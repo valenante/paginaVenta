@@ -1,91 +1,206 @@
+/* === BASE GENERAL === */
 .TopBar {
-  grid-area: TopBar;
-  display: grid;
-  grid-template-columns: 1fr 7fr;
-  height: 12vh;
-  background-color: var(--color-primario);
-  color: var(--color-blanco);
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: #ffffff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  z-index: 1000;
+  font-family: "Poppins", sans-serif;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
 }
 
-.TopBar-logo {
-  background-color: var(--color-blanco);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-weight: bold;
-  font-size: 1.4rem;
-  color: var(--color-negro);
-}
-
-.TopBar-resto {
-  background-color: var(--color-secundario-hover); /* puedes ajustar o quitar esto */
+.TopBar-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 12px 24px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 2rem;
-  gap: 2rem;
 }
 
-.TopBar-nav {
-  display: flex;
-  gap: 1.5rem;
-  flex-wrap: wrap;
-}
-
-.TopBar-nav a {
-  color: var(--color-blanco);
-  text-decoration: none;
-  font-weight: 500;
-  transition: color 0.3s;
-}
-
-.TopBar-nav a:hover {
-  color: var(--color-dorado);
-}
-
-.TopBar-cta {
-  background-color: var(--color-secundario);
-  border: none;
-  padding: 0.6rem 1rem;
-  border-radius: 6px;
-  color: var(--color-blanco);
-  font-weight: bold;
+/* === LOGO === */
+.TopBar-logo {
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: #222;
   cursor: pointer;
-  transition: background 0.3s;
+  transition: color 0.3s ease;
+}
+.TopBar-logo span {
+  color: #6A0DAD;
+}
+.TopBar-logo:hover {
+  color: #6A0DAD;
 }
 
-.TopBar-cta:hover {
-  background-color: var(--color-secundario-hover);
+/* === BOTÓN HAMBURGUESA === */
+.TopBar-menu {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 26px;
+  height: 18px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  z-index: 1100;
+}
+.TopBar-menu span {
+  height: 3px;
+  width: 100%;
+  background-color: #333;
+  border-radius: 2px;
+  transition: all 0.3s ease;
+}
+.TopBar-menu.active span:nth-child(1) {
+  transform: rotate(45deg) translateY(7px);
+}
+.TopBar-menu.active span:nth-child(2) {
+  opacity: 0;
+}
+.TopBar-menu.active span:nth-child(3) {
+  transform: rotate(-45deg) translateY(-7px);
 }
 
-/* RESPONSIVE */
-@media screen and (max-width: 768px) {
-  .TopBar {
-    display: flex;
-    flex-direction: column;
-    height: auto;
+/* === MENÚ DESPLEGABLE (MÓVIL) === */
+.TopBar-dropdown {
+  position: absolute;
+  top: 50px;
+  right: 0;
+  width: 100%;
+  background-color: #fff;
+  max-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: max-height 0.35s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+.TopBar-dropdown.open {
+  max-height: 480px;
+}
+
+.TopBar-dropdown a,
+.TopBar-dropdown button {
+  width: 100%;
+  text-align: center;
+  padding: 12px 0;
+  border: none;
+  background: none;
+  color: #333;
+  font-size: 1rem;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.25s, color 0.25s;
+}
+.TopBar-dropdown a:hover,
+.TopBar-dropdown button:hover {
+  background-color: #f5f5f5;
+  color: #6A0DAD;
+}
+
+/* === BOTONES ESPECIALES === */
+.TopBar-btn.login {
+  color: #6A0DAD;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.TopBar-btn.cta {
+  background-color: #FF6700;
+  color: #fff;
+  border-radius: 8px;
+  padding: 10px 16px;
+  margin: 10px 0;
+  width: 80%;
+  font-weight: 600;
+  text-transform: uppercase;
+  transition: background 0.3s ease;
+}
+.TopBar-btn.cta:hover {
+  background-color: #e45f00;
+}
+
+.TopBar-btn.special {
+  color: #fff;
+  background-color: #6A0DAD;
+  border-radius: 8px;
+  padding: 10px 16px;
+  width: 80%;
+  margin: 10px 0;
+  text-transform: uppercase;
+  font-weight: 600;
+  transition: background 0.3s ease;
+}
+.TopBar-btn.special:hover {
+  background-color: #580c94;
+}
+
+/* === VERSIÓN ESCRITORIO === */
+@media (min-width: 769px) {
+  .TopBar-container {
+    padding: 12px 40px;
   }
 
-  .TopBar-logo {
-    width: 100%;
-    padding: 1rem;
+  .TopBar-menu {
+    display: none;
   }
 
-  .TopBar-resto {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 1rem;
-    width: 100%;
-    padding: 1rem;
+  .TopBar-dropdown {
+    position: static;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+    max-height: none;
+    background: none;
+    box-shadow: none;
+    transition: none;
+    width: auto;
   }
 
-  .TopBar-nav {
-    flex-direction: column;
-    gap: 0.5rem;
+  .TopBar-dropdown a,
+  .TopBar-dropdown button {
+    width: auto;
+    margin: 0 8px;
+    font-size: 0.95rem;
+    padding: 6px 10px;
   }
 
-  .TopBar-cta {
-    align-self: stretch;
-    text-align: center;
+  .TopBar-btn.cta {
+    width: auto;
+    margin-left: 12px;
+    border-radius: 6px;
+    padding: 8px 14px;
+  }
+
+  .TopBar-btn.special {
+    width: auto;
+    margin-left: 12px;
+    padding: 8px 14px;
+  }
+
+  .TopBar-btn.login {
+    font-weight: 500;
+    font-size: 0.95rem;
+    letter-spacing: normal;
+  }
+
+  .TopBar-dropdown a:hover,
+  .TopBar-dropdown button:hover {
+    background: none;
+    color: #6A0DAD;
+  }
+}
+
+/* === EFECTO DE SOMBRA CUANDO SE DESPLAZA === */
+@media (prefers-reduced-motion: no-preference) {
+  .TopBar.scrolled {
+    background-color: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+    backdrop-filter: blur(6px);
   }
 }

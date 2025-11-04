@@ -1,0 +1,37 @@
+.modal-nueva-reserva {
+  max-width: 500px;
+}
+
+.modal-nueva-reserva h2 {
+  color: #6A0DAD;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.form-group {
+  margin-bottom: 1rem;
+  text-align: left;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.3rem;
+  color: #333;
+  font-weight: 500;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 0.6rem 0.8rem;
+  border: 1px solid #ccc;
+  border-radius: 0.4rem;
+  font-size: 1rem;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #6A0DAD;
+  box-shadow: 0 0 0 2px rgba(106, 13, 173, 0.15);
+}

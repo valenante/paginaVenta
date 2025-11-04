@@ -1,0 +1,213 @@
+.reservas-ajustes-page {
+    padding: 2rem;
+    max-width: 900px;
+    margin: 0 auto;
+    color: #2d2d2d;
+    background: #fff;
+    border-radius: 1rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.reservas-ajustes-page h2 {
+    color: #6A0DAD;
+    text-align: center;
+    margin-bottom: 1.5rem;
+    font-weight: 700;
+}
+
+.reservas-ajustes-page h3 {
+    color: #333;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    border-left: 4px solid #6A0DAD;
+    padding-left: 0.6rem;
+}
+
+.fecha-selector {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.fecha-selector label {
+    font-weight: 500;
+    color: #444;
+}
+
+.react-datepicker-wrapper {
+    flex: 1;
+}
+
+.react-datepicker__input-container input {
+    width: 100%;
+    padding: 0.6rem 1rem;
+    border: 1px solid #ccc;
+    border-radius: 0.5rem;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.react-datepicker__input-container input:focus {
+    border-color: #6A0DAD;
+    box-shadow: 0 0 0 3px rgba(106, 13, 173, 0.15);
+    outline: none;
+}
+
+/* === FRANJAS HORARIAS === */
+.franjas-config {
+    margin-bottom: 2rem;
+    background: #fafafa;
+    border-radius: 0.8rem;
+    padding: 1rem 1.5rem;
+    border: 1px solid #eee;
+}
+
+.franja-item {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    margin-bottom: 0.8rem;
+    flex-wrap: wrap;
+}
+
+.franja-item input[type="time"],
+.franja-item input[type="number"] {
+    padding: 0.5rem 0.8rem;
+    border: 1px solid #ccc;
+    border-radius: 0.4rem;
+    font-size: 0.95rem;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.franja-item input:focus {
+    border-color: #6A0DAD;
+    box-shadow: 0 0 0 3px rgba(106, 13, 173, 0.15);
+}
+
+.franja-item button {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 1.3rem;
+    color: #b00;
+    transition: color 0.2s, transform 0.1s;
+}
+
+.franja-item button:hover {
+    color: #ff2d2d;
+    transform: scale(1.1);
+}
+
+.franjas-config>button {
+    background: #FF6700;
+    color: white;
+    font-weight: 600;
+    border: none;
+    border-radius: 0.5rem;
+    padding: 0.6rem 1.2rem;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.franjas-config>button:hover {
+    background: #e85d00;
+}
+
+/* === DÍAS HABILITADOS === */
+.dias-config {
+    background: #fafafa;
+    border-radius: 0.8rem;
+    padding: 1rem 1.5rem;
+    border: 1px solid #eee;
+    margin-bottom: 2rem;
+}
+
+.dias-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 0.6rem;
+}
+
+.dias-grid label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: #f4f4ff;
+    border: 1px solid #e0d8f5;
+    border-radius: 0.5rem;
+    padding: 0.5rem 0.8rem;
+    cursor: pointer;
+    font-weight: 500;
+    color: #4a4a4a;
+    transition: background 0.2s, transform 0.1s;
+}
+
+.dias-grid input[type="checkbox"] {
+    accent-color: #6A0DAD;
+}
+
+.dias-grid label:hover {
+    background: #e9ddff;
+    transform: scale(1.02);
+}
+
+/* === BOTÓN GUARDAR === */
+.btn-guardar-config {
+    display: block;
+    width: 100%;
+    background: #6A0DAD;
+    color: #fff;
+    font-weight: 600;
+    border: none;
+    border-radius: 0.6rem;
+    padding: 0.9rem 1.2rem;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.1s;
+}
+
+.btn-guardar-config:hover {
+    background: #580b90;
+    transform: scale(1.02);
+}
+
+.btn-guardar-config:active {
+    transform: scale(0.98);
+}
+
+/* === ALERTA === */
+.alerta-mensaje {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    animation: fadeIn 0.4s ease-in-out;
+}
+
+/* === ANIMACIONES === */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* === MODO RESPONSIVE === */
+@media (max-width: 768px) {
+    .reservas-ajustes-page {
+        padding: 1.2rem;
+    }
+
+    .franja-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .dias-grid {
+        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    }
+}

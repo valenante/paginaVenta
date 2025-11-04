@@ -32,10 +32,6 @@ html, body {
   transform: scale(1);
 }
 
-.espaciados {
-  margin: 1.1rem; 
-}
-
 /* secciones */
 
 section > div {

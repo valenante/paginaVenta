@@ -1,0 +1,86 @@
+/* === Contenedor base === */
+.alerta-mensaje {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  background: #fff;
+  color: #333;
+  border-left: 6px solid #6A0DAD; /* color base (info) */
+  border-radius: 0.6rem;
+  padding: 0.9rem 1.2rem;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  font-size: 1rem;
+  font-weight: 500;
+  z-index: 2000;
+  min-width: 280px;
+  max-width: 400px;
+  animation: slideIn 0.3s ease-out;
+}
+
+/* === Variantes de color === */
+.alerta-exito {
+  border-left-color: #2ecc71;
+  background: #ecfdf5;
+  color: #166534;
+}
+
+.alerta-error {
+  border-left-color: #e74c3c;
+  background: #fef2f2;
+  color: #7f1d1d;
+}
+
+.alerta-info {
+  border-left-color: #6A0DAD;
+  background: #f9f5ff;
+  color: #3c096c;
+}
+
+.alerta-advertencia {
+  border-left-color: #f39c12;
+  background: #fff9eb;
+  color: #7c4400;
+}
+
+/* === Botón cerrar === */
+.alerta-cerrar {
+  background: none;
+  border: none;
+  color: inherit;
+  font-size: 1.4rem;
+  font-weight: bold;
+  cursor: pointer;
+  margin-left: auto;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.alerta-cerrar:hover {
+  transform: scale(1.2);
+  opacity: 0.8;
+}
+
+/* === Animación de entrada === */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* === Responsividad === */
+@media (max-width: 480px) {
+  .alerta-mensaje {
+    right: 1rem;
+    left: 1rem;
+    bottom: 1rem;
+    width: auto;
+    font-size: 0.95rem;
+  }
+}

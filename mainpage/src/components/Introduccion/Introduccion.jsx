@@ -1,4 +1,5 @@
 import "./Introduccion.css";
+import main from "../../assets/imagenes/main.png";
 
 const Introduccion = () => {
   return (
@@ -19,7 +20,7 @@ const Introduccion = () => {
       </div>
       <div className="Introduccion-right">
         <img
-          src="/img/intro-foto.jpg"
+          src={main}
           alt="TPV restaurante"
           className="Introduccion-imagen"
         />

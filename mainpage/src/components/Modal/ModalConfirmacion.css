@@ -1,0 +1,131 @@
+/* === Fondo del modal === */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+/* === Contenedor principal === */
+.modal-contenido {
+  background: #ffffff;
+  padding: 2rem;
+  border-radius: 1rem;
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  animation: popIn 0.25s ease-in-out;
+  position: relative;
+}
+
+/* === Título y texto === */
+.modal-contenido h2 {
+  font-size: 1.4rem;
+  margin-bottom: 0.8rem;
+  color: #6A0DAD;
+}
+
+.modal-contenido p {
+  color: #333;
+  margin-bottom: 1.5rem;
+  font-size: 1rem;
+}
+
+/* === Input === */
+.modal-contenido input {
+  width: 90%;
+  padding: 0.7rem 1rem;
+  border: 1px solid #ccc;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.modal-contenido input:focus {
+  border-color: #6A0DAD;
+  box-shadow: 0 0 0 3px rgba(106, 13, 173, 0.15);
+}
+
+/* === Botones === */
+.modal-botones {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.boton-cancelar-modal-confirmacion,
+.boton-aceptar-modal-confirmacion {
+  flex: 1;
+  padding: 0.8rem;
+  font-size: 1rem;
+  border-radius: 0.5rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  font-weight: 600;
+}
+
+/* Cancelar */
+.boton-cancelar-modal-confirmacion {
+  background: #e5e5e5;
+  color: #333;
+}
+
+.boton-cancelar-modal-confirmacion:hover {
+  background: #d3d3d3;
+}
+
+/* Aceptar */
+.boton-aceptar-modal-confirmacion {
+  background: #6A0DAD;
+  color: #fff;
+}
+
+.boton-aceptar-modal-confirmacion:hover {
+  background: #580b90;
+}
+
+/* === Animaciones === */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes popIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* === Responsividad === */
+@media (max-width: 480px) {
+  .modal-contenido {
+    width: 90%;
+    padding: 1.5rem;
+  }
+
+  .modal-botones {
+    flex-direction: column;
+  }
+
+  .boton-cancelar-modal-confirmacion,
+  .boton-aceptar-modal-confirmacion {
+    width: 100%;
+  }
+}

@@ -1,0 +1,88 @@
+.paso4-resumen {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.resumen-bloque {
+  background: #f8f8ff;
+  padding: 1rem 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+}
+
+.resumen-bloque h3 {
+  color: #6a0dad;
+  margin-bottom: 0.5rem;
+}
+
+.resumen-bloque ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.resumen-bloque li {
+  padding: 0.3rem 0;
+  border-bottom: 1px solid #eee;
+  font-size: 0.95rem;
+}
+
+.color-box {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  vertical-align: middle;
+  margin-left: 6px;
+}
+
+.resumen-precio {
+  background: #fffaf0;
+  padding: 1.2rem 1.5rem;
+  border-radius: 12px;
+  border-left: 4px solid #ff6700;
+}
+
+.resumen-precio .fila {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+}
+
+.resumen-precio .total strong {
+  font-size: 1.2rem;
+  color: #6a0dad;
+}
+
+.boton-pago {
+  width: 100%;
+  background: linear-gradient(90deg, #6a0dad, #ff6700);
+  color: white;
+  padding: 0.9rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.boton-pago:hover {
+  opacity: 0.9;
+}
+
+.mensaje-exito {
+  color: green;
+  font-weight: 600;
+  text-align: center;
+  margin-top: 1rem;
+}
+
+.nota-legal {
+  text-align: center;
+  font-size: 0.8rem;
+  color: #777;
+  margin-top: 1rem;
+}

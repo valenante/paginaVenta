@@ -1,0 +1,26 @@
+.paso1-datos {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.form-group input {
+  padding: 0.6rem 0.8rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+.info-box {
+  background: #f8f8ff;
+  border-left: 4px solid #6a0dad;
+  padding: 1rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+}

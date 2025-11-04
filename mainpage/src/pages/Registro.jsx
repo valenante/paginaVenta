@@ -1,0 +1,103 @@
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import api from "../utils/api";
+import "../styles/Registro.css";
+
+import Paso1DatosRestaurante from "../components/Registro/Paso1DatosRestaurante.jsx";
+import Paso2ConfiguracionBasica from "../components/Registro/Paso2ConfiguracionBasica.jsx";
+import Paso3ServiciosExtras from "../components/Registro/Paso3ServiciosExtras.jsx";
+import Paso4ResumenPago from "../components/Registro/Paso4ResumenPago.jsx";
+import PanelPrecio from "../components/Registro/PanelPrecio.jsx";
+
+export default function Registro() {
+  const navigate = useNavigate();
+  const [paso, setPaso] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState(false);
+
+  // ======== ESTADOS PRINCIPALES ========
+  const [tenant, setTenant] = useState({ nombre: "", email: "", plan: "premium" });
+  const [admin, setAdmin] = useState({ name: "", password: "" });
+
+  const [config, setConfig] = useState({
+    permitePedidosComida: true,
+    permitePedidosBebida: true,
+    stockHabilitado: true,
+    colores: { principal: "#6A0DAD", secundario: "#FF6700" },
+    informacionRestaurante: { telefono: "", direccion: "" },
+  });
+
+  const BASE_MENSUAL = 80;
+  const [servicios, setServicios] = useState({
+    vozCocina: false,
+    vozComandas: false,
+    impresoras: 0,
+    pantallas: 0,
+    pda: 0,
+    fotografia: false,
+    cargaDatos: false,
+  });
+
+  const [precio, setPrecio] = useState({ mensual: BASE_MENSUAL, unico: 0, totalPrimerMes: BASE_MENSUAL });
+  const [pago, setPago] = useState({ metodo: "simulado", idPago: "TEST-" + Date.now() });
+
+  // ======== CALCULAR PRECIO ========
+  useEffect(() => {
+    const mensual = BASE_MENSUAL + (servicios.vozCocina ? 10 : 0) + (servicios.vozComandas ? 10 : 0);
+    const unico =
+      (servicios.impresoras * 150) +
+      (servicios.pantallas * 250) +
+      (servicios.pda * 180) +
+      (servicios.fotografia ? 120 : 0) +
+      (servicios.cargaDatos ? 100 : 0);
+    setPrecio({ mensual, unico, totalPrimerMes: mensual + unico });
+  }, [servicios]);
+
+  // ======== SUBMIT FINAL ========
+  const handleSubmit = async () => {
+    setLoading(true);
+    setError("");
+    setSuccess(false);
+    try {
+      await api.post("/tenants/registro-avanzado", {
+        tenant,
+        admin,
+        config,
+        servicios,
+        precio,
+        pago,
+      });
+      setSuccess(true);
+      setTimeout(() => navigate("/"), 1500);
+    } catch (err) {
+      setError(err.response?.data?.error || "Error al registrar el restaurante.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ======== RENDER ========
+  const pasos = [
+    <Paso1DatosRestaurante tenant={tenant} setTenant={setTenant} admin={admin} setAdmin={setAdmin} />,
+    <Paso2ConfiguracionBasica config={config} setConfig={setConfig} />,
+    <Paso3ServiciosExtras servicios={servicios} setServicios={setServicios} />,
+    <Paso4ResumenPago tenant={tenant} config={config} servicios={servicios} precio={precio} onSubmit={handleSubmit} loading={loading} success={success} />,
+  ];
+
+  return (
+    <main className="registro-avanzado">
+      <div className="registro-container">
+        <h1>Configura tu restaurante</h1>
+        <p>Paso {paso} de 4</p>
+        {error && <p className="registro-error">{error}</p>}
+        {pasos[paso - 1]}
+        <div className="registro-nav">
+          {paso > 1 && <button onClick={() => setPaso(paso - 1)}>Anterior</button>}
+          {paso < 4 && <button onClick={() => setPaso(paso + 1)}>Siguiente</button>}
+        </div>
+      </div>
+      <PanelPrecio precio={precio} />
+    </main>
+  );
+}

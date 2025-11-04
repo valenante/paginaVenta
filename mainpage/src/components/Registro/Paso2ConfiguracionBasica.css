@@ -1,0 +1,51 @@
+.paso2-config {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.config-grupo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  background: #f8f8ff;
+  padding: 1rem 1.5rem;
+  border-radius: 12px;
+}
+
+.config-colores {
+  background: #fffaf0;
+  padding: 1rem 1.5rem;
+  border-radius: 12px;
+  border-left: 4px solid #ff6700;
+}
+
+.color-pickers {
+  display: flex;
+  gap: 1.5rem;
+  margin-top: 0.5rem;
+}
+
+.color-item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.3rem;
+}
+
+.color-item span {
+  font-size: 0.8rem;
+  color: #555;
+}
+
+.config-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.config-info input {
+  padding: 0.6rem 0.8rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}

@@ -1,82 +1,113 @@
+/* === SECCIÓN COMPLETA === */
 .Packs {
-  display: grid;
-  grid-template-rows: auto 1fr;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
-  padding: 2rem;
-  background-color: var(--color-claro);
-}
-
-.fila-superior {
-  grid-column: 1 / 4;
-  background-color: var(--color-header);
-  padding: 2rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.packs-header {
-  max-width: 800px;
-  text-align: center;
-}
-
-.packs-header h2 {
-  font-size: 2rem;
-  margin-bottom: 0.5rem;
-}
-
-.packs-header p {
-  font-size: 1.1rem;
-  color: var(--color-texto);
-}
-
-.Packs1, .Packs2, .Packs3 {
-  padding: 2rem;
-  border-radius: 12px;
+  padding: 60px 10%;
+  background: linear-gradient(180deg, #faf7ff 0%, #ffffff 100%);
+  font-family: "Poppins", sans-serif;
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+/* === CABECERA === */
+.fila-superior {
+  width: 100%;
   text-align: center;
-  color: var(--color-blanco);
+  margin-bottom: 60px;
 }
 
-.Packs1 {
-  background-color: var(--color-pack-1);
+.packs-header h2 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #6A0DAD;
+  margin-bottom: 10px;
 }
 
-.Packs2 {
-  background-color: var(--color-pack-2);
+.packs-header p {
+  font-size: 1.05rem;
+  color: #555;
+  line-height: 1.7;
 }
 
-.Packs3 {
-  background-color: var(--color-pack-3);
-  color: var(--color-pack-3-text);
+/* === CONTENEDOR DE LAS TARJETAS === */
+.Packs-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+  gap: 30px;
+  width: 100%;
+  max-width: 1200px;
 }
 
+/* === TARJETAS === */
+.Packs1, .Packs2, .Packs3 {
+  background: #fff;
+  border-radius: 16px;
+  padding: 40px 30px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  text-align: left;
+}
+
+.Packs1:hover, .Packs2:hover, .Packs3:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 35px rgba(0, 0, 0, 0.12);
+}
+
+/* Colores de cada plan */
+.Packs1 { border-top: 5px solid #6A0DAD; }
+.Packs2 { border-top: 5px solid #FF6700; }
+.Packs3 { border-top: 5px solid #2dc653; }
+
+/* Título */
 .Packs1 h3, .Packs2 h3, .Packs3 h3 {
   font-size: 1.5rem;
-  margin-bottom: 1rem;
+  color: #6A0DAD;
+  font-weight: 700;
+  margin-bottom: 20px;
 }
 
+/* Lista */
 .Packs1 ul, .Packs2 ul, .Packs3 ul {
   list-style: none;
   padding: 0;
-  font-size: 1rem;
 }
 
 .Packs1 li, .Packs2 li, .Packs3 li {
-  margin-bottom: 0.5rem;
+  position: relative;
+  padding-left: 26px;
+  margin-bottom: 14px;
+  font-size: 1rem;
+  color: #444;
 }
 
-/* Responsive */
-@media screen and (max-width: 900px) {
+.Packs1 li::before, .Packs2 li::before, .Packs3 li::before {
+  content: "✔";
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: #6A0DAD;
+  font-weight: bold;
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 768px) {
   .Packs {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto;
+    padding: 60px 6%;
   }
 
-  .fila-superior {
-    grid-column: auto;
+  .packs-header h2 {
+    font-size: 1.9rem;
+  }
+
+  .Packs-cards {
+    grid-template-columns: 1fr;
+    gap: 25px;
+  }
+
+  .Packs1, .Packs2, .Packs3 {
+    text-align: center;
+  }
+
+  .Packs1 li, .Packs2 li, .Packs3 li {
+    text-align: left;
   }
 }

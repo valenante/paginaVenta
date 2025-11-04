@@ -1,0 +1,51 @@
+.registro-success {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: #f9f9fb;
+  font-family: "Inter", sans-serif;
+  text-align: center;
+  padding: 2rem;
+}
+
+.registro-success h1 {
+  color: #0a9447;
+  margin-bottom: 0.5rem;
+}
+
+.registro-success p {
+  color: #444;
+  margin-bottom: 1.5rem;
+}
+
+.registro-success button {
+  background: #6a0dad;
+  color: white;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.registro-success button:hover {
+  background: #ff6700;
+}
+
+.spinner {
+  width: 48px;
+  height: 48px;
+  border: 5px solid #6a0dad;
+  border-bottom-color: transparent;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

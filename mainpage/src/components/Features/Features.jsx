@@ -33,8 +33,14 @@ const Features = () => {
   useRevealOnScroll();
 
   return (
-    <section className="Features espaciados" id="ventajas">
-      <h2 className="Features-titulo">¿Cuáles son las ventajas de nuestro sistema?</h2>
+    <section className="Features reveal espaciados" id="ventajas">
+      <div className="Features-header">
+        <h2>¿Cuáles son las ventajas de nuestro sistema?</h2>
+        <p>
+          Nuestro TPV en la nube se adapta a cada restaurante: moderno, rápido y completamente personalizable.
+        </p>
+      </div>
+
       <div className="Features-grid">
         {ventajas.map((v, i) => (
           <div key={i} className="Features-card">

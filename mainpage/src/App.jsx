@@ -17,6 +17,8 @@ import PerfilPage from "./pages/PerfilPage";
 import RestauranteConfigPage from "./pages/RestauranteConfigPage";
 import CartaConfigPage from "./pages/CartaConfigPage";
 import ReservasConfigPage from "./pages/ReservasConfigPage";
+import ForgotPassword from "./components/ForgotPassword/ForgotPassword";
+import ResetPassword from "./components/ForgotPassword/ResetPassword";
 import "./index.css";
 
 function LandingPage() {
@@ -38,6 +40,7 @@ function App() {
   return (
     <Router>
       <Routes>
+        <Route path="/:tenantId" element={<LandingPage />} />
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/registro" element={<Registro />} />
@@ -45,6 +48,9 @@ function App() {
         <Route path="/registro/cancel" element={<RegistroSuccess />} />
         <Route path="/superadmin" element={<AdminDashboard />} />
         <Route path="/tpv/login/:tenantId" element={<LoginImpersonar />} />
+        <Route path="/tpv/:tenantId/dashboard" element={<DashboardPage />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password/:tenantId/:token" element={<ResetPassword />} />
 
         {/* 👇 Nuevas rutas para el área privada */}
         <Route path="/dashboard" element={<DashboardPage />} />

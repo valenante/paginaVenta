@@ -19,16 +19,22 @@ export default function Login() {
     setError("");
 
     try {
+      // ✅ Enviar login al backend
       const res = await api.post("/auth/login", form);
       const { user } = res.data;
 
       console.log("✅ Usuario autenticado:", user);
 
+      // 🔹 Guardar sesión temporal
+      sessionStorage.setItem("user", JSON.stringify(user));
+
+      // 🧭 Redirección según rol
       if (user.role === "superadmin") {
-        navigate("/");
+        navigate("/superadmin");
       } else if (user.role === "admin_restaurante") {
         // 🚀 Redirige al TPV del restaurante
-        const tpvUrl = `http://localhost:5173/`;
+        const tenantId = user.tenantId || "default";
+        const tpvUrl = `http://localhost:5173/${tenantId}`;
         window.location.href = tpvUrl;
       } else {
         navigate("/");
@@ -42,6 +48,10 @@ export default function Login() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleForgotPassword = () => {
+    navigate("/forgot-password");
   };
 
   return (
@@ -82,6 +92,15 @@ export default function Login() {
           <button type="submit" className="login-btn" disabled={loading}>
             {loading ? "Iniciando sesión..." : "Entrar"}
           </button>
+
+          {/* 🔹 Nueva opción: recuperar contraseña */}
+          <p
+            className="login-forgot"
+            onClick={handleForgotPassword}
+            style={{ cursor: "pointer", color: "var(--color-secundario)" }}
+          >
+            ¿Olvidaste tu contraseña?
+          </p>
         </form>
 
         <p className="login-footer">

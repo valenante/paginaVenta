@@ -158,6 +158,13 @@ export default function ReservasConfigPage() {
                             ❌ Rechazar
                           </button>
                         </>
+                      ) : r.estado === "confirmada" || r.estado === "auto-confirmada" ? (
+                        <button
+                          className="btn-cancelar"
+                          onClick={() => cancelarReserva(r._id)}
+                        >
+                          🛑 Cancelar
+                        </button>
                       ) : (
                         <span className="no-acciones">—</span>
                       )}

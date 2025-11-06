@@ -7,16 +7,7 @@ import { useConfigStyles } from "../Hooks/useConfigStyles";
 export const ConfigContext = createContext();
 
 export const ConfigProvider = ({ children }) => {
-  let tenantId = null;
-  try {
-    // ⚙️ Proteger en caso de que TenantProvider no esté montado
-    const tenant = useTenant?.();
-    tenantId = tenant?.tenantId || null;
-  } catch (err) {
-    console.warn("⚠️ [ConfigProvider] TenantContext no disponible todavía:", err);
-    tenantId = null;
-  }
-
+  const { tenantId } = useTenant() || {}; // sin try/catch
   const [config, setConfig] = useState(null);
   const [loading, setLoading] = useState(true);
 

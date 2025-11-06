@@ -96,3 +96,16 @@
 .login-link:hover {
   text-decoration: underline;
 }
+.login-forgot {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-align: right;
+  color: var(--color-secundario);
+  transition: color 0.3s ease;
+}
+
+.login-forgot:hover {
+  color: var(--color-secundario-hover);
+  text-decoration: underline;
+}

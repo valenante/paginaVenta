@@ -10,6 +10,7 @@ export default function Paso4ResumenPago({
   config,
   servicios,
   precio,
+  admin,
   onSubmit,
   loading,
   success,
@@ -22,6 +23,8 @@ export default function Paso4ResumenPago({
         tenant,
         precio,
         servicios,
+        config,
+        admin,
       });
 
       if (data.url) {

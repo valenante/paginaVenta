@@ -107,6 +107,60 @@
   box-shadow: 0 8px 25px rgba(255, 103, 0, 0.35);
 }
 
+/* === BOTONES === */
+.perfil-actions {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  /* 👈 Espaciado entre botones */
+  margin-top: 25px;
+  /* 👈 Separación del formulario */
+  flex-wrap: wrap;
+  /* 👈 Permite que bajen en pantallas pequeñas */
+}
+
+.perfil-actions button {
+  flex: 1;
+  /* 👈 Ambos botones mismo ancho proporcional */
+  max-width: 180px;
+  /* 👈 Evita que sean demasiado anchos */
+  padding: 10px 20px;
+  /* 👈 Menos padding para altura equilibrada */
+  font-size: 0.95rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+/* Botón principal (guardar cambios) */
+.perfil-actions button[type="submit"] {
+  background-color: #6A0DAD;
+  color: #fff;
+  border: none;
+  box-shadow: 0 5px 12px rgba(106, 13, 173, 0.25);
+}
+
+.perfil-actions button[type="submit"]:hover {
+  background-color: #5b0996;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(106, 13, 173, 0.35);
+}
+
+/* Botón secundario (cerrar sesión) */
+.btn-secundario {
+  background-color: #FF6700;
+  color: #fff;
+  border: none;
+  box-shadow: 0 5px 12px rgba(255, 103, 0, 0.25);
+}
+
+.btn-secundario:hover {
+  background-color: #e45f00;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(255, 103, 0, 0.35);
+}
+
 /* === RESPONSIVE === */
 @media (max-width: 768px) {
   .perfil-card {
@@ -143,5 +197,15 @@
 
   .btn-secundario {
     width: 100%;
+  }
+
+  .perfil-actions {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .perfil-actions button {
+    width: 100%;
+    max-width: none;
   }
 }

@@ -46,6 +46,8 @@ function App() {
         <Route path="/registro" element={<Registro />} />
         <Route path="/registro/success" element={<RegistroSuccess />} />
         <Route path="/registro/cancel" element={<RegistroSuccess />} />
+        <Route path="/pago/exito" element={<RegistroSuccess />} />
+        <Route path="/pago/cancelado" element={<RegistroSuccess />} />
         <Route path="/superadmin" element={<AdminDashboard />} />
         <Route path="/tpv/login/:tenantId" element={<LoginImpersonar />} />
         <Route path="/tpv/:tenantId/dashboard" element={<DashboardPage />} />

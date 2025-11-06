@@ -5,7 +5,7 @@ import "../styles/Login.css";
 
 export default function Login() {
   const navigate = useNavigate();
-  const [form, setForm] = useState({ name: "", password: "" });
+  const [form, setForm] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -43,7 +43,7 @@ export default function Login() {
       console.error("❌ Error de inicio de sesión:", err);
       setError(
         err.response?.data?.error ||
-          "Error al iniciar sesión. Intenta nuevamente."
+        "Error al iniciar sesión. Intenta nuevamente."
       );
     } finally {
       setLoading(false);
@@ -64,13 +64,13 @@ export default function Login() {
 
         <form className="login-form" onSubmit={handleSubmit}>
           <label>
-            Usuario:
+            Correo electrónico:
             <input
-              type="text"
-              name="name"
-              value={form.name}
+              type="email"
+              name="email"
+              value={form.email}
               onChange={handleChange}
-              placeholder="Tu nombre de usuario"
+              placeholder="tu@restaurante.com"
               required
             />
           </label>

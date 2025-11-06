@@ -82,7 +82,17 @@ export default function Registro() {
     <Paso1DatosRestaurante tenant={tenant} setTenant={setTenant} admin={admin} setAdmin={setAdmin} />,
     <Paso2ConfiguracionBasica config={config} setConfig={setConfig} />,
     <Paso3ServiciosExtras servicios={servicios} setServicios={setServicios} />,
-    <Paso4ResumenPago tenant={tenant} config={config} servicios={servicios} precio={precio} onSubmit={handleSubmit} loading={loading} success={success} />,
+    <Paso4ResumenPago
+      tenant={tenant}
+      admin={admin}
+      config={config}
+      servicios={servicios}
+      precio={precio}
+      pago={pago}
+      onSubmit={handleSubmit}
+      loading={loading}
+      success={success}
+    />
   ];
 
   return (

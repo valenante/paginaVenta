@@ -1,0 +1,495 @@
+/* ================================
+   CONTENEDOR GENERAL
+================================== */
+
+.planes-admin {
+  padding: 18px 20px;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.planes-admin h1 {
+  text-align: center;
+  color: #6a0dad;
+  margin: 0 0 10px;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+/* ================================
+   TABS
+================================== */
+
+.tabs {
+  display: inline-flex;
+  align-self: center;
+  background: #f3e8ff;
+  border-radius: 999px;
+  padding: 4px;
+  gap: 4px;
+  margin-bottom: 10px;
+}
+
+.tabs button {
+  border: none;
+  outline: none;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+  background: transparent;
+  color: #6b7280;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition:
+    background 0.18s ease,
+    color 0.18s ease,
+    transform 0.08s ease;
+}
+
+.tabs button.active {
+  background: #6a0dad;
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.tabs button:hover:not(.active) {
+  background: rgba(148, 163, 184, 0.25);
+  color: #111827;
+}
+
+/* ================================
+   CABECERA DE CADA TAB
+================================== */
+
+.planes-header {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 10px;
+}
+
+/* ================================
+   BOTONES
+================================== */
+
+.btn-primary {
+  background: #6a0dad;
+  color: #ffffff;
+  border: none;
+  padding: 0.55rem 1.1rem;
+  border-radius: 999px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 8px 18px rgba(124, 58, 237, 0.35);
+  transition:
+    background 0.18s ease,
+    transform 0.08s ease,
+    box-shadow 0.18s ease;
+}
+
+.btn-primary:hover {
+  background: #550c91;
+  transform: translateY(-1px);
+  box-shadow: 0 10px 22px rgba(124, 58, 237, 0.45);
+}
+
+.btn-secondary {
+  background: #e5e7eb;
+  border: none;
+  padding: 0.5rem 0.9rem;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  color: #374151;
+}
+
+.btn-secondary:hover {
+  background: #d1d5db;
+}
+
+/* Botones de acciones en tabla */
+
+.acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.acciones button {
+  border: none;
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 12px;
+  cursor: pointer;
+  background: #eef2ff;
+  color: #4338ca;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.acciones button:hover {
+  background: #e0e7ff;
+}
+
+.acciones .danger {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.acciones .danger:hover {
+  background: #fecaca;
+}
+
+/* ================================
+   TABLA
+================================== */
+
+.planes-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #ffffff;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+}
+
+.planes-table thead {
+  background: #f5f3ff;
+}
+
+.planes-table th,
+.planes-table td {
+  padding: 11px 14px;
+  border-bottom: 1px solid #e5e7eb;
+  font-size: 14px;
+  text-align: left;
+}
+
+.planes-table th {
+  font-weight: 600;
+  color: #6a0dad;
+}
+
+.planes-table tbody tr:nth-child(even) {
+  background: #fafafa;
+}
+
+.planes-table tbody tr:hover {
+  background: #eef2ff;
+}
+
+/* Badges de activo / inactivo */
+
+.badge {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.badge-activo {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.badge-inactivo {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+/* ================================
+   MODALES
+================================== */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+}
+
+.modal-card {
+  background: #ffffff;
+  padding: 22px 22px 18px;
+  border-radius: 18px;
+  width: 520px;
+  max-width: 95vw;
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.4);
+}
+
+.modal-card h2 {
+  color: #6a0dad;
+  text-align: center;
+  margin-bottom: 14px;
+  font-size: 18px;
+}
+
+.modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.modal-form label {
+  display: flex;
+  flex-direction: column;
+  font-weight: 600;
+  font-size: 13px;
+  color: #374151;
+  gap: 4px;
+}
+
+.modal-form input,
+.modal-form select,
+.planes-admin textarea {
+  border-radius: 10px;
+  border: 1px solid #d1d5db;
+  padding: 7px 10px;
+  font-size: 14px;
+  outline: none;
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.modal-form input:focus,
+.modal-form select:focus,
+.planes-admin textarea:focus {
+  border-color: #6a0dad;
+  box-shadow: 0 0 0 1px rgba(124, 58, 237, 0.35);
+}
+
+.planes-admin textarea {
+  min-height: 90px;
+  resize: vertical;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+/* ================================
+   LISTA DE FEATURES (NuevoPlan / EditarPlan)
+================================== */
+
+.features-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 10px 0 6px;
+  padding: 10px;
+  background: #f9fafb;
+  border-radius: 10px;
+  border: 1px dashed #e5e7eb;
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+/* Scroll discreto */
+.features-list::-webkit-scrollbar {
+  width: 6px;
+}
+.features-list::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.8);
+  border-radius: 999px;
+}
+
+/* Versión sencilla (NuevoPlanModal): label.feature-item */
+
+.feature-item {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 8px;
+  align-items: flex-start;
+  padding: 8px 9px;
+  background: #ffffff;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  cursor: pointer;
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease,
+    background 0.18s ease;
+}
+
+.feature-item:hover {
+  background: #f5f3ff;
+  border-color: #c4b5fd;
+  box-shadow: 0 4px 10px rgba(148, 163, 184, 0.35);
+}
+
+.feature-item input[type="checkbox"] {
+  margin-top: 2px;
+  accent-color: #6a0dad;
+}
+
+.feature-item strong {
+  font-size: 0.9rem;
+  color: #111827;
+}
+
+.feature-item small {
+  font-size: 0.78rem;
+  color: #6b7280;
+}
+
+/* ================================
+   CARD DE FEATURE (EditarPlanModal)
+================================== */
+
+.feature-card {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 9px 10px;
+  background: #ffffff;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease,
+    background 0.18s ease;
+}
+
+.feature-card:hover {
+  background: #f5f3ff;
+  border-color: #c4b5fd;
+  box-shadow: 0 4px 10px rgba(148, 163, 184, 0.3);
+}
+
+.feature-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.feature-desc {
+  margin: 0;
+  font-size: 0.82rem;
+  color: #4b5563;
+}
+
+.feature-tag {
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+.feature-tag code {
+  padding: 2px 5px;
+  border-radius: 6px;
+  background: #eef2ff;
+  font-size: 0.74rem;
+}
+
+.feature-checkbox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.feature-checkbox input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #6a0dad;
+}
+
+/* ================================
+   RESPONSIVE MODALES
+================================== */
+
+@media (max-width: 768px) {
+  .features-list {
+    max-height: 210px;
+  }
+
+  .feature-card,
+  .feature-item {
+    padding: 8px;
+  }
+}
+
+/* ================================
+   RESPONSIVE
+================================== */
+
+@media (max-width: 1024px) {
+  .planes-admin {
+    padding: 14px;
+  }
+
+  .planes-table th,
+  .planes-table td {
+    padding: 9px 10px;
+  }
+}
+
+@media (max-width: 768px) {
+  .planes-admin h1 {
+    font-size: 18px;
+  }
+
+  .planes-header {
+    justify-content: center;
+  }
+
+  .planes-table {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    white-space: nowrap;
+    border-radius: 14px;
+  }
+
+  .planes-table th,
+  .planes-table td {
+    font-size: 13px;
+  }
+
+  .modal-card {
+    padding: 18px 16px 14px;
+    width: 95vw;
+  }
+}
+
+@media (max-width: 480px) {
+  .tabs {
+    width: 100%;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .tabs button {
+    flex: 1 1 45%;
+    justify-content: center;
+  }
+
+  .planes-admin {
+    padding: 10px;
+  }
+
+  .planes-table th,
+  .planes-table td {
+    padding: 8px 8px;
+  }
+}

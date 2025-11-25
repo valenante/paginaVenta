@@ -1,4 +1,5 @@
 // src/pages/admin/AdminDashboard/AdminDashboard.jsx
+import React from "react";
 import { useState } from "react";
 import "../../../styles/AdminDashboard.css";
 import useTenantsData from "../hooks/useTenantsData";

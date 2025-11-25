@@ -245,6 +245,31 @@
   color: #6A0DAD;
 }
 
+.feature-blocked-card {
+  max-width: 640px;
+  margin: 4rem auto;
+  padding: 2rem;
+  border-radius: 18px;
+  background: #fff7f0;
+  border: 1px solid #ffd9b5;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+}
+
+.feature-blocked-card h2 {
+  margin-bottom: 0.75rem;
+  color: #c05621;
+}
+
+.feature-blocked-card p {
+  margin-bottom: 0.35rem;
+  color: #4a5568;
+}
+
+.feature-blocked-note {
+  font-size: 0.9rem;
+  color: #805027;
+}
+
 /* === RESPONSIVO === */
 @media (max-width: 900px) {
   .reservas-card {

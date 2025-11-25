@@ -29,6 +29,18 @@ export default function Paso1DatosRestaurante({ tenant, setTenant, admin, setAdm
       </div>
 
       <div className="form-group">
+        <label>Email del administrador</label>
+        <input
+          type="email"
+          name="email"
+          value={admin.email}
+          onChange={handleAdminChange}
+          placeholder="admin@restaurante.com"
+          required
+        />
+      </div>
+
+      <div className="form-group">
         <label>Email de contacto</label>
         <input
           type="email"

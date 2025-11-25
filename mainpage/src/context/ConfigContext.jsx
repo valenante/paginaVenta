@@ -1,3 +1,4 @@
+import React from "react";
 import { createContext, useEffect, useState, useContext } from "react";
 import api from "../utils/api";
 import { useTenant } from "./TenantContext.jsx";
@@ -8,7 +9,7 @@ export const ConfigContext = createContext();
 
 export const ConfigProvider = ({ children }) => {
   const { tenantId } = useTenant() || {}; // sin try/catch
-  const [config, setConfig] = useState(null);
+  const [config, setConfig] = useState({});
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -53,7 +54,7 @@ export const useConfig = () => {
   const context = useContext(ConfigContext);
   if (!context) {
     console.warn("⚠️ useConfig se usó fuera de ConfigProvider. Se devuelve contexto vacío.");
-    return { config: null, loading: false, setConfig: () => {} };
+    return { config: null, loading: false, setConfig: () => { } };
   }
   return context;
 };

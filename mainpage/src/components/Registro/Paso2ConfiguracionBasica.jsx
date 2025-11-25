@@ -1,10 +1,52 @@
-import React from "react";
+import React, { useMemo, useState } from "react";
 import "./Paso2ConfiguracionBasica.css";
 
-export default function Paso2ConfiguracionBasica({ config, setConfig }) {
-  const handleCheckboxChange = (e) => {
-    const { name, checked } = e.target;
-    setConfig((prev) => ({ ...prev, [name]: checked }));
+const TITULOS_CATEGORIA = {
+  legal: "🧾 Fiscalidad y VeriFactu",
+  tpv: "🧾 TPV y caja",
+  carta: "📋 Carta digital",
+  cocina: "🍳 Cocina / barra",
+  reservas: "📅 Reservas",
+  reporting: "📊 Informes y estadísticas",
+  soporte: "🛟 Soporte",
+  hardware: "🖨 Impresoras y hardware",
+  general: "🔧 Opciones generales",
+};
+
+function getTituloCategoria(cat) {
+  const key = (cat || "general").toLowerCase();
+  return TITULOS_CATEGORIA[key] || `🔧 ${key}`;
+}
+
+export default function Paso2ConfiguracionBasica({ config, setConfig, plan }) {
+  const featuresDelPlan = plan?.features || [];
+
+  // 🔁 Agrupar en { [cat]: { configurables: [], fijas: [] } }
+  const featuresPorCategoria = useMemo(() => {
+    return featuresDelPlan.reduce((acc, f) => {
+      const cat = (f.categoria || "general").toLowerCase();
+      if (!acc[cat]) acc[cat] = { configurables: [], fijas: [] };
+      if (f.configKey) acc[cat].configurables.push(f);
+      else acc[cat].fijas.push(f);
+      return acc;
+    }, {});
+  }, [featuresDelPlan]);
+
+  const categorias = Object.entries(featuresPorCategoria);
+  const totalFeatures = featuresDelPlan.length;
+  const totalCategorias = categorias.length;
+
+  // 🎛 Acordeón: por defecto se abre la primera categoría
+  const [openCategory, setOpenCategory] = useState(
+    categorias[0]?.[0] || null
+  );
+
+  const handleFeatureToggle = (configKey, checked) => {
+    if (!configKey) return;
+    setConfig((prev) => ({
+      ...prev,
+      [configKey]: checked,
+    }));
   };
 
   const handleColorChange = (e) => {
@@ -27,45 +69,136 @@ export default function Paso2ConfiguracionBasica({ config, setConfig }) {
 
   return (
     <section className="paso2-config">
-      <h2>⚙️ Configuración inicial</h2>
-      <p>Define opciones básicas del sistema y personaliza los colores de tu marca.</p>
+      <header className="paso2-header">
+        <div>
+          <h2>⚙️ Configuración inicial</h2>
+          <p>
+            Activa o desactiva las funcionalidades incluidas en tu plan. Esta
+            configuración se usará para crear tu entorno. Más adelante podrás
+            ajustar muchos detalles desde el panel del restaurante.
+          </p>
+        </div>
 
-      {/* === Opciones generales === */}
-      <div className="config-grupo">
-        <label>
-          <input
-            type="checkbox"
-            name="permitePedidosComida"
-            checked={config.permitePedidosComida}
-            onChange={handleCheckboxChange}
-          />
-          Permitir pedidos de comida
-        </label>
+        <div className="plan-summary">
+          <div className="plan-summary-pill principal">
+            <span className="pill-number">{totalFeatures}</span>
+            <span className="pill-label">
+              funciones incluidas en tu plan
+            </span>
+          </div>
+          <div className="plan-summary-pill">
+            <span className="pill-number">{totalCategorias}</span>
+            <span className="pill-label">bloques de configuración</span>
+          </div>
+        </div>
+      </header>
 
-        <label>
-          <input
-            type="checkbox"
-            name="permitePedidosBebida"
-            checked={config.permitePedidosBebida}
-            onChange={handleCheckboxChange}
-          />
-          Permitir pedidos de bebida
-        </label>
+      {/* === BLOQUES DE FEATURES === */}
+      <div className="config-features-wrapper">
+        {totalFeatures === 0 && (
+          <p>No hay opciones configurables en este plan.</p>
+        )}
 
-        <label>
-          <input
-            type="checkbox"
-            name="stockHabilitado"
-            checked={config.stockHabilitado}
-            onChange={handleCheckboxChange}
-          />
-          Habilitar control de stock
-        </label>
+        {categorias.map(([catKey, grupo]) => {
+          const abierta =
+            openCategory === null
+              ? catKey === categorias[0][0]
+              : openCategory === catKey;
+
+          const { configurables, fijas } = grupo;
+
+          return (
+            <div
+              key={catKey}
+              className={`feature-category-card ${
+                abierta ? "open" : "closed"
+              }`}
+            >
+              <button
+                type="button"
+                className="feature-category-header"
+                onClick={() =>
+                  setOpenCategory((prev) =>
+                    prev === catKey ? null : catKey
+                  )
+                }
+              >
+                <div className="feature-category-title">
+                  {getTituloCategoria(catKey)}
+                  <span className="feature-category-count">
+                    {configurables.length + fijas.length} función
+                    {configurables.length + fijas.length !== 1 && "es"}
+                  </span>
+                </div>
+                <span className="feature-category-chevron">
+                  {abierta ? "▲" : "▼"}
+                </span>
+              </button>
+
+              {abierta && (
+                <div className="feature-category-body">
+                  {/* Configurables ahora */}
+                  {configurables.length > 0 && (
+                    <>
+                      <p className="feature-subtitle">
+                        Lo que puedes configurar ahora
+                      </p>
+                      <div className="feature-list">
+                        {configurables.map((f) => (
+                          <label key={f._id} className="feature-item">
+                            <input
+                              type="checkbox"
+                              checked={!!config[f.configKey]}
+                              onChange={(e) =>
+                                handleFeatureToggle(
+                                  f.configKey,
+                                  e.target.checked
+                                )
+                              }
+                            />
+                            <div className="feature-text">
+                              <span className="feature-name">
+                                {f.nombre}
+                              </span>
+                              {f.descripcion && (
+                                <small className="feature-desc">
+                                  {f.descripcion}
+                                </small>
+                              )}
+                            </div>
+                          </label>
+                        ))}
+                      </div>
+                    </>
+                  )}
+
+                  {/* Incluidas fijas */}
+                  {fijas.length > 0 && (
+                    <div className="feature-fixed-block">
+                      <p className="feature-subtitle">
+                        También incluye en este plan
+                      </p>
+                      <ul className="feature-fixed-list">
+                        {fijas.map((f) => (
+                          <li key={f._id}>{f.nombre}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
 
-      {/* === Colores === */}
+      {/* === Colores básicos === */}
       <div className="config-colores">
         <h3>🎨 Paleta de colores</h3>
+        <p className="config-help">
+          Elige los colores principales de tu marca. Podrás ajustarlos más
+          adelante desde el panel.
+        </p>
         <div className="color-pickers">
           <div className="color-item">
             <label>Principal</label>
@@ -92,7 +225,12 @@ export default function Paso2ConfiguracionBasica({ config, setConfig }) {
 
       {/* === Información restaurante === */}
       <div className="config-info">
-        <h3>📞 Información del restaurante</h3>
+        <h3>📞 Información básica del restaurante</h3>
+        <p className="config-help">
+          Estos datos aparecerán en algunas comunicaciones y en el panel del
+          TPV. Podrás completarlos luego más en detalle.
+        </p>
+
         <label>Teléfono</label>
         <input
           type="text"

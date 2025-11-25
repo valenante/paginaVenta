@@ -1,0 +1,433 @@
+/* ================================
+   CONTENEDOR GENERAL
+================================== */
+
+.tickets-page {
+  padding: 18px 20px;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.tickets-page h1 {
+  font-size: 22px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 6px;
+}
+
+/* ================================
+   FILTROS
+================================== */
+
+.ticket-filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  background: #f9fafb;
+  border-radius: 14px;
+  padding: 10px 12px;
+  border: 1px solid #e5e7eb;
+}
+
+.ticket-filtros input,
+.ticket-filtros select {
+  padding: 8px 11px;
+  border-radius: 999px;
+  border: 1px solid #d1d5db;
+  font-size: 13px;
+  min-width: 150px;
+  outline: none;
+  background: #ffffff;
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease,
+    background 0.18s ease;
+}
+
+.ticket-filtros input:focus,
+.ticket-filtros select:focus {
+  border-color: #6a0dad;
+  box-shadow: 0 0 0 1px rgba(124, 58, 237, 0.2);
+}
+
+/* Botón actualizar */
+
+.ticket-filtros button {
+  margin-left: auto;
+  background: #6a0dad;
+  color: #ffffff;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 8px 18px rgba(124, 58, 237, 0.35);
+  transition:
+    background 0.18s ease,
+    transform 0.08s ease,
+    box-shadow 0.18s ease;
+}
+
+.ticket-filtros button:hover {
+  background: #550c91;
+  transform: translateY(-1px);
+  box-shadow: 0 10px 22px rgba(124, 58, 237, 0.45);
+}
+
+/* ================================
+   TABLA
+================================== */
+
+.tickets-table {
+  width: 100%;
+  background: #ffffff;
+  border-radius: 16px;
+  border-collapse: collapse;
+  overflow: hidden;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+}
+
+.tickets-table thead {
+  background: #f5f3ff;
+}
+
+.tickets-table th,
+.tickets-table td {
+  padding: 10px 13px;
+  border-bottom: 1px solid #e5e7eb;
+  font-size: 13px;
+  text-align: left;
+}
+
+.tickets-table th {
+  font-weight: 600;
+  color: #6a0dad;
+}
+
+.tickets-table tbody tr:nth-child(even) {
+  background: #fafafa;
+}
+
+.tickets-table tbody tr:hover {
+  background: #eef2ff;
+  cursor: pointer;
+}
+
+/* Prioridad como pill */
+
+.prio {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 999px;
+  text-transform: capitalize;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.prio-baja {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.prio-media {
+  background: #ede9fe;
+  color: #6d28d9;
+}
+
+.prio-alta {
+  background: #ffedd5;
+  color: #c2410c;
+}
+
+.prio-urgente {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+/* Mensajes de estado */
+
+.tickets-page > p {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+/* ================================
+   MODAL TICKET
+================================== */
+
+.ticket-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 40;
+}
+
+.ticket-modal-content {
+  background: #ffffff;
+  padding: 22px 22px 18px;
+  width: 700px;
+  max-width: 95vw;
+  border-radius: 18px;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.55);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ticket-modal-content h2 {
+  margin: 0;
+  font-size: 18px;
+  color: #111827;
+}
+
+.ticket-modal-content p {
+  margin: 4px 0;
+  font-size: 14px;
+  color: #374151;
+}
+
+/* Fila de datos (estado / prioridad) */
+
+.ticket-data-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 6px 0;
+}
+
+.ticket-data-row label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #4b5563;
+  min-width: 70px;
+}
+
+.ticket-data-row select {
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid #d1d5db;
+  font-size: 13px;
+  outline: none;
+  background: #ffffff;
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.ticket-data-row select:focus {
+  border-color: #6a0dad;
+  box-shadow: 0 0 0 1px rgba(124, 58, 237, 0.2);
+}
+
+/* ================================
+   CHAT DEL TICKET
+================================== */
+
+.ticket-chat {
+  background: #f9fafb;
+  border-radius: 12px;
+  padding: 12px;
+  max-height: 260px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Scroll discreto */
+.ticket-chat::-webkit-scrollbar {
+  width: 6px;
+}
+.ticket-chat::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.8);
+  border-radius: 999px;
+}
+
+.mensaje {
+  max-width: 85%;
+  padding: 8px 10px;
+  border-radius: 10px;
+  font-size: 13px;
+  line-height: 1.35;
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.mensaje-superadmin {
+  align-self: flex-end;
+  background: #ede9fe;
+  color: #4c1d95;
+  border-bottom-right-radius: 4px;
+}
+
+.mensaje-tenant {
+  align-self: flex-start;
+  background: #e5f4ff;
+  color: #1e293b;
+  border-bottom-left-radius: 4px;
+}
+
+.mensaje span {
+  font-size: 11px;
+  color: #6b7280;
+  align-self: flex-end;
+}
+
+/* ================================
+   ENVIAR MENSAJE
+================================== */
+
+.mensaje-form {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.mensaje-form input {
+  flex: 1;
+  padding: 8px 11px;
+  border-radius: 999px;
+  border: 1px solid #d1d5db;
+  font-size: 13px;
+  outline: none;
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.mensaje-form input:focus {
+  border-color: #6a0dad;
+  box-shadow: 0 0 0 1px rgba(124, 58, 237, 0.2);
+}
+
+.mensaje-form button {
+  border: none;
+  border-radius: 999px;
+  padding: 8px 13px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  background: #6a0dad;
+  color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition:
+    background 0.18s ease,
+    transform 0.08s ease,
+    box-shadow 0.18s ease;
+}
+
+.mensaje-form button:hover {
+  background: #550c91;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(124, 58, 237, 0.4);
+}
+
+/* ================================
+   BOTÓN ELIMINAR TICKET
+================================== */
+
+.delete-ticket-btn {
+  margin-top: 12px;
+  align-self: flex-start;
+  background: #fee2e2;
+  color: #b91c1c;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition:
+    background 0.18s ease,
+    transform 0.08s ease,
+    box-shadow 0.18s ease;
+}
+
+.delete-ticket-btn:hover {
+  background: #ef4444;
+  color: #fef2f2;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(248, 113, 113, 0.5);
+}
+
+/* ================================
+   RESPONSIVE
+================================== */
+
+@media (max-width: 1024px) {
+  .tickets-page {
+    padding: 14px;
+  }
+
+  .tickets-table th,
+  .tickets-table td {
+    padding: 9px 10px;
+  }
+}
+
+@media (max-width: 768px) {
+  .ticket-filtros {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .ticket-filtros button {
+    margin-left: 0;
+    align-self: stretch;
+    justify-content: center;
+  }
+
+  /* Tabla scroll horizontal en móvil */
+  .tickets-table {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    white-space: nowrap;
+    border-radius: 14px;
+  }
+
+  .tickets-table th,
+  .tickets-table td {
+    font-size: 12px;
+  }
+
+  .ticket-modal-content {
+    padding: 18px 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .tickets-page {
+    padding: 10px;
+  }
+
+  .tickets-page h1 {
+    font-size: 18px;
+  }
+
+  .tickets-table th,
+  .tickets-table td {
+    padding: 7px 8px;
+  }
+}

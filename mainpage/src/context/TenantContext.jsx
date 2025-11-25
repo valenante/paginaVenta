@@ -1,4 +1,5 @@
 // src/context/TenantContext.jsx
+import React from "react";
 import { createContext, useContext, useEffect, useState } from "react";
 import api from "../utils/api";
 

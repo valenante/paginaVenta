@@ -1,3 +1,4 @@
+import React from "react";
 import "./Introduccion.css";
 import main from "../../assets/imagenes/main.png";
 

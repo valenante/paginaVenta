@@ -169,6 +169,57 @@ section h3 {
   opacity: 0.6;
   cursor: not-allowed;
 }
+.verifactu-banner {
+  background: #fff3cd;
+  border: 1px solid #ffeeba;
+  color: #856404;
+  padding: 18px 22px;
+  border-radius: 12px;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+}
+
+.verifactu-banner-texto h2 {
+  margin: 0 0 6px;
+  font-size: 1.3rem;
+}
+
+.verifactu-banner-texto p {
+  margin: 0 0 4px;
+  font-size: 0.95rem;
+}
+
+.verifactu-banner-small {
+  font-size: 0.85rem;
+  opacity: 0.85;
+}
+
+.verifactu-banner-btn {
+  flex-shrink: 0;
+  padding: 10px 20px;
+  border-radius: 999px;
+  border: none;
+  background: #ff6700;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 0.95rem;
+  align-self: center;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.verifactu-banner-btn:hover {
+  background: #d95700;
+  transform: translateY(-1px);
+}
+
+.verifactu-banner-btn:active {
+  transform: translateY(0);
+}
 
 /* === RESPONSIVE === */
 @media (max-width: 1024px) {

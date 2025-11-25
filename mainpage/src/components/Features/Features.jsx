@@ -1,3 +1,4 @@
+import React from "react";
 import useRevealOnScroll from "../../Hooks/useRevealOnScroll";
 import "./Features.css";
 

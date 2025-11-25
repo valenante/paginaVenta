@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { useLocation } from "react-router-dom";
 import { useConfig } from "../context/ConfigContext.jsx";
 import api from "../utils/api";
 import "../styles/RestauranteConfigPage.css";
@@ -7,9 +8,20 @@ import AlertaMensaje from "../components/AlertaMensaje/AlertaMensaje.jsx";
 
 export default function RestauranteConfigPage() {
   const { config, setConfig } = useConfig();
+  const location = useLocation();
+
   const [form, setForm] = useState({ branding: {}, colores: {}, estilo: {} });
   const [saving, setSaving] = useState(false);
   const [dragOver, setDragOver] = useState(null);
+  const [features, setFeatures] = useState([]);
+  const [loadingFeatures, setLoadingFeatures] = useState(true);
+
+  // === Estado modales y alertas ===
+  const [modalConfirm, setModalConfirm] = useState(null);
+  const [alerta, setAlerta] = useState(null);
+
+  const [verifactuEnabled, setVerifactuEnabled] = useState(false);
+  const [verifactuLoaded, setVerifactuLoaded] = useState(false);
 
   // === SIF CONFIG ===
   const [sifForm, setSifForm] = useState({
@@ -29,11 +41,25 @@ export default function RestauranteConfigPage() {
   const faviconInputRef = useRef(null);
   const fondoInputRef = useRef(null);
 
-  // === Estado modales y alertas ===
-  const [modalConfirm, setModalConfirm] = useState(null);
-  const [alerta, setAlerta] = useState(null);
+  // RestauranteConfigPage.jsx
+  useEffect(() => {
+    const fetchFeatures = async () => {
+      try {
+        const { data } = await api.get("/admin/features-plan");
+        // data = { plan, features, config }
+        setFeatures(data.features || []);
+        setConfig(data.config);
+      } catch (err) {
+        setAlerta({ tipo: "error", mensaje: "Error al cargar funcionalidades del plan." });
+      } finally {
+        setLoadingFeatures(false);
+      }
+    };
 
-  // === Cargar configuración general ===
+    fetchFeatures();
+  }, [setConfig]);
+
+  // === Cargar configuración general en el formulario ===
   useEffect(() => {
     if (config) {
       setForm({
@@ -44,10 +70,71 @@ export default function RestauranteConfigPage() {
     }
   }, [config]);
 
+  // 👇 helper para leer rutas tipo "impresion.imprimirPedidosCocina"
+  const getConfigValue = (cfg, path) => {
+    if (!cfg || !path) return undefined;
+    return path.split(".").reduce((acc, part) => {
+      if (acc == null) return undefined;
+      return acc[part];
+    }, cfg);
+  };
+
+  // 🔥 NUEVO: actualizar flags de config cuando tocas una feature
+  const handleFeatureUpdate = async (configKey, value) => {
+    try {
+      const { data } = await api.put("/admin/features-plan/update", {
+        key: configKey,
+        value,
+      });
+
+      // el backend devuelve la config ya actualizada
+      setConfig(data);
+
+      setAlerta({
+        tipo: "success",
+        mensaje: "Cambios guardados correctamente ✅",
+      });
+    } catch (err) {
+      console.error("[RestauranteConfig] Error al actualizar feature:", err);
+      setAlerta({
+        tipo: "error",
+        mensaje: "Error al actualizar la configuración del plan.",
+      });
+    }
+  };
+
+  // 🔥 NUEVO: comprobar si VeriFactu está activo
+  useEffect(() => {
+    const checkVerifactu = async () => {
+      try {
+        const { data } = await api.get("/admin/verifactu/verifactu");
+        setVerifactuEnabled(!!data.enabled);
+      } catch (err) {
+        // si da 401/403/404, simplemente no mostramos nada especial
+        console.error("[RestauranteConfig] Error obteniendo estado VeriFactu:", err.message);
+      } finally {
+        setVerifactuLoaded(true);
+      }
+    };
+    checkVerifactu();
+  }, []);
+
+  // 🔔 Si venimos redirigidos desde el guard, mostramos también alerta normal
+  useEffect(() => {
+    if (location.state?.fromVerifactuGuard) {
+      setAlerta({
+        tipo: "warning",
+        mensaje:
+          "Debes completar la configuración fiscal (SIF) y activar VeriFactu antes de poder utilizar el TPV.",
+      });
+    }
+  }, [location.state]);
+
+  // === Cargar configuración SIF ===
   useEffect(() => {
     const fetchSifConfig = async () => {
       try {
-        const { data } = await api.get("/sifconfig");
+        const { data } = await api.get("admin/verifactu/sifconfig");
         setSifForm({
           cif: data.productor?.nif || "",
           razonSocial: data.productor?.nombreRazon || "",
@@ -138,7 +225,7 @@ export default function RestauranteConfigPage() {
             codigoPostal: sifForm.codigoPostal,
             pais: sifForm.pais,
           };
-          const { data } = await api.post("/sifconfig", payload);
+          const { data } = await api.post("admin/verifactu/init-sif", payload);
           setSifMensaje(data.message || "Configuración SIF guardada correctamente ✅");
           setAlerta({ tipo: "success", mensaje: "Configuración SIF actualizada ✅" });
         } catch {
@@ -237,6 +324,38 @@ export default function RestauranteConfigPage() {
           </div>
         </section>
 
+        <section>
+          <h3>🧩 Funcionalidades del plan</h3>
+
+          {loadingFeatures && <p>Cargando funcionalidades...</p>}
+
+          {!loadingFeatures && features.length === 0 && (
+            <p>Este plan no incluye funcionalidades configurables.</p>
+          )}
+
+          <div className="feature-grid">
+            {features.map((f) => (
+              <label key={f._id} className="feature-item">
+                {f.configKey ? (
+                  <>
+                    <input
+                      type="checkbox"
+                      checked={Boolean(getConfigValue(config, f.configKey))}
+                      onChange={(e) => handleFeatureUpdate(f.configKey, e.target.checked)}
+                    />
+                    <span>{f.nombre}</span>
+                  </>
+                ) : (
+                  <>
+                    <span className="feature-check">✔</span>
+                    <span>{f.nombre}</span>
+                  </>
+                )}
+              </label>
+            ))}
+          </div>
+        </section>
+
         {/* ESTILO */}
         <section>
           <h3>🧩 Estilo general</h3>
@@ -273,7 +392,7 @@ export default function RestauranteConfigPage() {
         </section>
 
         {/* CONFIGURACIÓN SIF */}
-        <section>
+        <section id="sif-section">
           <h3>🧾 Configuración SIF / VeriFactu</h3>
           <p className="sif-subtexto">
             Completa los datos fiscales del restaurante antes de activar VeriFactu.

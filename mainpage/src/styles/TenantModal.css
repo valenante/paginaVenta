@@ -1,0 +1,91 @@
+.tenant-modal {
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  max-width: 600px;
+  margin: auto;
+  outline: none;
+  font-family: "Poppins", sans-serif;
+}
+
+.modal-overlay {
+  background: rgba(0, 0, 0, 0.45);
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tenant-info p {
+  margin: 6px 0;
+}
+
+.impresora-section {
+  margin-top: 15px;
+}
+
+.impresora-section label {
+  display: block;
+  font-weight: 500;
+  margin-top: 10px;
+}
+
+.impresora-section input,
+.impresora-section select {
+  width: 100%;
+  padding: 7px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  margin-top: 4px;
+}
+
+.impresora-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.impresora-buttons button {
+  flex: 1;
+  border: none;
+  padding: 8px;
+  border-radius: 6px;
+  background-color: #6A0DAD;
+  color: white;
+  cursor: pointer;
+}
+
+.impresora-buttons button:hover {
+  opacity: 0.9;
+}
+
+.estado {
+  margin-top: 10px;
+}
+
+.estado.online strong {
+  color: green;
+}
+.estado.offline strong {
+  color: red;
+}
+
+.mensaje {
+  margin-top: 8px;
+  font-size: 0.9rem;
+  color: #333;
+}
+
+.close-btn {
+  margin-top: 20px;
+  background: #ff6700;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  color: white;
+  cursor: pointer;
+  float: right;
+}
+

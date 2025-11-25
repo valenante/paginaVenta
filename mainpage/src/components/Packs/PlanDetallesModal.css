@@ -1,0 +1,217 @@
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+/* CONTENEDOR MODAL */
+
+.modal-plan {
+  background: white;
+  width: 90%;
+  max-width: 560px;
+  padding: 2rem 2.2rem;
+  border-radius: 20px;
+  box-shadow: 0 18px 40px rgba(0,0,0,0.3);
+  animation: fadeIn 0.2s ease;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-plan h2 {
+  font-size: 1.9rem;
+  color: #6A0DAD;
+  margin-bottom: 0.4rem;
+}
+
+.modal-precio {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 0.6rem;
+}
+
+.precio-anual {
+  font-size: 0.9rem;
+  margin-left: 0.5rem;
+  color: #555;
+}
+
+.modal-descripcion {
+  margin-bottom: 1.1rem;
+  color: #444;
+}
+
+/* RESUMEN SUPERIOR */
+
+.modal-resumen {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin: 1.2rem 0 0.8rem;
+}
+
+.resumen-item {
+  padding: 0.55rem 0.9rem;
+  border-radius: 999px;
+  background: #f7f3ff;
+  display: flex;
+  flex-direction: column;
+  min-width: 150px;
+  border: 1px solid rgba(106,13,173,0.08);
+}
+
+.resumen-item.total {
+  background: #6a0dad;
+  color: #fff;
+  border: none;
+}
+
+button.resumen-item {
+  cursor: pointer;
+  text-align: left;
+  transition:
+    transform 0.08s ease,
+    box-shadow 0.08s ease,
+    background 0.12s ease,
+    border-color 0.12s ease;
+}
+
+button.resumen-item:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+  background: #f1e8ff;
+}
+
+.resumen-item.active {
+  border-color: #6a0dad;
+  background: #f3e7ff;
+  box-shadow: 0 0 0 1px rgba(106,13,173,0.25);
+}
+
+.resumen-count {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.resumen-count.small {
+  font-size: 1rem;
+}
+
+.resumen-label {
+  font-size: 0.78rem;
+  opacity: 0.9;
+}
+
+/* BLOQUES POR CATEGORÍA */
+
+.modal-feature-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 0.6rem;
+}
+
+.feature-group {
+  border-radius: 12px;
+  border: 1px solid #eee;
+  background: #faf7ff;
+  padding: 0.65rem 0.9rem 0.8rem;
+}
+
+.feature-group-header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.feature-group-title {
+  font-weight: 600;
+  color: #6a0dad;
+  display: block;
+}
+
+.feature-group-count {
+  font-size: 0.75rem;
+  color: #777;
+}
+
+.feature-group-toggle {
+  font-size: 1.4rem;
+  line-height: 1;
+  color: #6a0dad;
+}
+
+.feature-group-list {
+  margin-top: 0.45rem;
+  padding-left: 1.1rem;
+  list-style: disc;
+}
+
+.feature-group-list li {
+  margin-bottom: 0.45rem;
+}
+
+.feature-ver-mas {
+  font-size: 0.8rem;
+  color: #666;
+  font-style: italic;
+}
+
+.feature-desc {
+  font-size: 0.85rem;
+  color: #555;
+  margin-top: 2px;
+}
+
+/* BOTONES INFERIORES */
+
+.btn-elegir.big {
+  display: block;
+  width: 100%;
+  text-align: center;
+  background: #6A0DAD;
+  color: white;
+  padding: 0.8rem;
+  border-radius: 8px;
+  margin-top: 1.5rem;
+  font-size: 1.1rem;
+}
+
+.btn-cerrar {
+  margin-top: 0.9rem;
+  width: 100%;
+  padding: .7rem;
+  border: none;
+  background: #eee;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* ANIMACIÓN */
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Scrollbar del modal (opcional) */
+
+.modal-plan::-webkit-scrollbar {
+  width: 6px;
+}
+
+.modal-plan::-webkit-scrollbar-thumb {
+  background: rgba(0,0,0,0.2);
+  border-radius: 4px;
+}

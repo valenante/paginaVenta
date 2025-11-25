@@ -45,6 +45,20 @@ export default function TenantTable({ tenants, onRefresh }) {
     }
   };
 
+  const toggleEstado = async (tenant) => {
+    try {
+      const nuevo = tenant.estado === "suspendido" ? "activo" : "suspendido";
+
+      await api.patch(`/superadmin/tenants/${tenant._id}/estado`, {
+        estado: nuevo,
+      });
+
+      onRefresh();
+    } catch (err) {
+      console.error("❌ Error cambiando estado:", err);
+      alert("No se pudo cambiar el estado del restaurante.");
+    }
+  };
 
   if (!tenants.length)
     return <p className="empty">No hay restaurantes registrados aún.</p>;
@@ -60,6 +74,7 @@ export default function TenantTable({ tenants, onRefresh }) {
             <th>Email</th>
             <th>Plan</th>
             <th>VeriFactu</th>
+            <th>Estado</th>
             <th>Creación</th>
             <th>Acciones</th>
           </tr>
@@ -72,6 +87,11 @@ export default function TenantTable({ tenants, onRefresh }) {
               <td>{t.email}</td>
               <td>{t.plan}</td>
               <td>{t.verifactuEnabled ? "✅" : "❌"}</td>
+              <td>
+                <span className={`estado-tag estado-${t.estado}`}>
+                  {t.estado}
+                </span>
+              </td>
               <td>{new Date(t.createdAt).toLocaleDateString()}</td>
               <td className="actions">
                 {/* 👁️ Ver detalles */}
@@ -87,10 +107,17 @@ export default function TenantTable({ tenants, onRefresh }) {
                 {/* 👤 Entrar como admin */}
                 <button
                   title="Entrar como admin"
-                  onClick={() => handleImpersonar(t.tenantId)}
+                  onClick={() => handleImpersonar(t.slug)}
                   disabled={loadingImpersonar}
                 >
                   <FiLogIn />
+                </button>
+
+                <button
+                  title={t.estado === "suspendido" ? "Reactivar" : "Suspender"}
+                  onClick={() => toggleEstado(t)}
+                >
+                  {t.estado === "suspendido" ? "🔓" : "🔒"}
                 </button>
 
                 {/* 🗑️ Eliminar */}
@@ -117,7 +144,7 @@ export default function TenantTable({ tenants, onRefresh }) {
         <ConfirmDeleteModal
           tenant={deleteTarget}
           onCancel={() => setDeleteTarget(null)}
-          onConfirm={() => handleDelete(deleteTarget.tenantId)}
+          onConfirm={() => handleDelete(deleteTarget.slug)}
         />
       )}
     </section>

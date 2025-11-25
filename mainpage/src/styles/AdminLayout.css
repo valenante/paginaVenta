@@ -1,0 +1,219 @@
+.admin-layout {
+  display: flex;
+  min-height: 100vh;
+  background: #f3f4f6;
+  color: #111827;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+/* Sidebar */
+.admin-sidebar {
+  width: 260px;
+  background: radial-gradient(circle at top left, #6a0dad, #1e1e2f 55%);
+  color: #f9fafb;
+  padding: 24px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  box-shadow: 2px 0 15px rgba(15, 23, 42, 0.4);
+}
+
+/* Logo */
+.admin-sidebar .logo {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  margin: 0;
+}
+
+.admin-sidebar .logo span {
+  color: #ff6700;
+}
+
+/* Navegación */
+.admin-sidebar .menu {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.admin-sidebar nav a {
+  color: #e5e7eb;
+  text-decoration: none;
+  padding: 10px 12px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 15px;
+  font-weight: 500;
+  opacity: 0.9;
+  transition:
+    background 0.18s ease,
+    color 0.18s ease,
+    opacity 0.18s ease,
+    transform 0.08s ease;
+}
+
+.admin-sidebar nav a svg {
+  font-size: 18px;
+}
+
+/* Estado activo / hover */
+.admin-sidebar nav a.active {
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  opacity: 1;
+  transform: translateX(2px);
+}
+
+.admin-sidebar nav a:hover {
+  background: rgba(15, 23, 42, 0.45);
+  color: #ffffff;
+  opacity: 1;
+}
+
+/* Botón logout */
+.logout-btn {
+  margin-top: auto;
+  border: none;
+  outline: none;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(239, 68, 68, 0.12);
+  color: #fecaca;
+  font-size: 14px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    transform 0.08s ease;
+}
+
+.logout-btn:hover {
+  background: #ef4444;
+  color: #fef2f2;
+  transform: translateY(-1px);
+}
+
+/* Contenido principal */
+.admin-content {
+  flex: 1;
+  padding: 30px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Opcional: estilo tipo “card” para el contenido interno */
+.admin-content > * {
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
+  padding: 20px 22px;
+}
+
+/* ============================================
+   📱 Responsive
+   ============================================ */
+
+/* Tablets / pantallas medianas */
+@media (max-width: 1024px) {
+  .admin-sidebar {
+    width: 230px;
+    padding: 20px 18px;
+  }
+
+  .admin-content {
+    padding: 24px 20px;
+  }
+}
+
+/* Móvil: la sidebar pasa arriba tipo topbar */
+@media (max-width: 768px) {
+  .admin-layout {
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  .admin-sidebar {
+    width: 100%;
+    padding: 12px 14px;
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 2px 10px rgba(15, 23, 42, 0.35);
+    position: sticky;
+    top: 0;
+    z-index: 20;
+  }
+
+  .admin-sidebar .logo {
+    font-size: 18px;
+    margin-bottom: 0;
+    white-space: nowrap;
+  }
+
+  .admin-sidebar .menu {
+    flex: 1;
+    flex-direction: row;
+    gap: 6px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+
+  .admin-sidebar .menu::-webkit-scrollbar {
+    height: 4px;
+  }
+
+  .admin-sidebar .menu::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .admin-sidebar .menu::-webkit-scrollbar-thumb {
+    background: rgba(148, 163, 184, 0.7);
+    border-radius: 999px;
+  }
+
+  .admin-sidebar nav a {
+    padding: 8px 10px;
+    font-size: 13px;
+    white-space: nowrap;
+  }
+
+  .logout-btn {
+    margin-top: 0;
+    font-size: 13px;
+    padding: 8px 10px;
+  }
+
+  .admin-content {
+    padding: 14px 12px 18px;
+  }
+
+  .admin-content > * {
+    padding: 14px 12px;
+    border-radius: 14px;
+  }
+}
+
+/* Extra small (por si abres desde un móvil muy pequeño) */
+@media (max-width: 420px) {
+  .admin-sidebar .logo {
+    display: none; /* si quieres ganar espacio para el menú, opcional */
+  }
+
+  .logout-btn span,
+  .logout-btn svg {
+    font-size: 12px;
+  }
+
+  .admin-sidebar nav a {
+    padding: 6px 8px;
+    font-size: 12px;
+  }
+}

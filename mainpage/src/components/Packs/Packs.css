@@ -1,4 +1,3 @@
-/* === SECCIÓN COMPLETA === */
 .Packs {
   padding: 60px 10%;
   background: linear-gradient(180deg, #faf7ff 0%, #ffffff 100%);
@@ -8,7 +7,7 @@
   align-items: center;
 }
 
-/* === CABECERA === */
+/* CABECERA */
 .fila-superior {
   width: 100%;
   text-align: center;
@@ -28,7 +27,7 @@
   line-height: 1.7;
 }
 
-/* === CONTENEDOR DE LAS TARJETAS === */
+/* GRID DE CARDS */
 .Packs-cards {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
@@ -37,58 +36,127 @@
   max-width: 1200px;
 }
 
-/* === TARJETAS === */
-.Packs1, .Packs2, .Packs3 {
+/* TARJETA GENÉRICA */
+.PackCard {
   background: #fff;
   border-radius: 16px;
   padding: 40px 30px;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  text-align: left;
 }
 
-.Packs1:hover, .Packs2:hover, .Packs3:hover {
+.PackCard:hover {
   transform: translateY(-6px);
   box-shadow: 0 16px 35px rgba(0, 0, 0, 0.12);
 }
 
-/* Colores de cada plan */
-.Packs1 { border-top: 5px solid #6A0DAD; }
-.Packs2 { border-top: 5px solid #FF6700; }
-.Packs3 { border-top: 5px solid #2dc653; }
+/* COLORES POR ÍNDICE */
+.PackCard-0 { border-top: 5px solid #6A0DAD; }
+.PackCard-1 { border-top: 5px solid #FF6700; }
+.PackCard-2 { border-top: 5px solid #2dc653; }
+.PackCard-3 { border-top: 5px solid #6A0DAD; } /* fallback */
+.PackCard-4 { border-top: 5px solid #6A0DAD; }
 
-/* Título */
-.Packs1 h3, .Packs2 h3, .Packs3 h3 {
+/* TÍTULO */
+.PackCard h3 {
   font-size: 1.5rem;
   color: #6A0DAD;
   font-weight: 700;
   margin-bottom: 20px;
 }
 
-/* Lista */
-.Packs1 ul, .Packs2 ul, .Packs3 ul {
-  list-style: none;
-  padding: 0;
+/* PRECIOS */
+.precio {
+  font-size: 1.3rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  color: #2d3436;
 }
 
-.Packs1 li, .Packs2 li, .Packs3 li {
+.precio-anual {
+  display: block;
+  font-size: 0.9rem;
+  color: #6A0DAD;
+  margin-top: 3px;
+}
+.PackCard ul {
+  padding-left: 0;
+  margin-top: 10px;
+}
+
+.PackCard li {
+  list-style: none;
   position: relative;
-  padding-left: 26px;
-  margin-bottom: 14px;
-  font-size: 1rem;
+  margin-bottom: 8px;
+  padding-left: 20px;
   color: #444;
 }
 
-.Packs1 li::before, .Packs2 li::before, .Packs3 li::before {
+.PackCard li::before {
   content: "✔";
+  color: #6A0DAD;
   position: absolute;
   left: 0;
   top: 0;
-  color: #6A0DAD;
-  font-weight: bold;
 }
 
-/* === RESPONSIVE === */
+/* BOTÓN */
+.btn-elegir {
+  background: #FF6700;
+  color: white;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  display: inline-block;
+  text-decoration: none;
+  transition: background 0.2s ease;
+}
+
+.btn-elegir:hover {
+  background: #e65900;
+}
+
+/* CONTENEDOR DE ACCIONES */
+.pack-actions {
+  margin-top: 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* VER DETALLES (izquierda) */
+.btn-detalles {
+  background: transparent;
+  border: none;
+  color: #6A0DAD;
+  font-size: 0.9rem;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+  transition: opacity 0.2s ease;
+}
+
+.btn-detalles:hover {
+  opacity: 0.7;
+}
+
+/* ELEGIR PLAN (principal) */
+.btn-elegir {
+  background: #FF6700;
+  color: white;
+  padding: 0.45rem 0.9rem;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: background 0.2s ease;
+}
+
+.btn-elegir:hover {
+  background: #e45c00;
+}
+
+
+/* RESPONSIVE */
 @media (max-width: 768px) {
   .Packs {
     padding: 60px 6%;
@@ -103,11 +171,7 @@
     gap: 25px;
   }
 
-  .Packs1, .Packs2, .Packs3 {
+  .PackCard {
     text-align: center;
-  }
-
-  .Packs1 li, .Packs2 li, .Packs3 li {
-    text-align: left;
   }
 }

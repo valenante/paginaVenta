@@ -4,6 +4,7 @@ import AlertaMensaje from "../components/AlertaMensaje/AlertaMensaje.jsx";
 import ModalConfirmacion from "../components/Modal/ModalConfirmacion.jsx";
 import ModalNuevaReserva from "../components/Reservas/ModalNuevaReserva.jsx";
 import ReservasAjustesPage from "../components/Reservas/ReservasAjustesPage.jsx";
+import { useFeature } from "../Hooks/useFeature";
 import "../styles/ReservasConfigPage.css";
 
 export default function ReservasConfigPage() {
@@ -14,6 +15,9 @@ export default function ReservasConfigPage() {
   const [modal, setModal] = useState(null);
   const [showConfig, setShowConfig] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  // ✅ Usa el hook centralizado: plan + config
+  const reservasHabilitadas = useFeature("reservas.habilitadas", true);
 
   const cargarReservas = async () => {
     try {
@@ -33,8 +37,9 @@ export default function ReservasConfigPage() {
   };
 
   useEffect(() => {
+    if (!reservasHabilitadas) return; // 👈 no golpeamos backend si la feature está off
     cargarReservas();
-  }, [fecha, estado]);
+  }, [fecha, estado, reservasHabilitadas]);
 
   const confirmarReserva = async (id) => {
     try {
@@ -68,6 +73,27 @@ export default function ReservasConfigPage() {
     });
   };
 
+  // 🔒 Si la feature está deshabilitada (por plan o por config) → cartel
+  if (!reservasHabilitadas) {
+    return (
+      <div className="reservas-page">
+        <div className="feature-blocked-card">
+          <h2>Reservas desactivadas</h2>
+          <p>
+            El módulo de reservas está desactivado para este restaurante.
+            Puedes seguir usando el TPV y la carta digital, pero no podrás
+            gestionar reservas desde Alef.
+          </p>
+          <p className="feature-blocked-note">
+            Si quieres activar las reservas online, comprueba tu plan y la
+            configuración del restaurante o contacta con nuestro equipo de soporte.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // 🔓 Feature activa → UI normal
   return (
     <div className="reservas-page">
       <div className="reservas-card">
@@ -99,7 +125,10 @@ export default function ReservasConfigPage() {
 
         {/* === BOTÓN NUEVA RESERVA === */}
         <div className="nueva-reserva-bar">
-          <button className="btn-nueva-reserva" onClick={() => setModal({ tipo: "nueva" })}>
+          <button
+            className="btn-nueva-reserva"
+            onClick={() => setModal({ tipo: "nueva" })}
+          >
             ➕ Nueva reserva
           </button>
         </div>
@@ -158,7 +187,8 @@ export default function ReservasConfigPage() {
                             ❌ Rechazar
                           </button>
                         </>
-                      ) : r.estado === "confirmada" || r.estado === "auto-confirmada" ? (
+                      ) : r.estado === "confirmada" ||
+                        r.estado === "auto-confirmada" ? (
                         <button
                           className="btn-cancelar"
                           onClick={() => cancelarReserva(r._id)}

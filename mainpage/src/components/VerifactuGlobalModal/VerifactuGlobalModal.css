@@ -1,0 +1,139 @@
+/* Fondo superpuesto */
+.vf-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 12, 27, 0.65);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 80px;
+  z-index: 9999; /* bien por encima del resto */
+}
+
+/* Tarjeta principal */
+.vf-modal-card {
+  max-width: 620px;
+  width: 92%;
+  background: linear-gradient(135deg, #fff7e6, #fff);
+  border-radius: 18px;
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 103, 0, 0.4);
+  position: relative;
+  padding: 26px 26px 22px;
+  animation: vf-slide-down 0.22s ease-out;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
+}
+
+/* Botón cerrar (X) */
+.vf-modal-close {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  border: none;
+  background: transparent;
+  font-size: 20px;
+  cursor: pointer;
+  color: #555;
+  padding: 4px;
+  border-radius: 999px;
+}
+
+.vf-modal-close:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+/* Contenido */
+.vf-modal-content h2 {
+  font-size: 1.5rem;
+  margin: 0 0 10px;
+  color: #6a0dad;
+}
+
+.vf-modal-text {
+  font-size: 0.95rem;
+  line-height: 1.45;
+  color: #444;
+  margin-bottom: 6px;
+}
+
+.vf-modal-text-sec {
+  font-size: 0.9rem;
+  color: #555;
+}
+
+/* Botones */
+.vf-modal-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.vf-modal-primary,
+.vf-modal-secondary {
+  border-radius: 999px;
+  padding: 9px 20px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  border: none;
+  transition: transform 0.08s ease, box-shadow 0.08s ease, background 0.12s ease,
+    color 0.12s ease;
+}
+
+.vf-modal-primary {
+  background: #ff6700;
+  color: #fff;
+  box-shadow: 0 8px 18px rgba(255, 103, 0, 0.35);
+}
+
+.vf-modal-primary:hover {
+  background: #e15a00;
+  transform: translateY(-1px);
+  box-shadow: 0 10px 22px rgba(255, 103, 0, 0.42);
+}
+
+.vf-modal-secondary {
+  background: #ffffff;
+  color: #444;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.vf-modal-secondary:hover {
+  background: #f4f4f4;
+}
+
+/* Animación de entrada */
+@keyframes vf-slide-down {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .vf-modal-card {
+    padding: 20px 18px 18px;
+  }
+
+  .vf-modal-content h2 {
+    font-size: 1.25rem;
+  }
+
+  .vf-modal-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .vf-modal-primary,
+  .vf-modal-secondary {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+  }
+}

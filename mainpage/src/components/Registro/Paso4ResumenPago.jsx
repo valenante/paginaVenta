@@ -14,6 +14,8 @@ export default function Paso4ResumenPago({
   onSubmit,
   loading,
   success,
+  precioBasePlan,
+  plan
 }) {
   const handlePago = async () => {
     try {
@@ -55,20 +57,53 @@ export default function Paso4ResumenPago({
       {/* === CONFIGURACIÓN === */}
       <div className="resumen-bloque">
         <h3>⚙️ Configuración inicial</h3>
+
         <ul>
-          <li>Pedidos de comida: {config.permitePedidosComida ? "✔️ Sí" : "❌ No"}</li>
-          <li>Pedidos de bebida: {config.permitePedidosBebida ? "✔️ Sí" : "❌ No"}</li>
-          <li>Control de stock: {config.stockHabilitado ? "✔️ Activado" : "❌ Desactivado"}</li>
-          <li>Color principal: <span className="color-box" style={{ background: config.colores.principal }} /></li>
-          <li>Color secundario: <span className="color-box" style={{ background: config.colores.secundario }} /></li>
+          {plan?.features?.map((f) => {
+            // Si la feature tiene configKey, mostramos ON/OFF desde config
+            if (f.configKey) {
+              return (
+                <li key={f._id}>
+                  {f.nombre}:{" "}
+                  {config[f.configKey] ? "✔️ Activado" : "❌ Desactivado"}
+                </li>
+              );
+            }
+
+            // Si NO tiene configKey → solo informativa: incluida
+            return (
+              <li key={f._id}>
+                {f.nombre}: <span>✔️ Incluida</span>
+              </li>
+            );
+          })}
+
+          {/* Colores siempre visibles */}
+          <li>
+            Color principal:
+            <span
+              className="color-box"
+              style={{ background: config.colores.principal }}
+            />
+          </li>
+
+          <li>
+            Color secundario:
+            <span
+              className="color-box"
+              style={{ background: config.colores.secundario }}
+            />
+          </li>
         </ul>
       </div>
+
 
       {/* === SERVICIOS CONTRATADOS === */}
       <div className="resumen-bloque">
         <h3>🧾 Servicios contratados</h3>
         <ul>
-          <li>Base TPV SaaS — 80 €/mes</li>
+          <p><strong>Plan seleccionado:</strong> {tenant.plan}</p>
+          <p><strong>Suscripción base:</strong> {precioBasePlan} €/mes</p>
           {servicios.vozCocina && <li>+ Voz en cocina — 10 €/mes</li>}
           {servicios.vozComandas && <li>+ Voz en comandas — 10 €/mes</li>}
           {servicios.impresoras > 0 && <li>{servicios.impresoras} × Impresora térmica — {150 * servicios.impresoras} €</li>}

@@ -1,0 +1,174 @@
+.billing-page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 4px; /* el padding grande ya lo pone AdminLayout */
+}
+
+/* Título principal */
+.billing-page h1 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 4px;
+}
+
+/* Texto de carga / error */
+.billing-loading,
+.billing-error {
+  padding: 14px 16px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 500;
+  background: #fff7ed;
+  color: #9a3412;
+  border: 1px solid #fed7aa;
+}
+
+/* ====== CARDS SUPERIORES ====== */
+
+.billing-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 16px;
+}
+
+.billing-card {
+  background: radial-gradient(circle at top left, #6a0dad, #4b0c80 40%, #1e1e2f);
+  color: #f9fafb;
+  padding: 18px 20px;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.billing-card h3 {
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  opacity: 0.85;
+  margin: 0;
+}
+
+.billing-number {
+  font-size: 26px;
+  font-weight: 800;
+  margin: 4px 0 0;
+  color: #ffffff;
+}
+
+/* ====== TÍTULOS DE SECCIÓN ====== */
+
+.billing-section-title {
+  margin-top: 12px;
+  margin-bottom: 8px;
+  font-size: 18px;
+  font-weight: 600;
+  color: #111827;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ====== TABLAS ====== */
+
+.billing-table {
+  width: 100%;
+  background: #ffffff;
+  border-radius: 16px;
+  border-collapse: collapse;
+  margin-bottom: 32px;
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
+  overflow: hidden; /* para el border-radius en thead */
+}
+
+/* Cabecera */
+.billing-table thead {
+  background: #f5f3ff;
+}
+
+.billing-table th,
+.billing-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #e5e7eb;
+  text-align: left;
+  font-size: 14px;
+}
+
+.billing-table th {
+  font-weight: 600;
+  color: #6a0dad;
+}
+
+.billing-table tbody tr:nth-child(even) {
+  background: #fafafa;
+}
+
+.billing-table tbody tr:hover {
+  background: #eef2ff;
+}
+
+/* Monto y números */
+.billing-table td:first-child,
+.billing-table td:nth-child(2) {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ====== RESPONSIVE ====== */
+
+@media (max-width: 1024px) {
+  .billing-page {
+    gap: 20px;
+  }
+
+  .billing-table th,
+  .billing-table td {
+    padding: 10px 12px;
+  }
+}
+
+@media (max-width: 768px) {
+  .billing-page h1 {
+    font-size: 20px;
+  }
+
+  .billing-cards {
+    grid-template-columns: 1fr;
+  }
+
+  /* Tabla scrollable horizontal en móvil */
+  .billing-table {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    white-space: nowrap;
+    border-radius: 14px;
+  }
+
+  .billing-table thead,
+  .billing-table tbody,
+  .billing-table tr {
+    width: 100%;
+  }
+
+  .billing-table th,
+  .billing-table td {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .billing-card {
+    padding: 14px 16px;
+  }
+
+  .billing-number {
+    font-size: 22px;
+  }
+
+  .billing-section-title {
+    font-size: 16px;
+  }
+}

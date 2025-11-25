@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import api from "../utils/api";
 import { useTenant } from "./TenantContext.jsx";
 
@@ -10,34 +10,24 @@ export function AuthProvider({ children }) {
   const { setTenantId } = useTenant();
 
   useEffect(() => {
-    const impersonado = sessionStorage.getItem("impersonado") === "true";
-    console.log("🟣 [AuthProvider] Iniciando verificación. Impersonado:", impersonado);
+    // ================================
+    // 🏷️ Detectar tenant desde la URL
+    // ================================
+    const pathParts = window.location.pathname.split("/").filter(Boolean);
+    const tenantFromUrl = pathParts[0] || null;
+
+    if (tenantFromUrl) {
+      console.log("🏷️ [AuthProvider] Tenant detectado desde la URL:", tenantFromUrl);
+      setTenantId(tenantFromUrl);
+      sessionStorage.setItem("tenantId", tenantFromUrl);
+    }
 
     const verificarSesion = async () => {
-      // 🟪 Modo impersonado
-      if (impersonado) {
-        const storedUser = sessionStorage.getItem("user");
-        console.log("🟪 [AuthProvider] Usuario impersonado encontrado en sessionStorage:", storedUser);
-
-        if (storedUser) {
-          const parsed = JSON.parse(storedUser);
-          setUser(parsed);
-          setTenantId(parsed.tenantId);
-          console.log("✅ [AuthProvider] Usuario impersonado cargado:", parsed.name);
-        } else {
-          console.warn("⚠️ [AuthProvider] Impersonado pero sin user guardado en sessionStorage");
-        }
-
-        setLoading(false);
-        return; // 👈 No llamar /auth/me/me
-      }
-
-      // 🧩 Flujo normal
-      console.log("🟡 [AuthProvider] Verificando sesión normal con /auth/me/me...");
       try {
-        const res = await api.get("/auth/me/me");
+        console.log("🟡 [AuthProvider] Verificando sesión real (JWT en cookies)...");
+        const res = await api.get("/auth/me/me"); // el backend lee la cookie
+
         const usuario = res.data.user;
-        console.log("🟢 [AuthProvider] Usuario encontrado:", usuario);
         setUser(usuario);
 
         if (usuario?.tenantId) {
@@ -45,7 +35,11 @@ export function AuthProvider({ children }) {
           sessionStorage.setItem("tenantId", usuario.tenantId);
         }
       } catch (error) {
-        console.warn("🔴 [AuthProvider] No hay sesión activa:", error.response?.status);
+        console.warn(
+          "🔴 No hay sesión activa.",
+          error.response?.status,
+          error.response?.data
+        );
         setUser(null);
       } finally {
         setLoading(false);
@@ -57,12 +51,12 @@ export function AuthProvider({ children }) {
 
   const logout = async () => {
     console.log("🚪 [AuthProvider] Logout iniciado...");
-    await api.post("/auth/logout");
+    await api.post("/auth/logout"); // borra cookies en backend
     setUser(null);
     sessionStorage.removeItem("tenantId");
     sessionStorage.removeItem("impersonado");
     sessionStorage.removeItem("user");
-    window.location.href = "/";
+    window.location.href = "/login";
   };
 
   return (

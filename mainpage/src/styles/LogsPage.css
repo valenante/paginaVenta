@@ -1,0 +1,306 @@
+/* ================================
+   CONTENEDOR GENERAL
+================================== */
+
+.logs-page {
+  padding: 18px 20px;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.logs-page h1 {
+  font-size: 22px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 6px;
+}
+
+/* ================================
+   FILTROS
+================================== */
+
+.logs-filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  background: #f9fafb;
+  border-radius: 14px;
+  padding: 10px 12px;
+  border: 1px solid #e5e7eb;
+}
+
+.logs-filtros input,
+.logs-filtros select {
+  padding: 8px 11px;
+  border-radius: 999px;
+  border: 1px solid #d1d5db;
+  font-size: 13px;
+  min-width: 160px;
+  outline: none;
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease,
+    background 0.18s ease;
+  background: #ffffff;
+}
+
+.logs-filtros input:focus,
+.logs-filtros select:focus {
+  border-color: #6a0dad;
+  box-shadow: 0 0 0 1px rgba(124, 58, 237, 0.2);
+}
+
+/* Botón borrar todo */
+
+.delete-btn {
+  margin-left: auto;
+  background: #fee2e2;
+  color: #b91c1c;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition:
+    background 0.18s ease,
+    transform 0.08s ease,
+    box-shadow 0.18s ease;
+}
+
+.delete-btn:hover {
+  background: #ef4444;
+  color: #fef2f2;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(248, 113, 113, 0.4);
+}
+
+/* ================================
+   TABLA DE LOGS
+================================== */
+
+.logs-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #ffffff;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+}
+
+.logs-table thead {
+  background: #f5f3ff;
+}
+
+.logs-table th,
+.logs-table td {
+  padding: 10px 13px;
+  border-bottom: 1px solid #e5e7eb;
+  font-size: 13px;
+  text-align: left;
+}
+
+.logs-table th {
+  font-weight: 600;
+  color: #6a0dad;
+}
+
+.logs-table tbody tr:nth-child(even) {
+  background: #fafafa;
+}
+
+.logs-table tbody tr:hover {
+  background: #eef2ff;
+  cursor: pointer;
+}
+
+/* Nivel como badge */
+
+.nivel {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nivel-info {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+
+.nivel-warn {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.nivel-error {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+/* Mensaje truncado en tabla */
+
+.mensaje {
+  max-width: 420px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Mensaje de “cargando / vacío” */
+
+.logs-page > p {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+/* ================================
+   MODAL DETALLE LOG
+================================== */
+
+.log-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 40;
+}
+
+.log-modal-content {
+  background: #ffffff;
+  padding: 22px 22px 18px;
+  border-radius: 18px;
+  width: 640px;
+  max-width: 95vw;
+  max-height: 82vh;
+  overflow-y: auto;
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.55);
+}
+
+.log-modal-content h2 {
+  margin: 0 0 12px;
+  font-size: 18px;
+  color: #111827;
+}
+
+.log-modal-content p {
+  margin: 4px 0;
+  font-size: 14px;
+  color: #374151;
+}
+
+.log-modal-content strong {
+  color: #111827;
+}
+
+/* Bloque JSON */
+
+.log-modal-content pre {
+  background: #0f172a;
+  color: #e5e7eb;
+  padding: 12px;
+  border-radius: 10px;
+  font-size: 12px;
+  overflow: auto;
+  max-height: 260px;
+}
+
+/* Botón cerrar modal */
+
+.log-modal-content button {
+  margin-top: 12px;
+  border: none;
+  padding: 7px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  background: #6a0dad;
+  color: #ffffff;
+  align-self: flex-end;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition:
+    background 0.18s ease,
+    transform 0.08s ease,
+    box-shadow 0.18s ease;
+}
+
+.log-modal-content button:hover {
+  background: #550c91;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(124, 58, 237, 0.4);
+}
+
+/* ================================
+   RESPONSIVE
+================================== */
+
+@media (max-width: 1024px) {
+  .logs-page {
+    padding: 14px;
+  }
+
+  .logs-table th,
+  .logs-table td {
+    padding: 9px 10px;
+  }
+}
+
+@media (max-width: 768px) {
+  .logs-filtros {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .delete-btn {
+    margin-left: 0;
+    align-self: stretch;
+    justify-content: center;
+  }
+
+  /* Tabla scroll horizontal en móvil */
+  .logs-table {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    white-space: nowrap;
+    border-radius: 14px;
+  }
+
+  .logs-table th,
+  .logs-table td {
+    font-size: 12px;
+  }
+
+  .log-modal-content {
+    padding: 18px 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .logs-page {
+    padding: 10px;
+  }
+
+  .logs-page h1 {
+    font-size: 18px;
+  }
+
+  .logs-table th,
+  .logs-table td {
+    padding: 7px 8px;
+  }
+}

@@ -18,7 +18,16 @@ export default function Registro() {
 
   // ======== ESTADOS PRINCIPALES ========
   const [tenant, setTenant] = useState({ nombre: "", email: "", plan: "premium" });
-  const [admin, setAdmin] = useState({ name: "", password: "" });
+  const [admin, setAdmin] = useState({ name: "", password: "", admin: "" });
+
+  const params = new URLSearchParams(window.location.search);
+  const planSlug = params.get("plan");
+
+  useEffect(() => {
+    if (!planSlug) {
+      navigate("/?seleccionarPlan=1");
+    }
+  }, []);
 
   const [config, setConfig] = useState({
     permitePedidosComida: true,
@@ -27,8 +36,8 @@ export default function Registro() {
     colores: { principal: "#6A0DAD", secundario: "#FF6700" },
     informacionRestaurante: { telefono: "", direccion: "" },
   });
-
-  const BASE_MENSUAL = 80;
+  const [planSeleccionado, setPlanSeleccionado] = useState(null);
+  const [precioBasePlan, setPrecioBasePlan] = useState(0);
   const [servicios, setServicios] = useState({
     vozCocina: false,
     vozComandas: false,
@@ -39,20 +48,111 @@ export default function Registro() {
     cargaDatos: false,
   });
 
-  const [precio, setPrecio] = useState({ mensual: BASE_MENSUAL, unico: 0, totalPrimerMes: BASE_MENSUAL });
+  const [precio, setPrecio] = useState({
+    mensual: 0,
+    unico: 0,
+    totalPrimerMes: 0,
+  });
   const [pago, setPago] = useState({ metodo: "simulado", idPago: "TEST-" + Date.now() });
+
+  useEffect(() => {
+    const cargarPlan = async () => {
+      if (!planSlug) return;
+
+      try {
+        const { data } = await api.get("/superadminPlans/publicPlans");
+
+        const encontrado = data.find((p) => p.slug.toLowerCase() === planSlug.toLowerCase());
+
+        if (!encontrado) {
+          alert("El plan seleccionado no existe.");
+          navigate("/");
+          return;
+        }
+
+        // 🔥 Guardar datos del plan
+        setPlanSeleccionado(encontrado);
+
+        // guardar plan en tenant
+        setTenant((prev) => ({
+          ...prev,
+          plan: encontrado.slug,
+        }));
+
+        // actualizar precios
+        setPrecio((prev) => ({
+          ...prev,
+          mensual: encontrado.precioMensual,
+          totalPrimerMes: encontrado.precioMensual + prev.unico,
+        }));
+
+        // actualizar precio base del plan
+        setPrecioBasePlan(encontrado.precioMensual);
+
+      } catch (err) {
+        console.error("Error cargando plan:", err);
+      }
+    };
+
+    cargarPlan();
+  }, [planSlug]);
 
   // ======== CALCULAR PRECIO ========
   useEffect(() => {
-    const mensual = BASE_MENSUAL + (servicios.vozCocina ? 10 : 0) + (servicios.vozComandas ? 10 : 0);
+    const mensual =
+      precioBasePlan +
+      (servicios.vozCocina ? 10 : 0) +
+      (servicios.vozComandas ? 10 : 0);
+
     const unico =
-      (servicios.impresoras * 150) +
-      (servicios.pantallas * 250) +
-      (servicios.pda * 180) +
+      servicios.impresoras * 150 +
+      servicios.pantallas * 250 +
+      servicios.pda * 180 +
       (servicios.fotografia ? 120 : 0) +
       (servicios.cargaDatos ? 100 : 0);
-    setPrecio({ mensual, unico, totalPrimerMes: mensual + unico });
-  }, [servicios]);
+
+    setPrecio({
+      mensual,
+      unico,
+      totalPrimerMes: mensual + unico,
+    });
+  }, [servicios, precioBasePlan]);
+
+  useEffect(() => {
+    const cargarPlan = async () => {
+      if (!planSlug) return; // si no hay plan, se manejará después
+
+      try {
+        const { data } = await api.get("/superadminPlans/publicPlans");
+
+        const encontrado = data.find((p) => p.slug.toLowerCase() === planSlug.toLowerCase());
+
+        if (!encontrado) {
+          alert("El plan seleccionado no existe.");
+          navigate("/");
+          return;
+        }
+
+        // 💾 Guardamos en tenant
+        setTenant((prev) => ({
+          ...prev,
+          plan: encontrado.slug,
+        }));
+
+        // 💰 Actualizamos precio base según el plan
+        setPrecio((prev) => ({
+          ...prev,
+          mensual: encontrado.precioMensual,
+          totalPrimerMes: encontrado.precioMensual + prev.unico
+        }));
+
+      } catch (err) {
+        console.error("Error cargando plan:", err);
+      }
+    };
+
+    cargarPlan();
+  }, [planSlug]);
 
   // ======== SUBMIT FINAL ========
   const handleSubmit = async () => {
@@ -80,7 +180,11 @@ export default function Registro() {
   // ======== RENDER ========
   const pasos = [
     <Paso1DatosRestaurante tenant={tenant} setTenant={setTenant} admin={admin} setAdmin={setAdmin} />,
-    <Paso2ConfiguracionBasica config={config} setConfig={setConfig} />,
+    <Paso2ConfiguracionBasica
+      config={config}
+      setConfig={setConfig}
+      plan={planSeleccionado}
+    />,
     <Paso3ServiciosExtras servicios={servicios} setServicios={setServicios} />,
     <Paso4ResumenPago
       tenant={tenant}
@@ -92,6 +196,8 @@ export default function Registro() {
       onSubmit={handleSubmit}
       loading={loading}
       success={success}
+      precioBasePlan={precioBasePlan}
+      plan={planSeleccionado}
     />
   ];
 

@@ -212,6 +212,19 @@
   color: #c0392b;
 }
 
+.estado-tag {
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  text-transform: capitalize;
+}
+
+.estado-activo { background: #e6ffed; color: #0f7b2b; }
+.estado-trial { background: #fff7e6; color: #b36b00; }
+.estado-impago { background: #ffe6e6; color: #b30000; }
+.estado-suspendido { background: #ececec; color: #555; }
+.estado-cancelado { background: #f1f1f1; color: #777; }
+
 /* ====== MODALES ====== */
 .modal-overlay {
   background: rgba(0, 0, 0, 0.45);

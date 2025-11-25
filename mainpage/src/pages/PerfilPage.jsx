@@ -4,7 +4,7 @@ import api from "../utils/api";
 import "../styles/PerfilPage.css";
 
 export default function PerfilPage() {
-  const { user, logout } = useAuth();
+  const { user, logout, setUser } = useAuth(); // 👈 AÑADIMOS setUser
   const [nombre, setNombre] = useState(user?.name || "");
   const [nuevaPassword, setNuevaPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -12,7 +12,7 @@ export default function PerfilPage() {
   const [mensaje, setMensaje] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleActualizar = async (e) => {
+   const handleActualizar = async (e) => {
     e.preventDefault();
     setMensaje("");
 
@@ -29,12 +29,19 @@ export default function PerfilPage() {
       if (nuevaPassword) formData.append("nuevaPassword", nuevaPassword);
       if (avatar) formData.append("avatar", avatar);
 
-      await api.put("/auth/update-profile", formData, {
+      // 🔥 LEEMOS LA RESPUESTA
+      const { data } = await api.put("/auth/update-profile", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
+      // 🔥 ACTUALIZAMOS EL CONTEXTO
+      if (data?.user) {
+        setUser(data.user);
+      }
+
       setMensaje("✅ Perfil actualizado correctamente.");
-      setTimeout(() => window.location.reload(), 2000);
+      // ❌ Nada de recargar la página
+      // setTimeout(() => window.location.reload(), 2000);
     } catch (err) {
       console.error(err);
       setMensaje("❌ Error al actualizar perfil.");

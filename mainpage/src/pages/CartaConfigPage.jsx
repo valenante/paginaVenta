@@ -678,11 +678,6 @@ export default function CartaConfigPage() {
 
                         {/* Selección masiva */}
                         <label className="promo-label">
-                          <input
-                            type="checkbox"
-                            checked={promoSeleccionados.includes(p._id)}
-                            onChange={() => toggleProductoSeleccion(p._id)}
-                          />
                           <span className="promo-nombre">
                             {p.nombre} {p.categoria ? `(${p.categoria})` : ""}
                           </span>

@@ -11,25 +11,39 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     // ================================
-    // 🏷️ Detectar tenant desde la URL
+    // 🏷️ Detectar tenant desde la URL (solo si tiene pinta de tenant)
     // ================================
     const pathParts = window.location.pathname.split("/").filter(Boolean);
-    const tenantFromUrl = pathParts[0] || null;
+    const firstSegment = pathParts[0];
 
-    if (tenantFromUrl) {
-      console.log("🏷️ [AuthProvider] Tenant detectado desde la URL:", tenantFromUrl);
-      setTenantId(tenantFromUrl);
-      sessionStorage.setItem("tenantId", tenantFromUrl);
+    // Rutas "globales" que NO son tenant
+    const GLOBAL_ROUTES = [
+      "login",
+      "register",
+      "perfil",
+      "planes",
+      "tenants",
+      "tickets",
+      "password",
+      "superadmin",
+      "admin",
+    ];
+
+    if (firstSegment && !GLOBAL_ROUTES.includes(firstSegment)) {
+      console.log("🏷️ [AuthProvider] Tenant detectado desde la URL:", firstSegment);
+      setTenantId(firstSegment);
+      sessionStorage.setItem("tenantId", firstSegment);
     }
 
     const verificarSesion = async () => {
       try {
         console.log("🟡 [AuthProvider] Verificando sesión real (JWT en cookies)...");
-        const res = await api.get("/auth/me/me"); // el backend lee la cookie
+        const res = await api.get("/auth/me/me");
 
         const usuario = res.data.user;
         setUser(usuario);
 
+        // 👉 AQUÍ fijamos el tenant REAL del usuario
         if (usuario?.tenantId) {
           setTenantId(usuario.tenantId);
           sessionStorage.setItem("tenantId", usuario.tenantId);

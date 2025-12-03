@@ -52,53 +52,57 @@ export default function BillingPage() {
 
       {/* ====== ÚLTIMOS PAGOS ====== */}
       <h2 className="billing-section-title">💳 Últimos pagos Stripe</h2>
+      <div className="billing-table-responsive">
 
-      <table className="billing-table">
-        <thead>
-          <tr>
-            <th>Monto</th>
-            <th>Estado</th>
-            <th>Cliente</th>
-            <th>Fecha</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          {pagos.map((pago) => (
-            <tr key={pago.id}>
-              <td>€ {(pago.amount / 100).toFixed(2)}</td>
-              <td>{pago.status}</td>
-              <td>{pago.customer || "—"}</td>
-              <td>{new Date(pago.created * 1000).toLocaleString()}</td>
+        <table className="billing-table">
+          <thead>
+            <tr>
+              <th>Monto</th>
+              <th>Estado</th>
+              <th>Cliente</th>
+              <th>Fecha</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+
+          <tbody>
+            {pagos.map((pago) => (
+              <tr key={pago.id}>
+                <td>€ {(pago.amount / 100).toFixed(2)}</td>
+                <td>{pago.status}</td>
+                <td>{pago.customer || "—"}</td>
+                <td>{new Date(pago.created * 1000).toLocaleString()}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
       {/* ====== SUSCRIPCIONES ====== */}
       <h2 className="billing-section-title">📦 Suscripciones</h2>
 
-      <table className="billing-table">
-        <thead>
-          <tr>
-            <th>Tenant</th>
-            <th>Precio mensual</th>
-            <th>Inicio</th>
-            <th>Renovación</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          {suscripciones.map((s) => (
-            <tr key={s._id}>
-              <td>{s.tenantId}</td>
-              <td>€ {s.precioMensual}</td>
-              <td>{new Date(s.fechaInicio).toLocaleDateString()}</td>
-              <td>{new Date(s.fechaRenovacion).toLocaleDateString()}</td>
+      <div className="billing-table-responsive">
+        <table className="billing-table">
+          <thead>
+            <tr>
+              <th>Tenant</th>
+              <th>Precio mensual</th>
+              <th>Inicio</th>
+              <th>Renovación</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+
+          <tbody>
+            {suscripciones.map((s) => (
+              <tr key={s._id}>
+                <td>{s.tenantId}</td>
+                <td>€ {s.precioMensual}</td>
+                <td>{new Date(s.fechaInicio).toLocaleDateString()}</td>
+                <td>{new Date(s.fechaRenovacion).toLocaleDateString()}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

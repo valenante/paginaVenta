@@ -1,306 +1,266 @@
-/* ================================
-   CONTENEDOR GENERAL
-================================== */
+/* =========================================================
+   LOGS — PANEL PREMIUM ALEF (sufijo -logsAdmin)
+   ========================================================= */
 
-.logs-page {
-  padding: 18px 20px;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+.logs-page-logsAdmin {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 22px;
+  color: #e5e7eb;
 }
 
-.logs-page h1 {
-  font-size: 22px;
-  font-weight: 700;
-  color: #111827;
-  margin: 0 0 6px;
+.logs-title-logsAdmin {
+  font-size: 26px;
+  font-weight: 800;
+  margin-bottom: 4px;
 }
 
-/* ================================
-   FILTROS
-================================== */
+/* ===== FILTROS ===== */
 
-.logs-filtros {
+.logs-filtros-logsAdmin {
   display: flex;
+  gap: 14px;
   flex-wrap: wrap;
-  gap: 10px;
-  align-items: center;
-  background: #f9fafb;
+
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(14px);
+  padding: 16px 18px;
   border-radius: 14px;
-  padding: 10px 12px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid rgba(255,255,255,0.08);
+
+  box-shadow:
+    0 10px 30px rgba(0,0,0,0.25),
+    0 0 0 1px rgba(255,255,255,0.05);
 }
 
-.logs-filtros input,
-.logs-filtros select {
-  padding: 8px 11px;
-  border-radius: 999px;
-  border: 1px solid #d1d5db;
-  font-size: 13px;
-  min-width: 160px;
+.logs-input-logsAdmin,
+.logs-select-logsAdmin {
+  padding: 9px 12px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.18);
+  color: #fff;
   outline: none;
-  transition:
-    border-color 0.18s ease,
-    box-shadow 0.18s ease,
-    background 0.18s ease;
-  background: #ffffff;
+  min-width: 180px;
+  transition: background 0.2s ease, border-color 0.2s ease;
 }
 
-.logs-filtros input:focus,
-.logs-filtros select:focus {
+.logs-input-logsAdmin:focus,
+.logs-select-logsAdmin:focus {
+  background: rgba(255,255,255,0.15);
   border-color: #6a0dad;
-  box-shadow: 0 0 0 1px rgba(124, 58, 237, 0.2);
+  box-shadow: 0 0 0 1px rgba(106,13,173,0.4);
 }
 
-/* Botón borrar todo */
-
-.delete-btn {
-  margin-left: auto;
-  background: #fee2e2;
-  color: #b91c1c;
+.logs-delete-btn-logsAdmin {
+  padding: 10px 14px;
+  background: rgba(239,68,68,0.14);
+  border-radius: 10px;
+  color: #fee2e2;
   border: none;
-  padding: 8px 14px;
-  border-radius: 999px;
   cursor: pointer;
-  font-size: 13px;
   font-weight: 600;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  transition:
-    background 0.18s ease,
-    transform 0.08s ease,
-    box-shadow 0.18s ease;
+
+  transition: background 0.2s, transform 0.15s ease;
 }
 
-.delete-btn:hover {
+.logs-delete-btn-logsAdmin:hover {
   background: #ef4444;
-  color: #fef2f2;
-  transform: translateY(-1px);
-  box-shadow: 0 8px 18px rgba(248, 113, 113, 0.4);
+  color: #fff;
+  transform: translateY(-2px);
 }
 
-/* ================================
-   TABLA DE LOGS
-================================== */
+.logs-pagination-logsAdmin {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 14px;
+  margin-top: 14px;
+}
 
-.logs-table {
+.logs-pagination-logsAdmin button {
+  padding: 8px 16px;
+  border-radius: 10px;
+  border: none;
+  background: rgba(255,255,255,0.15);
+  color: #fff;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.2s ease;
+}
+
+.logs-pagination-logsAdmin button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.logs-pagination-logsAdmin button:hover:not(:disabled) {
+  background: rgba(255,255,255,0.25);
+}
+
+/* ===== TABLA ===== */
+
+.logs-table-logsAdmin {
   width: 100%;
   border-collapse: collapse;
-  background: #ffffff;
+  background: rgba(255,255,255,0.06);
+  backdrop-filter: blur(10px);
   border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+
+  border: 1px solid rgba(255,255,255,0.08);
 }
 
-.logs-table thead {
-  background: #f5f3ff;
-}
-
-.logs-table th,
-.logs-table td {
-  padding: 10px 13px;
-  border-bottom: 1px solid #e5e7eb;
-  font-size: 13px;
+.logs-table-logsAdmin th {
+  background: rgba(0,0,0,0.35);
+  padding: 12px;
   text-align: left;
-}
-
-.logs-table th {
+  font-size: 14px;
+  color: #cbd5e1;
   font-weight: 600;
-  color: #6a0dad;
 }
 
-.logs-table tbody tr:nth-child(even) {
-  background: #fafafa;
+.logs-table-logsAdmin td {
+  padding: 10px 12px;
+  font-size: 14px;
+  color: #e2e8f0;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
 }
 
-.logs-table tbody tr:hover {
-  background: #eef2ff;
+.logs-row-logsAdmin {
   cursor: pointer;
+  transition: background 0.15s ease, transform 0.1s ease;
 }
 
-/* Nivel como badge */
+.logs-row-logsAdmin:hover {
+  background: rgba(255,255,255,0.10);
+  transform: translateY(-1px);
+}
 
-.nivel {
-  font-size: 11px;
+/* ===== Niveles ===== */
+
+.logs-nivel-logsAdmin {
   font-weight: 700;
-  padding: 3px 9px;
-  border-radius: 999px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  padding: 6px 10px;
+  border-radius: 8px;
+  text-transform: uppercase;
+  font-size: 12px;
+  display: inline-block;
 }
 
+/* INFO */
 .nivel-info {
-  background: #e0f2fe;
-  color: #0369a1;
+  background: rgba(96,165,250,0.2);
+  color: #93c5fd;
 }
-
+/* WARN */
 .nivel-warn {
-  background: #fef3c7;
-  color: #92400e;
+  background: rgba(251,191,36,0.2);
+  color: #fbbf24;
 }
-
+/* ERROR */
 .nivel-error {
-  background: #fee2e2;
-  color: #b91c1c;
+  background: rgba(239,68,68,0.2);
+  color: #ef4444;
 }
 
-/* Mensaje truncado en tabla */
-
-.mensaje {
-  max-width: 420px;
-  white-space: nowrap;
+.logs-mensaje-logsAdmin {
+  max-width: 380px;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-/* Mensaje de “cargando / vacío” */
+/* ===== LOADING / EMPTY ===== */
 
-.logs-page > p {
-  font-size: 14px;
-  color: #6b7280;
+.logs-loading-logsAdmin,
+.logs-empty-logsAdmin {
+  color: #94a3b8;
+  padding: 20px 4px;
 }
 
-/* ================================
-   MODAL DETALLE LOG
-================================== */
+/* =========================================================
+   MODAL DETALLES LOG
+   ========================================================= */
 
-.log-modal {
+.logs-modal-logsAdmin {
   position: fixed;
   inset: 0;
-  background: rgba(15, 23, 42, 0.55);
+  background: rgba(0,0,0,0.65);
+  backdrop-filter: blur(6px);
   display: flex;
-  justify-content: center;
   align-items: center;
-  z-index: 40;
+  justify-content: center;
+  z-index: 99;
+
+  animation: fadeLogModal 0.25s ease forwards;
 }
 
-.log-modal-content {
-  background: #ffffff;
-  padding: 22px 22px 18px;
-  border-radius: 18px;
-  width: 640px;
-  max-width: 95vw;
-  max-height: 82vh;
-  overflow-y: auto;
-  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.55);
+@keyframes fadeLogModal {
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 
-.log-modal-content h2 {
-  margin: 0 0 12px;
-  font-size: 18px;
-  color: #111827;
+.logs-modal-content-logsAdmin {
+  width: 100%;
+  max-width: 600px;
+
+  background: rgba(15,23,42,0.75);
+  backdrop-filter: blur(18px);
+  border-radius: 20px;
+  padding: 26px 30px;
+
+  border: 1px solid rgba(255,255,255,0.1);
+  box-shadow:
+    0 28px 60px rgba(0,0,0,0.55),
+    0 0 0 1px rgba(255,255,255,0.05);
+
+  animation: slideLogModal 0.25s ease;
+  color: #fff;
 }
 
-.log-modal-content p {
-  margin: 4px 0;
-  font-size: 14px;
-  color: #374151;
+@keyframes slideLogModal {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-.log-modal-content strong {
-  color: #111827;
-}
-
-/* Bloque JSON */
-
-.log-modal-content pre {
-  background: #0f172a;
-  color: #e5e7eb;
+.logs-pre-logsAdmin {
+  background: rgba(0,0,0,0.35);
   padding: 12px;
-  border-radius: 10px;
-  font-size: 12px;
-  overflow: auto;
+  border-radius: 8px;
   max-height: 260px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  font-size: 13px;
+  color: #e5e7eb;
 }
 
-/* Botón cerrar modal */
-
-.log-modal-content button {
-  margin-top: 12px;
-  border: none;
-  padding: 7px 14px;
+.logs-modal-close-logsAdmin {
+  margin-top: 14px;
+  padding: 10px 16px;
   border-radius: 999px;
-  font-size: 13px;
+  border: none;
+
+  background: rgba(255,255,255,0.16);
+  color: #fff;
   font-weight: 600;
   cursor: pointer;
-  background: #6a0dad;
-  color: #ffffff;
-  align-self: flex-end;
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  transition:
-    background 0.18s ease,
-    transform 0.08s ease,
-    box-shadow 0.18s ease;
+
+  transition: background 0.2s ease, transform 0.15s ease;
 }
 
-.log-modal-content button:hover {
-  background: #550c91;
-  transform: translateY(-1px);
-  box-shadow: 0 8px 20px rgba(124, 58, 237, 0.4);
+.logs-modal-close-logsAdmin:hover {
+  background: rgba(255,255,255,0.26);
+  transform: translateY(-2px);
 }
 
-/* ================================
-   RESPONSIVE
-================================== */
-
-@media (max-width: 1024px) {
-  .logs-page {
-    padding: 14px;
-  }
-
-  .logs-table th,
-  .logs-table td {
-    padding: 9px 10px;
-  }
+/* === TABLA RESPONSIVE === */
+.logs-table-wrapper-logsAdmin {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
-@media (max-width: 768px) {
-  .logs-filtros {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .delete-btn {
-    margin-left: 0;
-    align-self: stretch;
-    justify-content: center;
-  }
-
-  /* Tabla scroll horizontal en móvil */
-  .logs-table {
-    display: block;
-    width: 100%;
-    overflow-x: auto;
-    white-space: nowrap;
-    border-radius: 14px;
-  }
-
-  .logs-table th,
-  .logs-table td {
-    font-size: 12px;
-  }
-
-  .log-modal-content {
-    padding: 18px 14px;
-  }
-}
-
-@media (max-width: 480px) {
-  .logs-page {
-    padding: 10px;
-  }
-
-  .logs-page h1 {
-    font-size: 18px;
-  }
-
-  .logs-table th,
-  .logs-table td {
-    padding: 7px 8px;
-  }
+.logs-table-logsAdmin {
+  min-width: 700px; /* evita romper diseños en móvil */
 }

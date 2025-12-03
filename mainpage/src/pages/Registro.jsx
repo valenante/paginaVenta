@@ -9,12 +9,20 @@ import Paso3ServiciosExtras from "../components/Registro/Paso3ServiciosExtras.js
 import Paso4ResumenPago from "../components/Registro/Paso4ResumenPago.jsx";
 import PanelPrecio from "../components/Registro/PanelPrecio.jsx";
 
+const STEPS = [
+  { id: 1, label: "Datos del restaurante" },
+  { id: 2, label: "Configuración inicial" },
+  { id: 3, label: "Servicios y hardware" },
+  { id: 4, label: "Resumen y pago" },
+];
+
 export default function Registro() {
   const navigate = useNavigate();
   const [paso, setPaso] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
+  const [periodo, setPeriodo] = useState("mensual");
 
   // ======== ESTADOS PRINCIPALES ========
   const [tenant, setTenant] = useState({ nombre: "", email: "", plan: "premium" });
@@ -53,16 +61,21 @@ export default function Registro() {
     unico: 0,
     totalPrimerMes: 0,
   });
-  const [pago, setPago] = useState({ metodo: "simulado", idPago: "TEST-" + Date.now() });
+  const [pago, setPago] = useState({
+    metodo: "simulado",
+    idPago: "TEST-" + Date.now(),
+  });
 
+  // ======== CARGAR PLAN (1) – guarda planSeleccionado y precio base ========
   useEffect(() => {
     const cargarPlan = async () => {
       if (!planSlug) return;
 
       try {
         const { data } = await api.get("/superadminPlans/publicPlans");
-
-        const encontrado = data.find((p) => p.slug.toLowerCase() === planSlug.toLowerCase());
+        const encontrado = data.find(
+          (p) => p.slug.toLowerCase() === planSlug.toLowerCase()
+        );
 
         if (!encontrado) {
           alert("El plan seleccionado no existe.");
@@ -70,25 +83,20 @@ export default function Registro() {
           return;
         }
 
-        // 🔥 Guardar datos del plan
         setPlanSeleccionado(encontrado);
 
-        // guardar plan en tenant
         setTenant((prev) => ({
           ...prev,
           plan: encontrado.slug,
         }));
 
-        // actualizar precios
         setPrecio((prev) => ({
           ...prev,
           mensual: encontrado.precioMensual,
           totalPrimerMes: encontrado.precioMensual + prev.unico,
         }));
 
-        // actualizar precio base del plan
         setPrecioBasePlan(encontrado.precioMensual);
-
       } catch (err) {
         console.error("Error cargando plan:", err);
       }
@@ -109,7 +117,14 @@ export default function Registro() {
       servicios.pantallas * 250 +
       servicios.pda * 180 +
       (servicios.fotografia ? 120 : 0) +
-      (servicios.cargaDatos ? 100 : 0);
+      (servicios.cargaDatos ? 100 : 0) +
+      // ➕ NUEVO: carga completa de productos
+      (servicios.cargaProductos ? 80 : 0) +
+      // ➕ NUEVO: configuración de mesas + QR
+      (servicios.mesasQr ? 80 : 0);
+    // Si quieres que cada mesa cuente:
+    // servicios.mesasQr && servicios.mesasQrCantidad
+    //   ? servicios.mesasQrCantidad * 1.5 : 0
 
     setPrecio({
       mensual,
@@ -118,14 +133,16 @@ export default function Registro() {
     });
   }, [servicios, precioBasePlan]);
 
+  // ======== CARGAR PLAN (2) – mantiene compatibilidad con tu código original ========
   useEffect(() => {
     const cargarPlan = async () => {
-      if (!planSlug) return; // si no hay plan, se manejará después
+      if (!planSlug) return;
 
       try {
         const { data } = await api.get("/superadminPlans/publicPlans");
-
-        const encontrado = data.find((p) => p.slug.toLowerCase() === planSlug.toLowerCase());
+        const encontrado = data.find(
+          (p) => p.slug.toLowerCase() === planSlug.toLowerCase()
+        );
 
         if (!encontrado) {
           alert("El plan seleccionado no existe.");
@@ -133,19 +150,16 @@ export default function Registro() {
           return;
         }
 
-        // 💾 Guardamos en tenant
         setTenant((prev) => ({
           ...prev,
           plan: encontrado.slug,
         }));
 
-        // 💰 Actualizamos precio base según el plan
         setPrecio((prev) => ({
           ...prev,
           mensual: encontrado.precioMensual,
-          totalPrimerMes: encontrado.precioMensual + prev.unico
+          totalPrimerMes: encontrado.precioMensual + prev.unico,
         }));
-
       } catch (err) {
         console.error("Error cargando plan:", err);
       }
@@ -171,21 +185,30 @@ export default function Registro() {
       setSuccess(true);
       setTimeout(() => navigate("/"), 1500);
     } catch (err) {
-      setError(err.response?.data?.error || "Error al registrar el restaurante.");
+      setError(
+        err.response?.data?.error || "Error al registrar el restaurante."
+      );
     } finally {
       setLoading(false);
     }
   };
 
-  // ======== RENDER ========
   const pasos = [
-    <Paso1DatosRestaurante tenant={tenant} setTenant={setTenant} admin={admin} setAdmin={setAdmin} />,
+    <Paso1DatosRestaurante
+      tenant={tenant}
+      setTenant={setTenant}
+      admin={admin}
+      setAdmin={setAdmin}
+    />,
     <Paso2ConfiguracionBasica
       config={config}
       setConfig={setConfig}
       plan={planSeleccionado}
     />,
-    <Paso3ServiciosExtras servicios={servicios} setServicios={setServicios} />,
+    <Paso3ServiciosExtras
+      servicios={servicios}
+      setServicios={setServicios}
+    />,
     <Paso4ResumenPago
       tenant={tenant}
       admin={admin}
@@ -198,22 +221,113 @@ export default function Registro() {
       success={success}
       precioBasePlan={precioBasePlan}
       plan={planSeleccionado}
-    />
+      periodo={periodo}            // 👈 nuevo
+      setPeriodo={setPeriodo}      // 👈 nuevo
+    />,
   ];
 
+  const stepActual = STEPS.find((s) => s.id === paso);
+
   return (
-    <main className="registro-avanzado">
-      <div className="registro-container">
-        <h1>Configura tu restaurante</h1>
-        <p>Paso {paso} de 4</p>
-        {error && <p className="registro-error">{error}</p>}
-        {pasos[paso - 1]}
-        <div className="registro-nav">
-          {paso > 1 && <button onClick={() => setPaso(paso - 1)}>Anterior</button>}
-          {paso < 4 && <button onClick={() => setPaso(paso + 1)}>Siguiente</button>}
+    <main className="registro-avanzado registro-page">
+      <div className="registro-shell">
+        {/* COLUMNA PRINCIPAL */}
+        <div className="registro-main card">
+          <header className="registro-header">
+            <div>
+              <p className="registro-kicker">Alta de restaurante</p>
+              <h1 className="registro-title">Configura tu restaurante en Alef</h1>
+              <p className="registro-subtitle">
+                Completa estos pasos para crear tu entorno y empezar a trabajar con el TPV.
+              </p>
+            </div>
+
+            {planSeleccionado && (
+              <div className="registro-plan-box">
+                <span className="registro-plan-label">Plan seleccionado</span>
+                <strong className="registro-plan-nombre">
+                  {planSeleccionado.nombre}
+                </strong>
+                <span className="registro-plan-precio">
+                  {planSeleccionado.precioMensual} €/mes
+                </span>
+              </div>
+            )}
+          </header>
+
+          {/* STEPPER */}
+          <div className="registro-stepper">
+            {STEPS.map((step, index) => {
+              const isActive = paso === step.id;
+              const isDone = paso > step.id;
+
+              return (
+                <div className="registro-step" key={step.id}>
+                  <div
+                    className={`registro-step-circle ${isActive ? "active" : ""
+                      } ${isDone ? "done" : ""}`}
+                  >
+                    {isDone ? "✓" : step.id}
+                  </div>
+                  <span
+                    className={`registro-step-label ${isActive ? "active" : ""
+                      }`}
+                  >
+                    {step.label}
+                  </span>
+                  {index < STEPS.length - 1 && (
+                    <div className="registro-step-line" />
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          <p className="registro-step-counter">
+            Paso {paso} de {STEPS.length}:{" "}
+            <span>{stepActual?.label}</span>
+          </p>
+
+          {/* CONTENIDO DEL PASO */}
+          <div className="registro-step-content">{pasos[paso - 1]}</div>
+
+          {/* NAVIGATION BOTTOM */}
+          <div className="registro-nav">
+            {paso > 1 && (
+              <button
+                type="button"
+                className="registro-btn registro-btn-secundario"
+                onClick={() => setPaso(paso - 1)}
+                disabled={loading}
+              >
+                Anterior
+              </button>
+            )}
+            {paso < STEPS.length && (
+              <button
+                type="button"
+                className="registro-btn registro-btn-primario"
+                onClick={() => setPaso(paso + 1)}
+                disabled={loading}
+              >
+                Siguiente
+              </button>
+            )}
+          </div>
+
+          {error && <p className="registro-error">{error}</p>}
+          {success && (
+            <p className="registro-success">
+              Restaurante creado correctamente. Redirigiendo...
+            </p>
+          )}
+        </div>
+
+        {/* COLUMNA DERECHA: RESUMEN DE PRECIOS */}
+        <div className="registro-side">
+          <PanelPrecio precio={precio} periodo={periodo} />
         </div>
       </div>
-      <PanelPrecio precio={precio} />
     </main>
   );
 }

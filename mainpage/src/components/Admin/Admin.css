@@ -1,0 +1,168 @@
+/* Ejemplo (puede estar en otro sitio):
+:root {
+  --colorPrincipal: #970c0c;
+  --blanco: #4C5EA8;
+  --fondo: #841010;
+  --texto: #3264ae;
+  --cardBg: #ffffff;
+  --cardBorde: #940000;
+  --boton: #4C5EA8;
+  --botonHover: #3C4C8A;
+}
+*/
+
+/* ========================================================================== */
+/* 📌 CONTENEDOR GENERAL */
+/* ========================================================================== */
+
+.admin-panel {
+  background: var(--color-principal);              /* antes: var(--color-secundario) */
+  max-width: 650px;
+  margin: 2.5rem auto;
+  padding: 2.5rem;
+  border-radius: var(--borde-redondeado);
+  box-shadow: var(--sombra-suave);
+  color: var(--texto);                    /* antes: var(--blanco) */
+  border: 1px solid var(--cardBorde);     /* nuevo borde de tarjeta */
+}
+
+.admin-title {
+  text-align: center;
+  margin-bottom: 2rem;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--blanco);           /* resalta el título con el color principal */
+}
+
+/* ========================================================================== */
+/* 📌 SECCIONES */
+/* ========================================================================== */
+
+.admin-section {
+  margin-bottom: 2.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--cardBorde); /* antes: var(--tpv-border) */
+}
+
+.admin-section:last-child {
+  border-bottom: none;
+}
+
+.admin-section-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: var(--blanco);          /* subtítulos con color secundario */
+}
+
+/* ========================================================================== */
+/* 📌 FORMULARIO */
+/* ========================================================================== */
+
+.admin-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.admin-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.admin-field label {
+  font-weight: 600;
+  color: var(--texto);
+}
+
+.admin-field input[type="file"],
+.admin-field input[type="password"] {
+  padding: 0.65rem;
+  border-radius: var(--borde-redondeado);
+  border: 1px solid var(--cardBorde);   /* antes: var(--tpv-border) */
+  background: var(--blanco);            /* antes: var(--blanco) */
+  color: var(--texto);                  /* antes: var(--tpv-texto) */
+  transition: border var(--transicion-base), box-shadow var(--transicion-base);
+}
+
+.admin-field input:focus {
+  border-color: var(--blanco);                   /* acento al foco */
+  box-shadow: 0 0 5px rgba(76, 94, 168, 0.4);             /* tono basado en colorSecundario */
+}
+
+/* ========================================================================== */
+/* 📌 BOTONES */
+/* ========================================================================== */
+
+.btn-primary,
+.btn-secondary {
+  width: 100%;
+  padding: 0.75rem;
+  border-radius: var(--borde-redondeado);
+  border: none;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background var(--transicion-base), transform var(--transicion-base);
+}
+
+/* Botón principal */
+.btn-primary {
+  background: var(--color-secundario);       /* #4C5EA8 */
+  color: #ffffff;
+}
+
+.btn-primary:hover {
+  background: var(--botonHover);  /* #3C4C8A */
+  transform: translateY(-2px);
+}
+
+/* Botón secundario (mismo tono para simplificar, puedes cambiarlo a colorPrincipal si quieres) */
+.btn-secondary {
+  background: var(--color-secundario); /* #970c0c */
+  color: #ffffff;
+}
+
+.btn-secondary:hover {
+  background: #b51212;              /* hover más claro del principal */
+  transform: translateY(-2px);
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ========================================================================== */
+/* 📌 MENSAJES */
+/* ========================================================================== */
+
+.admin-message {
+  margin-top: 1rem;
+  text-align: center;
+  font-weight: 600;
+  color: var(--texto);
+}
+
+.admin-verifactu-estado {
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+  color: var(--colorPrincipal);
+}
+
+/* ========================================================================== */
+/* 📱 RESPONSIVE */
+/* ========================================================================== */
+
+@media (max-width: 480px) {
+  .admin-panel {
+    padding: 1.5rem;
+    margin: 1rem;
+  }
+
+  .admin-title {
+    font-size: 1.4rem;
+  }
+}

@@ -15,19 +15,25 @@ import {
 const COLORS = ["#6A0DAD", "#FF6700", "#98FF98", "#F5F5F5"];
 
 export default function ChartsSection({ tenants }) {
-  // 📊 Datos por plan
-  const plansData = [
-    { name: "gratis", value: tenants.filter(t => t.plan === "gratis").length },
-    { name: "Premium", value: tenants.filter(t => t.plan === "premium").length },
-  ];
+  // 📊 Distribución real de planes
+  const planCounts = tenants.reduce((acc, t) => {
+    acc[t.plan] = (acc[t.plan] || 0) + 1;
+    return acc;
+  }, {});
 
-  // 📈 Evolución temporal (por semana)
+  const plansData = Object.entries(planCounts).map(([plan, count]) => ({
+    name: plan,
+    value: count,
+  }));
+
+  // 📈 Evolución temporal
   const weeklyData = generarSemanas(tenants);
 
   return (
     <section className="charts-section">
       <div className="chart-card">
         <h3>Distribución de Planes</h3>
+
         <ResponsiveContainer width="100%" height={240}>
           <PieChart>
             <Pie

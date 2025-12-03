@@ -3,7 +3,7 @@ import { FiUsers, FiStar, FiCheckCircle, FiClock } from "react-icons/fi";
 
 export default function StatsCards({ tenants }) {
   const total = tenants.length;
-  const premium = tenants.filter(t => t.plan === "premium").length;
+  const premium = tenants.filter(t => t.plan === "tpv-premium").length;
   const verifactu = tenants.filter(t => t.verifactuEnabled).length;
 
   const latest =

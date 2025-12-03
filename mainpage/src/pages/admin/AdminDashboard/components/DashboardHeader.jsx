@@ -1,6 +1,6 @@
-// src/pages/admin/AdminDashboard/components/DashboardHeader.jsx
 import React from "react";
 import { FiRefreshCcw, FiSearch } from "react-icons/fi";
+import usePlanes from "../../../../Hooks/usePlanes";
 
 export default function DashboardHeader({
   search,
@@ -9,11 +9,14 @@ export default function DashboardHeader({
   setPlanFilter,
   onRefresh,
 }) {
+  const { planes, loading } = usePlanes();
+
   return (
     <header className="dashboard-header">
       <h1>Panel SuperAdmin Alef</h1>
 
       <div className="header-controls">
+        {/* 🔍 Barra de búsqueda */}
         <div className="search-bar">
           <FiSearch />
           <input
@@ -24,15 +27,22 @@ export default function DashboardHeader({
           />
         </div>
 
+        {/* 🟦 Select de planes reales */}
         <select
           value={planFilter}
           onChange={(e) => setPlanFilter(e.target.value)}
         >
-          <option value="todos">Todos</option>
-          <option value="gratis">gratis</option>
-          <option value="premium">Premium</option>
+          <option value="all">Todos los planes</option>
+
+          {!loading &&
+            planes.map((p) => (
+              <option key={p._id} value={p.slug}>
+                {p.nombre} ({p.slug})
+              </option>
+            ))}
         </select>
 
+        {/* 🔁 Refrescar */}
         <button onClick={onRefresh} className="refresh-btn">
           <FiRefreshCcw /> Actualizar
         </button>

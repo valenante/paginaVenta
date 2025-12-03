@@ -61,36 +61,55 @@ export default function SettingsPage() {
       ● {ok ? "OK" : "ERROR"}
     </span>
   );
-
   return (
-    <div className="settings-wrapper">
-      <h1 className="titulo">⚙️ Ajustes del Sistema</h1>
-      <p className="subtitulo">Configuración global del SaaS Alef.</p>
+    <div className="settings-wrapper-settingsAdmin">
+      <h1 className="settings-title-settingsAdmin">⚙️ Ajustes del Sistema</h1>
+      <p className="settings-subtitle-settingsAdmin">Configuración global del SaaS Alef.</p>
 
       {/* --------- TABS --------- */}
-      <div className="tabs">
-        <button className={tab === "general" ? "active" : ""} onClick={() => setTab("general")}>
+      <div className="settings-tabs-settingsAdmin">
+        <button
+          className={tab === "general" ? "tab-btn-settingsAdmin active" : "tab-btn-settingsAdmin"}
+          onClick={() => setTab("general")}
+        >
           General
         </button>
-        <button className={tab === "smtp" ? "active" : ""} onClick={() => setTab("smtp")}>
+
+        <button
+          className={tab === "smtp" ? "tab-btn-settingsAdmin active" : "tab-btn-settingsAdmin"}
+          onClick={() => setTab("smtp")}
+        >
           SMTP / Email
         </button>
-        <button className={tab === "stripe" ? "active" : ""} onClick={() => setTab("stripe")}>
+
+        <button
+          className={tab === "stripe" ? "tab-btn-settingsAdmin active" : "tab-btn-settingsAdmin"}
+          onClick={() => setTab("stripe")}
+        >
           Stripe
         </button>
-        <button className={tab === "cloudflare" ? "active" : ""} onClick={() => setTab("cloudflare")}>
+
+        <button
+          className={tab === "cloudflare" ? "tab-btn-settingsAdmin active" : "tab-btn-settingsAdmin"}
+          onClick={() => setTab("cloudflare")}
+        >
           Cloudflare
         </button>
-        <button className={tab === "r2" ? "active" : ""} onClick={() => setTab("r2")}>
+
+        <button
+          className={tab === "r2" ? "tab-btn-settingsAdmin active" : "tab-btn-settingsAdmin"}
+          onClick={() => setTab("r2")}
+        >
           R2 Storage
         </button>
       </div>
 
       {/* --------- PANEL GENERAL --------- */}
       {tab === "general" && (
-        <div className="panel">
-          <h2>🛠 Estado del sistema</h2>
-          <div className="status-grid">
+        <div className="settings-panel-settingsAdmin">
+          <h2 className="settings-panel-title-settingsAdmin">🛠 Estado del sistema</h2>
+
+          <div className="settings-status-grid-settingsAdmin">
             <p>MongoDB: {estado(status.mongo)}</p>
             <p>SMTP: {estado(status.smtp)}</p>
             <p>Stripe: {estado(status.stripe)}</p>
@@ -98,18 +117,19 @@ export default function SettingsPage() {
             <p>R2 Storage: {estado(status.r2)}</p>
           </div>
 
-          <h3>Modo mantenimiento</h3>
-          <label className="switch">
+          <h3 className="settings-section-title-settingsAdmin">Modo mantenimiento</h3>
+          <label className="settings-switch-settingsAdmin">
             <input
               type="checkbox"
               checked={config.maintenanceMode}
               onChange={(e) => setConfig({ ...config, maintenanceMode: e.target.checked })}
             />
-            <span className="slider" />
+            <span className="settings-slider-settingsAdmin" />
           </label>
 
-          <h3>Versión del sistema</h3>
+          <h3 className="settings-section-title-settingsAdmin">Versión del sistema</h3>
           <input
+            className="settings-input-settingsAdmin"
             type="text"
             value={config.system.version}
             onChange={(e) => update("system", "version", e.target.value)}
@@ -119,53 +139,57 @@ export default function SettingsPage() {
 
       {/* --------- SMTP --------- */}
       {tab === "smtp" && (
-        <div className="panel">
-          <h2>📧 Configuración SMTP</h2>
+        <div className="settings-panel-settingsAdmin">
+          <h2 className="settings-panel-title-settingsAdmin">📧 Configuración SMTP</h2>
 
-          <small>
-            SMTP permite a Alef enviar correos: bienvenida, recuperación de contraseña,
-            avisos, facturas, etc.
+          <small className="settings-small-settingsAdmin">
+            SMTP permite a Alef enviar correos: bienvenida, recuperación, avisos, facturas, etc.
           </small>
 
-          <label>Servidor SMTP (host)</label>
+          <label className="settings-label-settingsAdmin">Servidor SMTP (host)</label>
           <input
+            className="settings-input-settingsAdmin"
             value={config?.smtp?.host || ""}
             onChange={(e) => update("smtp", "host", e.target.value)}
             placeholder="smtp.tu-dominio.com"
           />
 
-          <label>Puerto</label>
+          <label className="settings-label-settingsAdmin">Puerto</label>
           <input
+            className="settings-input-settingsAdmin"
             type="number"
             value={config?.smtp?.port || ""}
             onChange={(e) => update("smtp", "port", e.target.value)}
             placeholder="587"
           />
 
-          <label>Usuario</label>
+          <label className="settings-label-settingsAdmin">Usuario</label>
           <input
+            className="settings-input-settingsAdmin"
             value={config?.smtp?.user || ""}
             onChange={(e) => update("smtp", "user", e.target.value)}
             placeholder="correo@tu-dominio.com"
           />
 
-          <label>Contraseña / API Key</label>
+          <label className="settings-label-settingsAdmin">Contraseña / API Key</label>
           <input
+            className="settings-input-settingsAdmin"
             type="password"
             value={config?.smtp?.pass || ""}
             onChange={(e) => update("smtp", "pass", e.target.value)}
           />
 
-          <label>Remitente (FROM)</label>
+          <label className="settings-label-settingsAdmin">Remitente (FROM)</label>
           <input
+            className="settings-input-settingsAdmin"
             value={config?.smtp?.from || ""}
             onChange={(e) => update("smtp", "from", e.target.value)}
             placeholder="Alef <no-reply@tu-dominio.com>"
           />
 
-          <div className="smtp-buttons">
+          <div className="settings-smtp-buttons-settingsAdmin">
             <button
-              className="test-btn"
+              className="settings-test-btn-settingsAdmin"
               disabled={testing === "smtp"}
               onClick={() => testService("smtp")}
             >
@@ -173,7 +197,7 @@ export default function SettingsPage() {
             </button>
 
             <button
-              className="test-btn secondary"
+              className="settings-test-btn-settingsAdmin secondary"
               onClick={async () => {
                 const email = prompt("Ingresa un email para enviar la prueba:");
                 if (!email) return;
@@ -189,30 +213,33 @@ export default function SettingsPage() {
 
       {/* --------- STRIPE --------- */}
       {tab === "stripe" && (
-        <div className="panel">
-          <h2>💳 Stripe</h2>
+        <div className="settings-panel-settingsAdmin">
+          <h2 className="settings-panel-title-settingsAdmin">💳 Stripe</h2>
 
-          <label>Clave Pública</label>
+          <label className="settings-label-settingsAdmin">Clave Pública</label>
           <input
+            className="settings-input-settingsAdmin"
             value={config?.stripe?.publicKey || ""}
             onChange={(e) => update("stripe", "publicKey", e.target.value)}
           />
 
-          <label>Clave Secreta</label>
+          <label className="settings-label-settingsAdmin">Clave Secreta</label>
           <input
+            className="settings-input-settingsAdmin"
             type="password"
             value={config?.stripe?.secretKey || ""}
             onChange={(e) => update("stripe", "secretKey", e.target.value)}
           />
 
-          <label>Webhook Secret</label>
+          <label className="settings-label-settingsAdmin">Webhook Secret</label>
           <input
+            className="settings-input-settingsAdmin"
             value={config?.stripe?.webhookSecret || ""}
             onChange={(e) => update("stripe", "webhookSecret", e.target.value)}
           />
 
           <button
-            className="test-btn"
+            className="settings-test-btn-settingsAdmin"
             disabled={testing === "stripe"}
             onClick={() => testService("stripe")}
           >
@@ -223,29 +250,32 @@ export default function SettingsPage() {
 
       {/* --------- CLOUDFLARE --------- */}
       {tab === "cloudflare" && (
-        <div className="panel">
-          <h2>🌐 Cloudflare</h2>
+        <div className="settings-panel-settingsAdmin">
+          <h2 className="settings-panel-title-settingsAdmin">🌐 Cloudflare</h2>
 
-          <label>Zone ID</label>
+          <label className="settings-label-settingsAdmin">Zone ID</label>
           <input
+            className="settings-input-settingsAdmin"
             value={config?.cloudflare?.zoneId || ""}
             onChange={(e) => update("cloudflare", "zoneId", e.target.value)}
           />
 
-          <label>API Token</label>
+          <label className="settings-label-settingsAdmin">API Token</label>
           <input
+            className="settings-input-settingsAdmin"
             value={config?.cloudflare?.apiToken || ""}
             onChange={(e) => update("cloudflare", "apiToken", e.target.value)}
           />
 
-          <label>Account ID</label>
+          <label className="settings-label-settingsAdmin">Account ID</label>
           <input
+            className="settings-input-settingsAdmin"
             value={config?.cloudflare?.accountId || ""}
             onChange={(e) => update("cloudflare", "accountId", e.target.value)}
           />
 
           <button
-            className="test-btn"
+            className="settings-test-btn-settingsAdmin"
             disabled={testing === "cloudflare"}
             onClick={() => testService("cloudflare")}
           >
@@ -256,42 +286,47 @@ export default function SettingsPage() {
 
       {/* --------- R2 STORAGE --------- */}
       {tab === "r2" && (
-        <div className="panel">
-          <h2>📦 R2 Storage</h2>
+        <div className="settings-panel-settingsAdmin">
+          <h2 className="settings-panel-title-settingsAdmin">📦 R2 Storage</h2>
 
-          <label>Account ID</label>
+          <label className="settings-label-settingsAdmin">Account ID</label>
           <input
+            className="settings-input-settingsAdmin"
             value={config?.r2?.accountId || ""}
             onChange={(e) => update("r2", "accountId", e.target.value)}
           />
 
-          <label>Access Key ID</label>
+          <label className="settings-label-settingsAdmin">Access Key ID</label>
           <input
+            className="settings-input-settingsAdmin"
             value={config?.r2?.accessKeyId || ""}
             onChange={(e) => update("r2", "accessKeyId", e.target.value)}
           />
 
-          <label>Secret Access Key</label>
+          <label className="settings-label-settingsAdmin">Secret Access Key</label>
           <input
+            className="settings-input-settingsAdmin"
             type="password"
             value={config?.r2?.secretAccessKey || ""}
             onChange={(e) => update("r2", "secretAccessKey", e.target.value)}
           />
 
-          <label>Bucket</label>
+          <label className="settings-label-settingsAdmin">Bucket</label>
           <input
+            className="settings-input-settingsAdmin"
             value={config?.r2?.bucket || ""}
             onChange={(e) => update("r2", "bucket", e.target.value)}
           />
 
-          <label>URL pública base</label>
+          <label className="settings-label-settingsAdmin">URL pública base</label>
           <input
+            className="settings-input-settingsAdmin"
             value={config?.r2?.publicBaseUrl || ""}
             onChange={(e) => update("r2", "publicBaseUrl", e.target.value)}
           />
 
           <button
-            className="test-btn"
+            className="settings-test-btn-settingsAdmin"
             disabled={testing === "r2"}
             onClick={() => testService("r2")}
           >
@@ -301,7 +336,7 @@ export default function SettingsPage() {
       )}
 
       {/* --------- GUARDAR --------- */}
-      <button className="guardar-btn" disabled={saving} onClick={guardar}>
+      <button className="settings-save-btn-settingsAdmin" disabled={saving} onClick={guardar}>
         {saving ? "Guardando..." : "Guardar Cambios"}
       </button>
     </div>

@@ -1,13 +1,61 @@
 :root {
-  --color-principal: #60b5ff;
-  --color-secundario: #afddff;
-  --color-terciario: #ffecdb;
-  --color-quaternario: #ff9149;
-}
+  /* 🎨 Brand Alef */
+  --color-primario: #60b5ff;   /* Azul Alef principal */
+  --color-primario-oscuro: #2f7ed8;
+  --color-primario-suave: #afddff;
 
-html {
-  margin: 0;
-  padding: 0;
+  --color-secundario: #ff9149; /* Naranja acento (botones, highlights) */
+  --color-secundario-oscuro: #e86f1c;
+  --color-terciario: #ffecdb;  /* Fondo cálido para secciones */
+
+  /* 🌫 Neutros */
+  --color-fondo: #0b1020;          /* Fondo global oscuro para hero */
+  --color-fondo-claro: #f5f7fb;    /* Fondo general claro para secciones */
+  --color-fondo-card: #ffffff;     /* Tarjetas / cards */
+  --color-borde-suave: #e0e4ee;
+
+  --color-texto: #111827;          /* Texto principal */
+  --color-texto-suave: #6b7280;    /* Secundario */
+  --color-texto-invertido: #f9fafb;/* Sobre fondos oscuros */
+
+  /* ✅ Estados (para badges, mensajes, etc.) */
+  --color-exito: #10b981;
+  --color-exito-suave: #d1fae5;
+
+  --color-aviso: #fbbf24;
+  --color-aviso-suave: #fef3c7;
+
+  --color-error: #ef4444;
+  --color-error-suave: #fee2e2;
+
+  /* ✨ Sombras y bordes */
+  --shadow-suave: 0 10px 30px rgba(15, 23, 42, 0.12);
+  --shadow-hover: 0 16px 40px rgba(15, 23, 42, 0.18);
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --radius-pill: 999px;
+
+  /* 🔠 Tipografía */
+  --font-base: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-md: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.5rem;
+  --font-size-2xl: 2rem;
+  --font-size-3xl: 2.5rem;
+
+  /* 📏 Espaciado base */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  --space-2xl: 3rem;
 }
 
 html, body {
@@ -15,43 +63,209 @@ html, body {
   padding: 0;
   overflow-x: hidden;
   box-sizing: border-box;
-  font-family: sans-serif;
+  font-family: var(--font-base);
   width: 100%;
+  color: var(--color-texto);
+  background-color: var(--color-fondo-claro);
 }
 
-/*accesorios*/
+/*****************************************************
+ * Helpers de color de fondo
+ *****************************************************/
+
+.bg-primario {
+  background: var(--color-primario);
+  color: var(--color-texto-invertido);
+}
+
+.bg-primario-oscuro {
+  background: var(--color-primario-oscuro);
+  color: var(--color-texto-invertido);
+}
+
+.bg-primario-suave {
+  background: var(--color-primario-suave);
+}
+
+.bg-secundario {
+  background: var(--color-secundario);
+  color: var(--color-texto-invertido);
+}
+
+.bg-secundario-oscuro {
+  background: var(--color-secundario-oscuro);
+  color: var(--color-texto-invertido);
+}
+
+.bg-terciario {
+  background: var(--color-terciario);
+}
+
+.bg-fondo-oscuro {
+  background: var(--color-fondo);
+  color: var(--color-texto-invertido);
+}
+
+.bg-fondo-claro {
+  background: var(--color-fondo-claro);
+}
+
+/*****************************************************
+ * Helpers de texto
+ *****************************************************/
+
+.text-primario {
+  color: var(--color-primario);
+}
+
+.text-secundario {
+  color: var(--color-secundario);
+}
+
+.text-suave {
+  color: var(--color-texto-suave);
+}
+
+.text-invertido {
+  color: var(--color-texto-invertido);
+}
+
+/*****************************************************
+ * Helpers de borde / card
+ *****************************************************/
+
+.borde-suave {
+  border: 1px solid var(--color-borde-suave);
+}
+
+.card {
+  background: var(--color-fondo-card);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-borde-suave);
+  box-shadow: var(--shadow-suave);
+  padding: var(--space-md);
+}
+
+/*****************************************************
+ * Secciones y layout base
+ *****************************************************/
+
+.section {
+  padding: var(--space-2xl) var(--space-lg);
+}
+
+.section--wide {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.section-title {
+  font-size: var(--font-size-2xl);
+  font-weight: 700;
+  margin-bottom: var(--space-md);
+  color: var(--color-primario);
+}
+
+.section-subtitle {
+  font-size: var(--font-size-md);
+  color: var(--color-texto-suave);
+  max-width: 640px;
+}
+
+/*****************************************************
+ * Botones
+ *****************************************************/
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.7rem 1.3rem;
+  border-radius: var(--radius-pill);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+
+.btn-primario {
+  background: var(--color-primario);
+  color: var(--color-texto-invertido);
+  box-shadow: var(--shadow-suave);
+}
+
+.btn-primario:hover {
+  background: var(--color-primario-oscuro);
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-1px);
+}
+
+.btn-secundario {
+  background: #ffffff;
+  color: var(--color-texto);
+  border: 1px solid var(--color-borde-suave);
+}
+
+.btn-secundario:hover {
+  background: #f9fafb;
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--color-texto-invertido);
+  border: 1px solid rgba(148, 163, 184, 0.4);
+}
+
+.btn-ghost:hover {
+  background: rgba(15, 23, 42, 0.6);
+}
+
+/*****************************************************
+ * Badges / chips
+ *****************************************************/
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.7rem;
+  border-radius: var(--radius-pill);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+}
+
+.badge-exito {
+  background: var(--color-exito-suave);
+  color: var(--color-exito);
+}
+
+.badge-aviso {
+  background: var(--color-aviso-suave);
+  color: var(--color-aviso);
+}
+
+.badge-error {
+  background: var(--color-error-suave);
+  color: var(--color-error);
+}
+
+/*****************************************************
+ * Gradiente para hero Alef
+ *****************************************************/
+
+
 
 .reveal {
-  opacity: 0;
-  transform: scale(0.7);
+  opacity: 1;
+  transform: translateY(0);
   transition: all 0.8s ease-out;
 }
 
+/* Si más adelante tienes un script que añade .visible,
+   puedes usar este estado para animar desde abajo */
 .reveal.visible {
   opacity: 1;
-  transform: scale(1);
-}
-
-/* secciones */
-
-section > div {
-  height: 100%;
-  max-width: 100%;
-  
-}
-
-.main-grid {
-  height: 100%;
-  width: 100%;
-  box-sizing: border-box;
-  display: grid;
-  grid-template-areas:
-    "TopBar"
-    "Introduccion"
-    "Hero"
-    "Features"
-    "Gallery"
-    "Packs"
-    "About"
-    "Contact";
+  transform: translateY(0);
 }

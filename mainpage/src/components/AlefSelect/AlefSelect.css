@@ -1,0 +1,73 @@
+.alef-select-wrapper {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  gap: 4px;
+  z-index: 50;          /* dentro de la barra de filtros */
+}
+.alef-select-label {
+  font-size: 0.85rem;
+  color: #e5e7eb;
+  letter-spacing: 0.04em;
+}
+
+.alef-select-trigger {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid rgba(148, 163, 184, 0.45);
+  border-radius: 10px;
+  cursor: pointer;
+  color: #f8fafc;
+  backdrop-filter: blur(6px);
+  transition: all 0.2s ease;
+}
+
+.alef-select-trigger:hover {
+  border-color: rgba(255, 255, 255, 0.65);
+}
+
+.alef-select-arrow {
+  opacity: 0.75;
+}
+
+.alef-select-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  max-height: 240px;
+  overflow-y: auto;
+
+  background: rgba(15, 23, 42, 0.92);
+  border: 1px solid rgba(148, 163, 184, 0.45);
+  border-radius: 12px;
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.65);
+
+  z-index: 9999;        /* tope dentro de la barra */
+}
+
+.alef-select-option {
+  padding: 10px 14px;
+  color: #e5e7eb;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.alef-select-option:hover {
+  background: rgba(59, 130, 246, 0.25);
+}
+
+.alef-select-option.selected {
+  background: rgba(167, 139, 250, 0.25);
+  font-weight: 600;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}

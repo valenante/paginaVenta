@@ -6,13 +6,20 @@
   max-width: 850px;
   margin: 0 auto;
   padding: 30px 20px;
+  color: #333;
 }
 
 .soporte-contenedor h1 {
   font-size: 1.9rem;
-  color: #6A0DAD; /* Morado Alef */
-  margin-bottom: 18px;
+  color: var(--color-primario); 
+  margin-bottom: 8px;
   font-weight: 700;
+}
+
+.soporte-subtitulo {
+  font-size: 0.95rem;
+  color: #666;
+  margin: 0;
 }
 
 /*****************************************************
@@ -23,10 +30,20 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 25px;
+  gap: 12px;
 }
 
+.soporte-header-acciones {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+/*****************************************************
+ *   BOTONES GENERALES
+ *****************************************************/
 .btn-primario {
-  background: #6A0DAD;
+  background: var(--color-primario);
   padding: 10px 18px;
   color: #fff;
   border-radius: 8px;
@@ -34,10 +51,104 @@
   font-size: 0.95rem;
   cursor: pointer;
   transition: 0.2s;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
 }
 
 .btn-primario:hover {
   background: #5b0a99;
+}
+
+.btn-secundario {
+  background: #f3f3f3;
+  padding: 9px 16px;
+  color: #444;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: 0.2s;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-secundario:hover {
+  background: #e6e6e6;
+}
+
+/*****************************************************
+ *   FILTROS
+ *****************************************************/
+.soporte-filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.soporte-filtro {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 150px;
+}
+
+.soporte-filtro label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #444;
+}
+
+.soporte-filtro select,
+.soporte-filtro input {
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid #dcdcdc;
+  font-size: 0.9rem;
+  background: #fafafa;
+}
+
+.soporte-filtro select:focus,
+.soporte-filtro input:focus {
+  outline: none;
+  border-color: var(--color-primario);
+  background: #fff;
+}
+
+.soporte-filtro-busqueda {
+  flex: 1;
+  min-width: 220px;
+}
+
+.soporte-search-wrapper {
+  display: flex;
+  gap: 8px;
+  align-items: stretch;
+}
+
+.soporte-search-wrapper input {
+  flex: 1;
+}
+
+.btn-buscar {
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--color-primario);
+  background: #fff;
+  color: var(--color-primario);
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: 0.2s;
+  white-space: nowrap;
+}
+
+.btn-buscar:hover {
+  background: #f3e9ff;
 }
 
 /*****************************************************
@@ -60,11 +171,17 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 16px;
 }
 
 .soporte-item:hover {
   box-shadow: 0 3px 12px rgba(0,0,0,0.08);
   transform: translateY(-2px);
+}
+
+.soporte-item-main {
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
 .soporte-item h3 {
@@ -74,8 +191,59 @@
   font-weight: 600;
 }
 
+.soporte-item-descripcion {
+  margin: 6px 0 0;
+  font-size: 0.9rem;
+  color: #666;
+  line-height: 1.4;
+  max-width: 520px;
+}
+
+.soporte-item-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.soporte-fecha {
+  font-size: 0.8rem;
+  color: #888;
+}
+
 /*****************************************************
- *   ETIQUETAS DE ESTADO
+ *   BADGES (ESTADO / PRIORIDAD)
+ *****************************************************/
+.soporte-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
+.badge-estado,
+.badge-prioridad {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+/* Estados (coinciden con los que ya usabas) */
+.estado-en_progreso  { background: #CFE7FF; color: #004D8F; }
+.estado-resuelto     { background: #D5FFCF; color: #0F7A00; }
+.estado-cerrado      { background: #FFD6D6; color: #9F0000; }
+
+/* Prioridades */
+.prioridad-baja    { background: #E2E3E5; color: #383D41; }
+.prioridad-media   { background: #CFE7FF; color: #004085; }
+.prioridad-alta    { background: #F8D7DA; color: #721C24; }
+.prioridad-critica { background: #f5c6cb; color: #721c24; font-weight: 700; }
+
+/*****************************************************
+ *   ESTADO (COMPAT BACKWARD)
+ *   (por si hay otros sitios que aún usan .estado)
  *****************************************************/
 .estado {
   display: inline-block;
@@ -130,7 +298,7 @@
 .soporte-form select:focus,
 .soporte-form textarea:focus {
   outline: none;
-  border-color: #6A0DAD;
+  border-color: var(--color-primario);
   background: #fff;
 }
 
@@ -191,23 +359,24 @@
 }
 
 .soporte-chat-form input:focus {
-  border-color: #6A0DAD;
-}
-
-.soporte-error {
-  color: #C40000;
-  font-weight: 600;
-  margin-top: -8px;
+  border-color: var(--color-primario);
 }
 
 /*****************************************************
- *   LOADING / VACÍO
+ *   ERRORES / VACÍOS / LOADING
  *****************************************************/
+.soporte-error {
+  color: #C40000;
+  font-weight: 600;
+  margin-top: 8px;
+}
+
 .soporte-loading,
 .soporte-vacio {
   text-align: center;
   opacity: 0.7;
   font-size: 1rem;
+  margin-top: 16px;
 }
 
 /*****************************************************
@@ -221,5 +390,34 @@
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+/*****************************************************
+ *   RESPONSIVE
+ *****************************************************/
+@media (max-width: 700px) {
+  .soporte-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .soporte-header-acciones {
+    width: 100%;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .soporte-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .soporte-item-meta {
+    align-items: flex-start;
+  }
+
+  .soporte-badges {
+    justify-content: flex-start;
   }
 }

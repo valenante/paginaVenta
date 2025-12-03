@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import api from "../../utils/api";
+import Portal from "../../components/ui/Portal.jsx";
 import "../../styles/TicketsPage.css";
 
 export default function TicketsPage() {
@@ -98,12 +99,16 @@ export default function TicketsPage() {
   // UI
   // ============================
   return (
-    <div className="tickets-page">
-      <h1>🎫 Tickets de soporte</h1>
+    <div className="tickets-page-ticketsAdmin">
+      <h1 className="tickets-title-ticketsAdmin">🎫 Tickets de soporte</h1>
 
       {/* FILTROS */}
-      <div className="ticket-filtros">
-        <select value={estado} onChange={(e) => setEstado(e.target.value)}>
+      <div className="ticket-filtros-ticketsAdmin">
+        <select
+          className="ticket-select-ticketsAdmin"
+          value={estado}
+          onChange={(e) => setEstado(e.target.value)}
+        >
           <option value="">Estado</option>
           <option value="abierto">Abierto</option>
           <option value="en_progreso">En progreso</option>
@@ -111,7 +116,11 @@ export default function TicketsPage() {
           <option value="cerrado">Cerrado</option>
         </select>
 
-        <select value={prioridad} onChange={(e) => setPrioridad(e.target.value)}>
+        <select
+          className="ticket-select-ticketsAdmin"
+          value={prioridad}
+          onChange={(e) => setPrioridad(e.target.value)}
+        >
           <option value="">Prioridad</option>
           <option value="baja">Baja</option>
           <option value="media">Media</option>
@@ -120,6 +129,7 @@ export default function TicketsPage() {
         </select>
 
         <input
+          className="ticket-input-ticketsAdmin"
           type="text"
           placeholder="Tenant..."
           value={tenant}
@@ -127,23 +137,26 @@ export default function TicketsPage() {
         />
 
         <input
+          className="ticket-input-ticketsAdmin"
           type="text"
           placeholder="Buscar asunto..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
 
-        <button onClick={fetchTickets}>🔄 Actualizar</button>
+        <button className="ticket-refresh-btn-ticketsAdmin" onClick={fetchTickets}>
+          🔄 Actualizar
+        </button>
       </div>
 
       {/* TABLA */}
       {loading ? (
-        <p>Cargando tickets...</p>
+        <p className="tickets-loading-ticketsAdmin">Cargando tickets...</p>
       ) : tickets.length === 0 ? (
-        <p>No hay tickets.</p>
+        <p className="tickets-empty-ticketsAdmin">No hay tickets.</p>
       ) : (
-        <table className="tickets-table">
-          <thead>
+        <div className="tickets-table-wrapper-ticketsAdmin">
+          <table className="tickets-table-ticketsAdmin">          <thead>
             <tr>
               <th>Tenant</th>
               <th>Asunto</th>
@@ -153,87 +166,114 @@ export default function TicketsPage() {
             </tr>
           </thead>
 
-          <tbody>
-            {tickets.map((t) => (
-              <tr key={t._id} onClick={() => setSelected(t)}>
-                <td>{t.tenant}</td>
-                <td>{t.asunto}</td>
-                <td className={`prio prio-${t.prioridad}`}>{t.prioridad}</td>
-                <td>{t.estado}</td>
-                <td>{new Date(t.createdAt).toLocaleString()}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+            <tbody>
+              {tickets.map((t) => (
+                <tr
+                  key={t._id}
+                  className="tickets-row-ticketsAdmin"
+                  onClick={() => setSelected(t)}
+                >
+                  <td>{t.tenant}</td>
+                  <td>{t.asunto}</td>
+
+                  <td className={`ticket-prio-tag-ticketsAdmin prio-${t.prioridad}`}>
+                    {t.prioridad}
+                  </td>
+
+                  <td className={`ticket-estado-tag-ticketsAdmin estado-${t.estado}`}>
+                    {t.estado}
+                  </td>
+
+                  <td>{new Date(t.createdAt).toLocaleString()}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
 
       {/* MODAL */}
       {selected && (
-        <div className="ticket-modal" onClick={() => setSelected(null)}>
-          <div className="ticket-modal-content" onClick={(e) => e.stopPropagation()}>
-            <h2>{selected.asunto}</h2>
-            <p><strong>Tenant:</strong> {selected.tenant}</p>
+        <Portal>
+          <div className="ticket-modal-ticketsAdmin" onClick={() => setSelected(null)}>
+            <div
+              className="ticket-modal-content-ticketsAdmin"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <h2 className="ticket-modal-title-ticketsAdmin">{selected.asunto}</h2>
+              <p><strong>Tenant:</strong> {selected.tenant}</p>
 
-            <hr />
+              <hr className="ticket-divider-ticketsAdmin" />
 
-            {/* ESTADO Y PRIORIDAD */}
-            <div className="ticket-data-row">
-              <label>Estado:</label>
-              <select
-                value={selected.estado}
-                onChange={(e) => updateTicket({ estado: e.target.value })}
+              {/* ESTADO */}
+              <div className="ticket-data-row-ticketsAdmin">
+                <label>Estado:</label>
+                <select
+                  className="ticket-select-modal-ticketsAdmin"
+                  value={selected.estado}
+                  onChange={(e) => updateTicket({ estado: e.target.value })}
+                >
+                  <option value="abierto">Abierto</option>
+                  <option value="en_progreso">En progreso</option>
+                  <option value="resuelto">Resuelto</option>
+                  <option value="cerrado">Cerrado</option>
+                </select>
+              </div>
+
+              {/* PRIORIDAD */}
+              <div className="ticket-data-row-ticketsAdmin">
+                <label>Prioridad:</label>
+                <select
+                  className="ticket-select-modal-ticketsAdmin"
+                  value={selected.prioridad}
+                  onChange={(e) => updateTicket({ prioridad: e.target.value })}
+                >
+                  <option value="baja">Baja</option>
+                  <option value="media">Media</option>
+                  <option value="alta">Alta</option>
+                  <option value="urgente">Urgente</option>
+                </select>
+              </div>
+
+              <hr className="ticket-divider-ticketsAdmin" />
+
+              {/* CHAT */}
+              <h3 className="ticket-chat-title-ticketsAdmin">Mensajes</h3>
+              <div className="ticket-chat-ticketsAdmin">
+                {selected.mensajes.map((m, idx) => (
+                  <div key={idx} className={`ticket-msg-ticketsAdmin msg-${m.autor}`}>
+                    <p>{m.mensaje}</p>
+                    <span>{new Date(m.fecha).toLocaleString()}</span>
+                  </div>
+                ))}
+              </div>
+
+              <div className="ticket-msg-form-ticketsAdmin">
+                <input
+                  className="ticket-msg-input-ticketsAdmin"
+                  type="text"
+                  placeholder="Escribe un mensaje..."
+                  value={nuevoMensaje}
+                  onChange={(e) => setNuevoMensaje(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && enviarMensaje()}
+                />
+                <button
+                  className="ticket-msg-send-btn-ticketsAdmin"
+                  onClick={enviarMensaje}
+                >
+                  Enviar
+                </button>
+              </div>
+
+              <button
+                className="ticket-delete-btn-ticketsAdmin"
+                onClick={eliminarTicket}
               >
-                <option value="abierto">Abierto</option>
-                <option value="en_progreso">En progreso</option>
-                <option value="resuelto">Resuelto</option>
-                <option value="cerrado">Cerrado</option>
-              </select>
+                🗑 Eliminar ticket
+              </button>
             </div>
-
-            <div className="ticket-data-row">
-              <label>Prioridad:</label>
-              <select
-                value={selected.prioridad}
-                onChange={(e) => updateTicket({ prioridad: e.target.value })}
-              >
-                <option value="baja">Baja</option>
-                <option value="media">Media</option>
-                <option value="alta">Alta</option>
-                <option value="urgente">Urgente</option>
-              </select>
-            </div>
-
-            <hr />
-
-            {/* CHAT */}
-            <h3>Mensajes</h3>
-            <div className="ticket-chat">
-              {selected.mensajes.map((m, idx) => (
-                <div key={idx} className={`mensaje mensaje-${m.autor}`}>
-                  <p>{m.mensaje}</p>
-                  <span>{new Date(m.fecha).toLocaleString()}</span>
-                </div>
-              ))}
-            </div>
-
-            {/* ENVIAR MENSAJE */}
-            <div className="mensaje-form">
-              <input
-                type="text"
-                placeholder="Escribe un mensaje..."
-                value={nuevoMensaje}
-                onChange={(e) => setNuevoMensaje(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && enviarMensaje()}
-              />
-              <button onClick={enviarMensaje}>Enviar</button>
-            </div>
-
-            {/* BOTÓN ELIMINAR */}
-            <button className="delete-ticket-btn" onClick={eliminarTicket}>
-              🗑 Eliminar ticket
-            </button>
           </div>
-        </div>
+        </Portal>
       )}
     </div>
   );

@@ -1,217 +1,354 @@
+/* PlanDetallesModal.css */
+
+/*****************************************************
+ * OVERLAY
+ *****************************************************/
+
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.45);
+  background: rgba(15, 23, 42, 0.55);
   display: flex;
-  justify-content: center;
   align-items: center;
-  z-index: 2000;
+  justify-content: center;
+  z-index: 90;
+  overflow: hidden;           /* 👈 evita que el propio overlay tenga scroll lateral */
 }
-
-/* CONTENEDOR MODAL */
 
 .modal-plan {
-  background: white;
-  width: 90%;
-  max-width: 560px;
-  padding: 2rem 2.2rem;
-  border-radius: 20px;
-  box-shadow: 0 18px 40px rgba(0,0,0,0.3);
-  animation: fadeIn 0.2s ease;
+  position: relative;
+  box-sizing: border-box;     /* 👈 asegura que padding cuenta dentro del width */
+  max-width: 780px;
+  width: 100%;                /* 👈 nunca más ancho que el viewport */
   max-height: 90vh;
-  overflow-y: auto;
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 24px 80px rgba(15, 23, 42, 0.4);
+  padding: 1.6rem 1.8rem 1.7rem;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
-.modal-plan h2 {
-  font-size: 1.9rem;
-  color: #6A0DAD;
+/* Permitir scroll solo al contenido interior (no al header/CTA) */
+.modal-feature-groups {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 0.4rem;
+  margin-bottom: 1.1rem;
+}
+
+/*****************************************************
+ * HEADER
+ *****************************************************/
+
+.modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.9rem;
+}
+
+.modal-title {
+  margin: 0;
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  color: var(--color-texto);
+}
+
+.modal-subtitle {
+  margin: 0.25rem 0 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-texto-suave);
+}
+
+/* Botón cerrar (icono) */
+
+.btn-cerrar-icon {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 1.1rem;
+  line-height: 1;
+  color: #6b7280;
+  border-radius: var(--radius-pill);
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.btn-cerrar-icon:hover {
+  background: #f3f4f6;
+  color: #111827;
+}
+
+/*****************************************************
+ * PRECIO Y DESCRIPCIÓN
+ *****************************************************/
+
+.modal-precio {
+  margin: 0;
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  font-size: var(--font-size-md);
   margin-bottom: 0.4rem;
 }
 
-.modal-precio {
-  font-size: 1.25rem;
+.modal-precio-cantidad {
+  font-size: 1.6rem;
   font-weight: 700;
-  color: #333;
-  margin-bottom: 0.6rem;
+}
+
+.modal-precio-unidad {
+  font-size: var(--font-size-sm);
+  color: var(--color-texto-suave);
 }
 
 .precio-anual {
-  font-size: 0.9rem;
-  margin-left: 0.5rem;
-  color: #555;
+  font-size: var(--font-size-xs);
+  color: var(--color-texto-suave);
 }
 
 .modal-descripcion {
-  margin-bottom: 1.1rem;
-  color: #444;
+  margin: 0 0 0.9rem;
+  font-size: var(--font-size-sm);
+  color: var(--color-texto-suave);
 }
 
-/* RESUMEN SUPERIOR */
+/*****************************************************
+ * RESUMEN SUPERIOR (PILLS POR CATEGORÍA)
+ *****************************************************/
 
 .modal-resumen {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.75rem;
-  margin: 1.2rem 0 0.8rem;
+  gap: 0.6rem;
+  margin: 0 0 1rem;
 }
 
 .resumen-item {
-  padding: 0.55rem 0.9rem;
-  border-radius: 999px;
-  background: #f7f3ff;
-  display: flex;
-  flex-direction: column;
-  min-width: 150px;
-  border: 1px solid rgba(106,13,173,0.08);
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--color-borde-suave);
+  background: #f9fafb;
+  padding: 0.35rem 0.8rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: var(--font-size-xs);
+  color: var(--color-texto);
 }
 
 .resumen-item.total {
-  background: #6a0dad;
-  color: #fff;
-  border: none;
+  background: var(--color-primario-suave);
+  border-color: rgba(96, 181, 255, 0.7);
+  font-weight: 600;
 }
 
-button.resumen-item {
+.resumen-item.pill {
   cursor: pointer;
-  text-align: left;
-  transition:
-    transform 0.08s ease,
-    box-shadow 0.08s ease,
-    background 0.12s ease,
-    border-color 0.12s ease;
+  background: #ffffff;
 }
 
-button.resumen-item:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-  background: #f1e8ff;
-}
-
-.resumen-item.active {
-  border-color: #6a0dad;
-  background: #f3e7ff;
-  box-shadow: 0 0 0 1px rgba(106,13,173,0.25);
+.resumen-item.pill.active {
+  background: var(--color-primario-suave);
+  border-color: rgba(96, 181, 255, 0.9);
 }
 
 .resumen-count {
-  font-size: 1.1rem;
+  min-width: 1.6rem;
+  height: 1.6rem;
+  border-radius: var(--radius-pill);
+  background: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   font-weight: 700;
+  font-size: var(--font-size-xs);
 }
 
 .resumen-count.small {
-  font-size: 1rem;
+  min-width: 1.4rem;
+  height: 1.4rem;
 }
 
 .resumen-label {
-  font-size: 0.78rem;
-  opacity: 0.9;
+  white-space: nowrap;
 }
 
-/* BLOQUES POR CATEGORÍA */
+/*****************************************************
+ * TÍTULO SECCIÓN
+ *****************************************************/
 
-.modal-feature-groups {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  margin-top: 0.6rem;
+.modal-section-title {
+  margin: 0 0 0.7rem;
+  font-size: var(--font-size-md);
+  font-weight: 600;
+  color: var(--color-texto);
 }
+
+/*****************************************************
+ * GRUPOS DE FUNCIONALIDADES (ACORDEÓN)
+ *****************************************************/
 
 .feature-group {
-  border-radius: 12px;
-  border: 1px solid #eee;
-  background: #faf7ff;
-  padding: 0.65rem 0.9rem 0.8rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-borde-suave);
+  background: #f9fafb;
+  padding: 0.6rem 0.75rem 0.5rem;
+  margin-bottom: 0.6rem;
 }
 
 .feature-group-header {
   width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: transparent;
   border: none;
-  padding: 0;
+  background: transparent;
+  padding: 0.25rem 0.25rem 0.35rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   cursor: pointer;
 }
 
 .feature-group-title {
-  font-weight: 600;
-  color: #6a0dad;
   display: block;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: #111827;
 }
 
 .feature-group-count {
-  font-size: 0.75rem;
-  color: #777;
+  display: block;
+  font-size: var(--font-size-xs);
+  color: var(--color-texto-suave);
 }
 
 .feature-group-toggle {
-  font-size: 1.4rem;
+  font-size: 1.2rem;
   line-height: 1;
-  color: #6a0dad;
+  color: var(--color-texto-suave);
 }
 
+/* Lista de features */
+
 .feature-group-list {
-  margin-top: 0.45rem;
-  padding-left: 1.1rem;
-  list-style: disc;
+  list-style: none;
+  padding: 0.1rem 0.25rem 0.4rem;
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-texto);
 }
 
 .feature-group-list li {
-  margin-bottom: 0.45rem;
+  margin-bottom: 0.4rem;
 }
 
-.feature-ver-mas {
-  font-size: 0.8rem;
-  color: #666;
-  font-style: italic;
+.feature-group-list strong {
+  font-weight: 600;
 }
 
 .feature-desc {
-  font-size: 0.85rem;
-  color: #555;
-  margin-top: 2px;
+  margin: 0.05rem 0 0;
+  font-size: var(--font-size-xs);
+  color: var(--color-texto-suave);
 }
 
-/* BOTONES INFERIORES */
+/* “...y X más” */
+
+.feature-ver-mas {
+  margin-top: 0.2rem;
+  font-size: var(--font-size-xs);
+  color: var(--color-texto-suave);
+  font-style: italic;
+}
+
+/*****************************************************
+ * CTA FINAL + BOTÓN CERRAR
+ *****************************************************/
 
 .btn-elegir.big {
-  display: block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   width: 100%;
-  text-align: center;
-  background: #6A0DAD;
-  color: white;
-  padding: 0.8rem;
-  border-radius: 8px;
-  margin-top: 1.5rem;
-  font-size: 1.1rem;
+  padding: 0.7rem 1rem;
+  margin-top: 0.4rem;
+  border-radius: var(--radius-pill);
+  border: none;
+  text-decoration: none;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  background: var(--color-primario);
+  color: var(--color-texto-invertido);
+  box-shadow: var(--shadow-suave);
+  cursor: pointer;
+  transition: background 0.15s ease, box-shadow 0.15s ease,
+    transform 0.15s ease;
+}
+
+.btn-elegir.big:hover {
+  background: var(--color-primario-oscuro);
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-1px);
 }
 
 .btn-cerrar {
-  margin-top: 0.9rem;
+  margin-top: 0.5rem;
   width: 100%;
-  padding: .7rem;
-  border: none;
-  background: #eee;
-  border-radius: 8px;
-  font-weight: 600;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--color-borde-suave);
+  background: #ffffff;
+  padding: 0.5rem 1rem;
+  font-size: var(--font-size-xs);
+  color: var(--color-texto-suave);
   cursor: pointer;
+  transition: background 0.15s ease;
 }
 
-/* ANIMACIÓN */
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+.btn-cerrar:hover {
+  background: #f9fafb;
 }
 
-/* Scrollbar del modal (opcional) */
+/*****************************************************
+ * RESPONSIVE
+ *****************************************************/
 
-.modal-plan::-webkit-scrollbar {
-  width: 6px;
-}
+@media (max-width: 640px) {
+  .modal-overlay {
+    align-items: flex-start;             /* 👈 que nazca un poco más arriba */
+    padding: 0.75rem 0.5rem;            /* 👈 menos padding lateral */
+  }
 
-.modal-plan::-webkit-scrollbar-thumb {
-  background: rgba(0,0,0,0.2);
-  border-radius: 4px;
+  .modal-plan {
+    max-height: calc(100vh - 1.5rem);   /* 👈 usa casi todo el alto */
+    width: 100%;                        /* 👈 ocupa el ancho disponible */
+    padding: 1.2rem 1.1rem 1.3rem;
+    border-radius: 16px;
+  }
+
+  .modal-header {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .modal-title {
+    font-size: 1.2rem;
+  }
+
+  .modal-resumen {
+    gap: 0.4rem;
+    overflow-x: auto;                   /* 👈 si los pills no caben, scroll horizontal interno */
+    padding-bottom: 0.2rem;
+  }
+
+  .resumen-label {
+    max-width: 9rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 }

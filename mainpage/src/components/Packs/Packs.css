@@ -1,177 +1,253 @@
+/* src/components/Packs/Packs.css */
+
 .Packs {
-  padding: 60px 10%;
-  background: linear-gradient(180deg, #faf7ff 0%, #ffffff 100%);
-  font-family: "Poppins", sans-serif;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  padding: var(--space-2xl) var(--space-lg);
 }
 
-/* CABECERA */
+.Packs-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* HEADER */
+
 .fila-superior {
-  width: 100%;
+  margin-bottom: var(--space-xl);
+}
+
+.packs-header {
   text-align: center;
-  margin-bottom: 60px;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.packs-kicker {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem 0.7rem;
+  border-radius: var(--radius-pill);
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  background: var(--color-primario-suave);
+  color: var(--color-primario-oscuro);
+  margin-bottom: 0.6rem;
 }
 
 .packs-header h2 {
-  font-size: 2.2rem;
-  font-weight: 700;
-  color: #6A0DAD;
-  margin-bottom: 10px;
+  margin: 0 0 0.5rem;
+  font-size: var(--font-size-2xl);
 }
 
 .packs-header p {
-  font-size: 1.05rem;
-  color: #555;
-  line-height: 1.7;
+  margin: 0;
+  font-size: var(--font-size-md);
+  color: var(--color-texto-suave);
+}
+
+/* ESTADOS (LOADING / ERROR / VACÍO) */
+
+.packs-estado {
+  text-align: center;
+  font-size: var(--font-size-sm);
+  color: var(--color-texto-suave);
+  margin-top: 0.8rem;
+}
+
+.packs-estado-error {
+  color: var(--color-error);
 }
 
 /* GRID DE CARDS */
+
 .Packs-cards {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
-  gap: 30px;
-  width: 100%;
-  max-width: 1200px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.5rem;
 }
 
-/* TARJETA GENÉRICA */
+@media (max-width: 960px) {
+  .Packs-cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .Packs-cards {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* CARD BASE */
+
 .PackCard {
-  background: #fff;
-  border-radius: 16px;
-  padding: 40px 30px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+  background: #ffffff;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-borde-suave);
+  padding: 1.6rem 1.4rem 1.4rem;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  transition: transform 0.18s ease, box-shadow 0.18s ease,
+    border-color 0.18s ease, background 0.18s ease;
 }
 
 .PackCard:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-hover);
+  border-color: rgba(96, 181, 255, 0.7);
+}
+
+/* CARD DESTACADA (PLAN MÁS ELEGIDO) */
+
+.PackCard--destacado {
+  border-width: 2px;
+  border-color: var(--color-primario);
+  background: linear-gradient(180deg, #f5f9ff 0%, #ffffff 55%);
   transform: translateY(-6px);
-  box-shadow: 0 16px 35px rgba(0, 0, 0, 0.12);
 }
 
-/* COLORES POR ÍNDICE */
-.PackCard-0 { border-top: 5px solid #6A0DAD; }
-.PackCard-1 { border-top: 5px solid #FF6700; }
-.PackCard-2 { border-top: 5px solid #2dc653; }
-.PackCard-3 { border-top: 5px solid #6A0DAD; } /* fallback */
-.PackCard-4 { border-top: 5px solid #6A0DAD; }
-
-/* TÍTULO */
-.PackCard h3 {
-  font-size: 1.5rem;
-  color: #6A0DAD;
-  font-weight: 700;
-  margin-bottom: 20px;
-}
-
-/* PRECIOS */
-.precio {
-  font-size: 1.3rem;
-  font-weight: bold;
-  margin-bottom: 1rem;
-  color: #2d3436;
-}
-
-.precio-anual {
-  display: block;
-  font-size: 0.9rem;
-  color: #6A0DAD;
-  margin-top: 3px;
-}
-.PackCard ul {
-  padding-left: 0;
-  margin-top: 10px;
-}
-
-.PackCard li {
-  list-style: none;
-  position: relative;
-  margin-bottom: 8px;
-  padding-left: 20px;
-  color: #444;
-}
-
-.PackCard li::before {
-  content: "✔";
-  color: #6A0DAD;
+.PackCard-badge {
   position: absolute;
-  left: 0;
-  top: 0;
+  top: 0.9rem;
+  right: 1rem;
+  padding: 0.25rem 0.7rem;
+  border-radius: var(--radius-pill);
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  background: var(--color-secundario);
+  color: #ffffff;
 }
 
-/* BOTÓN */
-.btn-elegir {
-  background: #FF6700;
-  color: white;
-  padding: 0.6rem 1rem;
-  border-radius: 8px;
-  display: inline-block;
-  text-decoration: none;
-  transition: background 0.2s ease;
+/* TÍTULOS */
+
+.PackCard-titulo {
+  margin: 0;
+  font-size: var(--font-size-lg);
 }
 
-.btn-elegir:hover {
-  background: #e65900;
+.PackCard-subtitulo {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-texto-suave);
 }
 
-/* CONTENEDOR DE ACCIONES */
-.pack-actions {
-  margin-top: 18px;
+/* PRECIO */
+
+.precio-wrapper {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  align-items: baseline;
+  gap: 0.25rem;
+  margin-top: 0.4rem;
 }
 
-/* VER DETALLES (izquierda) */
-.btn-detalles {
-  background: transparent;
-  border: none;
-  color: #6A0DAD;
-  font-size: 0.9rem;
-  cursor: pointer;
+.precio-cantidad {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--color-texto);
+}
+
+.precio-unidad {
+  font-size: var(--font-size-sm);
+  color: var(--color-texto-suave);
+}
+
+.precio-nota {
+  margin: 0;
+  font-size: var(--font-size-xs);
+  color: var(--color-texto-suave);
+}
+
+/* LISTA DE FEATURES */
+
+.PackCard-lista {
+  list-style: none;
   padding: 0;
+  margin: 0.6rem 0 0.8rem;
+  font-size: var(--font-size-sm);
+  color: var(--color-texto);
+}
+
+.PackCard-lista li {
+  display: flex;
+  gap: 0.35rem;
+  margin-bottom: 0.35rem;
+}
+
+.PackCard-lista li::before {
+  content: "✓";
+  font-weight: 700;
+  color: var(--color-primario-oscuro);
+}
+
+/* “VER MÁS” */
+
+.ver-mas {
+  cursor: pointer;
+  color: var(--color-primario-oscuro);
+  font-weight: 500;
+}
+
+.ver-mas::before {
+  content: none;
+}
+
+.ver-mas:hover {
   text-decoration: underline;
-  transition: opacity 0.2s ease;
+}
+
+/* ACCIONES */
+
+.pack-actions {
+  margin-top: auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.btn-detalles,
+.btn-elegir {
+  flex: 1;
+  text-align: center;
+  padding: 0.6rem 0.9rem;
+  border-radius: var(--radius-pill);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+  text-decoration: none;
+  transition: background 0.15s ease, color 0.15s ease,
+    box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+/* Botón secundario (detalles) */
+
+.btn-detalles {
+  background: #ffffff;
+  color: var(--color-texto);
+  border-color: var(--color-borde-suave);
 }
 
 .btn-detalles:hover {
-  opacity: 0.7;
+  background: #f9fafb;
 }
 
-/* ELEGIR PLAN (principal) */
+/* Botón principal (elegir plan) */
+
 .btn-elegir {
-  background: #FF6700;
-  color: white;
-  padding: 0.45rem 0.9rem;
-  border-radius: 8px;
-  text-decoration: none;
-  font-weight: 600;
-  font-size: 0.9rem;
-  transition: background 0.2s ease;
+  background: var(--color-primario);
+  color: var(--color-texto-invertido);
+  box-shadow: var(--shadow-suave);
 }
 
 .btn-elegir:hover {
-  background: #e45c00;
-}
-
-
-/* RESPONSIVE */
-@media (max-width: 768px) {
-  .Packs {
-    padding: 60px 6%;
-  }
-
-  .packs-header h2 {
-    font-size: 1.9rem;
-  }
-
-  .Packs-cards {
-    grid-template-columns: 1fr;
-    gap: 25px;
-  }
-
-  .PackCard {
-    text-align: center;
-  }
+  background: var(--color-primario-oscuro);
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-1px);
 }

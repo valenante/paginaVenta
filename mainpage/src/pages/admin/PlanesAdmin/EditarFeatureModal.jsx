@@ -3,14 +3,14 @@ import api from "../../../utils/api";
 import "./featureModal.css";
 
 export default function EditarFeatureModal({ feature, onClose, onSave }) {
-const [form, setForm] = useState({
-  nombre: feature.nombre,
-  clave: feature.clave,
-  descripcion: feature.descripcion,
-  categoria: feature.categoria,
-  activa: feature.activa,
-  configKey: feature.configKey || "",
-});
+  const [form, setForm] = useState({
+    nombre: feature.nombre,
+    clave: feature.clave,                // ⬅️ Ya existía aquí
+    descripcion: feature.descripcion,
+    categoria: feature.categoria,
+    activa: feature.activa,
+    configKey: feature.configKey || "",
+  });
 
   const [loading, setLoading] = useState(false);
 
@@ -35,15 +35,17 @@ const [form, setForm] = useState({
   };
 
   return (
-    <div className="modal-overlay">
-      <div className="modal-card">
-        <h2>✏️ Editar Feature</h2>
+    <div className="modal-overlay-featureEdit">
+      <div className="modal-card-featureEdit">
+        <h2 className="modal-title-featureEdit">✏️ Editar Feature</h2>
 
-        <form onSubmit={guardar} className="modal-form">
+        <form onSubmit={guardar} className="modal-form-featureEdit">
 
-          <label>
+          {/* ===== NOMBRE ===== */}
+          <label className="form-label-featureEdit">
             Nombre
             <input
+              className="input-featureEdit"
               name="nombre"
               value={form.nombre}
               onChange={handleChange}
@@ -51,19 +53,36 @@ const [form, setForm] = useState({
             />
           </label>
 
-          <label>
-            Clave de configuración (configKey)
+          {/* ===== CLAVE INTERNA (FALTABA) ===== */}
+          <label className="form-label-featureEdit">
+            Clave interna (slug)
             <input
-              name="configKey"
-              value={form.configKey || ""}
+              className="input-featureEdit"
+              name="clave"
+              value={form.clave}
               onChange={handleChange}
-              placeholder="Ej: stockHabilitado"
+              placeholder="Ej: estadisticas_avanzadas"
+              required
             />
           </label>
 
-          <label>
+          {/* ===== CONFIGKEY ===== */}
+          <label className="form-label-featureEdit">
+            Clave de configuración (configKey)
+            <input
+              className="input-featureEdit"
+              name="configKey"
+              value={form.configKey}
+              onChange={handleChange}
+              placeholder="Ej: features.estadisticasAvanzadas"
+            />
+          </label>
+
+          {/* ===== CATEGORÍA ===== */}
+          <label className="form-label-featureEdit">
             Categoría
             <select
+              className="select-featureEdit"
               name="categoria"
               value={form.categoria}
               onChange={handleChange}
@@ -76,30 +95,46 @@ const [form, setForm] = useState({
             </select>
           </label>
 
-          <label>
+          {/* ===== DESCRIPCIÓN ===== */}
+          <label className="form-label-featureEdit">
             Descripción
             <textarea
+              className="textarea-featureEdit"
               name="descripcion"
               value={form.descripcion}
               onChange={handleChange}
             />
           </label>
 
-          <label className="switch-label">
+          {/* ===== SWITCH ACTIVA ===== */}
+          <label className="switch-label-featureEdit">
             <input
               type="checkbox"
+              className="switch-checkbox-featureEdit"
               checked={form.activa}
               onChange={toggleActiva}
             />
-            <span>{form.activa ? "Activa ✔" : "Inactiva ✖"}</span>
+            <span className="switch-text-featureEdit">
+              {form.activa ? "Activa ✔" : "Inactiva ✖"}
+            </span>
           </label>
 
-          <div className="modal-buttons">
-            <button type="submit" className="btn-primary" disabled={loading}>
+          {/* ===== BOTONES ===== */}
+          <div className="modal-buttons-featureEdit">
+            <button
+              type="submit"
+              className="btn-primary-featureEdit"
+              disabled={loading}
+            >
               {loading ? "Guardando..." : "Guardar Cambios"}
             </button>
 
-            <button type="button" className="btn-secondary" onClick={onClose}>
+            <button
+              type="button"
+              className="btn-secondary-featureEdit"
+              onClick={onClose}
+              disabled={loading}
+            >
               Cancelar
             </button>
           </div>

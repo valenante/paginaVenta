@@ -68,9 +68,9 @@ export default function Paso2ConfiguracionBasica({ config, setConfig, plan }) {
   };
 
   return (
-    <section className="paso2-config">
+    <section className="paso2-config section section--wide">
       <header className="paso2-header">
-        <div>
+        <div className="paso2-header-text">
           <h2>⚙️ Configuración inicial</h2>
           <p>
             Activa o desactiva las funcionalidades incluidas en tu plan. Esta
@@ -80,13 +80,13 @@ export default function Paso2ConfiguracionBasica({ config, setConfig, plan }) {
         </div>
 
         <div className="plan-summary">
-          <div className="plan-summary-pill principal">
+          <div className="plan-summary-pill plan-summary-pill--primary">
             <span className="pill-number">{totalFeatures}</span>
             <span className="pill-label">
               funciones incluidas en tu plan
             </span>
           </div>
-          <div className="plan-summary-pill">
+          <div className="plan-summary-pill plan-summary-pill--neutral">
             <span className="pill-number">{totalCategorias}</span>
             <span className="pill-label">bloques de configuración</span>
           </div>
@@ -96,7 +96,9 @@ export default function Paso2ConfiguracionBasica({ config, setConfig, plan }) {
       {/* === BLOQUES DE FEATURES === */}
       <div className="config-features-wrapper">
         {totalFeatures === 0 && (
-          <p>No hay opciones configurables en este plan.</p>
+          <p className="config-empty text-suave">
+            No hay opciones configurables en este plan.
+          </p>
         )}
 
         {categorias.map(([catKey, grupo]) => {
@@ -110,22 +112,19 @@ export default function Paso2ConfiguracionBasica({ config, setConfig, plan }) {
           return (
             <div
               key={catKey}
-              className={`feature-category-card ${
-                abierta ? "open" : "closed"
-              }`}
+              className={`feature-category-card card ${abierta ? "open" : "closed"
+                }`}
             >
               <button
                 type="button"
                 className="feature-category-header"
                 onClick={() =>
-                  setOpenCategory((prev) =>
-                    prev === catKey ? null : catKey
-                  )
+                  setOpenCategory((prev) => (prev === catKey ? null : catKey))
                 }
               >
                 <div className="feature-category-title">
                   {getTituloCategoria(catKey)}
-                  <span className="feature-category-count">
+                  <span className="feature-category-count badge badge-aviso">
                     {configurables.length + fijas.length} función
                     {configurables.length + fijas.length !== 1 && "es"}
                   </span>
@@ -157,9 +156,7 @@ export default function Paso2ConfiguracionBasica({ config, setConfig, plan }) {
                               }
                             />
                             <div className="feature-text">
-                              <span className="feature-name">
-                                {f.nombre}
-                              </span>
+                              <span className="feature-name">{f.nombre}</span>
                               {f.descripcion && (
                                 <small className="feature-desc">
                                   {f.descripcion}
@@ -193,59 +190,71 @@ export default function Paso2ConfiguracionBasica({ config, setConfig, plan }) {
       </div>
 
       {/* === Colores básicos === */}
-      <div className="config-colores">
+      <div className="config-colores card">
         <h3>🎨 Paleta de colores</h3>
         <p className="config-help">
           Elige los colores principales de tu marca. Podrás ajustarlos más
           adelante desde el panel.
         </p>
+
         <div className="color-pickers">
           <div className="color-item">
             <label>Principal</label>
-            <input
-              type="color"
-              name="principal"
-              value={config.colores.principal}
-              onChange={handleColorChange}
-            />
-            <span>{config.colores.principal}</span>
+            <div className="color-input-wrapper">
+              <input
+                type="color"
+                name="principal"
+                value={config.colores.principal}
+                onChange={handleColorChange}
+              />
+              <span className="color-code">{config.colores.principal}</span>
+            </div>
           </div>
+
           <div className="color-item">
             <label>Secundario</label>
-            <input
-              type="color"
-              name="secundario"
-              value={config.colores.secundario}
-              onChange={handleColorChange}
-            />
-            <span>{config.colores.secundario}</span>
+            <div className="color-input-wrapper">
+              <input
+                type="color"
+                name="secundario"
+                value={config.colores.secundario}
+                onChange={handleColorChange}
+              />
+              <span className="color-code">{config.colores.secundario}</span>
+            </div>
           </div>
         </div>
       </div>
 
       {/* === Información restaurante === */}
-      <div className="config-info">
+      <div className="config-info card">
         <h3>📞 Información básica del restaurante</h3>
         <p className="config-help">
           Estos datos aparecerán en algunas comunicaciones y en el panel del
           TPV. Podrás completarlos luego más en detalle.
         </p>
 
-        <label>Teléfono</label>
-        <input
-          type="text"
-          value={config.informacionRestaurante.telefono}
-          onChange={(e) => handleInfoChange("telefono", e.target.value)}
-          placeholder="Ej. +34 612 345 678"
-        />
+        <div className="config-info-grid">
+          <div className="config-info-field">
+            <label>Teléfono</label>
+            <input
+              type="text"
+              value={config.informacionRestaurante.telefono}
+              onChange={(e) => handleInfoChange("telefono", e.target.value)}
+              placeholder="Ej. +34 612 345 678"
+            />
+          </div>
 
-        <label>Dirección</label>
-        <input
-          type="text"
-          value={config.informacionRestaurante.direccion}
-          onChange={(e) => handleInfoChange("direccion", e.target.value)}
-          placeholder="Ej. Calle Mayor 12, Madrid"
-        />
+          <div className="config-info-field">
+            <label>Dirección</label>
+            <input
+              type="text"
+              value={config.informacionRestaurante.direccion}
+              onChange={(e) => handleInfoChange("direccion", e.target.value)}
+              placeholder="Ej. Calle Mayor 12, Madrid"
+            />
+          </div>
+        </div>
       </div>
     </section>
   );

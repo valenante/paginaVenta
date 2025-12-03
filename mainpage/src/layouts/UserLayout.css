@@ -1,0 +1,11 @@
+/* =========================================================
+   USER LAYOUT ALEF — Navbar + Contenido
+   ========================================================= */
+
+.userlayout-root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #0b0b16;
+}
+

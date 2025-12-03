@@ -26,6 +26,16 @@ export default function CartaConfigPage() {
     if (config) setForm(config);
   }, [config]);
 
+  if (!config) {
+    return (
+      <div className="carta-config-page section section--wide">
+        <div className="card carta-config-card">
+          <h3>Cargando configuración...</h3>
+        </div>
+      </div>
+    );
+  }
+
   // ============================
   // 🔧 Manejo genérico del form
   // ============================
@@ -178,7 +188,10 @@ export default function CartaConfigPage() {
     try {
       setSaving(true);
       const { data } = await api.put("/configuracion", form);
-      setConfig(data);
+
+      const cfg = data.config ?? data;   // 👈 desenvolver por si acaso
+      setConfig(cfg);
+
       setAlerta({
         tipo: "exito",
         mensaje: "Configuración actualizada correctamente",
@@ -246,13 +259,6 @@ export default function CartaConfigPage() {
     promoCategoria ? p.categoria === promoCategoria : true
   );
 
-
-  const toggleProductoSeleccion = (id) => {
-    setPromoSeleccionados((prev) =>
-      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
-    );
-  };
-
   const actualizarProductosSeleccionados = async (dataActualizar) => {
     if (!promoSeleccionados.length) {
       setAlerta({
@@ -305,13 +311,30 @@ export default function CartaConfigPage() {
   // RENDER
   // ============================
   return (
-    <div className="config-page carta-config">
-      <div className="config-card">
-        <h2 className="config-title">Configuración de la Carta y Página Principal</h2>
+    <div className="carta-config-page section section--wide">
+      <div className="card carta-config-card">
+        {/* ===== HEADER PRINCIPAL ===== */}
+        <header className="carta-config-header">
+          <div>
+            <h2 className="config-title">
+              🍽 Configuración de la carta y página principal
+            </h2>
+            <p className="config-subtitle">
+              Ajusta la información que verán tus clientes al entrar en la carta,
+              las imágenes destacadas del home y el estilo visual general.
+            </p>
+          </div>
+        </header>
 
         {/* === INFORMACIÓN GENERAL === */}
         <section className="config-section">
-          <h3 className="section-title">📍 Información del Restaurante</h3>
+          <div className="config-section-header">
+            <h3 className="section-title">📍 Información del restaurante</h3>
+            <p className="section-description">
+              Estos datos aparecerán en la cabecera de la carta y en distintos
+              puntos de la experiencia del cliente.
+            </p>
+          </div>
 
           <div className="config-field">
             <label>Teléfono</label>
@@ -353,7 +376,7 @@ export default function CartaConfigPage() {
             />
           </div>
 
-          <div className="config-field-group">
+          <div className="config-field-row">
             <div className="config-field">
               <label>Horario de comida</label>
               <input
@@ -380,19 +403,27 @@ export default function CartaConfigPage() {
 
         {/* === IMÁGENES HOME === */}
         <section className="config-section">
-          <h3 className="section-title">🖼️ Imágenes del Home</h3>
+          <div className="config-section-header">
+            <h3 className="section-title">🖼 Imágenes del home</h3>
+            <p className="section-description">
+              Gestiona las imágenes del carrusel principal y de los bloques de
+              secciones que se muestran en la página de inicio.
+            </p>
+          </div>
 
           {["carrousel", "secciones"].map((section) => (
             <div key={section} className="imagenes-bloque">
               <div className="section-subheader">
-                <h4>{section === "carrousel" ? "Carrousel" : "Secciones"}</h4>
+                <h4 className="subsection-title">
+                  {section === "carrousel" ? "Carrusel" : "Secciones"}
+                </h4>
                 <span className="section-subtitle">
                   Arrastra imágenes o haz clic para añadir
                 </span>
               </div>
 
               <div
-                className={`imagenes-grid ${dragOverSection === section ? "drag-over" : ""
+                className={`imagenes-grid card-border-dashed ${dragOverSection === section ? "drag-over" : ""
                   }`}
                 onDragOver={(e) => {
                   e.preventDefault();
@@ -411,14 +442,25 @@ export default function CartaConfigPage() {
                     <button
                       type="button"
                       className="btn-icon btn-delete"
-                      onClick={() => handleRemoveImage(section, i)}
+                      onClick={(ev) => {
+                        ev.stopPropagation();
+                        handleRemoveImage(section, i);
+                      }}
                     >
                       🗑
                     </button>
                   </div>
                 ))}
 
-                <button type="button" className="btn-add">
+                <button
+                  type="button"
+                  className="btn btn-secundario btn-add"
+                  onClick={(ev) => {
+                    ev.stopPropagation();
+                    setDragOverSection(section);
+                    fileInputRef.current?.click();
+                  }}
+                >
                   ➕ Añadir
                 </button>
               </div>
@@ -438,26 +480,32 @@ export default function CartaConfigPage() {
 
         {/* === TEXTOS HOME === */}
         <section className="config-section">
-          <h3 className="section-title">📝 Textos del Home</h3>
+          <div className="config-section-header">
+            <h3 className="section-title">📝 Textos del home</h3>
+            <p className="section-description">
+              Mensajes breves que acompañan a las imágenes del carrusel y a las
+              secciones destacadas.
+            </p>
+          </div>
 
           {["carrousel", "secciones"].map((section) => (
             <div key={section} className="textos-section">
               <div className="textos-header">
-                <h4>
-                  {section === "carrousel" ? "Carrousel" : "Secciones"}{" "}
-                  <span className="contador">
-                    ({form.textosHome?.[section]?.length || 0})
+                <h4 className="subsection-title">
+                  {section === "carrousel" ? "Carrusel" : "Secciones"}{" "}
+                  <span className="badge badge-aviso contador">
+                    {form.textosHome?.[section]?.length || 0} textos
                   </span>
                 </h4>
               </div>
 
               <ul className="textos-lista">
                 {form.textosHome?.[section]?.map((t, i) => (
-                  <li key={i} className="texto-item">
+                  <li key={i} className="texto-item card-row">
                     <span>{t}</span>
                     <button
                       type="button"
-                      className="btn-icon btn-remove"
+                      className="btn-icon btn-delete"
                       onClick={() => handleRemoveText(section, i)}
                     >
                       🗑
@@ -468,7 +516,7 @@ export default function CartaConfigPage() {
                 <li className="li-add">
                   <button
                     type="button"
-                    className="btn-add"
+                    className="btn btn-secundario btn-add"
                     onClick={() => handleAddText(section)}
                   >
                     ➕ Añadir texto
@@ -481,7 +529,13 @@ export default function CartaConfigPage() {
 
         {/* === CONFIGURACIÓN CARTA === */}
         <section className="config-section">
-          <h3 className="section-title">🍽️ Opciones de la Carta</h3>
+          <div className="config-section-header">
+            <h3 className="section-title">🍽 Opciones de la carta</h3>
+            <p className="section-description">
+              Define qué información se muestra en cada producto y cómo se ordena
+              la carta.
+            </p>
+          </div>
 
           <label className="checkbox-row">
             <input
@@ -514,13 +568,31 @@ export default function CartaConfigPage() {
           </label>
 
           <div className="config-field">
+            <label>Tamaño de las imágenes de producto</label>
+            <select
+              name="carta.tamanoImagen"
+              value={form.carta?.tamanoImagen || "mediano"}
+              onChange={handleChange}
+            >
+              <option value="pequeno">Pequeño</option>
+              <option value="mediano">Mediano (por defecto)</option>
+              <option value="grande">Grande</option>
+            </select>
+            <small className="theme-help">
+              Afecta al tamaño de la miniatura en cada tarjeta de producto.
+            </small>
+          </div>
+
+          <div className="config-field">
             <label>Orden de la carta</label>
             <select
               name="carta.modoOrden"
               value={form.carta?.modoOrden || "por_categoria"}
               onChange={handleChange}
             >
-              <option value="por_categoria">Por categorías (por defecto)</option>
+              <option value="por_categoria">
+                Por categorías (por defecto)
+              </option>
               <option value="alfabetico">Alfabético (A-Z)</option>
               <option value="precio_asc">Precio: de menor a mayor</option>
               <option value="precio_desc">Precio: de mayor a menor</option>
@@ -529,26 +601,6 @@ export default function CartaConfigPage() {
               </option>
             </select>
           </div>
-
-          <label className="checkbox-row">
-            <input
-              type="checkbox"
-              name="carta.mostrarDestacados"
-              checked={!!form.carta?.mostrarDestacados}
-              onChange={handleChange}
-            />
-            <span>Mostrar sección de productos destacados</span>
-          </label>
-
-          <label className="checkbox-row">
-            <input
-              type="checkbox"
-              name="carta.mostrarPromociones"
-              checked={!!form.carta?.mostrarPromociones}
-              onChange={handleChange}
-            />
-            <span>Mostrar sección de productos en promoción</span>
-          </label>
 
           <div className="config-field">
             <label>Idiomas (separados por coma)</label>
@@ -561,9 +613,7 @@ export default function CartaConfigPage() {
                   ...form,
                   carta: {
                     ...form.carta,
-                    idiomas: e.target.value
-                      .split(",")
-                      .map((i) => i.trim()),
+                    idiomas: e.target.value.split(",").map((i) => i.trim()),
                   },
                 })
               }
@@ -571,19 +621,225 @@ export default function CartaConfigPage() {
           </div>
         </section>
 
-        {/* === DESTACADOS / PROMOS === */}
+        {/* === TEMA VISUAL DE LA CARTA === */}
+        <section className="config-section">
+          <div className="config-section-header">
+            <h3 className="section-title">🎨 Apariencia de la carta</h3>
+            <p className="section-description">
+              Personaliza los colores de la carta que verá el cliente. Estos
+              ajustes solo afectan a la carta online, no al TPV.
+            </p>
+          </div>
+
+          <div className="theme-grid">
+            {/* Color principal */}
+            <div className="theme-row">
+              <label>Color principal</label>
+              <div className="theme-inputs">
+                <input
+                  type="color"
+                  name="temaCarta.colorPrincipal"
+                  value={form.temaCarta?.colorPrincipal || "#9B1C1C"}
+                  onChange={handleChange}
+                  className="theme-color-input"
+                />
+                <input
+                  type="text"
+                  name="temaCarta.colorPrincipal"
+                  value={form.temaCarta?.colorPrincipal || "#9B1C1C"}
+                  onChange={handleChange}
+                  className="theme-text-input"
+                />
+              </div>
+              <small className="theme-help">
+                Botones principales, títulos y acentos.
+              </small>
+            </div>
+
+            {/* Color secundario */}
+            <div className="theme-row">
+              <label>Color secundario</label>
+              <div className="theme-inputs">
+                <input
+                  type="color"
+                  name="temaCarta.colorSecundario"
+                  value={form.temaCarta?.colorSecundario || "#4C5EA8"}
+                  onChange={handleChange}
+                  className="theme-color-input"
+                />
+                <input
+                  type="text"
+                  name="temaCarta.colorSecundario"
+                  value={form.temaCarta?.colorSecundario || "#4C5EA8"}
+                  onChange={handleChange}
+                  className="theme-text-input"
+                />
+              </div>
+              <small className="theme-help">
+                Elementos secundarios, etiquetas o detalles.
+              </small>
+            </div>
+
+            {/* Fondo */}
+            <div className="theme-row">
+              <label>Fondo de la página</label>
+              <div className="theme-inputs">
+                <input
+                  type="color"
+                  name="temaCarta.fondo"
+                  value={form.temaCarta?.fondo || "#FFFFFF"}
+                  onChange={handleChange}
+                  className="theme-color-input"
+                />
+                <input
+                  type="text"
+                  name="temaCarta.fondo"
+                  value={form.temaCarta?.fondo || "#FFFFFF"}
+                  onChange={handleChange}
+                  className="theme-text-input"
+                />
+              </div>
+            </div>
+
+            {/* Texto */}
+            <div className="theme-row">
+              <label>Color del texto</label>
+              <div className="theme-inputs">
+                <input
+                  type="color"
+                  name="temaCarta.texto"
+                  value={form.temaCarta?.texto || "#2D2D2D"}
+                  onChange={handleChange}
+                  className="theme-color-input"
+                />
+                <input
+                  type="text"
+                  name="temaCarta.texto"
+                  value={form.temaCarta?.texto || "#2D2D2D"}
+                  onChange={handleChange}
+                  className="theme-text-input"
+                />
+              </div>
+            </div>
+
+            {/* Card fondo */}
+            <div className="theme-row">
+              <label>Fondo de tarjetas / productos</label>
+              <div className="theme-inputs">
+                <input
+                  type="color"
+                  name="temaCarta.cardBg"
+                  value={form.temaCarta?.cardBg || "#F5F5F5"}
+                  onChange={handleChange}
+                  className="theme-color-input"
+                />
+                <input
+                  type="text"
+                  name="temaCarta.cardBg"
+                  value={form.temaCarta?.cardBg || "#F5F5F5"}
+                  onChange={handleChange}
+                  className="theme-text-input"
+                />
+              </div>
+            </div>
+
+            {/* Botón carta */}
+            <div className="theme-row">
+              <label>Color de botones</label>
+              <div className="theme-inputs">
+                <input
+                  type="color"
+                  name="temaCarta.boton"
+                  value={form.temaCarta?.boton || "#9B1C1C"}
+                  onChange={handleChange}
+                  className="theme-color-input"
+                />
+                <input
+                  type="text"
+                  name="temaCarta.boton"
+                  value={form.temaCarta?.boton || "#9B1C1C"}
+                  onChange={handleChange}
+                  className="theme-text-input"
+                />
+              </div>
+            </div>
+
+            {/* Botón hover */}
+            <div className="theme-row">
+              <label>Hover de botones</label>
+              <div className="theme-inputs">
+                <input
+                  type="color"
+                  name="temaCarta.botonHover"
+                  value={form.temaCarta?.botonHover || "#7E1616"}
+                  onChange={handleChange}
+                  className="theme-color-input"
+                />
+                <input
+                  type="text"
+                  name="temaCarta.botonHover"
+                  value={form.temaCarta?.botonHover || "#7E1616"}
+                  onChange={handleChange}
+                  className="theme-text-input"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Vista previa mini de la carta */}
+          <div className="theme-preview">
+            <div
+              className="theme-preview-inner"
+              style={{
+                backgroundColor: form.temaCarta?.fondo || "#FFFFFF",
+                color: form.temaCarta?.texto || "#2D2D2D",
+              }}
+            >
+              <h4
+                className="theme-preview-title"
+                style={{ color: form.temaCarta?.colorPrincipal || "#9B1C1C" }}
+              >
+                Vista previa de la carta
+              </h4>
+              <div
+                className="theme-preview-card"
+                style={{
+                  backgroundColor: form.temaCarta?.cardBg || "#F5F5F5",
+                  borderColor: form.temaCarta?.cardBorde || "#CCCCCC",
+                }}
+              >
+                <span className="theme-preview-producto">
+                  Producto de ejemplo
+                </span>
+                <span className="theme-preview-precio">12,00 €</span>
+                <button
+                  type="button"
+                  className="theme-preview-btn"
+                  style={{
+                    backgroundColor: form.temaCarta?.boton || "#9B1C1C",
+                  }}
+                >
+                  Añadir
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* === DESTACADOS / PROMOS === */}
         <section className="config-section">
-          <h3 className="section-title">⭐ Productos destacados y en promoción</h3>
-          <p className="texto-ayuda">
-            Selecciona productos por tipo y categoría, y márcalos como{" "}
-            <strong>destacados</strong> o <strong>en promoción</strong> para
-            resaltarlos en la carta.
-          </p>
+          <div className="config-section-header">
+            <h3 className="section-title">⭐ Productos destacados y en promoción</h3>
+            <p className="texto-ayuda">
+              Selecciona productos por tipo y categoría, y márcalos como{" "}
+              <strong>destacados</strong> o <strong>en promoción</strong> para
+              resaltarlos en la carta.
+            </p>
+          </div>
 
           <button
             type="button"
-            className="btn-secondary"
+            className="btn btn-secundario"
             onClick={() => setPromoPanelAbierto(true)}
           >
             Gestionar productos destacados / en promoción
@@ -595,7 +851,7 @@ export default function CartaConfigPage() {
             type="button"
             onClick={handleSave}
             disabled={saving}
-            className="btn-primary"
+            className="btn btn-primario"
           >
             {saving ? "Guardando..." : "Guardar todos los cambios"}
           </button>
@@ -604,19 +860,19 @@ export default function CartaConfigPage() {
 
       {/* ⭐ MODAL DESTACADOS / PROMOS */}
       {promoPanelAbierto && (
-        <div className="modal-overlay-promos">
-          <div className="modal-promos">
+        <div className="modal-overlay modal-overlay-promos">
+          <div className="modal-promos card">
             <div className="modal-promos-header">
               <div>
                 <h3>Productos destacados y en promoción</h3>
                 <p>
-                  Selecciona uno o varios productos, y márcalos como
-                  destacados o en promoción. Los cambios se guardan al instante.
+                  Selecciona uno o varios productos y márcalos como destacados o
+                  en promoción. Los cambios se guardan al instante.
                 </p>
               </div>
               <button
                 type="button"
-                className="modal-promos-close"
+                className="btn-icon modal-promos-close"
                 onClick={() => setPromoPanelAbierto(false)}
               >
                 ✕
@@ -650,7 +906,7 @@ export default function CartaConfigPage() {
               </div>
 
               {/* Selección de categoría */}
-              <div className="promo-categorias">
+              <div className="promo-categorias config-field">
                 <label>Categoría</label>
                 <select
                   value={promoCategoria}
@@ -674,16 +930,13 @@ export default function CartaConfigPage() {
                 ) : (
                   <ul>
                     {productosFiltrados.map((p) => (
-                      <li key={p._id} className="promo-item">
-
-                        {/* Selección masiva */}
-                        <label className="promo-label">
+                      <li key={p._id} className="promo-item card-row">
+                        <div className="promo-label">
                           <span className="promo-nombre">
                             {p.nombre} {p.categoria ? `(${p.categoria})` : ""}
                           </span>
-                        </label>
+                        </div>
 
-                        {/* Toggles individuales */}
                         <div className="promo-toggles">
                           <label className="toggle-row">
                             <span>Destacado</span>
@@ -691,7 +944,13 @@ export default function CartaConfigPage() {
                               type="checkbox"
                               className="toggle-switch"
                               checked={p.destacado}
-                              onChange={() => handleToggleEstado(p._id, "destacado", !p.destacado)}
+                              onChange={() =>
+                                handleToggleEstado(
+                                  p._id,
+                                  "destacado",
+                                  !p.destacado
+                                )
+                              }
                             />
                           </label>
 
@@ -701,7 +960,13 @@ export default function CartaConfigPage() {
                               type="checkbox"
                               className="toggle-switch"
                               checked={p.promocionado}
-                              onChange={() => handleToggleEstado(p._id, "promocionado", !p.promocionado)}
+                              onChange={() =>
+                                handleToggleEstado(
+                                  p._id,
+                                  "promocionado",
+                                  !p.promocionado
+                                )
+                              }
                             />
                           </label>
                         </div>
@@ -724,7 +989,7 @@ export default function CartaConfigPage() {
         />
       )}
 
-      {/* 🟢 Modal */}
+      {/* 🟢 Modal genérico */}
       {modal && (
         <ModalConfirmacion
           titulo={modal.titulo}

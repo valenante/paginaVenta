@@ -1,81 +1,102 @@
-import React from "react";
 // src/context/FeaturesPlanContext.jsx
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import api from "../utils/api";
+import { useAuth } from "./AuthContext";
+import { useTenant } from "./TenantContext";
 
 const FeaturesPlanContext = createContext(null);
 
-export const FeaturesPlanProvider = ({ children }) => {
+export function FeaturesPlanProvider({ children }) {
+  const { user, loading: authLoading } = useAuth();
+  const { tenantId } = useTenant(); // slug del tenant, por ejemplo "zabor-feten"
+
   const [features, setFeatures] = useState([]);
-  const [plan, setPlan] = useState(null);
-  const [configFromPlan, setConfigFromPlan] = useState(null); // opcional
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [config, setConfig] = useState(null);
+  const [loadingFeatures, setLoadingFeatures] = useState(true);
+  const [alerta, setAlerta] = useState(null);
 
   useEffect(() => {
-    const fetchFeaturesPlan = async () => {
-      try {
-        setLoading(true);
-        setError(null);
+    // Mientras el auth aún está resolviendo, no hacemos nada
+    if (authLoading) return;
 
-        // 👉 endpoint que ya usas en RestauranteConfigPage
-        const { data } = await api.get("/admin/features-plan");
-        // data = { plan, features, config }
-        setFeatures(data.features || []);
-        setPlan(data.plan || null);
-        setConfigFromPlan(data.config || null);
+    // Si no hay usuario logueado → limpiamos y no llamamos a la API
+    if (!user || !tenantId) {
+      setFeatures([]);
+      setConfig(null);
+      setLoadingFeatures(false);
+      setAlerta(null);
+      return;
+    }
+
+    const fetchFeatures = async () => {
+      setLoadingFeatures(true);
+      try {
+        const { data } = await api.get("/admin/features-plan", {
+          headers: {
+            "X-Tenant-Slug": tenantId
+          }
+        }); setFeatures(data.features || []);
+        setConfig(data.config || null);
+        setAlerta(null);
       } catch (err) {
-        console.error("❌ Error cargando features del plan:", err);
-        setError("Error al cargar funcionalidades del plan.");
+        console.error(
+          "Error al cargar features-plan:",
+          err.response?.status,
+          err.response?.data
+        );
+
+        // Si es 401, avisamos que la sesión caducó
+        if (err.response?.status === 401) {
+          setAlerta({
+            tipo: "error",
+            mensaje: "Tu sesión ha caducado. Vuelve a iniciar sesión.",
+          });
+        } else {
+          setAlerta({
+            tipo: "error",
+            mensaje: "Error al cargar funcionalidades del plan.",
+          });
+        }
+
+        setFeatures([]);
+        setConfig(null);
       } finally {
-        setLoading(false);
+        setLoadingFeatures(false);
       }
     };
 
-    fetchFeaturesPlan();
-  }, []);
+    fetchFeatures();
+  }, [user, tenantId, authLoading]);
 
-  // Mapear por clave y por configKey para que sea cómodo de usar
-  const featuresByClave = useMemo(() => {
-    const map = {};
-    features.forEach((f) => {
-      if (f.clave) map[f.clave] = f;
-    });
-    return map;
-  }, [features]);
-
-  const featuresByConfigKey = useMemo(() => {
-    const map = {};
-    features.forEach((f) => {
-      if (f.configKey) map[f.configKey] = f;
-    });
-    return map;
-  }, [features]);
-
-  const hasFeature = (clave) => !!featuresByClave[clave];
-  const hasFeatureByConfigKey = (configKey) => !!featuresByConfigKey[configKey];
+  const hasFeature = (clave, fallback = false) => {
+    if (!clave) return fallback;
+    if (!features || features.length === 0) return fallback;
+    return features.some((f) => f.clave === clave);
+  };
 
   return (
     <FeaturesPlanContext.Provider
       value={{
         features,
-        plan,
-        configFromPlan,
-        loading,
-        error,
+        config,
+        setConfig,
         hasFeature,
-        hasFeatureByConfigKey,
+        loading: loadingFeatures,
+        alerta,
+        setAlerta,
       }}
     >
       {children}
     </FeaturesPlanContext.Provider>
   );
-};
+}
 
 export const useFeaturesPlan = () => {
   const ctx = useContext(FeaturesPlanContext);
   if (!ctx) {
-    throw new Error("useFeaturesPlan debe usarse dentro de FeaturesPlanProvider");
+    throw new Error(
+      "useFeaturesPlan debe usarse dentro de <FeaturesPlanProvider>"
+    );
   }
   return ctx;
 };

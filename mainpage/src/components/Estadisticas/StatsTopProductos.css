@@ -1,0 +1,125 @@
+/* =========================================================
+   TOP PRODUCTOS — Estilo Profesional Alef
+   Clases únicas "toppro-*"
+   ========================================================= */
+
+/* ===== CONTENEDOR ===== */
+.toppro-container {
+  margin-top: 2rem;
+  padding: 1.8rem 2rem;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-xl);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 8px 26px rgba(0, 0, 0, 0.28);
+  animation: topproFade 0.35s ease;
+}
+
+@keyframes topproFade {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===== HEADER ===== */
+.toppro-header {
+  margin-bottom: 1.4rem;
+}
+
+.toppro-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin: 0;
+  color: #fff;
+}
+
+.toppro-subtitle {
+  margin: 0.2rem 0 0;
+  font-size: 0.92rem;
+  opacity: 0.75;
+  color: #dfe3ea;
+}
+
+/* ===== LISTA ===== */
+.toppro-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 1.4rem;
+}
+
+/* ===== ITEM ===== */
+.toppro-item {
+  padding: 0.8rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.toppro-item:last-child {
+  border-bottom: none;
+}
+
+.toppro-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.55rem;
+}
+
+.toppro-item-name {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #fff;
+}
+
+.toppro-item-meta {
+  font-size: 0.85rem;
+  opacity: 0.8;
+  color: #cbd5e1;
+}
+
+/* ===== BARRA ===== */
+.toppro-bar {
+  width: 100%;
+  height: 9px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+  position: relative;
+}
+
+.toppro-bar-inner {
+  height: 100%;
+  background: linear-gradient(90deg, #6a0dad, #ff6700);
+  border-radius: 999px;
+  box-shadow: 0 3px 10px rgba(255, 103, 0, 0.25);
+  transition: width 0.4s ease;
+}
+
+/* ===== PORCENTAJE ===== */
+.toppro-share {
+  display: block;
+  margin-top: 0.35rem;
+  font-size: 0.82rem;
+  color: #e0e6ef;
+  opacity: 0.85;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .toppro-container {
+    padding: 1.4rem 1.5rem;
+  }
+
+  .toppro-item-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.2rem;
+  }
+}

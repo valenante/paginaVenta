@@ -1,480 +1,657 @@
-/* ====== GLOBAL ====== */
+/* =========================================================
+   ADMIN DASHBOARD ALEF – Vista Superadmin
+   ---------------------------------------------------------
+   - Fondo con degradado morado/naranja tipo ALEF
+   - Contenedor central con cards limpias
+   - Botón "Nuevo Restaurante" como call-to-action principal
+   ========================================================= */
+
+/* ===== LAYOUT GENERAL ===== */
+
 .admin-dashboard {
-  padding: 2rem;
-  background-color: #f8f9fb;
   min-height: 100vh;
-  font-family: "Inter", sans-serif;
-  color: #2d3436;
-}
-
-.admin-dashboard h1 {
-  font-size: 2rem;
-  font-weight: 700;
-  color: #6A0DAD;
-  text-align: center;
-  margin-bottom: 2rem;
-}
-
-/* ====== ENCABEZADO ====== */
-.dashboard-header {
+  padding: 2.5rem 1.5rem 2.75rem;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  align-items: center;
-  margin-bottom: 2rem;
+  gap: var(--space-lg);
+  color: var(--color-texto-invertido);
+  box-sizing: border-box;
 }
 
-.header-controls {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.8rem;
-  justify-content: center;
-  align-items: center;
-}
-
-.search-bar {
-  display: flex;
-  align-items: center;
-  background: #f3f3f3;
-  padding: 0.5rem 1rem;
-  border-radius: 0.6rem;
-}
-
-.search-bar input {
-  border: none;
-  background: transparent;
-  outline: none;
-  margin-left: 0.5rem;
-  font-size: 1rem;
-}
-
-.header-controls select {
-  border: 1px solid #ccc;
-  border-radius: 0.6rem;
-  padding: 0.5rem 1rem;
-  background: white;
-  font-size: 1rem;
-  cursor: pointer;
-}
-
-.refresh-btn {
-  background: #6A0DAD;
-  color: white;
-  border: none;
-  border-radius: 0.6rem;
-  padding: 0.6rem 1.2rem;
-  font-weight: 600;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  transition: background 0.2s ease, transform 0.2s ease;
-}
-
-.refresh-btn:hover {
-  background: #550c91;
-  transform: scale(1.05);
-}
-
-/* ====== ESTADÍSTICAS (CARDS) ====== */
-.stats-cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 1rem;
-  margin-bottom: 2.5rem;
-}
-
-.stat-card {
-  display: flex;
-  align-items: center;
-  background: white;
-  border-radius: 0.8rem;
-  padding: 1rem 1.5rem;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
-  transition: transform 0.2s ease;
-}
-
-.stat-card:hover {
-  transform: translateY(-3px);
-}
-
-.stat-card .icon {
-  font-size: 1.8rem;
-  margin-right: 1rem;
-  color: #6A0DAD;
-}
-
-.stat-card h3 {
-  font-size: 1rem;
-  font-weight: 600;
-  margin-bottom: 0.3rem;
-}
-
-.stat-card p {
-  font-size: 1.4rem;
-  font-weight: 700;
-  color: #2d3436;
-}
-
-.stat-card.premium .icon { color: #FF6700; }
-.stat-card.verifactu .icon { color: #98FF98; }
-
-/* ====== GRÁFICOS ====== */
-.charts-section {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 2.5rem;
-}
-
-.chart-card {
-  background: white;
-  border-radius: 1rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  padding: 1rem 1.5rem;
-}
-
-.chart-card h3 {
-  text-align: center;
-  font-size: 1.1rem;
-  font-weight: 700;
-  margin-bottom: 1rem;
-  color: #6A0DAD;
-}
-
-/* ====== TABLA DE TENANTS ====== */
-.tenant-table-section {
-  background: white;
-  border-radius: 1rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  padding: 1.5rem;
-}
-
-.tenant-table-section h3 {
-  font-size: 1.3rem;
-  font-weight: 700;
-  color: #6A0DAD;
-  margin-bottom: 1rem;
-}
-
-.tenants-table {
+/* Contenedor centrado para que no se haga gigante en pantallas muy anchas */
+.admin-dashboard > * {
+  max-width: 1240px;
   width: 100%;
-  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
 }
 
-.tenants-table th,
-.tenants-table td {
-  padding: 1rem;
-  text-align: left;
-  border-bottom: 1px solid #eee;
+/* Separación vertical uniforme entre bloques principales */
+.admin-dashboard > * + * {
+  margin-top: var(--space-md);
 }
 
-.tenants-table th {
-  background-color: #6A0DAD;
-  color: #fff;
-  font-weight: 700;
-  font-size: 1rem;
+/* ===== CABECERA + CTA ===== */
+
+/* El DashboardHeader es el primer hijo, le damos un poco de margen inferior extra */
+.admin-dashboard > *:first-child {
+  margin-bottom: 0.25rem;
 }
 
-.tenants-table td {
-  font-size: 0.95rem;
-}
-
-.tenants-table tr:hover {
-  background-color: #f3e8ff;
-}
-
-/* ====== ACCIONES ====== */
-.tenants-table .actions {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.tenants-table button {
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 1.1rem;
-  color: #6A0DAD;
-  transition: transform 0.2s ease, color 0.2s ease;
-}
-
-.tenants-table button:hover {
-  transform: scale(1.2);
-  color: #FF6700;
-}
-
-.tenants-table button.delete {
-  color: #e74c3c;
-}
-
-.tenants-table button.delete:hover {
-  color: #c0392b;
-}
-
-.estado-tag {
-  padding: 4px 10px;
-  border-radius: 6px;
-  font-size: 0.8rem;
-  text-transform: capitalize;
-}
-
-.estado-activo { background: #e6ffed; color: #0f7b2b; }
-.estado-trial { background: #fff7e6; color: #b36b00; }
-.estado-impago { background: #ffe6e6; color: #b30000; }
-.estado-suspendido { background: #ececec; color: #555; }
-.estado-cancelado { background: #f1f1f1; color: #777; }
-
-/* ====== MODALES ====== */
-.modal-overlay {
-  background: rgba(0, 0, 0, 0.45);
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  display: flex; justify-content: center; align-items: center;
-  z-index: 999;
-}
-
-.tenant-modal,
-.confirm-modal {
-  background: white;
-  border-radius: 12px;
-  padding: 25px;
-  max-width: 420px;
-  width: 90%;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-  text-align: center;
-  animation: fadeIn 0.2s ease;
-}
-
-.tenant-modal h2,
-.confirm-modal h3 {
-  color: #6A0DAD;
-  margin-bottom: 1rem;
-}
-
-.tenant-info p {
-  margin: 0.4rem 0;
-  font-size: 0.95rem;
-}
-
-.close-btn {
-  background: #6A0DAD;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  padding: 0.6rem 1.2rem;
-  margin-top: 1rem;
-  cursor: pointer;
-  transition: background 0.2s ease;
-}
-
-.close-btn:hover {
-  background: #550c91;
-}
-
-.confirm-modal .buttons {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 20px;
-  gap: 1rem;
-}
-
-.confirm-modal button {
-  flex: 1;
-  padding: 8px 16px;
-  border-radius: 6px;
-  border: none;
-  cursor: pointer;
-  font-weight: 600;
-  transition: background 0.2s ease;
-}
-
-.confirm-modal button:hover {
-  opacity: 0.9;
-}
-
-.confirm-modal button.danger {
-  background: #ff3b30;
-  color: white;
-}
-
-.confirm-modal button:not(.danger) {
-  background: #f3f3f3;
-}
-
-/* ====== MODAL BASE ====== */
-.modal-overlay {
-  background: rgba(0, 0, 0, 0.45);
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  display: flex;
-  justify-content: center;
+/* Botón "➕ Nuevo Restaurante" */
+.refresh-btn {
+  align-self: flex-end;
+  display: inline-flex;
   align-items: center;
-  z-index: 1000;
-}
-
-/* ====== MODAL FORMULARIO NUEVO TENANT ====== */
-.tenant-modal {
-  background: #fff;
-  border-radius: 1rem;
-  padding: 1.5rem 2rem;
-  width: 95%;
-  max-width: 550px;              /* 💡 límite máximo de ancho */
-  max-height: 90vh;              /* 💡 evita que crezca más que la pantalla */
-  overflow-y: auto;              /* 💡 scroll interno */
-  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
-  animation: fadeIn 0.25s ease;
-}
-
-.tenant-modal::-webkit-scrollbar {
-  width: 6px;
-}
-.tenant-modal::-webkit-scrollbar-thumb {
-  background: #ccc;
-  border-radius: 10px;
-}
-
-/* ====== FORM ====== */
-.tenant-form {
-  display: flex;
-  flex-direction: column;
-  gap: 0.8rem;
-}
-
-.tenant-form label {
-  display: flex;
-  flex-direction: column;
+  gap: 0.35rem;
+  padding: 0.6rem 1.2rem;
+  border-radius: var(--radius-pill);
+  border: none;
+  font-size: var(--font-size-sm);
   font-weight: 600;
-  font-size: 0.9rem;
-  color: #2d3436;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  cursor: pointer;
+  background: linear-gradient(135deg, var(--color-primario), var(--color-secundario));
+  color: #ffffff;
+  box-shadow:
+    0 12px 24px rgba(15, 23, 42, 0.6),
+    0 0 0 1px rgba(148, 163, 184, 0.4);
+  transform: translateY(0);
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    filter 0.15s ease,
+    opacity 0.15s ease;
 }
 
-.tenant-form input,
-.tenant-form select {
-  margin-top: 0.3rem;
-  padding: 0.6rem 0.8rem;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  font-size: 0.95rem;
-}
-
-/* ====== SECCIONES ====== */
-.tenant-form h4 {
-  margin-top: 1rem;
-  margin-bottom: 0.3rem;
+/* Emoji alineado */
+.refresh-btn::before {
+  content: "➕";
   font-size: 1rem;
-  color: #6A0DAD;
-  text-align: left;
 }
 
-.config-section,
-.dias-apertura {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.6rem;
+/* Como ya añado el emoji con ::before, oculto el del texto si lo mantienes */
+.refresh-btn {
+  /* Si quieres mantener el emoji en el JSX, comenta la siguiente línea */
+  text-indent: 0;
 }
 
-.color-picker {
-  display: flex;
-  justify-content: space-between;
-  gap: 1rem;
+/* Hover / Active / Disabled */
+.refresh-btn:hover {
+  filter: brightness(1.05);
+  transform: translateY(-1px);
+  box-shadow:
+    0 16px 30px rgba(15, 23, 42, 0.7),
+    0 0 0 1px rgba(148, 163, 184, 0.5);
 }
 
-.color-picker input[type="color"] {
-  width: 45px;
-  height: 35px;
-  border: none;
-  cursor: pointer;
+.refresh-btn:active {
+  transform: translateY(0);
+  box-shadow:
+    0 8px 18px rgba(15, 23, 42, 0.7),
+    0 0 0 1px rgba(148, 163, 184, 0.5);
 }
 
-/* ====== BOTONES ====== */
-.tenant-form button[type="submit"] {
-  background: #6A0DAD;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  padding: 0.8rem 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  margin-top: 1rem;
-  transition: background 0.2s ease;
-}
-.tenant-form button[type="submit"]:hover {
-  background: #550c91;
+.refresh-btn:disabled {
+  opacity: 0.7;
+  cursor: default;
+  transform: none;
+  box-shadow:
+    0 0 0 1px rgba(148, 163, 184, 0.4);
 }
 
-.close-btn {
-  margin-top: 1rem;
-  background: #eee;
-  color: #333;
-  border: none;
-  border-radius: 6px;
-  padding: 0.6rem 1rem;
-  cursor: pointer;
-}
-.close-btn:hover {
-  background: #ddd;
-}
+/* ===== BLOQUES PRINCIPALES (Stats, Charts, Tabla) ===== */
+/* Nota: asumo que StatsCards, ChartsSection y TenantTable usan sus propias clases.
+   Aquí sólo les damos un “marco” visual consistente si no tienen CSS propio. */
 
-/* ====== ANIMACIÓN ====== */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
+/* Todos los bloques que vienen después del botón se tratan como secciones */
+.admin-content-wrapper > .admin-dashboard > section,
+.admin-content-wrapper > .admin-dashboard > div:not(.dashboard-header):not(.refresh-btn) {
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-suave);
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  backdrop-filter: blur(18px);
 }
 
-
-/* ====== ANIMACIONES ====== */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* ====== RESPONSIVE ====== */
+/* Ajustes de paddings un poco más sutiles en móviles */
 @media (max-width: 900px) {
-  .stats-cards {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-
-@media (max-width: 700px) {
-  .stats-cards {
-    grid-template-columns: 1fr;
+  .admin-dashboard {
+    padding: 1.8rem 1.1rem 2rem;
   }
 
-  .charts-section {
-    grid-template-columns: 1fr;
+  .admin-dashboard > * {
+    max-width: 100%;
+  }
+
+  .refresh-btn {
+    width: 100%;
+    justify-content: center;
   }
 }
 
 @media (max-width: 600px) {
-  .tenants-table thead {
-    display: none;
+  .admin-dashboard {
+    padding: 1.5rem 0.85rem 1.8rem;
   }
 
-  .tenants-table tr {
-    display: block;
-    margin-bottom: 1rem;
-    background: #fff;
-    border-radius: 0.6rem;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  .admin-dashboard > *:nth-child(n + 3) {
+    border-radius: var(--radius-md);
+  }
+}
+
+/* ===== ESTADOS / UTILIDADES ===== */
+
+/* Texto de carga temporal (por si lo reutilizas) */
+.admin-dashboard-loading {
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-md);
+  color: rgba(226, 232, 240, 0.9);
+}
+
+/* Scrollbar discreta en el dashboard (solo si el contenido crece mucho) */
+.admin-dashboard::-webkit-scrollbar {
+  width: 8px;
+}
+
+.admin-dashboard::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.admin-dashboard::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.55);
+  border-radius: 999px;
+}
+
+.admin-dashboard::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.8);
+}
+
+/* =========================================================
+   DASHBOARD HEADER — SuperAdmin Alef
+   ---------------------------------------------------------
+   - Barra superior elegante y funcional
+   - Íconos minimalistas
+   - Input de búsqueda estilo "glass"
+   ========================================================= */
+
+.dashboard-header {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 0;
+  color: var(--color-texto-invertido);
+}
+
+/* ===== TÍTULO PRINCIPAL ===== */
+
+.dashboard-header h1 {
+  font-size: var(--font-size-2xl);
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: var(--color-primario);
+  margin: 0;
+}
+
+/* ===== CONTROLES ===== */
+
+.header-controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+/* ===== SEARCH BAR ===== */
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.55rem 0.85rem;
+  background: rgba(15, 23, 42, 0.55);
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  border-radius: var(--radius-md);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.2);
+  color: rgba(226, 232, 240, 0.9);
+  flex: 1;
+  min-width: 240px;
+}
+
+.search-bar svg {
+  font-size: 1.05rem;
+  opacity: 0.85;
+}
+
+.search-bar input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: #e2e8f0;
+  font-size: var(--font-size-sm);
+}
+
+.search-bar input::placeholder {
+  color: rgba(255, 255, 255, 0.45);
+}
+
+/* ===== SELECT (FILTRAR PLAN) ===== */
+
+.header-controls select {
+  padding: 0.55rem 0.8rem;
+  border-radius: var(--radius-md);
+  background: rgba(15, 23, 42, 0.55);
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  color: #ffffff;
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: 0.15s ease;
+}
+
+.header-controls select:hover {
+  border-color: var(--color-primario);
+}
+
+.header-controls select:focus {
+  outline: none;
+  border-color: var(--color-primario);
+  box-shadow: 0 0 0 1px rgba(96, 181, 255, 0.4);
+}
+
+/* ===== BOTÓN REFRESH ===== */
+/* Reutiliza la clase .refresh-btn del dashboard, pero aquí ajustamos tamaño */
+
+.header-controls .refresh-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.55rem 1rem;
+  font-size: var(--font-size-sm);
+  border-radius: var(--radius-pill);
+  background: linear-gradient(135deg, var(--color-primario), var(--color-secundario));
+  color: #ffffff;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow:
+    0 10px 22px rgba(0, 0, 0, 0.45),
+    0 0 0 1px rgba(255, 255, 255, 0.08);
+  transition: 0.15s ease;
+}
+
+.header-controls .refresh-btn svg {
+  font-size: 1rem;
+}
+
+.header-controls .refresh-btn:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.1);
+}
+
+.header-controls .refresh-btn:active {
+  transform: none;
+  filter: brightness(0.95);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 780px) {
+  .header-controls {
+    flex-direction: column;
+    align-items: stretch;
   }
 
+  .header-controls .refresh-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .header-controls select {
+    width: 100%;
+  }
+}
+
+/* =========================================================
+   STATS CARDS — Panel SuperAdmin Alef
+   ---------------------------------------------------------
+   - Tarjetas KPI profesionales estilo SaaS
+   - Fondo vidrio oscuro con efectos de brillo
+   - Íconos diferenciados por tipo de métrica
+   ========================================================= */
+
+/* ===== CONTENEDOR PRINCIPAL ===== */
+
+.stats-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.4rem;
+  margin-top: 1.6rem;
+}
+
+/* ===== TARJETA BASE ===== */
+
+.stat-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.25rem 1.4rem;
+  border-radius: var(--radius-lg);
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  box-shadow:
+    0 18px 32px rgba(0, 0, 0, 0.45),
+    0 0 0 1px rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  color: #e2e8f0;
+  transition: 0.18s ease;
+  cursor: default;
+}
+
+.stat-card:hover {
+  transform: translateY(-3px);
+  box-shadow:
+    0 28px 40px rgba(0, 0, 0, 0.55),
+    0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+/* ===== ÍCONOS ===== */
+
+.stat-card .icon {
+  font-size: 2rem;
+  opacity: 0.85;
+  flex-shrink: 0;
+  transition: opacity 0.2s ease;
+}
+
+.stat-card:hover .icon {
+  opacity: 1;
+}
+
+/* ===== TEXTO DE LA TARJETA ===== */
+
+.stat-card h3 {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: rgba(226, 232, 240, 0.77);
+}
+
+.stat-card p {
+  margin: 0.2rem 0 0;
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  color: #fff;
+}
+
+/* ===== VARIANTES DE COLOR ===== */
+
+.stat-card.premium {
+  border-color: rgba(255, 215, 0, 0.35);
+  background: linear-gradient(
+    135deg,
+    rgba(255, 215, 0, 0.12),
+    rgba(15, 23, 42, 0.75)
+  );
+}
+
+.stat-card.premium .icon {
+  color: #facc15;
+}
+
+.stat-card.verifactu {
+  border-color: rgba(0, 255, 155, 0.35);
+  background: linear-gradient(
+    135deg,
+    rgba(0, 255, 155, 0.12),
+    rgba(15, 23, 42, 0.75)
+  );
+}
+
+.stat-card.verifactu .icon {
+  color: #4ade80;
+}
+
+/* ===== RESPONSIVE ===== */
+
+@media (max-width: 640px) {
+  .stats-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .stat-card {
+    padding: 1.1rem 1.2rem;
+  }
+}
+
+/* =========================================================
+   TENANT TABLE — Panel SuperAdmin Alef
+   ---------------------------------------------------------
+   - Tabla premium estilo SaaS
+   - Vidrio oscuro + sombra profunda
+   - Acciones minimalistas con iconos
+   ========================================================= */
+
+/* ===== CONTENEDOR GENERAL ===== */
+
+/* =========================================================
+   TABLE WRAPPER — scroll suave en móviles
+   ========================================================= */
+
+.table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-bottom: 0.5rem;
+
+  /* Estética ALEF */
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+
+.table-wrapper::-webkit-scrollbar {
+  height: 6px;
+}
+
+.table-wrapper::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 999px;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.35);
+  border-radius: 999px;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.55);
+}
+
+.tenant-table-section {
+  margin-top: 2rem;
+}
+
+.tenant-table-section h3 {
+  font-size: var(--font-size-lg);
+  margin-bottom: 0.8rem;
+  color: #fff;
+  letter-spacing: 0.02em;
+}
+
+/* ===== ESTADO VACÍO ===== */
+
+.empty {
+  padding: 1.2rem;
+  text-align: center;
+  color: rgba(226, 232, 240, 0.75);
+  font-size: var(--font-size-sm);
+}
+
+/* ===== TABLA ===== */
+
+.tenants-table {
+  width: 100%;
+  border-collapse: collapse;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+
+  box-shadow:
+    0 18px 40px rgba(0, 0, 0, 0.55),
+    0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+
+/* ===== HEAD ===== */
+
+.tenants-table thead {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.tenants-table th {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  font-size: var(--font-size-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: rgba(226, 232, 240, 0.65);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.18);
+  white-space: nowrap;
+}
+
+/* ===== FILAS ===== */
+
+.tenants-table tbody tr {
+  transition: background 0.15s ease;
+}
+
+.tenants-table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.tenants-table td {
+  padding: 0.8rem 1rem;
+  font-size: var(--font-size-sm);
+  color: rgba(226, 232, 240, 0.92);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+}
+
+/* ===== ESTADOS ===== */
+
+.estado-tag {
+  padding: 0.25rem 0.6rem;
+  font-size: var(--font-size-xs);
+  border-radius: var(--radius-pill);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #fff;
+}
+
+.estado-activo {
+  background: rgba(34, 197, 94, 0.35);
+  border: 1px solid rgba(34, 197, 94, 0.5);
+}
+
+.estado-trial {
+  background: rgba(96, 181, 255, 0.32);
+  border: 1px solid rgba(96, 181, 255, 0.45);
+}
+
+.estado-impago {
+  background: rgba(251, 191, 36, 0.35);
+  border: 1px solid rgba(251, 191, 36, 0.45);
+}
+
+.estado-suspendido {
+  background: rgba(239, 68, 68, 0.35);
+  border: 1px solid rgba(239, 68, 68, 0.45);
+}
+
+.estado-cancelado {
+  background: rgba(148, 163, 184, 0.25);
+  border: 1px solid rgba(148, 163, 184, 0.35);
+}
+
+/* ===== CELDA DE ACCIONES ===== */
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.actions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.35rem;
+  width: 32px;
+  height: 32px;
+  background: rgba(15, 23, 42, 0.55);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  color: rgba(226, 232, 240, 0.9);
+  cursor: pointer;
+  transition: 0.15s ease;
+}
+
+.actions button svg {
+  font-size: 1rem;
+}
+
+.actions button:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--color-primario);
+  transform: translateY(-1px);
+}
+
+.actions button:active {
+  transform: none;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Botón eliminar */
+.actions .delete {
+  border-color: rgba(239, 68, 68, 0.35);
+}
+
+.actions .delete:hover {
+  background: rgba(239, 68, 68, 0.3);
+  border-color: rgba(239, 68, 68, 0.6);
+}
+
+/* ===== RESPONSIVE ===== */
+
+@media (max-width: 820px) {
+  .tenants-table th,
   .tenants-table td {
-    display: flex;
-    justify-content: space-between;
-    padding: 0.8rem 1rem;
-    border-bottom: 1px solid #eee;
+    padding: 0.65rem 0.55rem;
   }
 
-  .tenants-table td:last-child {
-    border-bottom: none;
+  .actions button {
+    width: 28px;
+    height: 28px;
+    padding: 0.25rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .tenants-table {
+    font-size: 0.85rem;
   }
 
-  .tenants-table td::before {
-    content: attr(data-label);
-    font-weight: 700;
-    color: #6A0DAD;
+  .tenant-table-section h3 {
+    text-align: center;
   }
 }

@@ -1,10 +1,10 @@
+import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
-import { useState } from "react";
 import api from "../utils/api";
 import "../styles/PerfilPage.css";
 
 export default function PerfilPage() {
-  const { user, logout, setUser } = useAuth(); // 👈 AÑADIMOS setUser
+  const { user, logout, setUser } = useAuth();
   const [nombre, setNombre] = useState(user?.name || "");
   const [nuevaPassword, setNuevaPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -12,7 +12,11 @@ export default function PerfilPage() {
   const [mensaje, setMensaje] = useState("");
   const [loading, setLoading] = useState(false);
 
-   const handleActualizar = async (e) => {
+  useEffect(() => {
+    document.title = "Mi perfil | Alef";
+  }, []);
+
+  const handleActualizar = async (e) => {
     e.preventDefault();
     setMensaje("");
 
@@ -29,19 +33,15 @@ export default function PerfilPage() {
       if (nuevaPassword) formData.append("nuevaPassword", nuevaPassword);
       if (avatar) formData.append("avatar", avatar);
 
-      // 🔥 LEEMOS LA RESPUESTA
       const { data } = await api.put("/auth/update-profile", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      // 🔥 ACTUALIZAMOS EL CONTEXTO
       if (data?.user) {
         setUser(data.user);
       }
 
       setMensaje("✅ Perfil actualizado correctamente.");
-      // ❌ Nada de recargar la página
-      // setTimeout(() => window.location.reload(), 2000);
     } catch (err) {
       console.error(err);
       setMensaje("❌ Error al actualizar perfil.");
@@ -50,37 +50,45 @@ export default function PerfilPage() {
     }
   };
 
-  console.log("Usuario en PerfilPage:", user);
-
   if (!user) {
     return (
-      <div className="perfil-page perfil-loading">
-        <p>Cargando datos del usuario...</p>
-      </div>
+      <main className="perfil-page section section--wide perfil-loading">
+        <p className="text-suave">Cargando datos del usuario...</p>
+      </main>
     );
   }
 
+  const esError = mensaje.startsWith("❌");
+  const esOk = mensaje.startsWith("✅");
+
   return (
-    <section className="perfil-page">
-      <div className="perfil-card">
-        <div className="perfil-header">
-          <img
-            src={user.avatarUrl || "/default-avatar.png"}
-            alt="Avatar"
-            className="perfil-avatar"
-          />
-          <div>
-            <h2>{user.name}</h2>
-            <span className="perfil-rol">{user.role}</span>
+    <main className="perfil-page section section--wide">
+      <section className="perfil-card card">
+        <header className="perfil-header">
+          <div className="perfil-header-left">
+            <img
+              src={user.avatarUrl || "/default-avatar.png"}
+              alt="Avatar"
+              className="perfil-avatar"
+            />
+            <div className="perfil-header-info">
+              <h1>{user.name}</h1>
+              <div className="perfil-header-meta">
+                <span className="perfil-rol badge badge-aviso">
+                  {user.role}
+                </span>
+                <span className="perfil-email">{user.email}</span>
+              </div>
+            </div>
           </div>
-        </div>
+        </header>
 
         <form
           onSubmit={handleActualizar}
           className="perfil-form"
           autoComplete="off"
         >
-          {/* === CAMPOS FANTASMA PARA EVITAR AUTOCOMPLETADO LOGIN === */}
+          {/* Campos fantasma para evitar autocompletado de login */}
           <input
             type="text"
             name="fakeusernameremembered"
@@ -94,9 +102,9 @@ export default function PerfilPage() {
             autoComplete="new-password"
           />
 
-          {/* === EMAIL (SOLO LECTURA) === */}
-          <label>
-            Correo electrónico:
+          {/* Email (solo lectura) */}
+          <label className="perfil-field">
+            <span className="perfil-label">Correo electrónico</span>
             <input
               type="email"
               name="email"
@@ -106,9 +114,9 @@ export default function PerfilPage() {
             />
           </label>
 
-          {/* === NOMBRE === */}
-          <label>
-            Nombre:
+          {/* Nombre */}
+          <label className="perfil-field">
+            <span className="perfil-label">Nombre</span>
             <input
               type="text"
               name="profileName"
@@ -119,9 +127,9 @@ export default function PerfilPage() {
             />
           </label>
 
-          {/* === CONTRASEÑA === */}
-          <label>
-            Nueva contraseña:
+          {/* Contraseña nueva */}
+          <label className="perfil-field">
+            <span className="perfil-label">Nueva contraseña</span>
             <input
               type="password"
               name="newPassword"
@@ -133,8 +141,8 @@ export default function PerfilPage() {
           </label>
 
           {nuevaPassword && (
-            <label>
-              Confirmar nueva contraseña:
+            <label className="perfil-field">
+              <span className="perfil-label">Confirmar nueva contraseña</span>
               <input
                 type="password"
                 name="confirmNewPassword"
@@ -145,28 +153,52 @@ export default function PerfilPage() {
             </label>
           )}
 
-          {/* === AVATAR === */}
-          <label>
-            Foto de perfil:
+          {/* Avatar */}
+          <label className="perfil-field">
+            <span className="perfil-label">Foto de perfil</span>
             <input
               type="file"
               accept="image/*"
               onChange={(e) => setAvatar(e.target.files[0])}
             />
+            <span className="perfil-help">
+              PNG o JPG. Se recomienda formato cuadrado.
+            </span>
           </label>
 
-          {mensaje && <p className="perfil-mensaje">{mensaje}</p>}
+          {mensaje && (
+            <p
+              className={[
+                "perfil-mensaje",
+                esError && "perfil-mensaje--error",
+                esOk && "perfil-mensaje--ok",
+              ]
+                .filter(Boolean)
+                .join(" ")}
+            >
+              {mensaje}
+            </p>
+          )}
 
           <div className="perfil-actions">
-            <button type="submit" disabled={loading}>
+            <button
+              type="submit"
+              className="btn btn-primario"
+              disabled={loading}
+            >
               {loading ? "Actualizando..." : "Guardar cambios"}
             </button>
-            <button type="button" className="btn-secundario" onClick={logout}>
+
+            <button
+              type="button"
+              className="btn btn-secundario"
+              onClick={logout}
+            >
               Cerrar sesión
             </button>
           </div>
         </form>
-      </div>
-    </section>
+      </section>
+    </main>
   );
 }

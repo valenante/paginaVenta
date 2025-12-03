@@ -1,7 +1,7 @@
-import React from "react";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext.jsx";
+import logoAlef from "../../assets/imagenes/alef.png";
 import "./TopBar.css";
 
 export default function TopBar() {
@@ -23,21 +23,18 @@ export default function TopBar() {
     return () => window.removeEventListener("resize", manejarResize);
   }, [menuAbierto]);
 
-  // 👉 Ir a la sección de planes ("Packs")
-  const irAPacks = () => {
-    setMenuAbierto(false);
-    // Navegamos a la landing con hash #packs
-    navigate("/#packs");
-  };
-
   return (
     <header className="TopBar">
       <div className="TopBar-container">
-        <div className="TopBar-logo" onClick={() => navigate("/")}>
-          TPV <span>ALEF</span>
-        </div>
+        {/* Logo */}
+        <button className="TopBar-logo" onClick={() => navigate("/")}>
+          <img src={logoAlef} alt="Alef Logo" className="TopBar-logo-img" />
+          <span className="TopBar-logo-text">
+            Alef <strong>TPV</strong>
+          </span>
+        </button>
 
-        {/* Botón hamburguesa */}
+        {/* Botón hamburguesa (solo móvil) */}
         <button
           className={`TopBar-menu ${menuAbierto ? "active" : ""}`}
           onClick={() => setMenuAbierto(!menuAbierto)}
@@ -48,8 +45,11 @@ export default function TopBar() {
           <span></span>
         </button>
 
-        {/* Menú desplegable */}
-        <div className={`TopBar-dropdown ${menuAbierto ? "open" : ""}`}>
+        {/* Menú (desktop + móvil) */}
+        <nav
+          className={`TopBar-dropdown ${menuAbierto ? "open" : ""}`}
+          aria-label="Navegación principal"
+        >
           {!user ? (
             <>
               <a href="#inicio" onClick={() => setMenuAbierto(false)}>Inicio</a>
@@ -66,12 +66,10 @@ export default function TopBar() {
                 Iniciar sesión
               </Link>
 
-              {/* 🔥 Ahora "Solicitar demo" baja al bloque de planes */}
               <button
                 className="TopBar-btn cta"
                 onClick={() => {
                   setMenuAbierto(false);
-                  // Navega a la home indicando que queremos ir a los planes
                   navigate("/?seleccionarPlan=1#packs");
                 }}
               >
@@ -125,7 +123,8 @@ export default function TopBar() {
                 </>
               )}
 
-              {user.role === "admin_restaurante" && (
+              {/* Permitir admin_restaurane y admin */}
+              {["admin_restaurante", "admin"].includes(user.role) && (
                 <>
                   <button
                     onClick={() => { setMenuAbierto(false); navigate("/dashboard"); }}
@@ -161,6 +160,13 @@ export default function TopBar() {
                     Perfil
                   </Link>
                   <Link
+                    to="/ayuda"
+                    onClick={() => setMenuAbierto(false)}
+                    className="TopBar-btn login"
+                  >
+                    Ayuda
+                  </Link>
+                  <Link
                     to="/soporte"
                     onClick={() => setMenuAbierto(false)}
                     className="TopBar-btn login"
@@ -175,7 +181,7 @@ export default function TopBar() {
                   <button
                     onClick={() =>
                       abrirEnNuevaPestana(
-                        `http://localhost:3002/tpv/login/${user.tenantId || "demo"}`
+                        `http://tpv.local.softalef.com/tpv/login/${user.tenantId || "demo"}`
                       )
                     }
                     className="TopBar-btn login"
@@ -186,7 +192,7 @@ export default function TopBar() {
                   <button
                     onClick={() =>
                       abrirEnNuevaPestana(
-                        `http://localhost:3001/${user.tenantId || "demo"}`
+                        `http://carta.local.softalef.com/${user.tenantId || "demo"}`
                       )
                     }
                     className="TopBar-btn login"
@@ -214,7 +220,7 @@ export default function TopBar() {
               </button>
             </>
           )}
-        </div>
+        </nav>
       </div>
     </header>
   );

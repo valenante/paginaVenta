@@ -1,0 +1,230 @@
+/* =========================================================
+   TENANT MODAL – SUPERADMIN ALEF
+   Clases únicas: tenantModal-*
+   ========================================================= */
+
+/* ========= OVERLAY ========= */
+
+.tenantModal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(8px);
+  z-index: 9998;
+  animation: tenantModal-fadeIn 0.25s ease forwards;
+}
+
+@keyframes tenantModal-fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ========= MODAL CONTENT ========= */
+
+.tenantModal-content {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  width: 100%;
+  max-width: 700px;
+  max-height: 92vh;
+  overflow-y: auto;
+
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(16px);
+
+  padding: 32px 36px;
+  border-radius: 22px;
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow:
+    0 28px 60px rgba(0, 0, 0, 0.55),
+    0 0 0 1px rgba(255, 255, 255, 0.05);
+
+  color: #ffffff;
+  z-index: 9999;
+
+  animation: tenantModal-slideIn 0.3s ease;
+}
+
+@keyframes tenantModal-slideIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -46%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+
+/* ========= TITULO ========= */
+
+.tenantModal-title {
+  font-size: 26px;
+  font-weight: 800;
+  margin-bottom: 18px;
+  text-align: center;
+}
+
+/* ========= FORM ========= */
+
+.tenantModal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+/* ========= BLOQUES ========= */
+
+.tenantModal-block {
+  background: rgba(255, 255, 255, 0.07);
+  padding: 20px;
+  border-radius: 14px;
+
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow:
+    0 10px 22px rgba(0, 0, 0, 0.25),
+    0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+
+.tenantModal-block h4 {
+  margin: 0 0 12px;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+/* ========= INPUTS ========= */
+
+.tenantModal-label {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: #d8dee9;
+}
+
+.tenantModal-input,
+.tenantModal-select {
+  width: 100%;
+  padding: 12px 14px;
+
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: #fff;
+
+  border-radius: 10px;
+  outline: none;
+
+  transition: 0.2s ease;
+}
+
+.tenantModal-input:focus,
+.tenantModal-select:focus {
+  border-color: #6a0dad;
+  background: rgba(255, 255, 255, 0.18);
+  box-shadow: 0 0 0 2px rgba(106, 13, 173, 0.35);
+}
+
+/* ========= CHECKBOXES ========= */
+
+.tenantModal-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.tenantModal-checkbox input {
+  width: 18px;
+  height: 18px;
+}
+
+/* ========= COLOR PICKER ========= */
+
+.tenantModal-colorBlock {
+  display: flex;
+  gap: 16px;
+}
+
+.tenantModal-colorItem input[type="color"] {
+  width: 54px;
+  height: 40px;
+  border-radius: 10px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+/* ========= DÍAS DE APERTURA ========= */
+
+.tenantModal-days {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px 10px;
+}
+
+/* ========= MENSAJE ========= */
+
+.tenantModal-message {
+  background: rgba(255, 255, 255, 0.12);
+  padding: 12px;
+  text-align: center;
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+/* ========= BOTONES ========= */
+
+.tenantModal-submit {
+  padding: 12px;
+  width: 100%;
+  background: #6a0dad;
+  border: none;
+  border-radius: 12px;
+  color: #fff;
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.tenantModal-submit:hover {
+  background: #530a9b;
+  transform: translateY(-2px);
+}
+
+.tenantModal-close {
+  margin-top: 20px;
+  padding: 10px;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.16);
+  border-radius: 12px;
+  border: none;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.tenantModal-close:hover {
+  background: rgba(255, 255, 255, 0.28);
+  transform: translateY(-2px);
+}
+
+/* ========= RESPONSIVE ========= */
+
+@media (max-width: 600px) {
+  .tenantModal-content {
+    padding: 24px 20px;
+  }
+
+  .tenantModal-colorBlock {
+    flex-direction: column;
+  }
+
+  .tenantModal-days {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

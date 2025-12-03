@@ -1,60 +1,186 @@
+// src/components/Paso3ServiciosExtras.jsx
 import React from "react";
 import "./Paso3ServiciosExtras.css";
 
 export default function Paso3ServiciosExtras({ servicios, setServicios }) {
   const handleChange = (e) => {
     const { name, type, value, checked } = e.target;
+
     setServicios((prev) => ({
       ...prev,
-      [name]: type === "checkbox" ? checked : Number(value),
+      [name]:
+        type === "checkbox"
+          ? checked
+          : value === ""
+          ? ""
+          : Number(value),
+    }));
+  };
+
+  const handleFileChange = (e) => {
+    const { name, files } = e.target;
+
+    setServicios((prev) => ({
+      ...prev,
+      // Guardamos un array de File para poder montar luego un FormData
+      [name]: Array.from(files || []),
     }));
   };
 
   return (
-    <section className="paso3-servicios">
-      <h2>🧾 Servicios y equipamiento</h2>
-      <p>Personaliza tu plan mensual y selecciona el equipamiento que deseas incluir.</p>
+    <section className="paso3-servicios section section--wide">
+      <header className="paso3-header">
+        <div>
+          <h2>🧾 Servicios y equipamiento</h2>
+          <p>
+            Personaliza tu plan mensual y selecciona el equipamiento que
+            necesitas para arrancar con Alef desde el primer día.
+          </p>
+        </div>
 
-      {/* === Servicios de software === */}
-      <div className="servicios-grupo">
-        <h3>💡 Funcionalidades avanzadas</h3>
+        <div className="paso3-badge">
+          <span className="badge badge-aviso">
+            Opcional — puedes contratarlo más adelante
+          </span>
+        </div>
+      </header>
 
-        <label className="servicio-item">
+      {/* === Servicios de puesta en marcha === */}
+      <div className="servicios-grupo card">
+        <h3>🚀 Puesta en marcha avanzada</h3>
+        <p className="servicios-help">
+          Si quieres olvidarte de la parte pesada, nos mandas la información y
+          dejamos Alef listo para trabajar.
+        </p>
+
+        {/* Carga completa de carta y productos */}
+        <label className="servicio-item servicio-item--checkbox">
           <input
             type="checkbox"
-            name="vozCocina"
-            checked={servicios.vozCocina}
+            name="cargaProductos"
+            checked={!!servicios.cargaProductos}
             onChange={handleChange}
           />
-          <span>
-            <strong>Voz en cocina</strong>
-            <small>+10 €/mes</small>
-            <p>Los pedidos se leen automáticamente por voz al llegar a cocina.</p>
-          </span>
+
+          <div className="servicio-content">
+            <div className="servicio-header-row">
+              <span className="servicio-title">
+                Carga completa de carta y productos
+              </span>
+              <span className="servicio-price badge badge-aviso">
+                +80 € único
+              </span>
+            </div>
+            <p className="servicio-description">
+              Nos envías tu carta (PDF, fotos, Excel…) y nosotros damos de alta
+              todos los productos, categorías y precios dentro de Alef para que
+              puedas empezar a usarlo desde el día uno.
+            </p>
+
+            {servicios.cargaProductos && (
+              <div className="servicio-upload">
+                <label className="servicio-upload-label">
+                  Adjunta tu carta (PDF, imagen o archivo)
+                  <input
+                    type="file"
+                    name="cartaAdjuntos"
+                    multiple
+                    onChange={handleFileChange}
+                    accept=".pdf,.jpg,.jpeg,.png,.xlsx,.xls,.csv"
+                  />
+                </label>
+                <small className="servicio-helper">
+                  Usaremos estos archivos como base para cargar tu carta en el
+                  sistema. Si prefieres, también podrás enviarlos luego por
+                  email o WhatsApp.
+                </small>
+              </div>
+            )}
+          </div>
         </label>
 
-        <label className="servicio-item">
+        {/* Configuración de mesas + QR impresos */}
+        <label className="servicio-item servicio-item--checkbox">
           <input
             type="checkbox"
-            name="vozComandas"
-            checked={servicios.vozComandas}
+            name="mesasQr"
+            checked={!!servicios.mesasQr}
             onChange={handleChange}
           />
-          <span>
-            <strong>Voz en comandas</strong>
-            <small>+10 €/mes</small>
-            <p>Los camareros escuchan los pedidos confirmados sin mirar la pantalla.</p>
-          </span>
+
+          <div className="servicio-content">
+            <div className="servicio-header-row">
+              <span className="servicio-title">
+                Configuración de mesas + QR impresos
+              </span>
+              <span className="servicio-price badge badge-aviso">
+                desde 80 € único
+              </span>
+            </div>
+            <p className="servicio-description">
+              Nos envías el plano o listado de mesas y configuramos toda la
+              estructura en Alef. Te mandamos los QR de la carta con número de
+              mesa, plastificados y listos para colocar en cada mesa.
+            </p>
+
+            {servicios.mesasQr && (
+              <>
+                <div className="servicio-item servicio-item--number servicio-item--inline">
+                  <div className="servicio-number-text">
+                    <label>Número aproximado de mesas</label>
+                    <small className="servicio-helper">
+                      Solo para estimar el pack de QRs plastificados.
+                    </small>
+                  </div>
+                  <input
+                    className="servicio-number-input"
+                    type="number"
+                    name="mesasQrCantidad"
+                    min="1"
+                    max="150"
+                    value={servicios.mesasQrCantidad ?? ""}
+                    onChange={handleChange}
+                  />
+                </div>
+
+                <div className="servicio-upload">
+                  <label className="servicio-upload-label">
+                    Adjunta plano, fotos o listado de mesas
+                    <input
+                      type="file"
+                      name="mesasAdjuntos"
+                      multiple
+                      onChange={handleFileChange}
+                      accept=".pdf,.jpg,.jpeg,.png"
+                    />
+                  </label>
+                  <small className="servicio-helper">
+                    Puedes subir un plano, fotos de la sala o un documento con
+                    los números de mesa. Si lo prefieres, también podrás
+                    enviarlo después por email/WhatsApp.
+                  </small>
+                </div>
+              </>
+            )}
+          </div>
         </label>
       </div>
 
       {/* === Equipamiento físico === */}
-      <div className="servicios-grupo">
+      <div className="servicios-grupo card">
         <h3>🖨️ Equipamiento de hardware</h3>
+        <p className="servicios-help">
+          Indícanos el hardware que quieres que incluyamos en la instalación
+          estándar. Te llegará listo para usar.
+        </p>
 
-        <div className="servicio-item">
-          <label>Impresoras térmicas</label>
+        <div className="servicio-item servicio-item--number">
+          <div className="servicio-number-text">
+            <label>Impresoras térmicas</label>
+            <small className="servicio-helper">150 € por unidad</small>
+          </div>
           <input
+            className="servicio-number-input"
             type="number"
             name="impresoras"
             min="0"
@@ -62,12 +188,15 @@ export default function Paso3ServiciosExtras({ servicios, setServicios }) {
             value={servicios.impresoras}
             onChange={handleChange}
           />
-          <small>150 € por unidad</small>
         </div>
 
-        <div className="servicio-item">
-          <label>Pantallas de cocina/barra</label>
+        <div className="servicio-item servicio-item--number">
+          <div className="servicio-number-text">
+            <label>Pantallas de cocina/barra</label>
+            <small className="servicio-helper">250 € por unidad</small>
+          </div>
           <input
+            className="servicio-number-input"
             type="number"
             name="pantallas"
             min="0"
@@ -75,12 +204,15 @@ export default function Paso3ServiciosExtras({ servicios, setServicios }) {
             value={servicios.pantallas}
             onChange={handleChange}
           />
-          <small>250 € por unidad</small>
         </div>
 
-        <div className="servicio-item">
-          <label>PDA o tablet para camareros</label>
+        <div className="servicio-item servicio-item--number">
+          <div className="servicio-number-text">
+            <label>PDA o tablet para camareros</label>
+            <small className="servicio-helper">180 € por unidad</small>
+          </div>
           <input
+            className="servicio-number-input"
             type="number"
             name="pda"
             min="0"
@@ -88,48 +220,46 @@ export default function Paso3ServiciosExtras({ servicios, setServicios }) {
             value={servicios.pda}
             onChange={handleChange}
           />
-          <small>180 € por unidad</small>
         </div>
       </div>
 
       {/* === Servicios adicionales === */}
-      <div className="servicios-grupo">
+      <div className="servicios-grupo card">
         <h3>📷 Servicios adicionales</h3>
+        <p className="servicios-help">
+          Opciones únicas para presentar mejor tu marca y empezar con todo
+          configurado.
+        </p>
 
-        <label className="servicio-item">
+        <label className="servicio-item servicio-item--checkbox">
           <input
             type="checkbox"
             name="fotografia"
             checked={servicios.fotografia}
             onChange={handleChange}
           />
-          <span>
-            <strong>Servicio de fotografía profesional</strong>
-            <small>+120 € único</small>
-            <p>Fotografiamos tus platos y productos con calidad profesional.</p>
-          </span>
-        </label>
-
-        <label className="servicio-item">
-          <input
-            type="checkbox"
-            name="cargaDatos"
-            checked={servicios.cargaDatos}
-            onChange={handleChange}
-          />
-          <span>
-            <strong>Carga inicial de carta y datos</strong>
-            <small>+100 € único</small>
-            <p>Nos encargamos de cargar tu carta y configuraciones iniciales.</p>
-          </span>
+          <div className="servicio-content">
+            <div className="servicio-header-row">
+              <span className="servicio-title">
+                Servicio de fotografía profesional
+              </span>
+              <span className="servicio-price badge badge-aviso">
+                +120 € único
+              </span>
+            </div>
+            <p className="servicio-description">
+              Fotografíamos tus platos y tu local con calidad profesional para
+              usarlos en la carta digital y en tu web.
+            </p>
+          </div>
         </label>
       </div>
 
       {/* === Info final === */}
-      <div className="servicios-nota">
-        <p>
-          💬 Todos los precios incluyen soporte técnico y actualizaciones.  
-          El plan base es de <strong>80 €/mes</strong> e incluye acceso completo al TPV y carta digital.
+      <div className="servicios-nota card">
+        <p className="servicios-nota-text">
+          💬 Todos los precios incluyen soporte técnico y actualizaciones de
+          Alef. El hardware se envía configurado y listo para conectar.
         </p>
       </div>
     </section>

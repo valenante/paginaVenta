@@ -1,128 +1,117 @@
-/* === SECCIÓN PRINCIPAL === */
+/* src/components/Features/Features.css */
+
 .Features {
-  padding: 60px 10%;
-  background: linear-gradient(180deg, #ffffff 0%, #faf7ff 100%);
-  font-family: "Poppins", sans-serif;
-  text-align: center;
-  margin: 0;
+  /* fondo ya lo mete bg-fondo-claro */
 }
 
-/* === CABECERA === */
+.Features-inner {
+  padding: var(--space-2xl) var(--space-lg);
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* Cabecera */
+
 .Features-header {
-  max-width: 750px;
-  margin: 0 auto 70px;
+  text-align: center;
+  max-width: 720px;
+  margin: 0 auto var(--space-xl);
+}
+
+.Features-kicker {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem 0.7rem;
+  border-radius: var(--radius-pill);
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: var(--color-primario-suave);
+  color: var(--color-primario-oscuro);
+  margin-bottom: 0.6rem;
 }
 
 .Features-header h2 {
-  font-size: 2.3rem;
-  font-weight: 700;
-  color: #6A0DAD;
-  margin-bottom: 16px;
+  font-size: var(--font-size-2xl);
+  margin: 0 0 0.6rem;
+  color: var(--color-texto);
 }
 
 .Features-header p {
-  font-size: 1.05rem;
-  color: #555;
-  line-height: 1.7;
+  margin: 0;
+  font-size: var(--font-size-md);
+  color: var(--color-texto-suave);
 }
 
-/* === GRID DE TARJETAS === */
+/* Grid de ventajas */
+
 .Features-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 30px;
-  justify-items: center;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.4rem;
 }
 
-/* === TARJETAS === */
+@media (max-width: 960px) {
+  .Features-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .Features-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Tarjetas */
+
 .Features-card {
-  background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
-  padding: 40px 28px;
-  max-width: 340px;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  background: var(--color-fondo-card);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-borde-suave);
+  padding: 1.2rem 1.3rem;
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.04);
+  transition: transform 0.16s ease, box-shadow 0.16s ease,
+    border-color 0.16s ease, background 0.16s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 .Features-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 14px 35px rgba(0, 0, 0, 0.12);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-hover);
+  border-color: rgba(96, 181, 255, 0.6);
+  background: #ffffff;
 }
 
-/* === ICONOS === */
+/* Icono */
+
 .Features-icono {
-  font-size: 2.8rem;
-  margin-bottom: 16px;
-  color: #6A0DAD;
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: var(--radius-pill);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  background: var(--color-primario-suave);
+  color: var(--color-primario-oscuro);
 }
 
-/* === TITULO Y TEXTO === */
-.Features-card h3 {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: #222;
+/* Título y texto */
+
+.Features-titulo {
+  margin: 0;
+  font-size: var(--font-size-lg);
+  color: var(--color-texto);
 }
 
-.Features-card p {
-  font-size: 1rem;
-  color: #555;
+.Features-descripcion {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-texto-suave);
   line-height: 1.6;
-}
-
-/* === ANIMACIÓN REVEAL === */
-.reveal {
-  opacity: 0;
-  transform: translateY(40px);
-  transition: all 0.8s ease-out;
-}
-
-.reveal.active {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* === RESPONSIVE === */
-@media (max-width: 1024px) {
-  .Features {
-    padding: 100px 8%;
-  }
-
-  .Features-header h2 {
-    font-size: 2rem;
-  }
-
-  .Features-header p {
-    font-size: 1rem;
-  }
-}
-
-@media (max-width: 600px) {
-  .Features {
-    padding: 80px 6%;
-  }
-
-  .Features-header h2 {
-    font-size: 1.8rem;
-  }
-
-  .Features-grid {
-    gap: 24px;
-  }
-
-  .Features-card {
-    padding: 32px 22px;
-    max-width: 100%;
-  }
-
-  .Features-icono {
-    font-size: 2.4rem;
-  }
-
-  .Features-card h3 {
-    font-size: 1.1rem;
-  }
-
-  .Features-card p {
-    font-size: 0.95rem;
-  }
 }

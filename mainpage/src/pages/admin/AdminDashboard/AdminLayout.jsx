@@ -52,7 +52,9 @@ export default function AdminLayout() {
 
       {/* 📌 CONTENIDO */}
       <main className="admin-content">
-        <Outlet />
+        <div className="admin-content-wrapper">
+          <Outlet />
+        </div>
       </main>
     </div>
   );

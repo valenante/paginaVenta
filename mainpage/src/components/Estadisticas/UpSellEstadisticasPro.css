@@ -1,0 +1,95 @@
+/* =========================================================
+   ESTADÍSTICAS ALEF — UPSELL PRO
+   Clases únicas "upsellpro-*"
+   ========================================================= */
+
+/* ===== CONTENEDOR ===== */
+.upsellpro-container {
+  margin-top: 2rem;
+  padding: 2rem;
+  border-radius: var(--radius-xl);
+  background: linear-gradient(
+    135deg,
+    rgba(255, 103, 0, 0.25),
+    rgba(106, 13, 173, 0.25)
+  );
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: #fff;
+  text-align: center;
+  box-shadow:
+    0 12px 28px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  animation: upsellFadeIn 0.4s ease;
+}
+
+/* Animación */
+@keyframes upsellFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===== TÍTULO ===== */
+.upsellpro-title {
+  font-size: 1.5rem;
+  margin-bottom: 0.6rem;
+  font-weight: 700;
+}
+
+/* ===== TEXTO ===== */
+.upsellpro-text {
+  font-size: 1rem;
+  opacity: 0.92;
+  margin: 0 auto;
+  max-width: 580px;
+  line-height: 1.55;
+}
+
+/* ===== FOOTNOTE ===== */
+.upsellpro-footnote {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  opacity: 0.75;
+}
+
+/* ===== BOTÓN ===== */
+.upsellpro-btn {
+  margin-top: 1.4rem;
+  padding: 0.7rem 1.6rem;
+  background: linear-gradient(90deg, #6a0dad, #ff6700);
+  color: #fff;
+  border: none;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(255, 103, 0, 0.35);
+  transition: all 0.25s ease;
+}
+
+.upsellpro-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 28px rgba(255, 103, 0, 0.45);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .upsellpro-container {
+    padding: 1.5rem;
+  }
+
+  .upsellpro-title {
+    font-size: 1.3rem;
+  }
+
+  .upsellpro-btn {
+    width: 100%;
+  }
+}

@@ -1,206 +1,242 @@
-/* === BASE GENERAL === */
+/*****************************************************
+ * TOPBAR – CONTENEDOR GENERAL
+ *****************************************************/
+
 .TopBar {
-  width: 100%;
-  position: fixed;
+  position: sticky;
   top: 0;
-  left: 0;
-  background-color: #ffffff;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-  z-index: 1000;
-  font-family: "Poppins", sans-serif;
-  transition: background 0.3s ease, box-shadow 0.3s ease;
+  z-index: 50;
+  background: #ffffff;
+  box-shadow: 0 2px 14px rgba(15, 23, 42, 0.06);
 }
 
 .TopBar-container {
-  max-width: 1200px;
+  max-width: 1180px;
   margin: 0 auto;
-  padding: 12px 24px;
+  padding: 0.7rem 1.5rem;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-}
-
-/* === LOGO === */
-.TopBar-logo {
-  font-weight: 700;
-  font-size: 1.5rem;
-  color: #222;
-  cursor: pointer;
-  transition: color 0.3s ease;
-}
-.TopBar-logo span {
-  color: #6A0DAD;
-}
-.TopBar-logo:hover {
-  color: #6A0DAD;
-}
-
-/* === BOTÓN HAMBURGUESA === */
-.TopBar-menu {
-  display: flex;
-  flex-direction: column;
   justify-content: space-between;
-  width: 26px;
-  height: 18px;
-  background: none;
+}
+
+/*****************************************************
+ * LOGO
+ *****************************************************/
+
+
+.TopBar-logo {
   border: none;
+  background: transparent;
+  padding: 0;
+  margin: 0;
   cursor: pointer;
-  z-index: 1100;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
 }
+
+.TopBar-logo-img {
+  height: 38px;
+  width: auto;
+  display: block;
+}
+
+.TopBar-logo-text {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #111827;
+  letter-spacing: 0.02em;
+}
+
+.TopBar-logo-text strong {
+  color: var(--color-primario);
+}
+
+/*****************************************************
+ * MENÚ HAMBURGUESA (MÓVIL)
+ *****************************************************/
+
+.TopBar-menu {
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border-radius: 999px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
 .TopBar-menu span {
-  height: 3px;
-  width: 100%;
-  background-color: #333;
-  border-radius: 2px;
-  transition: all 0.3s ease;
+  display: block;
+  height: 2px;
+  width: 18px;
+  border-radius: 999px;
+  background: #111827;
+  transition: transform 0.2s ease, opacity 0.2s ease;
 }
+
 .TopBar-menu.active span:nth-child(1) {
-  transform: rotate(45deg) translateY(7px);
+  transform: translateY(6px) rotate(45deg);
 }
+
 .TopBar-menu.active span:nth-child(2) {
   opacity: 0;
 }
+
 .TopBar-menu.active span:nth-child(3) {
-  transform: rotate(-45deg) translateY(-7px);
+  transform: translateY(-6px) rotate(-45deg);
 }
 
-/* === MENÚ DESPLEGABLE (MÓVIL) === */
+/*****************************************************
+ * MENÚ – ESTADO MÓVIL
+ *****************************************************/
+
 .TopBar-dropdown {
   position: absolute;
-  top: 50px;
-  right: 0;
-  width: 100%;
-  background-color: #fff;
-  max-height: 0;
-  overflow: hidden;
-  display: flex;
+  inset: 60px 1rem auto 1rem;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 0.9rem 1rem 1rem;
+  display: none;
   flex-direction: column;
-  align-items: center;
-  transition: max-height 0.35s ease;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  gap: 0.6rem;
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.18);
 }
+
 .TopBar-dropdown.open {
-  max-height: 480px;
+  display: flex;
 }
 
 .TopBar-dropdown a,
 .TopBar-dropdown button {
-  width: 100%;
-  text-align: center;
-  padding: 12px 0;
-  border: none;
-  background: none;
-  color: #333;
-  font-size: 1rem;
-  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+/*****************************************************
+ * LINKS DE NAVEGACIÓN (COMUNES)
+ *****************************************************/
+
+.TopBar-dropdown a {
   text-decoration: none;
-  transition: background 0.25s, color 0.25s;
-}
-.TopBar-dropdown a:hover,
-.TopBar-dropdown button:hover {
-  background-color: #f5f5f5;
-  color: #6A0DAD;
+  color: #111827;
+  padding: 0.3rem 0.2rem;
+  font-weight: 500;
 }
 
-/* === BOTONES ESPECIALES === */
+.TopBar-dropdown a:hover {
+  color: var(--color-primario);
+}
+
+/*****************************************************
+ * BOTONES
+ *****************************************************/
+
+.TopBar-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.45rem 1.1rem;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  background: transparent;
+  text-decoration: none;
+  transition: background 0.15s ease, color 0.15s ease,
+    box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+/* “Login” / botones neutros */
 .TopBar-btn.login {
-  color: #6A0DAD;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  color: var(--color-primario-oscuro);
+  border-color: rgba(148, 163, 184, 0.5);
+  background: #ffffff;
+  padding: 1vh;
 }
 
+.TopBar-btn.login:hover {
+  background: #f9fafb;
+  box-shadow: var(--shadow-suave);
+  transform: translateY(-1px);
+}
+
+/* CTA principal: Solicitar demo / Cerrar sesión */
 .TopBar-btn.cta {
-  background-color: #FF6700;
-  color: #fff;
-  border-radius: 8px;
-  padding: 10px 16px;
-  margin: 10px 0;
-  width: 80%;
-  font-weight: 600;
-  text-transform: uppercase;
-  transition: background 0.3s ease;
+  background: var(--color-primario);
+  color: #ffffff;
+  border-color: transparent;
+  box-shadow: var(--shadow-suave);
 }
+
 .TopBar-btn.cta:hover {
-  background-color: #e45f00;
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-1px);
 }
 
+/* Botón especial SuperAdmin */
 .TopBar-btn.special {
-  color: #fff;
-  background-color: #6A0DAD;
-  border-radius: 8px;
-  padding: 10px 16px;
-  width: 80%;
-  margin: 10px 0;
-  text-transform: uppercase;
-  font-weight: 600;
-  transition: background 0.3s ease;
+  background: #111827;
+  color: #f9fafb;
 }
+
 .TopBar-btn.special:hover {
-  background-color: #580c94;
+  background: #020617;
 }
 
-/* === VERSIÓN ESCRITORIO === */
-@media (min-width: 769px) {
-  .TopBar-container {
-    padding: 12px 40px;
-  }
+/*****************************************************
+ * VERSIÓN ESCRITORIO
+ *****************************************************/
 
+@media (min-width: 769px) {
   .TopBar-menu {
     display: none;
   }
 
   .TopBar-dropdown {
     position: static;
+    display: flex !important;
     flex-direction: row;
-    justify-content: flex-end;
     align-items: center;
-    max-height: none;
-    background: none;
+    gap: 1.6rem;
+    padding: 0;
     box-shadow: none;
-    transition: none;
-    width: auto;
+    background: transparent;
   }
 
-  .TopBar-dropdown a,
-  .TopBar-dropdown button {
-    width: auto;
-    margin: 0 8px;
-    font-size: 0.95rem;
-    padding: 6px 10px;
+  .TopBar-dropdown a {
+    font-size: 0.9rem;
   }
 
-  .TopBar-btn.cta {
-    width: auto;
-    margin-left: 12px;
-    border-radius: 6px;
-    padding: 8px 14px;
+  .TopBar-dropdown .TopBar-btn.login {
+    margin-left: 0.8rem;
   }
 
-  .TopBar-btn.special {
-    width: auto;
-    margin-left: 12px;
-    padding: 8px 14px;
-  }
-
-  .TopBar-btn.login {
-    font-weight: 500;
-    font-size: 0.95rem;
-    letter-spacing: normal;
-  }
-
-  .TopBar-dropdown a:hover,
-  .TopBar-dropdown button:hover {
-    background: none;
-    color: #6A0DAD;
+  .TopBar-dropdown .TopBar-btn.cta {
+    margin-left: 0.4rem;
   }
 }
 
-/* === EFECTO DE SOMBRA CUANDO SE DESPLAZA === */
-@media (prefers-reduced-motion: no-preference) {
-  .TopBar.scrolled {
-    background-color: rgba(255, 255, 255, 0.95);
-    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
-    backdrop-filter: blur(6px);
+/*****************************************************
+ * PEQUEÑOS AJUSTES EXTRA PEQUEÑO
+ *****************************************************/
+
+@media (max-width: 360px) {
+  .TopBar-dropdown {
+    inset: 56px 0.6rem auto 0.6rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .TopBar-logo-img {
+    height: 32px;
+  }
+
+  .TopBar-logo-text {
+    font-size: 1rem;
   }
 }

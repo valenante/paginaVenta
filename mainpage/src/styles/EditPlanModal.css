@@ -1,0 +1,308 @@
+/* =========================================================
+   EDIT PLAN MODAL — SuperAdmin Alef
+   ---------------------------------------------------------
+   - Vidrio oscuro profesional
+   - Columns responsive
+   - Scroll interno si hay muchas features
+   ========================================================= */
+
+/* ===== OVERLAY ===== */
+
+.modal-overlay--planModal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ===== MODAL ===== */
+
+.modal-content--planModal {
+  max-width: 760px;
+  width: 92%;
+  background: rgba(15, 23, 42, 0.88);
+  border-radius: var(--radius-xl);
+  border: 1px solid rgba(148, 163, 184, 0.3);
+
+  padding: 2rem 2.4rem;
+  box-shadow:
+    0 26px 48px rgba(0, 0, 0, 0.55),
+    0 0 0 1px rgba(255, 255, 255, 0.06);
+
+  color: #fff;
+
+  max-height: 90vh;     /* ← evita salir de pantalla */
+  overflow-y: auto;
+  animation: modalPlanAppear 0.3s ease-out;
+}
+
+@keyframes modalPlanAppear {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===== CABECERA ===== */
+
+.header--planModal {
+  margin-bottom: 1.2rem;
+}
+
+.titulo--planModal {
+  font-size: var(--font-size-xl);
+  text-align: center;
+  margin: 0 0 0.6rem;
+  font-weight: 700;
+}
+
+.tenant-nombre--planModal {
+  color: var(--color-primario);
+}
+
+.texto--planModal {
+  color: rgba(226, 232, 240, 0.85);
+  font-size: var(--font-size-sm);
+  margin-bottom: 0.9rem;
+  text-align: center;
+}
+
+.plan-actual--planModal {
+  text-align: center;
+  font-size: var(--font-size-sm);
+  color: rgba(226, 232, 240, 0.85);
+}
+
+.badge-plan--planModal {
+  margin-left: 0.4rem;
+  background: rgba(255, 255, 255, 0.08);
+  padding: 0.35rem 0.7rem;
+  border-radius: var(--radius-pill);
+  font-weight: 600;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+}
+
+/* ===== FORMULARIO ===== */
+
+.form--planModal {
+  margin-top: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.4rem;
+}
+
+.campo--planModal label {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: rgba(226, 232, 240, 0.75);
+  margin-bottom: 0.25rem;
+  display: inline-block;
+}
+
+.select--planModal {
+  width: 100%;
+  padding: 0.75rem;
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  font-size: var(--font-size-sm);
+  outline: none;
+  transition: 0.15s ease;
+}
+
+.select--planModal:focus {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: var(--color-primario);
+  box-shadow: 0 0 0 1px rgba(96, 181, 255, 0.4);
+}
+
+/* ===== DETALLES DEL PLAN ===== */
+
+.plan-details--planModal {
+  margin-top: 0.5rem;
+  padding: 1.4rem;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(148, 163, 184, 0.22);
+}
+
+.plan-details-header--planModal {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.plan-details-main--planModal {
+  max-width: 65%;
+}
+
+.plan-name--planModal {
+  margin: 0;
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+}
+
+.plan-tagline--planModal {
+  margin-top: 0.2rem;
+  font-size: var(--font-size-sm);
+  color: rgba(226, 232, 240, 0.8);
+}
+
+.plan-price-box--planModal {
+  text-align: right;
+}
+
+.plan-price-mensual--planModal {
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+}
+
+.plan-price-anual--planModal {
+  display: block;
+  margin-top: 0.2rem;
+  font-size: var(--font-size-sm);
+  opacity: 0.75;
+}
+
+/* ===== FEATURES ===== */
+
+.plan-features-wrapper--planModal {
+  margin-top: 1.3rem;
+}
+
+.plan-features-header--planModal {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.7rem;
+  font-size: var(--font-size-sm);
+  color: rgba(226, 232, 240, 0.85);
+}
+
+.plan-features-grid--planModal {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 0.55rem 0.9rem; /* rows / columns */
+}
+
+.plan-feature-item--planModal {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  background: rgba(255, 255, 255, 0.04);
+  padding: 0.55rem 0.75rem;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(148, 163, 184, 0.18);
+
+  font-size: var(--font-size-sm);
+  color: rgba(226, 232, 240, 0.9);
+
+  transition: 0.15s ease;
+}
+
+.plan-feature-item--planModal:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.plan-feature-icon--planModal {
+  color: #4ade80;
+  font-weight: 900;
+}
+
+/* ===== ERRORES ===== */
+
+.mensaje-error--planModal {
+  color: #f87171;
+  font-size: var(--font-size-sm);
+  text-align: center;
+  background: rgba(255, 0, 0, 0.12);
+  border-left: 3px solid #ef4444;
+  padding: 0.65rem;
+  border-radius: var(--radius-md);
+}
+
+/* ===== BOTONES MODAL ===== */
+
+.modal-actions--planModal {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.6rem;
+  margin-top: 1.2rem;
+}
+
+.boton--planModal {
+  padding: 0.7rem 1.4rem;
+  border-radius: var(--radius-pill);
+  border: none;
+  background: linear-gradient(
+    135deg,
+    var(--color-primario),
+    var(--color-secundario)
+  );
+  color: #fff;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.15s ease;
+}
+
+.boton--planModal:hover:not(:disabled) {
+  filter: brightness(1.06);
+  transform: translateY(-1px);
+}
+
+.boton-cancelar--planModal {
+  padding: 0.7rem 1.2rem;
+  border-radius: var(--radius-pill);
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+  transition: 0.15s ease;
+}
+
+.boton-cancelar--planModal:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+/* ===== RESPONSIVE ===== */
+
+@media (max-width: 600px) {
+  .modal-content--planModal {
+    padding: 1.4rem 1.2rem;
+  }
+
+  .plan-details-header--planModal {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .plan-price-box--planModal {
+    text-align: left;
+    margin-top: 0.6rem;
+  }
+
+  .plan-features-grid--planModal {
+    grid-template-columns: 1fr;
+    gap: 0.4rem;
+  }
+}

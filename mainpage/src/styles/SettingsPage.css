@@ -1,337 +1,228 @@
-/* ===========================
-   WRAPPER Y TÍTULOS
-=========================== */
+/* =========================================================
+   SETTINGS — PANEL PREMIUM ALEF (sufijo -settingsAdmin)
+   ========================================================= */
 
-.settings-wrapper {
-  max-width: 1100px;
-  margin: 20px auto;
-  padding: 18px 20px;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+.settings-wrapper-settingsAdmin {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 22px;
+  color: #e5e7eb;
 }
 
-.settings-wrapper .titulo {
-  font-size: 22px;
-  font-weight: 700;
-  color: #111827;
-  margin: 0;
+.settings-title-settingsAdmin {
+  font-size: 28px;
+  font-weight: 800;
 }
 
-.settings-wrapper .subtitulo {
-  font-size: 14px;
-  color: #6b7280;
-  margin: 0 0 10px;
-}
-
-/* ===========================
-   TABS (coherente con el resto)
-=========================== */
-
-.tabs {
-  display: inline-flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  align-self: flex-start;
-  background: #f3e8ff;
-  border-radius: 999px;
-  padding: 4px;
-  margin-bottom: 10px;
-}
-
-.tabs button {
-  border: none;
-  outline: none;
-  padding: 6px 14px;
-  border-radius: 999px;
-  font-size: 13px;
-  font-weight: 600;
-  background: transparent;
-  color: #6b7280;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  transition:
-    background 0.18s ease,
-    color 0.18s ease,
-    transform 0.08s ease;
-}
-
-.tabs button.active {
-  background: #6a0dad;
-  color: #ffffff;
-  transform: translateY(-1px);
-}
-
-.tabs button:hover:not(.active) {
-  background: rgba(148, 163, 184, 0.25);
-  color: #111827;
-}
-
-/* ===========================
-   PANEL
-=========================== */
-
-.panel {
-  background: #ffffff;
-  padding: 20px 18px;
-  border-radius: 16px;
-  border: 1px solid #e5e7eb;
-  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.panel h2 {
-  margin: 0 0 6px;
-  font-size: 18px;
-  color: #111827;
-}
-
-.panel h3 {
-  margin: 14px 0 6px;
+.settings-subtitle-settingsAdmin {
   font-size: 15px;
-  color: #111827;
+  opacity: 0.8;
 }
 
-.panel small {
-  font-size: 12px;
-  color: #6b7280;
-}
+/* ===== TABS ===== */
 
-/* Labels / inputs */
-
-.panel label {
-  font-weight: 600;
-  font-size: 13px;
-  color: #374151;
-  display: block;
-  margin-top: 10px;
-  margin-bottom: 4px;
-}
-
-.panel input {
-  width: 100%;
-  padding: 8px 11px;
-  border: 1px solid #d1d5db;
-  border-radius: 10px;
-  font-size: 14px;
-  outline: none;
-  transition:
-    border-color 0.18s ease,
-    box-shadow 0.18s ease,
-    background 0.18s ease;
-}
-
-.panel input:focus {
-  border-color: #6a0dad;
-  box-shadow: 0 0 0 1px rgba(124, 58, 237, 0.25);
-}
-
-/* ===========================
-   ESTADO DEL SISTEMA
-=========================== */
-
-.status-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-  gap: 10px;
-  margin-top: 8px;
-}
-
-.status-grid p {
-  margin: 0;
-  font-size: 13px;
-  color: #374151;
-}
-
-.estado {
-  display: inline-flex;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 6px;
-  padding: 4px 10px;
-  border-radius: 999px;
-  font-weight: 600;
-  font-size: 11px;
-}
-
-.estado.ok {
-  background: #dcfce7;
-  color: #166534;
-}
-
-.estado.fail {
-  background: #fee2e2;
-  color: #b91c1c;
-}
-
-/* ===========================
-   SWITCH (modo mantenimiento)
-=========================== */
-
-.switch {
-  position: relative;
-  width: 50px;
-  display: inline-block;
-  margin-top: 6px;
-}
-
-.switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-.slider {
-  cursor: pointer;
-  background-color: #d1d5db;
-  border-radius: 999px;
-  position: absolute;
-  inset: 0;
-  transition: 0.3s;
-}
-
-.slider:before {
-  position: absolute;
-  content: "";
-  height: 20px;
-  width: 20px;
-  left: 4px;
-  bottom: 3px;
-  background: #ffffff;
-  border-radius: 50%;
-  transition: 0.3s;
-}
-
-input:checked + .slider {
-  background-color: #6a0dad;
-}
-
-input:checked + .slider:before {
-  transform: translateX(22px);
-}
-
-/* ===========================
-   BOTONES DE TEST
-=========================== */
-
-.smtp-buttons {
+.settings-tabs-settingsAdmin {
   display: flex;
-  flex-wrap: wrap;
   gap: 10px;
-  margin-top: 14px;
+  flex-wrap: wrap;
 }
 
-.test-btn {
-  padding: 9px 14px;
-  background: #ff6700;
-  color: #ffffff;
-  border: none;
-  border-radius: 999px;
+.tab-btn-settingsAdmin {
+  padding: 10px 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.06);
+  color: #e5e7eb;
+  cursor: pointer;
   font-weight: 600;
-  font-size: 13px;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  transition:
-    background 0.18s ease,
-    transform 0.08s ease,
-    box-shadow 0.18s ease;
+  transition: background 0.18s ease, box-shadow 0.18s ease, transform 0.12s ease;
 }
 
-.test-btn.secondary {
-  background: #e5e7eb;
-  color: #111827;
-}
-
-.test-btn:hover:not(:disabled) {
-  background: #d95700;
+.tab-btn-settingsAdmin:hover {
+  background: rgba(255,255,255,0.12);
   transform: translateY(-1px);
-  box-shadow: 0 8px 18px rgba(248, 113, 22, 0.4);
 }
 
-.test-btn.secondary:hover:not(:disabled) {
-  background: #d1d5db;
-  box-shadow: none;
+.tab-btn-settingsAdmin.active {
+  background: linear-gradient(135deg, #6a0dad, #8a1bd7);
+  box-shadow: 0 6px 14px rgba(106,13,173,0.38);
+  color: #fff;
 }
 
-.test-btn:disabled {
-  background: #9ca3af;
-  cursor: not-allowed;
-  box-shadow: none;
+/* ===== PANEL ===== */
+
+.settings-panel-settingsAdmin {
+  padding: 26px 30px;
+  border-radius: 18px;
+
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  backdrop-filter: blur(14px);
+
+  box-shadow:
+    0 18px 40px rgba(0,0,0,0.35),
+    0 0 0 1px rgba(255,255,255,0.05);
+
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
-/* ===========================
-   BOTÓN FINAL GUARDAR
-=========================== */
-
-.guardar-btn {
-  margin-top: 6px;
-  padding: 11px 22px;
-  background: #6a0dad;
-  color: #ffffff;
-  border: none;
-  border-radius: 999px;
-  font-size: 14px;
+.settings-panel-title-settingsAdmin {
+  font-size: 20px;
   font-weight: 700;
+}
+
+/* ===== INPUTS ===== */
+
+.settings-input-settingsAdmin {
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.18);
+  background: rgba(255,255,255,0.08);
+  color: #fff;
+
+  outline: none;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.settings-input-settingsAdmin:focus {
+  border-color: #6a0dad;
+  background: rgba(255,255,255,0.12);
+  box-shadow: 0 0 0 1px rgba(106,13,173,0.45);
+}
+
+.settings-label-settingsAdmin {
+  font-size: 14px;
+  font-weight: 600;
+  color: #e2e8f0;
+}
+
+/* ===== SMALL ===== */
+
+.settings-small-settingsAdmin {
+  font-size: 13px;
+  opacity: 0.8;
+  margin-bottom: 8px;
+}
+
+/* ===== STATUS GRID ===== */
+
+.settings-status-grid-settingsAdmin {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+  padding: 12px 0;
+  opacity: 0.9;
+}
+
+/* ===== SECTION TITLE ===== */
+
+.settings-section-title-settingsAdmin {
+  margin-top: 12px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+/* ===== SWITCH ===== */
+
+.settings-switch-settingsAdmin {
+  display: flex;
+  align-items: center;
   cursor: pointer;
-  align-self: flex-start;
-  transition:
-    background 0.18s ease,
-    transform 0.08s ease,
-    box-shadow 0.18s ease;
 }
 
-.guardar-btn:hover:not(:disabled) {
-  background: #550c91;
-  transform: translateY(-1px);
-  box-shadow: 0 10px 22px rgba(124, 58, 237, 0.45);
+.settings-switch-settingsAdmin input {
+  display: none;
 }
 
-.guardar-btn:disabled {
-  background: #a78bfa;
-  cursor: not-allowed;
-  box-shadow: none;
+.settings-slider-settingsAdmin {
+  width: 48px;
+  height: 24px;
+  background: rgba(255,255,255,0.15);
+  border-radius: 24px;
+  position: relative;
+  transition: background 0.2s ease;
 }
 
-/* ===========================
-   RESPONSIVE
-=========================== */
+.settings-slider-settingsAdmin::before {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
 
-@media (max-width: 768px) {
-  .settings-wrapper {
-    margin: 10px auto;
-    padding: 12px 12px;
-  }
+  background: white;
+  border-radius: 50%;
+  transition: transform 0.2s ease;
+}
 
-  .settings-wrapper .titulo {
-    font-size: 18px;
-  }
+.settings-switch-settingsAdmin input:checked + .settings-slider-settingsAdmin {
+  background: #6a0dad;
+}
 
-  .panel {
-    padding: 16px 14px;
-  }
+.settings-switch-settingsAdmin input:checked + .settings-slider-settingsAdmin::before {
+  transform: translateX(24px);
+}
 
-  .status-grid {
-    grid-template-columns: 1fr;
-  }
+/* ===== SMTP BUTTONS ===== */
 
-  .smtp-buttons {
-    flex-direction: column;
-  }
+.settings-smtp-buttons-settingsAdmin {
+  margin-top: 10px;
+  display: flex;
+  gap: 10px;
+}
 
-  .tabs {
-    align-self: stretch;
-    justify-content: center;
-  }
+.settings-test-btn-settingsAdmin {
+  padding: 10px 16px;
+  border-radius: 11px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
 
-  .tabs button {
-    flex: 1 1 45%;
-    justify-content: center;
-  }
+  background: rgba(255,255,255,0.14);
+  color: #fff;
+
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.settings-test-btn-settingsAdmin:hover {
+  background: rgba(255,255,255,0.22);
+  transform: translateY(-2px);
+}
+
+.settings-test-btn-settingsAdmin.secondary {
+  background: rgba(106,13,173,0.25);
+}
+
+.settings-test-btn-settingsAdmin.secondary:hover {
+  background: rgba(106,13,173,0.35);
+}
+
+/* ===== SAVE BUTTON ===== */
+
+.settings-save-btn-settingsAdmin {
+  margin-top: 10px;
+  padding: 12px 20px;
+  border-radius: 999px;
+  border: none;
+
+  background: linear-gradient(135deg, #6a0dad, #8a1bd7);
+  color: white;
+  font-weight: 700;
+
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.settings-save-btn-settingsAdmin:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(106,13,173,0.45);
+}
+
+/* DISABLED */
+.settings-save-btn-settingsAdmin:disabled {
+  opacity: 0.7;
+  cursor: default;
 }

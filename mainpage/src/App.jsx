@@ -1,6 +1,12 @@
-import React from "react";
-import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
-import { useEffect } from "react";
+// src/App.jsx
+import React, { useEffect } from "react";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useLocation,
+} from "react-router-dom";
+
 // 🌐 Landing
 import TopBar from "./components/TopBar/TopBar";
 import Introduccion from "./components/Introduccion/Introduccion";
@@ -10,6 +16,7 @@ import Gallery from "./components/Gallery/Gallery";
 import Packs from "./components/Packs/Packs";
 import About from "./components/About/About";
 import Contact from "./components/Contact/Contact";
+import LoadingScreen from "./components/LoadingScreen/LoadingScreen";
 
 // 🔐 Auth
 import Login from "./pages/Login";
@@ -25,7 +32,8 @@ import PerfilPage from "./pages/PerfilPage";
 import RestauranteConfigPage from "./pages/RestauranteConfigPage";
 import CartaConfigPage from "./pages/CartaConfigPage";
 import ReservasConfigPage from "./pages/ReservasConfigPage";
-
+import MiCuentaPage from "./pages/MiCuentaPage";
+import FacturasPage from "./pages/FacturasPage";
 // 🛡 SuperAdmin
 import AdminLayout from "./pages/admin/AdminDashboard/AdminLayout";
 import AdminDashboard from "./pages/admin/AdminDashboard/AdminDashboard";
@@ -34,18 +42,41 @@ import LogsPage from "./pages/admin/LogsPage";
 import TicketsPage from "./pages/admin/TicketsPage";
 import SettingsPage from "./pages/admin/SettingsPage";
 import PlanesAdmin from "./pages/admin/PlanesAdmin/PlanesAdmin.jsx";
+import PanelPro from "./pages/PanelPro";
 
 import SoporteDetalle from "./pages/SoporteDetalle.jsx";
 import SoporteLista from "./pages/SoporteLista.jsx";
 import SoporteNuevo from "./pages/SoporteNuevo.jsx";
+import AyudaPage from "./pages/Ayuda/AyudaPage.jsx";
+
 
 import TenantTable from "./pages/admin/AdminDashboard/components/TenantTable.jsx";
 
-import VerifactuGlobalModal from "./components/VerifactuGlobalModal/VerifactuGlobalModal.jsx"; // ✅ NUEVO
-import { FeaturesPlanProvider } from "./context/FeaturesPlanContext.jsx";  // 👈 NUEVO
+import VerifactuGlobalModal from "./context/VerifactuGlobalModal/VerifactuGlobalModal.jsx";
+import { FeaturesPlanProvider } from "./context/FeaturesPlanContext.jsx";
+
+// 🧠 Contextos para decidir qué ver en la home
+import { useAuth } from "./context/AuthContext.jsx";
+import { useConfig } from "./context/ConfigContext.jsx";
+import { useTenant } from "./context/TenantContext.jsx";
+import { useFeaturesPlan } from "./context/FeaturesPlanContext.jsx";
+import UserLayout from "./layouts/UserLayout";
+
+
+// 📊 Página de estadísticas (la que ya tienes hecha)
+import EstadisticasPage from "./pages/EstadisticasPage.jsx";
+// Pagina de Caja Diaria
+import CajaDiaria from "./components/CajaDiariaUltraPro/CajaDiariaUltraPro";
+
 
 import "./index.css";
+import { CategoriasProvider } from "./context/CategoriasContext";
+import { ImagesProvider } from "./context/ImagesContext";
+import Funcionamiento from "./components/Funcionamiento/Funcionamiento";
 
+/* =============================
+   LANDING PÚBLICA (marketing)
+   ============================= */
 function LandingPage() {
   const location = useLocation();
 
@@ -70,6 +101,7 @@ function LandingPage() {
       <TopBar />
       <Introduccion />
       <Hero />
+      <Funcionamiento />
       <Features />
       <Gallery />
       <Packs />
@@ -78,56 +110,167 @@ function LandingPage() {
     </div>
   );
 }
+
+/* ==========================================
+   HOME ENTRY – decide landing vs estadísticas
+   ========================================== */
+function HomeEntry() {
+  const { user } = useAuth();
+  const { tenantId } = useTenant();
+  const { hasFeature, loading } = useFeaturesPlan();
+
+  console.log("HomeEntry:", { user, tenantId, loading });
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  const isPro =
+    !!user &&
+    !!tenantId &&
+    hasFeature("estadisticas_avanzadas", false);
+
+  console.log("➡️ isPro:", isPro);
+
+  if (isPro) {
+    return (
+      <UserLayout>
+        <PanelPro />
+      </UserLayout>
+    );
+  }
+
+  return <LandingPage />;
+}
+
+
+/* =============================
+   RUTAS DE LA APLICACIÓN
+   ============================= */
+function AppRoutes() {
+  return (
+    <Routes>
+      {/* 🏠 HOME:
+          - si está logueado + plan pro -> estadísticas
+          - si no -> landing
+      */}
+      <Route path="/" element={<HomeEntry />} />
+      <Route path="/:tenantId" element={<HomeEntry />} />
+
+      {/* 🔐 AUTENTICACIÓN */}
+      <Route path="/login" element={<Login />} />
+      <Route path="/registro" element={<Registro />} />
+      <Route path="/registro/success" element={<RegistroSuccess />} />
+      <Route path="/registro/cancel" element={<RegistroSuccess />} />
+      <Route path="/pago/exito" element={<RegistroSuccess />} />
+      <Route path="/pago/cancelado" element={<RegistroSuccess />} />
+
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route
+        path="/reset-password/:tenantId/:token"
+        element={<ResetPassword />}
+      />
+
+      {/* 🛠 LOGIN IMPERSONAR */}
+      <Route path="/tpv/login/:tenantId" element={<LoginImpersonar />} />
+
+      {/* 🧑‍🍳 TPV / ÁREA RESTAURANTE */}
+      <Route path="/tpv/:tenantId/dashboard" element={<DashboardPage />} />
+      <Route path="/dashboard" element={<DashboardPage />} />
+      <Route path="/mi-cuenta" element={<MiCuentaPage />} />
+      <Route path="/facturas" element={<FacturasPage />} />
+      <Route path="/perfil" element={<PerfilPage />} />
+      <Route
+        path="/configuracion/restaurante"
+        element={<RestauranteConfigPage />}
+      />
+      <Route path="/configuracion/carta" element={<CartaConfigPage />} />
+      <Route
+        path="/configuracion/reservas"
+        element={<ReservasConfigPage />}
+      />
+
+      <Route path="/soporte" element={<SoporteLista />} />
+      <Route path="/soporte/nuevo" element={<SoporteNuevo />} />
+      <Route path="/soporte/:id" element={<SoporteDetalle />} />
+      <Route
+        path="/ayuda"
+        element={
+          <UserLayout>
+            <AyudaPage />
+          </UserLayout>
+        }
+      />
+
+      {/* 🔍 (OPCIONAL) Ruta directa a estadísticas si quieres */}
+      <Route
+        path="/estadisticas"
+        element={
+          <UserLayout>
+            <EstadisticasPage type="plato" />
+          </UserLayout>
+        }
+      />
+
+      <Route
+        path="/caja-diaria"
+        element={
+          <UserLayout>
+            <CajaDiaria />
+          </UserLayout>
+        }
+      />
+
+      {/* 🛡 SUPERADMIN */}
+      <Route path="/superadmin" element={<AdminLayout />}>
+        <Route index element={<AdminDashboard />} />
+        <Route path="tenants" element={<TenantTable />} />
+        <Route path="planes" element={<PlanesAdmin />} />
+        <Route path="billing" element={<BillingPage />} />
+        <Route path="logs" element={<LogsPage />} />
+        <Route path="tickets" element={<TicketsPage />} />
+        <Route path="settings" element={<SettingsPage />} />
+      </Route>
+    </Routes>
+  );
+}
+
+/* =============================
+   APP ROOT
+   ============================= */
 export default function App() {
+  const [loadingApp, setLoadingApp] = React.useState(true);
+
+  React.useEffect(() => {
+    // ⏳ Mínimo 700 ms de pantalla de carga (animación estética)
+    const timer = setTimeout(() => {
+      setLoadingApp(false);
+    }, 700);
+
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <Router>
-      <FeaturesPlanProvider>
-        {/* 🔔 Modal global VeriFactu (solo aparece si hay sesión y está desactivado) */}
-        <VerifactuGlobalModal />
+      <ImagesProvider>
+        <FeaturesPlanProvider>
+          <CategoriasProvider>
 
-        <Routes>
-          {/* 🌍 LANDING PAGE */}
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/:tenantId" element={<LandingPage />} />
+            {/* 🟦 1) Mientras loadingApp está activo */}
+            {loadingApp && <LoadingScreen />}
 
-          {/* 🔐 AUTENTICACIÓN */}
-          <Route path="/login" element={<Login />} />
-          <Route path="/registro" element={<Registro />} />
-          <Route path="/registro/success" element={<RegistroSuccess />} />
-          <Route path="/registro/cancel" element={<RegistroSuccess />} />
-          <Route path="/pago/exito" element={<RegistroSuccess />} />
-          <Route path="/pago/cancelado" element={<RegistroSuccess />} />
+            {/* 🟧 2) Cuando ya cargó, mostrar la aplicación */}
+            {!loadingApp && (
+              <>
+                <VerifactuGlobalModal />
+                <AppRoutes />
+              </>
+            )}
 
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/reset-password/:tenantId/:token" element={<ResetPassword />} />
-
-          {/* 🛠 LOGIN IMPERSONAR */}
-          <Route path="/tpv/login/:tenantId" element={<LoginImpersonar />} />
-
-          {/* 🧑‍🍳 TPV / ÁREA RESTAURANTE */}
-          <Route path="/tpv/:tenantId/dashboard" element={<DashboardPage />} />
-          <Route path="/dashboard" element={<DashboardPage />} />
-          <Route path="/perfil" element={<PerfilPage />} />
-          <Route path="/configuracion/restaurante" element={<RestauranteConfigPage />} />
-          <Route path="/configuracion/carta" element={<CartaConfigPage />} />
-          <Route path="/configuracion/reservas" element={<ReservasConfigPage />} />
-
-          <Route path="/soporte" element={<SoporteLista />} />
-          <Route path="/soporte/nuevo" element={<SoporteNuevo />} />
-          <Route path="/soporte/:id" element={<SoporteDetalle />} />
-
-          {/* 🛡 SUPERADMIN */}
-          <Route path="/superadmin" element={<AdminLayout />}>
-            <Route index element={<AdminDashboard />} />
-            <Route path="tenants" element={<TenantTable />} />
-            <Route path="planes" element={<PlanesAdmin />} />
-            <Route path="billing" element={<BillingPage />} />
-            <Route path="logs" element={<LogsPage />} />
-            <Route path="tickets" element={<TicketsPage />} />
-            <Route path="settings" element={<SettingsPage />} />
-          </Route>
-        </Routes>
-      </FeaturesPlanProvider>
+          </CategoriasProvider>
+        </FeaturesPlanProvider>
+      </ImagesProvider>
     </Router>
   );
 }
+

@@ -1,0 +1,135 @@
+/* =========================================================
+   STATS POR MESA — DISEÑO PROFESIONAL ALEF
+   ========================================================= */
+
+/* ===== CONTENEDOR ===== */
+.statsmesa-container {
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: var(--radius-lg);
+  padding: 1.6rem 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.25),
+    0 0 0 1px rgba(255, 255, 255, 0.05);
+  animation: fadeInStatsMesa 0.3s ease;
+}
+
+@keyframes fadeInStatsMesa {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== HEADER ===== */
+.statsmesa-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.4rem;
+}
+
+.statsmesa-header h3 {
+  font-size: 1.25rem;
+  margin: 0;
+  color: #ffffff;
+}
+
+.statsmesa-desc {
+  font-size: 0.9rem;
+  opacity: 0.8;
+  margin-top: 0.25rem;
+}
+
+/* ===== BADGE ===== */
+.statsmesa-badge {
+  background: linear-gradient(90deg, #6a0dad, #ff6700);
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #fff;
+  box-shadow: 0 3px 12px rgba(255, 103, 0, 0.35);
+}
+
+/* ===== EMPTY STATE ===== */
+.statsmesa-empty {
+  padding: 1rem 0;
+  text-align: center;
+  color: #cbd5e1;
+  font-size: 0.95rem;
+}
+
+/* ===== TABLE WRAPPER ===== */
+.statsmesa-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+}
+
+/* ===== TABLE ===== */
+.statsmesa-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+  color: #e6e8eb;
+}
+
+/* HEAD */
+.statsmesa-table thead tr {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.statsmesa-table th {
+  text-align: left;
+  font-weight: 600;
+  padding: 0.9rem 1rem;
+  color: #f0f4f8;
+  letter-spacing: 0.03em;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* BODY */
+.statsmesa-table tbody tr {
+  background: rgba(255, 255, 255, 0.025);
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.statsmesa-table tbody tr:nth-child(even) {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.statsmesa-table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.08);
+  transform: translateY(-1px);
+}
+
+/* CELLS */
+.statsmesa-table td {
+  padding: 0.8rem 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  white-space: nowrap;
+}
+
+.mesa-name {
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.stats-money {
+  font-weight: 600;
+  color: #6bdcff; /* azul analítico */
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .statsmesa-container {
+    padding: 1.2rem 1.3rem;
+  }
+
+  .statsmesa-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.4rem;
+  }
+}

@@ -1,37 +1,162 @@
-.modal-nueva-reserva {
-  max-width: 500px;
+/*****************************************************
+ * Modal Nueva Reserva – Alef (Profesional)
+ * Versión aislada con sufijo --modalnuevareserva
+ *****************************************************/
+
+/* ===== Overlay ===== */
+.modal-overlay-reservas--modalnuevareserva {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(4px);
+  z-index: 9999;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-lg);
 }
 
-.modal-nueva-reserva h2 {
-  color: #6A0DAD;
-  margin-bottom: 1rem;
-  text-align: center;
-}
-
-.form-group {
-  margin-bottom: 1rem;
-  text-align: left;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 0.3rem;
-  color: #333;
-  font-weight: 500;
-}
-
-.form-group input,
-.form-group textarea {
+/* ===== Card principal ===== */
+.modal-nueva-reserva--modalnuevareserva {
   width: 100%;
-  padding: 0.6rem 0.8rem;
-  border: 1px solid #ccc;
-  border-radius: 0.4rem;
-  font-size: 1rem;
+  max-width: 680px;
+  background: var(--color-card-bg, #ffffff);
+  border-radius: var(--radius-xl);
+
+  padding: var(--space-xl);
+  box-shadow: var(--shadow-md);
+
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+
+  animation: modalFadeIn--modalnuevareserva 0.22s ease-out;
 }
 
-.form-group input:focus,
-.form-group textarea:focus {
+/* Animación */
+@keyframes modalFadeIn--modalnuevareserva {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===== Header ===== */
+.modal-nueva-header--modalnuevareserva {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-md);
+}
+
+.modal-nueva-title--modalnuevareserva {
+  margin: 0;
+  font-size: var(--font-size-xl);
+  line-height: 1.25;
+}
+
+.modal-nueva-subtitle--modalnuevareserva {
+  margin-top: 0.25rem;
+  font-size: var(--font-size-sm);
+  color: var(--color-texto-suave);
+  max-width: 90%;
+}
+
+/* Botón cerrar */
+.modal-nueva-close--modalnuevareserva {
+  font-size: 1.4rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--color-texto-suave);
+  transition: opacity 0.15s ease;
+}
+
+.modal-nueva-close--modalnuevareserva:hover {
+  opacity: 0.6;
+}
+
+/* ===== Formulario ===== */
+.modal-nueva-form--modalnuevareserva {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+}
+
+/* Grid */
+.form-grid--modalnuevareserva {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: var(--space-md);
+}
+
+.form-group--modalnuevareserva {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.form-group-full--modalnuevareserva {
+  grid-column: 1 / -1;
+}
+
+.form-group--modalnuevareserva label {
+  font-weight: 600;
+  font-size: var(--font-size-sm);
+}
+
+.form-group--modalnuevareserva input,
+.form-group--modalnuevareserva textarea {
+  padding: 0.65rem 0.75rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-borde-suave);
+  background: var(--color-card-elevated);
+
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.form-group--modalnuevareserva input:focus,
+.form-group--modalnuevareserva textarea:focus {
+  border-color: var(--color-primario);
+  box-shadow: 0 0 0 2px rgba(106, 13, 173, 0.25);
   outline: none;
-  border-color: #6A0DAD;
-  box-shadow: 0 0 0 2px rgba(106, 13, 173, 0.15);
+}
+
+/* ===== Botones ===== */
+.modal-botones--modalnuevareserva {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-md);
+  margin-top: var(--space-md);
+}
+
+.boton-cancelar-modal-confirmacion--modalnuevareserva,
+.boton-aceptar-modal-confirmacion--modalnuevareserva {
+  width: 100%;
+  max-width: 140px;
+  padding: 0.7rem 1rem;
+  border-radius: var(--radius-lg);
+  font-weight: 600;
+}
+
+/* ===== Alerta ===== */
+.modal-alerta-wrapper--modalnuevareserva {
+  margin-top: var(--space-md);
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+  .modal-nueva-reserva--modalnuevareserva {
+    padding: var(--space-lg);
+  }
+
+  .modal-nueva-header--modalnuevareserva {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }

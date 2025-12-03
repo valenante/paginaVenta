@@ -1,0 +1,263 @@
+/*****************************************************
+ * Facturas Encadenadas – Alef SaaS (RESPONSIVE PRO)
+ *****************************************************/
+
+/* FORZAR contenedor centrado ignorando estilos globales */
+.facturaspage.section.section--wide {
+  width: 100%;
+  max-width: 1280px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  padding-left: var(--space-lg) !important;
+  padding-right: var(--space-lg) !important;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+}
+
+/* ===========================
+   HEADER
+   =========================== */
+.facturaspage-header h1 {
+  margin: 0 0 var(--space-xs);
+  font-size: var(--font-size-2xl);
+  color: var(--color-primario);
+}
+.facturaspage-header p {
+  margin: 0;
+  max-width: 620px;
+  color: var(--color-texto-suave);
+}
+
+/* ===========================
+   CARD GENÉRICA
+   =========================== */
+.facturaspage-card {
+  background: #fff;
+  border-radius: var(--radius-md);
+  padding: var(--space-lg) var(--space-xl);
+  box-shadow: var(--shadow-suave);
+  overflow: hidden; /* evita overflow en móvil */
+}
+.facturaspage-card-header {
+  margin-bottom: var(--space-md);
+}
+.facturaspage-card-header h2 {
+  margin: 0;
+}
+.facturaspage-card-subtitle {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-texto-suave);
+}
+
+.facturaspage-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 14px;
+  margin-top: 18px;
+  padding: 10px 0;
+}
+
+.facturaspage-pagination button {
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  background: #fff;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.facturaspage-pagination button:hover:not(:disabled) {
+  background: #f3f4f6;
+  transform: translateY(-2px);
+}
+
+.facturaspage-pagination button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ===========================
+   FILTROS
+   =========================== */
+.facturaspage-filtros-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: var(--space-md);
+  margin-top: var(--space-md);
+}
+
+/* ===========================
+   ACCIONES SUPERIORES
+   =========================== */
+.facturaspage-actions {
+  display: flex;
+  gap: var(--space-sm);
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+/* Botones */
+.btn-primario {
+  background: var(--color-primario);
+  color: #fff;
+  border: none;
+  padding: 0.6rem 1.1rem;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+}
+.btn-secundario {
+  background: var(--color-secundario-suave);
+  color: var(--color-secundario);
+  border: none;
+  padding: 0.6rem 1.1rem;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+}
+
+/* ===========================
+   TABLA (responsive pro)
+   =========================== */
+
+.facturaspage-card table {
+  width: 100%;
+}
+
+/* <--- WRAPPER que permite scroll en móvil --- */
+.facturaspage-table-wrapper {
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x mandatory;
+  border-radius: var(--radius-md);
+}
+
+.facturaspage-table {
+  width: 100%;
+  min-width: 960px; /* evita roturas en pantallas pequeñas */
+  border-collapse: collapse;
+}
+
+/* HEADER */
+.facturaspage-table th {
+  text-align: left;
+  font-size: var(--font-size-sm);
+  padding: var(--space-sm);
+  background: #f3f4f6;
+  border-bottom: 1px solid #e5e7eb;
+  white-space: nowrap;
+}
+
+/* FILAS */
+.facturaspage-table td {
+  padding: var(--space-sm);
+  border-bottom: 1px solid #e5e7eb;
+  font-size: var(--font-size-sm);
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+/* HASH mega largo */
+.facturaspage-hash {
+  max-width: 260px;
+  white-space: normal;
+  word-break: break-all;
+}
+
+/* ===========================
+   ESTADOS
+   =========================== */
+.estado-factura {
+  font-weight: 600;
+  text-transform: capitalize;
+}
+.estado-factura.correcto {
+  color: var(--color-exito);
+}
+.estado-factura.enviado {
+  color: var(--color-aviso);
+}
+.estado-factura.incorrecto {
+  color: var(--color-error);
+}
+
+/* ===========================
+   ACCIONES DE TABLA
+   =========================== */
+.facturaspage-table-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.facturaspage-table-actions button {
+  font-size: var(--font-size-xs);
+  padding: 0.35rem 0.7rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-borde-suave);
+  background: #fff;
+  cursor: pointer;
+}
+.facturaspage-table-actions button.danger {
+  color: var(--color-error);
+  border-color: var(--color-error);
+}
+
+/* ===========================
+   MODAL
+   =========================== */
+.modal-overlay_facturaspage {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9000;
+}
+.modal-contenido_facturaspage {
+  width: 420px;
+  max-width: 92%;
+  background: #fff;
+  border-radius: var(--radius-md);
+  padding: var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+.modal-botones_facturaspage {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-sm);
+}
+
+/* ===========================
+   RESPONSIVE REAL
+   =========================== */
+
+@media (max-width: 768px) {
+  .facturaspage.section.section--wide {
+    gap: var(--space-lg); /* menos espacio vertical */
+  }
+
+  .facturaspage-card {
+    padding: var(--space-md) var(--space-lg);
+  }
+
+  .facturaspage-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .facturaspage-table-wrapper {
+    border: 1px solid #e5e7eb;
+    border-radius: var(--radius-md);
+  }
+
+  .facturaspage-header h1 {
+    font-size: var(--font-size-xl);
+  }
+}

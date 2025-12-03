@@ -1,0 +1,96 @@
+/* =========================================================
+   PANEL PRO ALEF — Selector de módulos (Versión Premium)
+   ---------------------------------------------------------
+   - Tabs fluidas con scroll horizontal
+   - Diseño profesional tipo SaaS
+   - Responsivo para móvil, tablet y desktop
+   - Mantiene identidad visual Alef
+   ========================================================= */
+
+/* ===== ROOT ===== */
+.panelpro-root {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.6rem;
+}
+
+/* ===== TABS WRAPPER ===== */
+.panelpro-tabs {
+  display: flex;
+  flex-wrap: nowrap;           /* NO permitir salto de línea */
+  gap: 0.6rem;
+  padding: 0.8rem 0.3rem;
+
+  overflow-x: auto;            /* ⭐ Scroll horizontal */
+  overflow-y: hidden;
+
+  scrollbar-width: thin;       /* Firefox */
+  scrollbar-color: rgba(255,255,255,0.2) transparent;
+
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+/* Ocultar scrollbar feo en Chrome/Safari/Edge */
+.panelpro-tabs::-webkit-scrollbar {
+  height: 6px;
+}
+.panelpro-tabs::-webkit-scrollbar-track {
+  background: transparent;
+}
+.panelpro-tabs::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.18);
+  border-radius: 10px;
+}
+
+/* ===== TABS BUTTON ===== */
+.panelpro-tabs button {
+  white-space: nowrap;         /* ⭐ Evita ruptura de texto */
+  padding: 0.55rem 1.2rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #e2e8f0;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.25s ease;
+  flex-shrink: 0;              /* ⭐ Evita aplastarse en scroll */
+}
+
+.panelpro-tabs button:hover:not(.active):not(.disabled) {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
+}
+
+.panelpro-tabs button.active {
+  background: linear-gradient(90deg, #6a0dad, #ff6700);
+  border-color: transparent;
+  font-weight: 600;
+  color: white;
+  box-shadow: 0 4px 18px rgba(255, 103, 0, 0.25);
+}
+
+.panelpro-tabs button.disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* ===== CONTENIDO ===== */
+.panelpro-content {
+  width: 100%;
+  padding-bottom: 2rem; /* espacio preventivo */
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 650px) {
+  .panelpro-tabs {
+    gap: 0.4rem;
+    padding: 0.6rem 0.2rem;
+  }
+
+  .panelpro-tabs button {
+    padding: 0.45rem 1rem;
+    font-size: 0.85rem;
+  }
+}

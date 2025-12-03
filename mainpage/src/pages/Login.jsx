@@ -42,10 +42,6 @@ export default function Login() {
         sessionStorage.setItem("tenantId", user.tenantId);
       }
 
-      // ===============================
-      // 🧭 REDIRECCIÓN SEGÚN EL ROL
-      // ===============================
-
       // 1️⃣ SUPERADMIN → Panel central Alef
       if (user.role === "superadmin") {
         return navigate("/superadmin");
@@ -59,15 +55,10 @@ export default function Login() {
         return;
       }
 
-      // 2️⃣ Roles ligados a restaurante → ir al entorno del restaurante
-      //    (admin_restaurante, admin, camarero, cocinero)
-      if (
-        ["admin_restaurante", "admin", "camarero", "cocinero"].includes(user.role)
-      ) {
+      // 2️⃣ Roles ligados a restaurante
+      if (["admin_restaurante", "admin", "camarero", "cocinero"].includes(user.role)) {
         const url = isLocalDomain
-          // 🔹 Entorno local: usamos alef.local con el slug como primer segmento
           ? `https://alef.local.softalef.com/${tenantSlug}`
-          // 🔹 Producción: subdominio por tenant para el TPV
           : `https://tpv.${tenantSlug}.${import.meta.env.VITE_MAIN_DOMAIN}`;
 
         window.location.href = url;
@@ -76,7 +67,6 @@ export default function Login() {
 
       // 3️⃣ Otros roles globales (muy raro)
       navigate("/");
-
     } catch (err) {
       console.error("❌ Error de inicio de sesión:", err);
 
@@ -103,62 +93,91 @@ export default function Login() {
   // ============================
   return (
     <main className="login-page">
-      <div className="login-container">
-        <h1 className="login-title">Iniciar sesión en Alef</h1>
-        <p className="login-subtitle">
-          Accede a tu panel de control o al entorno de tu restaurante.
-        </p>
-
-        <form className="login-form" onSubmit={handleSubmit}>
-          {/* EMAIL */}
-          <label>
-            Correo electrónico:
-            <input
-              type="email"
-              name="email"
-              value={form.email}
-              onChange={handleChange}
-              placeholder="tu@restaurante.com"
-              autoComplete="username"
-              required
-            />
-          </label>
-
-          {/* PASSWORD */}
-          <label>
-            Contraseña:
-            <input
-              type="password"
-              name="password"
-              value={form.password}
-              onChange={handleChange}
-              placeholder="••••••••"
-              autoComplete="current-password"
-              required
-            />
-          </label>
-
-          {/* ERROR */}
-          {error && <p className="login-error">{error}</p>}
-
-          {/* BOTÓN */}
-          <button type="submit" className="login-btn" disabled={loading}>
-            {loading ? "Iniciando sesión..." : "Entrar"}
-          </button>
-
-          {/* RECUPERAR CONTRASEÑA */}
-          <p className="login-forgot" onClick={handleForgotPassword}>
-            ¿Olvidaste tu contraseña?
+      <div className="login-shell">
+        {/* Lado izquierdo: branding / mensaje */}
+        <section className="login-info">
+          <span className="login-kicker">Panel Alef</span>
+          <h1 className="login-hero-title">
+            Accede al corazón digital de tu restaurante
+          </h1>
+          <p className="login-hero-subtitle">
+            Desde aquí gestionas tus locales, planes, usuarios y todo lo que
+            ocurre en tu TPV Alef. Un solo acceso para controlar la operación
+            completa.
           </p>
-        </form>
 
-        {/* FOOTER */}
-        <p className="login-footer">
-          ¿No tienes cuenta?{" "}
-          <a href="/registro" className="login-link">
-            Regístrate aquí
-          </a>
-        </p>
+          <ul className="login-bullets">
+            <li>Ver y gestionar tus restaurantes y usuarios.</li>
+            <li>Configurar carta digital, reservas y flujos de trabajo.</li>
+            <li>Acceder rápidamente al TPV y a la carta online.</li>
+          </ul>
+        </section>
+
+        {/* Lado derecho: tarjeta de login */}
+        <section className="login-card card">
+          <h2 className="login-title">Iniciar sesión en Alef</h2>
+          <p className="login-subtitle">
+            Usa las credenciales que recibiste al dar de alta tu restaurante
+            o tu usuario.
+          </p>
+
+          <form className="login-form" onSubmit={handleSubmit}>
+            {/* EMAIL */}
+            <div className="login-field">
+              <label htmlFor="login-email">Correo electrónico</label>
+              <input
+                id="login-email"
+                type="email"
+                name="email"
+                value={form.email}
+                onChange={handleChange}
+                placeholder="tu@restaurante.com"
+                autoComplete="username"
+                required
+              />
+            </div>
+
+            {/* PASSWORD */}
+            <div className="login-field">
+              <label htmlFor="login-password">Contraseña</label>
+              <input
+                id="login-password"
+                type="password"
+                name="password"
+                value={form.password}
+                onChange={handleChange}
+                placeholder="••••••••"
+                autoComplete="current-password"
+                required
+              />
+            </div>
+
+            {/* ERROR */}
+            {error && <p className="login-error">{error}</p>}
+
+            {/* BOTÓN */}
+            <button type="submit" className="login-btn btn-primario" disabled={loading}>
+              {loading ? "Iniciando sesión..." : "Entrar"}
+            </button>
+
+            {/* RECUPERAR CONTRASEÑA */}
+            <button
+              type="button"
+              className="login-forgot"
+              onClick={handleForgotPassword}
+            >
+              ¿Olvidaste tu contraseña?
+            </button>
+          </form>
+
+          {/* FOOTER */}
+          <p className="login-footer">
+            ¿No tienes cuenta?{" "}
+            <a href="/registro" className="login-link">
+              Regístrate aquí
+            </a>
+          </p>
+        </section>
       </div>
     </main>
   );

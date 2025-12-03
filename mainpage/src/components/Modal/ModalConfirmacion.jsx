@@ -1,12 +1,13 @@
 import React, { useState } from "react";
-import "./ModalConfirmacion.css"; // Asegúrate de tener este archivo CSS
+import "./ModalConfirmacion.css";
 
 export default function ModalConfirmacion({
   titulo = "Confirmar acción",
   mensaje = "¿Está seguro?",
   placeholder = "",
   onConfirm,
-  onClose
+  onClose,
+  children
 }) {
   const [valor, setValor] = useState("");
 
@@ -15,14 +16,21 @@ export default function ModalConfirmacion({
   };
 
   return (
-    <div className="modal-overlay">
-      <div className="modal-contenido">
-        <h2>{titulo}</h2>
-        <p>{mensaje}</p>
+    <div className="modal-overlay--modalconfirmacion">
+      <div className="modal-contenido--modalconfirmacion glass-card">
+        
+        <h2 className="modal-titulo--modalconfirmacion">{titulo}</h2>
+        <p className="modal-mensaje--modalconfirmacion">{mensaje}</p>
+
+        {children && (
+          <div className="modal-extra--modalconfirmacion">
+            {children}
+          </div>
+        )}
+
         {placeholder && (
           <>
             {placeholder.toLowerCase().includes("comensales") ? (
-              // 🟢 Input numérico seguro solo para "Número de comensales"
               <input
                 type="number"
                 min="1"
@@ -30,19 +38,24 @@ export default function ModalConfirmacion({
                 step="1"
                 inputMode="numeric"
                 pattern="[0-9]*"
+                className="modal-input--modalconfirmacion"
                 placeholder={placeholder}
                 value={valor}
                 onChange={(e) => {
                   const value = e.target.value;
-                  if (/^\d*$/.test(value) && (value === "" || (Number(value) >= 1 && Number(value) <= 25))) {
+                  if (
+                    /^\d*$/.test(value) &&
+                    (value === "" ||
+                      (Number(value) >= 1 && Number(value) <= 25))
+                  ) {
                     setValor(value);
                   }
                 }}
               />
             ) : (
-              // ⚪ Input normal para cualquier otro caso
               <input
                 type="text"
+                className="modal-input--modalconfirmacion"
                 placeholder={placeholder}
                 value={valor}
                 onChange={(e) => setValor(e.target.value)}
@@ -50,10 +63,23 @@ export default function ModalConfirmacion({
             )}
           </>
         )}
-        <div className="modal-botones">
-          <button onClick={onClose} className="boton-cancelar-modal-confirmacion">Cancelar</button>
-          <button onClick={manejarConfirmacion} className="boton-aceptar-modal-confirmacion">Aceptar</button>
+
+        <div className="modal-botones--modalconfirmacion">
+          <button
+            onClick={onClose}
+            className="boton-cancelar--modalconfirmacion"
+          >
+            Cancelar
+          </button>
+
+          <button
+            onClick={manejarConfirmacion}
+            className="boton-aceptar--modalconfirmacion"
+          >
+            Aceptar
+          </button>
         </div>
+
       </div>
     </div>
   );

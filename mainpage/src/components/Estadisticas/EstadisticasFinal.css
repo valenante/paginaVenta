@@ -1,0 +1,345 @@
+/* =========================================================
+   ESTADÍSTICAS ALEF — Estilo Profesional
+   ---------------------------------------------------------
+   - Fondo dinámico con degradado tenue
+   - Tarjetas vidrio con bordes suaves
+   - Tipografía moderna y jerarquía visual clara
+   - Animaciones sutiles en aparición
+   ========================================================= */
+
+/* ===== LAYOUT GENERAL ===== */
+.estadisticas-page {
+  min-height: 100vh;
+  padding: 2.5rem 1.5rem 4rem;
+  background: radial-gradient(circle at top right, #1a1a2f 0, #0c0c17 85%);
+  color: #f5f7fa;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===== BARRA DE FILTROS ===== */
+.estadisticas-root .stats-filter-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 1rem 1.5rem;
+  gap: 1rem;
+  flex-wrap: wrap;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+}
+
+.stats-filter-bar select,
+.stats-filter-bar input[type="date"] {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  border-radius: var(--radius-md);
+  padding: 0.5rem 0.8rem;
+  font-size: 0.95rem;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.stats-filter-bar select:hover,
+.stats-filter-bar input[type="date"]:hover {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+/* ===== RESUMEN CATEGORÍA ===== */
+.estadisticas-root .stats-resumen-categoria{
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: var(--radius-lg);
+  padding: 1.8rem 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem;
+  animation: fadeIn 0.4s ease;
+}
+
+.stats-resumen-categoria h2 {
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin-bottom: 0.6rem;
+}
+
+.stats-resumen-categoria .stat-card {
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: var(--radius-md);
+  padding: 1.2rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: all 0.25s ease;
+}
+
+.stats-resumen-categoria .stat-card:hover {
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.07);
+}
+
+/* ===== GRID ESTADÍSTICAS PRO ===== */
+.estadisticas-root .stats-pro-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+  gap: 1.6rem;
+  margin-top: 2rem;
+}
+
+/* ===== TOP PRODUCTOS ===== */
+.stats-top-productos {
+  margin-top: 2rem;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: var(--radius-lg);
+  padding: 1.6rem 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.stats-top-productos h3 {
+  font-size: 1.3rem;
+  margin-bottom: 1rem;
+  color: #ffffff;
+}
+
+.top-producto-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.top-producto-item:last-child {
+  border-bottom: none;
+}
+
+/* ===== LISTA PRODUCTOS ===== */
+.stats-lista-productos {
+  margin-top: 2.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 1.5rem;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.25);
+}
+
+.stats-lista-productos table {
+  width: 100%;
+  border-collapse: collapse;
+  color: #e5e7eb;
+  font-size: 0.95rem;
+}
+
+.stats-lista-productos th,
+.stats-lista-productos td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  text-align: left;
+}
+
+.stats-lista-productos th {
+  color: #cbd5e1;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.12);
+}
+
+.stats-lista-productos tr:hover td {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+/* ===== MÓDULO UPSALE ===== */
+.upsell-estadisticas-pro {
+  margin-top: 2rem;
+  padding: 2rem;
+  background: linear-gradient(135deg, rgba(255, 103, 0, 0.2), rgba(106, 13, 173, 0.3));
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: var(--radius-lg);
+  color: #fff;
+  text-align: center;
+  box-shadow: 0 8px 20px rgba(255, 103, 0, 0.25);
+}
+
+.upsell-estadisticas-pro h3 {
+  font-size: 1.4rem;
+  margin-bottom: 0.5rem;
+}
+
+.upsell-estadisticas-pro p {
+  font-size: 1rem;
+  opacity: 0.9;
+}
+
+.upsell-estadisticas-pro button {
+  margin-top: 1rem;
+  background: var(--color-primario, #6a0dad);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-pill);
+  padding: 0.6rem 1.4rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.upsell-estadisticas-pro button:hover {
+  transform: translateY(-1px);
+  background: var(--color-secundario, #ff6700);
+}
+
+/* ===== MENSAJE DE CARGA ===== */
+.mensaje-carga--estadisticas {
+  text-align: center;
+  font-size: 1.1rem;
+  color: #e2e8f0;
+  padding-top: 4rem;
+  animation: blink 1.8s ease infinite;
+}
+
+/* ===== Toggle tipo (platos / bebidas) ===== */
+
+.stats-filter-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.stats-filter-type-toggle {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  box-shadow:
+    0 10px 25px rgba(15, 23, 42, 0.35),
+    0 0 0 1px rgba(15, 23, 42, 0.8);
+  width: fit-content;
+}
+
+.stats-type-btn {
+  border: none;
+  background: transparent;
+  color: #e5e7eb;
+  padding: 0.45rem 1.1rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  opacity: 0.7;
+}
+
+.stats-type-btn.active {
+  background: linear-gradient(135deg, #6a0dad, #ff6700);
+  color: #ffffff;
+  box-shadow: 0 8px 20px rgba(99, 102, 241, 0.45);
+  opacity: 1;
+}
+
+.stats-type-btn:hover {
+  opacity: 1;
+  transform: translateY(-1px);
+}
+
+/* Controles de filtros (categoría + fecha) */
+
+.stats-filter-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: flex-end;
+}
+
+.stats-filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.stats-filter-group label {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #9ca3af;
+}
+
+.stats-filter-group select,
+.stats-filter-group input[type="date"] {
+  background: #020617;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  padding: 0.45rem 0.75rem;
+  color: #e5e7eb;
+  font-size: 0.9rem;
+  min-width: 190px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .stats-filter-bar {
+    align-items: flex-start;
+  }
+
+  .stats-filter-type-toggle {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .stats-filter-controls {
+    width: 100%;
+  }
+
+  .stats-filter-group select,
+  .stats-filter-group input[type="date"] {
+    width: 100%;
+  }
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .estadisticas-page {
+    padding: 1.5rem;
+    gap: 1.5rem;
+  }
+
+  .stats-filter-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .stats-pro-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stats-lista-productos table {
+    font-size: 0.85rem;
+  }
+}

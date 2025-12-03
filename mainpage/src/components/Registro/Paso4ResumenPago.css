@@ -1,88 +1,405 @@
+/*****************************************************
+ * Paso 4 – Resumen y contratación
+ * (usa variables y helpers del sistema Alef)
+ *****************************************************/
+
 .paso4-resumen {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
+  margin: var(--space-2xl) auto var(--space-2xl);
+  max-width: 960px;
 }
+
+/* ===== Header principal ===== */
+
+.paso4-header {
+  margin-bottom: var(--space-xl);
+}
+
+.paso4-header h2 {
+  font-size: var(--font-size-2xl);
+  margin: 0 0 var(--space-sm);
+}
+
+.paso4-header p {
+  margin: 0;
+  font-size: var(--font-size-md);
+  color: var(--color-texto-suave);
+}
+
+/* ===== Bloques del resumen (cards) ===== */
 
 .resumen-bloque {
-  background: #f8f8ff;
-  padding: 1rem 1.5rem;
-  border-radius: 12px;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  margin-bottom: var(--space-lg);
 }
 
-.resumen-bloque h3 {
-  color: #6a0dad;
-  margin-bottom: 0.5rem;
+.resumen-bloque-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
 }
 
-.resumen-bloque ul {
-  list-style: none;
-  padding: 0;
+.resumen-bloque-header h3 {
+  margin: 0;
+  font-size: var(--font-size-lg);
+}
+
+.resumen-tag {
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* ===== Datos del restaurante (dl) ===== */
+
+.resumen-datos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--space-md) var(--space-xl);
   margin: 0;
 }
 
-.resumen-bloque li {
-  padding: 0.3rem 0;
-  border-bottom: 1px solid #eee;
-  font-size: 0.95rem;
+.resumen-dato dt {
+  font-size: var(--font-size-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-texto-suave);
+  margin-bottom: var(--space-xs);
+}
+
+.resumen-dato dd {
+  margin: 0;
+  font-size: var(--font-size-md);
+}
+
+/* ===== Configuración inicial (grid 2 columnas) ===== */
+
+.resumen-config-layout {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: var(--space-lg);
+}
+
+.resumen-config-col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.resumen-list-title {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-texto-suave);
+  margin-bottom: var(--space-xs);
+}
+
+.resumen-empty {
+  font-size: var(--font-size-sm);
+  color: var(--color-texto-suave);
+}
+
+/* Listas comunes */
+
+.resumen-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.resumen-list-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-borde-suave);
+  background: #ffffff;
+}
+
+.resumen-list-name {
+  font-size: var(--font-size-sm);
+}
+
+/* Pills de estado */
+
+.resumen-pill {
+  padding: 0.25rem 0.8rem;
+  border-radius: var(--radius-pill);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  white-space: nowrap;
+  border: 1px solid transparent;
+}
+
+.pill-on {
+  background: var(--color-exito-suave);
+  color: var(--color-exito);
+  border-color: var(--color-exito);
+}
+
+.pill-off {
+  background: #f3f4f6;
+  color: var(--color-texto-suave);
+  border-color: #e5e7eb;
+}
+
+.pill-included {
+  background: var(--color-primario-suave);
+  color: var(--color-primario-oscuro);
+  border-color: var(--color-primario);
+}
+
+/* Colores elegidos */
+
+.resumen-list-item.colores {
+  align-items: center;
 }
 
 .color-box {
-  display: inline-block;
-  width: 20px;
-  height: 20px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  vertical-align: middle;
-  margin-left: 6px;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--color-borde-suave);
 }
 
+/* ===== Servicios contratados ===== */
+
+.resumen-servicios {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.resumen-servicios-linea {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: var(--font-size-sm);
+}
+
+.resumen-servicios-linea span {
+  color: var(--color-texto-suave);
+}
+
+.resumen-servicios-linea strong {
+  font-weight: 600;
+}
+
+.resumen-servicios-lista {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.resumen-servicios-lista li {
+  font-size: var(--font-size-sm);
+}
+
+/* ===== Resumen de precios ===== */
+
 .resumen-precio {
-  background: #fffaf0;
-  padding: 1.2rem 1.5rem;
-  border-radius: 12px;
-  border-left: 4px solid #ff6700;
+  margin-top: var(--space-lg);
+  margin-bottom: var(--space-lg);
+  background: var(--color-terciario);
 }
 
 .resumen-precio .fila {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 0.5rem;
-  font-size: 1rem;
+  align-items: center;
+  font-size: var(--font-size-sm);
+  margin-bottom: var(--space-sm);
 }
 
-.resumen-precio .total strong {
-  font-size: 1.2rem;
-  color: #6a0dad;
+.resumen-precio .fila span {
+  color: var(--color-texto-suave);
+}
+
+.resumen-precio .fila strong {
+  font-weight: 700;
+}
+
+.resumen-precio hr {
+  border: none;
+  border-top: 1px dashed rgba(148, 163, 184, 0.6);
+  margin: var(--space-sm) 0 var(--space-md);
+}
+
+.resumen-precio .fila.total {
+  font-size: var(--font-size-md);
+}
+
+/* ===== Pago y estado ===== */
+
+.resumen-pago {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-top: var(--space-md);
 }
 
 .boton-pago {
-  width: 100%;
-  background: linear-gradient(90deg, #6a0dad, #ff6700);
-  color: white;
-  padding: 0.9rem;
-  border: none;
-  border-radius: 8px;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: 0.3s ease;
-}
-
-.boton-pago:hover {
-  opacity: 0.9;
+  min-width: 260px;
 }
 
 .mensaje-exito {
-  color: green;
-  font-weight: 600;
-  text-align: center;
-  margin-top: 1rem;
+  font-size: var(--font-size-sm);
 }
 
+/* Nota legal */
+
 .nota-legal {
+  margin-top: var(--space-md);
+  font-size: var(--font-size-xs);
   text-align: center;
-  font-size: 0.8rem;
-  color: #777;
-  margin-top: 1rem;
+}
+/*****************************************************
+ * Filtro y scroll de opciones configuradas
+ *****************************************************/
+
+.resumen-filter-toggle {
+  display: inline-flex;
+  padding: 2px;
+  border-radius: var(--radius-pill);
+  background: #f3f4f6;
+  border: 1px solid var(--color-borde-suave);
+  margin-bottom: var(--space-sm);
+}
+
+.toggle-pill {
+  border: none;
+  background: transparent;
+  padding: 0.25rem 0.9rem;
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  color: var(--color-texto-suave);
+  transition: background 0.15s ease, color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.toggle-pill--active {
+  background: var(--color-primario);
+  color: var(--color-texto-invertido);
+  box-shadow: var(--shadow-suave);
+}
+
+/* Contenedor con scroll para listas largas */
+
+.resumen-list-scroll {
+  max-height: 360px; /* ajusta si quieres más/menos */
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+/* Scrollbar sutil en navegadores WebKit */
+.resumen-list-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.resumen-list-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.resumen-list-scroll::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.6);
+  border-radius: 999px;
+}
+
+/*****************************************************
+ * Tarjetas de selección de periodo (PROFESIONAL)
+ *****************************************************/
+
+.periodo-descripcion {
+  font-size: var(--font-size-sm);
+  color: var(--color-texto-suave);
+  margin-bottom: var(--space-md);
+}
+
+.periodo-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--space-md);
+}
+
+.periodo-card {
+  padding: var(--space-lg);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-borde-suave);
+  background: #ffffff;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: var(--shadow-xs);
+}
+
+.periodo-card h4 {
+  margin: 0 0 var(--space-xs);
+  font-size: var(--font-size-md);
+}
+
+.periodo-card .periodo-precio {
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  margin: 0 0 var(--space-xs);
+}
+
+.periodo-card .periodo-detalle {
+  font-size: var(--font-size-sm);
+  color: var(--color-texto-suave);
+}
+
+.periodo-card .periodo-detalle.ahorro {
+  color: #16a34a;
+  font-weight: 600;
+}
+
+.periodo-card:hover {
+  border-color: var(--color-primario);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+}
+
+.periodo-card.active {
+  border-color: var(--color-primario);
+  background: var(--color-primario-suave);
+  box-shadow: var(--shadow-lg);
+  transform: scale(1.02);
+}
+
+/* ===== Responsive ===== */
+
+@media (max-width: 768px) {
+  .paso4-resumen {
+    margin: var(--space-lg) auto var(--space-xl);
+    padding: var(--space-lg) var(--space-md);
+  }
+
+  .resumen-config-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .resumen-list-item {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .resumen-servicios-linea {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-xs);
+  }
+
+  .boton-pago {
+    width: 100%;
+  }
 }

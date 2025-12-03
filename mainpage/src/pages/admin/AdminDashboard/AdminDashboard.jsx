@@ -2,12 +2,12 @@
 import React from "react";
 import { useState } from "react";
 import "../../../styles/AdminDashboard.css";
-import useTenantsData from "../hooks/useTenantsData";
+import useTenantsData from "../../../Hooks/useTenantsData";
 import DashboardHeader from "./components/DashboardHeader";
 import StatsCards from "./components/StatsCards";
 import TenantTable from "./components/TenantTable";
 import ChartsSection from "./components/ChartsSection";
-import NuevoTenantModal from "./components/NuevoTenantModal";
+import NuevoTenantModal from "./components/NuevoTenantModal/NuevoTenantModal";
 
 export default function AdminDashboard() {
   const {

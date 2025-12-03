@@ -1,0 +1,267 @@
+/* =========================================================
+   USUARIOS — Panel de Administración Alef
+   ---------------------------------------------------------
+   - Vidrio oscuro con blur
+   - Gradiente profesional morado/naranja
+   - Tarjetas limpias y botones pill
+   - Tabla premium estilo SaaS
+   - Animaciones suaves
+   ========================================================= */
+
+/* ===== ROOT GENERAL ===== */
+.usuarios-root {
+  min-height: 100vh;
+  padding: 2.5rem 1.5rem 4rem;
+
+  background: radial-gradient(
+    circle at top right,
+    #1d1b2f 0%,
+    #0c0c17 85%
+  );
+
+  color: #f5f7fa;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+
+  animation: fadeIn 0.35s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* =========================================================
+   FORMULARIO CREAR USUARIO
+   ========================================================= */
+.usuario-create-card {
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(12px);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(255,255,255,0.10);
+  padding: 2rem;
+  box-shadow: 0 12px 32px rgba(0,0,0,0.35);
+  animation: fadeIn 0.4s ease;
+}
+
+.usuario-create-card h2 {
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+/* Inputs */
+.usuario-create-card input,
+.usuario-create-card select {
+  width: 100%;
+  padding: 0.7rem 0.9rem;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: var(--radius-md);
+  color: #fff;
+  outline: none;
+  margin-bottom: 1rem;
+  transition: all .2s ease;
+}
+
+.usuario-create-card input:focus,
+.usuario-create-card select:focus {
+  background: rgba(255,255,255,0.12);
+  border-color: #ff6700;
+}
+
+/* Botón crear */
+.usuario-create-card button {
+  background: var(--color-primario, #6a0dad);
+  color: white;
+  border: none;
+  padding: 0.7rem 1.6rem;
+  border-radius: var(--radius-pill);
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all .2s ease;
+}
+
+.usuario-create-card button:hover {
+  background: var(--color-secundario, #ff6700);
+  transform: translateY(-2px);
+}
+
+/* =========================================================
+   TABLA USUARIOS
+   ========================================================= */
+.usuarios-table-wrapper {
+  background: rgba(255,255,255,0.06);
+  backdrop-filter: blur(14px);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(255,255,255,0.08);
+  padding: 1.8rem 2rem;
+  box-shadow: 0 8px 28px rgba(0,0,0,0.25);
+}
+
+.usuarios-table {
+  width: 100%;
+  border-collapse: collapse;
+  color: #e5e7eb;
+  font-size: 0.95rem;
+}
+
+/* Encabezados */
+.usuarios-table th {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  color: #cbd5e1;
+  text-transform: uppercase;
+  font-size: 0.78rem;
+  letter-spacing: .05em;
+  border-bottom: 2px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.03);
+}
+
+/* Filas */
+.usuarios-table td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.usuarios-table tr:hover td {
+  background: rgba(255,255,255,0.05);
+}
+
+/* ===== Botones de acción ===== */
+.btn-accion {
+  padding: 0.35rem 0.75rem;
+  border-radius: var(--radius-pill);
+  border: none;
+  cursor: pointer;
+  color: #fff;
+  font-size: 0.82rem;
+  font-weight: 600;
+  margin-right: 0.4rem;
+  transition: all .18s ease;
+}
+
+.btn-editar {
+  background: #4c5ea8;
+}
+.btn-editar:hover {
+  background: #6473c9;
+}
+
+.btn-eliminar {
+  background: #9b1c1c;
+}
+.btn-eliminar:hover {
+  background: #b62828;
+}
+
+.btn-stats {
+  background: #ff6700;
+}
+.btn-stats:hover {
+  background: #ff7f28;
+}
+
+/* =========================================================
+   MODALES (EDITAR / STATS)
+   ========================================================= */
+.modal-usuarios {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  backdrop-filter: blur(6px);
+  background: rgba(0,0,0,0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  animation: fadeIn .25s ease;
+}
+
+.modal-usuarios .modal-content {
+  width: min(480px, 95%);
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+  box-shadow: 0 10px 36px rgba(0,0,0,0.35);
+  animation: fadeInUp .25s ease;
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.modal-usuarios h2 {
+  font-size: 1.3rem;
+  margin-bottom: 1rem;
+}
+
+/* Inputs modal */
+.modal-usuarios input,
+.modal-usuarios select {
+  padding: 0.7rem 0.9rem;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.15);
+  color: #fff;
+  border-radius: var(--radius-md);
+  margin-bottom: 1rem;
+}
+
+/* Botones modal */
+.modal-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1.5rem;
+}
+
+.modal-btn {
+  flex: 1;
+  padding: 0.8rem;
+  text-align: center;
+  border-radius: var(--radius-pill);
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  color: #fff;
+  transition: all .2s ease;
+}
+
+.modal-btn-confirmar {
+  background: #6a0dad;
+  margin-right: 0.5rem;
+}
+.modal-btn-confirmar:hover {
+  background: #ff6700;
+}
+
+.modal-btn-cerrar {
+  background: #444;
+}
+.modal-btn-cerrar:hover {
+  background: #555;
+}
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+@media (max-width: 768px) {
+  .usuarios-root {
+    padding: 1.5rem;
+  }
+
+  .usuarios-table th,
+  .usuarios-table td {
+    padding: 0.55rem;
+    font-size: 0.82rem;
+  }
+
+  .usuario-create-card {
+    padding: 1.5rem;
+  }
+}

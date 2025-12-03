@@ -51,93 +51,102 @@ export default function NuevoPlanModal({ onClose, onSave }) {
     }
   };
 
-  return (
-    <div className="modal-overlay">
-      <div className="modal-card">
-        <h2>➕ Crear Plan</h2>
+return (
+  <div className="modal-overlay-plans">
+    <div className="modal-card-plans">
+      <h2 className="modal-title-plans">➕ Crear Plan</h2>
 
-        <form onSubmit={crear} className="modal-form">
-          <label>
-            Nombre
-            <input
-              name="nombre"
-              value={form.nombre}
-              onChange={handleChange}
-              required
-            />
-          </label>
+      <form onSubmit={crear} className="modal-form-plans">
 
-          <label>
-            Slug
-            <input
-              name="slug"
-              value={form.slug}
-              onChange={handleChange}
-              required
-            />
-          </label>
+        <label className="form-label-plans">
+          Nombre
+          <input
+            className="input-plans"
+            name="nombre"
+            value={form.nombre}
+            onChange={handleChange}
+            required
+          />
+        </label>
 
-          <label>
-            Precio Mensual (€)
-            <input
-              name="precioMensual"
-              type="number"
-              value={form.precioMensual}
-              onChange={handleChange}
-              required
-            />
-          </label>
+        <label className="form-label-plans">
+          Slug
+          <input
+            className="input-plans"
+            name="slug"
+            value={form.slug}
+            onChange={handleChange}
+            required
+          />
+        </label>
 
-          <label>
-            Precio Anual (€)
-            <input
-              name="precioAnual"
-              type="number"
-              value={form.precioAnual}
-              onChange={handleChange}
-            />
-          </label>
+        <label className="form-label-plans">
+          Precio Mensual (€)
+          <input
+            className="input-plans"
+            name="precioMensual"
+            type="number"
+            value={form.precioMensual}
+            onChange={handleChange}
+            required
+          />
+        </label>
 
-          <label>
-            Descripción
-            <textarea
-              name="descripcion"
-              value={form.descripcion}
-              onChange={handleChange}
-            />
-          </label>
+        <label className="form-label-plans">
+          Precio Anual (€)
+          <input
+            className="input-plans"
+            name="precioAnual"
+            type="number"
+            value={form.precioAnual}
+            onChange={handleChange}
+          />
+        </label>
 
-          {/* ===================== FEATURES DINÁMICAS ===================== */}
-          <h3>Características incluidas</h3>
-          <div className="features-list">
-            {features.map((f) => (
-              <label key={f._id} className="feature-item">
-                <input
-                  type="checkbox"
-                  checked={selectedFeatures.includes(f._id)}
-                  onChange={() => toggleFeature(f._id)}
-                />
-                <strong>{f.nombre}</strong>
-                <small>{f.descripcion}</small>
-              </label>
-            ))}
-          </div>
-          {/* ============================================================= */}
+        <label className="form-label-plans">
+          Descripción
+          <textarea
+            className="textarea-plans"
+            name="descripcion"
+            value={form.descripcion}
+            onChange={handleChange}
+          />
+        </label>
 
-          <div className="modal-buttons">
-            <button type="submit" className="btn-primary">
-              Crear
-            </button>
-            <button
-              type="button"
-              className="btn-secondary"
-              onClick={onClose}
-            >
-              Cerrar
-            </button>
-          </div>
-        </form>
-      </div>
+        {/* FEATURES */}
+        <h3 className="features-title-plans">Características incluidas</h3>
+
+        <div className="features-list-plans">
+          {features.map((f) => (
+            <label key={f._id} className="feature-item-plans">
+              <input
+                className="feature-checkbox-plans"
+                type="checkbox"
+                checked={selectedFeatures.includes(f._id)}
+                onChange={() => toggleFeature(f._id)}
+              />
+              <strong>{f.nombre}</strong>
+              <small>{f.descripcion}</small>
+            </label>
+          ))}
+        </div>
+
+        {/* BOTONES */}
+        <div className="modal-buttons-plans">
+          <button type="submit" className="btn-primary-plans">
+            Crear
+          </button>
+
+          <button
+            type="button"
+            className="btn-secondary-plans"
+            onClick={onClose}
+          >
+            Cerrar
+          </button>
+        </div>
+      </form>
     </div>
-  );
+  </div>
+);
 }

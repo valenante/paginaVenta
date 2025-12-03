@@ -1,0 +1,130 @@
+/*****************************************************
+ * DashboardHeader – cabecera del panel SuperAdmin
+ *****************************************************/
+
+.admin-dashboard-header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  margin-bottom: var(--space-xl);
+}
+
+.admin-dashboard-header-main {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-lg);
+}
+
+.admin-dashboard-header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+/* Botón actualizar */
+
+.header-refresh-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding-inline: 1rem;
+  font-size: var(--font-size-sm);
+}
+
+.header-refresh-icon {
+  font-size: 1rem;
+}
+
+/*****************************************************
+ * Filtros (buscador + select plan)
+ *****************************************************/
+
+.admin-dashboard-filters {
+  border-top: 1px solid var(--color-borde-suave);
+  padding-top: var(--space-md);
+  margin-top: var(--space-xs);
+}
+
+.admin-dashboard-filters-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+/* Search */
+
+.header-search {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: 0.45rem 0.75rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-borde-suave);
+  background: #f9fafb;
+}
+
+.header-search-icon {
+  font-size: 1rem;
+  color: var(--color-texto-suave);
+}
+
+.header-search-input {
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: var(--font-size-sm);
+  width: 100%;
+  font-family: var(--font-base);
+}
+
+/* Filtro plan */
+
+.header-filter-plan {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.header-filter-plan label {
+  font-size: var(--font-size-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-texto-suave);
+}
+
+.header-filter-plan select {
+  min-width: 160px;
+  padding: 0.45rem 0.7rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-borde-suave);
+  font-size: var(--font-size-sm);
+  font-family: var(--font-base);
+  background: #ffffff;
+}
+
+/*****************************************************
+ * Responsive
+ *****************************************************/
+
+@media (max-width: 900px) {
+  .admin-dashboard-header-main {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .admin-dashboard-header-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .admin-dashboard-filters-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .header-filter-plan select {
+    width: 100%;
+  }
+}

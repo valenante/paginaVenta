@@ -1,21 +1,24 @@
-import React from "react";
+// src/context/ConfigContext.jsx
 import { createContext, useEffect, useState, useContext } from "react";
 import api from "../utils/api";
 import { useTenant } from "./TenantContext.jsx";
+// 👇 ojo con la ruta/case, en tu repo creo que es "hooks", no "Hooks"
 import { useConfigStyles } from "../Hooks/useConfigStyles";
 
-// Crear contexto
 export const ConfigContext = createContext();
 
 export const ConfigProvider = ({ children }) => {
-  const { tenantId } = useTenant() || {}; // sin try/catch
-  const [config, setConfig] = useState({});
+  const { tenantId } = useTenant() || {};
+  const [config, setConfig] = useState(null);
+  const [planFeatures, setPlanFeatures] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchConfig = async () => {
       if (!tenantId) {
-        console.warn("⏸ [ConfigProvider] No hay tenantId definido, omitiendo carga de configuración.");
+        console.warn(
+          "⏸ [ConfigProvider] No hay tenantId definido, omitiendo carga de configuración."
+        );
         setLoading(false);
         return;
       }
@@ -24,10 +27,27 @@ export const ConfigProvider = ({ children }) => {
         const { data } = await api.get("/configuracion", {
           headers: { "x-tenant-id": tenantId },
         });
-        setConfig(data);
 
-        if (data.colores) {
-          Object.entries(data.colores).forEach(([key, value]) => {
+        console.log("[ConfigContext] /configuracion response:", data);
+
+        // Backend devuelve { config, planFeatures } o directamente el doc
+        const cfg = data.config || data;
+        const feats = Array.isArray(data.planFeatures)
+          ? data.planFeatures.map(f => (typeof f === "string" ? f : f.clave))
+          : [];
+
+
+        console.log("[ConfigContext] planFeatures desde backend:", feats);
+        // cfg es la config YA normalizada según backend
+        setConfig(cfg);
+
+        // planFeatures normales
+        setPlanFeatures(cfg.planFeatures || []);
+
+
+        // Colores base
+        if (cfg.colores) {
+          Object.entries(cfg.colores).forEach(([key, value]) => {
             document.documentElement.style.setProperty(`--color-${key}`, value);
           });
         }
@@ -41,10 +61,56 @@ export const ConfigProvider = ({ children }) => {
     fetchConfig();
   }, [tenantId]);
 
+  // Aplica estilos avanzados (tema, fuentes, etc.)
   useConfigStyles(config);
 
+  // 🔑 Helper unificado:
+  //  - "estadisticas_avanzadas"        → feature del PLAN (slug)
+  //  - "impresion.imprimirPedidos..."  → flag booleana dentro de config
+  const hasFeature = (key, defaultValue = true) => {
+    if (!key) return defaultValue;
+
+    // 1) Feature de PLAN (sin punto)
+    if (!key.includes(".")) {
+      const enabled = planFeatures.includes(key);
+      console.log("[ConfigContext] hasFeature(slug)", {
+        key,
+        enabled,
+        planFeatures,
+      });
+      return enabled;
+    }
+
+    // 2) Feature configurable en CONFIG (con puntos)
+    if (!config) return defaultValue;
+
+    const parts = key.split(".");
+    let current = config;
+
+    for (const p of parts) {
+      if (current && Object.prototype.hasOwnProperty.call(current, p)) {
+        current = current[p];
+      } else {
+        return defaultValue;
+      }
+    }
+
+    const result =
+      typeof current === "boolean" ? current : defaultValue;
+
+    console.log("[ConfigContext] hasFeature(path)", {
+      key,
+      result,
+      finalValue: current,
+    });
+
+    return result;
+  };
+
   return (
-    <ConfigContext.Provider value={{ config, loading, setConfig }}>
+    <ConfigContext.Provider
+      value={{ config, loading, setConfig, hasFeature, planFeatures }}
+    >
       {children}
     </ConfigContext.Provider>
   );
@@ -53,8 +119,16 @@ export const ConfigProvider = ({ children }) => {
 export const useConfig = () => {
   const context = useContext(ConfigContext);
   if (!context) {
-    console.warn("⚠️ useConfig se usó fuera de ConfigProvider. Se devuelve contexto vacío.");
-    return { config: null, loading: false, setConfig: () => { } };
+    console.warn(
+      "⚠️ useConfig se usó fuera de ConfigProvider. Devuelvo stub para evitar petadas."
+    );
+    return {
+      config: null,
+      loading: false,
+      setConfig: () => { },
+      hasFeature: () => false,
+      planFeatures: [],
+    };
   }
   return context;
 };

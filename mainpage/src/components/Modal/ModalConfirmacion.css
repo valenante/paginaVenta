@@ -1,131 +1,158 @@
-/* === Fondo del modal === */
-.modal-overlay {
+/*****************************************************
+ * Modal Confirmación — Overlay
+ *****************************************************/
+
+.modal-overlay--modalconfirmacion {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(15, 23, 42, 0.45); /* igual que reservas */
   display: flex;
-  justify-content: center;
   align-items: center;
-  z-index: 1000;
-  animation: fadeIn 0.2s ease-in-out;
+  justify-content: center;
+  z-index: 50;
+  backdrop-filter: blur(4px);
 }
 
-/* === Contenedor principal === */
-.modal-contenido {
-  background: #ffffff;
-  padding: 2rem;
-  border-radius: 1rem;
-  width: 90%;
-  max-width: 400px;
-  text-align: center;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-  animation: popIn 0.25s ease-in-out;
-  position: relative;
-}
+/*****************************************************
+ * Contenido principal
+ *****************************************************/
 
-/* === Título y texto === */
-.modal-contenido h2 {
-  font-size: 1.4rem;
-  margin-bottom: 0.8rem;
-  color: #6A0DAD;
-}
+.modal-contenido--modalconfirmacion {
+  width: 100%;
+  max-width: 520px;
+  padding: var(--space-xl);
+  border-radius: var(--radius-lg);
 
-.modal-contenido p {
-  color: #333;
-  margin-bottom: 1.5rem;
-  font-size: 1rem;
-}
+  /* 🎨 Estilo glass como tus card modernas */
+  background: rgba(255, 255, 255);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(148, 163, 184, 0.25);
 
-/* === Input === */
-.modal-contenido input {
-  width: 90%;
-  padding: 0.7rem 1rem;
-  border: 1px solid #ccc;
-  border-radius: 0.5rem;
-  font-size: 1rem;
-  outline: none;
-  transition: border-color 0.2s ease;
-}
+  box-shadow:
+    0 20px 40px rgba(0, 0, 0, 0.28),
+    0 0 0 1px rgba(255, 255, 255, 0.08);
 
-.modal-contenido input:focus {
-  border-color: #6A0DAD;
-  box-shadow: 0 0 0 3px rgba(106, 13, 173, 0.15);
-}
-
-/* === Botones === */
-.modal-botones {
   display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-  margin-top: 2rem;
+  flex-direction: column;
+  gap: var(--space-lg);
+
+  animation: fadeInConfirmacion 0.2s ease-out;
 }
 
-.boton-cancelar-modal-confirmacion,
-.boton-aceptar-modal-confirmacion {
-  flex: 1;
-  padding: 0.8rem;
-  font-size: 1rem;
-  border-radius: 0.5rem;
-  border: none;
-  cursor: pointer;
-  transition: all 0.2s ease-in-out;
+@keyframes fadeInConfirmacion {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/*****************************************************
+ * Títulos y textos
+ *****************************************************/
+
+.modal-titulo--modalconfirmacion {
+  margin: 0 0 var(--space-xs);
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  color: var(--color-texto);
+}
+
+.modal-mensaje--modalconfirmacion {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-texto-suave);
+  line-height: 1.45;
+}
+
+/*****************************************************
+ * Contenedor de extras (slot <children>)
+ *****************************************************/
+
+.modal-extra--modalconfirmacion {
+  margin-top: -0.3rem;
+  padding: var(--space-sm) var(--space-xs);
+  border-radius: var(--radius-md);
+  background: rgba(241, 245, 249, 0.55);
+}
+
+/*****************************************************
+ * Input
+ *****************************************************/
+
+.modal-input--modalconfirmacion {
+  padding: 0.65rem 0.9rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-borde-suave);
+  background: #fff;
+  font-size: var(--font-size-sm);
+  font-family: var(--font-base);
+  margin-top: var(--space-xs);
+}
+
+.modal-input--modalconfirmacion:focus {
+  outline: none;
+  border-color: var(--color-primario);
+  box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.25);
+}
+
+/*****************************************************
+ * Botones
+ *****************************************************/
+
+.modal-botones--modalconfirmacion {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-sm);
+  margin-top: var(--space-sm);
+}
+
+.boton-cancelar--modalconfirmacion,
+.boton-aceptar--modalconfirmacion {
+  padding: 0.75rem;
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
   font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, border 0.15s ease;
+  text-align: center;
 }
 
 /* Cancelar */
-.boton-cancelar-modal-confirmacion {
-  background: #e5e5e5;
-  color: #333;
+.boton-cancelar--modalconfirmacion {
+  background: #f1f5f9;
+  border: 1px solid var(--color-borde-suave);
+  color: var(--color-texto);
 }
 
-.boton-cancelar-modal-confirmacion:hover {
-  background: #d3d3d3;
+.boton-cancelar--modalconfirmacion:hover {
+  background: #e2e8f0;
 }
 
 /* Aceptar */
-.boton-aceptar-modal-confirmacion {
-  background: #6A0DAD;
+.boton-aceptar--modalconfirmacion {
+  background: var(--color-primario);
+  border: 1px solid var(--color-primario-oscuro);
   color: #fff;
 }
 
-.boton-aceptar-modal-confirmacion:hover {
-  background: #580b90;
+.boton-aceptar--modalconfirmacion:hover {
+  background: var(--color-primario-oscuro);
 }
 
-/* === Animaciones === */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
+/*****************************************************
+ * Responsive
+ *****************************************************/
 
-@keyframes popIn {
-  from {
-    opacity: 0;
-    transform: scale(0.9);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-/* === Responsividad === */
 @media (max-width: 480px) {
-  .modal-contenido {
-    width: 90%;
-    padding: 1.5rem;
+  .modal-contenido--modalconfirmacion {
+    padding: var(--space-lg);
   }
 
-  .modal-botones {
-    flex-direction: column;
-  }
-
-  .boton-cancelar-modal-confirmacion,
-  .boton-aceptar-modal-confirmacion {
-    width: 100%;
+  .modal-botones--modalconfirmacion {
+    grid-template-columns: 1fr;
   }
 }

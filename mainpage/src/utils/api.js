@@ -55,8 +55,10 @@ api.interceptors.request.use((config) => {
   // --------------------------------------------------------------
   if (tenantId) {
     config.headers["x-tenant-id"] = tenantId;
+    config.headers["X-Tenant-Slug"] = tenantId;  // 🔥 NECESARIO PARA TENANT MIDDLEWARE
   } else {
     delete config.headers["x-tenant-id"];
+    delete config.headers["X-Tenant-Slug"];
   }
 
   // --------------------------------------------------------------

@@ -1,0 +1,197 @@
+/* =========================================================
+   STATS FILTER BAR — Estilo Profesional Alef
+   ========================================================= */
+
+.stats-filter-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 1.8rem;
+  margin-bottom: 2rem;
+  padding: 1.8rem 2rem;
+}
+
+/* ===== TITULOS ===== */
+.stats-filter-title {
+  font-size: 1.45rem;
+  font-weight: 700;
+  margin: 0;
+  color: #fff;
+}
+
+.stats-filter-subtitle {
+  font-size: 0.95rem;
+  margin: 0.2rem 0 0;
+  opacity: 0.8;
+  color: #cbd5e1;
+}
+
+/* ===== CONTENEDOR CONTROLES ===== */
+.stats-filter-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+}
+
+/* ===== GRUPO ===== */
+.stats-filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.stats-filter-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  opacity: 0.85;
+  color: #e2e8f0;
+}
+
+/* ===== PILLS ===== */
+.stats-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+
+.stats-pill {
+  padding: 0.45rem 0.95rem;
+  background: rgba(255, 255, 255, 0.065);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-pill);
+  font-size: 0.85rem;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.stats-pill:hover {
+  background: rgba(255, 255, 255, 0.13);
+  transform: translateY(-2px);
+}
+
+.stats-pill--active {
+  background: linear-gradient(90deg, #6a0dad, #ff6700);
+  border: none;
+  color: #fff;
+  font-weight: 600;
+  box-shadow: 0 4px 14px rgba(255, 103, 0, 0.35);
+}
+
+/* ===== DATEPICKER INPUT ===== */
+.stats-datepicker {
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.065);
+  color: #fff;
+  width: 180px;
+  outline: none;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.stats-datepicker:hover,
+.stats-datepicker:focus {
+  border-color: #6a0dad;
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 0 1px #6a0dad;
+}
+/* =========================================================
+   PILLS PROFESIONALES ALEF
+   ========================================================= */
+
+.stats-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+
+/* Base del pill */
+.stats-pill {
+  position: relative;
+  padding: 0.55rem 1.05rem;
+  border-radius: 999px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+
+  color: #e8ecf3;
+  transition: 
+    background 0.25s ease,
+    color 0.25s ease,
+    border-color 0.25s ease,
+    transform 0.2s ease,
+    box-shadow 0.25s ease;
+  backdrop-filter: blur(12px);
+}
+
+.stats-pill:hover {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.22);
+  transform: translateY(-2px);
+}
+
+/* Texto interno */
+.stats-pill-label {
+  position: relative;
+  z-index: 2;
+}
+
+/* Estado activo — con efecto “glow” suave */
+.stats-pill[data-active="true"] {
+  color: #fff;
+  font-weight: 600;
+  background: linear-gradient(
+    90deg,
+    rgba(106, 13, 173, 0.85),
+    rgba(255, 103, 0, 0.85)
+  );
+  border: none;
+  box-shadow: 
+    0 4px 16px rgba(255, 103, 0, 0.35),
+    0 0 0 1px rgba(255, 255, 255, 0.1);
+  transform: translateY(-1px);
+}
+
+/* INDIKATOR - Mini highlight dinámico */
+.stats-pill-indicator {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(255, 255, 255, 0.25) 0%,
+    transparent 70%
+  );
+  opacity: 0.7;
+  animation: pillGlow 1.6s ease-in-out infinite alternate;
+}
+
+@keyframes pillGlow {
+  from {
+    opacity: 0.4;
+    transform: scale(0.98);
+  }
+  to {
+    opacity: 0.75;
+    transform: scale(1.04);
+  }
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .stats-filter-controls {
+    flex-direction: column;
+    gap: 1.4rem;
+  }
+
+  .stats-datepicker {
+    width: 100%;
+  }
+}

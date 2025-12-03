@@ -1,0 +1,167 @@
+/* ==========================================================================
+   🔐 MODAL CAMBIO DE ESTADO TENANT (ESTILO ADMIN DASHBOARD)
+   ========================================================================== */
+
+/* Usamos .modal-overlay global que ya tienes para el fondo oscuro */
+
+/* Contenedor principal del modal de estado */
+.estado-modal {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 1.7rem 2rem;
+  max-width: 420px;
+  width: 90%;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.16);
+  text-align: left;
+  animation: fadeIn 0.2s ease;
+  font-family: "Inter", sans-serif;
+  color: #2d3436;
+}
+
+/* Cabecera */
+.estado-modal-header {
+  margin-bottom: 0.75rem;
+}
+
+.estado-modal-header h3 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #6A0DAD; /* mismo morado que el resto del dashboard */
+}
+
+/* Cuerpo */
+.estado-modal-body {
+  font-size: 0.95rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.estado-modal-body p {
+  margin: 0;
+}
+
+/* Línea con estado actual */
+.estado-actual-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Chip de estado actual */
+.estado-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  background-color: #f3e8ff; /* suave lila similar al hover de filas */
+  color: #6A0DAD;
+}
+
+/* Campo select */
+.estado-field {
+  margin-top: 0.6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.estado-field label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #2d3436;
+}
+
+.estado-select {
+  margin-top: 0.1rem;
+  padding: 0.55rem 0.75rem;
+  border-radius: 0.6rem;
+  border: 1px solid #ddd;
+  font-size: 0.95rem;
+  outline: none;
+  background: #fff;
+  cursor: pointer;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.estado-select:focus {
+  border-color: #6A0DAD;
+  box-shadow: 0 0 0 2px rgba(106, 13, 173, 0.15);
+}
+
+/* Mensaje de error */
+.estado-modal-error {
+  margin-top: 0.4rem;
+  font-size: 0.85rem;
+  color: #e74c3c;
+}
+
+/* Footer con botones */
+.estado-modal-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-top: 1.3rem;
+}
+
+/* Botones */
+.estado-btn,
+.estado-btn-secundario {
+  flex: 1;
+  padding: 0.6rem 1rem;
+  border-radius: 0.6rem;
+  border: none;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease, box-shadow 0.15s ease;
+}
+
+/* Guardar */
+.estado-btn {
+  background: #6A0DAD;
+  color: #fff;
+}
+
+.estado-btn:hover:not(:disabled) {
+  background: #550c91;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+}
+
+.estado-btn:disabled {
+  background: #dcdde1;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+/* Cancelar */
+.estado-btn-secundario {
+  background: #f3f3f3;
+  color: #2d3436;
+}
+
+.estado-btn-secundario:hover {
+  background: #e0e0e0;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .estado-modal {
+    padding: 1.4rem 1.3rem;
+    max-width: 95%;
+  }
+
+  .estado-modal-footer {
+    flex-direction: column;
+  }
+
+  .estado-btn,
+  .estado-btn-secundario {
+    width: 100%;
+  }
+}

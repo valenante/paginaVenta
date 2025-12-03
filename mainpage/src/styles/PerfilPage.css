@@ -1,211 +1,159 @@
-/* === CONTENEDOR PRINCIPAL === */
+/*****************************************************
+ * Perfil – Alef
+ *****************************************************/
+
 .perfil-page {
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 50px 10%;
-  background: linear-gradient(180deg, #faf7ff 0%, #ffffff 100%);
-  font-family: "Poppins", sans-serif;
+  margin: var(--space-2xl) auto;
+  max-width: 720px;
 }
 
-/* === ESTADO DE CARGA === */
 .perfil-loading {
-  text-align: center;
-  font-size: 1.1rem;
-  color: #6A0DAD;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 40vh;
 }
 
-/* === TARJETA DE PERFIL === */
+/* ===== Card principal ===== */
+
 .perfil-card {
-  background: #fff;
-  border-radius: 20px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-  padding: 50px 40px;
-  max-width: 500px;
-  width: 100%;
-  text-align: center;
-  color: #333;
+  padding: var(--space-lg) var(--space-xl);
 }
 
-/* === ENCABEZADO DEL PERFIL === */
+/* Header con avatar */
+
 .perfil-header {
+  margin-bottom: var(--space-lg);
+}
+
+.perfil-header-left {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 20px;
-  margin-bottom: 30px;
+  gap: var(--space-lg);
 }
 
 .perfil-avatar {
-  width: 90px;
-  height: 90px;
-  border-radius: 50%;
+  width: 80px;
+  height: 80px;
+  border-radius: 999px;
   object-fit: cover;
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+  background: #f3f4f6;
+  border: 1px solid var(--color-borde-suave);
 }
 
-.perfil-header h2 {
-  font-size: 1.6rem;
-  font-weight: 700;
-  color: #6A0DAD;
-  margin-bottom: 4px;
+.perfil-header-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.perfil-header-info h1 {
+  margin: 0;
+  font-size: var(--font-size-xl);
+  line-height: 1.2;
+}
+
+.perfil-header-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  align-items: center;
 }
 
 .perfil-rol {
-  display: inline-block;
-  background: #6A0DAD;
-  color: #fff;
-  padding: 4px 10px;
-  border-radius: 6px;
-  font-size: 0.85rem;
-  font-weight: 500;
-  text-transform: capitalize;
+  font-size: var(--font-size-xs);
 }
 
-/* === INFORMACIÓN DEL PERFIL === */
-.perfil-info {
-  margin-bottom: 30px;
-  text-align: left;
+.perfil-email {
+  font-size: var(--font-size-xs);
+  color: var(--color-texto-suave);
 }
 
-.perfil-info p {
-  font-size: 1rem;
-  color: #444;
-  line-height: 1.7;
-  margin-bottom: 8px;
+/* ===== Formulario ===== */
+
+.perfil-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
 }
 
-.perfil-info strong {
-  color: #6A0DAD;
+.perfil-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.perfil-label {
+  font-size: var(--font-size-sm);
   font-weight: 600;
 }
 
-/* === BOTONES === */
+.perfil-form input[type="text"],
+.perfil-form input[type="email"],
+.perfil-form input[type="password"],
+.perfil-form input[type="file"] {
+  font-family: var(--font-base);
+  font-size: var(--font-size-sm);
+  padding: 0.55rem 0.75rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-borde-suave);
+  background: #ffffff;
+}
+
+.input-disabled {
+  background: #f3f4f6;
+  color: var(--color-texto-suave);
+  cursor: not-allowed;
+}
+
+.perfil-help {
+  font-size: var(--font-size-xs);
+  color: var(--color-texto-suave);
+}
+
+/* Mensajes */
+
+.perfil-mensaje {
+  margin: 0;
+  font-size: var(--font-size-sm);
+}
+
+.perfil-mensaje--ok {
+  color: var(--color-exito);
+}
+
+.perfil-mensaje--error {
+  color: var(--color-error);
+}
+
+/* Acciones */
+
 .perfil-actions {
   display: flex;
-  justify-content: center;
+  justify-content: flex-end;
+  gap: var(--space-sm);
+  margin-top: var(--space-sm);
 }
 
-.btn-secundario {
-  background-color: #FF6700;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  padding: 12px 26px;
-  font-weight: 600;
-  font-size: 1rem;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 5px 15px rgba(255, 103, 0, 0.25);
-}
+/* Responsive */
 
-.btn-secundario:hover {
-  background-color: #e45f00;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(255, 103, 0, 0.35);
-}
-
-/* === BOTONES === */
-.perfil-actions {
-  display: flex;
-  justify-content: center;
-  gap: 16px;
-  /* 👈 Espaciado entre botones */
-  margin-top: 25px;
-  /* 👈 Separación del formulario */
-  flex-wrap: wrap;
-  /* 👈 Permite que bajen en pantallas pequeñas */
-}
-
-.perfil-actions button {
-  flex: 1;
-  /* 👈 Ambos botones mismo ancho proporcional */
-  max-width: 180px;
-  /* 👈 Evita que sean demasiado anchos */
-  padding: 10px 20px;
-  /* 👈 Menos padding para altura equilibrada */
-  font-size: 0.95rem;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-/* Botón principal (guardar cambios) */
-.perfil-actions button[type="submit"] {
-  background-color: #6A0DAD;
-  color: #fff;
-  border: none;
-  box-shadow: 0 5px 12px rgba(106, 13, 173, 0.25);
-}
-
-.perfil-actions button[type="submit"]:hover {
-  background-color: #5b0996;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 18px rgba(106, 13, 173, 0.35);
-}
-
-/* Botón secundario (cerrar sesión) */
-.btn-secundario {
-  background-color: #FF6700;
-  color: #fff;
-  border: none;
-  box-shadow: 0 5px 12px rgba(255, 103, 0, 0.25);
-}
-
-.btn-secundario:hover {
-  background-color: #e45f00;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 18px rgba(255, 103, 0, 0.35);
-}
-
-/* === RESPONSIVE === */
 @media (max-width: 768px) {
   .perfil-card {
-    padding: 40px 30px;
+    padding: var(--space-md);
   }
 
-  .perfil-header {
+  .perfil-header-left {
     flex-direction: column;
-    text-align: center;
-  }
-
-  .perfil-avatar {
-    width: 80px;
-    height: 80px;
-  }
-
-  .perfil-info {
-    text-align: center;
-  }
-}
-
-@media (max-width: 480px) {
-  .perfil-card {
-    padding: 30px 20px;
-  }
-
-  .perfil-header h2 {
-    font-size: 1.4rem;
-  }
-
-  .perfil-info p {
-    font-size: 0.95rem;
-  }
-
-  .btn-secundario {
-    width: 100%;
+    align-items: flex-start;
   }
 
   .perfil-actions {
-    flex-direction: column;
-    gap: 12px;
+    flex-direction: column-reverse;
+    align-items: stretch;
   }
 
-  .perfil-actions button {
+  .perfil-actions .btn {
     width: 100%;
-    max-width: none;
+    justify-content: center;
   }
 }

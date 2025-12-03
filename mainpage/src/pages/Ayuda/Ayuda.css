@@ -1,0 +1,219 @@
+/*****************************************************
+ * Centro de Ayuda – Alef (Versión Premium)
+ *****************************************************/
+
+/* ===== Layout general ===== */
+
+.ayuda-layout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: var(--space-xl);
+  margin: var(--space-2xl) auto;
+  max-width: 1320px;
+  padding: 0 var(--space-lg);
+}
+
+/**********************************************
+ * SIDEBAR
+ **********************************************/
+.ayuda-sidebar {
+  background: #ffffff;
+  border-radius: var(--radius-md);
+  padding: var(--space-lg);
+  border: 1px solid var(--color-borde-suave);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  height: fit-content;
+  position: sticky;
+  top: var(--space-lg);
+}
+
+.ayuda-sidebar-title {
+  margin: 0 0 var(--space-sm);
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+}
+
+.ayuda-sidebar button {
+  padding: 0.65rem 0.8rem;
+  background: #fafbfc;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-borde-suave);
+  font-size: var(--font-size-sm);
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.ayuda-sidebar button:hover {
+  background: var(--color-primario-suave);
+}
+
+.ayuda-sidebar button.active {
+  background: var(--color-primario);
+  color: #ffffff;
+  font-weight: 600;
+  border-color: var(--color-primario);
+}
+
+/**********************************************
+ * CONTENIDO PRINCIPAL
+ **********************************************/
+.ayuda-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+  min-width: 0; /* 🔥 Necesario para evitar overflow de grid */
+}
+
+/**********************************************
+ * BUSCADOR
+ **********************************************/
+.ayuda-search input {
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-borde-suave);
+  font-size: var(--font-size-sm);
+  background: #ffffff;
+}
+
+.ayuda-noresult {
+  margin-top: var(--space-xs);
+  font-size: var(--font-size-xs);
+  color: var(--color-error);
+}
+
+/**********************************************
+ * LISTA DE ARTÍCULOS
+ **********************************************/
+.ayuda-lista h2 {
+  margin-bottom: var(--space-md);
+  font-size: var(--font-size-xl);
+  color: var(--color-primario);
+}
+
+.ayuda-card {
+  background: #ffffff;
+  border-radius: var(--radius-md);
+  padding: var(--space-lg);
+  border: 1px solid var(--color-borde-suave);
+  margin-bottom: var(--space-md);
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.ayuda-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0px 5px 16px rgba(0,0,0,0.07);
+  border-color: var(--color-primario);
+}
+
+/**********************************************
+ * ARTÍCULO
+ **********************************************/
+.ayuda-articulo {
+  background: #ffffff;
+  border-radius: var(--radius-md);
+  padding: var(--space-xl);
+  border: 1px solid var(--color-borde-suave);
+
+  /* 🔥 Limita el ancho del texto para mejor lectura */
+  max-width: 780px;
+  max-height: 70vh;
+  overflow-y: auto;
+  line-height: 1.65;
+
+  /* 🔥 Evita que el texto se expanda demasiado */
+  overflow-wrap: break-word;
+}
+
+.ayuda-articulo h2 {
+  font-size: var(--font-size-2xl);
+  margin-bottom: var(--space-lg);
+  color: var(--color-primario);
+}
+
+.ayuda-articulo p {
+  margin-bottom: var(--space-sm);
+  color: var(--color-texto);
+  font-size: var(--font-size-sm);
+  line-height: 1.65;
+}
+
+/* BLOQUES DE CONTENIDO – PARA MEJORAR LECTURA */
+.ayuda-articulo p + p {
+  margin-top: var(--space-xs);
+}
+
+.ayuda-articulo p strong {
+  color: var(--color-primario);
+}
+
+.ayuda-articulo ul,
+.ayuda-articulo li {
+  margin-left: 1.2rem;
+  padding-left: 0.4rem;
+}
+
+/***** LÍNEAS SEPARADORAS ENTRE SECCIONES *****/
+.ayuda-articulo p:nth-child(odd) {
+  border-left: 3px solid var(--color-primario-suave);
+  padding-left: var(--space-sm);
+}
+
+/**********************************************
+ * IMÁGENES DENTRO DEL ARTÍCULO
+ **********************************************/
+.ayuda-articulo img {
+  width: 100%;
+  margin-top: var(--space-lg);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-borde-suave);
+  max-height: 420px;
+  object-fit: contain;
+}
+
+/**********************************************
+ * RESPONSIVE
+ **********************************************/
+@media (max-width: 980px) {
+  .ayuda-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .ayuda-sidebar {
+    flex-direction: row;
+    overflow-x: auto;
+    gap: var(--space-sm);
+    padding: var(--space-md);
+  }
+
+  .ayuda-sidebar-title {
+    display: none;
+  }
+
+  .ayuda-sidebar button {
+    white-space: nowrap;
+    min-width: 180px;
+  }
+
+  .ayuda-articulo {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 640px) {
+  .ayuda-articulo {
+    padding: var(--space-lg);
+  }
+
+  .ayuda-card {
+    padding: var(--space-lg);
+  }
+
+  /* 🔥 Permite arrastrar horizontal si algo es muy largo */
+  .ayuda-content {
+    overflow-x: auto;
+  }
+}

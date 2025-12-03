@@ -1,26 +1,69 @@
+// src/components/Hero/Hero.jsx
 import React from "react";
 import "./Hero.css";
+import facturaImg from "../../assets/imagenes/facturacion.png";
 
 const Hero = () => {
   return (
-    <section className="Hero reveal espaciados" id="hero">
-      <div className="Hero-left">
-        <img
-          src="/img/tpv-camarero.jpg"
-          alt="Camarero usando TPV"
-          className="Hero-img"
-        />
-      </div>
-      <div className="Hero-right">
+    <section className="Hero section bg-fondo-claro reveal" id="verifactu">
+      <div className="Hero-inner section--wide">
+        {/* Columna texto */}
         <div className="Hero-texto">
-          <h2>
-            Transforma tu restaurante en un entorno eficaz, ordenado y moderno
+          <div className="Hero-badge">
+            Listo para Ley Antifraude y VERI*FACTU
+          </div>
+
+          <h2 className="Hero-titulo">
+            Facturación encadenada, <br />
+            preparada para conectarse con Hacienda
           </h2>
-          <p>
-            Nuestro sistema TPV permite que todo funcione con fluidez: pedidos
-            digitales, cocina organizada y facturación legal al instante.
+
+          <p className="Hero-parrafo">
+            Alef genera facturas encadenadas con hash inalterable, registra
+            cada emisión y rectificación y está diseñado para integrarse con
+            VERI*FACTU en cuanto la Agencia Tributaria habilite el sistema
+            definitivo. Así tu restaurante se adelanta a la normativa y evita
+            sorpresas de última hora.
           </p>
-          <a href="#contacto" className="Hero-boton">Solicitar demo</a>
+
+          <ul className="Hero-lista">
+            <li>📌 Numeración encadenada y registro de cada factura y ticket.</li>
+            <li>📌 Hash antifraude y trazabilidad de modificaciones.</li>
+            <li>📌 Preparado para enviar la información a la AEAT (VERI*FACTU).</li>
+          </ul>
+
+          <p className="Hero-aviso">
+            <strong>Sin letra pequeña:</strong> te acompañamos en la adaptación
+            a la nueva normativa y te explicamos, en lenguaje claro, qué implica
+            para tu restaurante.
+          </p>
+
+          <div className="Hero-acciones">
+            <a href="#packs" className="Hero-boton btn-primario">
+              Ver planes con facturación antifraude
+            </a>
+            <a href="#contacto" className="Hero-link">
+              Resolver dudas legales →
+            </a>
+          </div>
+        </div>
+
+        {/* Columna visual */}
+        <div className="Hero-visual">
+          <div className="Hero-card">
+            <img
+              src={facturaImg}
+              alt="Factura con código QR y verificación antifraude"
+              className="Hero-img"
+            />
+
+            <div className="Hero-card-footer">
+              <span className="Hero-chip">Hash antifraude</span>
+              <span className="Hero-chip Hero-chip--verde">
+                Lista para VERI*FACTU
+              </span>
+            </div>
+          </div>
         </div>
       </div>
     </section>

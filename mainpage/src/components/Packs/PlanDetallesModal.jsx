@@ -1,5 +1,6 @@
-// PlanDetallesModal.jsx
-import { useMemo, useState, useRef } from "react";
+// src/components/Packs/PlanDetallesModal.jsx
+import { useMemo, useState, useRef, useEffect } from "react";
+import { createPortal } from "react-dom";
 import "./PlanDetallesModal.css";
 
 const LABEL_CATEGORIAS = {
@@ -26,11 +27,12 @@ function getEtiquetaCategoria(raw) {
 
 export default function PlanDetallesModal({ plan, onClose }) {
   const [openGroups, setOpenGroups] = useState({});
-  const groupRefs = useRef({}); // refs para hacer scroll a cada bloque
+  const groupRefs = useRef({});
 
+  // Agrupar features por categoría
   const groupedFeatures = useMemo(() => {
     const grupos = {};
-    (plan.features || []).forEach((f) => {
+    (plan?.features || []).forEach((f) => {
       const cat = f.categoria || "general";
       if (!grupos[cat]) grupos[cat] = [];
       grupos[cat].push(f);
@@ -48,10 +50,10 @@ export default function PlanDetallesModal({ plan, onClose }) {
   };
 
   const handleResumenClick = (cat) => {
-    // abrir el grupo
+    // Abrir el grupo
     setOpenGroups((prev) => ({ ...prev, [cat]: true }));
 
-    // y hacer scroll suave al bloque
+    // Scroll suave al bloque
     setTimeout(() => {
       const el = groupRefs.current[cat];
       if (el) {
@@ -60,20 +62,64 @@ export default function PlanDetallesModal({ plan, onClose }) {
     }, 50);
   };
 
+  // Bloquear scroll del body mientras el modal está abierto
+  useEffect(() => {
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prevOverflow;
+    };
+  }, []);
+
+  // Cerrar con ESC
+  useEffect(() => {
+    const handleKey = (e) => {
+      if (e.key === "Escape") onClose?.();
+    };
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [onClose]);
+
   if (!plan) return null;
 
-  return (
+  // 🔥 Portal: el overlay se pinta directamente en <body>
+  return createPortal(
     <div className="modal-overlay" onClick={onClose}>
       <div
         className="modal-plan"
         onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modal-plan-title"
       >
-        <h2>{plan.nombre}</h2>
+        {/* HEADER */}
+        <header className="modal-header">
+          <div>
+            <h2 id="modal-plan-title" className="modal-title">
+              {plan.nombre}
+            </h2>
+            {plan.descripcionCorta && (
+              <p className="modal-subtitle">{plan.descripcionCorta}</p>
+            )}
+          </div>
 
+          <button
+            className="btn-cerrar-icon"
+            onClick={onClose}
+            aria-label="Cerrar detalles del plan"
+          >
+            ✕
+          </button>
+        </header>
+
+        {/* PRECIO */}
         <p className="modal-precio">
-          {plan.precioMensual} €/mes
+          <span className="modal-precio-cantidad">
+            {plan.precioMensual} €
+          </span>
+          <span className="modal-precio-unidad">/mes</span>
           {plan.precioAnual > 0 && (
-            <span className="precio-anual">— {plan.precioAnual} €/año</span>
+            <span className="precio-anual"> — {plan.precioAnual} €/año</span>
           )}
         </p>
 
@@ -81,7 +127,7 @@ export default function PlanDetallesModal({ plan, onClose }) {
           <p className="modal-descripcion">{plan.descripcion}</p>
         )}
 
-        {/* Resumen rápido */}
+        {/* RESUMEN RÁPIDO */}
         <div className="modal-resumen">
           <div className="resumen-item total">
             <span className="resumen-count">
@@ -93,7 +139,6 @@ export default function PlanDetallesModal({ plan, onClose }) {
           {categoriasOrdenadas.map(([cat, feats]) => {
             const etiqueta = getEtiquetaCategoria(cat);
             const abierta = !!openGroups[cat];
-
             return (
               <button
                 key={cat}
@@ -108,9 +153,9 @@ export default function PlanDetallesModal({ plan, onClose }) {
           })}
         </div>
 
-        <h3 style={{ marginTop: "1rem" }}>¿Qué incluye este plan?</h3>
+        <h3 className="modal-section-title">¿Qué incluye este plan?</h3>
 
-        {/* Bloques por categoría con acordeón */}
+        {/* BLOQUES POR CATEGORÍA */}
         <div className="modal-feature-groups">
           {categoriasOrdenadas.map(([cat, feats]) => {
             const abierta = !!openGroups[cat];
@@ -119,7 +164,7 @@ export default function PlanDetallesModal({ plan, onClose }) {
             const restantes = feats.length - visibles.length;
 
             return (
-              <div
+              <section
                 className="feature-group"
                 key={cat}
                 ref={(el) => (groupRefs.current[cat] = el)}
@@ -132,7 +177,8 @@ export default function PlanDetallesModal({ plan, onClose }) {
                   <div>
                     <span className="feature-group-title">{etiqueta}</span>
                     <span className="feature-group-count">
-                      {feats.length} función{feats.length !== 1 && "es"}
+                      {feats.length} función
+                      {feats.length !== 1 && "es"}
                     </span>
                   </div>
                   <span className="feature-group-toggle">
@@ -142,7 +188,7 @@ export default function PlanDetallesModal({ plan, onClose }) {
 
                 <ul className="feature-group-list">
                   {visibles.map((f) => (
-                    <li key={f._id}>
+                    <li key={f._id || f.nombre}>
                       <strong>{f.nombre}</strong>
                       {f.descripcion && (
                         <p className="feature-desc">{f.descripcion}</p>
@@ -156,11 +202,12 @@ export default function PlanDetallesModal({ plan, onClose }) {
                     </li>
                   )}
                 </ul>
-              </div>
+              </section>
             );
           })}
         </div>
 
+        {/* CTA INFERIOR */}
         <a className="btn-elegir big" href={`/registro?plan=${plan.slug}`}>
           Elegir este plan
         </a>
@@ -169,6 +216,7 @@ export default function PlanDetallesModal({ plan, onClose }) {
           Cerrar
         </button>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

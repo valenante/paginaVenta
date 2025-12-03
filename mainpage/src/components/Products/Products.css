@@ -1,0 +1,253 @@
+/* =========================================================
+   PRODUCTS PANEL — Gestor de carta Alef
+   ---------------------------------------------------------
+   Se muestra dentro de la card de ProductsPage
+   ========================================================= */
+
+.alef-products-root {
+  display: flex;
+  flex-direction: column;
+  gap: 1.4rem;
+}
+
+/* ===== CABECERA ===== */
+.products-header--products {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.products-title--products {
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.products-title--products span {
+  font-weight: 500;
+  color: #a5b4fc;
+}
+
+.products-subtitle--products {
+  margin: 0.15rem 0 0;
+  font-size: 0.9rem;
+  color: #9ca3af;
+}
+
+/* Botón principal "Nuevo producto" en header */
+.boton-crear-main--products {
+  padding: 0.45rem 1rem;
+  border-radius: 999px;
+  border: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+  background: linear-gradient(135deg, #a855f7, #f97316);
+  color: #0b1120;
+  cursor: pointer;
+  box-shadow:
+    0 10px 24px rgba(0, 0, 0, 0.85),
+    0 0 0 1px rgba(15, 23, 42, 0.85);
+  transition: all 0.18s ease;
+}
+
+.boton-crear-main--products:hover {
+  transform: translateY(-1px);
+  box-shadow:
+    0 16px 32px rgba(0, 0, 0, 0.95),
+    0 0 0 1px rgba(248, 250, 252, 0.08);
+}
+
+/* ===== CARD SIN CATEGORÍAS ===== */
+.categories-wrapper--products {
+  margin-top: 0.3rem;
+}
+
+.no-categories-card--products {
+  background: radial-gradient(
+    circle at top left,
+    rgba(55, 65, 81, 0.6) 0,
+    rgba(15, 23, 42, 0.95) 65%
+  );
+  border-radius: 1rem;
+  padding: 1.4rem 1.6rem;
+  border: 1px solid rgba(148, 163, 184, 0.45);
+  box-shadow:
+    0 14px 30px rgba(0, 0, 0, 0.85),
+    0 0 0 1px rgba(15, 23, 42, 0.9);
+}
+
+.cargando-categorias--products {
+  margin: 0 0 0.9rem;
+  font-size: 0.95rem;
+  color: #e5e7eb;
+}
+
+/* ===== CARD CON CATEGORÍAS ===== */
+.categories-card--products {
+  background: radial-gradient(
+    circle at top left,
+    rgba(30, 64, 175, 0.35) 0,
+    rgba(15, 23, 42, 0.96) 65%
+  );
+  border-radius: 1rem;
+  padding: 1.4rem 1.6rem 1.3rem;
+  border: 1px solid rgba(148, 163, 184, 0.5);
+  box-shadow:
+    0 16px 34px rgba(0, 0, 0, 0.9),
+    0 0 0 1px rgba(15, 23, 42, 0.9);
+}
+
+.categories-title--products {
+  margin: 0 0 0.9rem;
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #e5e7eb;
+}
+
+/* Grid de botones-categoría */
+.buttons-grid--products {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 0.75rem;
+}
+
+/* Botones de categoría tipo “pill” */
+.category-pill--products {
+  border-radius: 999px;
+  padding: 0.55rem 1rem;
+  border: 1px solid rgba(148, 163, 184, 0.6);
+  background: radial-gradient(
+    circle at top left,
+    rgba(148, 163, 184, 0.35) 0,
+    rgba(15, 23, 42, 0.9) 65%
+  );
+  color: #e5e7eb;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: left;
+  box-shadow:
+    0 10px 24px rgba(0, 0, 0, 0.9),
+    0 0 0 1px rgba(15, 23, 42, 0.9);
+  transition: all 0.18s ease;
+}
+
+.category-pill--products:hover {
+  border-color: rgba(248, 250, 252, 0.95);
+  background: radial-gradient(
+    circle at top left,
+    rgba(248, 113, 22, 0.6) 0,
+    rgba(15, 23, 42, 0.95) 70%
+  );
+  transform: translateY(-1px);
+  box-shadow:
+    0 16px 30px rgba(0, 0, 0, 0.95),
+    0 0 0 1px rgba(248, 250, 252, 0.08);
+}
+
+/* Footer bajo las categorías */
+.categories-footer--products {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Botón crear producto secundario */
+.boton-crear-secundario--products {
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.7);
+  background: rgba(15, 23, 42, 0.96);
+  color: #e5e7eb;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.boton-crear-secundario--products:hover {
+  background: radial-gradient(circle at top left, #4b5563 0, #020617 70%);
+  border-color: rgba(248, 250, 252, 0.9);
+  transform: translateY(-1px);
+}
+
+/* ===== PANEL CUANDO HAY CATEGORÍA SELECCIONADA ===== */
+.category-panel--products {
+  margin-top: 0.4rem;
+  border-radius: 1rem;
+  padding: 0.9rem 1rem 0.2rem;
+  background: radial-gradient(
+    circle at top left,
+    rgba(17, 24, 39, 0.9) 0,
+    rgba(2, 6, 23, 0.96) 60%
+  );
+  border: 1px solid rgba(148, 163, 184, 0.45);
+  box-shadow:
+    0 16px 34px rgba(0, 0, 0, 0.9),
+    0 0 0 1px rgba(15, 23, 42, 0.9);
+}
+
+.category-panel-header--products {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+  margin-bottom: 0.6rem;
+}
+
+.category-panel-header--products h3 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #e5e7eb;
+}
+
+/* Botón volver a categorías */
+.volver-categorias--products {
+  padding: 0.3rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.7);
+  background: rgba(15, 23, 42, 0.95);
+  color: #e5e7eb;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.volver-categorias--products:hover {
+  background: radial-gradient(circle at top left, #4b5563 0, #020617 70%);
+  border-color: rgba(248, 250, 252, 0.9);
+}
+
+/* ===== BOTÓN GENÉRICO (fallback por si ya existía) ===== */
+.boton-crear--products {
+  font-family: inherit;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .products-header--products {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .categories-card--products,
+  .no-categories-card--products,
+  .category-panel--products {
+    padding: 1.2rem 1.1rem;
+  }
+
+  .buttons-grid--products {
+    grid-template-columns: 1fr;
+  }
+
+  .categories-footer--products {
+    justify-content: flex-start;
+  }
+}

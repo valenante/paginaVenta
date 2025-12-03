@@ -1,433 +1,315 @@
-/* ================================
-   CONTENEDOR GENERAL
-================================== */
+/* =========================================================
+   TICKETS — PANEL PREMIUM ALEF (sufijo -ticketsAdmin)
+   ========================================================= */
 
-.tickets-page {
-  padding: 18px 20px;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+.tickets-page-ticketsAdmin {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 22px;
+  color: #e5e7eb;
 }
 
-.tickets-page h1 {
-  font-size: 22px;
-  font-weight: 700;
-  color: #111827;
-  margin: 0 0 6px;
+.tickets-title-ticketsAdmin {
+  font-size: 26px;
+  font-weight: 800;
+  margin-bottom: 4px;
 }
 
-/* ================================
-   FILTROS
-================================== */
+/* ===== FILTROS ===== */
 
-.ticket-filtros {
+.ticket-filtros-ticketsAdmin {
   display: flex;
+  gap: 14px;
   flex-wrap: wrap;
-  gap: 10px;
-  align-items: center;
-  background: #f9fafb;
+
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(14px);
+  padding: 16px 18px;
   border-radius: 14px;
-  padding: 10px 12px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid rgba(255,255,255,0.08);
+
+  box-shadow:
+    0 10px 30px rgba(0,0,0,0.25),
+    0 0 0 1px rgba(255,255,255,0.05);
 }
 
-.ticket-filtros input,
-.ticket-filtros select {
-  padding: 8px 11px;
-  border-radius: 999px;
-  border: 1px solid #d1d5db;
-  font-size: 13px;
-  min-width: 150px;
+.ticket-input-ticketsAdmin,
+.ticket-select-ticketsAdmin {
+  padding: 9px 12px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.18);
+  color: #fff;
   outline: none;
-  background: #ffffff;
-  transition:
-    border-color 0.18s ease,
-    box-shadow 0.18s ease,
-    background 0.18s ease;
+  min-width: 160px;
+  transition: background 0.2s ease, border-color 0.2s ease;
 }
 
-.ticket-filtros input:focus,
-.ticket-filtros select:focus {
+.ticket-input-ticketsAdmin:focus,
+.ticket-select-ticketsAdmin:focus {
+  background: rgba(255,255,255,0.16);
   border-color: #6a0dad;
-  box-shadow: 0 0 0 1px rgba(124, 58, 237, 0.2);
+  box-shadow: 0 0 0 1px rgba(106,13,173,0.45);
 }
 
-/* Botón actualizar */
-
-.ticket-filtros button {
-  margin-left: auto;
-  background: #6a0dad;
-  color: #ffffff;
+.ticket-refresh-btn-ticketsAdmin {
+  padding: 10px 14px;
+  border-radius: 10px;
   border: none;
-  padding: 8px 14px;
-  border-radius: 999px;
-  cursor: pointer;
-  font-size: 13px;
   font-weight: 600;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  box-shadow: 0 8px 18px rgba(124, 58, 237, 0.35);
-  transition:
-    background 0.18s ease,
-    transform 0.08s ease,
-    box-shadow 0.18s ease;
+  background: rgba(255,255,255,0.14);
+  color: #f1f5f9;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.15s ease;
 }
 
-.ticket-filtros button:hover {
-  background: #550c91;
-  transform: translateY(-1px);
-  box-shadow: 0 10px 22px rgba(124, 58, 237, 0.45);
+.ticket-refresh-btn-ticketsAdmin:hover {
+  background: rgba(255,255,255,0.26);
+  transform: translateY(-2px);
 }
 
-/* ================================
-   TABLA
-================================== */
+/* ===== TABLA ===== */
 
-.tickets-table {
-  width: 100%;
-  background: #ffffff;
-  border-radius: 16px;
+.tickets-table-ticketsAdmin {
   border-collapse: collapse;
+  width: 100%;
+  background: rgba(255,255,255,0.06);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+  border: 1px solid rgba(255,255,255,0.08);
 }
 
-.tickets-table thead {
-  background: #f5f3ff;
-}
-
-.tickets-table th,
-.tickets-table td {
-  padding: 10px 13px;
-  border-bottom: 1px solid #e5e7eb;
-  font-size: 13px;
+.tickets-table-ticketsAdmin th {
+  background: rgba(0,0,0,0.35);
+  padding: 12px;
   text-align: left;
-}
-
-.tickets-table th {
-  font-weight: 600;
-  color: #6a0dad;
-}
-
-.tickets-table tbody tr:nth-child(even) {
-  background: #fafafa;
-}
-
-.tickets-table tbody tr:hover {
-  background: #eef2ff;
-  cursor: pointer;
-}
-
-/* Prioridad como pill */
-
-.prio {
-  font-size: 11px;
-  font-weight: 700;
-  padding: 3px 9px;
-  border-radius: 999px;
-  text-transform: capitalize;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.prio-baja {
-  background: #dbeafe;
-  color: #1d4ed8;
-}
-
-.prio-media {
-  background: #ede9fe;
-  color: #6d28d9;
-}
-
-.prio-alta {
-  background: #ffedd5;
-  color: #c2410c;
-}
-
-.prio-urgente {
-  background: #fee2e2;
-  color: #b91c1c;
-}
-
-/* Mensajes de estado */
-
-.tickets-page > p {
   font-size: 14px;
-  color: #6b7280;
+  color: #cbd5e1;
 }
 
-/* ================================
-   MODAL TICKET
-================================== */
+.tickets-table-ticketsAdmin td {
+  padding: 10px 12px;
+  font-size: 14px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  color: #e2e8f0;
+}
 
-.ticket-modal {
+.tickets-row-ticketsAdmin {
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+
+.tickets-row-ticketsAdmin:hover {
+  background: rgba(255,255,255,0.10);
+  transform: translateY(-1px);
+}
+
+/* ===== TAGS ===== */
+
+.ticket-prio-tag-ticketsAdmin,
+.ticket-estado-tag-ticketsAdmin {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  text-transform: uppercase;
+  font-weight: 700;
+  display: inline-block;
+}
+
+/* Prioridad */
+.prio-baja {
+  background: rgba(96,165,250,0.25);
+  color: #93c5fd;
+}
+.prio-media {
+  background: rgba(251,146,60,0.25);
+  color: #fb923c;
+}
+.prio-alta {
+  background: rgba(239,68,68,0.25);
+  color: #fca5a5;
+}
+.prio-urgente {
+  background: rgba(220,38,38,0.35);
+  color: #fecaca;
+}
+
+.estado-en_progreso {
+  background: rgba(251,191,36,0.25);
+  color: #facc15;
+}
+.estado-resuelto {
+  background: rgba(59,130,246,0.25);
+  color: #93c5fd;
+}
+.estado-cerrado {
+  background: rgba(107,114,128,0.25);
+  color: #d1d5db;
+}
+
+/* ===== MODAL ===== */
+
+.ticket-modal-ticketsAdmin {
   position: fixed;
   inset: 0;
-  background: rgba(15, 23, 42, 0.55);
+  background: rgba(0,0,0,0.65);
+  backdrop-filter: blur(6px);
   display: flex;
+  align-items: center;
   justify-content: center;
+  z-index: 99;
+}
+
+.ticket-modal-content-ticketsAdmin {
+  width: 100%;
+  max-width: 650px;
+  background: rgba(15,23,42,0.75);
+  padding: 26px 30px;
+  border-radius: 20px;
+  backdrop-filter: blur(18px);
+  color: white;
+
+  border: 1px solid rgba(255,255,255,0.1);
+
+  box-shadow:
+    0 28px 60px rgba(0,0,0,0.55),
+    0 0 0 1px rgba(255,255,255,0.05);
+}
+
+.ticket-modal-title-ticketsAdmin {
+  margin: 0 0 12px;
+  font-size: 22px;
+  font-weight: 800;
+  color: white;
+}
+
+.ticket-divider-ticketsAdmin {
+  border: none;
+  height: 1px;
+  background: rgba(255,255,255,0.12);
+  margin: 16px 0;
+}
+
+/* ===== DATA ROW ===== */
+
+.ticket-data-row-ticketsAdmin {
+  display: flex;
   align-items: center;
-  z-index: 40;
+  gap: 12px;
+  margin-bottom: 12px;
 }
 
-.ticket-modal-content {
-  background: #ffffff;
-  padding: 22px 22px 18px;
-  width: 700px;
-  max-width: 95vw;
-  border-radius: 18px;
-  max-height: 85vh;
-  overflow-y: auto;
-  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.55);
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.ticket-modal-content h2 {
-  margin: 0;
-  font-size: 18px;
-  color: #111827;
-}
-
-.ticket-modal-content p {
-  margin: 4px 0;
-  font-size: 14px;
-  color: #374151;
-}
-
-/* Fila de datos (estado / prioridad) */
-
-.ticket-data-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin: 6px 0;
-}
-
-.ticket-data-row label {
-  font-size: 13px;
-  font-weight: 600;
-  color: #4b5563;
-  min-width: 70px;
-}
-
-.ticket-data-row select {
-  padding: 6px 10px;
-  border-radius: 999px;
-  border: 1px solid #d1d5db;
-  font-size: 13px;
-  outline: none;
-  background: #ffffff;
-  transition:
-    border-color 0.18s ease,
-    box-shadow 0.18s ease;
-}
-
-.ticket-data-row select:focus {
-  border-color: #6a0dad;
-  box-shadow: 0 0 0 1px rgba(124, 58, 237, 0.2);
-}
-
-/* ================================
-   CHAT DEL TICKET
-================================== */
-
-.ticket-chat {
-  background: #f9fafb;
-  border-radius: 12px;
-  padding: 12px;
-  max-height: 260px;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-/* Scroll discreto */
-.ticket-chat::-webkit-scrollbar {
-  width: 6px;
-}
-.ticket-chat::-webkit-scrollbar-thumb {
-  background: rgba(148, 163, 184, 0.8);
-  border-radius: 999px;
-}
-
-.mensaje {
-  max-width: 85%;
-  padding: 8px 10px;
+.ticket-select-modal-ticketsAdmin {
+  padding: 8px 12px;
   border-radius: 10px;
-  font-size: 13px;
-  line-height: 1.35;
-  position: relative;
-  display: inline-flex;
-  flex-direction: column;
-  gap: 2px;
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.18);
+  color: #fff;
 }
 
-.mensaje-superadmin {
-  align-self: flex-end;
-  background: #ede9fe;
-  color: #4c1d95;
-  border-bottom-right-radius: 4px;
+/* ===== CHAT ===== */
+
+.ticket-chat-title-ticketsAdmin {
+  margin-bottom: 8px;
 }
 
-.mensaje-tenant {
-  align-self: flex-start;
-  background: #e5f4ff;
-  color: #1e293b;
-  border-bottom-left-radius: 4px;
-}
-
-.mensaje span {
-  font-size: 11px;
-  color: #6b7280;
-  align-self: flex-end;
-}
-
-/* ================================
-   ENVIAR MENSAJE
-================================== */
-
-.mensaje-form {
+.ticket-chat-ticketsAdmin {
+  max-height: 240px;
+  overflow-y: auto;
+  padding-right: 6px;
   display: flex;
-  gap: 8px;
-  margin-top: 8px;
+  flex-direction: column;
+  gap: 12px;
 }
 
-.mensaje-form input {
+.ticket-msg-ticketsAdmin {
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.14);
+}
+
+.ticket-msg-ticketsAdmin p {
+  margin: 0 0 4px;
+}
+
+.ticket-msg-ticketsAdmin span {
+  font-size: 12px;
+  color: #cbd5e1;
+}
+
+/* Auto color por autor */
+.msg-admin {
+  border-left: 3px solid #6a0dad;
+}
+.msg-user {
+  border-left: 3px solid #3b82f6;
+}
+
+/* ===== ENVIAR MENSAJE ===== */
+
+.ticket-msg-form-ticketsAdmin {
+  margin-top: 14px;
+  display: flex;
+  gap: 10px;
+}
+
+.ticket-msg-input-ticketsAdmin {
   flex: 1;
-  padding: 8px 11px;
-  border-radius: 999px;
-  border: 1px solid #d1d5db;
-  font-size: 13px;
-  outline: none;
-  transition:
-    border-color 0.18s ease,
-    box-shadow 0.18s ease;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.18);
+  background: rgba(255,255,255,0.08);
+  color: #fff;
 }
 
-.mensaje-form input:focus {
-  border-color: #6a0dad;
-  box-shadow: 0 0 0 1px rgba(124, 58, 237, 0.2);
-}
-
-.mensaje-form button {
+.ticket-msg-send-btn-ticketsAdmin {
+  padding: 10px 16px;
+  border-radius: 12px;
   border: none;
-  border-radius: 999px;
-  padding: 8px 13px;
-  font-size: 13px;
+  cursor: pointer;
+
+  background: linear-gradient(135deg, #6a0dad, #8a1bd7);
+  color: #fff;
+  font-weight: 600;
+
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.ticket-msg-send-btn-ticketsAdmin:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(106,13,173,0.5);
+}
+
+/* ===== ELIMINAR TICKET ===== */
+
+.ticket-delete-btn-ticketsAdmin {
+  margin-top: 18px;
+  padding: 10px 16px;
+  border-radius: 12px;
+  background: rgba(239,68,68,0.22);
+  color: #fecaca;
+  border: none;
   font-weight: 600;
   cursor: pointer;
-  background: #6a0dad;
-  color: #ffffff;
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  transition:
-    background 0.18s ease,
-    transform 0.08s ease,
-    box-shadow 0.18s ease;
+
+  transition: background 0.2s ease, transform 0.15s ease;
 }
 
-.mensaje-form button:hover {
-  background: #550c91;
-  transform: translateY(-1px);
-  box-shadow: 0 8px 20px rgba(124, 58, 237, 0.4);
-}
-
-/* ================================
-   BOTÓN ELIMINAR TICKET
-================================== */
-
-.delete-ticket-btn {
-  margin-top: 12px;
-  align-self: flex-start;
-  background: #fee2e2;
-  color: #b91c1c;
-  border: none;
-  padding: 8px 14px;
-  border-radius: 999px;
-  cursor: pointer;
-  font-size: 13px;
-  font-weight: 600;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  transition:
-    background 0.18s ease,
-    transform 0.08s ease,
-    box-shadow 0.18s ease;
-}
-
-.delete-ticket-btn:hover {
+.ticket-delete-btn-ticketsAdmin:hover {
   background: #ef4444;
-  color: #fef2f2;
-  transform: translateY(-1px);
-  box-shadow: 0 8px 18px rgba(248, 113, 113, 0.5);
+  color: #fff;
+  transform: translateY(-2px);
 }
 
-/* ================================
-   RESPONSIVE
-================================== */
-
-@media (max-width: 1024px) {
-  .tickets-page {
-    padding: 14px;
-  }
-
-  .tickets-table th,
-  .tickets-table td {
-    padding: 9px 10px;
-  }
+/* === TABLA RESPONSIVE === */
+.tickets-table-wrapper-ticketsAdmin {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
-@media (max-width: 768px) {
-  .ticket-filtros {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .ticket-filtros button {
-    margin-left: 0;
-    align-self: stretch;
-    justify-content: center;
-  }
-
-  /* Tabla scroll horizontal en móvil */
-  .tickets-table {
-    display: block;
-    width: 100%;
-    overflow-x: auto;
-    white-space: nowrap;
-    border-radius: 14px;
-  }
-
-  .tickets-table th,
-  .tickets-table td {
-    font-size: 12px;
-  }
-
-  .ticket-modal-content {
-    padding: 18px 14px;
-  }
-}
-
-@media (max-width: 480px) {
-  .tickets-page {
-    padding: 10px;
-  }
-
-  .tickets-page h1 {
-    font-size: 18px;
-  }
-
-  .tickets-table th,
-  .tickets-table td {
-    padding: 7px 8px;
-  }
+.tickets-table-ticketsAdmin {
+  min-width: 700px; /* evita romper diseño en móvil */
 }

@@ -1,110 +1,115 @@
+/*****************************************************
+ * Panel de precio – Alef
+ *****************************************************/
+
 .panel-precio {
-  position: sticky;
-  top: 2rem;
-  background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-  padding: 1.5rem 2rem;
-  width: 320px;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  border: 1px solid #eee;
-  transition: all 0.3s ease;
+  max-width: 320px;
+  font-size: var(--font-size-sm);
+  padding: var(--space-md) var(--space-lg);
 }
 
-/* === Títulos y textos === */
-.panel-precio h3 {
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: #6a0dad;
-  text-align: center;
-  margin-bottom: 0.8rem;
+/* Si lo usas en un layout a dos columnas, queda fijado al hacer scroll */
+@media (min-width: 1024px) {
+  .panel-precio {
+    position: sticky;
+    top: var(--space-xl);
+    align-self: flex-start;
+  }
 }
 
-.panel-precio p {
-  font-size: 1rem;
-  color: #333;
+/* ===== Header ===== */
+
+.panel-precio-header {
   display: flex;
   justify-content: space-between;
-  margin: 0.3rem 0;
+  align-items: flex-start;
+  gap: var(--space-md);
+  margin-bottom: var(--space-md);
 }
 
-.panel-precio hr {
-  border: none;
-  border-top: 1px solid #eee;
-  margin: 1rem 0;
+.panel-precio-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
 }
 
-.total-primer-mes {
-  background: linear-gradient(90deg, #6a0dad, #ff6700);
-  color: white;
-  padding: 1rem;
-  border-radius: 10px;
-  text-align: center;
-  font-weight: bold;
+.panel-precio-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-primario-suave);
+  color: var(--color-primario-oscuro);
   font-size: 1.1rem;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
-  letter-spacing: 0.3px;
 }
 
-/* === Desktop layout === */
-@media (min-width: 1025px) {
-  .registro-avanzado {
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    gap: 2.5rem;
-    padding: 2rem 4rem;
-  }
-
-  .registro-container {
-    flex: 1;
-    max-width: 700px;
-  }
-
-  .panel-precio {
-    align-self: flex-start;
-    position: sticky;
-    top: 2rem;
-  }
+.panel-precio-header h3 {
+  margin: 0;
+  font-size: var(--font-size-md);
 }
 
-/* === Tablet layout === */
-@media (max-width: 1024px) and (min-width: 769px) {
-  .registro-avanzado {
-    flex-direction: column;
-    align-items: center;
-    padding: 2rem;
-  }
-
-  .panel-precio {
-    width: 100%;
-    max-width: 700px;
-    margin-top: 1.5rem;
-  }
+.panel-precio-sub {
+  margin: 0;
+  font-size: var(--font-size-xs);
+  color: var(--color-texto-suave);
 }
 
-/* === Mobile layout === */
-@media (max-width: 768px) {
-  .registro-avanzado {
-    flex-direction: column;
-    align-items: stretch;
-    padding: 1.5rem;
-  }
+/* Etiqueta derecha (muy suave) */
 
-  .panel-precio {
-    margin-top: 1.8rem;
-    padding: 1.2rem 1.4rem;
-    border-radius: 12px;
-  }
+.panel-precio-tag {
+  font-size: var(--font-size-xs);
+  padding: 0.25rem 0.6rem;
+  border-radius: var(--radius-pill);
+  background: #f3f4f6;
+  color: var(--color-texto-suave);
+  white-space: nowrap;
+}
 
-  .panel-precio h3 {
-    font-size: 1.05rem;
-  }
+/* ===== Cuerpo ===== */
 
-  .total-primer-mes {
-    font-size: 1rem;
-    padding: 0.8rem;
-  }
+.panel-precio-body {
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-md);
+  background: #f9fafb;
+}
+
+.panel-precio-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--space-sm);
+  padding: 0.25rem 0;
+}
+
+.row-label {
+  color: var(--color-texto-suave);
+}
+
+.row-amount {
+  font-weight: 600;
+}
+
+.panel-precio-divider {
+  border-top: 1px dashed rgba(148, 163, 184, 0.7);
+  margin: var(--space-sm) 0;
+}
+
+.panel-precio-row--total {
+  padding-top: var(--space-sm);
+  font-size: var(--font-size-md);
+}
+
+.row-amount--total {
+  font-weight: 700;
+  color: var(--color-primario-oscuro);
+}
+
+/* Texto de ayuda */
+
+.panel-precio-help {
+  margin: var(--space-sm) 0 0;
+  font-size: var(--font-size-xs);
+  color: var(--color-texto-suave);
 }

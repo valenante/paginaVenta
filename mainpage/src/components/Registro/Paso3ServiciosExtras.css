@@ -1,51 +1,265 @@
+/*****************************************************
+ * Paso 3 – Servicios y equipamiento
+ *****************************************************/
+
 .paso3-servicios {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
+  margin: var(--space-2xl) auto;
 }
 
+/* Header */
+
+.paso3-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-xl);
+  margin-bottom: var(--space-xl);
+}
+
+.paso3-header h2 {
+  margin: 0 0 var(--space-sm);
+  font-size: var(--font-size-2xl);
+}
+
+.paso3-header p {
+  margin: 0;
+  font-size: var(--font-size-md);
+  color: var(--color-texto-suave);
+}
+
+.paso3-badge {
+  display: flex;
+  align-items: flex-start;
+}
+
+/* Grupos */
+
 .servicios-grupo {
-  background: #f8f8ff;
-  padding: 1rem 1.5rem;
-  border-radius: 12px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  margin-bottom: var(--space-lg);
 }
 
 .servicios-grupo h3 {
-  margin-bottom: 1rem;
-  color: #6a0dad;
+  margin-top: 0;
+  margin-bottom: var(--space-xs);
+  font-size: var(--font-size-lg);
 }
+
+.servicios-help {
+  margin: 0 0 var(--space-md);
+  font-size: var(--font-size-sm);
+  color: var(--color-texto-suave);
+}
+
+/* Items de servicio */
 
 .servicio-item {
   display: flex;
   align-items: flex-start;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-borde-suave);
+  background: #ffffff;
+}
+
+/* Separación entre items dentro del grupo */
+.servicios-grupo .servicio-item + .servicio-item {
+  margin-top: var(--space-sm);
+}
+
+/* Checkboxes */
+
+.servicio-item--checkbox {
+  cursor: pointer;
+}
+
+.servicio-item--checkbox input[type="checkbox"] {
+  margin-top: 0.2rem;
+}
+
+.servicio-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  width: 100%;
+}
+
+.servicio-header-row {
+  display: flex;
   justify-content: space-between;
-  gap: 1rem;
-  border-bottom: 1px solid #eee;
-  padding: 0.5rem 0;
+  align-items: center;
+  gap: var(--space-sm);
 }
 
-.servicio-item label {
-  flex: 1;
-  font-weight: 500;
+.servicio-title {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
 }
 
-.servicio-item small {
-  color: #ff6700;
-  font-weight: bold;
+.servicio-price {
+  font-size: var(--font-size-xs);
+  white-space: nowrap;
 }
 
-.servicio-item input[type="number"] {
-  width: 70px;
-  padding: 0.3rem;
+.servicio-description {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-texto-suave);
+}
+
+/* Items numéricos (hardware) */
+
+.servicio-item--number {
+  justify-content: space-between;
+  align-items: center;
+}
+
+.servicio-number-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.servicio-number-text label {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+}
+
+.servicio-helper {
+  font-size: var(--font-size-xs);
+  color: var(--color-texto-suave);
+}
+
+.servicio-number-input {
+  width: 90px;
+  padding: 0.4rem 0.6rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-borde-suave);
+  font-size: var(--font-size-sm);
   text-align: center;
-  border: 1px solid #ccc;
-  border-radius: 6px;
+  font-family: var(--font-base);
 }
+
+/* Nota final */
 
 .servicios-nota {
-  background: #fffaf0;
-  padding: 1rem;
-  border-left: 4px solid #ff6700;
-  border-radius: 8px;
+  margin-top: var(--space-lg);
+}
+
+.servicios-nota-text {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-texto-suave);
+}
+
+/* ============================================
+ * Upload de archivos (carta / mesas)
+ * ============================================ */
+
+.servicio-upload {
+  margin-top: var(--space-sm);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+/* Label que actúa como “dropzone / botón” */
+.servicio-upload-label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  padding: 0.55rem 0.9rem;
+  border-radius: var(--radius-md);
+  border: 1px dashed var(--color-borde-suave);
+  background: #f9fafb;
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+/* Ocultamos el input nativo para usar solo el label */
+.servicio-upload-label input[type="file"] {
+  display: none;
+}
+
+/* Botoncito pill a la derecha del label */
+.servicio-upload-label::after {
+  content: "Elegir archivos";
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  padding: 0.25rem 0.8rem;
+  border-radius: 999px;
+  border: 1px solid var(--color-primario, #6A0DAD);
+  background: #ffffff;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08);
+  white-space: nowrap;
+}
+
+.servicio-upload-label:hover {
+  background: #f3f4f6;
+  border-color: var(--color-primario, #6A0DAD);
+  box-shadow: 0 2px 5px rgba(15, 23, 42, 0.08);
+}
+
+/* Texto bajo el upload (ya usas .servicio-helper, solo afinamos un poco) */
+.servicio-upload .servicio-helper {
+  margin-top: 0.15rem;
+}
+
+/* ============================================
+ * Variante inline para el item de número de mesas
+ * ============================================ */
+
+/* Reutilizas .servicio-item y .servicio-item--number,
+   aquí solo suavizamos el bloque para que no parezca
+   otra “card” dentro de la card. */
+.servicio-item--inline {
+  margin-top: var(--space-sm);
+  padding-left: 0;
+  padding-right: 0;
+  border: none;
+  background: transparent;
+}
+
+/* Opcional: que el input no se vea tan ancho en desktop */
+.servicio-item--inline .servicio-number-input {
+  max-width: 120px;
+}
+
+
+/* Responsive */
+
+@media (max-width: 768px) {
+  .paso3-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .servicio-item--number {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-xs);
+  }
+
+  .servicio-number-input {
+    width: 100%;
+    max-width: 140px;
+  }
+
+  .servicio-header-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+    .servicio-upload-label {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .servicio-upload-label::after {
+    align-self: flex-start;
+  }
 }

@@ -1,0 +1,177 @@
+/* =========================================================
+   GESTOR DE PRODUCTOS — Panel Pro Alef
+   ---------------------------------------------------------
+   - Fondo oscuro con degradado
+   - Card principal en vidrio
+   - Botones tipo “pill” para elegir sección
+   ========================================================= */
+
+/* ===== LAYOUT GENERAL ===== */
+.alef-products-page {
+  min-height: calc(100vh - 80px);
+  padding: 1.9rem 1.6rem 2.8rem;
+  color: #e5e7eb;
+  display: flex;
+  flex-direction: column;
+  gap: 1.8rem;
+  box-sizing: border-box;
+    background-color: rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius-lg);
+}
+
+/* ===== CABECERA ===== */
+.products-header--productos {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.products-title--productos {
+  font-size: 1.6rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  margin: 0 0 0.2rem;
+}
+
+.products-subtitle--productos {
+  margin: 0;
+  font-size: 0.95rem;
+  color: #9ca3af;
+}
+
+/* Botón “cambiar tipo” */
+.products-back-btn--productos {
+  align-self: center;
+  padding: 0.35rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.7);
+  background: rgba(15, 23, 42, 0.9);
+  color: #e5e7eb;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.products-back-btn--productos:hover {
+  background: radial-gradient(circle at top left, #4b5563 0, #020617 65%);
+  border-color: rgba(248, 250, 252, 0.85);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.7);
+}
+
+/* ===== CARD SELECTOR INICIAL ===== */
+.products-selector-card--productos {
+  margin-top: 0.5rem;
+  border-radius: var(--radius-lg, 18px);
+  padding: 1.6rem 1.7rem;
+  border: 1px solid rgba(148, 163, 184, 0.45);
+  box-shadow:
+    0 18px 40px rgba(0, 0, 0, 0.75),
+    0 0 0 1px rgba(15, 23, 42, 0.9);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+.products-type-buttons--productos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.2rem;
+}
+
+/* Botones de tipo */
+.products-type-btn--productos {
+  position: relative;
+  text-align: left;
+  padding: 1.1rem 1.1rem 1rem;
+  border-radius: 1rem;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+
+  background: radial-gradient(circle at top left, #111827 0, #020617 70%);
+  color: #f9fafb;
+  font-size: 1rem;
+  font-weight: 600;
+
+  cursor: pointer;
+  box-shadow:
+    0 12px 26px rgba(0, 0, 0, 0.85),
+    0 0 0 1px rgba(15, 23, 42, 0.9);
+  transition:
+    transform 0.16s ease,
+    box-shadow 0.18s ease,
+    border-color 0.18s ease,
+    background 0.22s ease;
+}
+
+.products-type-btn--productos .products-type-desc--productos {
+  display: block;
+  margin-top: 0.4rem;
+  font-size: 0.85rem;
+  font-weight: 400;
+  color: #9ca3af;
+}
+
+/* Variantes de color sutiles por tipo */
+.products-type-btn--productos.bebidas {
+  background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.25), #020617 70%);
+}
+
+.products-type-btn--productos.platos {
+  background: radial-gradient(circle at top left, rgba(251, 146, 60, 0.25), #020617 70%);
+}
+
+.products-type-btn--productos.extras {
+  background: radial-gradient(circle at top left, rgba(167, 139, 250, 0.25), #020617 70%);
+}
+
+.products-type-btn--productos:hover {
+  transform: translateY(-2px);
+  border-color: rgba(248, 250, 252, 0.95);
+  box-shadow:
+    0 18px 34px rgba(0, 0, 0, 0.95),
+    0 0 0 1px rgba(248, 250, 252, 0.08);
+}
+
+/* ===== CARD DE CONTENIDO (Products / ExtrasPanel) ===== */
+.products-content-card--productos {
+  margin-top: 0.3rem;
+  background: rgba(15, 23, 42, 0.96);
+  border-radius: var(--radius-lg, 18px);
+  padding: 1.5rem 1.6rem 1.8rem;
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  box-shadow:
+    0 18px 40px rgba(0, 0, 0, 0.8),
+    0 0 0 1px rgba(15, 23, 42, 0.9);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+
+  /* deja respirar lo que hay dentro (Products / ExtrasPanel) */
+  overflow: hidden;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .alef-products-page {
+    padding: 1.4rem 1.1rem 2.2rem;
+  }
+
+  .products-header--productos {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.6rem;
+  }
+
+  .products-back-btn--productos {
+    align-self: flex-start;
+  }
+
+  .products-selector-card--productos,
+  .products-content-card--productos {
+    padding: 1.3rem 1.2rem 1.5rem;
+  }
+
+  .products-type-buttons--productos {
+    grid-template-columns: 1fr;
+  }
+}

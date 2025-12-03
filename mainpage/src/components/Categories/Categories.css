@@ -1,0 +1,270 @@
+/* =========================================================
+   CATEGORIES PANEL — Gestión de productos Alef
+   ---------------------------------------------------------
+   Se muestra dentro del panel Products (glass card)
+   ========================================================= */
+
+.alef-categories-root {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* ===== HEADER ===== */
+.categories-header--categories {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.4rem 0.2rem 0.6rem;
+}
+
+.categories-title--categories {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #e5e7eb;
+}
+
+.categories-subtitle--categories {
+  margin: 0.15rem 0 0;
+  font-size: 0.85rem;
+  color: #9ca3af;
+}
+
+/* Botón header */
+.btn-crear-header--categories {
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  border: none;
+  font-size: 0.85rem;
+  font-weight: 600;
+  background: linear-gradient(135deg, #a855f7, #f97316);
+  color: #0b1120;
+  cursor: pointer;
+  box-shadow:
+    0 10px 22px rgba(0, 0, 0, 0.85),
+    0 0 0 1px rgba(15, 23, 42, 0.9);
+  transition: all 0.18s ease;
+}
+
+.btn-crear-header--categories:hover {
+  transform: translateY(-1px);
+  box-shadow:
+    0 16px 30px rgba(0, 0, 0, 0.95),
+    0 0 0 1px rgba(248, 250, 252, 0.08);
+}
+
+/* ===== CUERPO ===== */
+.categories-body--categories {
+  border-radius: 0.9rem;
+  padding: 0.8rem 0.2rem 0.4rem;
+}
+
+/* Wrapper cuando estamos editando (solo margen) */
+.edit-wrapper--categories {
+  margin-top: 0.2rem;
+}
+
+/* ===== EMPTY STATE ===== */
+.empty-state--categories {
+  background: radial-gradient(
+    circle at top left,
+    rgba(30, 64, 175, 0.36) 0,
+    rgba(15, 23, 42, 0.98) 65%
+  );
+  border-radius: 0.9rem;
+  padding: 1.2rem 1.4rem;
+  border: 1px solid rgba(148, 163, 184, 0.55);
+  box-shadow:
+    0 14px 30px rgba(0, 0, 0, 0.9),
+    0 0 0 1px rgba(15, 23, 42, 0.9);
+  font-size: 0.95rem;
+  color: #e5e7eb;
+}
+
+.empty-state--categories p {
+  margin: 0 0 0.8rem;
+}
+
+.btn-empty-create--categories {
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.7);
+  background: rgba(15, 23, 42, 0.96);
+  color: #e5e7eb;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.btn-empty-create--categories:hover {
+  background: radial-gradient(circle at top left, #4b5563 0, #020617 70%);
+  border-color: rgba(248, 250, 252, 0.9);
+}
+
+/* ===== GRID DE PRODUCTOS ===== */
+.productos-grid--categories {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.9rem;
+}
+
+/* Card de producto */
+.producto-card--categories {
+  background: radial-gradient(
+    circle at top left,
+    rgba(55, 65, 81, 0.7) 0,
+    rgba(15, 23, 42, 0.98) 70%
+  );
+  border-radius: 0.9rem;
+  padding: 0.9rem 0.9rem 0.8rem;
+  border: 1px solid rgba(148, 163, 184, 0.6);
+  box-shadow:
+    0 12px 26px rgba(0, 0, 0, 0.9),
+    0 0 0 1px rgba(15, 23, 42, 0.95);
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  transition: transform 0.16s ease, box-shadow 0.18s ease,
+    border-color 0.18s ease, background 0.18s ease;
+}
+
+.producto-card--categories:hover {
+  transform: translateY(-2px);
+  border-color: rgba(248, 250, 252, 0.9);
+  box-shadow:
+    0 18px 32px rgba(0, 0, 0, 0.95),
+    0 0 0 1px rgba(248, 250, 252, 0.08);
+}
+
+/* Texto principal */
+.producto-main--categories {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.producto-nombre--categories {
+  margin: 0;
+  font-size: 0.98rem;
+  font-weight: 600;
+  color: #f9fafb;
+}
+
+.producto-descripcion--categories {
+  margin: 0;
+  font-size: 0.83rem;
+  color: #cbd5f5;
+}
+
+/* Chips tipo/categoría */
+.producto-meta--categories {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  margin-top: 0.1rem;
+}
+
+.producto-chip--categories,
+.producto-chip-sec--categories {
+  padding: 0.16rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 500;
+  border: 1px solid rgba(148, 163, 184, 0.7);
+}
+
+.producto-chip--categories {
+  background: rgba(56, 189, 248, 0.16);
+  color: #e0f2fe;
+}
+
+.producto-chip-sec--categories {
+  background: rgba(129, 140, 248, 0.16);
+  color: #e5e7eb;
+}
+
+/* Botones de acción */
+.producto-botones--categories {
+  margin-top: 0.35rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.boton-editar--categories,
+.boton-eliminar--categories {
+  padding: 0.28rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  font-size: 0.78rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.boton-editar--categories {
+  background: rgba(59, 130, 246, 0.18);
+  border-color: rgba(96, 165, 250, 0.7);
+  color: #e0f2fe;
+}
+
+.boton-editar--categories:hover {
+  background: rgba(59, 130, 246, 0.35);
+  border-color: rgba(191, 219, 254, 0.9);
+}
+
+.boton-eliminar--categories {
+  background: rgba(239, 68, 68, 0.16);
+  border-color: rgba(248, 113, 113, 0.7);
+  color: #fee2e2;
+}
+
+.boton-eliminar--categories:hover {
+  background: rgba(239, 68, 68, 0.3);
+  border-color: rgba(254, 202, 202, 0.9);
+}
+
+/* ===== FOOTER (botón extra crear) ===== */
+.categories-footer--categories {
+  margin-top: 0.4rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.boton-crear--categories {
+  padding: 0.38rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.7);
+  background: rgba(15, 23, 42, 0.96);
+  color: #e5e7eb;
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.boton-crear--categories:hover {
+  background: radial-gradient(circle at top left, #4b5563 0, #020617 70%);
+  border-color: rgba(248, 250, 252, 0.9);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .categories-header--categories {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .productos-grid--categories {
+    grid-template-columns: 1fr;
+  }
+
+  .categories-footer--categories {
+    justify-content: flex-start;
+  }
+}

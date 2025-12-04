@@ -57,9 +57,11 @@ export default function Login() {
 
       // 2️⃣ Roles ligados a restaurante
       if (["admin_restaurante", "admin", "camarero", "cocinero"].includes(user.role)) {
+        const domain = import.meta.env.VITE_MAIN_DOMAIN;
+
         const url = isLocalDomain
-          ? `https://alef.local.softalef.com/${tenantSlug}`
-          : `https://${tenantSlug}-tpv.${import.meta.env.VITE_MAIN_DOMAIN}`;
+          ? `https://alef.local.softalef.com/${tenantSlug}` // desarrollo local
+          : `https://${tenantSlug}-panel.${domain}`;        // PANEL del restaurante
 
         window.location.href = url;
         return;

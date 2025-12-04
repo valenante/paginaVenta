@@ -69,13 +69,6 @@ api.interceptors.request.use((config) => {
   // --------------------------------------------------------------
   // 🪵 4. Debug elegante
   // --------------------------------------------------------------
-  console.log("📤 [API REQUEST]", {
-    method: config.method?.toUpperCase(),
-    url: config.url,
-    tenantId: tenantId || "NONE",
-    impersonado,
-    user: user?.name || "N/A",
-  });
 
   return config;
 });
@@ -85,11 +78,6 @@ api.interceptors.request.use((config) => {
    ====================================================================== */
 api.interceptors.response.use(
   (response) => {
-    console.log("📥 [API RESPONSE]", {
-      url: response.config.url,
-      status: response.status,
-      data: response.data,
-    });
     return response;
   },
   (error) => {

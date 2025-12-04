@@ -8,6 +8,7 @@ import CrearProducto from "./CrearProducto";
 
 import AlertaMensaje from "../AlertaMensaje/AlertaMensaje";
 import ModalConfirmacion from "../Modal/ModalConfirmacion";
+import ModalReceta from "../Recetas/ModalReceta";
 import Portal from "../ui/Portal";
 
 import "./Categories.css";
@@ -17,6 +18,7 @@ const Categories = ({ category }) => {
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
   const [mensajeAlerta, setMensajeAlerta] = useState(null);
   const [productoAEliminar, setProductoAEliminar] = useState(null);
+  const [productoReceta, setProductoReceta] = useState(null);
 
   const { products, fetchProducts, updateProduct, deleteProduct } =
     useCategorias();
@@ -174,6 +176,15 @@ const Categories = ({ category }) => {
                         Editar
                       </button>
 
+                      {/* NUEVO BOTÓN: RECETA */}
+                      <button
+                        onClick={() => setProductoReceta(product)}
+                        className="boton-receta--categories"
+                        type="button"
+                      >
+                        🍳 Receta
+                      </button>
+
                       <button
                         onClick={() => setProductoAEliminar(product._id)}
                         className="boton-eliminar--categories"
@@ -221,6 +232,16 @@ const Categories = ({ category }) => {
           onConfirm={() => confirmarEliminacion(productoAEliminar)}
           onClose={() => setProductoAEliminar(null)}
         />
+      )}
+
+      {/* ===== MODAL RECETA ===== */}
+      {productoReceta && (
+        <Portal>
+          <ModalReceta
+            producto={productoReceta}
+            onClose={() => setProductoReceta(null)}
+          />
+        </Portal>
       )}
 
       {/* ===== ALERTA ===== */}

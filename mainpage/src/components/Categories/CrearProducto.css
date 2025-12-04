@@ -383,6 +383,91 @@
   transform: translateY(-0.5px);
 }
 
+/* ============================================================================
+   RECETA — Estilo Alef PRO
+   Integrado totalmente con el modal CrearProducto
+   ========================================================================== */
+
+/* === CONTENEDOR DE LÍNEAS DE RECETA === */
+.receta-crear-lista {
+  margin-top: 0.6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+/* === LÍNEA DE RECETA (Ingrediente + Cantidad + X) === */
+.receta-item--crear {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.55rem 0.75rem;
+
+  background: radial-gradient(
+      circle at top right,
+      rgba(91, 33, 182, 0.28),
+      transparent 55%
+    ),
+    rgba(15, 23, 42, 0.75);
+  border: 1px solid rgba(75, 85, 99, 0.7);
+  border-radius: 0.7rem;
+}
+
+/* Nombre del ingrediente */
+.receta-nombre--crear {
+  font-size: 0.88rem;
+  color: #e5e7eb;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+/* Cantidad + unidad */
+.receta-cant--crear {
+  font-size: 0.82rem;
+  color: #c084fc;
+  font-weight: 600;
+}
+
+/* Botón eliminar ya utiliza .btn-icon--crear → no necesita extra */
+
+/* === ÁREA PARA AÑADIR NUEVO INGREDIENTE === */
+.receta-add--crear {
+  margin-top: 0.85rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  align-items: center;
+}
+
+/* El select AlefSelect ya tiene su propio estilo */
+
+/* Input de cantidad */
+.receta-add--crear .input--crear {
+  width: 110px;
+  text-align: center;
+  padding: 0.55rem;
+}
+
+/* Botón "Añadir" ya usa .boton--secundario y queda perfecto */
+
+/* === Ajuste para móviles === */
+@media (max-width: 680px) {
+  .receta-item--crear {
+    grid-template-columns: 1fr auto;
+    gap: 0.45rem;
+  }
+
+  .receta-add--crear {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .receta-add--crear .input--crear {
+    width: 100%;
+  }
+}
+
 /* === RESPONSIVE === */
 @media (max-width: 960px) {
   .crear-producto-modal--crear {

@@ -32,11 +32,9 @@ export default function TenantTable({ tenants, onRefresh }) {
     setLoadingImpersonar(true);
 
     try {
-      console.log(`🟣 Intentando impersonar tenant: ${tenantSlug}`);
       const { data } = await api.get(`/superadmin/impersonar/${tenantSlug}`);
 
       if (data?.ok && data?.redirectUrl) {
-        console.log("✅ URL de impersonación generada:", data.redirectUrl);
         window.open(data.redirectUrl, "_blank", "noopener,noreferrer");
       } else {
         console.warn("⚠️ Respuesta inesperada del servidor:", data);
@@ -70,8 +68,6 @@ export default function TenantTable({ tenants, onRefresh }) {
     const { data } = await api.patch(`/superadmin/tenants/${tenantId}/plan`, {
       plan: nuevoPlanSlug,
     });
-
-    console.log("✅ Plan del tenant actualizado:", data);
     await onRefresh();
     return data;
   };

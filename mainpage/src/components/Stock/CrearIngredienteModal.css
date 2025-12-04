@@ -1,0 +1,157 @@
+/* ============================================================
+   🎨 ALEF PROFESSIONAL — MODAL CREAR INGREDIENTE
+   ------------------------------------------------------------
+   - Vidrio oscuro elegante
+   - Sombra premium
+   - Inputs pulidos
+   - Adaptado 100% a tu UI actual
+   ============================================================ */
+
+/* === OVERLAY === */
+.alef-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(8px);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 2rem 1rem;
+  overflow-y: auto;
+  z-index: 999999;
+}
+
+/* === CAJA PRINCIPAL DEL MODAL === */
+.alef-modal-content {
+  width: 100%;
+  max-width: 520px; /* tamaño perfecto para formularios */
+  background: rgba(15, 23, 42, 0.8);
+  backdrop-filter: blur(16px);
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+
+  box-shadow:
+    0 25px 45px rgba(0, 0, 0, 0.55),
+    0 0 0 1px rgba(255, 255, 255, 0.05);
+
+  padding: 1.8rem 1.7rem;
+  animation: modalFadeIn 0.25s ease-out;
+
+  max-height: 92vh;
+  overflow-y: auto;
+}
+
+/* === ANIMACIÓN === */
+@keyframes modalFadeIn {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* === CONTENIDO INTERNO === */
+.crear-ingrediente-modal h3 {
+  margin: 0 0 0.4rem 0;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.crear-ingrediente-modal p {
+  margin: 0 0 1.4rem 0;
+  font-size: 0.9rem;
+  color: #cbd5e1;
+  opacity: 0.85;
+}
+
+/* === LABELS E INPUTS === */
+.label--editar {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #cbd5e1;
+  gap: 6px;
+}
+
+.input--editar {
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: #f1f5f9;
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  transition: all 0.15s ease;
+}
+
+.input--editar:focus {
+  border-color: #6a0dad;
+  box-shadow: 0 0 0 2px rgba(106, 13, 173, 0.35);
+  outline: none;
+}
+
+/* Select */
+select.input--editar {
+  cursor: pointer;
+}
+
+/* === BOTONES === */
+.botones--editar {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1.6rem;
+}
+
+.boton--cancelar {
+  background: rgba(255, 255, 255, 0.08);
+  color: #cbd5e1;
+  padding: 10px 18px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.boton--cancelar:hover {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.boton--editar {
+  background: linear-gradient(135deg, #6a0dad, #ff6700);
+  padding: 10px 18px;
+  border-radius: 10px;
+  border: none;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.boton--editar:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.15);
+}
+
+.boton--editar:disabled {
+  opacity: 0.4;
+  filter: grayscale(1);
+  cursor: not-allowed;
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 600px) {
+  .alef-modal-content {
+    max-width: 100%;
+    padding: 1.3rem;
+    border-radius: 14px;
+  }
+
+  .botones--editar {
+    flex-direction: column-reverse;
+  }
+
+  .boton--editar,
+  .boton--cancelar {
+    width: 100%;
+    padding: 12px;
+  }
+}

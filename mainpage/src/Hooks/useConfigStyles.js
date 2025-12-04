@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 
 export function useConfigStyles(config) {
-  console.log("🔧 [useConfigStyles] Config recibida:", config);
   useEffect(() => {
     if (!config) {
       return;

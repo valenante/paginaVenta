@@ -60,6 +60,8 @@ import { useAuth } from "./context/AuthContext.jsx";
 import { useConfig } from "./context/ConfigContext.jsx";
 import { useTenant } from "./context/TenantContext.jsx";
 import { useFeaturesPlan } from "./context/FeaturesPlanContext.jsx";
+import { ProductosProvider } from "./context/ProductosContext.jsx";
+import { SocketProvider } from "./utils/socket.jsx";
 import UserLayout from "./layouts/UserLayout";
 
 
@@ -119,8 +121,6 @@ function HomeEntry() {
   const { tenantId } = useTenant();
   const { hasFeature, loading } = useFeaturesPlan();
 
-  console.log("HomeEntry:", { user, tenantId, loading });
-
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -129,8 +129,6 @@ function HomeEntry() {
     !!user &&
     !!tenantId &&
     hasFeature("estadisticas_avanzadas", false);
-
-  console.log("➡️ isPro:", isPro);
 
   if (isPro) {
     return (
@@ -252,24 +250,26 @@ export default function App() {
 
   return (
     <Router>
-      <ImagesProvider>
-        <FeaturesPlanProvider>
-          <CategoriasProvider>
+      <SocketProvider>   {/* ← NECESARIO */}
+        <ImagesProvider>
+          <FeaturesPlanProvider>
+            <CategoriasProvider>
+              <ProductosProvider>   {/* ← Ahora sí puede usar socket */}
 
-            {/* 🟦 1) Mientras loadingApp está activo */}
-            {loadingApp && <LoadingScreen />}
+                {loadingApp && <LoadingScreen />}
 
-            {/* 🟧 2) Cuando ya cargó, mostrar la aplicación */}
-            {!loadingApp && (
-              <>
-                <VerifactuGlobalModal />
-                <AppRoutes />
-              </>
-            )}
+                {!loadingApp && (
+                  <>
+                    <VerifactuGlobalModal />
+                    <AppRoutes />
+                  </>
+                )}
 
-          </CategoriasProvider>
-        </FeaturesPlanProvider>
-      </ImagesProvider>
+              </ProductosProvider>
+            </CategoriasProvider>
+          </FeaturesPlanProvider>
+        </ImagesProvider>
+      </SocketProvider>
     </Router>
   );
 }

@@ -28,16 +28,12 @@ export const ConfigProvider = ({ children }) => {
           headers: { "x-tenant-id": tenantId },
         });
 
-        console.log("[ConfigContext] /configuracion response:", data);
-
         // Backend devuelve { config, planFeatures } o directamente el doc
         const cfg = data.config || data;
         const feats = Array.isArray(data.planFeatures)
           ? data.planFeatures.map(f => (typeof f === "string" ? f : f.clave))
           : [];
 
-
-        console.log("[ConfigContext] planFeatures desde backend:", feats);
         // cfg es la config YA normalizada según backend
         setConfig(cfg);
 
@@ -73,11 +69,6 @@ export const ConfigProvider = ({ children }) => {
     // 1) Feature de PLAN (sin punto)
     if (!key.includes(".")) {
       const enabled = planFeatures.includes(key);
-      console.log("[ConfigContext] hasFeature(slug)", {
-        key,
-        enabled,
-        planFeatures,
-      });
       return enabled;
     }
 
@@ -97,12 +88,6 @@ export const ConfigProvider = ({ children }) => {
 
     const result =
       typeof current === "boolean" ? current : defaultValue;
-
-    console.log("[ConfigContext] hasFeature(path)", {
-      key,
-      result,
-      finalValue: current,
-    });
 
     return result;
   };

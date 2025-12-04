@@ -5,6 +5,7 @@ import UsuarioCreateForm from "./UsuarioCreateForm.jsx";
 import UsuariosTable from "./UsuariosTable.jsx";
 import UsuarioEditModal from "./UsuarioEditModal.jsx";
 import UsuarioStatsModal from "./UsuariosStatsModal.jsx";
+import UsuarioPermisosModal from "./UsuarioPermisosModal.jsx";
 
 import AlertaMensaje from "../AlertaMensaje/AlertaMensaje";
 
@@ -18,6 +19,7 @@ export default function UsuariosPage() {
     crearUsuario,
     eliminarUsuario,
     editarUsuario,
+    actualizarPermisosUsuario,
   } = useUsuarios();
 
   const [alerta, setAlerta] = useState(null);
@@ -25,6 +27,7 @@ export default function UsuariosPage() {
   // Estado modales
   const [usuarioEdit, setUsuarioEdit] = useState(null);
   const [usuarioStats, setUsuarioStats] = useState(null);
+  const [usuarioPermisos, setUsuarioPermisos] = useState(null);
 
   const onCrear = async (payload) => {
     const r = await crearUsuario(payload);
@@ -68,6 +71,7 @@ export default function UsuariosPage() {
         onEditar={setUsuarioEdit}
         onEliminar={onEliminar}
         onStats={setUsuarioStats}
+        onPermisos={setUsuarioPermisos}   // 👈 NUEVO
       />
 
       {/* Modal editar */}
@@ -86,6 +90,16 @@ export default function UsuariosPage() {
         <UsuarioStatsModal
           usuario={usuarioStats}
           onClose={() => setUsuarioStats(null)}
+        />
+      )}
+
+      {usuarioPermisos && (
+        <UsuarioPermisosModal
+          usuario={usuarioPermisos}
+          permisosDisponibles={permisosDisponibles}
+          rolesConfig={rolesConfig}
+          onSave={actualizarPermisosUsuario}
+          onClose={() => setUsuarioPermisos(null)}
         />
       )}
     </div>

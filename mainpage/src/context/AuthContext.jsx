@@ -30,14 +30,12 @@ export function AuthProvider({ children }) {
     ];
 
     if (firstSegment && !GLOBAL_ROUTES.includes(firstSegment)) {
-      console.log("🏷️ [AuthProvider] Tenant detectado desde la URL:", firstSegment);
       setTenantId(firstSegment);
       sessionStorage.setItem("tenantId", firstSegment);
     }
 
     const verificarSesion = async () => {
       try {
-        console.log("🟡 [AuthProvider] Verificando sesión real (JWT en cookies)...");
         const res = await api.get("/auth/me/me");
 
         const usuario = res.data.user;
@@ -64,7 +62,6 @@ export function AuthProvider({ children }) {
   }, [setTenantId]);
 
   const logout = async () => {
-    console.log("🚪 [AuthProvider] Logout iniciado...");
     await api.post("/auth/logout"); // borra cookies en backend
     setUser(null);
     sessionStorage.removeItem("tenantId");

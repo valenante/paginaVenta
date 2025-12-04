@@ -1,0 +1,331 @@
+/* =========================================================
+   STOCK PAGE ULTRA PRO — Estilo Premium Alef
+   ---------------------------------------------------------
+   - Glassmorphism con blur 14px
+   - Cards coherentes con KPIs de Caja Ultra Pro
+   - Gradiente morado → naranja
+   - Animación suave fade-in
+   ========================================================= */
+
+:root {
+  --glass-bg: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --shadow-deep: 0 12px 32px rgba(0, 0, 0, 0.35);
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --radius-pill: 999px;
+}
+
+/* ===== ROOT ===== */
+.stock-root {
+  padding: 2rem 2.5rem;
+  color: #f8fafc;
+  background: radial-gradient(circle at top right, #141423, #0a0a13 70%);
+  min-height: 100vh;
+  animation: fadeIn 0.25s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== HEADER ===== */
+.stock-header {
+  background: var(--glass-bg);
+  backdrop-filter: blur(14px);
+  padding: 1.8rem 2rem;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-deep);
+  margin-bottom: 2rem;
+}
+
+.stock-header-buttons {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.btn-toggle {
+  padding: 0.45rem 1.2rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #e2e8f0;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.btn-toggle.active {
+  background: linear-gradient(90deg, #6a0dad, #ff6700);
+  color: white;
+  border-color: transparent;
+  box-shadow: 0px 4px 12px rgba(255, 103, 0, 0.35);
+}
+
+.btn-toggle:hover:not(.active) {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+
+.stock-header h2 {
+  margin: 0;
+  font-size: 1.7rem;
+  font-weight: 800;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: white;
+}
+
+.stock-header p {
+  opacity: 0.8;
+  font-size: 0.95rem;
+  margin-top: .3rem;
+}
+
+/* -------------------------------------------
+   BOTÓN "NUEVO INGREDIENTE" — Estilo Premium Alef
+   ------------------------------------------- */
+.btn-nuevo {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+
+  padding: 0.55rem 1.2rem;
+  border-radius: 999px;
+
+  background: linear-gradient(90deg, #6a0dad, #ff6700);
+  color: #ffffff;
+
+  border: none;
+  font-weight: 600;
+  font-size: 0.92rem;
+  cursor: pointer;
+
+  box-shadow: 0 4px 14px rgba(255, 103, 0, 0.28),
+              0 0 0 1px rgba(255, 255, 255, 0.06);
+
+  transition: all 0.22s ease;
+}
+
+.btn-nuevo:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 103, 0, 0.45);
+  filter: brightness(1.08);
+}
+
+.btn-nuevo:active {
+  transform: translateY(0px);
+  filter: brightness(0.92);
+}
+
+/* Deshabilitado por si algún día lo usas */
+.btn-nuevo:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.btn-eliminar-ingrediente {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(255, 80, 80, 0.15);
+  border: 1px solid rgba(255, 80, 80, 0.3);
+  color: #ff6b6b;
+  width: 28px;
+  height: 28px;
+  font-size: 14px;
+  border-radius: 50%;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  transition: 0.2s ease;
+}
+
+.btn-eliminar-ingrediente:hover {
+  background: rgba(255, 80, 80, 0.35);
+  transform: scale(1.08);
+}
+
+.stock-card {
+  position: relative;
+  /* tu estilo existente */
+}
+
+
+/* ===== GRID ===== */
+.stock-grid {
+  margin-top: 1.6rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.4rem;
+}
+
+/* ===== CARD ===== */
+.stock-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(14px);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--glass-border);
+  padding: 1.4rem 1.6rem;
+  box-shadow: var(--shadow-deep);
+  transition: 0.25s ease;
+}
+
+.stock-card:hover {
+  transform: translateY(-4px);
+  background: rgba(255, 255, 255, 0.09);
+}
+
+/* ===== CARD HEADER ===== */
+.stock-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.stock-name {
+  font-size: 1.15rem;
+  font-weight: 600;
+}
+
+/* ===== BADGES ===== */
+.estado-badge {
+  padding: 4px 12px;
+  border-radius: var(--radius-pill);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.estado-badge.ok {
+  background: linear-gradient(90deg, #38b000, #70e000);
+}
+
+.estado-badge.bajo {
+  background: linear-gradient(90deg, #ffa600, #ffcd3c);
+}
+
+.estado-badge.critico {
+  background: linear-gradient(90deg, #d00000, #ff595e);
+}
+
+/* ===== STOCK BAR ===== */
+.stock-bar {
+  margin: 1.1rem 0 .9rem;
+  background: rgba(255, 255, 255, 0.12);
+  height: 12px;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.stock-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #6a0dad, #ff6700);
+  transition: width 0.35s ease-in-out;
+}
+
+.stock-card.estado-bajo .stock-bar-fill {
+  background: linear-gradient(90deg, #ffa600, #ff6700);
+}
+
+.stock-card.estado-critico .stock-bar-fill {
+  background: linear-gradient(90deg, #d00000, #ff595e);
+}
+
+/* ===== DETAILS ===== */
+.stock-details {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.92rem;
+  margin-bottom: 1.2rem;
+  color: #e2e8f0;
+}
+
+.stock-details strong {
+  font-size: 1.05rem;
+  color: #fff;
+}
+
+/* ===== BUTTON ===== */
+.btn-ajustar {
+  width: 100%;
+  padding: 0.65rem 1rem;
+  background: linear-gradient(90deg, #6a0dad, #ff6700);
+  border: none;
+  border-radius: var(--radius-pill);
+  font-weight: 600;
+  cursor: pointer;
+  color: white;
+  transition: 0.25s ease;
+  box-shadow: 0 4px 18px rgba(255, 103, 0, 0.25);
+}
+
+.btn-ajustar:hover {
+  opacity: 0.9;
+  transform: translateY(-2px);
+}
+
+/* ===== LOADING & ERROR ===== */
+.stock-loading,
+.stock-error {
+  margin-top: 2rem;
+  text-align: center;
+  font-size: 1.1rem;
+}
+.stock-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.stock-search {
+  padding: 0.55rem 1rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #e5e7eb;
+  font-size: 0.9rem;
+  width: 240px;
+  transition: 0.2s ease;
+}
+
+.stock-search:focus {
+  border-color: #a855f7;
+  box-shadow: 0 0 0 2px rgba(168, 85, 247, 0.45);
+  outline: none;
+}
+
+.stock-pagination {
+  margin-top: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  color: #e5e7eb;
+}
+
+.stock-pagination button {
+  padding: 0.45rem 1rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #fff;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.stock-pagination button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .stock-root {
+    padding: 1.2rem;
+  }
+}

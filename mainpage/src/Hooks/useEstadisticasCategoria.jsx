@@ -20,8 +20,6 @@ export const useEstadisticasCategoria = (products, selectedDate) => {
         // 1️⃣ Obtener TODAS las ventas del tenant
         const { data: ventasTodas } = await api.get("/ventas");
 
-        console.log(ventasTodas);
-
         // 2️⃣ Filtrar ventas SOLO de los productos de esta categoría
         const idsProductos = products.map(p => String(p._id));
 

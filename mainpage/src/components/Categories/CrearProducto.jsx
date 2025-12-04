@@ -58,7 +58,22 @@ const CrearProducto = ({ onClose, onCreated }) => {
       en: { nombre: "", descripcion: "" },
       fr: { nombre: "", descripcion: "" },
     },
+    receta: [],
   });
+  const [ingredientesStock, setIngredientesStock] = useState([]);
+
+  useEffect(() => {
+    const loadIngredientes = async () => {
+      try {
+        const { data } = await api.get("/stock/ingredientes");
+        setIngredientesStock(data.ingredientes || []);
+      } catch (err) {
+        console.error("Error cargando ingredientes", err);
+      }
+    };
+    loadIngredientes();
+  }, []);
+
 
   // 🔹 Cargar categorías desde productos existentes
   useEffect(() => {
@@ -687,6 +702,90 @@ const CrearProducto = ({ onClose, onCreated }) => {
               </div>
             )}
           </section>
+
+          {/* === RECETA OPCIONAL === */}
+          <fieldset className="fieldset--crear">
+            <legend className="legend--crear">Receta (opcional)</legend>
+
+            <div className="receta-crear-lista">
+              {formData.receta.map((item, index) => {
+                const ing = ingredientesStock.find((i) => i._id === item.ingrediente);
+                return (
+                  <div key={index} className="receta-item--crear">
+                    <span className="receta-nombre--crear">
+                      {ing?.nombre || "Ingrediente eliminado"}
+                    </span>
+
+                    <strong className="receta-cant--crear">
+                      {item.cantidad}
+                      {ing?.unidad || ""}
+                    </strong>
+
+                    <button
+                      type="button"
+                      className="btn-icon--crear"
+                      onClick={() => {
+                        const nueva = formData.receta.filter((_, i) => i !== index);
+                        setFormData((prev) => ({ ...prev, receta: nueva }));
+                      }}
+                    >
+                      ❌
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="receta-add--crear">
+              <AlefSelect
+                label="Ingrediente"
+                options={ingredientesStock.map((i) => ({
+                  label: i.nombre,
+                  value: i._id,
+                }))}
+                value={formData.nuevoIng}
+                onChange={(v) =>
+                  setFormData((prev) => ({ ...prev, nuevoIng: v }))
+                }
+                placeholder="Selecciona ingrediente"
+              />
+
+              <input
+                type="number"
+                className="input--crear"
+                placeholder="Cantidad"
+                value={formData.nuevaCantidad || ""}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    nuevaCantidad: e.target.value,
+                  }))
+                }
+              />
+
+              <button
+                type="button"
+                className="boton--secundario"
+                onClick={() => {
+                  if (!formData.nuevoIng || !formData.nuevaCantidad) return;
+
+                  const nuevaLinea = {
+                    ingrediente: formData.nuevoIng,
+                    cantidad: Number(formData.nuevaCantidad),
+                  };
+
+                  setFormData((prev) => ({
+                    ...prev,
+                    receta: [...prev.receta, nuevaLinea],
+                    nuevoIng: "",
+                    nuevaCantidad: "",
+                  }));
+                }}
+              >
+                ➕ Añadir
+              </button>
+            </div>
+          </fieldset>
 
           {/* === BOTONES FINALES === */}
           <div className="botones--crear">

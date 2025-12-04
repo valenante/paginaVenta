@@ -1,0 +1,166 @@
+/* ============================================================
+   ALEF PRO — MODAL AJUSTAR STOCK
+   ------------------------------------------------------------
+   - Vidrio oscuro elegante (blur)
+   - Botones morado→naranja
+   - Inputs profesionales
+   - Animaciones suaves
+   ============================================================ */
+
+/* === OVERLAY === */
+.alef-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(8px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1.4rem;
+  z-index: 99999;
+  animation: fadeIn 0.25s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* === CONTENEDOR DEL MODAL === */
+.alef-modal-content {
+  width: 100%;
+  max-width: 420px;
+  background: rgba(15, 23, 42, 0.8);
+  backdrop-filter: blur(14px);
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,0.08);
+  padding: 1.8rem;
+  box-shadow:
+    0 18px 40px rgba(0,0,0,0.45),
+    0 0 0 1px rgba(255,255,255,0.05);
+  animation: modalPop 0.28s ease-out;
+}
+
+@keyframes modalPop {
+  from { opacity: 0; transform: scale(0.92); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* === HEADER === */
+.stock-modal-header h3 {
+  font-size: 1.45rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 0;
+}
+
+.stock-modal-header p {
+  margin: 6px 0 0;
+  opacity: 0.75;
+  font-size: 0.95rem;
+  color: #cbd5e1;
+}
+
+/* === BODY === */
+.stock-modal-body {
+  margin-top: 1.4rem;
+}
+
+.ajuste-row {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  justify-content: center;
+}
+
+.ajuste-btn {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: none;
+  font-size: 1.4rem;
+  cursor: pointer;
+  color: #fff;
+  background: linear-gradient(90deg, #6a0dad, #ff6700);
+  box-shadow: 0 4px 18px rgba(255,103,0,0.25);
+  transition: 0.2s ease;
+}
+
+.ajuste-btn:hover {
+  transform: translateY(-2px);
+}
+
+.ajuste-input {
+  width: 90px;
+  padding: 0.6rem;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.07);
+  color: #fff;
+  font-size: 1.1rem;
+  text-align: center;
+}
+
+.unidad-label {
+  text-align: center;
+  margin-top: 0.6rem;
+  opacity: 0.7;
+  font-size: 0.85rem;
+}
+
+/* === ACTIONS === */
+.stock-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.btn-cancelar {
+  padding: 0.6rem 1.2rem;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.15);
+  color: #e2e8f0;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.btn-cancelar:hover {
+  background: rgba(255,255,255,0.15);
+}
+
+.btn-confirmar {
+  padding: 0.6rem 1.4rem;
+  border-radius: 14px;
+  border: none;
+  color: white;
+  font-weight: 700;
+  background: linear-gradient(90deg, #ff6700, #6a0dad);
+  box-shadow: 0 4px 18px rgba(255,103,0,0.28);
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+.btn-confirmar:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 22px rgba(255,103,0,0.45);
+}
+
+.btn-confirmar:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 480px) {
+  .alef-modal-content {
+    padding: 1.3rem;
+  }
+
+  .ajuste-btn {
+    width: 42px;
+    height: 42px;
+  }
+}

@@ -1,0 +1,72 @@
+/* =========================================================
+   MODAL RECETA — ALEF PRO
+   ========================================================= */
+
+.receta-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(8px);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 2rem 1rem;
+  overflow-y: auto;
+  z-index: 999999;
+}
+
+.receta-modal-content {
+  width: 100%;
+  max-width: 700px;
+  background: rgba(15, 23, 42, 0.85);
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(16px);
+  box-shadow: 0 25px 45px rgba(0,0,0,0.55),
+              0 0 0 1px rgba(255,255,255,0.05);
+  padding: 1.8rem;
+  animation: recetaFade 0.25s ease-out;
+}
+
+@keyframes recetaFade {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Header del modal */
+.receta-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.4rem;
+}
+
+.receta-modal-header h3 {
+  color: white;
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.receta-close-btn {
+  background: rgba(255, 80, 80, 0.15);
+  border: 1px solid rgba(255, 80, 80, 0.35);
+  color: #ff6b6b;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.receta-close-btn:hover {
+  background: rgba(255, 80, 80, 0.35);
+  transform: scale(1.1);
+}
+
+/* Body */
+.receta-modal-body {
+  max-height: 70vh;
+  overflow-y: auto;
+  padding-right: 4px;
+}

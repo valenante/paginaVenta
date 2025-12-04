@@ -1,7 +1,13 @@
 import React from "react";
 import "./UsuariosTable.css";
-export default function UsuariosTable({ usuarios, onEditar, onEliminar, onStats }) {
-  console.log(usuarios);
+
+export default function UsuariosTable({
+  usuarios,
+  onEditar,
+  onEliminar,
+  onStats,
+  onPermisos,   // 👈 NUEVO callback
+}) {
   return (
     <section className="usuarios-table-card">
       <div className="usuarios-table-header">
@@ -9,7 +15,6 @@ export default function UsuariosTable({ usuarios, onEditar, onEliminar, onStats 
         <span className="usuarios-badge">{usuarios.length}</span>
       </div>
 
-      {/* WRAPPER CON SCROLL */}
       <div className="usuarios-table-scroll">
         <table className="usuarios-table-main">
           <thead>
@@ -38,9 +43,40 @@ export default function UsuariosTable({ usuarios, onEditar, onEliminar, onStats 
                   <td>{u.estacion || "-"}</td>
                   <td>
                     <div className="usuarios-acciones">
-                      <button className="usuarios-btn usuarios-btn-stats" onClick={() => onStats(u)}>📊</button>
-                      <button className="usuarios-btn usuarios-btn-editar" onClick={() => onEditar(u)}>✏️</button>
-                      <button className="usuarios-btn usuarios-btn-eliminar" onClick={() => onEliminar(u._id)}>🗑️</button>
+
+                      {/* Stats */}
+                      <button
+                        className="usuarios-btn usuarios-btn-stats"
+                        onClick={() => onStats(u)}
+                      >
+                        📊
+                      </button>
+
+                      {/* Editar */}
+                      <button
+                        className="usuarios-btn usuarios-btn-editar"
+                        onClick={() => onEditar(u)}
+                      >
+                        ✏️
+                      </button>
+
+                      {/* Permisos - NUEVO */}
+                      <button
+                        className="usuarios-btn usuarios-btn-permisos"
+                        onClick={() => onPermisos(u)}
+                        title="Editar permisos"
+                      >
+                        🔐
+                      </button>
+
+                      {/* Eliminar */}
+                      <button
+                        className="usuarios-btn usuarios-btn-eliminar"
+                        onClick={() => onEliminar(u._id)}
+                      >
+                        🗑️
+                      </button>
+
                     </div>
                   </td>
                 </tr>

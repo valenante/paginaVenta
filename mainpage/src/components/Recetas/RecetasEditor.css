@@ -1,0 +1,107 @@
+/* ==========================================
+   RECETA EDITOR — Estilo Premium Alef
+   ========================================== */
+
+.receta-editor-pro {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  padding: 0.5rem 0;
+  color: #f1f5f9;
+}
+
+.receta-editor-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.receta-lineas {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.receta-vacia {
+  opacity: 0.7;
+  font-size: 0.9rem;
+}
+
+.receta-item-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.06);
+  padding: 0.7rem 1rem;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.receta-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.receta-nombre {
+  font-size: 0.95rem;
+}
+
+.receta-cantidad {
+  margin-top: 2px;
+  color: #fff;
+}
+
+.receta-delete-btn {
+  background: rgba(255, 80, 80, 0.18);
+  border: 1px solid rgba(255, 80, 80, 0.3);
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  color: #ff6b6b;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.receta-delete-btn:hover {
+  background: rgba(255, 80, 80, 0.35);
+  transform: scale(1.07);
+}
+
+.receta-separador {
+  border: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin: 0.5rem 0 1rem;
+}
+
+.receta-label {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.9rem;
+  font-weight: 600;
+  gap: 4px;
+}
+
+.receta-input {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  color: white;
+  padding: 8px 10px;
+  border-radius: 10px;
+}
+
+.receta-add-btn {
+  margin-top: 0.6rem;
+  background: linear-gradient(135deg, #6a0dad, #ff6700);
+  padding: 10px 16px;
+  border-radius: 12px;
+  border: none;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.receta-add-btn:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.1);
+}

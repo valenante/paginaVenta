@@ -8,9 +8,12 @@ export const SocketProvider = ({ children }) => {
   const [cuentaSolicitada, setCuentaSolicitada] = useState(null);
 
   useEffect(() => {
-    if (socket) return; // ✅ evita crear múltiples conexiones
+    if (socket) return;
 
-    const socketInstance = io(process.env.REACT_APP_SOCKET_URL, {
+    const url = import.meta.env.VITE_SOCKET_URL;
+    console.log("🔌 Conectando socket a:", url);
+
+    const socketInstance = io(url, {
       transports: ["websocket"],
       reconnectionAttempts: 5,
       reconnectionDelay: 1000,
@@ -18,7 +21,6 @@ export const SocketProvider = ({ children }) => {
 
     setSocket(socketInstance);
 
-    // === Estado de conexión ===
     socketInstance.on("connect", () => {
       console.log("✅ [Socket] Conectado:", socketInstance.id);
     });
@@ -28,48 +30,22 @@ export const SocketProvider = ({ children }) => {
     });
 
     socketInstance.on("connect_error", (err) => {
-      console.error("❌ [Socket] Error de conexión:", err.message);
+      console.error("❌ [Socket] Error:", err.message);
     });
 
-    socketInstance.io.on("reconnect_attempt", (attempt) => {
-      console.log(`🔁 [Socket] Intento de reconexión ${attempt}/5`);
-    });
-
-    // === Log de todos los eventos recibidos ===
-    socketInstance.onAny((event, data) => {
-      console.log("📡 [Socket] Evento recibido:", event, data);
-    });
-
-    // === Evento global: solicitud de cuenta ===
     socketInstance.on("cuentaSolicitada", (data) => {
-      console.log("💰 [Socket] Cuenta solicitada:", data);
+      console.log("💰 Cuenta solicitada:", data);
       setCuentaSolicitada(data);
     });
 
-    // Limpieza al desmontar
     return () => {
-      console.log("🚪 [SocketProvider] Cerrando conexión...");
+      console.log("🚪 Cerrando socket...");
       socketInstance.disconnect();
     };
   }, [socket]);
 
-  /**
-   * 🔹 Unirse a una sala específica (por estación, mesa, etc.)
-   */
-  const joinRoom = (room) => {
-    if (!socket) return;
-    console.log(`📥 [Socket] Uniéndose a la sala: ${room}`);
-    socket.emit("joinRoom", room);
-  };
-
-  /**
-   * 🔹 Salir de una sala específica
-   */
-  const leaveRoom = (room) => {
-    if (!socket) return;
-    console.log(`📤 [Socket] Saliendo de la sala: ${room}`);
-    socket.emit("leaveRoom", room);
-  };
+  const joinRoom = (room) => socket?.emit("joinRoom", room);
+  const leaveRoom = (room) => socket?.emit("leaveRoom", room);
 
   return (
     <SocketContext.Provider

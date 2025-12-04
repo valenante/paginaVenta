@@ -28,7 +28,6 @@ export default function LoginImpersonar() {
           sessionStorage.setItem("impersonado", "true");
           sessionStorage.setItem("user", JSON.stringify(user));
 
-          console.log(`✅ Impersonación validada. Redirigiendo a /tpv/${tenantId}/dashboard`);
           navigate(`/tpv/${tenantId}/dashboard`);
         } else {
           console.warn("🚫 Token inválido o expirado.");

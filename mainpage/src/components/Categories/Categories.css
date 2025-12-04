@@ -253,6 +253,22 @@
   border-color: rgba(248, 250, 252, 0.9);
 }
 
+.boton-receta--categories {
+  background: linear-gradient(135deg, #6a0dad, #ff6700);
+  border: none;
+  padding: 7px 14px;
+  border-radius: 10px;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.boton-receta--categories:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.15);
+}
+
 /* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
   .categories-header--categories {

@@ -7,6 +7,7 @@ import CajaDiaria from "../components/CajaDiariaUltraPro/CajaDiariaUltraPro";
 import UsuariosPage from "../components/Usuarios/UsuariosPage";
 import MapaEditor from "./MapaEditor";
 import ProductsPage from "./ProductsMenu"; // 🆕 Gestión de productos / extras
+import StockPage from "./StockPage"; // 🆕 Gestión de stock
 
 import "../styles/PanelPro.css";
 
@@ -52,6 +53,12 @@ const PanelPro = () => {
         >
           🧾 Carta y productos
         </button>
+        <button
+          className={active === "stock" ? "active" : ""}
+          onClick={() => setActive("stock")}
+        >
+          📦 Stock
+        </button>
       </div>
 
       {/* ====== CONTENIDO ====== */}
@@ -60,7 +67,8 @@ const PanelPro = () => {
         {active === "caja" && <CajaDiaria />}
         {active === "usuarios" && <UsuariosPage />}
         {active === "mapa" && <MapaEditor />}
-        {active === "productos" && <ProductsPage />} {/* 🆕 */}
+        {active === "productos" && <ProductsPage />} {/* 🆕 */}ç
+        {active === "stock" && <StockPage />}
       </div>
     </div>
   );

@@ -14,6 +14,25 @@ export default function TopBar() {
     if (nuevaVentana) nuevaVentana.focus();
   };
 
+  const getTenantURL = (type) => {
+    const tenant = user?.tenantId || "demo";
+    const domain = import.meta.env.VITE_MAIN_DOMAIN;
+
+    const isLocal = window.location.hostname.includes("local.");
+
+    if (isLocal) {
+      if (type === "tpv") return `http://tpv.local.softalef.com/tpv/login/${tenant}`;
+      if (type === "carta") return `http://carta.local.softalef.com/${tenant}`;
+      if (type === "panel") return `http://panel.local.softalef.com/${tenant}`;
+    }
+
+    // 🔥 PRODUCCIÓN
+    if (type === "tpv") return `https://${tenant}-tpv.${domain}`;
+    if (type === "carta") return `https://${tenant}-carta.${domain}`;
+    if (type === "panel") return `https://${tenant}-panel.${domain}`;
+  };
+
+
   // Cierra el menú al cambiar el tamaño de pantalla
   useEffect(() => {
     const manejarResize = () => {
@@ -95,9 +114,7 @@ export default function TopBar() {
                   </button>
                   <button
                     onClick={() =>
-                      abrirEnNuevaPestana(
-                        `http://tpv.local.softalef.com/tpv/login/${user.tenantId || "demo"}`
-                      )
+                      abrirEnNuevaPestana(getTenantURL("tpv"))
                     }
                     className="TopBar-btn login"
                   >
@@ -105,9 +122,7 @@ export default function TopBar() {
                   </button>
                   <button
                     onClick={() =>
-                      abrirEnNuevaPestana(
-                        `http://carta.local.softalef.com/${user.tenantId || "demo"}`
-                      )
+                      abrirEnNuevaPestana(getTenantURL("carta"))
                     }
                     className="TopBar-btn login"
                   >
@@ -133,20 +148,14 @@ export default function TopBar() {
                     Dashboard
                   </button>
                   <button
-                    onClick={() =>
-                      abrirEnNuevaPestana(
-                        `http://tpv.local.softalef.com/tpv/login/${user.tenantId || "demo"}`
-                      )
-                    }
+                    onClick={() => abrirEnNuevaPestana(getTenantURL("tpv"))}
                     className="TopBar-btn login"
                   >
                     TPV
                   </button>
                   <button
                     onClick={() =>
-                      abrirEnNuevaPestana(
-                        `http://carta.local.softalef.com/${user.tenantId || "demo"}`
-                      )
+                      abrirEnNuevaPestana(getTenantURL("carta"))
                     }
                     className="TopBar-btn login"
                   >

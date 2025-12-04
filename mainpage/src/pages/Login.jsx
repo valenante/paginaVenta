@@ -59,7 +59,7 @@ export default function Login() {
       if (["admin_restaurante", "admin", "camarero", "cocinero"].includes(user.role)) {
         const url = isLocalDomain
           ? `https://alef.local.softalef.com/${tenantSlug}`
-          : `https://tpv.${tenantSlug}.${import.meta.env.VITE_MAIN_DOMAIN}`;
+          : `https://${tenantSlug}-tpv.${import.meta.env.VITE_MAIN_DOMAIN}`;
 
         window.location.href = url;
         return;
@@ -74,7 +74,7 @@ export default function Login() {
 
       setError(
         backendMsg ||
-          "Error al iniciar sesión. Revisa tus credenciales e intenta nuevamente."
+        "Error al iniciar sesión. Revisa tus credenciales e intenta nuevamente."
       );
     } finally {
       setLoading(false);

@@ -23,15 +23,15 @@ export default function TopBar() {
 
     const isLocal = window.location.hostname.includes("local.");
 
-    // === LOCALHOST ===
+    // LOCALHOST
     if (isLocal) {
-      if (type === "tpv") return `http://tpv.local.softalef.com/${tenant}`;
+      if (type === "tpv") return `http://tpv.local.softalef.com/login/${tenant}`;
       if (type === "carta") return `http://carta.local.softalef.com/${tenant}`;
       if (type === "panel") return `http://panel.local.softalef.com/${tenant}`;
     }
 
-    // === PRODUCCIÓN ===
-    if (type === "tpv") return `https://${tenant}-tpv.${domain}`;
+    // PRODUCCIÓN
+    if (type === "tpv") return `https://${tenant}-tpv.${domain}/login`;
     if (type === "carta") return `https://${tenant}-carta.${domain}`;
     if (type === "panel") return `https://${tenant}-panel.${domain}`;
   };

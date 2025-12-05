@@ -14,26 +14,31 @@ export default function TopBar() {
     if (nuevaVentana) nuevaVentana.focus();
   };
 
+  // =============================
+  //  GENERADOR DE URLs DINÁMICAS
+  // =============================
   const getTenantURL = (type) => {
     const tenant = user?.tenantId || "demo";
     const domain = import.meta.env.VITE_MAIN_DOMAIN;
 
     const isLocal = window.location.hostname.includes("local.");
 
+    // === LOCALHOST ===
     if (isLocal) {
-      if (type === "tpv") return `http://tpv.local.softalef.com/tpv/login/${tenant}`;
+      if (type === "tpv") return `http://tpv.local.softalef.com/${tenant}`;
       if (type === "carta") return `http://carta.local.softalef.com/${tenant}`;
       if (type === "panel") return `http://panel.local.softalef.com/${tenant}`;
     }
 
-    // 🔥 PRODUCCIÓN
+    // === PRODUCCIÓN ===
     if (type === "tpv") return `https://${tenant}-tpv.${domain}`;
     if (type === "carta") return `https://${tenant}-carta.${domain}`;
     if (type === "panel") return `https://${tenant}-panel.${domain}`;
   };
 
-
-  // Cierra el menú al cambiar el tamaño de pantalla
+  // =============================
+  // Cerrar menú en resize
+  // =============================
   useEffect(() => {
     const manejarResize = () => {
       if (window.innerWidth > 768 && menuAbierto) setMenuAbierto(false);
@@ -45,6 +50,7 @@ export default function TopBar() {
   return (
     <header className="TopBar">
       <div className="TopBar-container">
+
         {/* Logo */}
         <button className="TopBar-logo" onClick={() => navigate("/")}>
           <img src={logoAlef} alt="Alef Logo" className="TopBar-logo-img" />
@@ -53,22 +59,16 @@ export default function TopBar() {
           </span>
         </button>
 
-        {/* Botón hamburguesa (solo móvil) */}
+        {/* Hamburguesa */}
         <button
           className={`TopBar-menu ${menuAbierto ? "active" : ""}`}
           onClick={() => setMenuAbierto(!menuAbierto)}
-          aria-label="Abrir menú"
         >
-          <span></span>
-          <span></span>
-          <span></span>
+          <span></span><span></span><span></span>
         </button>
 
-        {/* Menú (desktop + móvil) */}
-        <nav
-          className={`TopBar-dropdown ${menuAbierto ? "open" : ""}`}
-          aria-label="Navegación principal"
-        >
+        {/* Menú */}
+        <nav className={`TopBar-dropdown ${menuAbierto ? "open" : ""}`}>
           {!user ? (
             <>
               <a href="#inicio" onClick={() => setMenuAbierto(false)}>Inicio</a>
@@ -77,26 +77,20 @@ export default function TopBar() {
               <a href="#capturas" onClick={() => setMenuAbierto(false)}>Capturas</a>
               <a href="#contacto" onClick={() => setMenuAbierto(false)}>Contacto</a>
 
-              <Link
-                to="/login"
-                onClick={() => setMenuAbierto(false)}
-                className="TopBar-btn login"
-              >
+              <Link to="/login" onClick={() => setMenuAbierto(false)} className="TopBar-btn login">
                 Iniciar sesión
               </Link>
 
               <button
                 className="TopBar-btn cta"
-                onClick={() => {
-                  setMenuAbierto(false);
-                  navigate("/?seleccionarPlan=1#packs");
-                }}
+                onClick={() => { setMenuAbierto(false); navigate("/?seleccionarPlan=1#packs"); }}
               >
                 Solicitar demo
               </button>
             </>
           ) : (
             <>
+              {/* SUPERADMIN */}
               {user.role === "superadmin" && (
                 <>
                   <Link
@@ -106,114 +100,65 @@ export default function TopBar() {
                   >
                     Panel SuperAdmin
                   </Link>
-                  <button
-                    onClick={() => { setMenuAbierto(false); navigate("/dashboard"); }}
-                    className="TopBar-btn login"
-                  >
+
+                  <button onClick={() => navigate("/dashboard")} className="TopBar-btn login">
                     Dashboard
                   </button>
-                  <button
-                    onClick={() =>
-                      abrirEnNuevaPestana(getTenantURL("tpv"))
-                    }
-                    className="TopBar-btn login"
-                  >
+
+                  <button onClick={() => abrirEnNuevaPestana(getTenantURL("tpv"))} className="TopBar-btn login">
                     TPV
                   </button>
-                  <button
-                    onClick={() =>
-                      abrirEnNuevaPestana(getTenantURL("carta"))
-                    }
-                    className="TopBar-btn login"
-                  >
+
+                  <button onClick={() => abrirEnNuevaPestana(getTenantURL("carta"))} className="TopBar-btn login">
                     Carta
                   </button>
-                  <Link
-                    to="/perfil"
-                    onClick={() => setMenuAbierto(false)}
-                    className="TopBar-btn login"
-                  >
+
+                  <Link to="/perfil" className="TopBar-btn login" onClick={() => setMenuAbierto(false)}>
                     Perfil
                   </Link>
                 </>
               )}
 
-              {/* Permitir admin_restaurane y admin */}
+              {/* ADMIN / ADMIN_RESTAURANTE */}
               {["admin_restaurante", "admin"].includes(user.role) && (
                 <>
-                  <button
-                    onClick={() => { setMenuAbierto(false); navigate("/dashboard"); }}
-                    className="TopBar-btn login"
-                  >
+                  <button onClick={() => navigate("/dashboard")} className="TopBar-btn login">
                     Dashboard
                   </button>
+
+                  <button onClick={() => abrirEnNuevaPestana(getTenantURL("tpv"))} className="TopBar-btn login">
+                    TPV
+                  </button>
+
+                  <button onClick={() => abrirEnNuevaPestana(getTenantURL("carta"))} className="TopBar-btn login">
+                    Carta
+                  </button>
+
+                  <Link to="/perfil" className="TopBar-btn login">Perfil</Link>
+                  <Link to="/ayuda" className="TopBar-btn login">Ayuda</Link>
+                  <Link to="/soporte" className="TopBar-btn login">Soporte</Link>
+                </>
+              )}
+
+              {/* CAMARERO / COCINERO */}
+              {["camarero", "cocinero"].includes(user.role) && (
+                <>
                   <button
                     onClick={() => abrirEnNuevaPestana(getTenantURL("tpv"))}
                     className="TopBar-btn login"
                   >
                     TPV
                   </button>
-                  <button
-                    onClick={() =>
-                      abrirEnNuevaPestana(getTenantURL("carta"))
-                    }
-                    className="TopBar-btn login"
-                  >
-                    Carta
-                  </button>
-                  <Link
-                    to="/perfil"
-                    onClick={() => setMenuAbierto(false)}
-                    className="TopBar-btn login"
-                  >
-                    Perfil
-                  </Link>
-                  <Link
-                    to="/ayuda"
-                    onClick={() => setMenuAbierto(false)}
-                    className="TopBar-btn login"
-                  >
-                    Ayuda
-                  </Link>
-                  <Link
-                    to="/soporte"
-                    onClick={() => setMenuAbierto(false)}
-                    className="TopBar-btn login"
-                  >
-                    Soporte
-                  </Link>
-                </>
-              )}
-
-              {["camarero", "cocinero"].includes(user.role) && (
-                <>
-                  <button
-                    onClick={() =>
-                      abrirEnNuevaPestana(
-                        `http://tpv.local.softalef.com/tpv/login/${user.tenantId || "demo"}`
-                      )
-                    }
-                    className="TopBar-btn login"
-                  >
-                    TPV
-                  </button>
 
                   <button
-                    onClick={() =>
-                      abrirEnNuevaPestana(
-                        `http://carta.local.softalef.com/${user.tenantId || "demo"}`
-                      )
-                    }
+                    onClick={() => abrirEnNuevaPestana(getTenantURL("carta"))}
                     className="TopBar-btn login"
                   >
                     Carta
                   </button>
 
                   <button
-                    onClick={() => {
-                      setMenuAbierto(false);
-                      navigate("/personalizar");
-                    }}
+                    onClick={() => navigate("/personalizar")}
                     className="TopBar-btn login"
                   >
                     Personalizar
@@ -221,10 +166,7 @@ export default function TopBar() {
                 </>
               )}
 
-              <button
-                onClick={logout}
-                className="TopBar-btn cta"
-              >
+              <button onClick={logout} className="TopBar-btn cta">
                 Cerrar sesión
               </button>
             </>

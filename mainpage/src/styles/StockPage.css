@@ -328,4 +328,25 @@
   .stock-root {
     padding: 1.2rem;
   }
+    /* Asegura que nada se desborde */
+  .stock-header {
+    max-width: 100%;
+    overflow-x: hidden;
+    padding: 1.4rem;
+  }
+
+  /* Botón + input pasan a vertical */
+  .stock-header-actions {
+    flex-direction: column;
+    width: 100%;
+    gap: 0.8rem;
+    align-items: stretch;
+  }
+
+
+
+  /* Ajuste de grid para cartas */
+  .stock-grid {
+    grid-template-columns: 1fr;
+  }
 }

@@ -98,7 +98,7 @@
 /* ===== GRID ESTADÍSTICAS PRO ===== */
 .estadisticas-root .stats-pro-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 1.6rem;
   margin-top: 2rem;
 }
@@ -335,8 +335,9 @@
     align-items: stretch;
   }
 
-  .stats-pro-grid {
-    grid-template-columns: 1fr;
+ .stats-pro-grid {
+    grid-template-columns: 1fr; /* una sola columna */
+    min-width: 0 !important; /* evita overflow horizontal */
   }
 
   .stats-lista-productos table {

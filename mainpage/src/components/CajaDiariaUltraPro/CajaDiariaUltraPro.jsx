@@ -146,7 +146,7 @@ export default function CajaDiariaUltraPro() {
       {/* ====== HEADER ====== */}
       <header className="caja-ultra-header">
         <div>
-          <h1 className="caja-ultra-titulo">📊 Caja Diaria Ultra PRO</h1>
+          <h1 className="caja-ultra-titulo">📊 Caja Diaria</h1>
           <p className="caja-ultra-sub">
             Control financiero completo del restaurante.
           </p>

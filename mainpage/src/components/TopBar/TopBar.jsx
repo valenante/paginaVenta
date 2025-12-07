@@ -14,7 +14,20 @@ export default function TopBar() {
     if (nuevaVentana) nuevaVentana.focus();
   };
 
-  // Cierra el menú al cambiar el tamaño de pantalla
+  // Detectar si estamos en desarrollo
+  const isDev = window.location.hostname === "localhost";
+  const tenantSlug = user?.tenantId || "demo";
+
+  // URLs dinámicas según entorno
+  const tpvURL = isDev
+    ? `http://localhost:3002/${tenantSlug}`
+    : `https://tpv.${tenantSlug}.${import.meta.env.VITE_MAIN_DOMAIN}`;
+
+  const cartaURL = isDev
+    ? `http://localhost:3001/${tenantSlug}`
+    : `https://carta.${tenantSlug}.${import.meta.env.VITE_MAIN_DOMAIN}`;
+
+  // Cerrar menú al cambiar tamaño de pantalla
   useEffect(() => {
     const manejarResize = () => {
       if (window.innerWidth > 768 && menuAbierto) setMenuAbierto(false);
@@ -34,7 +47,7 @@ export default function TopBar() {
           </span>
         </button>
 
-        {/* Botón hamburguesa (solo móvil) */}
+        {/* Botón hamburguesa */}
         <button
           className={`TopBar-menu ${menuAbierto ? "active" : ""}`}
           onClick={() => setMenuAbierto(!menuAbierto)}
@@ -45,7 +58,7 @@ export default function TopBar() {
           <span></span>
         </button>
 
-        {/* Menú (desktop + móvil) */}
+        {/* Menú */}
         <nav
           className={`TopBar-dropdown ${menuAbierto ? "open" : ""}`}
           aria-label="Navegación principal"
@@ -58,11 +71,7 @@ export default function TopBar() {
               <a href="#capturas" onClick={() => setMenuAbierto(false)}>Capturas</a>
               <a href="#contacto" onClick={() => setMenuAbierto(false)}>Contacto</a>
 
-              <Link
-                to="/login"
-                onClick={() => setMenuAbierto(false)}
-                className="TopBar-btn login"
-              >
+              <Link to="/login" onClick={() => setMenuAbierto(false)} className="TopBar-btn login">
                 Iniciar sesión
               </Link>
 
@@ -78,6 +87,7 @@ export default function TopBar() {
             </>
           ) : (
             <>
+              {/* SUPERADMIN */}
               {user.role === "superadmin" && (
                 <>
                   <Link
@@ -87,43 +97,35 @@ export default function TopBar() {
                   >
                     Panel SuperAdmin
                   </Link>
+
                   <button
                     onClick={() => { setMenuAbierto(false); navigate("/dashboard"); }}
                     className="TopBar-btn login"
                   >
                     Dashboard
                   </button>
+
                   <button
-                    onClick={() =>
-                      abrirEnNuevaPestana(
-                        `http://tpv.local.softalef.com/tpv/login/${user.tenantId || "demo"}`
-                      )
-                    }
+                    onClick={() => abrirEnNuevaPestana(tpvURL)}
                     className="TopBar-btn login"
                   >
                     TPV
                   </button>
+
                   <button
-                    onClick={() =>
-                      abrirEnNuevaPestana(
-                        `http://carta.local.softalef.com/${user.tenantId || "demo"}`
-                      )
-                    }
+                    onClick={() => abrirEnNuevaPestana(cartaURL)}
                     className="TopBar-btn login"
                   >
                     Carta
                   </button>
-                  <Link
-                    to="/perfil"
-                    onClick={() => setMenuAbierto(false)}
-                    className="TopBar-btn login"
-                  >
+
+                  <Link to="/perfil" onClick={() => setMenuAbierto(false)} className="TopBar-btn login">
                     Perfil
                   </Link>
                 </>
               )}
 
-              {/* Permitir admin_restaurane y admin */}
+              {/* ADMIN Y ADMIN_RESTAURANTE */}
               {["admin_restaurante", "admin"].includes(user.role) && (
                 <>
                   <button
@@ -132,71 +134,37 @@ export default function TopBar() {
                   >
                     Dashboard
                   </button>
-                  <button
-                    onClick={() =>
-                      abrirEnNuevaPestana(
-                        `http://tpv.local.softalef.com/tpv/login/${user.tenantId || "demo"}`
-                      )
-                    }
-                    className="TopBar-btn login"
-                  >
+
+                  <button onClick={() => abrirEnNuevaPestana(tpvURL)} className="TopBar-btn login">
                     TPV
                   </button>
-                  <button
-                    onClick={() =>
-                      abrirEnNuevaPestana(
-                        `http://carta.local.softalef.com/${user.tenantId || "demo"}`
-                      )
-                    }
-                    className="TopBar-btn login"
-                  >
+
+                  <button onClick={() => abrirEnNuevaPestana(cartaURL)} className="TopBar-btn login">
                     Carta
                   </button>
-                  <Link
-                    to="/perfil"
-                    onClick={() => setMenuAbierto(false)}
-                    className="TopBar-btn login"
-                  >
+
+                  <Link to="/perfil" onClick={() => setMenuAbierto(false)} className="TopBar-btn login">
                     Perfil
                   </Link>
-                  <Link
-                    to="/ayuda"
-                    onClick={() => setMenuAbierto(false)}
-                    className="TopBar-btn login"
-                  >
+
+                  <Link to="/ayuda" onClick={() => setMenuAbierto(false)} className="TopBar-btn login">
                     Ayuda
                   </Link>
-                  <Link
-                    to="/soporte"
-                    onClick={() => setMenuAbierto(false)}
-                    className="TopBar-btn login"
-                  >
+
+                  <Link to="/soporte" onClick={() => setMenuAbierto(false)} className="TopBar-btn login">
                     Soporte
                   </Link>
                 </>
               )}
 
+              {/* CAMARERO / COCINERO */}
               {["camarero", "cocinero"].includes(user.role) && (
                 <>
-                  <button
-                    onClick={() =>
-                      abrirEnNuevaPestana(
-                        `http://tpv.local.softalef.com/tpv/login/${user.tenantId || "demo"}`
-                      )
-                    }
-                    className="TopBar-btn login"
-                  >
+                  <button onClick={() => abrirEnNuevaPestana(tpvURL)} className="TopBar-btn login">
                     TPV
                   </button>
 
-                  <button
-                    onClick={() =>
-                      abrirEnNuevaPestana(
-                        `http://carta.local.softalef.com/${user.tenantId || "demo"}`
-                      )
-                    }
-                    className="TopBar-btn login"
-                  >
+                  <button onClick={() => abrirEnNuevaPestana(cartaURL)} className="TopBar-btn login">
                     Carta
                   </button>
 
@@ -212,10 +180,8 @@ export default function TopBar() {
                 </>
               )}
 
-              <button
-                onClick={logout}
-                className="TopBar-btn cta"
-              >
+              {/* Logout */}
+              <button onClick={logout} className="TopBar-btn cta">
                 Cerrar sesión
               </button>
             </>

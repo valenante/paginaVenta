@@ -47,7 +47,7 @@ export default function Login() {
         return navigate("/superadmin");
       }
 
-      const isLocalDomain = window.location.hostname.includes("local.");
+      const isLocalhost = window.location.hostname === "localhost";
       const tenantSlug = user.tenantId;
 
       if (!tenantSlug) {
@@ -57,9 +57,15 @@ export default function Login() {
 
       // 2️⃣ Roles ligados a restaurante
       if (["admin_restaurante", "admin", "camarero", "cocinero"].includes(user.role)) {
-        const url = isLocalDomain
-          ? `https://alef.local.softalef.com/${tenantSlug}`
-          : `https://tpv.${tenantSlug}.${import.meta.env.VITE_MAIN_DOMAIN}`;
+        let url;
+
+        if (isLocalhost) {
+          // 🔥 Desarrollo → Vite localhost
+          url = `http://localhost:5173/${tenantSlug}`;
+        } else {
+          // 🔥 Producción → dominio real
+          url = `https://tpv.${tenantSlug}.${import.meta.env.VITE_MAIN_DOMAIN}`;
+        }
 
         window.location.href = url;
         return;
@@ -74,7 +80,7 @@ export default function Login() {
 
       setError(
         backendMsg ||
-          "Error al iniciar sesión. Revisa tus credenciales e intenta nuevamente."
+        "Error al iniciar sesión. Revisa tus credenciales e intenta nuevamente."
       );
     } finally {
       setLoading(false);

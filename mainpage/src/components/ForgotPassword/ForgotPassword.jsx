@@ -27,7 +27,7 @@ export default function ForgotPassword() {
       console.error("❌ Error al enviar correo:", err);
       setError(
         err.response?.data?.error ||
-          "Error al enviar el correo. Intenta nuevamente."
+        "Error al enviar el correo. Intenta nuevamente."
       );
     } finally {
       setLoading(false);
@@ -40,41 +40,52 @@ export default function ForgotPassword() {
         <div className="login-container">
           <h1 className="login-title">Correo enviado ✅</h1>
           <p className="login-subtitle">
-            Hemos enviado un enlace para restablecer tu contraseña.  
+            Hemos enviado un enlace para restablecer tu contraseña.
             Revisa tu bandeja de entrada (y la carpeta de spam).
           </p>
         </div>
       </main>
     );
   }
-
   return (
     <main className="login-page">
-      <div className="login-container">
-        <h1 className="login-title">¿Olvidaste tu contraseña?</h1>
-        <p className="login-subtitle">
-          Ingresa tu correo y te enviaremos un enlace para restablecerla.
-        </p>
+      <div className="forgot-container">
+        {!enviado ? (
+          <>
+            <h1 className="forgot-title">¿Olvidaste tu contraseña?</h1>
+            <p className="forgot-subtitle">
+              Ingresa tu correo y te enviaremos un enlace para restablecerla.
+            </p>
 
-        <form className="login-form" onSubmit={handleSubmit}>
-          <label>
-            Correo electrónico:
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="tu@correo.com"
-              required
-            />
-          </label>
+            <form className="forgot-form" onSubmit={handleSubmit}>
+              <div className="forgot-field">
+                <label>Correo electrónico</label>
+                <input
+                  type="email"
+                  placeholder="tu@correo.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </div>
 
-          {error && <p className="login-error">{error}</p>}
+              {error && <p className="forgot-error">{error}</p>}
 
-          <button type="submit" className="login-btn" disabled={loading}>
-            {loading ? "Enviando..." : "Enviar enlace"}
-          </button>
-        </form>
+              <button className="forgot-btn" disabled={loading}>
+                {loading ? "Enviando..." : "Enviar enlace"}
+              </button>
+            </form>
+          </>
+        ) : (
+          <>
+            <h1 className="forgot-success-title">Correo enviado ✅</h1>
+            <p className="forgot-success-subtitle">
+              Te enviamos un enlace para restablecer tu contraseña.
+              Revisa la bandeja de entrada o el spam.
+            </p>
+          </>
+        )}
       </div>
     </main>
+
   );
 }

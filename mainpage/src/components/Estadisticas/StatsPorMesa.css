@@ -11,7 +11,7 @@
   box-shadow:
     0 8px 24px rgba(0, 0, 0, 0.25),
     0 0 0 1px rgba(255, 255, 255, 0.05);
-  animation: fadeInStatsMesa 0.3s ease;
+  animation: fadeInStatsMesa 0.3s ease;;
 }
 
 @keyframes fadeInStatsMesa {
@@ -62,12 +62,15 @@
 .statsmesa-table-wrapper {
   width: 100%;
   overflow-x: auto;
-  padding-bottom: 0.5rem;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
 }
+
 
 /* ===== TABLE ===== */
 .statsmesa-table {
-  width: 100%;
+  width: max-content;
+  min-width: 100%;
   border-collapse: collapse;
   font-size: 0.95rem;
   color: #e6e8eb;

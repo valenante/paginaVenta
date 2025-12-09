@@ -21,11 +21,11 @@ export default function TopBar() {
   // URLs dinámicas según entorno
   const tpvURL = isDev
     ? `http://localhost:3002/${tenantSlug}`
-    : `https://tpv.${tenantSlug}.${import.meta.env.VITE_MAIN_DOMAIN}`;
+    : `https://${tenantSlug}-tpv.${import.meta.env.VITE_MAIN_DOMAIN}`;
 
   const cartaURL = isDev
     ? `http://localhost:3001/${tenantSlug}`
-    : `https://carta.${tenantSlug}.${import.meta.env.VITE_MAIN_DOMAIN}`;
+    : `https://${tenantSlug}-carta.${import.meta.env.VITE_MAIN_DOMAIN}`;
 
   // Cerrar menú al cambiar tamaño de pantalla
   useEffect(() => {

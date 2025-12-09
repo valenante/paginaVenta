@@ -64,7 +64,7 @@ export default function Login() {
           url = `http://localhost:5173/${tenantSlug}`;
         } else {
           // 🔥 Producción → dominio real -> https://zabor-feten-panel.softalef.com/
-          url = `https://${tenantSlug}-tpv.${import.meta.env.VITE_MAIN_DOMAIN}`;
+          url = `https://${tenantSlug}-panel.${import.meta.env.VITE_MAIN_DOMAIN}`;
         }
 
         window.location.href = url;

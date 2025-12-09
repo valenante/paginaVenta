@@ -141,7 +141,10 @@ export default function ReservasAjustesPage() {
 
   return (
     <div className="reservas-ajustes-page">
-      {/* HEADER */}
+
+      {/* =========================== */}
+      {/* HEADER PRINCIPAL */}
+      {/* =========================== */}
       <header className="reservas-ajustes-header">
         <div>
           <h2 className="config-title">⚙️ Configuración de reservas</h2>
@@ -164,22 +167,35 @@ export default function ReservasAjustesPage() {
         </div>
       </header>
 
+      {/* =========================== */}
+      {/* GRID GENERAL IZQ + DER */}
+      {/* =========================== */}
       <div className="reservas-ajustes-grid">
-        {/* === CONFIG GENERAL: FECHA + FRANJAS + DÍAS === */}
+
+        {/* ====================================================== */}
+        {/*      BLOQUE IZQUIERDO: FRANJAS + DÍAS HABILITADOS      */}
+        {/* ====================================================== */}
         <section className="config-section card reservas-ajustes-main">
+
+          {/* --- Título del bloque --- */}
           <div className="reservas-main-header">
             <h3 className="section-title">🕐 Franjas y días habilitados</h3>
             <p className="section-description text-suave">
-              Elige un día de referencia, define las franjas horarias y qué días
-              de la semana están abiertos a reservas.
+              Define las franjas horarias y qué días de la semana aceptan reservas.
             </p>
           </div>
 
+          {/* --- LAYOUT INTERNO: 2 columnas --- */}
           <div className="reservas-main-layout">
-            {/* Columna izquierda: fecha + franjas */}
+
+            {/* ---------------------------------------- */}
+            {/* COLUMNA IZQUIERDA: DÍA + FRANJAS */}
+            {/* ---------------------------------------- */}
             <div className="reservas-franjas-panel">
+
+              {/* Selección de fecha */}
               <div className="config-field">
-                <label>Selecciona un día de referencia</label>
+                <label>Día de referencia</label>
                 <DatePicker
                   selected={fechaSeleccionada}
                   onChange={setFechaSeleccionada}
@@ -189,16 +205,18 @@ export default function ReservasAjustesPage() {
                 />
               </div>
 
+              {/* Lista de franjas */}
               <div className="reservas-franjas-list">
                 {franjas.length === 0 && (
                   <p className="text-suave">
-                    No hay franjas definidas para este día. Añade al menos una
-                    franja para empezar.
+                    No hay franjas definidas para este día. Añade una.
                   </p>
                 )}
 
                 {franjas.map((f, i) => (
                   <div key={i} className="franja-item card-secondary">
+
+                    {/* Horas inicio / fin */}
                     <div className="franja-horas">
                       <div className="franja-field">
                         <label>Inicio</label>
@@ -210,7 +228,9 @@ export default function ReservasAjustesPage() {
                           }
                         />
                       </div>
+
                       <span className="franja-separador">—</span>
+
                       <div className="franja-field">
                         <label>Fin</label>
                         <input
@@ -223,6 +243,7 @@ export default function ReservasAjustesPage() {
                       </div>
                     </div>
 
+                    {/* Máx reservas + eliminar */}
                     <div className="franja-extra">
                       <div className="franja-field">
                         <label>Máx. reservas</label>
@@ -231,11 +252,7 @@ export default function ReservasAjustesPage() {
                           min="1"
                           value={f.maxReservas}
                           onChange={(e) =>
-                            handleChangeFranja(
-                              i,
-                              "maxReservas",
-                              e.target.value
-                            )
+                            handleChangeFranja(i, "maxReservas", e.target.value)
                           }
                         />
                       </div>
@@ -253,6 +270,7 @@ export default function ReservasAjustesPage() {
                 ))}
               </div>
 
+              {/* Añadir franja */}
               <button
                 type="button"
                 className="btn btn-secundario btn-add-franja"
@@ -262,21 +280,21 @@ export default function ReservasAjustesPage() {
               </button>
             </div>
 
-            {/* Columna derecha: días habilitados */}
+            {/* ---------------------------------------- */}
+            {/* COLUMNA DERECHA: DÍAS HABILITADOS */}
+            {/* ---------------------------------------- */}
             <div className="reservas-dias-panel">
               <h4 className="subsection-title">📆 Días habilitados</h4>
               <p className="text-suave">
-                Estos días se usarán por defecto para todas las semanas, salvo
-                que marques una fecha como especial.
+                Estos días aplican por defecto para todas las semanas.
               </p>
 
               <div className="dias-grid">
                 {diasSemana.map((d) => (
                   <label
                     key={d}
-                    className={`dia-pill ${
-                      diasHabilitados[d] ? "dia-activo" : "dia-inactivo"
-                    }`}
+                    className={`dia-pill ${diasHabilitados[d] ? "dia-activo" : "dia-inactivo"
+                      }`}
                   >
                     <input
                       type="checkbox"
@@ -292,6 +310,7 @@ export default function ReservasAjustesPage() {
             </div>
           </div>
 
+          {/* Botón guardar general */}
           <div className="config-actions">
             <button
               type="button"
@@ -303,27 +322,29 @@ export default function ReservasAjustesPage() {
           </div>
         </section>
 
-        {/* === FECHA ESPECIAL === */}
+        {/* ====================================================== */}
+        {/*               BLOQUE DERECHA: FECHA ESPECIAL           */}
+        {/* ====================================================== */}
         <section className="config-section card reservas-especial-card">
+
           <h3 className="section-title">⭐ Fecha especial</h3>
           <p className="section-description text-suave">
-            Para festivos, eventos o días con horario distinto. Estas
-            configuraciones sobrescriben las franjas y días estándar solo para
-            la fecha seleccionada.
+            Las fechas especiales sobrescriben los horarios estándar.
           </p>
 
           {cargandoFechaEspecial ? (
-            <p className="text-suave">Cargando configuración de la fecha…</p>
+            <p className="text-suave">Cargando configuración…</p>
           ) : fechaEspecial ? (
             <p className="estado-especial badge badge-aviso">
-              Esta fecha está actualmente marcada como especial.
+              Esta fecha está marcada como especial.
             </p>
           ) : (
             <p className="estado-normal text-suave">
-              Esta fecha se comporta como un día normal.
+              Esta fecha usa la configuración estándar.
             </p>
           )}
 
+          {/* Toggle fecha especial */}
           <div className="toggle-especial">
             <label className="checkbox-row">
               <input
@@ -335,19 +356,20 @@ export default function ReservasAjustesPage() {
             </label>
           </div>
 
+          {/* Franjas especiales */}
           {habilitadoEspecial && (
             <div className="franjas-especiales">
               <h4 className="subsection-title">⏰ Franjas especiales</h4>
 
               {franjasEspeciales.length === 0 && (
                 <p className="text-suave">
-                  No hay franjas especiales definidas. Añade una franja para
-                  este día concreto.
+                  No hay franjas especiales. Añade una.
                 </p>
               )}
 
               {franjasEspeciales.map((f, i) => (
                 <div key={i} className="franja-especial-item card-secondary">
+
                   <div className="franja-horas">
                     <div className="franja-field">
                       <label>Inicio</label>
@@ -428,6 +450,7 @@ export default function ReservasAjustesPage() {
             </div>
           )}
 
+          {/* Guardar fecha especial */}
           <div className="config-actions">
             <button
               type="button"
@@ -440,7 +463,7 @@ export default function ReservasAjustesPage() {
         </section>
       </div>
 
-      {/* ALERTA GLOBAL */}
+      {/* Alerta global */}
       {alerta && (
         <div className="reservas-ajustes-alerta">
           <AlertaMensaje
@@ -450,6 +473,7 @@ export default function ReservasAjustesPage() {
           />
         </div>
       )}
+
     </div>
   );
 }

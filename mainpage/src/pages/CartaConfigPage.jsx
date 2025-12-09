@@ -441,7 +441,7 @@ export default function CartaConfigPage() {
                     <img src={url} alt={`${section}-${i}`} />
                     <button
                       type="button"
-                      className="btn-icon btn-delete"
+                      className="config-btn-delete"
                       onClick={(ev) => {
                         ev.stopPropagation();
                         handleRemoveImage(section, i);
@@ -454,7 +454,7 @@ export default function CartaConfigPage() {
 
                 <button
                   type="button"
-                  className="btn btn-secundario btn-add"
+                  className="config-btn-add"
                   onClick={(ev) => {
                     ev.stopPropagation();
                     setDragOverSection(section);
@@ -505,7 +505,7 @@ export default function CartaConfigPage() {
                     <span>{t}</span>
                     <button
                       type="button"
-                      className="btn-icon btn-delete"
+                      className="config-btn-delete"
                       onClick={() => handleRemoveText(section, i)}
                     >
                       🗑
@@ -516,7 +516,7 @@ export default function CartaConfigPage() {
                 <li className="li-add">
                   <button
                     type="button"
-                    className="btn btn-secundario btn-add"
+                    className="config-btn-add"
                     onClick={() => handleAddText(section)}
                   >
                     ➕ Añadir texto

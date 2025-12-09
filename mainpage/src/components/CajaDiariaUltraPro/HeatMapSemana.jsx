@@ -5,23 +5,25 @@ import "./HeatMapSemana.css";
  * Espera datos en formato:
  * [
  *   {
- *     createdAt: "2025-02-10T21:30:00.000Z",
- *     total: 120.50,
- *     numTickets: 4
+ *     fecha: "2025-12-08",
+ *     hora: 23,
+ *     total: 14.40,
+ *     numTickets: 1
  *   },
  *   ...
  * ]
  */
 
 const HeatmapSemana = ({ datos }) => {
-  // Generar mapa [dia][hora] = ingresos
+  // Construir estructura [dia][hora] = totalIngresos
   const mapa = useMemo(() => {
     const estructura = {};
 
     datos.forEach((d) => {
-      const fecha = new Date(d.createdAt);
-      const dia = fecha.getDay();     // 0-6 (domingo-sábado)
-      const hora = fecha.getHours();  // 0-23
+      // Convertimos la fecha a Date
+      const fechaObj = new Date(`${d.fecha}T${d.hora}:00:00`);
+      const dia = fechaObj.getDay();   // 0-6 → Domingo-Sábado
+      const hora = d.hora;            // 0–23
 
       if (!estructura[dia]) estructura[dia] = {};
       if (!estructura[dia][hora]) estructura[dia][hora] = 0;
@@ -32,7 +34,7 @@ const HeatmapSemana = ({ datos }) => {
     return estructura;
   }, [datos]);
 
-  // Buscar valor máximo para escalar colores
+  // Valor máximo para escalar intensidad del color
   const maxValor = useMemo(() => {
     let max = 0;
     Object.values(mapa).forEach((horas) => {
@@ -72,8 +74,7 @@ const HeatmapSemana = ({ datos }) => {
             {/* Celdas por día */}
             {diasSemana.map((_, diaIndex) => {
               const valor = mapa[diaIndex]?.[hora] || 0;
-              const intensidad =
-                maxValor > 0 ? (valor / maxValor) : 0;
+              const intensidad = maxValor > 0 ? valor / maxValor : 0;
 
               return (
                 <div

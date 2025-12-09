@@ -1,8 +1,8 @@
 import api from '../../utils/api';
 
-export const obtenerCajasPorRango = async (fechaInicio, fechaFin) => {
-  const response = await api.get('caja/total', {
-    params: { fechaInicio, fechaFin },
+export const obtenerCajasPorRango = async (fi, ff) => {
+  const response = await api.get("caja/caja", {
+    params: { fechaInicio: fi, fechaFin: ff }
   });
   return response.data;
 };

@@ -29,28 +29,29 @@ ChartJS.register(
 export default function CajaDiariaUltraPro() {
   const [fechaInicio, setFechaInicio] = useState("");
   const [fechaFin, setFechaFin] = useState("");
-  const [datos, setDatos] = useState([]);
+  const [datos, setDatos] = useState([]); // datos horario (fecha + hora)
   const [error, setError] = useState(null);
   const chartRef = useRef(null);
 
-  /* 🌅 Fechas iniciales */
+  /* 🌅 Fechas iniciales al abrir */
   useEffect(() => {
     const hoy = new Date();
     const primerDiaMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
-    const manana = new Date(hoy);
-    manana.setDate(hoy.getDate() + 1);
+    const mañana = new Date(hoy);
+    mañana.setDate(hoy.getDate() + 1);
 
     setFechaInicio(primerDiaMes.toISOString().split("T")[0]);
-    setFechaFin(manana.toISOString().split("T")[0]);
+    setFechaFin(mañana.toISOString().split("T")[0]);
   }, []);
 
-  /* 🔄 Cargar datos */
+  /* 🔄 Cargar datos desde el backend */
   const cargarDatos = async () => {
     try {
       const cajas = await obtenerCajasPorRango(fechaInicio, fechaFin);
       setDatos(cajas || []);
       setError(null);
     } catch (err) {
+      console.error(err);
       setDatos([]);
       setError("Error al cargar datos.");
     }
@@ -60,37 +61,57 @@ export default function CajaDiariaUltraPro() {
     if (fechaInicio && fechaFin) cargarDatos();
   }, [fechaInicio, fechaFin]);
 
-  /* =============================
-     📊 Cálculos derivados
-  ============================= */
+  /* =========================================================================
+      📌 AGREGACIÓN POR DÍA PARA KPIs, LISTA Y GRÁFICAS
+     ========================================================================= */
+
+  const datosDiarios = useMemo(() => {
+    const map = {};
+
+    datos.forEach((d) => {
+      if (!map[d.fecha]) {
+        map[d.fecha] = {
+          fecha: d.fecha,
+          total: 0,
+          numTickets: 0,
+        };
+      }
+      map[d.fecha].total += d.total;
+      map[d.fecha].numTickets += d.numTickets;
+    });
+
+    // Convertimos a array ordenado por fecha
+    return Object.values(map).sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
+  }, [datos]);
+
+  /* KPI */
   const totalIngresos = useMemo(
-    () => datos.reduce((acc, d) => acc + (d.total || 0), 0),
-    [datos]
+    () => datosDiarios.reduce((acc, d) => acc + d.total, 0),
+    [datosDiarios]
   );
 
   const totalTickets = useMemo(
-    () => datos.reduce((acc, d) => acc + (d.numTickets || 0), 0),
-    [datos]
+    () => datosDiarios.reduce((acc, d) => acc + d.numTickets, 0),
+    [datosDiarios]
   );
 
   const ticketMedio = totalTickets > 0 ? totalIngresos / totalTickets : 0;
 
-  const diaMasFuerte = useMemo(() => {
-    if (!datos.length) return null;
-    return datos.reduce((a, b) => (a.total > b.total ? a : b));
-  }, [datos]);
+  const diaMasFuerte = datosDiarios.length
+    ? datosDiarios.reduce((a, b) => (a.total > b.total ? a : b))
+    : null;
 
-  const diaMasDebil = useMemo(() => {
-    if (!datos.length) return null;
-    return datos.reduce((a, b) => (a.total < b.total ? a : b));
-  }, [datos]);
+  const diaMasDebil = datosDiarios.length
+    ? datosDiarios.reduce((a, b) => (a.total < b.total ? a : b))
+    : null;
 
-  /* =============================
-     📈 Gráfico principal
-  ============================= */
+  /* =========================================================================
+      📈 GRÁFICO
+     ========================================================================= */
+
   const chartData = {
-    labels: datos.map((d) =>
-      new Date(d.createdAt).toLocaleDateString("es-ES", {
+    labels: datosDiarios.map((d) =>
+      new Date(d.fecha).toLocaleDateString("es-ES", {
         day: "2-digit",
         month: "short",
       })
@@ -98,33 +119,34 @@ export default function CajaDiariaUltraPro() {
     datasets: [
       {
         label: "Ingresos (€)",
-        data: datos.map((d) => d.total),
+        data: datosDiarios.map((d) => d.total),
         borderColor: "#6a0dad",
         backgroundColor: "rgba(106, 13, 173, 0.25)",
-        tension: 0.35,
+        tension: 0.3,
         borderWidth: 3,
-        pointRadius: 4,
-        pointHoverRadius: 7,
+        pointRadius: 5,
       },
     ],
   };
 
-  /* =============================
-     📅 Variación día a día
-  ============================= */
+  /* =========================================================================
+      📅 VARIACIONES DÍA A DÍA
+     ========================================================================= */
+
   const variaciones = useMemo(() => {
-    return datos.map((d, i) => {
+    return datosDiarios.map((d, i) => {
       if (i === 0) return { ...d, variacion: 0 };
-      const anterior = datos[i - 1].total;
+      const anterior = datosDiarios[i - 1].total;
       const diff = d.total - anterior;
       const pct = anterior > 0 ? (diff / anterior) * 100 : 0;
       return { ...d, variacion: pct };
     });
-  }, [datos]);
+  }, [datosDiarios]);
 
-  /* =============================
-     🧾 Descargar PDF
-  ============================= */
+  /* =========================================================================
+      🧾 GENERAR PDF
+     ========================================================================= */
+
   const handlePDF = () => {
     const heatmapImg = document
       .querySelector("#heatmap-canvas")
@@ -133,46 +155,37 @@ export default function CajaDiariaUltraPro() {
     const chartImg = chartRef?.current?.toBase64Image() ?? null;
 
     generarPDFCaja({
-      datos,
+      datos: datosDiarios,
       fechaInicio,
       fechaFin,
       heatmapDataURL: heatmapImg,
       chartDataURL: chartImg,
     });
   };
+
+  /* =========================================================================
+      🖥️ RENDER
+     ========================================================================= */
+
   return (
     <div className="caja-ultra-root">
-
-      {/* ====== HEADER ====== */}
+      {/* HEADER */}
       <header className="caja-ultra-header">
         <div>
           <h1 className="caja-ultra-titulo">📊 Caja Diaria</h1>
-          <p className="caja-ultra-sub">
-            Control financiero completo del restaurante.
-          </p>
+          <p className="caja-ultra-sub">Control financiero completo del restaurante.</p>
         </div>
 
         <div className="caja-ultra-filtros">
-          <input
-            type="date"
-            value={fechaInicio}
-            onChange={(e) => setFechaInicio(e.target.value)}
-          />
-
-          <input
-            type="date"
-            value={fechaFin}
-            onChange={(e) => setFechaFin(e.target.value)}
-          />
+          <input type="date" value={fechaInicio} onChange={(e) => setFechaInicio(e.target.value)} />
+          <input type="date" value={fechaFin} onChange={(e) => setFechaFin(e.target.value)} />
 
           <button onClick={cargarDatos}>Actualizar</button>
-          <button className="pdf-btn" onClick={handlePDF}>
-            Descargar PDF
-          </button>
+          <button className="pdf-btn" onClick={handlePDF}>Descargar PDF</button>
         </div>
       </header>
 
-      {/* ====== RESUMEN KPI ====== */}
+      {/* KPI */}
       <section className="caja-ultra-kpi">
         <div className="kpi-card">
           <span>Ingresos totales</span>
@@ -192,9 +205,7 @@ export default function CajaDiariaUltraPro() {
         {diaMasFuerte && (
           <div className="kpi-card highlight">
             <span>Mejor día</span>
-            <strong>
-              {new Date(diaMasFuerte.createdAt).toLocaleDateString()}
-            </strong>
+            <strong>{new Date(diaMasFuerte.fecha).toLocaleDateString()}</strong>
             <small>{diaMasFuerte.total.toFixed(2)} €</small>
           </div>
         )}
@@ -202,38 +213,27 @@ export default function CajaDiariaUltraPro() {
         {diaMasDebil && (
           <div className="kpi-card worst">
             <span>Peor día</span>
-            <strong>
-              {new Date(diaMasDebil.createdAt).toLocaleDateString()}
-            </strong>
+            <strong>{new Date(diaMasDebil.fecha).toLocaleDateString()}</strong>
             <small>{diaMasDebil.total.toFixed(2)} €</small>
           </div>
         )}
       </section>
 
-      {/* ====== GRÁFICO ====== */}
+      {/* GRÁFICO */}
       <section className="caja-ultra-chart">
         <Line ref={chartRef} data={chartData} />
       </section>
 
-      {/* ====== LISTADO DIARIO ====== */}
+      {/* LISTA DIARIA */}
       <section className="caja-ultra-lista">
         <h3>Días del periodo</h3>
         <ul>
           {variaciones.map((d) => (
-            <li key={d._id} className="dia-item">
-              <strong>
-                {new Date(d.createdAt).toLocaleDateString()}
-              </strong>
-
+            <li key={d.fecha} className="dia-item">
+              <strong>{new Date(d.fecha).toLocaleDateString()}</strong>
               <span>{d.total.toFixed(2)} €</span>
-
               <small>{d.numTickets} tickets</small>
-
-              <span
-                className={
-                  "variacion " + (d.variacion >= 0 ? "up" : "down")
-                }
-              >
+              <span className={"variacion " + (d.variacion >= 0 ? "up" : "down")}>
                 {d.variacion >= 0 ? "+" : ""}
                 {d.variacion.toFixed(1)}%
               </span>
@@ -242,7 +242,7 @@ export default function CajaDiariaUltraPro() {
         </ul>
       </section>
 
-      {/* ====== HEATMAP ====== */}
+      {/* HEATMAP */}
       <HeatmapSemana datos={datos} />
     </div>
   );

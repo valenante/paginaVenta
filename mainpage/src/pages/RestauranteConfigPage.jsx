@@ -221,30 +221,6 @@ export default function RestauranteConfigPage() {
     }
   }, [location.state]);
 
-  // Cargar configuración SIF
-  useEffect(() => {
-    const fetchSifConfig = async () => {
-      try {
-        const { data } = await api.get("admin/verifactu/sifconfig");
-        setSifForm({
-          cif: data.productor?.nif || "",
-          razonSocial: data.productor?.nombreRazon || "",
-          direccion: data.direccion || "",
-          municipio: data.municipio || "",
-          provincia: data.provincia || "",
-          codigoPostal: data.codigoPostal || "",
-          pais: data.pais || "ES",
-        });
-      } catch (err) {
-        setAlerta({
-          tipo: "error",
-          mensaje: "Error al obtener configuración SIF.",
-        });
-      }
-    };
-    fetchSifConfig();
-  }, []);
-
   /** === Subida de imágenes === */
   const handleFileUpload = async (file, tipo) => {
     if (!file) return;

@@ -63,8 +63,8 @@ export default function Login() {
           // 🔥 Desarrollo → Vite localhost
           url = `http://localhost:5173/${tenantSlug}`;
         } else {
-          // 🔥 Producción → dominio real
-          url = `https://tpv.${tenantSlug}.${import.meta.env.VITE_MAIN_DOMAIN}`;
+          // 🔥 Producción → dominio real -> https://zabor-feten-panel.softalef.com/
+          url = `https://${tenantSlug}-tpv.${import.meta.env.VITE_MAIN_DOMAIN}`;
         }
 
         window.location.href = url;

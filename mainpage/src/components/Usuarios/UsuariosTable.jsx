@@ -6,7 +6,8 @@ export default function UsuariosTable({
   onEditar,
   onEliminar,
   onStats,
-  onPermisos,   // 👈 NUEVO callback
+  onPermisos,
+  isPlanEsencial,
 }) {
   return (
     <section className="usuarios-table-card">
@@ -45,12 +46,23 @@ export default function UsuariosTable({
                     <div className="usuarios-acciones">
 
                       {/* Stats */}
-                      <button
-                        className="usuarios-btn usuarios-btn-stats"
-                        onClick={() => onStats(u)}
-                      >
-                        📊
-                      </button>
+                      {isPlanEsencial ? (
+                        <button
+                          className="usuarios-btn usuarios-btn-stats disabled"
+                          title="Estadísticas disponibles solo en el plan Pro"
+                          style={{ opacity: 0.4, cursor: "not-allowed" }}
+                          disabled
+                        >
+                          🔒
+                        </button>
+                      ) : (
+                        <button
+                          className="usuarios-btn usuarios-btn-stats"
+                          onClick={() => onStats(u)}
+                        >
+                          📊
+                        </button>
+                      )}
 
                       {/* Editar */}
                       <button

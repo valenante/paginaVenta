@@ -72,14 +72,10 @@ export default function Login() {
         let url;
 
         if (isLocalhost) {
-          // 🔥 Desarrollo → Vite localhost (panel)
-          url = isPlanEsencial
-            ? `http://localhost:5173/dashboard`
-            : `http://localhost:5173/${tenantSlug}`;
+          url = `http://localhost:5173/pro`;
         } else {
-          // 🔥 Producción → dominio real -> https://{tenant}-panel.dominio/...
           const base = `https://${tenantSlug}-panel.${import.meta.env.VITE_MAIN_DOMAIN}`;
-          url = isPlanEsencial ? `${base}/dashboard` : base;
+          url = `${base}/pro`;
         }
 
         window.location.href = url;

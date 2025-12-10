@@ -1,6 +1,7 @@
 // src/components/Categories/CrearProducto.jsx
 import React, { useState, useContext, useEffect } from "react";
 import { ProductosContext } from "../../context/ProductosContext";
+import { useAuth } from "../../context/AuthContext";
 import { ImageContext } from "../../context/ImagesContext";
 import {
   cargarSeccionesAPI,
@@ -14,6 +15,7 @@ import "./CrearProducto.css";
 const CrearProducto = ({ onClose, onCreated }) => {
   // 🔹 ProductosContext — opcional
   const productosCtx = useContext(ProductosContext);
+  const { user } = useAuth();
   const cargarProductos = productosCtx?.cargarProductos;
 
   // 🔹 ImageContext — opcional, con fallbacks
@@ -32,6 +34,9 @@ const CrearProducto = ({ onClose, onCreated }) => {
   const [usarOtraCategoria, setUsarOtraCategoria] = useState(false);
   const [secciones, setSecciones] = useState([]);
   const [estaciones, setEstaciones] = useState([]);
+
+  const isPlanEsencial =
+    user?.plan === "esencial" || user?.plan === "tpv-esencial";
 
   const [formData, setFormData] = useState({
     nombre: "",
@@ -159,7 +164,7 @@ const CrearProducto = ({ onClose, onCreated }) => {
         alert("Debes seleccionar una sección.");
         return;
       }
-      if (!formData.estacion) {
+      if (!isPlanEsencial && !formData.estacion) {
         alert("Debes seleccionar una estación.");
         return;
       }
@@ -456,20 +461,22 @@ const CrearProducto = ({ onClose, onCreated }) => {
                   />
                 </label>
 
-                {/* === ESTACIÓN === */}
-                <label className="label--crear">
-                  Estación:
-                  <AlefSelect
-                    value={formData.estacion}
-                    options={estaciones.map((est) => ({
-                      label: est.nombre,
-                      value: est.slug
-                    }))}
-                    onChange={(value) =>
-                      setFormData((prev) => ({ ...prev, estacion: value }))
-                    }
-                  />
-                </label>
+                {/* === ESTACIÓN (solo si el plan NO es esencial) === */}
+                {!isPlanEsencial && (
+                  <label className="label--crear">
+                    Estación:
+                    <AlefSelect
+                      value={formData.estacion}
+                      options={estaciones.map((est) => ({
+                        label: est.nombre,
+                        value: est.slug,
+                      }))}
+                      onChange={(value) =>
+                        setFormData((prev) => ({ ...prev, estacion: value }))
+                      }
+                    />
+                  </label>
+                )}
 
               </div>
 
@@ -704,10 +711,25 @@ const CrearProducto = ({ onClose, onCreated }) => {
           </section>
 
           {/* === RECETA OPCIONAL === */}
+          {/* === RECETA OPCIONAL === */}
           <fieldset className="fieldset--crear">
-            <legend className="legend--crear">Receta (opcional)</legend>
+            <legend className="legend--crear">
+              Receta (opcional)
+              {isPlanEsencial && (
+                <span style={{ marginLeft: 8, fontSize: "14px", color: "#ff6700" }}>
+                  🔒 Solo en plan Profesional
+                </span>
+              )}
+            </legend>
 
-            <div className="receta-crear-lista">
+            {/* LISTA DE INGREDIENTES (DESACTIVADA SI ESENCIAL) */}
+            <div
+              className="receta-crear-lista"
+              style={{
+                opacity: isPlanEsencial ? 0.45 : 1,
+                pointerEvents: isPlanEsencial ? "none" : "auto",
+              }}
+            >
               {formData.receta.map((item, index) => {
                 const ing = ingredientesStock.find((i) => i._id === item.ingrediente);
                 return (
@@ -736,7 +758,14 @@ const CrearProducto = ({ onClose, onCreated }) => {
               })}
             </div>
 
-            <div className="receta-add--crear">
+            {/* FORMULARIO PARA AÑADIR (DESACTIVADO SI ESENCIAL) */}
+            <div
+              className="receta-add--crear"
+              style={{
+                opacity: isPlanEsencial ? 0.45 : 1,
+                pointerEvents: isPlanEsencial ? "none" : "auto",
+              }}
+            >
               <AlefSelect
                 label="Ingrediente"
                 options={ingredientesStock.map((i) => ({
@@ -785,6 +814,20 @@ const CrearProducto = ({ onClose, onCreated }) => {
                 ➕ Añadir
               </button>
             </div>
+
+            {/* MENSAJE DE UPSELL */}
+            {isPlanEsencial && (
+              <p
+                style={{
+                  marginTop: "12px",
+                  fontSize: "14px",
+                  textAlign: "center",
+                  color: "#ff6700",
+                }}
+              >
+                Para gestionar recetas completas, mejora tu plan a <strong>Profesional</strong>.
+              </p>
+            )}
           </fieldset>
 
           {/* === BOTONES FINALES === */}

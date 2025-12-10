@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { useUsuarios } from "./useUsuarios";
+import { useAuth } from "../../context/AuthContext";
+import UpsellEstadisticasUsuarios from "../Usuarios/UpsellEstadisticasUsuarios";
 
 import UsuarioCreateForm from "./UsuarioCreateForm.jsx";
 import UsuariosTable from "./UsuariosTable.jsx";
@@ -28,6 +30,10 @@ export default function UsuariosPage() {
   const [usuarioEdit, setUsuarioEdit] = useState(null);
   const [usuarioStats, setUsuarioStats] = useState(null);
   const [usuarioPermisos, setUsuarioPermisos] = useState(null);
+  const { user } = useAuth();
+
+  const isPlanEsencial =
+    user?.plan === "esencial" || user?.plan === "tpv-esencial";
 
   const onCrear = async (payload) => {
     const r = await crearUsuario(payload);
@@ -65,13 +71,21 @@ export default function UsuariosPage() {
       {/* Crear Usuario */}
       <UsuarioCreateForm onCrear={onCrear} />
 
+      {/* 🔒 Upsell SOLO si es plan esencial */}
+      {isPlanEsencial && (
+        <div style={{ margin: "1.5rem 0" }}>
+          <UpsellEstadisticasUsuarios />
+        </div>
+      )}
+
       {/* Tabla de Usuarios */}
       <UsuariosTable
         usuarios={usuarios}
         onEditar={setUsuarioEdit}
         onEliminar={onEliminar}
         onStats={setUsuarioStats}
-        onPermisos={setUsuarioPermisos}   // 👈 NUEVO
+        onPermisos={setUsuarioPermisos}
+        isPlanEsencial={isPlanEsencial}
       />
 
       {/* Modal editar */}

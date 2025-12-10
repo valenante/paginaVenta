@@ -180,36 +180,49 @@ const EstadisticasPage = ({ type = "plato" }) => {
 
         {selectedCategory && (
           <>
-            {isPro && (
+            {/* SIEMPRE visible */}
+            <StatsResumenCategoria
+              category={selectedCategory}
+              resumenCategoria={resumenCategoria}
+              fechaTexto={fechaTexto}
+              horaPunta={horaPunta}
+              productoEstrella={productoEstrella}
+              isPro={isPro}
+              tipo={tipo}
+            />
+
+            {/* =============================
+        BLOQUE AVANZADO — SOLO PRO
+       ============================= */}
+            {isPro ? (
               <>
-                <StatsResumenCategoria
-                  category={selectedCategory}
-                  resumenCategoria={resumenCategoria}
-                  fechaTexto={fechaTexto}
-                  horaPunta={horaPunta}
-                  productoEstrella={productoEstrella}
-                  isPro={isPro}
-                  tipo={tipo}
-                />
+                <div className="stats-pro-section">
+                  <div className="stats-pro-grid">
+                    <StatsPorMesa data={estadisticasPorMesa} />
+                    <StatsPorHora data={estadisticasPorHora} />
+                  </div>
 
-                <div className="stats-pro-grid">
-                  <StatsPorMesa data={estadisticasPorMesa} />
-                  <StatsPorHora data={estadisticasPorHora} />
+                  <StatsTopProductos
+                    topProductos={topProductos}
+                    totalIngresosCategoria={totalIngresosCategoria}
+                  />
                 </div>
-
-                <StatsTopProductos
-                  topProductos={topProductos}
-                  totalIngresosCategoria={totalIngresosCategoria}
-                />
               </>
+            ) : (
+              // ⛔ SOLO ESTO, nada más debajo
+              <UpsellEstadisticasPro fullscreen={true} />
             )}
 
-            {!isPro && <UpsellEstadisticasPro />}
-
-            <StatsListaProductos
-              productosConStats={productosConStats}
-              loading={loading}
-            />
+            {/* =============================
+        LISTA DE PRODUCTOS
+       ============================= */}
+            {/* LISTA DE PRODUCTOS */}
+            {isPro && (
+              <StatsListaProductos
+                productosConStats={productosConStats}
+                loading={loading}
+              />
+            )}
           </>
         )}
       </div>

@@ -22,7 +22,7 @@
 }
 
 /* === CONTENEDOR DEL MODAL === */
-.alef-modal-content {
+.alef-modal-content-editar {
   width: 100%;
   max-width: 700px;         /* tamaño perfecto para TPV */
   background: rgba(15, 23, 42, 0.75);

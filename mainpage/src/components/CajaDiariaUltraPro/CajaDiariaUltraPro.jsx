@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import { Line } from "react-chartjs-2";
 import { obtenerCajasPorRango } from "./ObtenerCajasPorRango";
+import UpsellEstadisticasPro from "../../components/Estadisticas/UpsellEstadisticasPro";
+import { useAuth } from "../../context/AuthContext.jsx";
 import { generarPDFCaja } from "./pdfs/pdfCajaUltraPro";
 import HeatmapSemana from "./HeatMapSemana";
 import "./CajaDiariaUltraPro.css";
@@ -32,6 +34,9 @@ export default function CajaDiariaUltraPro() {
   const [datos, setDatos] = useState([]); // datos horario (fecha + hora)
   const [error, setError] = useState(null);
   const chartRef = useRef(null);
+  const { user } = useAuth();
+  const isPlanEsencial =
+    user?.plan === "esencial" || user?.plan === "tpv-esencial";
 
   /* 🌅 Fechas iniciales al abrir */
   useEffect(() => {
@@ -169,11 +174,14 @@ export default function CajaDiariaUltraPro() {
 
   return (
     <div className="caja-ultra-root">
+
       {/* HEADER */}
       <header className="caja-ultra-header">
         <div>
           <h1 className="caja-ultra-titulo">📊 Caja Diaria</h1>
-          <p className="caja-ultra-sub">Control financiero completo del restaurante.</p>
+          <p className="caja-ultra-sub">
+            Control financiero del restaurante.
+          </p>
         </div>
 
         <div className="caja-ultra-filtros">
@@ -181,69 +189,88 @@ export default function CajaDiariaUltraPro() {
           <input type="date" value={fechaFin} onChange={(e) => setFechaFin(e.target.value)} />
 
           <button onClick={cargarDatos}>Actualizar</button>
-          <button className="pdf-btn" onClick={handlePDF}>Descargar PDF</button>
+
+          {!isPlanEsencial && (
+            <button className="pdf-btn" onClick={handlePDF}>Descargar PDF</button>
+          )}
         </div>
       </header>
 
-      {/* KPI */}
-      <section className="caja-ultra-kpi">
-        <div className="kpi-card">
-          <span>Ingresos totales</span>
-          <strong>{totalIngresos.toFixed(2)} €</strong>
-        </div>
-
-        <div className="kpi-card">
-          <span>Total tickets</span>
-          <strong>{totalTickets}</strong>
-        </div>
-
-        <div className="kpi-card">
-          <span>Ticket medio</span>
-          <strong>{ticketMedio.toFixed(2)} €</strong>
-        </div>
-
-        {diaMasFuerte && (
-          <div className="kpi-card highlight">
-            <span>Mejor día</span>
-            <strong>{new Date(diaMasFuerte.fecha).toLocaleDateString()}</strong>
-            <small>{diaMasFuerte.total.toFixed(2)} €</small>
-          </div>
-        )}
-
-        {diaMasDebil && (
-          <div className="kpi-card worst">
-            <span>Peor día</span>
-            <strong>{new Date(diaMasDebil.fecha).toLocaleDateString()}</strong>
-            <small>{diaMasDebil.total.toFixed(2)} €</small>
-          </div>
-        )}
-      </section>
-
-      {/* GRÁFICO */}
+      {/* =====================================================
+         GRAFICO → SIEMPRE VISIBLE PARA TODOS LOS PLANES
+       ===================================================== */}
       <section className="caja-ultra-chart">
         <Line ref={chartRef} data={chartData} />
       </section>
 
-      {/* LISTA DIARIA */}
-      <section className="caja-ultra-lista">
-        <h3>Días del periodo</h3>
-        <ul>
-          {variaciones.map((d) => (
-            <li key={d.fecha} className="dia-item">
-              <strong>{new Date(d.fecha).toLocaleDateString()}</strong>
-              <span>{d.total.toFixed(2)} €</span>
-              <small>{d.numTickets} tickets</small>
-              <span className={"variacion " + (d.variacion >= 0 ? "up" : "down")}>
-                {d.variacion >= 0 ? "+" : ""}
-                {d.variacion.toFixed(1)}%
-              </span>
-            </li>
-          ))}
-        </ul>
-      </section>
+      {/* =====================================================
+         SI PLAN ESENCIAL → MOSTRAR SOLO EL UPSELL
+       ===================================================== */}
+      {isPlanEsencial && (
+        <UpsellEstadisticasPro />
+      )}
 
-      {/* HEATMAP */}
-      <HeatmapSemana datos={datos} />
+      {/* =====================================================
+         SI PLAN PRO → MOSTRAR TODO LO DEMÁS
+       ===================================================== */}
+      {!isPlanEsencial && (
+        <>
+          {/* KPI */}
+          <section className="caja-ultra-kpi">
+            <div className="kpi-card">
+              <span>Ingresos totales</span>
+              <strong>{totalIngresos.toFixed(2)} €</strong>
+            </div>
+
+            <div className="kpi-card">
+              <span>Total tickets</span>
+              <strong>{totalTickets}</strong>
+            </div>
+
+            <div className="kpi-card">
+              <span>Ticket medio</span>
+              <strong>{ticketMedio.toFixed(2)} €</strong>
+            </div>
+
+            {diaMasFuerte && (
+              <div className="kpi-card highlight">
+                <span>Mejor día</span>
+                <strong>{new Date(diaMasFuerte.fecha).toLocaleDateString()}</strong>
+                <small>{diaMasFuerte.total.toFixed(2)} €</small>
+              </div>
+            )}
+
+            {diaMasDebil && (
+              <div className="kpi-card worst">
+                <span>Peor día</span>
+                <strong>{new Date(diaMasDebil.fecha).toLocaleDateString()}</strong>
+                <small>{diaMasDebil.total.toFixed(2)} €</small>
+              </div>
+            )}
+          </section>
+
+          {/* LISTA DIARIA */}
+          <section className="caja-ultra-lista">
+            <h3>Días del periodo</h3>
+            <ul>
+              {variaciones.map((d) => (
+                <li key={d.fecha} className="dia-item">
+                  <strong>{new Date(d.fecha).toLocaleDateString()}</strong>
+                  <span>{d.total.toFixed(2)} €</span>
+                  <small>{d.numTickets} tickets</small>
+                  <span className={"variacion " + (d.variacion >= 0 ? "up" : "down")}>
+                    {d.variacion >= 0 ? "+" : ""}
+                    {d.variacion.toFixed(1)}%
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </section>
+
+          {/* HEATMAP */}
+          <HeatmapSemana datos={datos} />
+        </>
+      )}
     </div>
   );
 }

@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { useCategorias } from "../../context/CategoriasContext";
 import * as logger from "../../utils/logger";
+import { useAuth } from "../../context/AuthContext";
 
 import EditProduct from "./EditProducts";
 import CrearProducto from "./CrearProducto";
@@ -19,6 +20,8 @@ const Categories = ({ category }) => {
   const [mensajeAlerta, setMensajeAlerta] = useState(null);
   const [productoAEliminar, setProductoAEliminar] = useState(null);
   const [productoReceta, setProductoReceta] = useState(null);
+  const { user } = useAuth();
+  const isPlanEsencial = user?.plan === "esencial" || user?.plan === "tpv-esencial";
 
   const { products, fetchProducts, updateProduct, deleteProduct } =
     useCategorias();
@@ -176,14 +179,29 @@ const Categories = ({ category }) => {
                         Editar
                       </button>
 
-                      {/* NUEVO BOTÓN: RECETA */}
-                      <button
-                        onClick={() => setProductoReceta(product)}
-                        className="boton-receta--categories"
-                        type="button"
-                      >
-                        🍳 Receta
-                      </button>
+                      {/* Botón Receta */}
+                      {isPlanEsencial ? (
+                        <button
+                          className="boton-receta--categories disabled"
+                          type="button"
+                          disabled
+                          title="Disponible solo en el plan Profesional"
+                          style={{
+                            opacity: 0.45,
+                            cursor: "not-allowed",
+                          }}
+                        >
+                          🔒 Receta
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => setProductoReceta(product)}
+                          className="boton-receta--categories"
+                          type="button"
+                        >
+                          🍳 Receta
+                        </button>
+                      )}
 
                       <button
                         onClick={() => setProductoAEliminar(product._id)}

@@ -149,7 +149,7 @@ const EditProduct = ({ product, onSave, onCancel, onDelete }) => {
 
   return (
     <div className="alef-modal-overlay">
-      <div className="alef-modal-content">
+      <div className="alef-modal-content-editar">
         <div className="edit-product--editar">
           <form onSubmit={handleSubmit} className="form--editar" noValidate>
             {/* Nombre */}

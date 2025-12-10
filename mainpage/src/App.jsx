@@ -173,20 +173,53 @@ function AppRoutes() {
       <Route path="/tpv/login/:tenantId" element={<LoginImpersonar />} />
 
       {/* 🧑‍🍳 TPV / ÁREA RESTAURANTE */}
-      <Route path="/tpv/:tenantId/dashboard" element={<DashboardPage />} />
-      <Route path="/dashboard" element={<DashboardPage />} />
-      <Route path="/mi-cuenta" element={<MiCuentaPage />} />
-      <Route path="/facturas" element={<FacturasPage />} />
-      <Route path="/perfil" element={<PerfilPage />} />
-      <Route
-        path="/configuracion/restaurante"
-        element={<RestauranteConfigPage />}
-      />
-      <Route path="/configuracion/carta" element={<CartaConfigPage />} />
-      <Route
-        path="/configuracion/reservas"
-        element={<ReservasConfigPage />}
-      />
+      <Route path="/tpv/:tenantId/dashboard" element={
+        <UserLayout>
+          <DashboardPage />
+        </UserLayout>
+      } />
+
+      <Route path="/dashboard" element={
+        <UserLayout>
+          <DashboardPage />
+        </UserLayout>
+      } />
+
+      <Route path="/mi-cuenta" element={
+        <UserLayout>
+          <MiCuentaPage />
+        </UserLayout>
+      } />
+
+      <Route path="/facturas" element={
+        <UserLayout>
+          <FacturasPage />
+        </UserLayout>
+      } />
+
+      <Route path="/perfil" element={
+        <UserLayout>
+          <PerfilPage />
+        </UserLayout>
+      } />
+
+      <Route path="/configuracion/restaurante" element={
+        <UserLayout>
+          <RestauranteConfigPage />
+        </UserLayout>
+      } />
+
+      <Route path="/configuracion/carta" element={
+        <UserLayout>
+          <CartaConfigPage />
+        </UserLayout>
+      } />
+
+      <Route path="/configuracion/reservas" element={
+        <UserLayout>
+          <ReservasConfigPage />
+        </UserLayout>
+      } />
 
       <Route path="/soporte" element={<SoporteLista />} />
       <Route path="/soporte/nuevo" element={<SoporteNuevo />} />
@@ -215,6 +248,15 @@ function AppRoutes() {
         element={
           <UserLayout>
             <CajaDiaria />
+          </UserLayout>
+        }
+      />
+
+      <Route
+        path="/pro"
+        element={
+          <UserLayout>
+            <PanelPro />
           </UserLayout>
         }
       />

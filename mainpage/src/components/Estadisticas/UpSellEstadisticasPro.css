@@ -21,7 +21,15 @@
     0 0 0 1px rgba(255, 255, 255, 0.06);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
+
   animation: upsellFadeIn 0.4s ease;
+
+  /* 🔥 Hace el bloque enorme, como tú querías */
+  min-height: 420px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 /* Animación */
@@ -72,6 +80,7 @@
   cursor: pointer;
   box-shadow: 0 6px 20px rgba(255, 103, 0, 0.35);
   transition: all 0.25s ease;
+  width: fit-content;
 }
 
 .upsellpro-btn:hover {
@@ -83,6 +92,7 @@
 @media (max-width: 768px) {
   .upsellpro-container {
     padding: 1.5rem;
+    min-height: 320px; /* más pequeño en móvil */
   }
 
   .upsellpro-title {

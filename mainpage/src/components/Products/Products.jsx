@@ -55,12 +55,6 @@ const Products = ({ type, categories }) => {
                 Todavía no hay categorías. Crea tu primer producto para empezar
                 a construir la carta.
               </p>
-              <button
-                onClick={handleCrearProducto}
-                className="boton-crear--products"
-              >
-                Crear producto
-              </button>
             </div>
           ) : (
             <div className="categories-card--products">

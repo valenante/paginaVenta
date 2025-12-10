@@ -1,8 +1,6 @@
-import { createContext } from "react";
-import { useState } from "react";
+import { createContext, useState } from "react";
 import api from "../utils/api";
-import * as logger from '../utils/logger';
-
+import * as logger from "../utils/logger";
 
 export const ImageContext = createContext();
 
@@ -10,83 +8,69 @@ export const ImagesProvider = ({ children }) => {
   const [dragging, setDragging] = useState(false);
   const [imageFile, setImageFile] = useState(null);
 
-  // ✅ Manejo de arrastrar y soltar imágenes (Drag & Drop)
+  /* ===============================
+      DRAG & DROP
+  =============================== */
   const handleDragOver = (e) => {
     e.preventDefault();
     setDragging(true);
   };
 
-  const handleDragLeave = () => {
-    setDragging(false);
+  const handleDragLeave = () => setDragging(false);
+
+  const uploadToBackend = async (file, setFormData) => {
+    const formDataUpload = new FormData();
+    formDataUpload.append("file", file);
+
+    try {
+      const { data } = await api.post(
+        "/images/upload-image",
+        formDataUpload,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
+
+      if (data?.imageUrl) {
+        setFormData((prev) => ({ ...prev, img: data.imageUrl }));
+        setImageFile(file);
+      }
+    } catch (error) {
+      logger.error("❌ Error subiendo imagen:", error);
+    }
   };
 
   const handleDrop = async (e, setFormData) => {
     e.preventDefault();
     setDragging(false);
 
-    const file = e.dataTransfer.files[0];
+    const file = e.dataTransfer.files?.[0];
     if (!file) return;
 
-    const formData = new FormData();
-    formData.append("file", file);
-
-    try {
-      const response = await api.post("/images/upload-image", formData);
-      if (response.data.imageUrl) {
-        setFormData((prev) => ({ ...prev, img: response.data.imageUrl }));
-        setImageFile(file);
-      }
-    } catch (error) {
-      logger.error("Error al subir la imagen:", error);
-    }
+    await uploadToBackend(file, setFormData);
   };
 
+  /* ===============================
+      INPUT FILE
+  =============================== */
   const handleFileChange = async (e, setFormData) => {
-    const file = e.target.files[0];
+    const file = e.target.files?.[0];
     if (!file) return;
 
-    const formData = new FormData();
-    formData.append("file", file);
-
-    try {
-      const response = await api.post("/images/upload-image", formData);
-      if (response.data.imageUrl) {
-        setFormData((prev) => ({ ...prev, img: response.data.imageUrl }));
-        setImageFile(file);
-      }
-    } catch (error) {
-      logger.error("Error al subir la imagen:", error);
-    }
-  };
-
-  const uploadImage = async (file) => {
-    if (!file) return null;
-
-    const formData = new FormData();
-    formData.append("file", file); // Debe coincidir con `upload.single('file')` en el backend
-
-    try {
-      const response = await fetch(`${process.env.REACT_APP_SOCKET_URL}/api/images/upload-image`, {
-        method: "POST",
-        body: formData, // No agregues `Content-Type`, fetch lo maneja automáticamente
-      });
-
-      const data = await response.json();
-
-      if (data.filename) {
-        return data.imageUrl;
-      } else {
-        logger.error("❌ Error al subir la imagen");
-        return null;
-      }
-    } catch (err) {
-      logger.error("❌ Error en la solicitud:", err);
-      return null;
-    }
+    await uploadToBackend(file, setFormData);
   };
 
   return (
-    <ImageContext.Provider value={{ uploadImage, handleDragOver, handleDragLeave, handleDrop, handleFileChange, dragging, imageFile }}>
+    <ImageContext.Provider
+      value={{
+        dragging,
+        imageFile,
+        handleDragOver,
+        handleDragLeave,
+        handleDrop,
+        handleFileChange,
+      }}
+    >
       {children}
     </ImageContext.Provider>
   );

@@ -23,7 +23,7 @@ export default function VerifactuGlobalModal() {
         // Si ya está activado o estamos en la pantalla de config → nada
         if (
           enabled ||
-          location.pathname === "/configuracion/restaurante"
+          location.pathname === "/mi-cuenta"
         ) {
           setVisible(false);
           return;
@@ -57,7 +57,7 @@ export default function VerifactuGlobalModal() {
 
   const irAConfig = () => {
     setVisible(false);
-    navigate("/configuracion/restaurante");
+    navigate("/mi-cuenta");
   };
 
   const cerrar = () => {

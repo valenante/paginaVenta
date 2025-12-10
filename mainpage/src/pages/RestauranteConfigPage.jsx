@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import { useConfig } from "../context/ConfigContext.jsx";
+import { useAuth } from "../context/AuthContext.jsx";
 import api from "../utils/api";
 import "../styles/RestauranteConfigPage.css";
 import ModalConfirmacion from "../components/Modal/ModalConfirmacion.jsx";
@@ -8,8 +9,10 @@ import AlertaMensaje from "../components/AlertaMensaje/AlertaMensaje.jsx";
 
 export default function RestauranteConfigPage() {
   const { config, setConfig } = useConfig();
+  const { user } = useAuth();
   const location = useLocation();
-
+  const isPlanEsencial =
+    user?.plan === "esencial" || user?.plan === "tpv-esencial";
   const [form, setForm] = useState({
     branding: {},
     colores: {},
@@ -938,10 +941,14 @@ export default function RestauranteConfigPage() {
           {/* === SECCIONES === */}
           <section className="config-card card">
             <header className="config-card-header">
-              <h2>📦 Secciones de la carta</h2>
+              <h2>
+                {isPlanEsencial ? "📦 Secciones del pedido" : "📦 Secciones de la carta"}
+              </h2>
+
               <p className="config-card-subtitle">
-                Agrupa tus productos en secciones (entrantes, postres, bebidas,
-                etc.) y define a qué zona llegan sus pedidos.
+                {isPlanEsencial
+                  ? "Define cómo se agruparán los productos en el ticket (entrantes, principales, postres, bebidas, etc.) para que la impresión salga organizada por bloques claros y fáciles de leer para sala y cocina."
+                  : "Agrupa tus productos en secciones (entrantes, postres, bebidas, etc.) y define a qué zona llegan sus pedidos dentro de la carta digital."}
               </p>
             </header>
 
@@ -1006,7 +1013,9 @@ export default function RestauranteConfigPage() {
                   </span>
 
                   <div className="acciones-mini">
-                    <button type="button" onClick={() => iniciarEdicionSeccion(s)}>✏️</button>
+                    <button type="button" onClick={() => iniciarEdicionSeccion(s)}>
+                      ✏️
+                    </button>
                     <button
                       type="button"
                       className="delete-btn"
@@ -1020,105 +1029,112 @@ export default function RestauranteConfigPage() {
             </ul>
           </section>
 
-          {/* === ESTACIONES === */}
-          <section className="config-card card">
-            <header className="config-card-header">
-              <h2>🔥 Estaciones de cocina / barra</h2>
-              <p className="config-card-subtitle">
-                Define las estaciones donde se preparan los productos
-                (plancha, frío, barra, etc.) y marca cuál es la estación
-                central.
-              </p>
-            </header>
+          {!isPlanEsencial && (
+            <section className="config-card card">
+              <header className="config-card-header">
+                <h2>🔥 Estaciones de cocina / barra</h2>
+                <p className="config-card-subtitle">
+                  Define las estaciones donde se preparan los productos
+                  (plancha, frío, barra, etc.) y marca cuál es la estación
+                  central.
+                </p>
+              </header>
 
-            <div className="config-field config-field--stacked">
-              <label>Nueva estación</label>
+              <div className="config-field config-field--stacked">
+                <label>Nueva estación</label>
 
-              <input
-                type="text"
-                placeholder="Nombre (Ej: Plancha)"
-                value={nuevaEstacion.nombre}
-                onChange={(e) =>
-                  setNuevaEstacion({
-                    ...nuevaEstacion,
-                    nombre: e.target.value,
-                  })
-                }
-              />
-
-              <input
-                type="text"
-                placeholder="Slug (plancha)"
-                value={nuevaEstacion.slug}
-                onChange={(e) =>
-                  setNuevaEstacion({
-                    ...nuevaEstacion,
-                    slug: e.target.value,
-                  })
-                }
-              />
-
-              <select
-                value={nuevaEstacion.destino}
-                onChange={(e) =>
-                  setNuevaEstacion({
-                    ...nuevaEstacion,
-                    destino: e.target.value,
-                  })
-                }
-              >
-                <option value="cocina">Cocina</option>
-                <option value="barra">Barra</option>
-              </select>
-
-              <label className="check-central">
                 <input
-                  type="checkbox"
-                  checked={nuevaEstacion.esCentral}
+                  type="text"
+                  placeholder="Nombre (Ej: Plancha)"
+                  value={nuevaEstacion.nombre}
                   onChange={(e) =>
                     setNuevaEstacion({
                       ...nuevaEstacion,
-                      esCentral: e.target.checked,
+                      nombre: e.target.value,
                     })
                   }
                 />
-                Estación central
-              </label>
 
-              <button
-                type="button"
-                className="btn btn-primario"
-                onClick={crearEstacion}
-              >
-                Crear estación
-              </button>
-            </div>
+                <input
+                  type="text"
+                  placeholder="Slug (plancha)"
+                  value={nuevaEstacion.slug}
+                  onChange={(e) =>
+                    setNuevaEstacion({
+                      ...nuevaEstacion,
+                      slug: e.target.value,
+                    })
+                  }
+                />
 
-            <ul className="lista-simple">
-              {loadingEstaciones && <li>Cargando estaciones...</li>}
-              {!loadingEstaciones && estaciones.length === 0 && (
-                <li>No hay estaciones creadas todavía.</li>
-              )}
-              {estaciones.map((e) => (
-                <li key={e._id}>
-                  <span>
-                    {e.nombre} ({e.slug}) — {e.destino} {e.esCentral ? "⭐ Central" : ""}
-                  </span>
+                <select
+                  value={nuevaEstacion.destino}
+                  onChange={(e) =>
+                    setNuevaEstacion({
+                      ...nuevaEstacion,
+                      destino: e.target.value,
+                    })
+                  }
+                >
+                  <option value="cocina">Cocina</option>
+                  <option value="barra">Barra</option>
+                </select>
 
-                  <div className="acciones-mini">
-                    <button type="button" onClick={() => iniciarEdicionEstacion(e)}>✏️</button>
-                    <button
-                      type="button"
-                      className="delete-btn"
-                      onClick={() => pedirConfirmacionBorrarEstacion(e)}
-                    >
-                      ❌
-                    </button>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </section>
+                <label className="check-central">
+                  <input
+                    type="checkbox"
+                    checked={nuevaEstacion.esCentral}
+                    onChange={(e) =>
+                      setNuevaEstacion({
+                        ...nuevaEstacion,
+                        esCentral: e.target.checked,
+                      })
+                    }
+                  />
+                  Estación central
+                </label>
+
+                <button
+                  type="button"
+                  className="btn btn-primario"
+                  onClick={crearEstacion}
+                >
+                  Crear estación
+                </button>
+              </div>
+
+              <ul className="lista-simple">
+                {loadingEstaciones && <li>Cargando estaciones...</li>}
+                {!loadingEstaciones && estaciones.length === 0 && (
+                  <li>No hay estaciones creadas todavía.</li>
+                )}
+                {estaciones.map((e) => (
+                  <li key={e._id}>
+                    <span>
+                      {e.nombre} ({e.slug}) — {e.destino}{" "}
+                      {e.esCentral ? "⭐ Central" : ""}
+                    </span>
+
+                    <div className="acciones-mini">
+                      <button
+                        type="button"
+                        onClick={() => iniciarEdicionEstacion(e)}
+                      >
+                        ✏️
+                      </button>
+                      <button
+                        type="button"
+                        className="delete-btn"
+                        onClick={() => pedirConfirmacionBorrarEstacion(e)}
+                      >
+                        ❌
+                      </button>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
 
           {/* === ESTILO GENERAL === */}
           <section className="config-card card">
@@ -1176,7 +1192,7 @@ export default function RestauranteConfigPage() {
         </button>
       </div>
 
-      {editandoSeccion && (
+      {editandoEstacion && !isPlanEsencial && (
         <ModalConfirmacion
           titulo="Editar sección"
           mensaje=""
@@ -1264,14 +1280,16 @@ export default function RestauranteConfigPage() {
         </ModalConfirmacion>
       )}
 
-      {modalConfirmDelete && (
-        <ModalConfirmacion
-          titulo={`Eliminar ${modalConfirmDelete.tipo === "seccion" ? "sección" : "estación"}`}
-          mensaje={`¿Seguro que deseas eliminar "${modalConfirmDelete.nombre}"? Esta acción NO se puede deshacer.`}
-          onConfirm={confirmarBorrado}
-          onClose={() => setModalConfirmDelete(null)}
-        />
-      )}
+      {modalConfirmDelete &&
+        (modalConfirmDelete.tipo === "seccion" || !isPlanEsencial) && (
+          <ModalConfirmacion
+            titulo={`Eliminar ${modalConfirmDelete.tipo === "seccion" ? "sección" : "estación"
+              }`}
+            mensaje={`¿Seguro que deseas eliminar "${modalConfirmDelete.nombre}"? Esta acción NO se puede deshacer.`}
+            onConfirm={confirmarBorrado}
+            onClose={() => setModalConfirmDelete(null)}
+          />
+        )}
 
     </main>
   );

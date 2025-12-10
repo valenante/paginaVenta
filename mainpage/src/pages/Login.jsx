@@ -33,8 +33,14 @@ export default function Login() {
     setError("");
 
     try {
-      const response = await api.post("/auth/login", form);
-      const { user } = response.data;
+      // 1) Login: solo para crear la sesión / cookie
+      await api.post("/auth/login", form);
+
+      // 2) Ahora sí, pedimos el usuario completo desde /auth/me/me
+      const meRes = await api.get("/auth/me/me");
+      const user = meRes.data.user;
+
+      console.log("USER DESDE /auth/me/me EN LOGIN:", user);
 
       // Guardar info de usuario para UI / impersonado (NO para auth)
       sessionStorage.setItem("user", JSON.stringify(user));
@@ -55,16 +61,25 @@ export default function Login() {
         return;
       }
 
+      // 👉 Detectar plan esencial (ahora SÍ viene bien)
+      const isPlanEsencial =
+        user.plan === "esencial" || user.plan === "tpv-esencial";
+
+      console.log("Plan en Login:", user.plan, "→ isPlanEsencial:", isPlanEsencial);
+
       // 2️⃣ Roles ligados a restaurante
       if (["admin_restaurante", "admin", "camarero", "cocinero"].includes(user.role)) {
         let url;
 
         if (isLocalhost) {
-          // 🔥 Desarrollo → Vite localhost
-          url = `http://localhost:5173/${tenantSlug}`;
+          // 🔥 Desarrollo → Vite localhost (panel)
+          url = isPlanEsencial
+            ? `http://localhost:5173/dashboard`
+            : `http://localhost:5173/${tenantSlug}`;
         } else {
-          // 🔥 Producción → dominio real -> https://zabor-feten-panel.softalef.com/
-          url = `https://${tenantSlug}-panel.${import.meta.env.VITE_MAIN_DOMAIN}`;
+          // 🔥 Producción → dominio real -> https://{tenant}-panel.dominio/...
+          const base = `https://${tenantSlug}-panel.${import.meta.env.VITE_MAIN_DOMAIN}`;
+          url = isPlanEsencial ? `${base}/dashboard` : base;
         }
 
         window.location.href = url;

@@ -8,8 +8,13 @@ export default function DashboardPage() {
   const { user } = useAuth();
   const { config, loading } = useConfig();
 
+  const isPlanEsencial =
+    user?.plan === "esencial" || user?.plan === "tpv-esencial";
+
   useEffect(() => {
-    document.title = `${config?.branding?.nombreRestaurante || "Restaurante"} | Dashboard`;
+    document.title = `${
+      config?.branding?.nombreRestaurante || "Restaurante"
+    } | Dashboard`;
   }, [config]);
 
   if (loading) {
@@ -59,9 +64,7 @@ export default function DashboardPage() {
       </header>
 
       {/* Grid de accesos rápidos */}
-      {/* Grid de accesos rápidos */}
       <section className="dashboard-grid">
-
         <Link to="/perfil" className="dashboard-tile card">
           <div className="dashboard-tile-icon">👤</div>
           <h2>Perfil</h2>
@@ -74,7 +77,8 @@ export default function DashboardPage() {
           <div className="dashboard-tile-icon">💼</div>
           <h2>Mi cuenta</h2>
           <p>
-            Consulta tu plan, fecha de renovación, estado de tu suscripción y datos de facturación.
+            Consulta tu plan, fecha de renovación, estado de tu suscripción y
+            datos de facturación.
           </p>
         </Link>
 
@@ -86,30 +90,41 @@ export default function DashboardPage() {
           </p>
         </Link>
 
-        <Link to="/configuracion/restaurante" className="dashboard-tile card">
+        {/* 👉 SIEMPRE visible */}
+        <Link
+          to="/configuracion/restaurante"
+          className="dashboard-tile card"
+        >
           <div className="dashboard-tile-icon">🏪</div>
           <h2>Datos del restaurante</h2>
           <p>
-            Actualiza branding, contacto y configuración general del entorno Alef.
+            Actualiza branding, contacto y configuración general del entorno
+            Alef.
           </p>
         </Link>
 
-        <Link to="/configuracion/carta" className="dashboard-tile card">
-          <div className="dashboard-tile-icon">📋</div>
-          <h2>Carta</h2>
-          <p>
-            Gestiona la carta digital, alérgenos, platos, bebidas y visibilidad.
-          </p>
-        </Link>
+        {/* Estas dos solo si el plan NO es esencial */}
+        {!isPlanEsencial && (
+          <>
+            <Link to="/configuracion/carta" className="dashboard-tile card">
+              <div className="dashboard-tile-icon">📋</div>
+              <h2>Carta</h2>
+              <p>
+                Gestiona la carta digital, alérgenos, platos, bebidas y
+                visibilidad.
+              </p>
+            </Link>
 
-        <Link to="/configuracion/reservas" className="dashboard-tile card">
-          <div className="dashboard-tile-icon">📅</div>
-          <h2>Reservas</h2>
-          <p>
-            Administra días disponibles, capacidad y solicitudes de reservas.
-          </p>
-        </Link>
-
+            <Link to="/configuracion/reservas" className="dashboard-tile card">
+              <div className="dashboard-tile-icon">📅</div>
+              <h2>Reservas</h2>
+              <p>
+                Administra días disponibles, capacidad y solicitudes de
+                reservas.
+              </p>
+            </Link>
+          </>
+        )}
       </section>
     </main>
   );

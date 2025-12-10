@@ -37,10 +37,11 @@ export function AuthProvider({ children }) {
     const verificarSesion = async () => {
       try {
         const res = await api.get("/auth/me/me");
-
+        console.log(res, 'res')
         const usuario = res.data.user;
         setUser(usuario);
 
+        console.log(usuario);
         // 👉 AQUÍ fijamos el tenant REAL del usuario
         if (usuario?.tenantId) {
           setTenantId(usuario.tenantId);

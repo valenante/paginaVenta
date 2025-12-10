@@ -9,6 +9,10 @@ export default function TopBar() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
+  // 👉 Plan esencial: tanto 'esencial' como 'tpv-esencial'
+  const isPlanEsencial =
+    user?.plan === "esencial" || user?.plan === "tpv-esencial";
+
   const abrirEnNuevaPestana = (url) => {
     const nuevaVentana = window.open(url, "_blank", "noopener,noreferrer");
     if (nuevaVentana) nuevaVentana.focus();
@@ -65,13 +69,27 @@ export default function TopBar() {
         >
           {!user ? (
             <>
-              <a href="#inicio" onClick={() => setMenuAbierto(false)}>Inicio</a>
-              <a href="#ventajas" onClick={() => setMenuAbierto(false)}>Ventajas</a>
-              <a href="#packs" onClick={() => setMenuAbierto(false)}>Packs</a>
-              <a href="#capturas" onClick={() => setMenuAbierto(false)}>Capturas</a>
-              <a href="#contacto" onClick={() => setMenuAbierto(false)}>Contacto</a>
+              <a href="#inicio" onClick={() => setMenuAbierto(false)}>
+                Inicio
+              </a>
+              <a href="#ventajas" onClick={() => setMenuAbierto(false)}>
+                Ventajas
+              </a>
+              <a href="#packs" onClick={() => setMenuAbierto(false)}>
+                Packs
+              </a>
+              <a href="#capturas" onClick={() => setMenuAbierto(false)}>
+                Capturas
+              </a>
+              <a href="#contacto" onClick={() => setMenuAbierto(false)}>
+                Contacto
+              </a>
 
-              <Link to="/login" onClick={() => setMenuAbierto(false)} className="TopBar-btn login">
+              <Link
+                to="/login"
+                onClick={() => setMenuAbierto(false)}
+                className="TopBar-btn login"
+              >
                 Iniciar sesión
               </Link>
 
@@ -99,12 +117,16 @@ export default function TopBar() {
                   </Link>
 
                   <button
-                    onClick={() => { setMenuAbierto(false); navigate("/dashboard"); }}
+                    onClick={() => {
+                      setMenuAbierto(false);
+                      navigate("/dashboard");
+                    }}
                     className="TopBar-btn login"
                   >
                     Dashboard
                   </button>
 
+                  {/* Superadmin siempre puede abrir TPV y Carta */}
                   <button
                     onClick={() => abrirEnNuevaPestana(tpvURL)}
                     className="TopBar-btn login"
@@ -119,7 +141,11 @@ export default function TopBar() {
                     Carta
                   </button>
 
-                  <Link to="/perfil" onClick={() => setMenuAbierto(false)} className="TopBar-btn login">
+                  <Link
+                    to="/perfil"
+                    onClick={() => setMenuAbierto(false)}
+                    className="TopBar-btn login"
+                  >
                     Perfil
                   </Link>
                 </>
@@ -129,29 +155,54 @@ export default function TopBar() {
               {["admin_restaurante", "admin"].includes(user.role) && (
                 <>
                   <button
-                    onClick={() => { setMenuAbierto(false); navigate("/dashboard"); }}
+                    onClick={() => {
+                      setMenuAbierto(false);
+                      navigate("/dashboard");
+                    }}
                     className="TopBar-btn login"
                   >
                     Dashboard
                   </button>
 
-                  <button onClick={() => abrirEnNuevaPestana(tpvURL)} className="TopBar-btn login">
+                  {/* TPV SIEMPRE visible para admin/admin_restaurante */}
+                  <button
+                    onClick={() => abrirEnNuevaPestana(tpvURL)}
+                    className="TopBar-btn login"
+                  >
                     TPV
                   </button>
 
-                  <button onClick={() => abrirEnNuevaPestana(cartaURL)} className="TopBar-btn login">
-                    Carta
-                  </button>
+                  {/* Carta SOLO si el plan NO es esencial */}
+                  {!isPlanEsencial && (
+                    <button
+                      onClick={() => abrirEnNuevaPestana(cartaURL)}
+                      className="TopBar-btn login"
+                    >
+                      Carta
+                    </button>
+                  )}
 
-                  <Link to="/perfil" onClick={() => setMenuAbierto(false)} className="TopBar-btn login">
+                  <Link
+                    to="/perfil"
+                    onClick={() => setMenuAbierto(false)}
+                    className="TopBar-btn login"
+                  >
                     Perfil
                   </Link>
 
-                  <Link to="/ayuda" onClick={() => setMenuAbierto(false)} className="TopBar-btn login">
+                  <Link
+                    to="/ayuda"
+                    onClick={() => setMenuAbierto(false)}
+                    className="TopBar-btn login"
+                  >
                     Ayuda
                   </Link>
 
-                  <Link to="/soporte" onClick={() => setMenuAbierto(false)} className="TopBar-btn login">
+                  <Link
+                    to="/soporte"
+                    onClick={() => setMenuAbierto(false)}
+                    className="TopBar-btn login"
+                  >
                     Soporte
                   </Link>
                 </>
@@ -160,13 +211,23 @@ export default function TopBar() {
               {/* CAMARERO / COCINERO */}
               {["camarero", "cocinero"].includes(user.role) && (
                 <>
-                  <button onClick={() => abrirEnNuevaPestana(tpvURL)} className="TopBar-btn login">
+                  {/* TPV SIEMPRE visible para camarero/cocinero */}
+                  <button
+                    onClick={() => abrirEnNuevaPestana(tpvURL)}
+                    className="TopBar-btn login"
+                  >
                     TPV
                   </button>
 
-                  <button onClick={() => abrirEnNuevaPestana(cartaURL)} className="TopBar-btn login">
-                    Carta
-                  </button>
+                  {/* Carta SOLO si el plan NO es esencial */}
+                  {!isPlanEsencial && (
+                    <button
+                      onClick={() => abrirEnNuevaPestana(cartaURL)}
+                      className="TopBar-btn login"
+                    >
+                      Carta
+                    </button>
+                  )}
 
                   <button
                     onClick={() => {

@@ -6,8 +6,9 @@ import EstadisticasPage from "./EstadisticasPage";
 import CajaDiaria from "../components/CajaDiariaUltraPro/CajaDiariaUltraPro";
 import UsuariosPage from "../components/Usuarios/UsuariosPage";
 import MapaEditor from "./MapaEditor";
-import ProductsPage from "./ProductsMenu"; // 🆕 Gestión de productos / extras
-import StockPage from "./StockPage"; // 🆕 Gestión de stock
+import ProductsPage from "./ProductsMenu";
+import StockPage from "./StockPage";
+import ValoracionesPanel from "./ValoracionesPanel"; // 👈 NUEVO
 
 import "../styles/PanelPro.css";
 
@@ -46,18 +47,26 @@ const PanelPro = () => {
           🗺️ Mapa del restaurante
         </button>
 
-        {/* 🆕 NUEVA PESTAÑA: Productos / Carta */}
         <button
           className={active === "productos" ? "active" : ""}
           onClick={() => setActive("productos")}
         >
           🧾 Carta y productos
         </button>
+
         <button
           className={active === "stock" ? "active" : ""}
           onClick={() => setActive("stock")}
         >
           📦 Stock
+        </button>
+
+        {/* ⭐ NUEVA PESTAÑA: VALORACIONES */}
+        <button
+          className={active === "valoraciones" ? "active" : ""}
+          onClick={() => setActive("valoraciones")}
+        >
+          ⭐ Valoraciones
         </button>
       </div>
 
@@ -67,8 +76,9 @@ const PanelPro = () => {
         {active === "caja" && <CajaDiaria />}
         {active === "usuarios" && <UsuariosPage />}
         {active === "mapa" && <MapaEditor />}
-        {active === "productos" && <ProductsPage />} {/* 🆕 */}ç
+        {active === "productos" && <ProductsPage />}
         {active === "stock" && <StockPage />}
+        {active === "valoraciones" && <ValoracionesPanel />} {/* 👈 NUEVO */}
       </div>
     </div>
   );

@@ -57,7 +57,6 @@ const CrearProducto = ({ onClose, onCreated }) => {
       precioCopa: null,
       precioBotella: null,
     },
-    ingredientes: [],
     alergenos: [],
     traducciones: {
       en: { nombre: "", descripcion: "" },
@@ -343,60 +342,6 @@ const CrearProducto = ({ onClose, onCreated }) => {
                   />
                 </label>
               </div>
-
-              {/* Ingredientes */}
-              <fieldset className="fieldset--crear">
-                <legend className="legend--crear">Ingredientes</legend>
-
-                <div className="ingredientes-lista--crear">
-                  {formData.ingredientes.map((ingrediente, index) => (
-                    <div key={index} className="ingrediente-item--crear">
-                      <input
-                        type="text"
-                        value={ingrediente}
-                        onChange={(e) => {
-                          const nuevos = [...formData.ingredientes];
-                          nuevos[index] = e.target.value;
-                          setFormData((prev) => ({
-                            ...prev,
-                            ingredientes: nuevos,
-                          }));
-                        }}
-                        className="input--crear"
-                      />
-                      <button
-                        type="button"
-                        className="btn-icon--crear"
-                        onClick={() => {
-                          const nuevos = formData.ingredientes.filter(
-                            (_, i) => i !== index
-                          );
-                          setFormData((prev) => ({
-                            ...prev,
-                            ingredientes: nuevos,
-                          }));
-                        }}
-                        aria-label="Eliminar ingrediente"
-                      >
-                        ❌
-                      </button>
-                    </div>
-                  ))}
-                </div>
-
-                <button
-                  type="button"
-                  className="boton--secundario"
-                  onClick={() =>
-                    setFormData((prev) => ({
-                      ...prev,
-                      ingredientes: [...prev.ingredientes, ""],
-                    }))
-                  }
-                >
-                  ➕ Agregar ingrediente
-                </button>
-              </fieldset>
             </section>
 
             {/* -------- Columna 2 -------- */}

@@ -13,6 +13,7 @@ export default function Login() {
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   // ============================
   // 🔧 Manejo del formulario
@@ -155,18 +156,31 @@ export default function Login() {
             </div>
 
             {/* PASSWORD */}
-            <div className="login-field">
+            {/* PASSWORD */}
+            <div className="login-field login-field-password">
               <label htmlFor="login-password">Contraseña</label>
-              <input
-                id="login-password"
-                type="password"
-                name="password"
-                value={form.password}
-                onChange={handleChange}
-                placeholder="••••••••"
-                autoComplete="current-password"
-                required
-              />
+
+              <div className="login-password-wrapper">
+                <input
+                  id="login-password"
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  value={form.password}
+                  onChange={handleChange}
+                  placeholder="••••••••"
+                  autoComplete="current-password"
+                  required
+                />
+
+                <button
+                  type="button"
+                  className="login-toggle-password"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                >
+                  {showPassword ? "Ocultar" : "Ver"}
+                </button>
+              </div>
             </div>
 
             {/* ERROR */}

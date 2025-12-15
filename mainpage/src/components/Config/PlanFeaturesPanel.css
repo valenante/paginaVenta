@@ -1,0 +1,151 @@
+/* =====================================================
+   PlanFeaturesPanel – compacto, profesional y responsive
+   ===================================================== */
+
+.features-search {
+  width: 100%;
+  max-width: 380px;
+  min-width: 0; /* clave para que no se salga en flex */
+}
+
+.features-search input {
+  min-width: 0; /* clave para overflow en móvil */
+  font-family: var(--font-base);
+  font-size: var(--font-size-sm);
+  padding: 0.45rem 0.7rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-borde-suave);
+  background: #ffffff;
+  outline: none;
+}
+
+.features-search input:focus {
+  border-color: var(--color-primario);
+  box-shadow: 0 0 0 3px rgba(106, 13, 173, 0.12);
+}
+
+/* Contenedor categorías */
+.features-cats {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem; /* más compacto */
+  margin-top: var(--space-sm);
+}
+
+/* Bloque categoría */
+.features-cat {
+  border: 1px solid var(--color-borde-suave);
+  background: #ffffff;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+/* Header categoría */
+.features-cat-header {
+  width: 100%;
+  border: none;
+  background: #f8fafc;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 0.55rem 0.8rem; /* más pequeño */
+  gap: 0.75rem;
+}
+
+.features-cat-header:hover {
+  background: #f3f6fb;
+}
+
+.features-cat-title {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.45rem;
+  font-weight: 700;
+  font-size: var(--font-size-sm);
+  text-transform: lowercase;
+}
+
+.features-cat-count {
+  font-weight: 600;
+  font-size: var(--font-size-xs);
+  color: var(--color-texto-suave);
+}
+
+.features-cat-chevron {
+  font-size: 0.95rem;
+  opacity: 0.75;
+}
+
+/* Grid de checks (más denso y compacto) */
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 0.45rem;            /* más compacto */
+  padding: 0.65rem 0.75rem; /* más compacto */
+  background: #ffffff;
+}
+
+.feature-item {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+
+  padding: 0.45rem 0.6rem; /* más compacto */
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  background: #ffffff;
+
+  font-size: var(--font-size-sm);
+  line-height: 1.2;
+}
+
+.feature-item:hover {
+  border-color: rgba(106, 13, 173, 0.35);
+  box-shadow: 0 1px 0 rgba(15, 23, 42, 0.04);
+}
+
+.feature-item input[type="checkbox"] {
+  margin: 0;
+  width: 16px;
+  height: 16px;
+}
+
+.feature-check {
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  background: var(--color-exito-suave);
+  color: var(--color-exito);
+}
+
+/* Ajustes para que el header del panel no se rompa en móvil */
+.config-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .config-card-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .features-search {
+    max-width: 100%;
+  }
+
+  .feature-grid {
+    grid-template-columns: 1fr; /* 1 columna en móvil */
+  }
+}

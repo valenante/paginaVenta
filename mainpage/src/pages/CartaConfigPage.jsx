@@ -601,24 +601,6 @@ export default function CartaConfigPage() {
               </option>
             </select>
           </div>
-
-          <div className="config-field">
-            <label>Idiomas (separados por coma)</label>
-            <input
-              type="text"
-              name="carta.idiomas"
-              value={form.carta?.idiomas?.join(", ") || ""}
-              onChange={(e) =>
-                setForm({
-                  ...form,
-                  carta: {
-                    ...form.carta,
-                    idiomas: e.target.value.split(",").map((i) => i.trim()),
-                  },
-                })
-              }
-            />
-          </div>
         </section>
 
         {/* === TEMA VISUAL DE LA CARTA === */}

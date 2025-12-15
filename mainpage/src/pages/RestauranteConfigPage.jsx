@@ -6,6 +6,7 @@ import api from "../utils/api";
 import "../styles/RestauranteConfigPage.css";
 import ModalConfirmacion from "../components/Modal/ModalConfirmacion.jsx";
 import AlertaMensaje from "../components/AlertaMensaje/AlertaMensaje.jsx";
+import PlanFeaturesPanel from "../components/Config/PlanFeaturesPanel.jsx";
 
 export default function RestauranteConfigPage() {
   const { config, setConfig } = useConfig();
@@ -31,8 +32,6 @@ export default function RestauranteConfigPage() {
 
   const [saving, setSaving] = useState(false);
   const [dragOver, setDragOver] = useState(null);
-  const [features, setFeatures] = useState([]);
-  const [loadingFeatures, setLoadingFeatures] = useState(true);
 
   // === Estado modales y alertas ===
   const [modalConfirmSif, setModalConfirmSif] = useState(null);
@@ -84,26 +83,6 @@ export default function RestauranteConfigPage() {
   const faviconInputRef = useRef(null);
   const fondoInputRef = useRef(null);
 
-  // Carga de features y config base
-  useEffect(() => {
-    const fetchFeatures = async () => {
-      try {
-        const { data } = await api.get("/admin/features-plan");
-        setFeatures(data.features || []);
-        setConfig(data.config);
-      } catch (err) {
-        setAlerta({
-          tipo: "error",
-          mensaje: "Error al cargar funcionalidades del plan.",
-        });
-      } finally {
-        setLoadingFeatures(false);
-      }
-    };
-
-    fetchFeatures();
-  }, [setConfig]);
-
   // Carga secciones / estaciones
   useEffect(() => {
     const fetchData = async () => {
@@ -137,63 +116,6 @@ export default function RestauranteConfigPage() {
       }));
     }
   }, [config]);
-
-  // Helper para leer paths "impresion.imprimirPedidosCocina"
-  const getConfigValue = (cfg, path) => {
-    if (!cfg || !path) return undefined;
-    return path.split(".").reduce((acc, part) => {
-      if (acc == null) return undefined;
-      return acc[part];
-    }, cfg);
-  };
-
-  // Actualizar flags de config cuando tocas una feature
-  const handleFeatureUpdate = async (configKey, value) => {
-    try {
-      const { data } = await api.put("/admin/features-plan/update", {
-        key: configKey,
-        value,
-      });
-
-      setConfig(data);
-
-      // 🔄 Si la feature toca pedidos comida/bebida → sincronizar flujoPedidos
-      if (
-        configKey === "flujoPedidos.permitePedidosComida" ||
-        configKey === "flujoPedidos.permitePedidosBebida"
-      ) {
-        try {
-          const nuevoFlujo = {
-            permitePedidosComida:
-              configKey === "flujoPedidos.permitePedidosComida" ? value : config.flujoPedidos?.permitePedidosComida,
-            permitePedidosBebida:
-              configKey === "flujoPedidos.permitePedidosBebida" ? value : config.flujoPedidos?.permitePedidosBebida,
-          };
-
-          const resFlujo = await api.put("/admin/config/flujo-pedidos", nuevoFlujo);
-
-          // Guardar el flujo actualizado
-          setConfig((prev) => ({
-            ...prev,
-            flujoPedidos: resFlujo.data.flujoPedidos,
-          }));
-        } catch (err) {
-          console.error("Error sincronizando flujo pedidos:", err);
-        }
-      }
-
-      setAlerta({
-        tipo: "success",
-        mensaje: "Cambios guardados correctamente ✅",
-      });
-    } catch (err) {
-      console.error("[RestauranteConfig] Error al actualizar feature:", err);
-      setAlerta({
-        tipo: "error",
-        mensaje: "Error al actualizar la configuración del plan.",
-      });
-    }
-  };
 
   // Estado de VeriFactu
   useEffect(() => {
@@ -890,53 +812,7 @@ export default function RestauranteConfigPage() {
             </div>
           </section>
 
-          {/* === FUNCIONALIDADES DEL PLAN === */}
-          <section className="config-card card">
-            <header className="config-card-header">
-              <h2>🧩 Funcionalidades del plan</h2>
-              <p className="config-card-subtitle">
-                Activa o desactiva las opciones disponibles según el plan
-                contratado.
-              </p>
-            </header>
-
-            {loadingFeatures && <p>Cargando funcionalidades...</p>}
-
-            {!loadingFeatures && features.length === 0 && (
-              <p>Este plan no incluye funcionalidades configurables.</p>
-            )}
-
-            {!loadingFeatures && features.length > 0 && (
-              <div className="feature-grid">
-                {features.map((f) => (
-                  <label key={f._id} className="feature-item">
-                    {f.configKey ? (
-                      <>
-                        <input
-                          type="checkbox"
-                          checked={Boolean(
-                            getConfigValue(config, f.configKey)
-                          )}
-                          onChange={(e) =>
-                            handleFeatureUpdate(
-                              f.configKey,
-                              e.target.checked
-                            )
-                          }
-                        />
-                        <span>{f.nombre}</span>
-                      </>
-                    ) : (
-                      <>
-                        <span className="feature-check">✔</span>
-                        <span>{f.nombre}</span>
-                      </>
-                    )}
-                  </label>
-                ))}
-              </div>
-            )}
-          </section>
+          <PlanFeaturesPanel onAlert={setAlerta} />
 
           {/* === SECCIONES === */}
           <section className="config-card card">

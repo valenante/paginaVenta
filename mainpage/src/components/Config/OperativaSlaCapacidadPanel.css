@@ -1,0 +1,127 @@
+/*****************************************************
+ * OperativaSlaCapacidadPanel
+ * (usa las mismas cards/fields del RestauranteConfigPage)
+ *****************************************************/
+
+/* Tabla editable (tramos SLA + pesos) */
+.tabla-tramos {
+  display: grid;
+  gap: var(--space-sm);
+  margin-top: var(--space-sm);
+}
+
+/* Cabecera */
+.tabla-tramos__head {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1.2fr 48px;
+  gap: var(--space-sm);
+  align-items: center;
+
+  padding: 0.35rem 0.1rem;
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  color: var(--color-texto-suave);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* Fila */
+.tabla-tramos__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1.2fr 48px;
+  gap: var(--space-sm);
+  align-items: center;
+
+  padding: 0.55rem 0.55rem;
+  border-radius: var(--radius-md);
+  background: #f9fafb;
+  border: 1px solid var(--color-borde-suave);
+}
+
+/* Inputs dentro de la tabla */
+.tabla-tramos__row input {
+  font-family: var(--font-base);
+  font-size: var(--font-size-sm);
+  padding: 0.5rem 0.65rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-borde-suave);
+  background: #ffffff;
+}
+
+/* Input readOnly (índice) */
+.tabla-tramos__row input[readonly] {
+  background: rgba(148, 163, 184, 0.16);
+  color: rgba(15, 23, 42, 0.85);
+  cursor: default;
+}
+
+/* Botón eliminar en fila (reusa delete-btn, pero afinamos) */
+.tabla-tramos__row .delete-btn {
+  width: 42px;
+  height: 38px;
+  border-radius: var(--radius-sm);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid transparent;
+  transition: transform 0.12s ease, background 0.12s ease, border-color 0.12s ease;
+}
+
+.tabla-tramos__row .delete-btn:hover {
+  transform: scale(1.05);
+  background: rgba(220, 38, 38, 0.08);
+  border-color: rgba(220, 38, 38, 0.25);
+}
+
+.tabla-tramos__row .delete-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+  background: transparent;
+  border-color: transparent;
+}
+
+/* Botón “Añadir tramo” (si usas btn-secundario ya queda, pero le doy un margen) */
+.config-card .btn.btn-secundario {
+  margin-top: var(--space-sm);
+}
+
+/* Small text (si no existe en tu sistema) */
+.text-suave {
+  color: var(--color-texto-suave);
+  font-size: var(--font-size-xs);
+  line-height: 1.25rem;
+}
+
+/*****************************************************
+ * Responsive
+ *****************************************************/
+@media (max-width: 768px) {
+  .tabla-tramos__head {
+    display: none; /* en móvil se entiende por placeholders/orden */
+  }
+
+  .tabla-tramos__row {
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      "a b"
+      "c d";
+    gap: var(--space-sm);
+  }
+
+  .tabla-tramos__row > input:nth-child(1) {
+    grid-area: a;
+  }
+  .tabla-tramos__row > input:nth-child(2) {
+    grid-area: b;
+  }
+  .tabla-tramos__row > input:nth-child(3) {
+    grid-area: c;
+  }
+  .tabla-tramos__row > button,
+  .tabla-tramos__row > .delete-btn {
+    grid-area: d;
+    justify-self: end;
+  }
+}

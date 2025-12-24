@@ -75,6 +75,7 @@ import "./index.css";
 import { CategoriasProvider } from "./context/CategoriasContext";
 import { ImagesProvider } from "./context/ImagesContext";
 import Funcionamiento from "./components/Funcionamiento/Funcionamiento";
+import ConfigImpresionPage from "./pages/ConfigImpresionPage";
 
 /* =============================
    LANDING PÚBLICA (marketing)
@@ -218,6 +219,13 @@ function AppRoutes() {
       <Route path="/configuracion/reservas" element={
         <UserLayout>
           <ReservasConfigPage />
+        </UserLayout>
+      } />
+
+
+      <Route path="/configuracion/impresion" element={
+        <UserLayout>
+          <ConfigImpresionPage />
         </UserLayout>
       } />
 

@@ -12,9 +12,8 @@ export default function DashboardPage() {
     user?.plan === "esencial" || user?.plan === "tpv-esencial";
 
   useEffect(() => {
-    document.title = `${
-      config?.branding?.nombreRestaurante || "Restaurante"
-    } | Dashboard`;
+    document.title = `${config?.branding?.nombreRestaurante || "Restaurante"
+      } | Dashboard`;
   }, [config]);
 
   if (loading) {
@@ -122,6 +121,13 @@ export default function DashboardPage() {
                 Administra días disponibles, capacidad y solicitudes de
                 reservas.
               </p>
+            </Link>
+
+            {/* 👉 SIEMPRE visible */}
+            <Link to="/configuracion/impresion" className="dashboard-tile card">
+              <div className="dashboard-tile-icon">🖨️</div>
+              <h2>Impresión</h2>
+              <p>Asigna impresoras a cocina/barra/caja y haz pruebas.</p>
             </Link>
           </>
         )}

@@ -1,0 +1,132 @@
+/*****************************************************
+ * Config Impresión – Alef
+ *****************************************************/
+
+.imp-config-page {
+  margin: var(--space-2xl) auto var(--space-3xl);
+}
+
+/* Card principal */
+.config-impresion {
+  padding: var(--space-lg) var(--space-xl);
+}
+
+/* Título y descripción */
+.config-impresion h1 {
+  margin: 0 0 var(--space-xs);
+  font-size: var(--font-size-2xl);
+  color: var(--color-primario);
+}
+
+.config-impresion .text-suave {
+  margin: 0;
+  max-width: 720px;
+  color: var(--color-texto-suave);
+}
+
+/* Separación general */
+.config-impresion__grid {
+  margin-top: var(--space-lg);
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-md);
+  align-items: flex-start;
+}
+
+/* Campos */
+.config-impresion__field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.config-impresion__field label {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+}
+
+.config-impresion__field select,
+.config-impresion__field input {
+  font-family: var(--font-base);
+  font-size: var(--font-size-sm);
+  padding: 0.55rem 0.75rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-borde-suave);
+  background: #ffffff;
+}
+
+.config-impresion__field select {
+  cursor: pointer;
+}
+
+/* Acciones */
+.config-impresion__actions {
+  display: flex;
+  gap: var(--space-sm);
+  margin-top: var(--space-md);
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+/* Que los botones respiren y queden parejos */
+.config-impresion__actions .btn {
+  min-width: 190px;
+}
+
+/* Estado + mensaje */
+.config-impresion .text-suave b {
+  color: var(--color-texto);
+}
+
+.mensaje {
+  margin-top: var(--space-sm);
+  padding: 0.65rem 0.85rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-borde-suave);
+  background: #f9fafb;
+  font-size: var(--font-size-sm);
+  color: var(--color-texto);
+  box-shadow: var(--shadow-suave);
+}
+
+/* (Opcional) “hint” visual si quieres que se vea más pro */
+.config-impresion .mensaje::before {
+  content: "";
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  margin-right: 8px;
+  background: var(--color-borde-suave);
+  vertical-align: middle;
+}
+
+/* =====================================================
+ * Responsive
+ * ===================================================== */
+
+@media (max-width: 1024px) {
+  .config-impresion {
+    padding: var(--space-md) var(--space-lg);
+  }
+
+  .config-impresion__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .config-impresion__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .config-impresion__actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .config-impresion__actions .btn {
+    width: 100%;
+    min-width: unset;
+  }
+}

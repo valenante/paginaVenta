@@ -5,8 +5,12 @@ import { useAuth } from "../context/AuthContext.jsx";
 import api from "../utils/api";
 import "../styles/RestauranteConfigPage.css";
 import ModalConfirmacion from "../components/Modal/ModalConfirmacion.jsx";
+import EstacionesCapacidadPanel from "../components/Config/EstacionesCapacidadPanel.jsx";
 import AlertaMensaje from "../components/AlertaMensaje/AlertaMensaje.jsx";
 import PlanFeaturesPanel from "../components/Config/PlanFeaturesPanel.jsx";
+import OperativaSlaCapacidadPanel from "../components/Config/OperativaSlaCapacidadPanel.jsx";
+import { DEFAULT_TEMA_TPV, normalizarTemaTpv } from "../utils/tema";
+import TemaTpvPanel from "../components/Tema/TemaTpvPanel.jsx";
 
 export default function RestauranteConfigPage() {
   const { config, setConfig } = useConfig();
@@ -18,15 +22,24 @@ export default function RestauranteConfigPage() {
     branding: {},
     colores: {},
     estilo: {},
-    temaTpv: {
-      colorPrincipal: "#9B1C1C",
-      colorSecundario: "#4C5EA8",
-      fondo: "#5B1010",
-      texto: "#ffffff",
-      cardBg: "#3a3a3a",
-      cardBorde: "#555555",
-      boton: "#4C5EA8",
-      botonHover: "#3C4C8A",
+    temaTpv: { ...DEFAULT_TEMA_TPV },
+    slaMesas: {
+      activo: true,
+      porcentajeAvisoRiesgo: 80,
+      cooldownAvisoMinutos: 0,
+      tramosOcupacion: [
+        { desde: 0, hasta: 25, minutosMaxSinServicio: 8 },
+        { desde: 26, hasta: 50, minutosMaxSinServicio: 11 },
+        { desde: 51, hasta: 75, minutosMaxSinServicio: 14 },
+        { desde: 76, hasta: 100, minutosMaxSinServicio: 18 },
+      ],
+    },
+
+    // ✅ NUEVO
+    capacidadEstaciones: {
+      intervaloRevisionSegundos: 10,
+      pesosSeccion: { 0: 1.0, 1: 0.6, 2: 0.3 },
+      pesoDefault: 0.15,
     },
   });
 
@@ -62,8 +75,6 @@ export default function RestauranteConfigPage() {
 
   const [editandoSeccion, setEditandoSeccion] = useState(null);
   const [editandoEstacion, setEditandoEstacion] = useState(null);
-
-
 
   // === SIF CONFIG ===
   const [sifForm, setSifForm] = useState({
@@ -106,15 +117,17 @@ export default function RestauranteConfigPage() {
 
   // Cargar config en el formulario
   useEffect(() => {
-    if (config) {
-      setForm((prev) => ({
-        ...prev,
-        branding: config.branding || {},
-        colores: config.colores || {},
-        estilo: config.estilo || {},
-        temaTpv: config.temaTpv || prev.temaTpv,
-      }));
-    }
+    if (!config) return;
+
+    setForm((prev) => ({
+      ...prev,
+      branding: config.branding || {},
+      colores: config.colores || {},
+      estilo: config.estilo || {},
+      temaTpv: normalizarTemaTpv(config.temaTpv),
+      slaMesas: config.slaMesas || prev.slaMesas,
+      capacidadEstaciones: config.capacidadEstaciones || prev.capacidadEstaciones,
+    }));
   }, [config]);
 
   // Estado de VeriFactu
@@ -197,6 +210,8 @@ export default function RestauranteConfigPage() {
         colores: form.colores,
         estilo: form.estilo,
         temaTpv: form.temaTpv,
+        slaMesas: form.slaMesas,
+        capacidadEstaciones: form.capacidadEstaciones,
       });
       setConfig(data);
       setAlerta({
@@ -212,48 +227,6 @@ export default function RestauranteConfigPage() {
       setSaving(false);
     }
   };
-
-  /** === Guardar configuración SIF === */
-  const handleSaveSif = async () => {
-    setModalConfirmSif({
-      titulo: "Confirmar guardado",
-      mensaje: "¿Deseas guardar la configuración SIF?",
-      onConfirm: async () => {
-        try {
-          setSifLoading(true);
-          const payload = {
-            productor: {
-              nif: sifForm.cif,
-              nombreRazon: sifForm.razonSocial,
-            },
-            direccion: sifForm.direccion,
-            municipio: sifForm.municipio,
-            provincia: sifForm.provincia,
-            codigoPostal: sifForm.codigoPostal,
-            pais: sifForm.pais,
-          };
-          const { data } = await api.post("admin/verifactu/init-sif", payload);
-          setSifMensaje(
-            data.message || "Configuración SIF guardada correctamente ✅"
-          );
-          setAlerta({
-            tipo: "success",
-            mensaje: "Configuración SIF actualizada ✅",
-          });
-        } catch {
-          setAlerta({
-            tipo: "error",
-            mensaje: "Error al guardar configuración SIF.",
-          });
-        } finally {
-          setSifLoading(false);
-          setModalConfirmSif(null); // 👈 cerramos este modal
-        }
-      },
-      onClose: () => setModalConfirmSif(null),
-    });
-  };
-
   // === CRUD SECCIONES ===
   const crearSeccion = async () => {
     if (!nuevaSeccion.nombre.trim()) return;
@@ -508,307 +481,55 @@ export default function RestauranteConfigPage() {
           </section>
 
           {/* === APARIENCIA TPV === */}
-          <section className="config-card card config-card--tema">
+          <TemaTpvPanel
+            temaTpv={form.temaTpv}
+            setTemaTpv={(updater) =>
+              setForm((prev) => ({
+                ...prev,
+                temaTpv: typeof updater === "function" ? updater(prev.temaTpv) : updater,
+              }))
+            }
+          />
+
+          {/* === ESTILO GENERAL === */}
+          <section className="config-card card">
             <header className="config-card-header">
-              <h2>🖥️ Apariencia del TPV</h2>
+              <h2>🎨 Estilo general</h2>
               <p className="config-card-subtitle">
-                Personaliza los colores que verán los trabajadores en el TPV
-                (caja, cocina, barra). Estos ajustes no afectan a la carta
-                online.
+                Ajustes de fuente y tema del backoffice (no afectan a TPV ni a la
+                carta de los clientes).
               </p>
             </header>
 
-            <div className="tema-grid">
-              {/* Color principal */}
-              <div className="tema-item">
-                <span className="tema-label">Color principal</span>
-                <div className="tema-color-row">
-                  <span
-                    className="tema-color-preview"
-                    style={{
-                      backgroundColor:
-                        form.temaTpv?.colorPrincipal || "#9B1C1C",
-                    }}
-                  />
-                  <input
-                    type="color"
-                    value={form.temaTpv?.colorPrincipal || "#9B1C1C"}
-                    onChange={(e) =>
-                      setForm((prev) => ({
-                        ...prev,
-                        temaTpv: {
-                          ...prev.temaTpv,
-                          colorPrincipal: e.target.value,
-                        },
-                      }))
-                    }
-                  />
-                  <span className="tema-hex">
-                    {form.temaTpv?.colorPrincipal || "#9B1C1C"}
-                  </span>
-                </div>
-                <p className="tema-help">
-                  Barra lateral, encabezados y acentos principales.
-                </p>
-              </div>
-
-              {/* Color secundario */}
-              <div className="tema-item">
-                <span className="tema-label">Color secundario</span>
-                <div className="tema-color-row">
-                  <span
-                    className="tema-color-preview"
-                    style={{
-                      backgroundColor:
-                        form.temaTpv?.colorSecundario || "#4C5EA8",
-                    }}
-                  />
-                  <input
-                    type="color"
-                    value={form.temaTpv?.colorSecundario || "#4C5EA8"}
-                    onChange={(e) =>
-                      setForm((prev) => ({
-                        ...prev,
-                        temaTpv: {
-                          ...prev.temaTpv,
-                          colorSecundario: e.target.value,
-                        },
-                      }))
-                    }
-                  />
-                  <span className="tema-hex">
-                    {form.temaTpv?.colorSecundario || "#4C5EA8"}
-                  </span>
-                </div>
-                <p className="tema-help">
-                  Botones secundarios y etiquetas de estado.
-                </p>
-              </div>
-
-              {/* Fondo */}
-              <div className="tema-item">
-                <span className="tema-label">Fondo general</span>
-                <div className="tema-color-row">
-                  <span
-                    className="tema-color-preview"
-                    style={{
-                      backgroundColor: form.temaTpv?.fondo || "#5B1010",
-                    }}
-                  />
-                  <input
-                    type="color"
-                    value={form.temaTpv?.fondo || "#5B1010"}
-                    onChange={(e) =>
-                      setForm((prev) => ({
-                        ...prev,
-                        temaTpv: {
-                          ...prev.temaTpv,
-                          fondo: e.target.value,
-                        },
-                      }))
-                    }
-                  />
-                  <span className="tema-hex">
-                    {form.temaTpv?.fondo || "#5B1010"}
-                  </span>
-                </div>
-                <p className="tema-help">Fondo general de la app de TPV.</p>
-              </div>
-
-              {/* Texto */}
-              <div className="tema-item">
-                <span className="tema-label">Color del texto</span>
-                <div className="tema-color-row">
-                  <span
-                    className="tema-color-preview"
-                    style={{
-                      backgroundColor: form.temaTpv?.texto || "#ffffff",
-                    }}
-                  />
-                  <input
-                    type="color"
-                    value={form.temaTpv?.texto || "#ffffff"}
-                    onChange={(e) =>
-                      setForm((prev) => ({
-                        ...prev,
-                        temaTpv: {
-                          ...prev.temaTpv,
-                          texto: e.target.value,
-                        },
-                      }))
-                    }
-                  />
-                  <span className="tema-hex">
-                    {form.temaTpv?.texto || "#ffffff"}
-                  </span>
-                </div>
-                <p className="tema-help">Texto principal del TPV.</p>
-              </div>
-
-              {/* Fondo tarjetas */}
-              <div className="tema-item">
-                <span className="tema-label">Fondo de tarjetas</span>
-                <div className="tema-color-row">
-                  <span
-                    className="tema-color-preview"
-                    style={{
-                      backgroundColor: form.temaTpv?.cardBg || "#3a3a3a",
-                    }}
-                  />
-                  <input
-                    type="color"
-                    value={form.temaTpv?.cardBg || "#3a3a3a"}
-                    onChange={(e) =>
-                      setForm((prev) => ({
-                        ...prev,
-                        temaTpv: {
-                          ...prev.temaTpv,
-                          cardBg: e.target.value,
-                        },
-                      }))
-                    }
-                  />
-                  <span className="tema-hex">
-                    {form.temaTpv?.cardBg || "#3a3a3a"}
-                  </span>
-                </div>
-                <p className="tema-help">
-                  Tarjetas de mesas, pedidos y paneles.
-                </p>
-              </div>
-
-              {/* Borde tarjetas */}
-              <div className="tema-item">
-                <span className="tema-label">Borde de tarjetas</span>
-                <div className="tema-color-row">
-                  <span
-                    className="tema-color-preview"
-                    style={{
-                      backgroundColor:
-                        form.temaTpv?.cardBorde || "#555555",
-                    }}
-                  />
-                  <input
-                    type="color"
-                    value={form.temaTpv?.cardBorde || "#555555"}
-                    onChange={(e) =>
-                      setForm((prev) => ({
-                        ...prev,
-                        temaTpv: {
-                          ...prev.temaTpv,
-                          cardBorde: e.target.value,
-                        },
-                      }))
-                    }
-                  />
-                  <span className="tema-hex">
-                    {form.temaTpv?.cardBorde || "#555555"}
-                  </span>
-                </div>
-              </div>
-
-              {/* Botones */}
-              <div className="tema-item">
-                <span className="tema-label">Color de botones</span>
-                <div className="tema-color-row">
-                  <span
-                    className="tema-color-preview"
-                    style={{
-                      backgroundColor: form.temaTpv?.boton || "#4C5EA8",
-                    }}
-                  />
-                  <input
-                    type="color"
-                    value={form.temaTpv?.boton || "#4C5EA8"}
-                    onChange={(e) =>
-                      setForm((prev) => ({
-                        ...prev,
-                        temaTpv: {
-                          ...prev.temaTpv,
-                          boton: e.target.value,
-                        },
-                      }))
-                    }
-                  />
-                  <span className="tema-hex">
-                    {form.temaTpv?.boton || "#4C5EA8"}
-                  </span>
-                </div>
-              </div>
-
-              {/* Hover botones */}
-              <div className="tema-item">
-                <span className="tema-label">Hover de botones</span>
-                <div className="tema-color-row">
-                  <span
-                    className="tema-color-preview"
-                    style={{
-                      backgroundColor:
-                        form.temaTpv?.botonHover || "#3C4C8A",
-                    }}
-                  />
-                  <input
-                    type="color"
-                    value={form.temaTpv?.botonHover || "#3C4C8A"}
-                    onChange={(e) =>
-                      setForm((prev) => ({
-                        ...prev,
-                        temaTpv: {
-                          ...prev.temaTpv,
-                          botonHover: e.target.value,
-                        },
-                      }))
-                    }
-                  />
-                  <span className="tema-hex">
-                    {form.temaTpv?.botonHover || "#3C4C8A"}
-                  </span>
-                </div>
-              </div>
+            <div className="config-field">
+              <label>Fuente principal</label>
+              <input
+                type="text"
+                value={form.estilo.fuente || ""}
+                onChange={(e) =>
+                  setForm((prev) => ({
+                    ...prev,
+                    estilo: { ...prev.estilo, fuente: e.target.value },
+                  }))
+                }
+              />
             </div>
 
-            {/* Vista previa rápida del TPV */}
-            <div
-              className="tpv-preview"
-              style={{
-                backgroundColor: form.temaTpv?.fondo || "#5B1010",
-              }}
-            >
-              <aside
-                className="tpv-preview-sidebar"
-                style={{
-                  backgroundColor:
-                    form.temaTpv?.colorPrincipal || "#9B1C1C",
-                }}
+            <div className="config-field">
+              <label>Tema</label>
+              <select
+                value={form.estilo.tema || "claro"}
+                onChange={(e) =>
+                  setForm((prev) => ({
+                    ...prev,
+                    estilo: { ...prev.estilo, tema: e.target.value },
+                  }))
+                }
               >
-                TPV
-              </aside>
-
-              <div className="tpv-preview-main">
-                <div
-                  className="tpv-preview-card"
-                  style={{
-                    backgroundColor: form.temaTpv?.cardBg || "#3a3a3a",
-                    borderColor:
-                      form.temaTpv?.cardBorde || "#555555",
-                    color: form.temaTpv?.texto || "#ffffff",
-                  }}
-                >
-                  <div className="tpv-preview-card-title">Mesa 3</div>
-                  <div className="tpv-preview-card-body">
-                    <span>12,00 €</span>
-                    <button
-                      className="tpv-preview-btn"
-                      style={{
-                        backgroundColor:
-                          form.temaTpv?.boton || "#4C5EA8",
-                      }}
-                    >
-                      Cobrar
-                    </button>
-                  </div>
-                </div>
-              </div>
+                <option value="claro">Claro</option>
+                <option value="oscuro">Oscuro</option>
+                <option value="auto">Automático</option>
+              </select>
             </div>
           </section>
 
@@ -1012,47 +733,21 @@ export default function RestauranteConfigPage() {
             </section>
           )}
 
-          {/* === ESTILO GENERAL === */}
-          <section className="config-card card">
-            <header className="config-card-header">
-              <h2>🎨 Estilo general</h2>
-              <p className="config-card-subtitle">
-                Ajustes de fuente y tema del backoffice (no afectan a TPV ni a la
-                carta de los clientes).
-              </p>
-            </header>
+          <PlanFeaturesPanel onAlert={setAlerta} />
 
-            <div className="config-field">
-              <label>Fuente principal</label>
-              <input
-                type="text"
-                value={form.estilo.fuente || ""}
-                onChange={(e) =>
-                  setForm((prev) => ({
-                    ...prev,
-                    estilo: { ...prev.estilo, fuente: e.target.value },
-                  }))
-                }
-              />
-            </div>
+          <OperativaSlaCapacidadPanel
+            form={form}
+            setForm={setForm}
+            onAlert={setAlerta}
+          />
 
-            <div className="config-field">
-              <label>Tema</label>
-              <select
-                value={form.estilo.tema || "claro"}
-                onChange={(e) =>
-                  setForm((prev) => ({
-                    ...prev,
-                    estilo: { ...prev.estilo, tema: e.target.value },
-                  }))
-                }
-              >
-                <option value="claro">Claro</option>
-                <option value="oscuro">Oscuro</option>
-                <option value="auto">Automático</option>
-              </select>
-            </div>
-          </section>
+          {!isPlanEsencial && (
+            <EstacionesCapacidadPanel
+              estaciones={estaciones}
+              setEstaciones={setEstaciones}
+              onAlert={setAlerta}
+            />
+          )}
         </div>
       </div>
 

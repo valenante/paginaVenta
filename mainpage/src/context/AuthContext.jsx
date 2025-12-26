@@ -63,12 +63,17 @@ export function AuthProvider({ children }) {
   }, [setTenantId]);
 
   const logout = async () => {
-    await api.post("/auth/logout"); // borra cookies en backend
-    setUser(null);
-    sessionStorage.removeItem("tenantId");
-    sessionStorage.removeItem("impersonado");
-    sessionStorage.removeItem("user");
-    window.location.href = "/login";
+    try {
+      await api.post("/auth/logout");
+    } finally {
+      setUser(null);
+      sessionStorage.removeItem("tenantId");
+      sessionStorage.removeItem("impersonado");
+      sessionStorage.removeItem("user");
+
+      // 👇 CLAVE: no dejes /pro en el historial
+      window.location.replace("/login");
+    }
   };
 
   return (

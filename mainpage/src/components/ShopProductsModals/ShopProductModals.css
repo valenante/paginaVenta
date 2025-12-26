@@ -1,0 +1,46 @@
+.shopprod-modal {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.14);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.shopprod-modal__title {
+  margin: 0 0 var(--espaciado-base) 0;
+  font-weight: var(--peso-black);
+}
+
+.shopprod-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaciado-s);
+}
+
+.shopprod-field span {
+  display: block;
+  font-size: var(--texto-xs);
+  color: var(--texto-muted);
+  margin-bottom: 6px;
+}
+
+.shopprod-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--espaciado-s);
+}
+
+.shopprod-actions {
+  display: flex;
+  gap: var(--espaciado-s);
+  margin-top: var(--espaciado-base);
+}
+
+.shopprod-actions button {
+  width: 50%;
+}
+
+@media (max-width: 720px) {
+  .shopprod-row {
+    grid-template-columns: 1fr;
+  }
+}

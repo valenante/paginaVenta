@@ -1,0 +1,400 @@
+/* =========================================================
+   VENTAS PAGE SHOP — Estilo Premium Alef (igual a StockPage)
+   ---------------------------------------------------------
+   - Glassmorphism con blur 14px
+   - Fondo radial oscuro
+   - Pills + badges + tabla con hover
+   - Responsive: filtros apilados + tabla scrolleable
+   ========================================================= */
+
+:root {
+  --glass-bg: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --shadow-deep: 0 12px 32px rgba(0, 0, 0, 0.35);
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --radius-pill: 999px;
+}
+
+/* ===== ROOT ===== */
+.shops-page--ventas {
+  padding: 2rem 2.5rem;
+  color: #f8fafc;
+  background: radial-gradient(circle at top right, #141423, #0a0a13 70%);
+  min-height: 100vh;
+  animation: ventasFadeIn 0.25s ease-out;
+}
+
+@keyframes ventasFadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== HEADER ===== */
+.shops-page__header {
+  background: var(--glass-bg);
+  backdrop-filter: blur(14px);
+  padding: 1.8rem 2rem;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-deep);
+  margin-bottom: 2rem;
+
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.shops-page__headLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.shops-page__title {
+  margin: 0;
+  font-size: 1.7rem;
+  font-weight: 800;
+  color: #fff;
+}
+
+.shops-page__subtitle {
+  margin: 0;
+  opacity: 0.8;
+  font-size: 0.95rem;
+}
+
+.shops-page__metaRow {
+  margin-top: 0.8rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem 0.7rem;
+  align-items: center;
+}
+
+.shops-badge {
+  padding: 6px 12px;
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #e2e8f0;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.shops-metaText {
+  opacity: 0.75;
+  font-size: 0.85rem;
+  color: #cbd5e1;
+}
+
+/* ===== ACTIONS ===== */
+.shops-page__actions {
+  display: flex;
+  gap: 0.8rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* Reutiliza estética del stock */
+.btn-ghost,
+.btn-secondary {
+  padding: 0.55rem 1.2rem;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition: 0.22s ease;
+  font-weight: 600;
+  font-size: 0.92rem;
+}
+
+/* Ghost */
+.btn-ghost {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #e2e8f0;
+}
+
+.btn-ghost:hover {
+  background: rgba(255, 255, 255, 0.12);
+  transform: translateY(-1px);
+}
+
+.btn-ghost:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Secondary (gradiente premium) */
+.btn-secondary {
+  border: none;
+  color: #fff;
+  background: linear-gradient(90deg, #6a0dad, #ff6700);
+  box-shadow: 0 4px 14px rgba(255, 103, 0, 0.28),
+              0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+
+.btn-secondary:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.08);
+  box-shadow: 0 6px 20px rgba(255, 103, 0, 0.45);
+}
+
+.btn-secondary:active {
+  transform: translateY(0);
+  filter: brightness(0.92);
+}
+
+/* ===== CARD ===== */
+.shops-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(14px);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-deep);
+}
+
+.shops-card--pad {
+  padding: 1.6rem 1.8rem;
+}
+
+.shops-card--glass {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* ===== FILTERS ===== */
+.shops-filters {
+  display: flex;
+  justify-content: space-between;
+  gap: 1.2rem;
+  margin-bottom: 1.2rem;
+}
+
+.shops-filters__left {
+  display: grid;
+  grid-template-columns: 1.4fr repeat(5, minmax(140px, 1fr));
+  gap: 0.9rem;
+  width: 100%;
+  align-items: end;
+}
+
+.shops-filters__right {
+  display: flex;
+  gap: 0.9rem;
+  align-items: end;
+  flex-shrink: 0;
+}
+
+.shops-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.shops-field label {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #e2e8f0;
+  opacity: 0.9;
+}
+
+.shops-field input,
+.shops-field select {
+  padding: 0.55rem 0.9rem;
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #e5e7eb;
+  font-size: 0.9rem;
+  outline: none;
+  transition: 0.2s ease;
+}
+
+.shops-field input::placeholder {
+  color: rgba(226, 232, 240, 0.55);
+}
+
+.shops-field input:focus,
+.shops-field select:focus {
+  border-color: #a855f7;
+  box-shadow: 0 0 0 2px rgba(168, 85, 247, 0.45);
+}
+
+.shops-field--small select {
+  min-width: 110px;
+}
+
+/* ===== ALERTS ===== */
+.shops-alert {
+  margin: 0.6rem 0 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.28);
+  font-weight: 600;
+}
+
+.shops-alert--error {
+  background: rgba(255, 80, 80, 0.12);
+  border-color: rgba(255, 80, 80, 0.28);
+  color: #ffb4b4;
+}
+
+.shops-alert--info {
+  background: rgba(56, 189, 248, 0.10);
+  border-color: rgba(56, 189, 248, 0.22);
+  color: #bae6fd;
+}
+
+/* ===== EMPTY ===== */
+.shops-empty {
+  padding: 2rem 1rem;
+  text-align: center;
+  color: #e2e8f0;
+  opacity: 0.9;
+}
+
+.shops-empty__title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  margin-bottom: 0.4rem;
+}
+
+.shops-empty__text {
+  font-size: 0.95rem;
+  opacity: 0.85;
+}
+
+/* ===== TABLE ===== */
+.shops-tableWrap {
+  width: 100%;
+  overflow: auto;
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  background: rgba(0, 0, 0, 0.20);
+}
+
+.shops-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 980px; /* permite scroll en pantallas chicas */
+}
+
+.shops-table thead th {
+  text-align: left;
+  font-size: 0.8rem;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: rgba(226, 232, 240, 0.9);
+  padding: 0.85rem 0.9rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.shops-table tbody td {
+  padding: 0.85rem 0.9rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  color: #e5e7eb;
+  font-size: 0.92rem;
+  vertical-align: middle;
+}
+
+.shops-table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.t-right {
+  text-align: right;
+}
+
+.mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+    "Courier New", monospace;
+  font-size: 0.88rem;
+  opacity: 0.95;
+}
+
+/* ===== PILL (estado) ===== */
+.shops-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 12px;
+  border-radius: var(--radius-pill);
+  font-size: 0.78rem;
+  font-weight: 800;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.shops-pill.is-ok {
+  background: linear-gradient(90deg, rgba(56, 176, 0, 0.65), rgba(112, 224, 0, 0.65));
+  color: #fff;
+  border-color: rgba(112, 224, 0, 0.25);
+}
+
+.shops-pill.is-bad {
+  background: linear-gradient(90deg, rgba(208, 0, 0, 0.65), rgba(255, 89, 94, 0.65));
+  color: #fff;
+  border-color: rgba(255, 89, 94, 0.25);
+}
+
+/* ===== PAGER ===== */
+.shops-pager {
+  margin-top: 1.3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.7rem;
+  color: #e5e7eb;
+  flex-wrap: wrap;
+}
+
+.shops-pager__info {
+  padding: 0.4rem 0.9rem;
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 1100px) {
+  .shops-filters__left {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .shops-page--ventas {
+    padding: 1.2rem;
+  }
+
+  .shops-page__header {
+    padding: 1.4rem;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .shops-page__actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .shops-filters {
+    flex-direction: column;
+    gap: 0.9rem;
+  }
+
+  .shops-filters__left {
+    grid-template-columns: 1fr;
+  }
+
+  .shops-filters__right {
+    justify-content: space-between;
+  }
+
+  .shops-table {
+    min-width: 860px; /* sigue scrolleable pero un poco más compacto */
+  }
+}

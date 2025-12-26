@@ -21,6 +21,7 @@ const RUTAS_GLOBALES = [
   "superadmin",
   "forgot-password",
   "reset-password",
+  "pro"
 ];
 
 /* ======================================================================

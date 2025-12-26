@@ -101,7 +101,12 @@ export default function DashboardPage() {
             Alef.
           </p>
         </Link>
-
+        {/* 👉 SIEMPRE visible */}
+        <Link to="/configuracion/impresion" className="dashboard-tile card">
+          <div className="dashboard-tile-icon">🖨️</div>
+          <h2>Impresión</h2>
+          <p>Asigna impresoras a cocina/barra/caja y haz pruebas.</p>
+        </Link>
         {/* Estas dos solo si el plan NO es esencial */}
         {!isPlanEsencial && (
           <>
@@ -123,12 +128,7 @@ export default function DashboardPage() {
               </p>
             </Link>
 
-            {/* 👉 SIEMPRE visible */}
-            <Link to="/configuracion/impresion" className="dashboard-tile card">
-              <div className="dashboard-tile-icon">🖨️</div>
-              <h2>Impresión</h2>
-              <p>Asigna impresoras a cocina/barra/caja y haz pruebas.</p>
-            </Link>
+
           </>
         )}
       </section>

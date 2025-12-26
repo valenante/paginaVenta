@@ -14,9 +14,6 @@ import UpsellEstadisticasPro from "../components/Estadisticas/UpsellEstadisticas
 
 import "../components/Estadisticas/EstadisticasFinal.css";
 
-const log = (msg, data) =>
-  console.log(`%c[ESTADISTICAS] ${msg}`, "color:#ff6700;font-weight:bold", data);
-
 const EstadisticasPage = ({ type = "plato" }) => {
   const { categories, fetchCategories, products, fetchProducts } = useCategorias();
 
@@ -32,7 +29,6 @@ const EstadisticasPage = ({ type = "plato" }) => {
    * NORMALIZAR CATEGORÍAS
    * ===================================================== */
   const categoriasNormalizadas = useMemo(() => {
-    log("📌 RE-CALCULANDO categoriasNormalizadas", categories);
 
     if (!categories) return [];
 
@@ -41,8 +37,6 @@ const EstadisticasPage = ({ type = "plato" }) => {
 
     const ordenadas = sinDuplicados.sort((a, b) => a.localeCompare(b));
 
-    log("✔ categoriasNormalizadas RESULTADO", ordenadas);
-
     return ordenadas;
   }, [categories]);
 
@@ -50,8 +44,6 @@ const EstadisticasPage = ({ type = "plato" }) => {
    * 1) Cargar categorías según tipo
    * ===================================================== */
   useEffect(() => {
-    log("🔄 CAMBIO tipo → fetchCategories()", tipo);
-
     if (!tipo) return;
 
     fetchCategories(tipo);
@@ -65,13 +57,8 @@ const EstadisticasPage = ({ type = "plato" }) => {
    * 2) Seleccionar primera categoría SOLO si es null
    * ===================================================== */
   useEffect(() => {
-    log("👀 useEffect categoriasNormalizadas", {
-      categoriasNormalizadas,
-      selectedCategory,
-    });
 
     if (!selectedCategory && categoriasNormalizadas.length > 0) {
-      log("➡ AUTO-SELECT primera categoría", categoriasNormalizadas[0]);
       setSelectedCategory(categoriasNormalizadas[0]);
     }
   }, [categoriasNormalizadas]);
@@ -80,14 +67,6 @@ const EstadisticasPage = ({ type = "plato" }) => {
    * 3) Cargar productos cuando cambia la categoría
    * ===================================================== */
   useEffect(() => {
-    log("🟦 Cambio selectedCategory", selectedCategory);
-
-    if (!selectedCategory) {
-      log("⛔ NO se carga fetchProducts porque no hay categoría");
-      return;
-    }
-
-    log("📥 fetchProducts()", selectedCategory);
     fetchProducts(selectedCategory);
 
   }, [selectedCategory]);
@@ -96,16 +75,9 @@ const EstadisticasPage = ({ type = "plato" }) => {
    * 4) Filtrar productos
    * ===================================================== */
   const productosCategoria = useMemo(() => {
-    log("🔍 Filtrando productos por categoría", {
-      selectedCategory,
-      totalProducts: products?.length,
-    });
-
     const result = (products || []).filter(
       (p) => p.categoria === selectedCategory
     );
-
-    log("✔ productosCategoria", result);
     return result;
   }, [products, selectedCategory]);
 
@@ -113,7 +85,6 @@ const EstadisticasPage = ({ type = "plato" }) => {
    * 5) Hook estadísticas
    * ===================================================== */
   const stats = useEstadisticasCategoria(productosCategoria, selectedDate);
-  log("📊 Estadísticas generadas", stats);
 
   const {
     loading,
@@ -137,7 +108,6 @@ const EstadisticasPage = ({ type = "plato" }) => {
    * 6) Estado de carga inicial
    * ===================================================== */
   if (!categoriasNormalizadas || categoriasNormalizadas.length === 0) {
-    log("⏳ Esperando categorías...");
     return (
       <div className="estadisticas-final--estadisticas">
         <p className="mensaje-carga--estadisticas">
@@ -150,30 +120,21 @@ const EstadisticasPage = ({ type = "plato" }) => {
   /* =====================================================
    * 7) Render principal
    * ===================================================== */
-  log("🔰 Render principal", {
-    tipo,
-    selectedCategory,
-    selectedDate,
-  });
-
   return (
     <div className="estadisticas-root">
       <div className="estadisticas-page">
         <StatsFilterBar
           tipo={tipo}
           onChangeTipo={(t) => {
-            log("🟥 Cambio manual TIPO", t);
             setTipo(t);
           }}
           categories={categoriasNormalizadas}
           selectedCategory={selectedCategory}
           onChangeCategory={(cat) => {
-            log("🟨 Cambio manual CATEGORIA desde Select", cat);
             setSelectedCategory(cat);
           }}
           selectedDate={selectedDate}
           onChangeDate={(d) => {
-            log("🟩 Cambio manual FECHA", d);
             setSelectedDate(d);
           }}
         />

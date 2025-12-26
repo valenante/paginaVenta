@@ -338,21 +338,6 @@ export default function MiCuentaPage() {
 
           {sifMensaje && <p className="micuenta-msg">{sifMensaje}</p>}
         </div>
-
-        {/* USUARIO */}
-        <div className="micuenta-card">
-          <h2>Tu Usuario</h2>
-
-          <div className="micuenta-info-row">
-            <span className="micuenta-label">Nombre:</span>
-            <span className="micuenta-value">{user?.name}</span>
-          </div>
-
-          <div className="micuenta-info-row">
-            <span className="micuenta-label">Email:</span>
-            <span className="micuenta-value">{user?.email}</span>
-          </div>
-        </div>
       </div>
     </main>
   );

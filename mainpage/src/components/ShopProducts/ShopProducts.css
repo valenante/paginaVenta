@@ -1,0 +1,112 @@
+.shopproducts-root {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaciado-base);
+}
+
+.shopproducts-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--espaciado-base);
+}
+
+.shopproducts-title {
+  margin: 0;
+  font-size: var(--texto-lg);
+  font-weight: var(--peso-black);
+}
+
+.shopproducts-title span {
+  opacity: 0.9;
+}
+
+.shopproducts-subtitle {
+  margin-top: 6px;
+  color: var(--texto-muted);
+  font-size: var(--texto-sm);
+}
+
+.shopproducts-create {
+  white-space: nowrap;
+}
+
+.shopproducts-empty {
+  padding: var(--espaciado-l);
+  border-radius: var(--borde-redondeado-xl);
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.14);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: var(--sombra-suave);
+}
+
+.shopproducts-empty__title {
+  font-weight: var(--peso-black);
+  font-size: var(--texto-lg);
+  margin-bottom: 6px;
+}
+
+.shopproducts-empty__text {
+  color: var(--texto-muted);
+  margin-bottom: var(--espaciado-base);
+}
+
+.shopproducts-categoriesCard {
+  padding: var(--espaciado-base);
+  border-radius: var(--borde-redondeado-xl);
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.14);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: var(--sombra-suave);
+}
+
+.shopproducts-categoriesTitle {
+  margin: 0 0 var(--espaciado-s) 0;
+  font-size: var(--texto-base);
+  font-weight: var(--peso-black);
+}
+
+.shopproducts-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espaciado-s);
+}
+
+.shopproducts-pill {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.14);
+  color: var(--texto);
+  padding: 0.55rem 0.85rem;
+  border-radius: 999px;
+  font-weight: var(--peso-bold);
+}
+
+.shopproducts-pill:hover {
+  background: rgba(255,255,255,0.12);
+}
+
+.shopproducts-footer {
+  margin-top: var(--espaciado-base);
+  display: flex;
+  justify-content: flex-end;
+}
+
+.shopproducts-categoryPanel {
+  padding-top: var(--espaciado-s);
+}
+
+.shopproducts-categoryPanelHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espaciado-base);
+  margin-bottom: var(--espaciado-s);
+}
+
+.shopproducts-categoryName {
+  margin: 0;
+  font-size: var(--texto-base);
+  font-weight: var(--peso-black);
+}

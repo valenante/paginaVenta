@@ -1,0 +1,13 @@
+.shopstock-modal h3 {
+  margin: 0 0 10px 0;
+}
+
+.shopstock-modal__actions {
+  display: flex;
+  gap: var(--espaciado-s);
+  margin-top: var(--espaciado-base);
+}
+
+.shopstock-modal__actions button {
+  width: 50%;
+}

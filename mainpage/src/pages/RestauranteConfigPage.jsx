@@ -735,11 +735,13 @@ export default function RestauranteConfigPage() {
 
           <PlanFeaturesPanel onAlert={setAlerta} />
 
-          <OperativaSlaCapacidadPanel
-            form={form}
-            setForm={setForm}
-            onAlert={setAlerta}
-          />
+          {!isPlanEsencial && (
+            <OperativaSlaCapacidadPanel
+              form={form}
+              setForm={setForm}
+              onAlert={setAlerta}
+            />
+          )}
 
           {!isPlanEsencial && (
             <EstacionesCapacidadPanel

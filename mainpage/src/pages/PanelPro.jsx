@@ -1,87 +1,85 @@
 // src/pages/PanelPro.jsx
-import React, { useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
+import "../styles/PanelPro.css";
 
-// Módulos / páginas
+// ✅ Restaurante (los que ya existen y NO tocamos)
 import EstadisticasPage from "./EstadisticasPage";
 import CajaDiaria from "../components/CajaDiariaUltraPro/CajaDiariaUltraPro";
 import UsuariosPage from "../components/Usuarios/UsuariosPage";
 import MapaEditor from "./MapaEditor";
-import ProductsPage from "./ProductsMenu";
+import ProductsMenu from "./ProductsMenu";
 import StockPage from "./StockPage";
-import ValoracionesPanel from "./ValoracionesPanel"; // 👈 NUEVO
+import ValoracionesPanel from "./ValoracionesPanel";
 
-import "../styles/PanelPro.css";
+// ✅ Tienda (placeholders nuevos con sufijo Shop — los crearemos luego)
+import VentasPageShop from "./VentasPageShop";
+import ProductosPageShop from "./ProductosPageShop";
+import StockPageShop from "./StockPageShop";
 
-const PanelPro = () => {
-  const [active, setActive] = useState("estadisticas");
+// ✅ Tenant
+import { useTenant } from "../context/TenantContext";
+
+const PANEL_BY_TIPO = {
+  restaurante: [
+    { key: "estadisticas", label: "📊 Estadísticas", render: () => <EstadisticasPage type="plato" /> },
+    { key: "caja", label: "💶 Caja diaria", render: () => <CajaDiaria /> },
+    { key: "usuarios", label: "👥 Usuarios", render: () => <UsuariosPage /> },
+    { key: "mapa", label: "🗺️ Mapa del restaurante", render: () => <MapaEditor /> },
+    { key: "productos", label: "🧾 Carta y productos", render: () => <ProductsMenu /> },
+    { key: "stock", label: "📦 Stock", render: () => <StockPage /> },
+    { key: "valoraciones", label: "⭐ Valoraciones", render: () => <ValoracionesPanel /> },
+  ],
+
+  tienda: [
+    // ⚠️ POS fuera del panel (está en navbar / ruta propia)
+    { key: "ventas", label: "📈 Ventas", render: () => <VentasPageShop /> },
+    { key: "productos", label: "🏷️ Productos", render: () => <ProductosPageShop /> },
+    { key: "stock", label: "📦 Stock", render: () => <StockPageShop /> },
+    { key: "caja", label: "💶 Caja", render: () => <CajaDiaria /> }, // reutilizamos la misma caja
+    { key: "usuarios", label: "👥 Usuarios", render: () => <UsuariosPage /> }, // reutilizamos usuarios
+  ],
+};
+
+export default function PanelPro() {
+  const { tenant, loadingTenant, tenantError } = useTenant();
+  // ✅ tipoNegocio ahora está en tenant
+  const tipoNegocio = (
+    tenant?.tipoNegocio ||
+    tenant?.suscripcion?.tipoNegocio ||
+    "tienda"
+  ).toLowerCase();
+  console.log(tenant)
+
+  const tabs = useMemo(() => {
+    return PANEL_BY_TIPO[tipoNegocio] || PANEL_BY_TIPO.tienda;
+  }, [tipoNegocio]);
+
+  const [active, setActive] = useState(tabs[0]?.key || "ventas");
+
+  // ✅ si cambia tipoNegocio (o tabs), asegurar que active existe
+  useEffect(() => {
+    if (!tabs.some((t) => t.key === active)) {
+      setActive(tabs[0]?.key || "ventas");
+    }
+  }, [tabs, active]);
+
+  const current = tabs.find((t) => t.key === active);
 
   return (
     <div className="panelpro-root">
-      {/* ====== TABS SUPERIORES ====== */}
       <div className="panelpro-tabs">
-        <button
-          className={active === "estadisticas" ? "active" : ""}
-          onClick={() => setActive("estadisticas")}
-        >
-          📊 Estadísticas
-        </button>
-
-        <button
-          className={active === "caja" ? "active" : ""}
-          onClick={() => setActive("caja")}
-        >
-          💶 Caja diaria
-        </button>
-
-        <button
-          className={active === "usuarios" ? "active" : ""}
-          onClick={() => setActive("usuarios")}
-        >
-          👥 Usuarios
-        </button>
-
-        <button
-          className={active === "mapa" ? "active" : ""}
-          onClick={() => setActive("mapa")}
-        >
-          🗺️ Mapa del restaurante
-        </button>
-
-        <button
-          className={active === "productos" ? "active" : ""}
-          onClick={() => setActive("productos")}
-        >
-          🧾 Carta y productos
-        </button>
-
-        <button
-          className={active === "stock" ? "active" : ""}
-          onClick={() => setActive("stock")}
-        >
-          📦 Stock
-        </button>
-
-        {/* ⭐ NUEVA PESTAÑA: VALORACIONES */}
-        <button
-          className={active === "valoraciones" ? "active" : ""}
-          onClick={() => setActive("valoraciones")}
-        >
-          ⭐ Valoraciones
-        </button>
+        {tabs.map((t) => (
+          <button
+            key={t.key}
+            className={active === t.key ? "active" : ""}
+            onClick={() => setActive(t.key)}
+          >
+            {t.label}
+          </button>
+        ))}
       </div>
 
-      {/* ====== CONTENIDO ====== */}
-      <div className="panelpro-content">
-        {active === "estadisticas" && <EstadisticasPage type="plato" />}
-        {active === "caja" && <CajaDiaria />}
-        {active === "usuarios" && <UsuariosPage />}
-        {active === "mapa" && <MapaEditor />}
-        {active === "productos" && <ProductsPage />}
-        {active === "stock" && <StockPage />}
-        {active === "valoraciones" && <ValoracionesPanel />} {/* 👈 NUEVO */}
-      </div>
+      <div className="panelpro-content">{current?.render?.()}</div>
     </div>
   );
-};
-
-export default PanelPro;
+}

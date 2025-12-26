@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTenant } from "../context/TenantContext";
 import api from "../utils/api";
 import "../styles/Login.css";
 
@@ -14,6 +15,7 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const { setTenantId, clearTenant } = useTenant();
 
   // ============================
   // 🔧 Manejo del formulario
@@ -41,12 +43,14 @@ export default function Login() {
       const meRes = await api.get("/auth/me/me");
       const user = meRes.data.user;
 
-      console.log("USER DESDE /auth/me/me EN LOGIN:", user);
+      // Limpia errores anteriores (por si venías de /esto-no-existe)
+      clearTenant();
 
-      // Guardar info de usuario para UI / impersonado (NO para auth)
+      // Guarda (como ya haces)
       sessionStorage.setItem("user", JSON.stringify(user));
       if (user.tenantId) {
         sessionStorage.setItem("tenantId", user.tenantId);
+        setTenantId(user.tenantId); // ✅ CLAVE
       }
 
       // 1️⃣ SUPERADMIN → Panel central Alef

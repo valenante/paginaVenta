@@ -1,7 +1,6 @@
 // src/App.jsx
 import React, { useEffect } from "react";
 import {
-  BrowserRouter as Router,
   Routes,
   Route,
   useLocation,
@@ -17,6 +16,7 @@ import Packs from "./components/Packs/Packs";
 import About from "./components/About/About";
 import Contact from "./components/Contact/Contact";
 import LoadingScreen from "./components/LoadingScreen/LoadingScreen";
+import TenantErrorScreen from "./components/TenantErrorScreen/TenantErrorScreen";
 
 // 🔐 Auth
 import Login from "./pages/Login";
@@ -58,10 +58,11 @@ import { FeaturesPlanProvider } from "./context/FeaturesPlanContext.jsx";
 // 🧠 Contextos para decidir qué ver en la home
 import { useAuth } from "./context/AuthContext.jsx";
 import { useConfig } from "./context/ConfigContext.jsx";
-import { useTenant } from "./context/TenantContext.jsx";
+import { TenantProvider, useTenant } from "./context/TenantContext.jsx";
 import { useFeaturesPlan } from "./context/FeaturesPlanContext.jsx";
 import { ProductosProvider } from "./context/ProductosContext.jsx";
 import { SocketProvider } from "./utils/socket.jsx";
+import { VentasProvider } from "./context/VentasContext";
 import UserLayout from "./layouts/UserLayout";
 
 
@@ -73,6 +74,7 @@ import CajaDiaria from "./components/CajaDiariaUltraPro/CajaDiariaUltraPro";
 
 import "./index.css";
 import { CategoriasProvider } from "./context/CategoriasContext";
+import { ShopCategoriasProvider } from "./context/ShopCategoriasContext";
 import { ImagesProvider } from "./context/ImagesContext";
 import Funcionamiento from "./components/Funcionamiento/Funcionamiento";
 import ConfigImpresionPage from "./pages/ConfigImpresionPage";
@@ -119,12 +121,10 @@ function LandingPage() {
    ========================================== */
 function HomeEntry() {
   const { user } = useAuth();
-  const { tenantId } = useTenant();
+  const { tenantId, tenantError } = useTenant();
   const { hasFeature, loading } = useFeaturesPlan();
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  if (loading) return <LoadingScreen />;
 
   const isPro =
     !!user &&
@@ -147,6 +147,16 @@ function HomeEntry() {
    RUTAS DE LA APLICACIÓN
    ============================= */
 function AppRoutes() {
+  const { tenantId, tenantError } = useTenant();
+  if (tenantError) {
+    return (
+      <TenantErrorScreen
+        error={tenantError}
+        onRetry={() => window.location.reload()}
+        showDetails={import.meta?.env?.DEV}
+      />
+    );
+  }
   return (
     <Routes>
       {/* 🏠 HOME:
@@ -264,7 +274,9 @@ function AppRoutes() {
         path="/pro"
         element={
           <UserLayout>
-            <PanelPro />
+            <VentasProvider tenantId={tenantId}>
+              <PanelPro />
+            </VentasProvider>
           </UserLayout>
         }
       />
@@ -290,37 +302,33 @@ export default function App() {
   const [loadingApp, setLoadingApp] = React.useState(true);
 
   React.useEffect(() => {
-    // ⏳ Mínimo 700 ms de pantalla de carga (animación estética)
-    const timer = setTimeout(() => {
-      setLoadingApp(false);
-    }, 700);
-
+    const timer = setTimeout(() => setLoadingApp(false), 700);
     return () => clearTimeout(timer);
   }, []);
 
   return (
-    <Router>
-      <SocketProvider>   {/* ← NECESARIO */}
+    <>
+      <SocketProvider>
         <ImagesProvider>
           <FeaturesPlanProvider>
             <CategoriasProvider>
-              <ProductosProvider>   {/* ← Ahora sí puede usar socket */}
+              <ShopCategoriasProvider>
+                <ProductosProvider>
+                  {loadingApp && <LoadingScreen />}
 
-                {loadingApp && <LoadingScreen />}
-
-                {!loadingApp && (
-                  <>
-                    <VerifactuGlobalModal />
-                    <AppRoutes />
-                  </>
-                )}
-
-              </ProductosProvider>
+                  {!loadingApp && (
+                    <>
+                      <VerifactuGlobalModal />
+                      <AppRoutes />
+                    </>
+                  )}
+                </ProductosProvider>
+              </ShopCategoriasProvider>
             </CategoriasProvider>
           </FeaturesPlanProvider>
         </ImagesProvider>
       </SocketProvider>
-    </Router>
+    </>
   );
 }
 

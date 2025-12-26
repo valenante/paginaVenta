@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext.jsx";
+import { useTenant } from "../../context/TenantContext"; // ✅ si ya lo tienes
 import logoAlef from "../../assets/imagenes/alef.png";
 import "./TopBar.css";
 
 export default function TopBar() {
   const [menuAbierto, setMenuAbierto] = useState(false);
   const { user, logout } = useAuth();
+  const { tenant, tenantId, loadingTenant } = useTenant();
   const navigate = useNavigate();
 
-  // 👉 Plan esencial: tanto 'esencial' como 'tpv-esencial'
+  // ✅ Plan esencial: tanto 'esencial' como 'tpv-esencial'
   const isPlanEsencial =
     user?.plan === "esencial" || user?.plan === "tpv-esencial";
 
@@ -18,11 +20,25 @@ export default function TopBar() {
     if (nuevaVentana) nuevaVentana.focus();
   };
 
-  // Detectar si estamos en desarrollo
-  const isDev = window.location.hostname === "localhost";
-  const tenantSlug = user?.tenantId || "demo";
+  // ✅ Mejor que hostname: Vite te da DEV/PROD
+  const isDev = import.meta.env.DEV;
 
-  // URLs dinámicas según entorno
+  // ✅ tenantSlug: usa tenant.slug primero, y cae a user.tenantId como fallback
+  const tenantSlug = tenant?.slug || tenantId || user?.tenantId || "demo";
+  // ✅ tipoNegocio (soporta ambos modelos)
+  const tipoNegocio = (
+    tenant?.tipoNegocio ||
+    tenant?.suscripcion?.tipoNegocio ||
+    "restaurante"
+  ).toLowerCase();
+
+  const esTienda =
+    tipoNegocio === "tienda" || tipoNegocio === "peluqueria" || tipoNegocio === "otro";
+
+  // =========================
+  // URLs por tipo de negocio
+  // =========================
+  // Ajusta estos puertos/subdominios si tu arquitectura es distinta.
   const tpvURL = isDev
     ? `http://localhost:3002/${tenantSlug}`
     : `https://${tenantSlug}-tpv.${import.meta.env.VITE_MAIN_DOMAIN}`;
@@ -31,7 +47,12 @@ export default function TopBar() {
     ? `http://localhost:3001/${tenantSlug}`
     : `https://${tenantSlug}-carta.${import.meta.env.VITE_MAIN_DOMAIN}`;
 
-  // Cerrar menú al cambiar tamaño de pantalla
+  // 👉 SHOPS (tienda) — AJUSTA a tu realidad (subdominio/host)
+  const shopsURL = isDev
+    ? `http://localhost:3004/${tenantSlug}` // por ejemplo
+    : `https://${tenantSlug}-shops.${import.meta.env.VITE_MAIN_DOMAIN}`;
+
+  // Cerrar menú al cambiar tamaño
   useEffect(() => {
     const manejarResize = () => {
       if (window.innerWidth > 768 && menuAbierto) setMenuAbierto(false);
@@ -47,11 +68,11 @@ export default function TopBar() {
         <button className="TopBar-logo" onClick={() => navigate("/")}>
           <img src={logoAlef} alt="Alef Logo" className="TopBar-logo-img" />
           <span className="TopBar-logo-text">
-            Alef <strong>TPV</strong>
+            Alef <strong>{esTienda ? "Shops" : "TPV"}</strong>
           </span>
         </button>
 
-        {/* Botón hamburguesa */}
+        {/* Hamburguesa */}
         <button
           className={`TopBar-menu ${menuAbierto ? "active" : ""}`}
           onClick={() => setMenuAbierto(!menuAbierto)}
@@ -63,27 +84,14 @@ export default function TopBar() {
         </button>
 
         {/* Menú */}
-        <nav
-          className={`TopBar-dropdown ${menuAbierto ? "open" : ""}`}
-          aria-label="Navegación principal"
-        >
+        <nav className={`TopBar-dropdown ${menuAbierto ? "open" : ""}`}>
           {!user ? (
             <>
-              <a href="#inicio" onClick={() => setMenuAbierto(false)}>
-                Inicio
-              </a>
-              <a href="#ventajas" onClick={() => setMenuAbierto(false)}>
-                Ventajas
-              </a>
-              <a href="#packs" onClick={() => setMenuAbierto(false)}>
-                Packs
-              </a>
-              <a href="#capturas" onClick={() => setMenuAbierto(false)}>
-                Capturas
-              </a>
-              <a href="#contacto" onClick={() => setMenuAbierto(false)}>
-                Contacto
-              </a>
+              <a href="#inicio" onClick={() => setMenuAbierto(false)}>Inicio</a>
+              <a href="#ventajas" onClick={() => setMenuAbierto(false)}>Ventajas</a>
+              <a href="#packs" onClick={() => setMenuAbierto(false)}>Packs</a>
+              <a href="#capturas" onClick={() => setMenuAbierto(false)}>Capturas</a>
+              <a href="#contacto" onClick={() => setMenuAbierto(false)}>Contacto</a>
 
               <Link
                 to="/login"
@@ -126,20 +134,31 @@ export default function TopBar() {
                     Dashboard
                   </button>
 
-                  {/* Superadmin siempre puede abrir TPV y Carta */}
-                  <button
-                    onClick={() => abrirEnNuevaPestana(tpvURL)}
-                    className="TopBar-btn login"
-                  >
-                    TPV
-                  </button>
+                  {/* ✅ ENLACES EXTERNOS segun tipoNegocio */}
+                  {!esTienda ? (
+                    <>
+                      <button
+                        onClick={() => abrirEnNuevaPestana(tpvURL)}
+                        className="TopBar-btn login"
+                      >
+                        TPV
+                      </button>
 
-                  <button
-                    onClick={() => abrirEnNuevaPestana(cartaURL)}
-                    className="TopBar-btn login"
-                  >
-                    Carta
-                  </button>
+                      <button
+                        onClick={() => abrirEnNuevaPestana(cartaURL)}
+                        className="TopBar-btn login"
+                      >
+                        Carta
+                      </button>
+                    </>
+                  ) : (
+                    <button
+                      onClick={() => abrirEnNuevaPestana(shopsURL)}
+                      className="TopBar-btn login"
+                    >
+                      Alef Shops
+                    </button>
+                  )}
 
                   <Link
                     to="/perfil"
@@ -151,7 +170,7 @@ export default function TopBar() {
                 </>
               )}
 
-              {/* ADMIN Y ADMIN_RESTAURANTE */}
+              {/* ADMIN / ADMIN_RESTAURANTE */}
               {["admin_restaurante", "admin"].includes(user.role) && (
                 <>
                   <button
@@ -164,21 +183,32 @@ export default function TopBar() {
                     Dashboard
                   </button>
 
-                  {/* TPV SIEMPRE visible para admin/admin_restaurante */}
-                  <button
-                    onClick={() => abrirEnNuevaPestana(tpvURL)}
-                    className="TopBar-btn login"
-                  >
-                    TPV
-                  </button>
+                  {/* ✅ ENLACES EXTERNOS segun tipoNegocio */}
+                  {!esTienda ? (
+                    <>
+                      <button
+                        onClick={() => abrirEnNuevaPestana(tpvURL)}
+                        className="TopBar-btn login"
+                      >
+                        TPV
+                      </button>
 
-                  {/* Carta SOLO si el plan NO es esencial */}
-                  {!isPlanEsencial && (
+                      {/* Carta SOLO si NO es esencial */}
+                      {!isPlanEsencial && (
+                        <button
+                          onClick={() => abrirEnNuevaPestana(cartaURL)}
+                          className="TopBar-btn login"
+                        >
+                          Carta
+                        </button>
+                      )}
+                    </>
+                  ) : (
                     <button
-                      onClick={() => abrirEnNuevaPestana(cartaURL)}
+                      onClick={() => abrirEnNuevaPestana(shopsURL)}
                       className="TopBar-btn login"
                     >
-                      Carta
+                      Alef Shops
                     </button>
                   )}
 
@@ -208,40 +238,50 @@ export default function TopBar() {
                 </>
               )}
 
-              {/* CAMARERO / COCINERO */}
-              {["camarero", "cocinero"].includes(user.role) && (
+              {/* EMPLEADOS (camarero/cocinero) — en tienda quizá será "dependiente" */}
+              {["camarero", "cocinero", "dependiente", "empleado"].includes(user.role) && (
                 <>
-                  {/* TPV SIEMPRE visible para camarero/cocinero */}
-                  <button
-                    onClick={() => abrirEnNuevaPestana(tpvURL)}
-                    className="TopBar-btn login"
-                  >
-                    TPV
-                  </button>
+                  {!esTienda ? (
+                    <>
+                      <button
+                        onClick={() => abrirEnNuevaPestana(tpvURL)}
+                        className="TopBar-btn login"
+                      >
+                        TPV
+                      </button>
 
-                  {/* Carta SOLO si el plan NO es esencial */}
-                  {!isPlanEsencial && (
+                      {!isPlanEsencial && (
+                        <button
+                          onClick={() => abrirEnNuevaPestana(cartaURL)}
+                          className="TopBar-btn login"
+                        >
+                          Carta
+                        </button>
+                      )}
+                    </>
+                  ) : (
                     <button
-                      onClick={() => abrirEnNuevaPestana(cartaURL)}
+                      onClick={() => abrirEnNuevaPestana(shopsURL)}
                       className="TopBar-btn login"
                     >
-                      Carta
+                      Alef Shops
                     </button>
                   )}
 
-                  <button
-                    onClick={() => {
-                      setMenuAbierto(false);
-                      navigate("/personalizar");
-                    }}
-                    className="TopBar-btn login"
-                  >
-                    Personalizar
-                  </button>
+                  {!esTienda && (
+                    <button
+                      onClick={() => {
+                        setMenuAbierto(false);
+                        navigate("/personalizar");
+                      }}
+                      className="TopBar-btn login"
+                    >
+                      Personalizar
+                    </button>
+                  )}
                 </>
               )}
 
-              {/* Logout */}
               <button onClick={logout} className="TopBar-btn cta">
                 Cerrar sesión
               </button>

@@ -16,7 +16,8 @@ export default function UsuariosTable({
         <span className="usuarios-badge">{usuarios.length}</span>
       </div>
 
-      <div className="usuarios-table-scroll">
+      {/* ===== DESKTOP ===== */}
+      <div className="usuarios-table-scroll desktop-only">
         <table className="usuarios-table-main">
           <thead>
             <tr>
@@ -27,75 +28,57 @@ export default function UsuariosTable({
               <th></th>
             </tr>
           </thead>
-
           <tbody>
-            {usuarios.length === 0 ? (
-              <tr>
-                <td colSpan="5" className="usuarios-empty-cell">
-                  Sin usuarios registrados
+            {usuarios.map((u) => (
+              <tr key={u._id}>
+                <td>{u.name}</td>
+                <td>{u.email}</td>
+                <td>{u.role}</td>
+                <td>{u.estacion || "-"}</td>
+                <td>
+                  <div className="usuarios-acciones">
+                    {isPlanEsencial ? (
+                      <button className="usuarios-btn disabled" disabled>🔒</button>
+                    ) : (
+                      <button className="usuarios-btn" onClick={() => onStats(u)}>📊</button>
+                    )}
+                    <button className="usuarios-btn" onClick={() => onEditar(u)}>✏️</button>
+                    <button className="usuarios-btn" onClick={() => onPermisos(u)}>🔐</button>
+                    <button className="usuarios-btn danger" onClick={() => onEliminar(u._id)}>🗑️</button>
+                  </div>
                 </td>
               </tr>
-            ) : (
-              usuarios.map((u) => (
-                <tr key={u._id}>
-                  <td>{u.name}</td>
-                  <td>{u.email}</td>
-                  <td>{u.role}</td>
-                  <td>{u.estacion || "-"}</td>
-                  <td>
-                    <div className="usuarios-acciones">
-
-                      {/* Stats */}
-                      {isPlanEsencial ? (
-                        <button
-                          className="usuarios-btn usuarios-btn-stats disabled"
-                          title="Estadísticas disponibles solo en el plan Pro"
-                          style={{ opacity: 0.4, cursor: "not-allowed" }}
-                          disabled
-                        >
-                          🔒
-                        </button>
-                      ) : (
-                        <button
-                          className="usuarios-btn usuarios-btn-stats"
-                          onClick={() => onStats(u)}
-                        >
-                          📊
-                        </button>
-                      )}
-
-                      {/* Editar */}
-                      <button
-                        className="usuarios-btn usuarios-btn-editar"
-                        onClick={() => onEditar(u)}
-                      >
-                        ✏️
-                      </button>
-
-                      {/* Permisos - NUEVO */}
-                      <button
-                        className="usuarios-btn usuarios-btn-permisos"
-                        onClick={() => onPermisos(u)}
-                        title="Editar permisos"
-                      >
-                        🔐
-                      </button>
-
-                      {/* Eliminar */}
-                      <button
-                        className="usuarios-btn usuarios-btn-eliminar"
-                        onClick={() => onEliminar(u._id)}
-                      >
-                        🗑️
-                      </button>
-
-                    </div>
-                  </td>
-                </tr>
-              ))
-            )}
+            ))}
           </tbody>
         </table>
+      </div>
+
+      {/* ===== MOBILE ===== */}
+      <div className="usuarios-mobile-list mobile-only">
+        {usuarios.map((u) => (
+          <div key={u._id} className="usuario-card">
+            <div className="usuario-main">
+              <div className="usuario-info">
+                <strong>{u.name}</strong>
+                <span>{u.email}</span>
+              </div>
+
+              <div className="usuario-badges">
+                <span className="badge-role">{u.role}</span>
+                {u.estacion && <span className="badge-estacion">{u.estacion}</span>}
+              </div>
+            </div>
+
+            <div className="usuario-actions">
+              {!isPlanEsencial && (
+                <button onClick={() => onStats(u)}>📊</button>
+              )}
+              <button onClick={() => onEditar(u)}>✏️</button>
+              <button onClick={() => onPermisos(u)}>🔐</button>
+              <button className="danger" onClick={() => onEliminar(u._id)}>🗑️</button>
+            </div>
+          </div>
+        ))}
       </div>
     </section>
   );

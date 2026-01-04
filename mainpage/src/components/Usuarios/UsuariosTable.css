@@ -18,7 +18,6 @@
   border: 1px solid rgba(255, 255, 255, 0.10);
 
   padding: 1.8rem 2rem;
-  margin-top: 1.5rem;
 
   box-shadow:
     0 16px 36px rgba(0,0,0,0.35),
@@ -197,6 +196,78 @@
   background: rgba(255,255,255,0.4);
 }
 
+
+/* ===== MOBILE CARDS ===== */
+.usuarios-mobile-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.usuario-card {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 14px;
+  padding: 0.8rem;
+}
+
+.usuario-main {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.8rem;
+}
+
+.usuario-info {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.9rem;
+}
+
+.usuario-info span {
+  font-size: 0.8rem;
+  opacity: 0.75;
+}
+
+.usuario-badges {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  align-items: flex-end;
+}
+
+.badge-role,
+.badge-estacion {
+  font-size: 0.7rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.15);
+}
+
+.badge-estacion {
+  background: rgba(106,13,173,0.35);
+}
+
+/* ===== ACCIONES ===== */
+.usuario-actions {
+  margin-top: 0.6rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+.usuario-actions button {
+  flex: 1;
+  margin: 0 0.15rem;
+  padding: 0.45rem 0;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.12);
+  color: white;
+}
+
+.usuario-actions button.danger {
+  background: rgba(155,28,28,0.35);
+}
+
 /* =========================================================
    RESPONSIVE
    ========================================================= */
@@ -215,4 +286,12 @@
   .usuarios-acciones {
     flex-wrap: wrap;
   }
+}
+/* ===== VISIBILIDAD ===== */
+.desktop-only { display: block; }
+.mobile-only { display: none; }
+
+@media (max-width: 768px) {
+  .desktop-only { display: none; }
+  .mobile-only { display: block; }
 }

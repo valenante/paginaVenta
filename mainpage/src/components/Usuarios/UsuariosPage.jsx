@@ -58,7 +58,7 @@ export default function UsuariosPage() {
   };
 
   return (
-    <div className="usuarios-root">
+    <div className="usuarios-root usuarios-layout">
 
       {alerta && (
         <AlertaMensaje
@@ -68,25 +68,31 @@ export default function UsuariosPage() {
         />
       )}
 
-      {/* Crear Usuario */}
-      <UsuarioCreateForm onCrear={onCrear} />
+      <div className="usuarios-grid">
 
-      {/* 🔒 Upsell SOLO si es plan esencial */}
-      {isPlanEsencial && (
-        <div style={{ margin: "1.5rem 0" }}>
-          <UpsellEstadisticasUsuarios />
+        <div className="usuarios-col usuarios-col-create">
+          <UsuarioCreateForm onCrear={onCrear} />
+
+          {isPlanEsencial && (
+            <div style={{ marginTop: "1.2rem" }}>
+              <UpsellEstadisticasUsuarios />
+            </div>
+          )}
         </div>
-      )}
 
-      {/* Tabla de Usuarios */}
-      <UsuariosTable
-        usuarios={usuarios}
-        onEditar={setUsuarioEdit}
-        onEliminar={onEliminar}
-        onStats={setUsuarioStats}
-        onPermisos={setUsuarioPermisos}
-        isPlanEsencial={isPlanEsencial}
-      />
+        <div className="usuarios-col usuarios-col-table">
+          <UsuariosTable
+            usuarios={usuarios}
+            onEditar={setUsuarioEdit}
+            onEliminar={onEliminar}
+            onStats={setUsuarioStats}
+            onPermisos={setUsuarioPermisos}
+            isPlanEsencial={isPlanEsencial}
+          />
+        </div>
+
+      </div>
+
 
       {/* Modal editar */}
       {usuarioEdit && (

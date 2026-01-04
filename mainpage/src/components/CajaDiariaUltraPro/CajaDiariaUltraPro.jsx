@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useMemo, useRef } from "react";
-import { Line } from "react-chartjs-2";
 import { obtenerCajasPorRango } from "./ObtenerCajasPorRango";
 import UpsellEstadisticasPro from "../../components/Estadisticas/UpsellEstadisticasPro";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { generarPDFCaja } from "./pdfs/pdfCajaUltraPro";
 import HeatmapSemana from "./HeatMapSemana";
+import CajaIngresosChart from "./CajaIngresosChart";
 import "./CajaDiariaUltraPro.css";
 
 import {
@@ -111,30 +111,6 @@ export default function CajaDiariaUltraPro() {
     : null;
 
   /* =========================================================================
-      📈 GRÁFICO
-     ========================================================================= */
-
-  const chartData = {
-    labels: datosDiarios.map((d) =>
-      new Date(d.fecha).toLocaleDateString("es-ES", {
-        day: "2-digit",
-        month: "short",
-      })
-    ),
-    datasets: [
-      {
-        label: "Ingresos (€)",
-        data: datosDiarios.map((d) => d.total),
-        borderColor: "#6a0dad",
-        backgroundColor: "rgba(106, 13, 173, 0.25)",
-        tension: 0.3,
-        borderWidth: 3,
-        pointRadius: 5,
-      },
-    ],
-  };
-
-  /* =========================================================================
       📅 VARIACIONES DÍA A DÍA
      ========================================================================= */
 
@@ -199,9 +175,10 @@ export default function CajaDiariaUltraPro() {
       {/* =====================================================
          GRAFICO → SIEMPRE VISIBLE PARA TODOS LOS PLANES
        ===================================================== */}
-      <section className="caja-ultra-chart">
-        <Line ref={chartRef} data={chartData} />
-      </section>
+      <CajaIngresosChart
+        ref={chartRef}
+        datosDiarios={datosDiarios}
+      />
 
       {/* =====================================================
          SI PLAN ESENCIAL → MOSTRAR SOLO EL UPSELL

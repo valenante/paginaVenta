@@ -1,0 +1,75 @@
+/* =========================================================
+   CAJA INGRESOS CHART — ALEF SaaS
+   ---------------------------------------------------------
+   - Autocontenido
+   - Altura controlada
+   - Mobile-first real
+   ========================================================= */
+
+.caja-ingresos-chart {
+  margin-top: 2.2rem;
+  padding: 1.5rem 1.6rem;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+/* ===============================
+   HEADER
+   =============================== */
+
+.chart-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.chart-header h3 {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.chart-header span {
+  font-size: 0.85rem;
+  opacity: 0.75;
+  color: #cbd5e1;
+}
+
+/* ===============================
+   CANVAS WRAPPER
+   =============================== */
+
+.chart-wrapper {
+  position: relative;
+  width: 100%;
+  height: 320px;
+}
+
+/* ===============================
+   MOBILE ADAPTATION
+   =============================== */
+
+@media (max-width: 768px) {
+  .caja-ingresos-chart {
+    padding: 1.2rem 1.1rem;
+    gap: 0.9rem;
+  }
+
+  .chart-wrapper {
+    height: 220px;
+  }
+
+  .chart-header h3 {
+    font-size: 1rem;
+  }
+
+  .chart-header span {
+    font-size: 0.8rem;
+  }
+}

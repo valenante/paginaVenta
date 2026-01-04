@@ -7,71 +7,40 @@ const AuthContext = createContext();
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const { setTenantId } = useTenant();
+  const { setTenantId, clearTenant } = useTenant();
 
   useEffect(() => {
-    // ================================
-    // 🏷️ Detectar tenant desde la URL (solo si tiene pinta de tenant)
-    // ================================
-    const pathParts = window.location.pathname.split("/").filter(Boolean);
-    const firstSegment = pathParts[0];
-
-    // Rutas "globales" que NO son tenant
-    const GLOBAL_ROUTES = [
-      "login",
-      "register",
-      "perfil",
-      "planes",
-      "tenants",
-      "tickets",
-      "password",
-      "superadmin",
-      "admin",
-    ];
-
-    if (firstSegment && !GLOBAL_ROUTES.includes(firstSegment)) {
-      setTenantId(firstSegment);
-      sessionStorage.setItem("tenantId", firstSegment);
-    }
-
     const verificarSesion = async () => {
       try {
         const res = await api.get("/auth/me/me");
-        console.log(res, 'res')
         const usuario = res.data.user;
+
         setUser(usuario);
 
-        console.log(usuario);
-        // 👉 AQUÍ fijamos el tenant REAL del usuario
+        // ✅ SOLO aquí tocamos tenant: dato confirmado por backend
         if (usuario?.tenantId) {
           setTenantId(usuario.tenantId);
-          sessionStorage.setItem("tenantId", usuario.tenantId);
         }
       } catch (error) {
-        console.warn(
-          "🔴 No hay sesión activa.",
-          error.response?.status,
-          error.response?.data
-        );
         setUser(null);
+        clearTenant(); // 👈 importante si no hay sesión
       } finally {
         setLoading(false);
       }
     };
 
     verificarSesion();
-  }, [setTenantId]);
+  }, [setTenantId, clearTenant]);
 
   const logout = async () => {
     try {
       await api.post("/auth/logout");
     } finally {
       setUser(null);
-      sessionStorage.removeItem("tenantId");
+      clearTenant();
       sessionStorage.removeItem("impersonado");
       sessionStorage.removeItem("user");
 
-      // 👇 CLAVE: no dejes /pro en el historial
       window.location.replace("/login");
     }
   };

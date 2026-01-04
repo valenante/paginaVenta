@@ -158,19 +158,6 @@
 }
 
 /* ===============================
-   GRÁFICO
-   =============================== */
-
-.caja-ultra-chart {
-  margin-top: 2.2rem;
-  padding: 1.5rem;
-  background: rgba(255, 255, 255, 0.04);
-  border-radius: var(--radius-lg);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
-}
-
-/* ===============================
    LISTADO
    =============================== */
 
@@ -465,19 +452,6 @@
 .kpi-card.worst {
   border-color: #ff6700;
   box-shadow: 0 0 12px rgba(255, 103, 0, 0.55);
-}
-
-/* ===============================
-   GRÁFICO
-   =============================== */
-
-.caja-ultra-chart {
-  margin-top: 2.2rem;
-  padding: 1.5rem;
-  background: rgba(255, 255, 255, 0.04);
-  border-radius: var(--radius-lg);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
 }
 
 /* ===============================

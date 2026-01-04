@@ -18,6 +18,14 @@ export default function MapaEditor() {
   const [positions, setPositions] = useState({});
   const nodeRefs = useRef({}); // 👈 para evitar findDOMNode
 
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768);
+
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
   const holdTimeoutRef = useRef(null);
 
   useEffect(() => {
@@ -140,6 +148,23 @@ export default function MapaEditor() {
     (m) => m.zona === zona && m.zona !== "auxiliar"
   );
   const mesasAuxiliares = mesas.filter((m) => m.zona === "auxiliar");
+
+  if (isMobile) {
+    return (
+      <div className="mapa-mobile-disabled">
+        <div className="mapa-mobile-card">
+          <h2>Mapa del restaurante</h2>
+          <p>
+            El editor de plano está disponible solo en pantallas grandes.
+          </p>
+
+          <div className="mapa-mobile-hint">
+            💻 Accede desde un ordenador o tablet para editar el mapa.
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="mapa-editor-container">

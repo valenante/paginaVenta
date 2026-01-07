@@ -111,7 +111,7 @@ export default function MiCuentaPage() {
     formData.append("password", passwordCert);
 
     try {
-      const { data } = await api.post("/firma/subir-certificado", formData, {
+      const { data } = await api.post("/admin/firma/subir-certificado", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       setMensajeCert(data.message || "Certificado subido correctamente.");

@@ -37,7 +37,7 @@ export function ShopCategoriasProvider({ children }) {
     setErrorCategories(null);
 
     try {
-      const { data } = await api.get("/shopProducts/categorias", {
+      const { data } = await api.get("/shop/productos/categorias", {
         params: type ? { type } : {}, // ✅ type opcional
       });
 
@@ -60,9 +60,8 @@ export function ShopCategoriasProvider({ children }) {
   const fetchProducts = useCallback(async ({ type, category, search = "", page, limit } = {}) => {
     setLoadingProducts(true);
     setErrorProducts(null);
-console.log('HOLAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA')
     try {
-      const { data } = await api.get("/shopProducts/productos", {
+      const { data } = await api.get("/shop/productos", {
         params: {
           type,
           category,
@@ -95,7 +94,7 @@ console.log('HOLAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA')
   const createProduct = useCallback(async (payload) => {
     // payload típico shop:
     // { type: "producto"|"servicio", nombre, categoria, sku, barcode, precio, iva, stockActual, ... }
-    const { data } = await api.post("/shopProducts/productos", payload);
+    const { data } = await api.post("/shop/productos", payload);
     return data;
   }, []);
 
@@ -104,13 +103,13 @@ console.log('HOLAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA')
       throw new Error("updateProduct: falta _id/id");
     }
     const id = payload._id || payload.id;
-    const { data } = await api.put(`/shopProducts/productos/${id}`, payload);
+    const { data } = await api.put(`/shop/productos/${id}`, payload);
     return data;
   }, []);
 
   const deleteProduct = useCallback(async (id) => {
     if (!id) throw new Error("deleteProduct: falta id");
-    const { data } = await api.delete(`/shopProducts/productos/${id}`);
+    const { data } = await api.delete(`/shop/productos/productos/${id}`);
     return data;
   }, []);
 

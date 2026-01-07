@@ -8,7 +8,7 @@ const FeaturesPlanContext = createContext(null);
 
 export function FeaturesPlanProvider({ children }) {
   const { user, loading: authLoading } = useAuth();
-  const { tenantId } = useTenant(); // slug del tenant, por ejemplo "zabor-feten"
+  const { tenantId, tenant } = useTenant(); // slug del tenant, por ejemplo "zabor-feten"
 
   const [features, setFeatures] = useState([]);
   const [config, setConfig] = useState(null);
@@ -31,11 +31,13 @@ export function FeaturesPlanProvider({ children }) {
     const fetchFeatures = async () => {
       setLoadingFeatures(true);
       try {
-        const { data } = await api.get("/admin/features-plan", {
-          headers: {
-            "X-Tenant-Slug": tenantId
-          }
-        }); setFeatures(data.features || []);
+        const endpoint =
+          tenant?.tipoNegocio === "shop"
+            ? "/shop/admin/features-plan"
+            : "/admin/features-plan";
+
+        const { data } = await api.get(endpoint);
+        setFeatures(data.features || []);
         setConfig(data.config || null);
         setAlerta(null);
       } catch (err) {

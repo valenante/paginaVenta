@@ -32,9 +32,14 @@ const HeatmapSemana = ({ datos }) => {
 
     datos.forEach((d) => {
       // Convertimos la fecha a Date
-      const fechaObj = new Date(`${d.fecha}T${d.hora}:00:00`);
-      const dia = fechaObj.getDay();   // 0-6 → Domingo-Sábado
-      const hora = d.hora;            // 0–23
+      const hh = String(d.hora).padStart(2, "0");
+      const fechaObj = new Date(`${d.fecha}T${hh}:00:00`);
+
+      const dia = Number.isFinite(d.diaSemana)
+        ? d.diaSemana
+        : new Date(`${d.fecha}T00:00:00`).getDay();
+
+      const hora = Number(d.hora);
 
       if (!estructura[dia]) estructura[dia] = {};
       if (!estructura[dia][hora]) estructura[dia][hora] = 0;

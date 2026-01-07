@@ -18,6 +18,7 @@ import StockPageShop from "./StockPageShop";
 
 // ✅ Tenant
 import { useTenant } from "../context/TenantContext";
+import UsuariosShopPage from "../components/UsuariosShop/UsuariosShopPage";
 
 const PANEL_BY_TIPO = {
   restaurante: [
@@ -30,13 +31,13 @@ const PANEL_BY_TIPO = {
     { key: "valoraciones", label: "⭐ Valoraciones", render: () => <ValoracionesPanel /> },
   ],
 
-  tienda: [
+  shop: [
     // ⚠️ POS fuera del panel (está en navbar / ruta propia)
     { key: "ventas", label: "📈 Ventas", render: () => <VentasPageShop /> },
     { key: "productos", label: "🏷️ Productos", render: () => <ProductosPageShop /> },
     { key: "stock", label: "📦 Stock", render: () => <StockPageShop /> },
     { key: "caja", label: "💶 Caja", render: () => <CajaDiaria /> }, // reutilizamos la misma caja
-    { key: "usuarios", label: "👥 Usuarios", render: () => <UsuariosPage /> }, // reutilizamos usuarios
+    { key: "usuarios", label: "👥 Usuarios", render: () => <UsuariosShopPage /> }, // reutilizamos usuarios
   ],
 };
 
@@ -46,12 +47,11 @@ export default function PanelPro() {
   const tipoNegocio = (
     tenant?.tipoNegocio ||
     tenant?.suscripcion?.tipoNegocio ||
-    "tienda"
+    "shop"
   ).toLowerCase();
-  console.log(tenant)
 
   const tabs = useMemo(() => {
-    return PANEL_BY_TIPO[tipoNegocio] || PANEL_BY_TIPO.tienda;
+    return PANEL_BY_TIPO[tipoNegocio] || PANEL_BY_TIPO.shop;
   }, [tipoNegocio]);
 
   const [active, setActive] = useState(tabs[0]?.key || "ventas");

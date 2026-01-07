@@ -1,37 +1,88 @@
 import React, { useState } from "react";
-import "./ShopStockModals.css";
+import api from "../../utils/api";
+import "./AjustarStockShopModal.css";
 
-export default function AjustarStockShopModal({ item, onClose, onSave }) {
-  const [valor, setValor] = useState("");
+const AjustarStockShopModal = ({ producto, onClose, onSave }) => {
+  const stockActual = producto?.inventario?.stock ?? 0;
+  const unidad = producto?.inventario?.unidadMedida || "ud";
+
+  const [cantidad, setCantidad] = useState(stockActual);
+  const [loading, setLoading] = useState(false);
+
+  const aumentar = () => setCantidad((c) => Number(c) + 1);
+  const disminuir = () => setCantidad((c) => Math.max(0, Number(c) - 1));
+
+  const enviarAjuste = async () => {
+    try {
+      setLoading(true);
+
+      await api.post("/shop/stock/movimiento", {
+        productoId: producto._id,
+        tipo: "ajuste",
+        cantidad: Number(cantidad),
+        motivo: "Ajuste manual desde TPV",
+      });
+
+      onSave?.();
+      onClose();
+    } catch (err) {
+      console.error(err);
+      alert("Error ajustando stock");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <div className="overlay">
-      <div className="modal shopstock-modal">
-        <h3>Ajustar stock</h3>
-        <p className="muted">
-          {item?.nombre || "Ítem"} — stock actual: <b>{item?.stockActual ?? 0}</b>
-        </p>
+    <div className="alef-modal-overlay" onClick={onClose}>
+      <div
+        className="alef-modal-content"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* HEADER */}
+        <div className="stock-modal-header">
+          <h3>📦 Ajustar stock</h3>
+          <p>{producto.nombre}</p>
+        </div>
 
-        <input
-          placeholder="Nuevo stock (ej: 12)"
-          value={valor}
-          onChange={(e) => setValor(e.target.value)}
-        />
+        {/* BODY */}
+        <div className="stock-modal-body">
+          <div className="ajuste-row">
+            <button className="ajuste-btn" onClick={disminuir}>−</button>
 
-        <div className="shopstock-modal__actions">
-          <button className="btn-ghost" onClick={onClose}>Cancelar</button>
+            <input
+              type="number"
+              className="ajuste-input"
+              value={cantidad}
+              onChange={(e) => setCantidad(e.target.value)}
+              min={0}
+            />
+
+            <button className="ajuste-btn" onClick={aumentar}>+</button>
+          </div>
+
+          <div className="unidad-label">
+            Stock actual: <b>{stockActual}</b> {unidad}
+          </div>
+        </div>
+
+        {/* ACTIONS */}
+        <div className="stock-modal-actions">
+          <button className="btn-cancelar" onClick={onClose}>
+            Cancelar
+          </button>
+
           <button
-            className="btn-secondary"
-            onClick={() => {
-              // TODO backend: api.put(`/shop/stock/item/${item._id}`, { stockActual: Number(valor) })
-              onClose();
-              onSave?.();
-            }}
+            className="btn-confirmar"
+            onClick={enviarAjuste}
+            disabled={loading}
           >
-            Guardar
+            {loading ? "Guardando…" : "Guardar cambios"}
           </button>
         </div>
       </div>
     </div>
   );
-}
+};
+
+export default AjustarStockShopModal;

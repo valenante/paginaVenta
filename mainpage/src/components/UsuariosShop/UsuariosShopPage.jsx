@@ -1,19 +1,20 @@
 import React, { useState } from "react";
-import { useUsuarios } from "./useUsuarios";
+import { useUsuarios } from "./useUsuarios.jsx";
 import { useAuth } from "../../context/AuthContext";
-import UpsellEstadisticasUsuarios from "../Usuarios/UpsellEstadisticasUsuarios";
 import { useTenant } from "../../context/TenantContext";
+
 import UsuarioCreateForm from "./UsuarioCreateForm.jsx";
-import UsuariosTable from "./UsuariosTable.jsx";
-import UsuarioEditModal from "./UsuarioEditModal.jsx";
+import UsuarioTableShop from "./UsuarioTableShop.jsx";
+
+import UsuarioEditModal from "./UsuarioEditModalShop.jsx";
+import UsuarioPermisosModal from "./UsuarioPermisosModalShop.jsx";
 import UsuarioStatsModal from "./UsuariosStatsModal.jsx";
-import UsuarioPermisosModal from "./UsuarioPermisosModal.jsx";
 
 import AlertaMensaje from "../AlertaMensaje/AlertaMensaje";
 
 import "./UsuariosPage.css";
 
-export default function UsuariosPage() {
+export default function UsuariosShopPage() {
   const {
     usuarios,
     permisosDisponibles,
@@ -24,46 +25,65 @@ export default function UsuariosPage() {
     actualizarPermisosUsuario,
   } = useUsuarios();
 
+  /* =====================
+     ESTADO GLOBAL
+  ===================== */
   const [alerta, setAlerta] = useState(null);
 
-  // Estado modales
   const [usuarioEdit, setUsuarioEdit] = useState(null);
-  const [usuarioStats, setUsuarioStats] = useState(null);
   const [usuarioPermisos, setUsuarioPermisos] = useState(null);
+  const [usuarioStats, setUsuarioStats] = useState(null);
+
   const { user } = useAuth();
-
   const { tenant } = useTenant();
-  const tipoNegocio = tenant?.tipoNegocio || "restaurante";
 
-  const isPlanEsencial =
-    tipoNegocio === "restaurante" &&
-    (user?.plan === "esencial" || user?.plan === "tpv-esencial");
+  // 🛒 SHOP: de momento sin planes limitados
+  const isPlanLimitado = false;
+
+  /* =====================
+     ACCIONES
+  ===================== */
 
   const onCrear = async (payload) => {
     const r = await crearUsuario(payload);
-    if (r.ok) setAlerta({ tipo: "exito", mensaje: "Usuario creado!" });
-    else setAlerta({ tipo: "error", mensaje: r.error });
+
+    setAlerta({
+      tipo: r.ok ? "exito" : "error",
+      mensaje: r.ok
+        ? "Usuario creado correctamente"
+        : r.error || "Error al crear usuario",
+    });
   };
 
   const onEliminar = async (id) => {
     const ok = await eliminarUsuario(id);
+
     setAlerta({
       tipo: ok ? "exito" : "error",
-      mensaje: ok ? "Usuario eliminado" : "Error al eliminar",
+      mensaje: ok
+        ? "Usuario eliminado"
+        : "Error al eliminar usuario",
     });
   };
 
   const onEditar = async (id, payload) => {
     const r = await editarUsuario(id, payload);
-    if (r.ok)
-      setAlerta({ tipo: "exito", mensaje: "Usuario actualizado!" });
-    else
-      setAlerta({ tipo: "error", mensaje: r.error });
+
+    setAlerta({
+      tipo: r.ok ? "exito" : "error",
+      mensaje: r.ok
+        ? "Usuario actualizado"
+        : r.error || "Error al actualizar usuario",
+    });
   };
+
+  /* =====================
+     RENDER
+  ===================== */
 
   return (
     <div className="usuarios-root usuarios-layout">
-
+      {/* ALERTAS */}
       {alerta && (
         <AlertaMensaje
           tipo={alerta.tipo}
@@ -73,32 +93,27 @@ export default function UsuariosPage() {
       )}
 
       <div className="usuarios-grid">
-
+        {/* ================= COLUMNA CREAR ================= */}
         <div className="usuarios-col usuarios-col-create">
           <UsuarioCreateForm onCrear={onCrear} />
-
-          {isPlanEsencial && (
-            <div style={{ marginTop: "1.2rem" }}>
-              <UpsellEstadisticasUsuarios />
-            </div>
-          )}
         </div>
 
+        {/* ================= COLUMNA TABLA ================= */}
         <div className="usuarios-col usuarios-col-table">
-          <UsuariosTable
+          <UsuarioTableShop
             usuarios={usuarios}
             onEditar={setUsuarioEdit}
             onEliminar={onEliminar}
-            onStats={setUsuarioStats}
             onPermisos={setUsuarioPermisos}
-            isPlanEsencial={isPlanEsencial}
+            onStats={setUsuarioStats}
+            isPlanEsencial={isPlanLimitado}
           />
         </div>
-
       </div>
 
+      {/* ================= MODALES ================= */}
 
-      {/* Modal editar */}
+      {/* EDITAR */}
       {usuarioEdit && (
         <UsuarioEditModal
           usuario={usuarioEdit}
@@ -109,14 +124,7 @@ export default function UsuariosPage() {
         />
       )}
 
-      {/* Modal stats */}
-      {usuarioStats && (
-        <UsuarioStatsModal
-          usuario={usuarioStats}
-          onClose={() => setUsuarioStats(null)}
-        />
-      )}
-
+      {/* PERMISOS */}
       {usuarioPermisos && (
         <UsuarioPermisosModal
           usuario={usuarioPermisos}
@@ -125,7 +133,15 @@ export default function UsuariosPage() {
           onSave={actualizarPermisosUsuario}
           onClose={() => setUsuarioPermisos(null)}
         />
-      )} 
+      )}
+
+      {/* ESTADÍSTICAS */}
+      {usuarioStats && (
+        <UsuarioStatsModal
+          usuario={usuarioStats}
+          onClose={() => setUsuarioStats(null)}
+        />
+      )}
     </div>
   );
 }

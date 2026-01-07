@@ -7,6 +7,7 @@ import "../styles/RestauranteConfigPage.css";
 import ModalConfirmacion from "../components/Modal/ModalConfirmacion.jsx";
 import EstacionesCapacidadPanel from "../components/Config/EstacionesCapacidadPanel.jsx";
 import AlertaMensaje from "../components/AlertaMensaje/AlertaMensaje.jsx";
+import { useTenant } from "../context/TenantContext";
 import PlanFeaturesPanel from "../components/Config/PlanFeaturesPanel.jsx";
 import OperativaSlaCapacidadPanel from "../components/Config/OperativaSlaCapacidadPanel.jsx";
 import { DEFAULT_TEMA_TPV, normalizarTemaTpv } from "../utils/tema";
@@ -16,6 +17,11 @@ export default function RestauranteConfigPage() {
   const { config, setConfig } = useConfig();
   const { user } = useAuth();
   const location = useLocation();
+  const { tenant } = useTenant();
+  const tipoNegocio = tenant?.tipoNegocio || "restaurante";
+
+  const esRestaurante = tipoNegocio === "restaurante";
+  const esTienda = tipoNegocio === "shop";
   const isPlanEsencial =
     user?.plan === "esencial" || user?.plan === "tpv-esencial";
   const [form, setForm] = useState({
@@ -94,8 +100,14 @@ export default function RestauranteConfigPage() {
   const faviconInputRef = useRef(null);
   const fondoInputRef = useRef(null);
 
-  // Carga secciones / estaciones
   useEffect(() => {
+    if (!esRestaurante) {
+      // Para tiendas no existen secciones ni estaciones
+      setLoadingSecciones(false);
+      setLoadingEstaciones(false);
+      return;
+    }
+
     const fetchData = async () => {
       try {
         const sec = await api.get("/secciones");
@@ -112,8 +124,9 @@ export default function RestauranteConfigPage() {
         setLoadingEstaciones(false);
       }
     };
+
     fetchData();
-  }, []);
+  }, [esRestaurante]);
 
   // Cargar config en el formulario
   useEffect(() => {
@@ -398,7 +411,9 @@ export default function RestauranteConfigPage() {
       {/* Header global */}
       <header className="rest-config-header">
         <div>
-          <h1>⚙️ Configuración del restaurante</h1>
+          <h1>
+            ⚙️ Configuración {esTienda ? "de la shop" : "del restaurante"}
+          </h1>
           <p className="text-suave">
             Define la identidad visual, las funcionalidades y la configuración
             fiscal de tu entorno Alef.
@@ -413,7 +428,9 @@ export default function RestauranteConfigPage() {
           {/* === BRANDING Y LOGO === */}
           <section className="config-card card config-card--branding">
             <header className="config-card-header">
-              <h2>🏪 Identidad del restaurante</h2>
+              <h2>
+                🏪 Identidad {esTienda ? "de la shop" : "del restaurante"}
+              </h2>
               <p className="config-card-subtitle">
                 Nombre comercial y logotipo que se utilizarán en el TPV y en
                 la carta digital.
@@ -422,7 +439,9 @@ export default function RestauranteConfigPage() {
 
             <div className="branding-layout">
               <div className="config-field">
-                <label>Nombre del restaurante</label>
+                <label>
+                  Nombre {esTienda ? "de la shop" : "del restaurante"}
+                </label>
                 <input
                   type="text"
                   value={form.branding.nombreRestaurante || ""}
@@ -536,97 +555,99 @@ export default function RestauranteConfigPage() {
           <PlanFeaturesPanel onAlert={setAlerta} />
 
           {/* === SECCIONES === */}
-          <section className="config-card card">
-            <header className="config-card-header">
-              <h2>
-                {isPlanEsencial ? "📦 Secciones del pedido" : "📦 Secciones de la carta"}
-              </h2>
+          {esRestaurante && (
+            <section className="config-card card">
+              <header className="config-card-header">
+                <h2>
+                  {isPlanEsencial ? "📦 Secciones del pedido" : "📦 Secciones de la carta"}
+                </h2>
 
-              <p className="config-card-subtitle">
-                {isPlanEsencial
-                  ? "Define cómo se agruparán los productos en el ticket (entrantes, principales, postres, bebidas, etc.) para que la impresión salga organizada por bloques claros y fáciles de leer para sala y cocina."
-                  : "Agrupa tus productos en secciones (entrantes, postres, bebidas, etc.) y define a qué zona llegan sus pedidos dentro de la carta digital."}
-              </p>
-            </header>
+                <p className="config-card-subtitle">
+                  {isPlanEsencial
+                    ? "Define cómo se agruparán los productos en el ticket (entrantes, principales, postres, bebidas, etc.) para que la impresión salga organizada por bloques claros y fáciles de leer para sala y cocina."
+                    : "Agrupa tus productos en secciones (entrantes, postres, bebidas, etc.) y define a qué zona llegan sus pedidos dentro de la carta digital."}
+                </p>
+              </header>
 
-            <div className="config-field config-field--stacked">
-              <label>Nueva sección</label>
+              <div className="config-field config-field--stacked">
+                <label>Nueva sección</label>
 
-              <input
-                type="text"
-                placeholder="Nombre (Ej: Entrantes)"
-                value={nuevaSeccion.nombre}
-                onChange={(e) =>
-                  setNuevaSeccion({
-                    ...nuevaSeccion,
-                    nombre: e.target.value,
-                  })
-                }
-              />
+                <input
+                  type="text"
+                  placeholder="Nombre (Ej: Entrantes)"
+                  value={nuevaSeccion.nombre}
+                  onChange={(e) =>
+                    setNuevaSeccion({
+                      ...nuevaSeccion,
+                      nombre: e.target.value,
+                    })
+                  }
+                />
 
-              <input
-                type="text"
-                placeholder="Slug (ej: entrantes)"
-                value={nuevaSeccion.slug}
-                onChange={(e) =>
-                  setNuevaSeccion({
-                    ...nuevaSeccion,
-                    slug: e.target.value,
-                  })
-                }
-              />
+                <input
+                  type="text"
+                  placeholder="Slug (ej: entrantes)"
+                  value={nuevaSeccion.slug}
+                  onChange={(e) =>
+                    setNuevaSeccion({
+                      ...nuevaSeccion,
+                      slug: e.target.value,
+                    })
+                  }
+                />
 
-              <select
-                value={nuevaSeccion.destino}
-                onChange={(e) =>
-                  setNuevaSeccion({
-                    ...nuevaSeccion,
-                    destino: e.target.value,
-                  })
-                }
-              >
-                <option value="cocina">Cocina</option>
-                <option value="barra">Barra</option>
-              </select>
+                <select
+                  value={nuevaSeccion.destino}
+                  onChange={(e) =>
+                    setNuevaSeccion({
+                      ...nuevaSeccion,
+                      destino: e.target.value,
+                    })
+                  }
+                >
+                  <option value="cocina">Cocina</option>
+                  <option value="barra">Barra</option>
+                </select>
 
-              <button
-                type="button"
-                className="btn btn-primario"
-                onClick={crearSeccion}
-              >
-                Crear sección
-              </button>
-            </div>
+                <button
+                  type="button"
+                  className="btn btn-primario"
+                  onClick={crearSeccion}
+                >
+                  Crear sección
+                </button>
+              </div>
 
-            <ul className="lista-simple">
-              {loadingSecciones && <li>Cargando secciones...</li>}
-              {!loadingSecciones && secciones.length === 0 && (
-                <li>No hay secciones creadas todavía.</li>
-              )}
-              {secciones.map((s) => (
-                <li key={s._id}>
-                  <span>
-                    {s.nombre} ({s.slug})
-                  </span>
+              <ul className="lista-simple">
+                {loadingSecciones && <li>Cargando secciones...</li>}
+                {!loadingSecciones && secciones.length === 0 && (
+                  <li>No hay secciones creadas todavía.</li>
+                )}
+                {secciones.map((s) => (
+                  <li key={s._id}>
+                    <span>
+                      {s.nombre} ({s.slug})
+                    </span>
 
-                  <div className="acciones-mini">
-                    <button type="button" onClick={() => iniciarEdicionSeccion(s)}>
-                      ✏️
-                    </button>
-                    <button
-                      type="button"
-                      className="delete-btn"
-                      onClick={() => pedirConfirmacionBorrarSeccion(s)}
-                    >
-                      ❌
-                    </button>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </section>
+                    <div className="acciones-mini">
+                      <button type="button" onClick={() => iniciarEdicionSeccion(s)}>
+                        ✏️
+                      </button>
+                      <button
+                        type="button"
+                        className="delete-btn"
+                        onClick={() => pedirConfirmacionBorrarSeccion(s)}
+                      >
+                        ❌
+                      </button>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
 
-          {!isPlanEsencial && (
+          {esRestaurante && !isPlanEsencial && (
             <section className="config-card card">
               <header className="config-card-header">
                 <h2>🔥 Estaciones de cocina / barra</h2>
@@ -733,9 +754,7 @@ export default function RestauranteConfigPage() {
             </section>
           )}
 
-          <PlanFeaturesPanel onAlert={setAlerta} />
-
-          {!isPlanEsencial && (
+          {esRestaurante && !isPlanEsencial && (
             <OperativaSlaCapacidadPanel
               form={form}
               setForm={setForm}
@@ -743,7 +762,7 @@ export default function RestauranteConfigPage() {
             />
           )}
 
-          {!isPlanEsencial && (
+          {esRestaurante && !isPlanEsencial && (
             <EstacionesCapacidadPanel
               estaciones={estaciones}
               setEstaciones={setEstaciones}

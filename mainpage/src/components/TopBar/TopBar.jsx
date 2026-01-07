@@ -33,7 +33,7 @@ export default function TopBar() {
   ).toLowerCase();
 
   const esTienda =
-    tipoNegocio === "tienda" || tipoNegocio === "peluqueria" || tipoNegocio === "otro";
+    tipoNegocio === "shop" || tipoNegocio === "peluqueria" || tipoNegocio === "otro";
 
   // =========================
   // URLs por tipo de negocio
@@ -47,9 +47,9 @@ export default function TopBar() {
     ? `http://localhost:3001/${tenantSlug}`
     : `https://${tenantSlug}-carta.${import.meta.env.VITE_MAIN_DOMAIN}`;
 
-  // 👉 SHOPS (tienda) — AJUSTA a tu realidad (subdominio/host)
+  // 👉 SHOPS (shop) — AJUSTA a tu realidad (subdominio/host)
   const shopsURL = isDev
-    ? `http://localhost:3004/${tenantSlug}` // por ejemplo
+    ? `http://localhost:3003/${tenantSlug}` // por ejemplo
     : `https://${tenantSlug}-shops.${import.meta.env.VITE_MAIN_DOMAIN}`;
 
   // Cerrar menú al cambiar tamaño
@@ -171,7 +171,7 @@ export default function TopBar() {
               )}
 
               {/* ADMIN / ADMIN_RESTAURANTE */}
-              {["admin_restaurante", "admin"].includes(user.role) && (
+              {["admin_restaurante", "admin", "admin_tienda"].includes(user.role) && (
                 <>
                   <button
                     onClick={() => {
@@ -208,7 +208,7 @@ export default function TopBar() {
                       onClick={() => abrirEnNuevaPestana(shopsURL)}
                       className="TopBar-btn login"
                     >
-                      Alef Shops
+                      Shop
                     </button>
                   )}
 
@@ -238,8 +238,8 @@ export default function TopBar() {
                 </>
               )}
 
-              {/* EMPLEADOS (camarero/cocinero) — en tienda quizá será "dependiente" */}
-              {["camarero", "cocinero", "dependiente", "empleado"].includes(user.role) && (
+              {/* EMPLEADOS (camarero/cocinero) — en shop quizá será "dependiente" */}
+              {["camarero", "cocinero"].includes(user.role) && (
                 <>
                   {!esTienda ? (
                     <>
@@ -264,7 +264,7 @@ export default function TopBar() {
                       onClick={() => abrirEnNuevaPestana(shopsURL)}
                       className="TopBar-btn login"
                     >
-                      Alef Shops
+                      Shop
                     </button>
                   )}
 
@@ -279,6 +279,18 @@ export default function TopBar() {
                       Personalizar
                     </button>
                   )}
+                </>
+              )}
+
+              {/* VENDEDOR (SHOP) */}
+              {user.role === "vendedor" && (
+                <>
+                  <button
+                    onClick={() => abrirEnNuevaPestana(shopsURL)}
+                    className="TopBar-btn login"
+                  >
+                    Shop
+                  </button>
                 </>
               )}
 

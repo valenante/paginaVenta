@@ -1,0 +1,297 @@
+/* =========================================================
+   USUARIOS TABLE — Estilo Profesional Alef
+   ---------------------------------------------------------
+   - Tarjeta vidrio oscuro
+   - Tabla premium con hover elegante
+   - Botones pill para acciones
+   - Badge moderno
+   - Compatible con modo oscuro
+   ========================================================= */
+
+/* --- CONTENEDOR --- */
+.usuarios-table-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+
+  padding: 1.8rem 2rem;
+
+  box-shadow:
+    0 16px 36px rgba(0,0,0,0.35),
+    0 0 0 1px rgba(255,255,255,0.04);
+
+  animation: fadeIn 0.35s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* --- HEADER --- */
+.usuarios-table-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.2rem;
+}
+
+.usuarios-table-header h3 {
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: #fff;
+}
+
+.usuarios-badge {
+  background: linear-gradient(135deg, #6a0dad, #ff6700);
+  padding: 0.35rem 0.75rem;
+  border-radius: var(--radius-pill);
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(255,103,0,0.3);
+}
+
+
+/* =========================================================
+   TABLA
+   ========================================================= */
+
+.usuarios-table-main {
+  width: 100%;
+  border-collapse: collapse;
+  color: #e5e7eb;
+}
+
+/* Encabezados */
+.usuarios-table-main thead th {
+  text-align: left;
+  padding: 0.75rem 1rem;
+
+  text-transform: uppercase;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+
+  color: #cbd5e1;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.12);
+
+  background: rgba(255, 255, 255, 0.03);
+}
+
+/* Filas */
+.usuarios-table-main tbody td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.usuarios-table-main tbody tr:hover td {
+  background: rgba(255,255,255,0.05);
+  transition: background 0.22s ease;
+}
+
+/* Mensaje vacío */
+.usuarios-empty-cell {
+  padding: 1.2rem;
+  text-align: center;
+  color: #b6b9c2;
+  opacity: 0.85;
+  font-style: italic;
+}
+
+
+/* =========================================================
+   BOTONES DE ACCIÓN
+   ========================================================= */
+
+.usuarios-acciones {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.usuarios-btn {
+  background: rgba(255,255,255,0.10);
+  border: 1px solid rgba(255,255,255,0.18);
+
+  padding: 0.4rem 0.7rem;
+  border-radius: var(--radius-pill);
+
+  cursor: pointer;
+  color: #fff;
+  font-size: 0.9rem;
+
+  transition: all 0.22s ease;
+}
+
+.usuarios-btn:hover {
+  background: rgba(255,255,255,0.18);
+  transform: translateY(-2px);
+}
+
+/* Botón stats (naranja) */
+.usuarios-btn-stats {
+  background: rgba(255,103,0,0.22);
+  border-color: rgba(255,103,0,0.45);
+}
+
+.usuarios-btn-stats:hover {
+  background: rgba(255,103,0,0.35);
+}
+
+/* Botón editar (azulado) */
+.usuarios-btn-editar {
+  background: rgba(76,94,168,0.25);
+  border-color: rgba(76,94,168,0.4);
+}
+
+.usuarios-btn-editar:hover {
+  background: rgba(76,94,168,0.38);
+}
+
+/* Botón eliminar (rojo) */
+.usuarios-btn-eliminar {
+  background: rgba(155,28,28,0.25);
+  border-color: rgba(155,28,28,0.4);
+}
+
+.usuarios-btn-eliminar:hover {
+  background: rgba(155,28,28,0.38);
+}
+
+/* =========================================================
+   SCROLL RESPONSIVE PARA TABLAS — ALEF
+   ========================================================= */
+
+.usuarios-table-scroll {
+  width: 100%;
+  overflow-x: auto;
+
+  /* estética elegante compatible con tu diseño */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,0.25) transparent;
+
+  /* padding para que no quede cortado */
+  padding-bottom: 0.4rem;
+}
+
+/* Estilo de scrollbar para Chrome/Safari */
+.usuarios-table-scroll::-webkit-scrollbar {
+  height: 8px;
+}
+
+.usuarios-table-scroll::-webkit-scrollbar-track {
+  background: rgba(255,255,255,0.05);
+  border-radius: var(--radius-md);
+}
+
+.usuarios-table-scroll::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.25);
+  border-radius: var(--radius-pill);
+}
+
+.usuarios-table-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(255,255,255,0.4);
+}
+
+
+/* ===== MOBILE CARDS ===== */
+.usuarios-mobile-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.usuario-card {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 14px;
+  padding: 0.8rem;
+}
+
+.usuario-main {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.8rem;
+}
+
+.usuario-info {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.9rem;
+}
+
+.usuario-info span {
+  font-size: 0.8rem;
+  opacity: 0.75;
+}
+
+.usuario-badges {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  align-items: flex-end;
+}
+
+.badge-role,
+.badge-estacion {
+  font-size: 0.7rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.15);
+}
+
+.badge-estacion {
+  background: rgba(106,13,173,0.35);
+}
+
+/* ===== ACCIONES ===== */
+.usuario-actions {
+  margin-top: 0.6rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+.usuario-actions button {
+  flex: 1;
+  margin: 0 0.15rem;
+  padding: 0.45rem 0;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.12);
+  color: white;
+}
+
+.usuario-actions button.danger {
+  background: rgba(155,28,28,0.35);
+}
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 768px) {
+  .usuarios-table-card {
+    padding: 1.4rem;
+  }
+
+  .usuarios-table-main th,
+  .usuarios-table-main td {
+    padding: 0.6rem;
+    font-size: 0.85rem;
+  }
+
+  .usuarios-acciones {
+    flex-wrap: wrap;
+  }
+}
+/* ===== VISIBILIDAD ===== */
+.desktop-only { display: block; }
+.mobile-only { display: none; }
+
+@media (max-width: 768px) {
+  .desktop-only { display: none; }
+  .mobile-only { display: block; }
+}

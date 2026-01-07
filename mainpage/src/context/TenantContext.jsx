@@ -21,6 +21,17 @@ const RESERVED_FIRST_SEGMENTS = new Set([
   "pro", "superadmin",
 ]);
 
+const isPublicRoute = (pathname) => {
+  return (
+    pathname === "/" ||
+    pathname.startsWith("/login") ||
+    pathname.startsWith("/registro") ||
+    pathname.startsWith("/forgot-password") ||
+    pathname.startsWith("/reset-password") ||
+    pathname.startsWith("/superadmin")
+  );
+};
+
 const extractTenantFromPath = (pathname) => {
   // /tpv/:tenantId/...
   const m1 = pathname.match(/^\/tpv\/([^/]+)/i);
@@ -84,14 +95,18 @@ export const TenantProvider = ({ children }) => {
         return;
       }
 
+      // ⛔️ NUEVO: no cargar tenant en rutas públicas
+      if (isPublicRoute(location.pathname)) {
+        setTenant(null);
+        setTenantError(null);
+        return;
+      }
+
       try {
         setLoadingTenant(true);
         setTenantError(null);
 
-        // 👇 requiere endpoint backend: GET /api/tenant/me
-        const { data } = await api.get("/tenant/me");
-
-        // Espera formato: { tenant: {...} }
+        const { data } = await api.get("/meTenant/me");
         setTenant(data?.tenant || null);
       } catch (e) {
         setTenant(null);
@@ -107,7 +122,7 @@ export const TenantProvider = ({ children }) => {
     };
 
     run();
-  }, [tenantId]);
+  }, [tenantId, location.pathname]);
 
   const clearTenant = () => {
     setTenantId(null);

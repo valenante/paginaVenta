@@ -20,7 +20,7 @@ export default function ProductosPageShop() {
         <div>
           <h1 className="products-title--productos">Gestor de catálogo</h1>
           <p className="products-subtitle--productos">
-            Crea y edita productos de tu tienda: precios, impuestos, stock,
+            Crea y edita productos de tu shop: precios, impuestos, stock,
             duración y opciones avanzadas.
           </p>
           <p className="products-subtitle--productos">

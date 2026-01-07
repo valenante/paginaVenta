@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useConfig } from "../context/ConfigContext.jsx";
+import { useTenant } from "../context/TenantContext";
 import { useAuth } from "../context/AuthContext.jsx";
 import { Link } from "react-router-dom";
 import "../styles/DashboardPage.css";
@@ -7,14 +8,30 @@ import "../styles/DashboardPage.css";
 export default function DashboardPage() {
   const { user } = useAuth();
   const { config, loading } = useConfig();
+  const { tenant } = useTenant();
+  const tipoNegocio = tenant?.tipoNegocio || "restaurante";
 
   const isPlanEsencial =
     user?.plan === "esencial" || user?.plan === "tpv-esencial";
 
+  const labelNegocio =
+    tipoNegocio === "shop" ? "shop" : "restaurante";
+
+  const labelArticulo =
+    tipoNegocio === "shop" ? "la shop" : "el restaurante";
+
+  const impresionTexto =
+    tipoNegocio === "shop"
+      ? "Configura impresoras de tickets y facturas para el mostrador."
+      : "Asigna impresoras a cocina, barra y caja y realiza pruebas.";
+
   useEffect(() => {
-    document.title = `${config?.branding?.nombreRestaurante || "Restaurante"
+    const fallback =
+      tipoNegocio === "shop" ? "Tienda" : "Restaurante";
+
+    document.title = `${config?.branding?.nombreRestaurante || fallback
       } | Dashboard`;
-  }, [config]);
+  }, [config, tipoNegocio]);
 
   if (loading) {
     return (
@@ -24,8 +41,9 @@ export default function DashboardPage() {
     );
   }
 
-  const nombreRestaurante =
-    config?.branding?.nombreRestaurante || "Tu restaurante";
+  const nombreNegocio =
+    config?.branding?.nombreRestaurante ||
+    (tipoNegocio === "shop" ? "Tu shop" : "Tu restaurante");
   const direccion = config?.informacionRestaurante?.direccion || "";
   const telefono = config?.informacionRestaurante?.telefono || "";
 
@@ -36,12 +54,12 @@ export default function DashboardPage() {
         <div className="dashboard-header-left">
           <img
             src={config?.branding?.logoUrl || "/default-logo.png"}
-            alt="Logo restaurante"
+            alt={`Logo ${labelNegocio}`}
             className="dashboard-logo"
           />
 
           <div className="dashboard-info">
-            <h1>{nombreRestaurante}</h1>
+            <h1>{nombreNegocio}</h1>
             {direccion && <p className="dashboard-text">{direccion}</p>}
             {telefono && (
               <p className="dashboard-text">
@@ -57,7 +75,7 @@ export default function DashboardPage() {
             Hola, <span>{user?.name || "usuario"}</span>
           </p>
           <p className="dashboard-welcome-sub">
-            Gestiona tu restaurante desde un único lugar.
+            Gestiona {labelArticulo} desde un único lugar.
           </p>
         </div>
       </header>
@@ -95,27 +113,25 @@ export default function DashboardPage() {
           className="dashboard-tile card"
         >
           <div className="dashboard-tile-icon">🏪</div>
-          <h2>Datos del restaurante</h2>
+          <h2>Datos de {labelNegocio}</h2>
           <p>
-            Actualiza branding, contacto y configuración general del entorno
-            Alef.
+            Actualiza branding, contacto y configuración general del entorno Alef.
           </p>
         </Link>
         {/* 👉 SIEMPRE visible */}
         <Link to="/configuracion/impresion" className="dashboard-tile card">
           <div className="dashboard-tile-icon">🖨️</div>
           <h2>Impresión</h2>
-          <p>Asigna impresoras a cocina/barra/caja y haz pruebas.</p>
+          <p>{impresionTexto}</p>
         </Link>
         {/* Estas dos solo si el plan NO es esencial */}
-        {!isPlanEsencial && (
+        {tipoNegocio === "restaurante" && !isPlanEsencial && (
           <>
             <Link to="/configuracion/carta" className="dashboard-tile card">
               <div className="dashboard-tile-icon">📋</div>
               <h2>Carta</h2>
               <p>
-                Gestiona la carta digital, alérgenos, platos, bebidas y
-                visibilidad.
+                Gestiona la carta digital, alérgenos, platos, bebidas y visibilidad.
               </p>
             </Link>
 
@@ -123,12 +139,9 @@ export default function DashboardPage() {
               <div className="dashboard-tile-icon">📅</div>
               <h2>Reservas</h2>
               <p>
-                Administra días disponibles, capacidad y solicitudes de
-                reservas.
+                Administra días disponibles, capacidad y solicitudes de reservas.
               </p>
             </Link>
-
-
           </>
         )}
       </section>

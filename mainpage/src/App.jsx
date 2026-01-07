@@ -271,6 +271,15 @@ function AppRoutes() {
       />
 
       <Route
+        path="/:tenantId/pro"
+        element={
+          <UserLayout>
+            <PanelPro />
+          </UserLayout>
+        }
+      />
+
+      <Route
         path="/pro"
         element={
           <UserLayout>

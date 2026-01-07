@@ -70,14 +70,12 @@ export default function Login() {
       const isPlanEsencial =
         user.plan === "esencial" || user.plan === "tpv-esencial";
 
-      console.log("Plan en Login:", user.plan, "→ isPlanEsencial:", isPlanEsencial);
-
       // 2️⃣ Roles ligados a restaurante
-      if (["admin_restaurante", "admin", "camarero", "cocinero"].includes(user.role)) {
+      if (["admin_restaurante", "admin_tienda", "admin", "camarero", "cocinero"].includes(user.role)) {
         let url;
 
         if (isLocalhost) {
-          url = `http://localhost:5173/pro`;
+          url = `http://localhost:5173/${tenantSlug}/pro`;
         } else {
           const base = `https://${tenantSlug}-panel.${import.meta.env.VITE_MAIN_DOMAIN}`;
           url = `${base}/pro`;

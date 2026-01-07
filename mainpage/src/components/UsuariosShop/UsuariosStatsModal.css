@@ -1,0 +1,330 @@
+/* =========================================================
+   USUARIO STATS MODAL — ALEF PREMIUM
+   ---------------------------------------------------------
+   Vidrio oscuro · Blur 18px · Cards premium · Chips SaaS
+   Animaciones · Responsive
+   ========================================================= */
+
+/* ===== OVERLAY ===== */
+.statsUserModal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  z-index: 3000;
+  animation: fadeIn 0.25s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ===== CONTENEDOR ===== */
+.statsUserModal-container {
+  width: min(720px, 95%);
+  max-height: 92vh;
+  overflow-y: auto;
+
+  background: rgba(20, 20, 35, 0.55);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(255,255,255,0.10);
+  padding: 2rem;
+
+  box-shadow:
+    0 18px 50px rgba(0,0,0,0.6),
+    0 0 0 1px rgba(255,255,255,0.05);
+
+  animation: slideUp .28s ease;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== HEADER ===== */
+.statsUserModal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.4rem;
+}
+
+.statsUserModal-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.statsUserModal-subtitle {
+  font-size: 1rem;
+  opacity: 0.85;
+  color: #e5e5e5;
+}
+
+.statsUserModal-role {
+  color: #ff6700;
+  font-weight: 600;
+}
+
+.statsUserModal-close {
+  background: rgba(255,255,255,0.10);
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 50%;
+  width: 34px;
+  height: 34px;
+
+  cursor: pointer;
+  color: #fff;
+
+  transition: all .25s ease;
+}
+
+.statsUserModal-close:hover {
+  background: rgba(255,255,255,0.18);
+  transform: scale(1.1);
+}
+
+/* ===== BODY ===== */
+.statsUserModal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* ===== FILTROS ===== */
+.statsUserModal-filters {
+  background: rgba(255,255,255,0.05);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(255,255,255,0.10);
+  padding: 1.4rem;
+  backdrop-filter: blur(14px);
+}
+
+.statsUserModal-filter-presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.statsUserModal-chip {
+  padding: 0.45rem 1rem;
+  border-radius: var(--radius-pill);
+  background: rgba(255,255,255,0.10);
+  color: #fff;
+  cursor: pointer;
+  font-size: 0.9rem;
+  border: 1px solid rgba(255,255,255,0.18);
+  transition: all .22s ease;
+}
+
+.statsUserModal-chip:hover {
+  background: rgba(255,255,255,0.18);
+}
+
+.statsUserModal-chip.active {
+  background: linear-gradient(135deg, #6a0dad, #ff6700);
+  border-color: transparent;
+  box-shadow: 0 4px 14px rgba(255,103,0,0.35);
+}
+
+/* Rango personalizado */
+.statsUserModal-dates {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.statsUserModal-dates input {
+  padding: 0.45rem .7rem;
+  font-size: 0.9rem;
+
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.20);
+  color: white;
+  border-radius: var(--radius-md);
+
+  outline: none;
+}
+
+.statsUserModal-caption {
+  margin-top: 0.6rem;
+  color: #e2e2e2;
+  opacity: 0.85;
+}
+
+/* ===== LOADING ===== */
+.statsUserModal-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .8rem;
+}
+
+.statsUserModal-spinner {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 3px solid rgba(255,255,255,0.2);
+  border-top-color: #ff6700;
+  animation: spin .7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ===== ERROR ===== */
+.statsUserModal-error {
+  color: #ff6b6b;
+  font-size: 1rem;
+  text-align: center;
+}
+
+/* ===== SECCIONES ===== */
+.statsUserModal-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.statsUserModal-section-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: white;
+}
+
+/* ===== GRID RESUMEN ===== */
+.statsUserModal-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit,minmax(200px,1fr));
+  gap: 1rem;
+}
+
+.statsUserModal-card {
+  background: rgba(255,255,255,0.06);
+  padding: 1.2rem;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(255,255,255,0.12);
+  display: flex;
+  flex-direction: column;
+
+  transition: all .25s ease;
+}
+
+.statsUserModal-card:hover {
+  background: rgba(255,255,255,0.08);
+  transform: translateY(-2px);
+}
+
+.statsUserModal-card .label {
+  font-size: .9rem;
+  opacity: .85;
+}
+
+.statsUserModal-card .value {
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin-top: .4rem;
+}
+
+.statsUserModal-card .value.accent {
+  color: #ff6700;
+}
+
+.statsUserModal-card .value.small {
+  font-size: 1rem;
+  opacity: 0.9;
+}
+
+/* ===== PRODUCTOS ===== */
+.statsUserModal-product-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.statsUserModal-product-item {
+  display: flex;
+  justify-content: space-between;
+  padding: .7rem 0;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.statsUserModal-product-item .main {
+  display: flex;
+  flex-direction: column;
+}
+
+.statsUserModal-product-item .name {
+  font-weight: 600;
+}
+
+.statsUserModal-product-item .qty {
+  font-size: .85rem;
+  opacity: .8;
+}
+
+/* ===== ACTIVIDAD ===== */
+.statsUserModal-activity {
+  display: flex;
+  gap: 2rem;
+}
+
+.statsUserModal-activity-title {
+  font-size: 1.1rem;
+  margin-bottom: .6rem;
+}
+
+.statsUserModal-tags {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.statsUserModal-tags .tag {
+  display: flex;
+  justify-content: space-between;
+  padding: .5rem 0;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.statsUserModal-tags .badge {
+  background: rgba(255,103,0,0.25);
+  border: 1px solid rgba(255,103,0,0.4);
+  padding: .25rem .65rem;
+  border-radius: var(--radius-pill);
+  font-size: .85rem;
+}
+
+/* ===== FOOTER ===== */
+.statsUserModal-footer {
+  margin-top: 2rem;
+  text-align: center;
+}
+
+.statsUserModal-close-btn {
+  padding: .8rem 1.8rem;
+  background: linear-gradient(135deg, #6a0dad, #ff6700);
+  color: #fff;
+  border-radius: var(--radius-pill);
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: .95rem;
+
+  box-shadow: 0 6px 18px rgba(255,103,0,0.35);
+  transition: all .22s ease;
+}
+
+.statsUserModal-close-btn:hover {
+  transform: translateY(-2px);
+  background: linear-gradient(135deg, #7c1fcf, #ff7a22);
+}

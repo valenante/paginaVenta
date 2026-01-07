@@ -95,7 +95,7 @@ const Contact = () => {
               <input
                 id="contact-restaurante"
                 type="text"
-                placeholder="Restaurante, bar, cafetería…"
+                placeholder="Restaurante, bar, cafetería, shop..."
               />
             </div>
 

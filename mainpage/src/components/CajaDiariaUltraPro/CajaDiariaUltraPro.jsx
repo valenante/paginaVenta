@@ -3,6 +3,7 @@ import { obtenerCajasPorRango } from "./ObtenerCajasPorRango";
 import UpsellEstadisticasPro from "../../components/Estadisticas/UpsellEstadisticasPro";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { generarPDFCaja } from "./pdfs/pdfCajaUltraPro";
+import { useTenant } from "../../context/TenantContext";
 import HeatmapSemana from "./HeatMapSemana";
 import CajaIngresosChart from "./CajaIngresosChart";
 import "./CajaDiariaUltraPro.css";
@@ -35,8 +36,11 @@ export default function CajaDiariaUltraPro() {
   const [error, setError] = useState(null);
   const chartRef = useRef(null);
   const { user } = useAuth();
+  const { tenant } = useTenant();
+  const tipoNegocio = tenant?.tipoNegocio || "restaurante";
   const isPlanEsencial =
-    user?.plan === "esencial" || user?.plan === "tpv-esencial";
+    tipoNegocio === "restaurante" &&
+    (user?.plan === "esencial" || user?.plan === "tpv-esencial");
 
   /* 🌅 Fechas iniciales al abrir */
   useEffect(() => {
@@ -50,17 +54,23 @@ export default function CajaDiariaUltraPro() {
   }, []);
 
   /* 🔄 Cargar datos desde el backend */
-  const cargarDatos = async () => {
-    try {
-      const cajas = await obtenerCajasPorRango(fechaInicio, fechaFin);
-      setDatos(cajas || []);
-      setError(null);
-    } catch (err) {
-      console.error(err);
-      setDatos([]);
-      setError("Error al cargar datos.");
-    }
-  };
+const cargarDatos = async () => {
+  try {
+    const cajas = await obtenerCajasPorRango(fechaInicio, fechaFin, tipoNegocio);
+
+    console.log("[CAJA] tipoNegocio:", tipoNegocio);
+    console.log("[CAJA] respuesta:", cajas);
+    console.log("[CAJA] es array?", Array.isArray(cajas), "len:", cajas?.length);
+
+    setDatos(Array.isArray(cajas) ? cajas : []);
+    setError(null);
+  } catch (err) {
+    console.error("[CAJA] ERROR:", err?.response?.status, err?.response?.data || err);
+    setDatos([]);
+    setError("Error al cargar datos.");
+  }
+};
+
 
   useEffect(() => {
     if (fechaInicio && fechaFin) cargarDatos();
@@ -163,6 +173,8 @@ export default function CajaDiariaUltraPro() {
         <div className="caja-ultra-filtros">
           <input type="date" value={fechaInicio} onChange={(e) => setFechaInicio(e.target.value)} />
           <input type="date" value={fechaFin} onChange={(e) => setFechaFin(e.target.value)} />
+          {error && <div style={{ padding: 10, background: "#300", color: "#fff" }}>{error}</div>}
+{!error && datos.length === 0 && <div style={{ padding: 10 }}>No hay datos en este rango.</div>}
 
           <button onClick={cargarDatos}>Actualizar</button>
 

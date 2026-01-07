@@ -19,7 +19,7 @@ const Packs = () => {
       try {
         setLoading(true);
         setError("");
-        const { data } = await api.get("/superadminPlans/publicPlans");
+        const { data } = await api.get("/admin/superadminPlans/publicPlans");
         setPlanes(Array.isArray(data) ? data : []);
       } catch (err) {
         console.error("Error cargando planes:", err);

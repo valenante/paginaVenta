@@ -89,10 +89,8 @@ const CajaIngresosChart = forwardRef(({ datosDiarios }, ref) => {
         y: {
           ticks: {
             color: "#cbd5e1",
-            font: {
-              size: 11,
-            },
-            callback: (value) => `${value} €`,
+            font: { size: 11 },
+            callback: (value) => `${Number(value).toFixed(2)} €`,
           },
           grid: {
             color: "rgba(255,255,255,0.08)",

@@ -9,7 +9,7 @@ import React, {
   useState,
 } from "react";
 import api from "../utils/api";
-
+import { useTenant } from "./TenantContext";
 /* ================================
   Helpers
 ================================ */
@@ -148,6 +148,8 @@ export function VentasProvider({
   // paginación server-side
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(defaultPageSize);
+  const { tenant } = useTenant();
+  const tipoNegocio = tenant?.tipoNegocio || "restaurante";
 
   const headersTenant = useMemo(() => {
     return tenantId ? { headers: { "x-tenant-id": tenantId } } : {};
@@ -162,6 +164,10 @@ export function VentasProvider({
     const p = Number(page || 1);
     return Math.min(Math.max(p, 1), pageCount);
   }, [page, pageCount]);
+
+  const ventasEndpoint = useMemo(() => {
+    return tipoNegocio === "shop" ? "/shop/ventas" : "/ventas";
+  }, [tipoNegocio]);
 
   // ✅ Fetch server-side (sin slice() en frontend)
   const refresh = useCallback(async () => {
@@ -183,7 +189,7 @@ export function VentasProvider({
         limit: pageSize,
       };
 
-      const { data } = await api.get("/ventas", {
+      const { data } = await api.get(ventasEndpoint, {
         ...headersTenant,
         params,
       });
@@ -284,10 +290,7 @@ export function VentasProvider({
 
   // normalizadas (la página actual ya viene del server)
   const ventasNorm = useMemo(() => ventas.map(normalizeVenta), [ventas]);
-  useEffect(() => {
-  console.log("🧠 ventas RAW:", ventas);
-  console.log("🧠 ventas NORMALIZADAS:", ventasNorm);
-}, [ventas, ventasNorm]);
+
 
 
   // metodos/canales disponibles (de la página actual)

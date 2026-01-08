@@ -6,57 +6,63 @@ import "./Features.css";
 const ventajas = [
   {
     icono: "🎨",
-    titulo: "Personalización total",
+    titulo: "Personalización total del sistema",
     descripcion:
-      "Colores, logo, nombre del restaurante y módulos activados a tu medida. Alef se adapta a tu forma de trabajar, no al revés.",
+      "Colores, logo, nombre del negocio y módulos activables según tus necesidades. Alef se adapta tanto a restaurantes como a tiendas.",
   },
   {
     icono: "🗣️",
-    titulo: "Voz en sala, cocina y barra",
+    titulo: "Control por voz inteligente",
     descripcion:
-      "Toma comandas por voz, marca platos listos o solicita bebidas sin tocar la pantalla. Más rapidez y menos errores en momentos de estrés.",
+      "Comandas, estados de platos, acciones rápidas y flujos internos mediante voz. Ideal para sala, cocina, barra o mostrador.",
   },
   {
     icono: "📲",
-    titulo: "Carta digital y pedidos en mesa",
+    titulo: "Pedidos digitales y autoservicio",
     descripcion:
-      "Los clientes pueden ver la carta, hacer pedidos desde el móvil y solicitar la cuenta. Todo entra en tu TPV central y pasa por camarero.",
+      "Carta digital para restaurantes y flujos de autoservicio para tiendas. Pedidos desde el móvil del cliente conectados al sistema central.",
   },
   {
     icono: "📅",
-    titulo: "Reservas conectadas con el TPV",
+    titulo: "Reservas y gestión de turnos",
     descripcion:
-      "Agenda de reservas integrada: control de turnos, número de comensales, estado de cada reserva y sincronización con las mesas del local.",
+      "Reservas integradas con mesas y capacidad en restaurantes, o planificación de horarios y picos de venta en tiendas.",
   },
   {
     icono: "📦",
-    titulo: "Control de stock en tiempo real",
+    titulo: "Stock y proveedores profesionales",
     descripcion:
-      "Controla existencias, alertas de mínimos y consumo por producto. Reduce mermas y ten siempre claro qué se vende y qué no.",
+      "Control de stock en tiempo real, alertas de mínimos, consumo automático y gestión de proveedores unificada para todo el negocio.",
   },
   {
     icono: "📈",
-    titulo: "Estadísticas y datos de negocio",
+    titulo: "Estadísticas avanzadas de negocio",
     descripcion:
-      "Ventas por día, franja horaria, camarero, zona, producto y mucho más. Toma decisiones con datos, no con intuiciones.",
+      "Ventas, márgenes, productos, horarios, empleados y rendimiento. Datos claros para tomar decisiones reales.",
   },
   {
     icono: "🧾",
-    titulo: "Facturación encadenada y Ley Antifraude",
+    titulo: "Facturación legal y antifraude",
     descripcion:
-      "Facturas inalterables con hash encadenado, registros de rectificación y sistema preparado para integrarse con VERI*FACTU.",
+      "Facturación encadenada, rectificaciones, registros inalterables y sistema preparado para VERI*FACTU y normativa vigente.",
+  },
+  {
+    icono: "🔎",
+    titulo: "Escáner y ventas rápidas (Shop)",
+    descripcion:
+      "Compatible con escáneres de código de barras para tiendas. Venta inmediata, control de inventario y trazabilidad completa.",
   },
   {
     icono: "💻",
-    titulo: "Funciona en cualquier dispositivo",
+    titulo: "Web, multi-dispositivo y en tiempo real",
     descripcion:
-      "Alef es 100 % web: solo necesitas un navegador. Ordenadores, tablets o móviles conectados al mismo sistema en tiempo real.",
+      "Funciona desde cualquier navegador. TPV, cocina, barra, móvil o tablet sincronizados sin límites de dispositivos.",
   },
   {
     icono: "🤝",
-    titulo: "Instalación guiada y soporte cercano",
+    titulo: "Instalación guiada y soporte humano",
     descripcion:
-      "Te enviamos el equipo preconfigurado y te acompañamos en la puesta en marcha. Soporte humano que entiende la hostelería.",
+      "Puesta en marcha asistida, hardware preconfigurado y soporte real de personas que entienden cómo funciona un negocio físico.",
   },
 ];
 
@@ -68,11 +74,11 @@ const Features = () => {
       <div className="Features-inner section--wide">
         <div className="Features-header">
           <span className="Features-kicker">Ventajas clave</span>
-          <h2>Todo lo que tu restaurante necesita en un solo sistema</h2>
+          <h2>Una sola plataforma para gestionar todo tu negocio</h2>
           <p>
-            Alef unifica TPV, carta digital, reservas, stock, voz y
-            facturación antifraude en una plataforma web pensada para
-            restaurantes que quieren trabajar mejor y crecer.
+            Alef unifica TPV, ventas, stock, proveedores, facturación legal,
+            voz y estadísticas en un sistema web diseñado para restaurantes
+            y tiendas que quieren trabajar mejor y escalar sin límites.
           </p>
         </div>
 

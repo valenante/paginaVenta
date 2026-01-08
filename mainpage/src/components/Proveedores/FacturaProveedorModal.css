@@ -1,0 +1,208 @@
+/*****************************************************
+ * FacturaProveedorModal – Alef (UI PRO)
+ *****************************************************/
+
+.ppModal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-lg);
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(6px);
+}
+
+.ppModal {
+  width: min(760px, 100%);
+  max-height: min(86vh, 720px);
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  background: #ffffff;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  box-shadow: var(--shadow-suave);
+  display: flex;
+  flex-direction: column;
+}
+
+/* =========================
+   Header
+========================= */
+
+.ppModal-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-lg);
+  padding: var(--space-lg) var(--space-xl);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.25);
+  background: linear-gradient(
+    180deg,
+    rgba(99, 102, 241, 0.06),
+    rgba(255, 255, 255, 1)
+  );
+}
+
+.ppModal-head h2 {
+  margin: 0;
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  letter-spacing: -0.2px;
+}
+
+.ppModal-close {
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  background: #ffffff;
+  cursor: pointer;
+  font-size: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.12s ease, background 0.12s ease, border-color 0.12s ease;
+}
+
+.ppModal-close:hover {
+  transform: translateY(-1px);
+  background: rgba(99, 102, 241, 0.06);
+  border-color: color-mix(
+    in srgb,
+    var(--color-primario) 35%,
+    rgba(148, 163, 184, 0.35)
+  );
+}
+
+/* =========================
+   Body
+========================= */
+
+.ppModal-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  padding: var(--space-lg) var(--space-xl);
+  overflow: auto;
+}
+
+/* =========================
+   Alert
+========================= */
+
+.ppModal-alert {
+  padding: 0.75rem 0.95rem;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(239, 68, 68, 0.22);
+  background: rgba(239, 68, 68, 0.08);
+  font-size: var(--font-size-sm);
+}
+
+/* =========================
+   Grid
+========================= */
+
+.ppModal-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-md) var(--space-lg);
+}
+
+.ppModal-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.ppModal-field--full {
+  grid-column: 1 / -1;
+}
+
+.ppModal-field label {
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  color: rgba(15, 23, 42, 0.85);
+}
+
+/* =========================
+   Inputs
+========================= */
+
+.ppModal-field input,
+.ppModal-field textarea {
+  font-family: var(--font-base);
+  font-size: var(--font-size-sm);
+  padding: 0.6rem 0.75rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-borde-suave);
+  background: #ffffff;
+  outline: none;
+  transition: box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.ppModal-field textarea {
+  resize: vertical;
+  min-height: 92px;
+}
+
+.ppModal-field input:focus,
+.ppModal-field textarea:focus {
+  border-color: color-mix(
+    in srgb,
+    var(--color-primario) 55%,
+    #ffffff
+  );
+  box-shadow: 0 0 0 4px
+    color-mix(in srgb, var(--color-primario) 16%, transparent);
+}
+
+/* =========================
+   Footer
+========================= */
+
+.ppModal-foot {
+  margin-top: var(--space-md);
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-sm);
+  padding-top: var(--space-md);
+  border-top: 1px solid rgba(148, 163, 184, 0.25);
+}
+
+/* =========================
+   Responsive
+========================= */
+
+@media (max-width: 768px) {
+  .ppModal-backdrop {
+    padding: var(--space-md);
+  }
+
+  .ppModal {
+    max-height: 92vh;
+    border-radius: var(--radius-lg);
+  }
+
+  .ppModal-head {
+    padding: var(--space-md) var(--space-lg);
+  }
+
+  .ppModal-body {
+    padding: var(--space-md) var(--space-lg);
+  }
+
+  .ppModal-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-md);
+  }
+
+  .ppModal-foot {
+    justify-content: stretch;
+  }
+
+  .ppModal-foot .btn-ghost,
+  .ppModal-foot .btn-secondary {
+    width: 50%;
+  }
+}

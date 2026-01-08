@@ -15,19 +15,19 @@ export default function SettingsPage() {
   }, []);
 
   const cargarConfig = async () => {
-    const res = await api.get("/superadmin/system/config");
+    const res = await api.get("/admin/superadmin/system/config");
     setConfig(res.data.config);
   };
 
   const cargarStatus = async () => {
-    const res = await api.get("/superadmin/system/status");
+    const res = await api.get("/admin/superadmin/system/status");
     setStatus(res.data.status);
   };
 
   const guardar = async () => {
     setSaving(true);
     try {
-      await api.put("/superadmin/system/config", config);
+      await api.put("/admin/superadmin/system/config", config);
       await cargarStatus();
     } catch (err) {
       console.error("Error guardando ajustes:", err);
@@ -38,7 +38,7 @@ export default function SettingsPage() {
   const testService = async (svc) => {
     setTesting(svc);
     try {
-      const res = await api.post(`/superadmin/system/test/${svc}`);
+      const res = await api.post(`/admin/superadmin/system/test/${svc}`);
       alert(`✔ ${svc.toUpperCase()} funcionando`);
     } catch (err) {
       alert(`❌ ${svc.toUpperCase()} fallo: ` + err.response?.data?.error);

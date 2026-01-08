@@ -24,7 +24,7 @@ export default function LogsPage() {
       if (search) params.search = search;
       if (tenant) params.tenant = tenant;
 
-      const { data } = await api.get("/superadmin/logs", { params });
+      const { data } = await api.get("/admin/superadmin/logs", { params });
 
       setLogs(data.logs || []);
       setTotalPages(data.totalPages || 1);
@@ -46,7 +46,7 @@ export default function LogsPage() {
     if (!confirm("¿Seguro que quieres eliminar TODOS los logs?")) return;
 
     try {
-      await api.delete("/superadmin/logs");
+      await api.delete("/admin/superadmin/logs");
       fetchLogs();
       alert("Logs eliminados.");
     } catch (err) {

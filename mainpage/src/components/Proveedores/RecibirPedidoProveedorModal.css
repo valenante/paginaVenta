@@ -1,0 +1,187 @@
+/*****************************************************
+ * Recibir Pedido Modal – Alef UI
+ *****************************************************/
+
+/* =========================
+   Backdrop
+========================= */
+
+.ppRec-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(3px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* =========================
+   Modal
+========================= */
+
+.ppRec {
+  width: 100%;
+  max-width: 720px;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  overflow: hidden;
+}
+
+/* =========================
+   Header
+========================= */
+
+.ppRec-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-lg) var(--space-xl);
+  border-bottom: 1px solid var(--color-borde-suave);
+  background: var(--color-fondo-claro);
+}
+
+.ppRec-title {
+  margin: 0;
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+}
+
+.ppRec-close {
+  border: none;
+  background: transparent;
+  font-size: 1.25rem;
+  cursor: pointer;
+  opacity: 0.6;
+}
+
+.ppRec-close:hover {
+  opacity: 1;
+}
+
+/* =========================
+   Body
+========================= */
+
+.ppRec-body {
+  padding: var(--space-lg) var(--space-xl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  max-height: min(70vh, 600px);
+  overflow-y: auto;
+}
+
+/* =========================
+   Alert
+========================= */
+
+.ppRec-alert {
+  padding: 0.6rem 0.9rem;
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+}
+
+/* =========================
+   Table wrapper
+========================= */
+
+.ppRec-tableWrap {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* =========================
+   Table
+========================= */
+
+.ppRec-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 520px;
+  font-size: var(--font-size-sm);
+}
+
+.ppRec-table thead {
+  background: var(--color-fondo-claro);
+}
+
+.ppRec-table th,
+.ppRec-table td {
+  padding: 0.5rem 0.6rem;
+  border-bottom: 1px solid var(--color-borde-suave);
+  text-align: left;
+  white-space: nowrap;
+}
+
+.ppRec-table th {
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  color: var(--color-texto-suave);
+  text-transform: uppercase;
+}
+
+.ppRec-name {
+  font-weight: 600;
+}
+
+/* =========================
+   Inputs
+========================= */
+
+.ppRec-table input[type="number"] {
+  width: 80px;
+  padding: 0.35rem 0.45rem;
+  font-size: var(--font-size-sm);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-borde-suave);
+}
+
+.ppRec-table input[type="number"]:focus {
+  outline: none;
+  border-color: var(--color-primario);
+  box-shadow: 0 0 0 2px
+    color-mix(in srgb, var(--color-primario) 20%, transparent);
+}
+
+/* =========================
+   Footer
+========================= */
+
+.ppRec-foot {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-sm);
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--color-borde-suave);
+}
+
+/* =========================
+   Responsive
+========================= */
+
+@media (max-width: 640px) {
+  .ppRec {
+    max-width: 95vw;
+  }
+
+  .ppRec-body {
+    padding: var(--space-md);
+  }
+
+  .ppRec-foot {
+    flex-direction: column-reverse;
+  }
+
+  .ppRec-foot .btn {
+    width: 100%;
+  }
+
+  .ppRec-table {
+    min-width: 480px;
+    font-size: var(--font-size-xs);
+  }
+}

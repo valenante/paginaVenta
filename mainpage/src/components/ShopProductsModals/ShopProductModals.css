@@ -1,46 +1,253 @@
-.shopprod-modal {
-  background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.14);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+/* ============================================================================
+   EDIT PRODUCTO (EditProductShop) — Modal ALEF PRO
+   - Overlay oscuro con blur + gradiente
+   - Modal glass con sombra y borde suave
+   - Form: grid y spacing profesional
+   - Botones 50/50 (Cerrar / Guardar)
+   ========================================================================== */
+
+/* === OVERLAY BASE === */
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+
+  background:
+    radial-gradient(circle at top, rgba(110, 66, 193, 0.38), transparent 55%),
+    radial-gradient(circle at bottom right, rgba(255, 103, 0, 0.10), transparent 50%),
+    rgba(10, 15, 28, 0.82);
+
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
 }
 
+/* === MODAL BASE === */
+.modal.shopprod-modal {
+  width: 100%;
+  max-width: 720px;
+  max-height: 90vh;
+
+  border-radius: 1.25rem;
+  padding: 1.6rem 1.6rem 1.25rem;
+
+  background:
+    radial-gradient(circle at top left, rgba(88, 28, 135, 0.22), transparent 55%),
+    rgba(15, 23, 42, 0.92);
+
+  border: 1px solid rgba(148, 163, 184, 0.30);
+
+  box-shadow:
+    0 24px 70px rgba(0, 0, 0, 0.70),
+    0 0 0 1px rgba(255, 255, 255, 0.04);
+
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+
+  animation: shopprodModalIn 0.16s ease-out;
+}
+
+@keyframes shopprodModalIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* === TITLE === */
 .shopprod-modal__title {
-  margin: 0 0 var(--espaciado-base) 0;
-  font-weight: var(--peso-black);
+  margin: 0 0 1rem;
+  font-size: 1.35rem;
+  font-weight: 650;
+  letter-spacing: 0.02em;
+  color: rgba(229, 231, 235, 0.95);
+
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
 }
 
+.shopprod-modal__title::before {
+  content: "✏️";
+  font-size: 1.05rem;
+}
+
+/* === FORM WRAP === */
 .shopprod-form {
   display: flex;
   flex-direction: column;
-  gap: var(--espaciado-s);
+  gap: 1rem;
+  overflow-y: auto;
+  padding-right: 0.2rem;
 }
 
-.shopprod-field span {
-  display: block;
-  font-size: var(--texto-xs);
-  color: var(--texto-muted);
-  margin-bottom: 6px;
+/* scroll fino */
+.shopprod-form::-webkit-scrollbar {
+  width: 6px;
+}
+.shopprod-form::-webkit-scrollbar-track {
+  background: transparent;
+}
+.shopprod-form::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.55);
+  border-radius: 999px;
 }
 
+/* === FIELD === */
+.shopprod-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.shopprod-field > span {
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(156, 163, 175, 0.95);
+}
+
+/* inputs */
+.shopprod-field input {
+  border-radius: 0.85rem;
+
+  border: 1px solid rgba(55, 65, 81, 0.90);
+  background:
+    radial-gradient(circle at top, rgba(15, 23, 42, 0.35), rgba(15, 23, 42, 0.96));
+
+  padding: 0.68rem 0.8rem;
+  font-size: 0.92rem;
+  color: rgba(229, 231, 235, 0.96);
+  outline: none;
+
+  transition:
+    border-color 0.16s ease,
+    box-shadow 0.16s ease,
+    background 0.16s ease,
+    transform 0.06s ease;
+}
+
+.shopprod-field input::placeholder {
+  color: rgba(148, 163, 184, 0.7);
+}
+
+.shopprod-field input:focus {
+  border-color: rgba(168, 85, 247, 0.9);
+  box-shadow:
+    0 0 0 1px rgba(168, 85, 247, 0.75),
+    0 0 0 10px rgba(76, 29, 149, 0.35);
+  background:
+    radial-gradient(circle at top, rgba(30, 64, 175, 0.30), rgba(15, 23, 42, 0.98));
+  transform: translateY(-0.5px);
+}
+
+.shopprod-field input:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* === ROW 2 COLS === */
 .shopprod-row {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--espaciado-s);
+  gap: 1rem;
 }
 
+/* === ACTIONS (50/50) === */
 .shopprod-actions {
   display: flex;
-  gap: var(--espaciado-s);
-  margin-top: var(--espaciado-base);
+  gap: 0.85rem;
+  margin-top: 0.35rem;
 }
 
-.shopprod-actions button {
-  width: 50%;
+/* fuerza 50/50 */
+.shopprod-actions > button {
+  flex: 1;
+  min-height: 42px;
+  border-radius: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
 }
 
-@media (max-width: 720px) {
+/* Mejoras locales para estos botones (sin romper los globales) */
+.shopprod-actions .btn-ghost {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: rgba(255, 255, 255, 0.92);
+  transition: background 0.16s ease, border-color 0.16s ease, transform 0.08s ease;
+}
+
+.shopprod-actions .btn-ghost:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.09);
+  border-color: rgba(255, 255, 255, 0.22);
+  transform: translateY(-1px);
+}
+
+/* tu btn-secondary puede ser degradado global; aquí lo limitamos para que no se vea “barra” */
+.shopprod-actions .btn-secondary {
+  width: auto !important;
+  background: linear-gradient(135deg, #a855f7, #ec4899);
+  border: 1px solid rgba(236, 72, 153, 0.35);
+  color: #f9fafb;
+
+  box-shadow: 0 12px 28px rgba(168, 85, 247, 0.35);
+  transition: transform 0.08s ease, filter 0.16s ease, box-shadow 0.16s ease;
+}
+
+.shopprod-actions .btn-secondary:hover:not(:disabled) {
+  transform: translateY(-1px);
+  filter: brightness(1.06);
+  box-shadow: 0 16px 36px rgba(236, 72, 153, 0.45);
+}
+
+.shopprod-actions button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* focus accesible */
+.shopprod-actions button:focus-visible,
+.shopprod-field input:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.55);
+  outline-offset: 2px;
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 760px) {
+  .modal.shopprod-modal {
+    padding: 1.25rem 1.15rem 1rem;
+    border-radius: 1.05rem;
+  }
+
   .shopprod-row {
     grid-template-columns: 1fr;
+  }
+
+  .shopprod-actions {
+    flex-direction: column-reverse;
+  }
+
+  .shopprod-actions > button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 420px) {
+  .overlay {
+    padding: 0.75rem;
+  }
+
+  .shopprod-modal__title {
+    font-size: 1.22rem;
   }
 }

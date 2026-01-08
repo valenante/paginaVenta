@@ -33,7 +33,7 @@ export default function PlanesAdmin() {
   // =====================================================
   const cargarPlanes = async () => {
     try {
-      const { data } = await api.get("/superadminPlans");
+      const { data } = await api.get("/admin/superadminPlans");
       setPlanes(data);
     } catch (err) {
       alert("❌ Error cargando planes");
@@ -45,7 +45,7 @@ export default function PlanesAdmin() {
   // =====================================================
   const cargarFeatures = async () => {
     try {
-      const { data } = await api.get("/superadmin/features");
+      const { data } = await api.get("/admin/superadmin/features");
       setFeatures(data);
     } catch (err) {
       alert("❌ Error cargando features");
@@ -79,12 +79,12 @@ export default function PlanesAdmin() {
   const confirmarBorrado = async () => {
     try {
       if (modalConfirm.tipo === "plan") {
-        await api.delete(`/superadminPlans/${modalConfirm.id}`);
+        await api.delete(`/admin/superadminPlans/${modalConfirm.id}`);
         cargarPlanes();
       }
 
       if (modalConfirm.tipo === "feature") {
-        await api.delete(`/superadmin/features/${modalConfirm.id}`);
+        await api.delete(`/admin/superadmin/features/${modalConfirm.id}`);
         cargarFeatures();
       }
     } catch {
@@ -99,7 +99,7 @@ export default function PlanesAdmin() {
   // =====================================================
   const toggleFeature = async (id) => {
     try {
-      await api.patch(`/superadmin/features/${id}/toggle`);
+      await api.patch(`/admin/superadmin/features/${id}/toggle`);
       cargarFeatures();
     } catch {
       alert("No se pudo cambiar estado");

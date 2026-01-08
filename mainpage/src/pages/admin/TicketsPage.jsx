@@ -27,7 +27,7 @@ export default function TicketsPage() {
       if (tenant) params.tenant = tenant;
       if (search) params.search = search;
 
-      const { data } = await api.get("/superadmin/tickets", { params });
+      const { data } = await api.get("/admin/superadmin/tickets", { params });
       setTickets(data.tickets || []);
     } catch (err) {
       console.error(err);
@@ -46,7 +46,7 @@ export default function TicketsPage() {
     if (!nuevoMensaje.trim()) return;
 
     try {
-      await api.post(`/superadmin/tickets/${selected._id}/mensaje`, {
+      await api.post(`/admin/superadmin/tickets/${selected._id}/mensaje`, {
         autor: "superadmin",
         mensaje: nuevoMensaje,
       });
@@ -60,7 +60,7 @@ export default function TicketsPage() {
 
   const fetchTicket = async (id) => {
     try {
-      const { data } = await api.get(`/superadmin/tickets/${id}`);
+      const { data } = await api.get(`/admin/superadmin/tickets/${id}`);
       setSelected(data.ticket);
     } catch (err) {
       console.error("❌ Error recargando ticket:", err);
@@ -72,7 +72,7 @@ export default function TicketsPage() {
   // ============================
   const updateTicket = async (updates) => {
     try {
-      const { data } = await api.put(`/superadmin/tickets/${selected._id}`, updates);
+      const { data } = await api.put(`/admin/superadmin/tickets/${selected._id}`, updates);
       setSelected(data.ticket);
       fetchTickets();
     } catch (err) {
@@ -87,7 +87,7 @@ export default function TicketsPage() {
     if (!confirm("¿Eliminar ticket permanentemente?")) return;
 
     try {
-      await api.delete(`/superadmin/tickets/${selected._id}`);
+      await api.delete(`/admin/superadmin/tickets/${selected._id}`);
       setSelected(null);
       fetchTickets();
     } catch (err) {

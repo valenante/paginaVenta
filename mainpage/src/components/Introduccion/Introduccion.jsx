@@ -11,25 +11,28 @@ const Introduccion = () => {
         <div className="Introduccion-left">
           <div className="Introduccion-contenido">
             <div className="Introduccion-badge">
-              El primer TPV que se adapta a ti
+              La plataforma que se adapta a tu negocio
             </div>
 
             <h1 className="Introduccion-titulo">
-              El TPV web más rápido, flexible y moderno para tu restaurante
+              El sistema web definitivo para restaurantes y tiendas
             </h1>
 
             <p className="Introduccion-subtitulo">
-              Alef es el primer TPV creado desde dentro de la hostelería para
-              adaptarse a tu forma de trabajar. Sin instalaciones complicadas,
-              sin límites de dispositivos y totalmente personalizable en diseño
-              y funcionalidades.
+              Alef es una plataforma creada desde dentro del negocio físico para
+              adaptarse a tu forma real de trabajar. Gestiona restaurantes y
+              tiendas desde un único sistema: ventas, stock, proveedores,
+              facturación, estadísticas y mucho más, sin instalaciones
+              complicadas ni límites de dispositivos.
             </p>
 
             <div className="Introduccion-highlights">
               <span>⚡ Instalación en minutos</span>
-              <span>🖥️ Ilimitado en dispositivos</span>
+              <span>🖥️ Dispositivos ilimitados</span>
+              <span>🏪 Restaurantes y tiendas</span>
               <span>🎨 Personalización total</span>
-              <span>🗣️ Voz en sala, cocina y barra</span>
+              <span>🗣️ Voz en sala, cocina, barra y mostrador</span>
+              <span>📦 Stock, proveedores y escáner de códigos</span>
               <span>🧾 Facturación encadenada y VERI*FACTU</span>
             </div>
 
@@ -52,6 +55,10 @@ const Introduccion = () => {
                 <span>acceso desde cualquier dispositivo</span>
               </div>
               <div>
+                <strong>Todo en uno</strong>
+                <span>restaurante y shop en una sola plataforma</span>
+              </div>
+              <div>
                 <strong>Listo</strong>
                 <span>para Ley Antifraude 11/2021</span>
               </div>
@@ -64,13 +71,13 @@ const Introduccion = () => {
           <div className="hero-orbit">
             {/* Pills flotantes alrededor */}
             <div className="hero-pill pill-voz">
-              🗣️ Voz inteligente en sala, cocina y barra
+              🗣️ Voz inteligente en restaurante y tienda
             </div>
             <div className="hero-pill pill-cocina">
-              👨‍🍳 Cocina por secciones y tiempos
+              👨‍🍳 Cocina, barra y mostrador por secciones
             </div>
             <div className="hero-pill pill-carta">
-              📲 Carta web interactiva para tus clientes
+              📲 Carta digital y TPV web en cualquier dispositivo
             </div>
 
             {/* Stack principal de pantallas */}
@@ -79,13 +86,13 @@ const Introduccion = () => {
 
               <img
                 src={letrasalefsinfondo}
-                alt="Panel de mesas Alef TPV"
+                alt="Plataforma Alef – Restaurante y Shop"
                 className="hero-img hero-main"
               />
 
               <img
                 src={cartaMain}
-                alt="Carta web Alef en el móvil"
+                alt="Alef en móvil, tablet y TPV"
                 className="hero-img hero-secondary"
               />
             </div>

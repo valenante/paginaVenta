@@ -1,0 +1,168 @@
+/*****************************************************
+ * Producto Proveedor Modal – Alef UI
+ *****************************************************/
+
+/* =========================
+   Backdrop
+========================= */
+
+.ppModal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(3px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* =========================
+   Modal
+========================= */
+
+.ppModal {
+  width: 100%;
+  max-width: 640px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* =========================
+   Header
+========================= */
+
+.ppModal-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-lg) var(--space-xl);
+  border-bottom: 1px solid var(--color-borde-suave);
+  background: var(--color-fondo-claro);
+}
+
+.ppModal-title {
+  margin: 0;
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  color: var(--color-primario);
+}
+
+.ppModal-close {
+  border: none;
+  background: transparent;
+  font-size: 1.25rem;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.ppModal-close:hover {
+  opacity: 1;
+  transform: scale(1.05);
+}
+
+/* =========================
+   Body
+========================= */
+
+.ppModal-body {
+  padding: var(--space-lg) var(--space-xl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+/* =========================
+   Alert
+========================= */
+
+.ppModal-alert {
+  padding: 0.6rem 0.9rem;
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+}
+
+/* =========================
+   Grid campos
+========================= */
+
+.ppModal-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-md);
+}
+
+.ppModal-field--full {
+  grid-column: 1 / -1;
+}
+
+.ppModal-field label {
+  display: block;
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+  color: var(--color-texto-suave);
+}
+
+.ppModal-field input,
+.ppModal-field select {
+  font-family: var(--font-base);
+  font-size: var(--font-size-sm);
+  padding: 0.55rem 0.7rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-borde-suave);
+  background: var(--color-fondo-card);
+}
+
+.ppModal-field input:focus,
+.ppModal-field select:focus {
+  outline: none;
+  border-color: var(--color-primario);
+  box-shadow: 0 0 0 3px color-mix(
+    in srgb,
+    var(--color-primario) 20%,
+    transparent
+  );
+}
+
+/* =========================
+   Toggle
+========================= */
+
+.ppModal-toggle {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: var(--font-size-sm);
+  color: var(--color-texto);
+}
+
+/* =========================
+   Footer
+========================= */
+
+.ppModal-foot {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-sm);
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--color-borde-suave);
+}
+
+/* =========================
+   Responsive
+========================= */
+
+@media (max-width: 640px) {
+  .ppModal {
+    max-width: 95vw;
+  }
+
+  .ppModal-grid {
+    grid-template-columns: 1fr;
+  }
+}

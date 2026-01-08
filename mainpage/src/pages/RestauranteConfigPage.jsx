@@ -173,33 +173,29 @@ export default function RestauranteConfigPage() {
   }, [location.state]);
 
   /** === Subida de imágenes === */
-  const handleFileUpload = async (file, tipo) => {
+  const handleFileUpload = async (file) => {
     if (!file) return;
+
     const formData = new FormData();
     formData.append("logo", file);
 
-    try {
-      setSaving(true);
-      const { data } = await api.post("/configuracion/logo", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+    const uploadEndpoint = esTienda
+      ? "/shop/configuracion/logo"
+      : "/configuracion/logo";
 
-      const newBranding = { ...form.branding };
-      if (tipo === "logo") newBranding.logoUrl = data.logoUrl;
-      if (tipo === "favicon") newBranding.faviconUrl = data.logoUrl;
-      if (tipo === "fondo") newBranding.imagenFondoLogin = data.logoUrl;
+    const { data } = await api.post(uploadEndpoint, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
 
-      setForm((prev) => ({ ...prev, branding: newBranding }));
-      setConfig(data.config);
-      setAlerta({
-        tipo: "success",
-        mensaje: "Imagen subida correctamente ✅",
-      });
-    } catch (err) {
-      setAlerta({ tipo: "error", mensaje: "Error al subir imagen." });
-    } finally {
-      setSaving(false);
-    }
+    setForm((prev) => ({
+      ...prev,
+      branding: {
+        ...prev.branding,
+        logoUrl: data.logoUrl,
+      },
+    }));
+
+    setConfig(data.config);
   };
 
   const handleDrop = (tipo, e) => {
@@ -214,11 +210,15 @@ export default function RestauranteConfigPage() {
     if (file) handleFileUpload(file, tipo);
   };
 
+  const configEndpoint = esTienda
+    ? "/shop/configuracion"
+    : "/configuracion";
+
   /** === Guardar configuración general === */
   const handleSave = async () => {
     try {
       setSaving(true);
-      const { data } = await api.put("/configuracion", {
+      const { data } = await api.put(configEndpoint, {
         branding: form.branding,
         colores: form.colores,
         estilo: form.estilo,

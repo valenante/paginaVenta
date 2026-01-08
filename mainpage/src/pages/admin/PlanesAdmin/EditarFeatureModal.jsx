@@ -24,7 +24,7 @@ export default function EditarFeatureModal({ feature, onClose, onSave }) {
     e.preventDefault();
     setLoading(true);
     try {
-      await api.put(`/superadmin/features/${feature._id}`, form);
+      await api.put(`/admin/superadmin/features/${feature._id}`, form);
       onSave();
       onClose();
     } catch (err) {

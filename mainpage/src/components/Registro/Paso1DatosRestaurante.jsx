@@ -1,7 +1,13 @@
 import React from "react";
 import "./Paso1DatosRestaurante.css";
 
-export default function Paso1DatosRestaurante({ tenant, setTenant, admin, setAdmin }) {
+export default function Paso1DatosRestaurante({
+  tenant,
+  setTenant,
+  admin,
+  setAdmin,
+  isShop = false, // 👈 NUEVO
+}) {
   const handleTenantChange = (e) => {
     const { name, value } = e.target;
     setTenant((prev) => ({ ...prev, [name]: value }));
@@ -12,18 +18,23 @@ export default function Paso1DatosRestaurante({ tenant, setTenant, admin, setAdm
     setAdmin((prev) => ({ ...prev, [name]: value }));
   };
 
+  const labelNegocio = isShop ? "tienda" : "restaurante";
+
   return (
     <section className="paso1-datos">
-      <h2>🏪 Datos del restaurante</h2>
-      <p>Introduce la información básica de tu restaurante y del usuario administrador.</p>
+      <h2>🏪 Datos de la {labelNegocio}</h2>
+      <p>
+        Introduce la información básica de tu {labelNegocio} y del usuario
+        administrador.
+      </p>
 
       <div className="form-group">
-        <label>Nombre del restaurante</label>
+        <label>Nombre de la {labelNegocio}</label>
         <input
           name="nombre"
           value={tenant.nombre}
           onChange={handleTenantChange}
-          placeholder="Ej. La Campana"
+          placeholder={isShop ? "Ej. Alef Shop" : "Ej. La Campana"}
           required
         />
       </div>
@@ -35,7 +46,7 @@ export default function Paso1DatosRestaurante({ tenant, setTenant, admin, setAdm
           name="email"
           value={admin.email}
           onChange={handleAdminChange}
-          placeholder="admin@restaurante.com"
+          placeholder={isShop ? "admin@tienda.com" : "admin@restaurante.com"}
           required
         />
       </div>
@@ -47,7 +58,7 @@ export default function Paso1DatosRestaurante({ tenant, setTenant, admin, setAdm
           name="email"
           value={tenant.email}
           onChange={handleTenantChange}
-          placeholder="Ej. contacto@restaurante.com"
+          placeholder={isShop ? "Ej. contacto@tienda.com" : "Ej. contacto@restaurante.com"}
           required
         />
       </div>
@@ -60,7 +71,7 @@ export default function Paso1DatosRestaurante({ tenant, setTenant, admin, setAdm
           name="name"
           value={admin.name}
           onChange={handleAdminChange}
-          placeholder="Ej. admin-restaurante"
+          placeholder={isShop ? "Ej. admin-tienda" : "Ej. admin-restaurante"}
           required
         />
       </div>
@@ -79,8 +90,11 @@ export default function Paso1DatosRestaurante({ tenant, setTenant, admin, setAdm
 
       <div className="info-box">
         <p>
-          🔒 La cuenta de administrador te permitirá gestionar productos, personal y
-          configuraciones del restaurante. Podrás añadir más usuarios después.
+          🔒 La cuenta de administrador te permitirá gestionar{" "}
+          {isShop
+            ? "productos, pedidos y configuraciones de la tienda"
+            : "productos, personal y configuraciones del restaurante"}
+          . Podrás añadir más usuarios después.
         </p>
       </div>
     </section>

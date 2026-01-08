@@ -288,7 +288,7 @@ export default function FacturasPage() {
 
             {/* ACCIONES */}
             <section className="facturaspage-actions">
-                <button className="btn-secundario" onClick={exportarCSV}>
+                <button className="btn btn-secundario" onClick={exportarCSV}>
                     Exportar CSV
                 </button>
                 <button className="btn-primario" onClick={exportarPDF}>

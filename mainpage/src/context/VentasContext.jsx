@@ -52,61 +52,19 @@ const downloadTextFile = (filename, content, mime = "text/csv;charset=utf-8") =>
   Normalizador (soporta "ventas shops" y "ventas tpv viejas")
 ================================ */
 const normalizeVenta = (v) => {
-  const fecha = v?.fecha || v?.fechaOperativa || v?.createdAt;
-  const metodoPago = v?.metodoPago || v?.pago?.metodo || v?.metodo || "—";
-  const canal = v?.canal || v?.origen || "—";
-  const estado = v?.estado === "anulada" || v?.anulada ? "anulada" : "emitida";
-
-  // shops: lineas[]
-  const lineas = Array.isArray(v?.lineas) ? v.lineas : null;
-  if (lineas?.length) {
-    const total =
-      Number(v?.total) ||
-      lineas.reduce((acc, l) => {
-        const qty = Number(l?.cantidad ?? l?.qty ?? 0);
-        const unit = Number(l?.precioUnitario ?? l?.precio ?? 0);
-        const lineaTotal = Number(l?.total ?? unit * qty);
-        return acc + (Number.isFinite(lineaTotal) ? lineaTotal : 0);
-      }, 0);
-
-    const resumen = lineas
-      .slice(0, 3)
-      .map((l) => l?.nombre || l?.productoNombre || l?.sku || l?.productoId || "Item")
-      .join(" · ");
-
-    const itemsCount = lineas.reduce((acc, l) => acc + Number(l?.cantidad ?? l?.qty ?? 0), 0);
-
-    return {
-      id: v?._id,
-      fecha,
-      metodoPago,
-      canal,
-      estado,
-      lineasCount: lineas.length,
-      itemsCount,
-      total,
-      resumen,
-      raw: v,
-    };
-  }
-
-  // tpv viejo: producto + cantidad
-  const total = Number(v?.total) || 0;
-  const cantidad = Number(v?.cantidad) || 0;
-
-  const nombreProducto =
-    v?.nombre || v?.productoNombre || v?.producto?.nombre || v?.productoId || v?.producto || "Producto";
-
   return {
     id: v?._id,
-    fecha,
-    metodoPago,
-    canal,
-    estado,
-    lineasCount: cantidad ? 1 : 0,
-    itemsCount: cantidad,
-    total,
-    resumen: nombreProducto,
+    fecha: v?.fecha || v?.createdAt,
+    metodoPago: v?.metodoPago || "—",
+    canal: v?.canal || "—",
+    estado: v?.estado === "anulada" ? "anulada" : "emitida",
+
+    // 🔑 VIENE DEL BACKEND, NO SE RECONSTRUYE
+    resumen: v?.resumen || "—",
+
+    itemsCount: Number(v?.itemsCount || 0),
+    total: Number(v?.total || 0),
+
     raw: v,
   };
 };

@@ -28,7 +28,7 @@ export default function SoporteNuevo() {
         setError("");
 
         try {
-            await api.post("/tickets/cliente", form);
+            await api.post("/admin/tickets/cliente", form);
             navigate("/soporte");
 
         } catch (err) {

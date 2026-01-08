@@ -25,7 +25,7 @@ export default function useTenantsData() {
     setLoading(true);
     try {
       // Ajusta la ruta si tu API usa otra (p.ej. "/admin/tenants")
-      const { data } = await api.get("/superadmin/tenants");
+      const { data } = await api.get("/admin/superadmin/tenants");
 
       // Soportar tanto { tenants: [...] } como [ ... ]
       const list = Array.isArray(data) ? data : data.tenants || [];

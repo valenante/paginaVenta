@@ -31,7 +31,7 @@ export default function EditarPlanModal({ plan, onClose, onSave, features = [] }
     setLoading(true);
 
     try {
-      await api.put(`/superadminPlans/${plan._id}`, {
+      await api.put(`/admin/superadminPlans/${plan._id}`, {
         ...form,
         features: selectedFeatures,
       });

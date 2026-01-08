@@ -1,0 +1,185 @@
+/*****************************************************
+ * ProveedorFacturasTab – ALEF UI
+ *****************************************************/
+
+/* Grid base */
+.provDet-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-lg);
+  margin-top: var(--space-lg);
+}
+
+.provDet-card {
+  padding: var(--space-lg);
+}
+
+.provDet-card--full {
+  grid-column: 1 / -1;
+}
+
+/* Header */
+.provTab-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-md);
+  margin-bottom: var(--space-md);
+}
+
+.provDet-cardTitle {
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+}
+
+/* Estados */
+.provDet-loading,
+.provDet-empty {
+  padding: var(--space-xl);
+  text-align: center;
+  font-size: var(--font-size-sm);
+  color: var(--color-texto-suave);
+}
+
+.provDet-alert {
+  padding: var(--space-md);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+}
+
+.provDet-alert--error {
+  background: var(--color-error-suave);
+  color: var(--color-error);
+  border: 1px solid var(--color-error);
+}
+
+/* Tabla */
+.prov-tableWrap {
+  overflow-x: auto;
+}
+
+.prov-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--font-size-sm);
+}
+
+.prov-table th {
+  text-align: left;
+  padding: 0.7rem;
+  font-size: var(--font-size-xs);
+  text-transform: uppercase;
+  color: var(--color-texto-suave);
+  border-bottom: 1px solid var(--color-borde-suave);
+}
+
+.prov-table td {
+  padding: 0.75rem;
+  border-bottom: 1px solid var(--color-borde-suave);
+}
+
+.prov-table tr:hover {
+  background: #f9fafb;
+}
+
+.t-right {
+  text-align: right;
+}
+
+.prov-rowActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-sm);
+}
+
+/* ======================
+   Mobile
+====================== */
+
+.only-desktop {
+  display: block;
+}
+
+.only-mobile {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .provDet-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .provTab-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .only-desktop {
+    display: none;
+  }
+
+  .only-mobile {
+    display: block;
+  }
+
+  .prov-mobileList {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+
+  .prov-mobileCard {
+    border: 1px solid var(--color-borde-suave);
+    border-radius: var(--radius-md);
+    padding: var(--space-md);
+    background: var(--color-fondo-card);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+
+  .prov-mobileHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .prov-mobileTitle {
+    font-weight: 700;
+  }
+
+  .prov-mobileGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-sm);
+  }
+
+  .prov-mobileGrid .full {
+    grid-column: 1 / -1;
+  }
+
+  .prov-mobileGrid .k {
+    font-size: var(--font-size-xs);
+    color: var(--color-texto-suave);
+  }
+
+  .prov-mobileGrid .v {
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+  }
+
+  .prov-mobileGrid .v.total {
+    font-size: var(--font-size-md);
+    font-weight: 800;
+  }
+
+  .prov-mobileActions {
+    display: flex;
+    gap: var(--space-sm);
+  }
+
+  .prov-mobileActions a,
+  .prov-mobileActions button {
+    flex: 1;
+  }
+}

@@ -1,0 +1,287 @@
+/*****************************************************
+ * ProveedorProductosTab – ALEF UI (REFINADO)
+ *****************************************************/
+
+/* =========================
+   Grid general
+========================= */
+.provDet-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-lg);
+  margin-top: var(--space-lg);
+}
+
+/* =========================
+   Card
+   (usa .card global)
+========================= */
+.provDet-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  max-width: 100%;
+}
+
+/* Full width */
+.provDet-card--full {
+  grid-column: 1 / -1;
+}
+
+/* =========================
+   Header del tab
+========================= */
+.provTab-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+}
+
+.provDet-cardTitle {
+  margin: 0;
+  font-size: var(--font-size-md);
+  font-weight: 700;
+  color: var(--color-texto);
+}
+
+/* =========================
+   Estados generales
+========================= */
+.provDet-loading,
+.provDet-empty {
+  padding: var(--space-xl);
+  text-align: center;
+  font-size: var(--font-size-sm);
+  color: var(--color-texto-suave);
+}
+
+/* Alertas */
+.provDet-alert {
+  padding: var(--space-md);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  border: 1px solid;
+}
+
+.provDet-alert--error {
+  background: var(--color-error-suave);
+  color: var(--color-error);
+  border-color: rgba(239, 68, 68, 0.25);
+}
+
+/* =========================
+   Tabla contenedora
+========================= */
+.prov-tableWrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+/* =========================
+   Tabla base
+========================= */
+.prov-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--font-size-sm);
+}
+
+.prov-table thead th {
+  text-align: left;
+  padding: 0.65rem 0.75rem;
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  color: var(--color-texto-suave);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-bottom: 1px solid var(--color-borde-suave);
+  background: var(--color-fondo-claro);
+  white-space: nowrap;
+}
+
+.prov-table tbody td {
+  padding: 0.75rem;
+  border-bottom: 1px solid var(--color-borde-suave);
+  vertical-align: middle;
+}
+
+.prov-table tbody tr:hover {
+  background: var(--color-fondo-claro);
+}
+
+/* =========================
+   Celdas específicas
+========================= */
+.prov-name {
+  font-weight: 600;
+  color: var(--color-texto);
+}
+
+/* =========================
+   Estado (badge)
+========================= */
+.prov-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.65rem;
+  border-radius: var(--radius-pill);
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  background: var(--color-exito-suave);
+  color: var(--color-exito);
+}
+
+.prov-pill.is-off {
+  background: var(--color-error-suave);
+  color: var(--color-error);
+}
+
+/* =========================
+   Acciones fila
+========================= */
+.prov-rowActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-sm);
+}
+
+.t-right {
+  text-align: right;
+}
+
+/* =========================
+   Responsive helpers
+========================= */
+.only-desktop {
+  display: block;
+}
+
+.only-mobile {
+  display: none;
+}
+
+/* =========================
+   Mobile cards
+========================= */
+@media (max-width: 768px) {
+  .only-desktop {
+    display: none;
+  }
+
+  .only-mobile {
+    display: block;
+  }
+
+  .prov-mobileList {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+
+  .prov-mobileCard {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    padding: var(--space-md);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-borde-suave);
+    background: var(--color-fondo-card);
+  }
+
+  .prov-mobileHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-sm);
+  }
+
+  .prov-mobileGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-sm);
+  }
+
+  .prov-mobileGrid .k {
+    font-size: var(--font-size-xs);
+    color: var(--color-texto-suave);
+  }
+
+  .prov-mobileGrid .v {
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    color: var(--color-texto);
+  }
+
+  .prov-mobileActions {
+    display: flex;
+    gap: var(--space-sm);
+  }
+
+  .prov-mobileActions button {
+    flex: 1;
+  }
+}
+
+/* =========================
+   Layout responsive general
+========================= */
+@media (max-width: 1024px) {
+  .provDet-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .prov-rowActions {
+    flex-direction: column;
+    align-items: flex-end;
+  }
+}
+
+@media (max-width: 640px) {
+  .provDet-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .provTab-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-sm);
+  }
+
+  .prov-rowActions {
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  /* Table → card fallback */
+  .prov-table thead {
+    display: none;
+  }
+
+  .prov-table tbody tr {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+    padding: var(--space-sm);
+    border-bottom: 1px solid var(--color-borde-suave);
+  }
+
+  .prov-table tbody td {
+    padding: 0;
+    border: none;
+  }
+
+  .prov-table tbody td::before {
+    content: attr(data-label);
+    display: block;
+    font-size: var(--font-size-xs);
+    font-weight: 700;
+    color: var(--color-texto-suave);
+    text-transform: uppercase;
+    margin-bottom: 0.15rem;
+  }
+
+  .t-right {
+    text-align: left;
+  }
+}

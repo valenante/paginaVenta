@@ -1,27 +1,37 @@
-// src/pages/admin/AdminDashboard/components/TenantTable.jsx
 import { useState } from "react";
-import { FiTrash2, FiEye, FiEdit2, FiLogIn } from "react-icons/fi";
+import {
+  FiTrash2,
+  FiEye,
+  FiEdit2,
+  FiLogIn,
+  FiCoffee,
+  FiShoppingBag,
+} from "react-icons/fi";
+
 import TenantModal from "./TenantModal";
+import TenantModalShop from "./shop/TenantModalShop";
 import ConfirmDeleteModal from "./ConfirmDeleteModal";
 import EditEstadoModal from "./EditEstadoModal.jsx";
-import EditPlanModal from "./EditPlanModal.jsx"; // 👈 nuevo modal
+import EditPlanModal from "./EditPlanModal.jsx";
 import api from "../../../../utils/api";
 import Portal from "../../../../components/ui/Portal";
+
+import "./TenantTable.css"; // 👈 CSS PROPIO
 
 export default function TenantTable({ tenants, onRefresh }) {
   const [selected, setSelected] = useState(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [loadingImpersonar, setLoadingImpersonar] = useState(false);
   const [estadoTarget, setEstadoTarget] = useState(null);
-  const [planTarget, setPlanTarget] = useState(null); // 👈 nuevo
+  const [planTarget, setPlanTarget] = useState(null);
 
+  /* =========================
+     Actions
+  ========================= */
   const handleDelete = async (tenantSlug) => {
     try {
-      await api.delete(`/superadmin/tenants/${tenantSlug}`);
+      await api.delete(`/admin/superadmin/tenants/${tenantSlug}`);
       onRefresh();
-    } catch (err) {
-      console.error("Error al eliminar tenant:", err);
-      alert("No se pudo eliminar el restaurante.");
     } finally {
       setDeleteTarget(null);
     }
@@ -32,58 +42,53 @@ export default function TenantTable({ tenants, onRefresh }) {
     setLoadingImpersonar(true);
 
     try {
-      const { data } = await api.get(`/superadmin/impersonar/${tenantSlug}`);
-
-      if (data?.ok && data?.redirectUrl) {
+      const { data } = await api.get(`/admin/superadmin/impersonar/${tenantSlug}`);
+      if (data?.redirectUrl) {
         window.open(data.redirectUrl, "_blank", "noopener,noreferrer");
-      } else {
-        console.warn("⚠️ Respuesta inesperada del servidor:", data);
-        alert(data?.error || "No se pudo generar la URL de impersonación.");
       }
-    } catch (err) {
-      console.error(
-        "❌ Error al impersonar tenant:",
-        err.response?.data || err.message
-      );
-      alert(
-        err.response?.data?.error ||
-        "No se pudo entrar como admin del restaurante."
-      );
     } finally {
       setLoadingImpersonar(false);
     }
   };
 
-  // 👉 Cambiar estado (trial / activo / impago / suspendido / cancelado)
   const handleEstadoChange = async (tenantId, nuevoEstado) => {
-    await api.patch(`/superadmin/tenants/${tenantId}/estado`, {
+    await api.patch(`/admin/superadmin/tenants/${tenantId}/estado`, {
       estado: nuevoEstado,
     });
     await onRefresh();
   };
 
-  // 👉 Cambiar plan del tenant
   const handlePlanSave = async (tenantId, nuevoPlanSlug) => {
-    // PATCH /superadmin/tenants/:id/plan  { plan: 'premium' }
-    const { data } = await api.patch(`/superadmin/tenants/${tenantId}/plan`, {
+    await api.patch(`/admin/superadmin/tenants/${tenantId}/plan`, {
       plan: nuevoPlanSlug,
     });
     await onRefresh();
-    return data;
   };
 
-  if (!tenants.length)
-    return <p className="empty">No hay restaurantes registrados aún.</p>;
+  /* =========================
+     Empty state
+  ========================= */
+  if (!tenants.length) {
+    return (
+      <p className="tenant-table-empty">
+        No hay restaurantes ni tiendas registradas.
+      </p>
+    );
+  }
 
+  /* =========================
+     Render
+  ========================= */
   return (
     <section className="tenant-table-section">
-      <h3>Restaurantes Registrados</h3>
+      <h3>Tenants registrados</h3>
 
       <div className="table-wrapper">
         <table className="tenants-table">
           <thead>
             <tr>
-              <th>Restaurante</th>
+              <th>Nombre</th>
+              <th>Tipo</th>
               <th>Email</th>
               <th>Plan</th>
               <th>VeriFactu</th>
@@ -94,71 +99,93 @@ export default function TenantTable({ tenants, onRefresh }) {
           </thead>
 
           <tbody>
-            {tenants.map((t) => (
-              <tr key={t._id}>
-                <td>{t.nombre}</td>
-                <td>{t.email}</td>
-                <td>{t.plan}</td>
-                <td>{t.verifactuEnabled ? "✅" : "❌"}</td>
-                <td>
-                  <span className={`estado-tag estado-${t.estado}`}>
-                    {t.estado}
-                  </span>
-                </td>
-                <td>{new Date(t.createdAt).toLocaleDateString()}</td>
-                <td className="actions">
-                  {/* 👁️ Ver detalles */}
-                  <button title="Ver detalles" onClick={() => setSelected(t)}>
-                    <FiEye />
-                  </button>
+            {tenants.map((t) => {
+              const tipo = t.tipoNegocio || "restaurante";
 
-                  {/* ✏️ Editar plan del restaurante */}
-                  <button
-                    title="Editar plan"
-                    onClick={() => setPlanTarget(t)}
-                  >
-                    <FiEdit2 />
-                  </button>
+              return (
+                <tr key={t._id}>
+                  <td>{t.nombre}</td>
 
-                  {/* 👤 Entrar como admin */}
-                  <button
-                    title="Entrar como admin"
-                    onClick={() => handleImpersonar(t.slug)}
-                    disabled={loadingImpersonar}
-                  >
-                    <FiLogIn />
-                  </button>
+                  <td className={`tipo tipo-${tipo}`}>
+                    {tipo === "shop" ? <FiShoppingBag /> : <FiCoffee />}
+                    {tipo}
+                  </td>
 
-                  {/* 🔒 Cambiar estado (trial/activo/impago/suspendido/cancelado) */}
-                  <button
-                    title="Cambiar estado"
-                    onClick={() => setEstadoTarget(t)}
-                  >
-                    {t.estado === "suspendido" ? "🔓" : "🔒"}
-                  </button>
+                  <td>{t.email}</td>
+                  <td>{t.plan}</td>
+                  <td>{t.verifactuEnabled ? "✅" : "❌"}</td>
 
-                  {/* 🗑️ Eliminar */}
-                  <button
-                    className="delete"
-                    title="Eliminar"
-                    onClick={() => setDeleteTarget(t)}
-                  >
-                    <FiTrash2 />
-                  </button>
-                </td>
-              </tr>
-            ))}
+                  <td>
+                    <span className={`estado-tag estado-${t.estado}`}>
+                      {t.estado}
+                    </span>
+                  </td>
+
+                  <td>{new Date(t.createdAt).toLocaleDateString()}</td>
+
+                  <td className="actions">
+                    <button
+                      onClick={() => setSelected(t)}
+                      title="Ver detalles"
+                    >
+                      <FiEye />
+                    </button>
+
+                    <button
+                      onClick={() => setPlanTarget(t)}
+                      title="Editar plan"
+                    >
+                      <FiEdit2 />
+                    </button>
+
+                    <button
+                      onClick={() => handleImpersonar(t.slug)}
+                      disabled={loadingImpersonar}
+                      title="Entrar como admin"
+                    >
+                      <FiLogIn />
+                    </button>
+
+                    <button
+                      onClick={() => setEstadoTarget(t)}
+                      title="Cambiar estado"
+                    >
+                      {t.estado === "suspendido" ? "🔓" : "🔒"}
+                    </button>
+
+                    <button
+                      className="delete"
+                      onClick={() => setDeleteTarget(t)}
+                      title="Eliminar"
+                    >
+                      <FiTrash2 />
+                    </button>
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
 
+      {/* =========================
+          Modales
+      ========================= */}
 
-      {/* 🔍 Modal Detalles */}
-      {selected && (
-        <TenantModal tenant={selected} onClose={() => setSelected(null)} />
+      {selected && selected.tipoNegocio !== "shop" && (
+        <TenantModal
+          tenant={selected}
+          onClose={() => setSelected(null)}
+        />
       )}
 
-      {/* ⚠️ Modal Confirmación de Eliminación */}
+      {selected && selected.tipoNegocio === "shop" && (
+        <TenantModalShop
+          tenant={selected}
+          onClose={() => setSelected(null)}
+        />
+      )}
+
       {deleteTarget && (
         <ConfirmDeleteModal
           tenant={deleteTarget}
@@ -167,7 +194,6 @@ export default function TenantTable({ tenants, onRefresh }) {
         />
       )}
 
-      {/* 🎛 Modal para cambiar estado */}
       {estadoTarget && (
         <EditEstadoModal
           tenant={estadoTarget}

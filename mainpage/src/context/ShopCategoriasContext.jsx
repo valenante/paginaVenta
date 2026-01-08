@@ -71,6 +71,8 @@ export function ShopCategoriasProvider({ children }) {
         },
       });
 
+      console.log(data)
+
       // Acepta varios formatos posibles
       const list =
         data?.products ||

@@ -10,10 +10,11 @@ export default function Funcionamiento() {
         {/* TÍTULO CENTRAL */}
         <header className="Fn-header">
           <span className="Fn-badge">Así funciona Alef de principio a fin</span>
-          <h2 id="fn-title">Tu TPV Alef funcionando en minutos</h2>
+          <h2 id="fn-title">Tu sistema Alef funcionando en minutos</h2>
           <p>
-            Desde la elección del plan hasta tomar tu primer pedido. 
-            Sin técnicos, sin complicaciones: configuración automática y asistencia incluida.
+            Desde la activación del entorno hasta tu primera venta.
+            Restaurantes y tiendas comparten la misma base: configuración
+            automática, hardware listo y soporte incluido.
           </p>
         </header>
 
@@ -22,25 +23,37 @@ export default function Funcionamiento() {
           <div className="Fn-step">
             <div className="Fn-step-icon">📦</div>
             <h3>Elige tu plan</h3>
-            <p>Selecciona rápidamente según el tamaño y estilo de tu restaurante.</p>
+            <p>
+              Selecciona el plan según tu negocio: restaurante, tienda o ambos.
+              Sin límites de dispositivos ni usuarios.
+            </p>
           </div>
 
           <div className="Fn-step">
             <div className="Fn-step-icon">🎨</div>
-            <h3>Personaliza tu TPV</h3>
-            <p>Define colores, carta, estaciones, branding y funciones avanzadas.</p>
+            <h3>Configura tu entorno</h3>
+            <p>
+              Personaliza diseño, funciones, impuestos, stock, proveedores,
+              estaciones y flujos de trabajo.
+            </p>
           </div>
 
           <div className="Fn-step">
-            <div className="Fn-step-icon">📦</div>
-            <h3>Recibe el equipo</h3>
-            <p>Hardware preconfigurado, listo para enchufar, encender y usar.</p>
+            <div className="Fn-step-icon">🖥️</div>
+            <h3>Conecta tus dispositivos</h3>
+            <p>
+              Usa ordenadores, tablets, móviles, impresoras y escáneres.
+              Todo funciona desde el navegador, sin instalaciones.
+            </p>
           </div>
 
           <div className="Fn-step">
             <div className="Fn-step-icon">🚀</div>
             <h3>Empieza a trabajar</h3>
-            <p>Accede al dashboard y controla tu restaurante desde el primer día.</p>
+            <p>
+              Vende, controla stock, gestiona proveedores y consulta estadísticas
+              desde el primer día.
+            </p>
           </div>
         </div>
 

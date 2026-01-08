@@ -18,10 +18,22 @@ function getTituloCategoria(cat) {
   return TITULOS_CATEGORIA[key] || `🔧 ${key}`;
 }
 
-export default function Paso2ConfiguracionBasica({ config, setConfig, plan }) {
+export default function Paso2ConfiguracionBasica({
+  config,
+  setConfig,
+  plan,
+  isShop = false, // 👈 NUEVO
+}) {
   const featuresDelPlan = plan?.features || [];
 
-  // 🔁 Agrupar en { [cat]: { configurables: [], fijas: [] } }
+  // ✅ Shop: simplificado (sin categorías)
+  const featuresFlat = useMemo(() => {
+    const configurables = featuresDelPlan.filter((f) => !!f.configKey);
+    const fijas = featuresDelPlan.filter((f) => !f.configKey);
+    return { configurables, fijas };
+  }, [featuresDelPlan]);
+
+  // ✅ Restaurante: agrupado por categoría (lo que ya tenías)
   const featuresPorCategoria = useMemo(() => {
     return featuresDelPlan.reduce((acc, f) => {
       const cat = (f.categoria || "general").toLowerCase();
@@ -36,7 +48,7 @@ export default function Paso2ConfiguracionBasica({ config, setConfig, plan }) {
   const totalFeatures = featuresDelPlan.length;
   const totalCategorias = categorias.length;
 
-  // 🎛 Acordeón: por defecto se abre la primera categoría
+  // 🎛 Acordeón restaurante: por defecto se abre la primera categoría
   const [openCategory, setOpenCategory] = useState(
     categorias[0]?.[0] || null
   );
@@ -67,129 +79,199 @@ export default function Paso2ConfiguracionBasica({ config, setConfig, plan }) {
     }));
   };
 
+  const labelNegocio = isShop ? "tienda" : "restaurante";
+
   return (
     <section className="paso2-config section section--wide">
       <header className="paso2-header">
         <div className="paso2-header-text">
           <h2>⚙️ Configuración inicial</h2>
           <p>
-            Activa o desactiva las funcionalidades incluidas en tu plan. Esta
-            configuración se usará para crear tu entorno. Más adelante podrás
-            ajustar muchos detalles desde el panel del restaurante.
+            {isShop ? (
+              <>
+                Activa o desactiva las funcionalidades incluidas en tu plan.
+                Esta configuración se usará para crear tu entorno. Más adelante
+                podrás ajustar detalles desde el panel.
+              </>
+            ) : (
+              <>
+                Activa o desactiva las funcionalidades incluidas en tu plan.
+                Esta configuración se usará para crear tu entorno. Más adelante
+                podrás ajustar muchos detalles desde el panel del restaurante.
+              </>
+            )}
           </p>
         </div>
 
         <div className="plan-summary">
           <div className="plan-summary-pill plan-summary-pill--primary">
             <span className="pill-number">{totalFeatures}</span>
-            <span className="pill-label">
-              funciones incluidas en tu plan
-            </span>
+            <span className="pill-label">funciones incluidas en tu plan</span>
           </div>
-          <div className="plan-summary-pill plan-summary-pill--neutral">
-            <span className="pill-number">{totalCategorias}</span>
-            <span className="pill-label">bloques de configuración</span>
-          </div>
+
+          {!isShop && (
+            <div className="plan-summary-pill plan-summary-pill--neutral">
+              <span className="pill-number">{totalCategorias}</span>
+              <span className="pill-label">bloques de configuración</span>
+            </div>
+          )}
         </div>
       </header>
 
-      {/* === BLOQUES DE FEATURES === */}
-      <div className="config-features-wrapper">
-        {totalFeatures === 0 && (
-          <p className="config-empty text-suave">
-            No hay opciones configurables en este plan.
-          </p>
-        )}
+      {/* =============================
+          FEATURES
+          - SHOP: una sola tarjeta (simple)
+          - RESTAURANTE: categorías (igual que antes)
+      ============================= */}
 
-        {categorias.map(([catKey, grupo]) => {
-          const abierta =
-            openCategory === null
-              ? catKey === categorias[0][0]
-              : openCategory === catKey;
+      {isShop ? (
+        <div className="config-features-wrapper">
+          {totalFeatures === 0 && (
+            <p className="config-empty text-suave">
+              No hay opciones configurables en este plan.
+            </p>
+          )}
 
-          const { configurables, fijas } = grupo;
-
-          return (
-            <div
-              key={catKey}
-              className={`feature-category-card card ${abierta ? "open" : "closed"
-                }`}
-            >
-              <button
-                type="button"
-                className="feature-category-header"
-                onClick={() =>
-                  setOpenCategory((prev) => (prev === catKey ? null : catKey))
-                }
-              >
-                <div className="feature-category-title">
-                  {getTituloCategoria(catKey)}
-                  <span className="feature-category-count badge badge-aviso">
-                    {configurables.length + fijas.length} función
-                    {configurables.length + fijas.length !== 1 && "es"}
-                  </span>
-                </div>
-                <span className="feature-category-chevron">
-                  {abierta ? "▲" : "▼"}
-                </span>
-              </button>
-
-              {abierta && (
-                <div className="feature-category-body">
-                  {/* Configurables ahora */}
-                  {configurables.length > 0 && (
-                    <>
-                      <p className="feature-subtitle">
-                        Lo que puedes configurar ahora
-                      </p>
-                      <div className="feature-list">
-                        {configurables.map((f) => (
-                          <label key={f._id} className="feature-item">
-                            <input
-                              type="checkbox"
-                              checked={!!config[f.configKey]}
-                              onChange={(e) =>
-                                handleFeatureToggle(
-                                  f.configKey,
-                                  e.target.checked
-                                )
-                              }
-                            />
-                            <div className="feature-text">
-                              <span className="feature-name">{f.nombre}</span>
-                              {f.descripcion && (
-                                <small className="feature-desc">
-                                  {f.descripcion}
-                                </small>
-                              )}
-                            </div>
-                          </label>
-                        ))}
-                      </div>
-                    </>
-                  )}
-
-                  {/* Incluidas fijas */}
-                  {fijas.length > 0 && (
-                    <div className="feature-fixed-block">
-                      <p className="feature-subtitle">
-                        También incluye en este plan
-                      </p>
-                      <ul className="feature-fixed-list">
-                        {fijas.map((f) => (
-                          <li key={f._id}>{f.nombre}</li>
-                        ))}
-                      </ul>
+          {totalFeatures > 0 && (
+            <div className="feature-category-card card open">
+              <div className="feature-category-body">
+                {featuresFlat.configurables.length > 0 && (
+                  <>
+                    <p className="feature-subtitle">Lo que puedes configurar ahora</p>
+                    <div className="feature-list">
+                      {featuresFlat.configurables.map((f) => (
+                        <label key={f._id} className="feature-item">
+                          <input
+                            type="checkbox"
+                            checked={!!config[f.configKey]}
+                            onChange={(e) =>
+                              handleFeatureToggle(f.configKey, e.target.checked)
+                            }
+                          />
+                          <div className="feature-text">
+                            <span className="feature-name">{f.nombre}</span>
+                            {f.descripcion && (
+                              <small className="feature-desc">{f.descripcion}</small>
+                            )}
+                          </div>
+                        </label>
+                      ))}
                     </div>
-                  )}
-                </div>
-              )}
-            </div>
-          );
-        })}
-      </div>
+                  </>
+                )}
 
-      {/* === Colores básicos === */}
+                {featuresFlat.fijas.length > 0 && (
+                  <div className="feature-fixed-block">
+                    <p className="feature-subtitle">También incluye en este plan</p>
+                    <ul className="feature-fixed-list">
+                      {featuresFlat.fijas.map((f) => (
+                        <li key={f._id}>{f.nombre}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+      ) : (
+        // ✅ RESTAURANTE (TU CÓDIGO TAL CUAL)
+        <div className="config-features-wrapper">
+          {totalFeatures === 0 && (
+            <p className="config-empty text-suave">
+              No hay opciones configurables en este plan.
+            </p>
+          )}
+
+          {categorias.map(([catKey, grupo]) => {
+            const abierta =
+              openCategory === null
+                ? catKey === categorias[0][0]
+                : openCategory === catKey;
+
+            const { configurables, fijas } = grupo;
+
+            return (
+              <div
+                key={catKey}
+                className={`feature-category-card card ${
+                  abierta ? "open" : "closed"
+                }`}
+              >
+                <button
+                  type="button"
+                  className="feature-category-header"
+                  onClick={() =>
+                    setOpenCategory((prev) => (prev === catKey ? null : catKey))
+                  }
+                >
+                  <div className="feature-category-title">
+                    {getTituloCategoria(catKey)}
+                    <span className="feature-category-count badge badge-aviso">
+                      {configurables.length + fijas.length} función
+                      {configurables.length + fijas.length !== 1 && "es"}
+                    </span>
+                  </div>
+                  <span className="feature-category-chevron">
+                    {abierta ? "▲" : "▼"}
+                  </span>
+                </button>
+
+                {abierta && (
+                  <div className="feature-category-body">
+                    {configurables.length > 0 && (
+                      <>
+                        <p className="feature-subtitle">
+                          Lo que puedes configurar ahora
+                        </p>
+                        <div className="feature-list">
+                          {configurables.map((f) => (
+                            <label key={f._id} className="feature-item">
+                              <input
+                                type="checkbox"
+                                checked={!!config[f.configKey]}
+                                onChange={(e) =>
+                                  handleFeatureToggle(
+                                    f.configKey,
+                                    e.target.checked
+                                  )
+                                }
+                              />
+                              <div className="feature-text">
+                                <span className="feature-name">{f.nombre}</span>
+                                {f.descripcion && (
+                                  <small className="feature-desc">
+                                    {f.descripcion}
+                                  </small>
+                                )}
+                              </div>
+                            </label>
+                          ))}
+                        </div>
+                      </>
+                    )}
+
+                    {fijas.length > 0 && (
+                      <div className="feature-fixed-block">
+                        <p className="feature-subtitle">
+                          También incluye en este plan
+                        </p>
+                        <ul className="feature-fixed-list">
+                          {fijas.map((f) => (
+                            <li key={f._id}>{f.nombre}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {/* === Colores básicos (igual) === */}
       <div className="config-colores card">
         <h3>🎨 Paleta de colores</h3>
         <p className="config-help">
@@ -226,12 +308,21 @@ export default function Paso2ConfiguracionBasica({ config, setConfig, plan }) {
         </div>
       </div>
 
-      {/* === Información restaurante === */}
+      {/* === Información básica (solo cambia texto, no la estructura) === */}
       <div className="config-info card">
-        <h3>📞 Información básica del restaurante</h3>
+        <h3>📞 Información básica de {labelNegocio}</h3>
         <p className="config-help">
-          Estos datos aparecerán en algunas comunicaciones y en el panel del
-          TPV. Podrás completarlos luego más en detalle.
+          {isShop ? (
+            <>
+              Estos datos se usarán como información de contacto en el panel.
+              Podrás completarlos luego con más detalle.
+            </>
+          ) : (
+            <>
+              Estos datos aparecerán en algunas comunicaciones y en el panel del
+              TPV. Podrás completarlos luego más en detalle.
+            </>
+          )}
         </p>
 
         <div className="config-info-grid">

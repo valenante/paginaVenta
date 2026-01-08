@@ -1,0 +1,204 @@
+/*****************************************************
+ * Proveedores Page – Alef UI
+ *****************************************************/
+
+/* =========================
+   Seguridad anti overflow
+========================= */
+
+.prov-page {
+  overflow-x: hidden;
+}
+
+/* =========================
+   Header
+========================= */
+
+.prov-header {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-xl);
+  align-items: flex-start;
+}
+
+/* =========================
+   Meta
+========================= */
+
+.prov-metaRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+
+/* =========================
+   Actions
+========================= */
+
+.prov-actions {
+  display: flex;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+}
+
+/* =========================
+   Search
+========================= */
+
+.prov-search {
+  margin-top: var(--space-md);
+  display: flex;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.prov-search input {
+  flex: 1;
+  min-width: 220px;
+  padding: 0.55rem 0.7rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-borde-suave);
+}
+
+.prov-pageSize {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.prov-pageSize label {
+  font-size: var(--font-size-xs);
+  color: var(--color-texto-suave);
+}
+
+/* =========================
+   Card
+========================= */
+
+.prov-card {
+  margin-top: var(--space-xl);
+  overflow: hidden;
+}
+
+/* =========================
+   Estados
+========================= */
+
+.prov-loading,
+.prov-empty {
+  padding: 2rem 1rem;
+  text-align: center;
+  color: var(--color-texto-suave);
+}
+
+.prov-empty__title {
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+}
+
+.prov-empty__text {
+  margin-bottom: var(--space-md);
+}
+
+/* =========================
+   Table wrapper
+========================= */
+
+.prov-tableWrap {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* =========================
+   Table
+========================= */
+
+.prov-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 900px;
+  font-size: var(--font-size-sm);
+}
+
+.prov-table th,
+.prov-table td {
+  padding: 0.65rem 0.75rem;
+  border-bottom: 1px solid var(--color-borde-suave);
+  vertical-align: top;
+}
+
+.prov-table th {
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--color-texto-suave);
+  background: var(--color-fondo-claro);
+}
+
+.prov-name {
+  font-weight: 700;
+}
+
+.prov-sub {
+  font-size: var(--font-size-xs);
+  color: var(--color-texto-suave);
+}
+
+/* =========================
+   Row actions
+========================= */
+
+.prov-rowActions {
+  display: flex;
+  gap: var(--space-xs);
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+/* =========================
+   Pager
+========================= */
+
+.prov-pager {
+  margin-top: var(--space-md);
+  display: flex;
+  justify-content: center;
+  gap: var(--space-xs);
+  flex-wrap: wrap;
+}
+
+.prov-pagerInfo {
+  font-size: var(--font-size-sm);
+  color: var(--color-texto-suave);
+}
+
+/* =========================
+   Responsive
+========================= */
+
+@media (max-width: 768px) {
+  .prov-header {
+    flex-direction: column;
+  }
+
+  .prov-actions {
+    width: 100%;
+  }
+
+  .prov-actions .btn {
+    flex: 1;
+  }
+}
+
+@media (max-width: 640px) {
+  .section {
+    padding-left: var(--space-md);
+    padding-right: var(--space-md);
+  }
+
+  .prov-table {
+    min-width: 640px;
+  }
+}

@@ -10,7 +10,7 @@ export default function BillingPage() {
   useEffect(() => {
     const fetchBilling = async () => {
       try {
-        const res = await api.get("/superadminBilling");
+        const res = await api.get("/admin/superadminBilling");
         setData(res.data);
       } catch (err) {
         console.error("❌ Error billing:", err);

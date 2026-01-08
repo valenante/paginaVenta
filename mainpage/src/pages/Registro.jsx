@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../utils/api";
 import "../styles/Registro.css";
@@ -9,33 +9,28 @@ import Paso3ServiciosExtras from "../components/Registro/Paso3ServiciosExtras.js
 import Paso4ResumenPago from "../components/Registro/Paso4ResumenPago.jsx";
 import PanelPrecio from "../components/Registro/PanelPrecio.jsx";
 
-const STEPS = [
-  { id: 1, label: "Datos del restaurante" },
-  { id: 2, label: "Configuración inicial" },
-  { id: 3, label: "Servicios y hardware" },
-  { id: 4, label: "Resumen y pago" },
-];
-
 export default function Registro() {
   const navigate = useNavigate();
+
   const [paso, setPaso] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const [periodo, setPeriodo] = useState("mensual");
 
-  // ======== ESTADOS PRINCIPALES ========
-  const [tenant, setTenant] = useState({ nombre: "", email: "", plan: "premium" });
-  const [admin, setAdmin] = useState({ name: "", password: "", admin: "" });
-
+  // ======== QUERY ========
   const params = new URLSearchParams(window.location.search);
-  const planSlug = params.get("plan");
+  const planSlug = (params.get("plan") || "").toLowerCase();
 
-  useEffect(() => {
-    if (!planSlug) {
-      navigate("/?seleccionarPlan=1");
-    }
-  }, []);
+  // ======== ESTADOS PRINCIPALES ========
+  const [tenant, setTenant] = useState({
+    nombre: "",
+    email: "",
+    plan: "premium",
+    tipoNegocio: null, // 👈 NUEVO (restaurante | shop)
+  });
+
+  const [admin, setAdmin] = useState({ name: "", password: "", admin: "" });
 
   const [config, setConfig] = useState({
     permitePedidosComida: true,
@@ -44,8 +39,10 @@ export default function Registro() {
     colores: { principal: "#6A0DAD", secundario: "#FF6700" },
     informacionRestaurante: { telefono: "", direccion: "" },
   });
+
   const [planSeleccionado, setPlanSeleccionado] = useState(null);
   const [precioBasePlan, setPrecioBasePlan] = useState(0);
+
   const [servicios, setServicios] = useState({
     vozCocina: false,
     vozComandas: false,
@@ -61,10 +58,35 @@ export default function Registro() {
     unico: 0,
     totalPrimerMes: 0,
   });
+
   const [pago, setPago] = useState({
     metodo: "simulado",
     idPago: "TEST-" + Date.now(),
   });
+
+  // ✅ Determinar tipo de negocio (preferimos el del plan; fallback por URL)
+  const isShop = useMemo(() => {
+    const t = (planSeleccionado?.tipoNegocio || "").toLowerCase();
+    if (t) return t === "shop";
+    return planSlug === "shop" || planSlug.includes("shop");
+  }, [planSeleccionado, planSlug]);
+
+  // ✅ Steps con labels dinámicos (sin cambiar estructura)
+  const STEPS = useMemo(
+    () => [
+      { id: 1, label: isShop ? "Datos de la tienda" : "Datos del restaurante" },
+      { id: 2, label: isShop ? "Configuración inicial" : "Configuración inicial" },
+      { id: 3, label: isShop ? "Servicios y herramientas" : "Servicios y hardware" },
+      { id: 4, label: "Resumen y pago" },
+    ],
+    [isShop]
+  );
+
+  useEffect(() => {
+    if (!planSlug) {
+      navigate("/?seleccionarPlan=1");
+    }
+  }, [planSlug, navigate]);
 
   // ======== CARGAR PLAN (1) – guarda planSeleccionado y precio base ========
   useEffect(() => {
@@ -85,9 +107,15 @@ export default function Registro() {
 
         setPlanSeleccionado(encontrado);
 
+        // ✅ set tipoNegocio (plan > fallback URL)
+        const tipoNegocio =
+          (encontrado.tipoNegocio || "").toLowerCase() ||
+          (planSlug === "shop" || planSlug.includes("shop") ? "shop" : "restaurante");
+
         setTenant((prev) => ({
           ...prev,
           plan: encontrado.slug,
+          tipoNegocio, // 👈 NUEVO
         }));
 
         setPrecio((prev) => ({
@@ -103,7 +131,7 @@ export default function Registro() {
     };
 
     cargarPlan();
-  }, [planSlug]);
+  }, [planSlug, navigate]);
 
   // ======== CALCULAR PRECIO ========
   useEffect(() => {
@@ -118,13 +146,8 @@ export default function Registro() {
       servicios.pda * 180 +
       (servicios.fotografia ? 120 : 0) +
       (servicios.cargaDatos ? 100 : 0) +
-      // ➕ NUEVO: carga completa de productos
       (servicios.cargaProductos ? 80 : 0) +
-      // ➕ NUEVO: configuración de mesas + QR
       (servicios.mesasQr ? 80 : 0);
-    // Si quieres que cada mesa cuente:
-    // servicios.mesasQr && servicios.mesasQrCantidad
-    //   ? servicios.mesasQrCantidad * 1.5 : 0
 
     setPrecio({
       mensual,
@@ -139,7 +162,7 @@ export default function Registro() {
       if (!planSlug) return;
 
       try {
-        const { data } = await api.get("/superadminPlans/publicPlans");
+        const { data } = await api.get("/admin/superadminPlans/publicPlans");
         const encontrado = data.find(
           (p) => p.slug.toLowerCase() === planSlug.toLowerCase()
         );
@@ -150,9 +173,14 @@ export default function Registro() {
           return;
         }
 
+        const tipoNegocio =
+          (encontrado.tipoNegocio || "").toLowerCase() ||
+          (planSlug === "shop" || planSlug.includes("shop") ? "shop" : "restaurante");
+
         setTenant((prev) => ({
           ...prev,
           plan: encontrado.slug,
+          tipoNegocio, // 👈 NUEVO también aquí
         }));
 
         setPrecio((prev) => ({
@@ -166,28 +194,32 @@ export default function Registro() {
     };
 
     cargarPlan();
-  }, [planSlug]);
+  }, [planSlug, navigate]);
 
   // ======== SUBMIT FINAL ========
   const handleSubmit = async () => {
     setLoading(true);
     setError("");
     setSuccess(false);
+
     try {
-      await api.post("/tenants/registro-avanzado", {
-        tenant,
+      await api.post("/admin/tenants/registro-avanzado", {
+        tenant: {
+          ...tenant,
+          // ✅ asegura tipoNegocio aunque no viniera del plan
+          tipoNegocio: tenant.tipoNegocio || (isShop ? "shop" : "restaurante"),
+        },
         admin,
         config,
         servicios,
         precio,
         pago,
       });
+
       setSuccess(true);
       setTimeout(() => navigate("/"), 1500);
     } catch (err) {
-      setError(
-        err.response?.data?.error || "Error al registrar el restaurante."
-      );
+      setError(err.response?.data?.error || "Error al registrar el entorno.");
     } finally {
       setLoading(false);
     }
@@ -199,15 +231,18 @@ export default function Registro() {
       setTenant={setTenant}
       admin={admin}
       setAdmin={setAdmin}
+      isShop={isShop} // 👈 por si quieres adaptar textos/campos dentro
     />,
     <Paso2ConfiguracionBasica
       config={config}
       setConfig={setConfig}
       plan={planSeleccionado}
+      isShop={isShop}
     />,
     <Paso3ServiciosExtras
       servicios={servicios}
       setServicios={setServicios}
+      isShop={isShop}
     />,
     <Paso4ResumenPago
       tenant={tenant}
@@ -221,8 +256,9 @@ export default function Registro() {
       success={success}
       precioBasePlan={precioBasePlan}
       plan={planSeleccionado}
-      periodo={periodo}            // 👈 nuevo
-      setPeriodo={setPeriodo}      // 👈 nuevo
+      periodo={periodo}
+      setPeriodo={setPeriodo}
+      isShop={isShop}
     />,
   ];
 
@@ -235,10 +271,17 @@ export default function Registro() {
         <div className="registro-main card">
           <header className="registro-header">
             <div>
-              <p className="registro-kicker">Alta de restaurante</p>
-              <h1 className="registro-title">Configura tu restaurante en Alef</h1>
+              <p className="registro-kicker">
+                Alta de {isShop ? "tienda" : "restaurante"}
+              </p>
+
+              <h1 className="registro-title">
+                Configura tu {isShop ? "tienda online" : "restaurante"} en Alef
+              </h1>
+
               <p className="registro-subtitle">
-                Completa estos pasos para crear tu entorno y empezar a trabajar con el TPV.
+                Completa estos pasos para crear tu entorno y empezar a trabajar con{" "}
+                {isShop ? "Alef Shop" : "el TPV"}.
               </p>
             </div>
 
@@ -264,28 +307,25 @@ export default function Registro() {
               return (
                 <div className="registro-step" key={step.id}>
                   <div
-                    className={`registro-step-circle ${isActive ? "active" : ""
-                      } ${isDone ? "done" : ""}`}
+                    className={`registro-step-circle ${isActive ? "active" : ""} ${
+                      isDone ? "done" : ""
+                    }`}
                   >
                     {isDone ? "✓" : step.id}
                   </div>
                   <span
-                    className={`registro-step-label ${isActive ? "active" : ""
-                      }`}
+                    className={`registro-step-label ${isActive ? "active" : ""}`}
                   >
                     {step.label}
                   </span>
-                  {index < STEPS.length - 1 && (
-                    <div className="registro-step-line" />
-                  )}
+                  {index < STEPS.length - 1 && <div className="registro-step-line" />}
                 </div>
               );
             })}
           </div>
 
           <p className="registro-step-counter">
-            Paso {paso} de {STEPS.length}:{" "}
-            <span>{stepActual?.label}</span>
+            Paso {paso} de {STEPS.length}: <span>{stepActual?.label}</span>
           </p>
 
           {/* CONTENIDO DEL PASO */}
@@ -318,7 +358,7 @@ export default function Registro() {
           {error && <p className="registro-error">{error}</p>}
           {success && (
             <p className="registro-success">
-              Restaurante creado correctamente. Redirigiendo...
+              {isShop ? "Tienda" : "Restaurante"} creado correctamente. Redirigiendo...
             </p>
           )}
         </div>

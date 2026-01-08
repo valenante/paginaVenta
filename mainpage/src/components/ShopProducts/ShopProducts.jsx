@@ -106,7 +106,7 @@ export default function ShopProducts({ categories }) {
             <h3>{selectedCategory}</h3>
           </div>
 
-          <ShopCategories category={selectedCategory} />
+          <ShopCategories category={selectedCategory} type="producto" />
         </section>
       )}
 

@@ -27,7 +27,7 @@ export default function SoporteLista() {
       if (prioridad && prioridad !== "todas") params.prioridad = prioridad;
       if (search.trim()) params.search = search.trim();
 
-      const res = await api.get("/tickets/cliente", { params });
+      const res = await api.get("/admin/tickets/cliente", { params });
       setTickets(res.data.tickets || []);
     } catch (err) {
       console.error("Error cargando tickets", err);
@@ -69,7 +69,7 @@ export default function SoporteLista() {
         <div className="soporte-header-acciones">
           <button
             type="button"
-            className="btn-secundario"
+            className="btn btn-secundario"
             onClick={() =>
               cargarTickets({
                 estado: filtroEstado,

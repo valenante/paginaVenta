@@ -10,7 +10,7 @@ export default function SoporteDetalle() {
 
   const cargar = async () => {
     try {
-      const res = await api.get(`/tickets/${id}`);
+      const res = await api.get(`/admin/tickets/${id}`);
       setTicket(res.data.ticket);
     } catch (err) {
       console.error("Error cargando ticket", err);
@@ -20,7 +20,7 @@ export default function SoporteDetalle() {
   const enviarMensaje = async (e) => {
     e.preventDefault();
 
-    await api.post(`/tickets/${id}/mensaje`, {
+    await api.post(`/admin/tickets/${id}/mensaje`, {
       autor: "cliente",
       mensaje
     });

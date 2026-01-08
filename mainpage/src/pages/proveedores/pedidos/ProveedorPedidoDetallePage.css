@@ -1,0 +1,248 @@
+/*****************************************************
+ * Proveedor Pedido Detalle – Alef UI
+ *****************************************************/
+
+/* =========================
+   Grid layout
+========================= */
+
+.provDet-grid {
+  margin-top: var(--space-xl);
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: var(--space-lg);
+}
+
+/* =========================
+   Cards
+========================= */
+
+.provDet-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.provDet-card--full {
+  grid-column: 1 / -1;
+}
+
+.provDet-cardTitle {
+  margin: 0;
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  color: var(--color-texto);
+}
+
+/* =========================
+   Estados
+========================= */
+
+.provDet-loading,
+.provDet-empty {
+  padding: 1rem;
+  text-align: center;
+  font-size: var(--font-size-sm);
+  color: var(--color-texto-suave);
+}
+
+/* =========================
+   Tabla
+========================= */
+
+.prov-tableWrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.prov-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 760px;
+  font-size: var(--font-size-sm);
+}
+
+.prov-table thead {
+  background: var(--color-fondo-claro);
+}
+
+.prov-table th,
+.prov-table td {
+  padding: 0.6rem 0.75rem;
+  border-bottom: 1px solid var(--color-borde-suave);
+  text-align: left;
+  white-space: nowrap;
+}
+
+.prov-table th {
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  color: var(--color-texto-suave);
+  text-transform: uppercase;
+}
+
+.prov-table tbody tr:hover {
+  background: rgba(96, 181, 255, 0.05);
+}
+
+.prov-name {
+  font-weight: 600;
+  color: var(--color-texto);
+}
+
+/* =========================
+   Totales
+========================= */
+
+.provDet-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.4rem 0;
+  font-size: var(--font-size-sm);
+}
+
+.provDet-row:not(:last-child) {
+  border-bottom: 1px dashed var(--color-borde-suave);
+}
+
+.provDet-k {
+  color: var(--color-texto-suave);
+}
+
+.provDet-v {
+  font-weight: 600;
+}
+
+/* =========================
+   Notas
+========================= */
+
+.provDet-notes {
+  margin: 0;
+  padding: 0.75rem;
+  font-size: var(--font-size-sm);
+  font-family: var(--font-base);
+  background: var(--color-fondo-claro);
+  border-radius: var(--radius-md);
+  white-space: pre-wrap;
+  border: 1px solid var(--color-borde-suave);
+}
+
+/* =========================
+   Responsive
+========================= */
+
+@media (max-width: 900px) {
+  .provDet-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .provDet-card--full {
+    grid-column: 1;
+  }
+}
+
+@media (max-width: 640px) {
+  .provDet-header {
+    flex-direction: column;
+    gap: var(--space-lg);
+  }
+
+  .provDet-actions {
+    width: 100%;
+  }
+
+  .provDet-actions .btn {
+    flex: 1;
+  }
+
+  .prov-table {
+    min-width: 640px;
+  }
+}
+
+/*****************************************************
+ * FIX MÓVIL – Pedido Proveedor
+ *****************************************************/
+
+/* =========================
+   Evitar overflow global
+========================= */
+
+.provDet-page {
+  overflow-x: hidden;
+}
+
+/* =========================
+   Ajuste section en móvil
+========================= */
+
+@media (max-width: 640px) {
+  .section {
+    padding-left: var(--space-md);
+    padding-right: var(--space-md);
+  }
+
+  .section--wide {
+    max-width: 100%;
+  }
+}
+
+/* =========================
+   Cards no pueden crecer más que viewport
+========================= */
+
+.provDet-card {
+  max-width: 100%;
+  overflow: hidden;
+}
+
+/* =========================
+   Header móvil
+========================= */
+
+@media (max-width: 640px) {
+  .provDet-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .provDet-headLeft {
+    width: 100%;
+  }
+
+  .provDet-actions {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+
+  .provDet-actions .btn {
+    width: 80%;
+    justify-content: center;
+  }
+}
+
+/* =========================
+   Tabla RESPONSIVE REAL
+========================= */
+
+@media (max-width: 640px) {
+  .prov-tableWrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .prov-table {
+    min-width: 100%;
+    width: 100%;
+    font-size: var(--font-size-xs);
+  }
+
+  .prov-table th,
+  .prov-table td {
+    padding: 0.45rem 0.5rem;
+  }
+}

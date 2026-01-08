@@ -7,6 +7,8 @@ export default function DashboardHeader({
   setSearch,
   planFilter,
   setPlanFilter,
+  tipoFilter,
+  setTipoFilter,
   onRefresh,
 }) {
   const { planes, loading } = usePlanes();
@@ -16,18 +18,28 @@ export default function DashboardHeader({
       <h1>Panel SuperAdmin Alef</h1>
 
       <div className="header-controls">
-        {/* 🔍 Barra de búsqueda */}
+        {/* 🔍 Búsqueda */}
         <div className="search-bar">
           <FiSearch />
           <input
             type="text"
-            placeholder="Buscar restaurante o email..."
+            placeholder="Buscar negocio, email o dominio..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
         </div>
 
-        {/* 🟦 Select de planes reales */}
+        {/* 🏷 Tipo de negocio */}
+        <select
+          value={tipoFilter}
+          onChange={(e) => setTipoFilter(e.target.value)}
+        >
+          <option value="all">Todos los negocios</option>
+          <option value="restaurante">🍽 Restaurantes</option>
+          <option value="shop">🛒 Tiendas</option>
+        </select>
+
+        {/* 🟦 Plan */}
         <select
           value={planFilter}
           onChange={(e) => setPlanFilter(e.target.value)}

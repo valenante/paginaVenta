@@ -1,0 +1,148 @@
+/*****************************************************
+ * ProveedorResumenTab – ALEF UI (REFINADO)
+ *****************************************************/
+
+/* =========================
+   Grid general
+========================= */
+.provDet-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-lg);
+  margin-top: var(--space-lg);
+}
+
+/* =========================
+   Cards
+   (usan .card base global)
+========================= */
+.provDet-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.provDet-card--full {
+  grid-column: 1 / -1;
+}
+
+/* =========================
+   Título de card
+========================= */
+.provDet-cardTitle {
+  font-size: var(--font-size-md);
+  font-weight: 700;
+  color: var(--color-texto);
+  margin: 0;
+}
+
+/* =========================
+   Filas clave / valor
+========================= */
+.provDet-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-md);
+  padding: 0.35rem 0;
+}
+
+.provDet-k {
+  font-size: var(--font-size-xs);
+  color: var(--color-texto-suave);
+}
+
+.provDet-v {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-texto);
+}
+
+/* =========================
+   Badges de estado
+   (basados en helpers)
+========================= */
+.provDet-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.7rem;
+  border-radius: var(--radius-pill);
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+}
+
+.provDet-badge.is-on {
+  background: var(--color-exito-suave);
+  color: var(--color-exito);
+}
+
+.provDet-badge.is-off {
+  background: var(--color-error-suave);
+  color: var(--color-error);
+}
+
+/* =========================
+   KPIs
+========================= */
+.provDet-kpis {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-lg);
+}
+
+.provDet-kpi {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: var(--space-md);
+  border-radius: var(--radius-md);
+  background: var(--color-fondo-claro);
+  border: 1px solid var(--color-borde-suave);
+}
+
+.provDet-kpiLabel {
+  font-size: var(--font-size-xs);
+  color: var(--color-texto-suave);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.provDet-kpiValue {
+  font-size: var(--font-size-lg);
+  font-weight: 800;
+  color: var(--color-texto);
+}
+
+/* =========================
+   Estados vacíos / loading
+========================= */
+.provDet-loading,
+.provDet-empty {
+  padding: var(--space-xl);
+  text-align: center;
+  font-size: var(--font-size-sm);
+  color: var(--color-texto-suave);
+}
+
+/* =========================
+   Responsive
+========================= */
+@media (max-width: 1024px) {
+  .provDet-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .provDet-kpis {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .provDet-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .provDet-kpis {
+    grid-template-columns: 1fr;
+  }
+}

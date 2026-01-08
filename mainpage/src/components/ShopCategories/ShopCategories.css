@@ -1,108 +1,278 @@
+/* ===============================
+   ShopCategories.css – ALEF UI
+   =============================== */
+
+/* Root */
 .shopcats-root {
   display: flex;
   flex-direction: column;
-  gap: var(--espaciado-base);
+  gap: var(--espaciado-base, 16px);
+  width: 100%;
 }
 
+/* -------------------------------
+   Header
+-------------------------------- */
 .shopcats-header {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
-  gap: var(--espaciado-base);
+  gap: var(--espaciado-base, 16px);
+  flex-wrap: wrap;
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .shopcats-title {
   margin: 0;
-  font-weight: var(--peso-black);
+  font-weight: var(--peso-black, 800);
+  letter-spacing: 0.2px;
 }
 
 .shopcats-subtitle {
-  margin-top: 6px;
-  color: var(--texto-muted);
-  font-size: var(--texto-sm);
+  margin: 6px 0 0;
+  color: var(--texto-muted, rgba(255, 255, 255, 0.7));
+  font-size: var(--texto-sm, 0.92rem);
+  line-height: 1.35;
 }
 
+/* ✅ Evita que “btn-secondary” se convierta en una barra gigante */
+.shopcats-header .btn-secondary {
+  width: auto !important;
+  min-width: max-content;
+  align-self: flex-end;
+  white-space: nowrap;
+}
+
+/* -------------------------------
+   Body
+-------------------------------- */
+.shopcats-body {
+  width: 100%;
+}
+
+/* -------------------------------
+   Empty state
+-------------------------------- */
 .shopcats-empty {
-  padding: var(--espaciado-l);
-  border-radius: var(--borde-redondeado-xl);
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.14);
+  padding: clamp(14px, 2.2vw, 22px);
+  border-radius: var(--borde-redondeado-xl, 18px);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.14);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  box-shadow: var(--sombra-suave);
+  box-shadow: var(--sombra-suave, 0 10px 30px rgba(0, 0, 0, 0.25));
+
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--espaciado-base);
+  gap: var(--espaciado-base, 16px);
 }
 
+.shopcats-empty .muted {
+  margin: 0;
+  color: var(--texto-muted, rgba(255, 255, 255, 0.75));
+  line-height: 1.4;
+}
+
+.shopcats-empty .btn-secondary {
+  width: auto !important;
+  min-width: max-content;
+  white-space: nowrap;
+}
+
+/* -------------------------------
+   Grid
+-------------------------------- */
 .shopcats-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--espaciado-base);
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: var(--espaciado-base, 16px);
 }
 
+/* -------------------------------
+   Card
+-------------------------------- */
 .shopcats-card {
-  border-radius: var(--borde-redondeado-xl);
-  padding: var(--espaciado-base);
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.14);
-  box-shadow: var(--sombra-suave);
+  position: relative;
+  overflow: hidden;
+
+  border-radius: var(--borde-redondeado-xl, 18px);
+  padding: clamp(12px, 1.7vw, 16px);
+
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: var(--sombra-suave, 0 10px 30px rgba(0, 0, 0, 0.25));
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
+
   display: flex;
   flex-direction: column;
-  gap: var(--espaciado-base);
+  gap: 10px;
+
+  transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
 }
 
+.shopcats-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(900px 280px at 20% 0%, rgba(255, 255, 255, 0.10), transparent 55%);
+  opacity: 0.9;
+}
+
+.shopcats-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.22);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
+}
+
+/* Card main */
+.shopcats-cardMain {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Nombre + pills (producto/habilitado) */
 .shopcats-name {
-  font-weight: var(--peso-black);
-  font-size: var(--texto-base);
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+
+  font-weight: var(--peso-black, 800);
+  font-size: var(--texto-base, 1rem);
+  letter-spacing: 0.2px;
+  color: rgba(255, 255, 255, 0.92);
 }
 
+/* Meta row (chips) */
 .shopcats-meta {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
-  margin-top: 8px;
+  gap: 8px;
+  margin-top: 2px;
 }
 
 .shopcats-pill {
-  font-size: var(--texto-xs);
-  padding: 4px 8px;
+  font-size: var(--texto-xs, 0.78rem);
+  line-height: 1;
+  padding: 6px 10px;
   border-radius: 999px;
-  border: 1px solid rgba(255,255,255,0.14);
-  background: rgba(255,255,255,0.06);
-  color: var(--texto-muted);
+
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--texto-muted, rgba(255, 255, 255, 0.75));
+
+  transition: background 160ms ease, border-color 160ms ease;
 }
 
+.shopcats-card:hover .shopcats-pill {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.20);
+}
+
+/* Descripción */
 .shopcats-desc {
-  margin-top: 8px;
-  color: var(--texto-muted);
-  font-size: var(--texto-sm);
+  margin-top: 2px;
+  color: var(--texto-muted, rgba(255, 255, 255, 0.74));
+  font-size: var(--texto-sm, 0.92rem);
+  line-height: 1.35;
+
+  /* recorte suave si se va de largo */
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
+/* -------------------------------
+   Actions
+-------------------------------- */
 .shopcats-actions {
+  position: relative;
+  z-index: 1;
+
   display: flex;
-  gap: var(--espaciado-s);
+  gap: 10px;
+  margin-top: 6px;
 }
 
 .shopcats-actions button {
-  width: 50%;
+  flex: 1;
+  min-height: 38px;
+  border-radius: 12px;
 }
 
-@media (max-width: 980px) {
-  .shopcats-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
+/* ✅ Botones dentro de ShopCategories (sin tocar el resto de la app) */
+.shopcats-root .btn-ghost,
+.shopcats-root .btn-danger,
+.shopcats-root .btn-secondary {
+  border-radius: 12px;
+  padding: 10px 12px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  font-size: 0.92rem;
+  line-height: 1;
+  transition: transform 120ms ease, filter 120ms ease, background 120ms ease, border-color 120ms ease;
 }
 
-@media (max-width: 640px) {
-  .shopcats-grid {
-    grid-template-columns: 1fr;
+.shopcats-root .btn-ghost {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: rgba(255, 255, 255, 0.90);
+}
+
+.shopcats-root .btn-ghost:hover {
+  background: rgba(255, 255, 255, 0.09);
+  border-color: rgba(255, 255, 255, 0.22);
+  transform: translateY(-1px);
+}
+
+.shopcats-root .btn-danger {
+  background: rgba(255, 60, 90, 0.16);
+  border: 1px solid rgba(255, 60, 90, 0.35);
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.shopcats-root .btn-danger:hover {
+  background: rgba(255, 60, 90, 0.22);
+  border-color: rgba(255, 60, 90, 0.50);
+  transform: translateY(-1px);
+}
+
+/* Focus accesible */
+.shopcats-root button:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.55);
+  outline-offset: 2px;
+}
+
+/* -------------------------------
+   Responsive
+-------------------------------- */
+@media (max-width: 700px) {
+  .shopcats-header {
+    align-items: flex-start;
   }
+
+  .shopcats-actions {
+    flex-direction: column;
+  }
+
+  .shopcats-actions button {
+    width: 100%;
+  }
+
   .shopcats-empty {
     flex-direction: column;
     align-items: stretch;
+  }
+
+  .shopcats-header .btn-secondary {
+    width: 100% !important;
   }
 }

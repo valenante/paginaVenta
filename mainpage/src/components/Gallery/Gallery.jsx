@@ -6,26 +6,30 @@ import "./Gallery.css";
 const capturas = [
   {
     src: "/img/captura1.jpg",
-    titulo: "Carta digital",
-    descripcion: "Los clientes ven la carta desde el móvil y pueden hacer pedidos.",
-    tag: "Carta y pedidos en mesa",
+    titulo: "Pedidos y autoservicio",
+    descripcion:
+      "Carta digital para restaurantes y flujos de autoservicio en tiendas, todo conectado al sistema central.",
+    tag: "Clientes y ventas",
   },
   {
     src: "/img/captura2.jpg",
-    titulo: "TPV para el equipo",
-    descripcion: "Visión completa de mesas, cuentas y tickets desde caja.",
+    titulo: "Panel de ventas y caja",
+    descripcion:
+      "Control completo de ventas, tickets, facturas y estados de caja desde un único panel.",
     tag: "TPV central",
   },
   {
     src: "/img/captura3.jpg",
-    titulo: "Vista de cocina",
-    descripcion: "Comandas claras por estación, con voz y estados en tiempo real.",
-    tag: "Cocina y barra",
+    titulo: "Cocina, barra y mostrador",
+    descripcion:
+      "Vistas optimizadas por estación: cocina, barra o mostrador, con estados en tiempo real y control por voz.",
+    tag: "Operativa diaria",
   },
   {
     src: "/img/captura4.jpg",
-    titulo: "Reservas y estadísticas",
-    descripcion: "Control de reservas, ocupación y datos de negocio.",
+    titulo: "Stock, proveedores y estadísticas",
+    descripcion:
+      "Gestión profesional de stock, proveedores, márgenes y análisis de negocio en tiempo real.",
     tag: "Gestión y análisis",
   },
 ];
@@ -38,11 +42,11 @@ const Gallery = () => {
       <div className="Gallery-inner section--wide">
         <header className="Gallery-header">
           <span className="Gallery-kicker">Capturas reales</span>
-          <h2>Así se ve Alef trabajando en tu restaurante</h2>
+          <h2>Así se ve Alef trabajando en tu negocio</h2>
           <p>
-            Panel para el equipo, carta digital para los clientes, vista de
-            cocina, reservas y estadísticas. Un mismo sistema, adaptado a cada
-            rol del restaurante.
+            Panel de ventas, pedidos desde el móvil, cocina, mostrador, stock y
+            estadísticas. Un único sistema que se adapta a restaurantes y
+            tiendas sin cambiar tu forma de trabajar.
           </p>
         </header>
 
@@ -63,7 +67,7 @@ const Gallery = () => {
 
         <div className="Gallery-footer">
           <a href="#contacto" className="btn btn-primario">
-            Quiero ver una demo en directo
+            Quiero ver Alef en funcionamiento
           </a>
         </div>
       </div>

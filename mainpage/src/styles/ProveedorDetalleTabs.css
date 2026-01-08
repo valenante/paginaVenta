@@ -1,0 +1,153 @@
+/*****************************************************
+ * Proveedor Detalle – Alef UI
+ *****************************************************/
+
+/* =========================
+   Header
+========================= */
+
+.provDet-header {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-xl);
+  align-items: flex-start;
+}
+
+/* =========================
+   Breadcrumbs
+========================= */
+
+.provDet-breadcrumbs {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: var(--font-size-xs);
+  color: var(--color-texto-suave);
+}
+
+.provDet-crumbLink {
+  color: var(--color-primario);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.provDet-crumb.is-active {
+  color: var(--color-texto);
+  font-weight: 700;
+}
+
+/* =========================
+   Title
+========================= */
+
+.provDet-title {
+  margin: var(--space-sm) 0;
+  font-size: var(--font-size-2xl);
+  font-weight: 800;
+  color: var(--color-texto);
+}
+
+/* =========================
+   Meta pills
+========================= */
+
+.provDet-metaRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+
+.provDet-pill {
+  background: var(--color-fondo-claro);
+  border: 1px solid var(--color-borde-suave);
+  border-radius: var(--radius-pill);
+  padding: 0.3rem 0.75rem;
+  font-size: var(--font-size-xs);
+}
+
+/* =========================
+   Actions
+========================= */
+
+.provDet-actions {
+  display: flex;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+}
+
+/* =========================
+   Alert
+========================= */
+
+.provDet-alert {
+  margin: var(--space-lg) 0;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+}
+
+.provDet-alert--error {
+  background: var(--color-error-suave);
+  color: var(--color-error);
+}
+
+/* =========================
+   Tabs
+========================= */
+
+.provTabs {
+  margin-top: var(--space-xl);
+  display: flex;
+  gap: var(--space-sm);
+  padding: 0.5rem;
+}
+
+.provTab {
+  padding: 0.55rem 1.1rem;
+  border-radius: var(--radius-pill);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  text-decoration: none;
+  color: var(--color-texto-suave);
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.provTab:hover {
+  background: var(--color-fondo-claro);
+}
+
+.provTab.is-active {
+  background: var(--color-primario);
+  color: var(--color-texto-invertido);
+}
+
+/* =========================
+   Content
+========================= */
+
+.provDet-content {
+  margin-top: var(--space-xl);
+}
+
+/* =========================
+   Responsive
+========================= */
+
+@media (max-width: 768px) {
+  .provDet-header {
+    flex-direction: column;
+    gap: var(--space-lg);
+  }
+
+  .provTabs {
+    overflow-x: auto;
+  }
+
+  .provDet-actions {
+    width: 100%;
+  }
+
+  .provDet-actions .btn {
+    flex: 1;
+  }
+}

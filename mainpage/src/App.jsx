@@ -70,15 +70,20 @@ import UserLayout from "./layouts/UserLayout";
 import EstadisticasPage from "./pages/EstadisticasPage.jsx";
 // Pagina de Caja Diaria
 import CajaDiaria from "./components/CajaDiariaUltraPro/CajaDiariaUltraPro";
-
-
+import ProveedoresPage from "./pages/ProveedoresPage";
+import ProveedorDetalleLayout from "./pages/proveedores/ProveedorDetalleLayout.jsx";
+import ProveedorResumenTab from "./pages/proveedores/tabs/ProveedorResumenTab.jsx";
+import ProveedorProductosTab from "./pages/proveedores/tabs/ProveedorProductosTab.jsx";
+import ProveedorPedidosTab from "./pages/proveedores/tabs/ProveedorPedidosTab.jsx";
+import ProveedorFacturasTab from "./pages/proveedores/tabs/ProveedorFacturasTab.jsx";
 import "./index.css";
 import { CategoriasProvider } from "./context/CategoriasContext";
 import { ShopCategoriasProvider } from "./context/ShopCategoriasContext";
 import { ImagesProvider } from "./context/ImagesContext";
 import Funcionamiento from "./components/Funcionamiento/Funcionamiento";
 import ConfigImpresionPage from "./pages/ConfigImpresionPage";
-
+import ConfigImpresionShopPage from "./pages/ConfigImpresionShopPage";
+import ProveedorPedidoDetallePage from "./pages/proveedores/pedidos/ProveedorPedidoDetallePage.jsx";
 /* =============================
    LANDING PÚBLICA (marketing)
    ============================= */
@@ -220,6 +225,31 @@ function AppRoutes() {
         </UserLayout>
       } />
 
+      <Route path="/configuracion/proveedores" element={
+        <UserLayout>
+          <ProveedoresPage />
+        </UserLayout>
+      } />
+
+<Route path="/configuracion/proveedores/:proveedorId" element={
+  <UserLayout>
+    <ProveedorDetalleLayout />
+  </UserLayout>
+}>
+  <Route index element={<ProveedorResumenTab />} />
+  <Route path="productos" element={<ProveedorProductosTab />} />
+  <Route path="pedidos" element={<ProveedorPedidosTab />} />
+  <Route path="facturas" element={<ProveedorFacturasTab />} />
+</Route>
+
+<Route
+  path="/configuracion/proveedores/:proveedorId/pedidos/:pedidoId"
+  element={
+    <UserLayout>
+      <ProveedorPedidoDetallePage />
+    </UserLayout>
+  }
+/>
       <Route path="/configuracion/carta" element={
         <UserLayout>
           <CartaConfigPage />
@@ -236,6 +266,12 @@ function AppRoutes() {
       <Route path="/configuracion/impresion" element={
         <UserLayout>
           <ConfigImpresionPage />
+        </UserLayout>
+      } />
+
+      <Route path="/configuracion/impresion-shop" element={
+        <UserLayout>
+          <ConfigImpresionShopPage />
         </UserLayout>
       } />
 

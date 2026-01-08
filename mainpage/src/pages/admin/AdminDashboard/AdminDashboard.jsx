@@ -34,13 +34,14 @@ export default function AdminDashboard() {
       />
 
       <button className="refresh-btn" onClick={() => setModalOpen(true)}>
-        ➕ Nuevo Restaurante
+        ➕ Nuevo negocio
       </button>
 
       <NuevoTenantModal
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
         onCreated={fetchTenants}
+        defaultTipo="restaurante" // 👈 por ahora
       />
 
       <StatsCards tenants={filtered} />

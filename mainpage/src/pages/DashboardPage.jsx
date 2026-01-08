@@ -47,6 +47,11 @@ export default function DashboardPage() {
   const direccion = config?.informacionRestaurante?.direccion || "";
   const telefono = config?.informacionRestaurante?.telefono || "";
 
+  const impresionPath =
+    tipoNegocio === "shop"
+      ? "/configuracion/impresion-shop"
+      : "/configuracion/impresion";
+
   return (
     <main className="dashboard-page section section--wide">
       {/* Header principal */}
@@ -119,7 +124,7 @@ export default function DashboardPage() {
           </p>
         </Link>
         {/* 👉 SIEMPRE visible */}
-        <Link to="/configuracion/impresion" className="dashboard-tile card">
+        <Link to={impresionPath} className="dashboard-tile card">
           <div className="dashboard-tile-icon">🖨️</div>
           <h2>Impresión</h2>
           <p>{impresionTexto}</p>
@@ -144,6 +149,13 @@ export default function DashboardPage() {
             </Link>
           </>
         )}
+        <Link to="/configuracion/proveedores" className="dashboard-tile card">
+          <div className="dashboard-tile-icon">🚚</div>
+          <h2>Proveedores</h2>
+          <p>
+            Gestiona proveedores, contactos, condiciones y relaciones comerciales.
+          </p>
+        </Link>
       </section>
     </main>
   );

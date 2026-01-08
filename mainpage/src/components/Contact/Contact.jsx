@@ -9,13 +9,14 @@ const Contact = () => {
         <div className="Contact-left">
           <span className="Contact-kicker">Contacto</span>
           <h2 className="Contact-title">
-            Hablemos de tu restaurante
+            Hablemos de tu negocio
           </h2>
 
           <p className="Contact-subtitle">
-            Cuéntanos cómo trabajáis ahora y te ayudamos a ver
-            cómo Alef puede encajar en vuestro día a día: TPV,
-            carta digital, reservas, VeriFactu y más.
+            Cuéntanos cómo trabajas ahora y te ayudamos a ver
+            cómo Alef puede encajar en tu día a día: TPV,
+            gestión de ventas, stock, proveedores, facturación
+            legal y mucho más, tanto en restaurante como en tienda.
           </p>
 
           <div className="Contact-channels">
@@ -42,15 +43,15 @@ const Contact = () => {
               <div>
                 <span className="Contact-channel-label">WhatsApp</span>
                 <span className="Contact-channel-value">
-                  Respuesta rápida en horario de servicio
+                  Respuesta rápida y directa
                 </span>
               </div>
             </a>
           </div>
 
           <p className="Contact-help">
-            También podemos agendar una llamada para ver el TPV
-            en directo con tu equipo.
+            También podemos agendar una llamada o una demo en directo
+            para enseñarte Alef funcionando en un entorno real.
           </p>
         </div>
 
@@ -60,7 +61,7 @@ const Contact = () => {
             className="Contact-form card"
             onSubmit={(e) => {
               e.preventDefault();
-              // Aquí más adelante puedes integrar envío real (API / email)
+              // Integración real más adelante (API / CRM / email)
             }}
           >
             <div className="Contact-form-header">
@@ -89,13 +90,13 @@ const Contact = () => {
             </div>
 
             <div className="Contact-field">
-              <label htmlFor="contact-restaurante">
-                Nombre del restaurante (opcional)
+              <label htmlFor="contact-negocio">
+                Nombre del negocio (opcional)
               </label>
               <input
-                id="contact-restaurante"
+                id="contact-negocio"
                 type="text"
-                placeholder="Restaurante, bar, cafetería, shop..."
+                placeholder="Restaurante, bar, tienda, shop..."
               />
             </div>
 
@@ -105,7 +106,7 @@ const Contact = () => {
               </label>
               <textarea
                 id="contact-mensaje"
-                placeholder="Cuéntanos brevemente tu situación actual y qué te gustaría mejorar."
+                placeholder="Cuéntanos brevemente cómo trabajas ahora y qué te gustaría mejorar."
                 required
               />
             </div>

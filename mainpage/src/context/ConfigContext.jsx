@@ -42,7 +42,10 @@ export const ConfigProvider = ({ children }) => {
         const { data } = await api.get(endpoint);
 
         // Backend puede devolver { config, planFeatures } o solo config
-        const cfg = data?.config || data || null;
+        const cfg =
+          data?.config && typeof data.config === "object"
+            ? data.config
+            : data;
 
         setConfig(cfg);
 
@@ -141,7 +144,7 @@ export const useConfig = () => {
     return {
       config: null,
       loading: false,
-      setConfig: () => {},
+      setConfig: () => { },
       hasFeature: () => false,
       planFeatures: [],
       tipoNegocio: "shop",

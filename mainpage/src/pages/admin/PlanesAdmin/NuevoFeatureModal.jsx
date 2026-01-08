@@ -20,7 +20,7 @@ export default function NuevoFeatureModal({ onClose, onSave }) {
     e.preventDefault();
     setLoading(true);
     try {
-      await api.post("/superadmin/features", form);
+      await api.post("/admin/superadmin/features", form);
       onSave();
       onClose();
     } catch (err) {

@@ -15,11 +15,12 @@ const AjustarStockShopModal = ({ producto, onClose, onSave }) => {
   const enviarAjuste = async () => {
     try {
       setLoading(true);
+      const n = Number(cantidad);
+      if (!Number.isFinite(n) || n < 0) return alert("Stock inválido");
 
-      await api.post("/shop/stock/movimiento", {
+      await api.post("/shop/stock/ajustar", {
         productoId: producto._id,
-        tipo: "ajuste",
-        cantidad: Number(cantidad),
+        nuevoStock: Number(cantidad),
         motivo: "Ajuste manual desde TPV",
       });
 
@@ -54,7 +55,10 @@ const AjustarStockShopModal = ({ producto, onClose, onSave }) => {
               type="number"
               className="ajuste-input"
               value={cantidad}
-              onChange={(e) => setCantidad(e.target.value)}
+              onChange={(e) => {
+                const v = e.target.value;
+                setCantidad(v === "" ? "" : Math.max(0, Number(v)));
+              }}
               min={0}
             />
 

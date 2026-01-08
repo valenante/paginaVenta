@@ -10,45 +10,62 @@ import {
   XAxis,
   YAxis,
   CartesianGrid,
+  Legend,
 } from "recharts";
 
-const COLORS = ["#6A0DAD", "#FF6700", "#98FF98", "#F5F5F5"];
+import "./ChartsSection.css";
+
+const COLORS = {
+  restaurante: "#FF6700",
+  shop: "#4ade80",
+};
 
 export default function ChartsSection({ tenants }) {
-  // 📊 Distribución real de planes
-  const planCounts = tenants.reduce((acc, t) => {
-    acc[t.plan] = (acc[t.plan] || 0) + 1;
-    return acc;
-  }, {});
+  /* ===============================
+     📊 PLANES POR TIPO DE NEGOCIO
+  =============================== */
+  const planData = [];
 
-  const plansData = Object.entries(planCounts).map(([plan, count]) => ({
-    name: plan,
-    value: count,
-  }));
+  tenants.forEach((t) => {
+    const key = `${t.plan}-${t.tipoNegocio}`;
+    const existing = planData.find((p) => p.key === key);
 
-  // 📈 Evolución temporal
+    if (existing) {
+      existing.value += 1;
+    } else {
+      planData.push({
+        key,
+        name: `${t.plan} (${t.tipoNegocio})`,
+        value: 1,
+        tipo: t.tipoNegocio,
+      });
+    }
+  });
+
+  /* ===============================
+     📈 EVOLUCIÓN SEMANAL
+  =============================== */
   const weeklyData = generarSemanas(tenants);
 
   return (
     <section className="charts-section">
+      {/* ===== PIE ===== */}
       <div className="chart-card">
-        <h3>Distribución de Planes</h3>
+        <h3>Distribución de Planes por Tipo</h3>
 
-        <ResponsiveContainer width="100%" height={240}>
+        <ResponsiveContainer width="100%" height={260}>
           <PieChart>
             <Pie
-              data={plansData}
+              data={planData}
               dataKey="value"
               nameKey="name"
-              cx="50%"
-              cy="50%"
-              outerRadius={80}
+              outerRadius={90}
               label
             >
-              {plansData.map((entry, index) => (
+              {planData.map((entry, index) => (
                 <Cell
-                  key={`cell-${index}`}
-                  fill={COLORS[index % COLORS.length]}
+                  key={entry.key}
+                  fill={COLORS[entry.tipo] || "#94a3b8"}
                 />
               ))}
             </Pie>
@@ -57,15 +74,33 @@ export default function ChartsSection({ tenants }) {
         </ResponsiveContainer>
       </div>
 
+      {/* ===== LINE ===== */}
       <div className="chart-card">
-        <h3>Nuevos Tenants (últimas 6 semanas)</h3>
-        <ResponsiveContainer width="100%" height={240}>
+        <h3>Nuevos Tenants (6 semanas)</h3>
+
+        <ResponsiveContainer width="100%" height={260}>
           <LineChart data={weeklyData}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="semana" />
-            <YAxis />
+            <YAxis allowDecimals={false} />
             <Tooltip />
-            <Line type="monotone" dataKey="tenants" stroke="#6A0DAD" />
+            <Legend />
+
+            <Line
+              type="monotone"
+              dataKey="restaurantes"
+              stroke={COLORS.restaurante}
+              strokeWidth={2}
+              name="Restaurantes"
+            />
+
+            <Line
+              type="monotone"
+              dataKey="tiendas"
+              stroke={COLORS.shop}
+              strokeWidth={2}
+              name="Tiendas"
+            />
           </LineChart>
         </ResponsiveContainer>
       </div>
@@ -73,7 +108,9 @@ export default function ChartsSection({ tenants }) {
   );
 }
 
-// 📅 Genera la cantidad de tenants creados por semana
+/* ===============================
+   📅 Helper semanal
+=============================== */
 function generarSemanas(tenants) {
   const ahora = new Date();
   const semanas = [];
@@ -81,19 +118,30 @@ function generarSemanas(tenants) {
   for (let i = 5; i >= 0; i--) {
     const inicio = new Date(ahora);
     inicio.setDate(ahora.getDate() - i * 7);
-    const fin = new Date(ahora);
+    const fin = new Date(inicio);
     fin.setDate(inicio.getDate() + 7);
 
-    const count = tenants.filter(
-      t => new Date(t.createdAt) >= inicio && new Date(t.createdAt) < fin
+    const restaurantes = tenants.filter(
+      (t) =>
+        t.tipoNegocio !== "shop" &&
+        new Date(t.createdAt) >= inicio &&
+        new Date(t.createdAt) < fin
+    ).length;
+
+    const tiendas = tenants.filter(
+      (t) =>
+        t.tipoNegocio === "shop" &&
+        new Date(t.createdAt) >= inicio &&
+        new Date(t.createdAt) < fin
     ).length;
 
     semanas.push({
-      semana: `${inicio.toLocaleDateString("es-ES", {
+      semana: inicio.toLocaleDateString("es-ES", {
         day: "2-digit",
         month: "2-digit",
-      })}`,
-      tenants: count,
+      }),
+      restaurantes,
+      tiendas,
     });
   }
 

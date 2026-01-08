@@ -1,0 +1,245 @@
+/*****************************************************
+ * ProveedorPedidosTab – ALEF UI (adaptado a :root)
+ *****************************************************/
+
+/* =========================
+   Grid general
+========================= */
+.provDet-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-lg);
+  margin-top: var(--space-lg);
+}
+
+/* =========================
+   Card base
+========================= */
+.provDet-card {
+  padding: var(--space-lg);
+  max-width: 100%;
+  background: var(--color-fondo-card);
+  border: 1px solid var(--color-borde-suave);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-suave);
+}
+
+.provDet-card--full {
+  grid-column: 1 / -1;
+}
+
+/* =========================
+   Header
+========================= */
+.provTab-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-md);
+  margin-bottom: var(--space-md);
+}
+
+.provDet-cardTitle {
+  font-size: var(--font-size-md);
+  font-weight: 700;
+  color: var(--color-texto);
+}
+
+/* =========================
+   Estados
+========================= */
+.provDet-loading,
+.provDet-empty {
+  padding: var(--space-xl);
+  text-align: center;
+  font-size: var(--font-size-sm);
+  color: var(--color-texto-suave);
+}
+
+.provDet-alert {
+  padding: var(--space-md);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+}
+
+.provDet-alert--error {
+  background: var(--color-error-suave);
+  border: 1px solid var(--color-error);
+  color: var(--color-error);
+}
+
+/* =========================
+   Tabla
+========================= */
+.prov-tableWrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.prov-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--font-size-sm);
+}
+
+.prov-table thead th {
+  padding: 0.65rem 0.75rem;
+  text-align: left;
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--color-texto-suave);
+  border-bottom: 1px solid var(--color-borde-suave);
+  background: var(--color-fondo-claro);
+}
+
+.prov-table tbody td {
+  padding: 0.75rem;
+  border-bottom: 1px solid var(--color-borde-suave);
+}
+
+.prov-table tbody tr:hover {
+  background: var(--color-fondo-claro);
+}
+
+.t-right {
+  text-align: right;
+}
+
+/* =========================
+   Acciones
+========================= */
+.prov-rowActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.35rem;
+}
+
+/* =========================
+   Estado pill
+========================= */
+.prov-pill {
+  padding: 0.25rem 0.6rem;
+  border-radius: var(--radius-pill);
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  text-transform: capitalize;
+}
+
+/* Estados usando sistema Alef */
+.estado-borrador {
+  background: var(--color-aviso-suave);
+  color: var(--color-aviso);
+}
+
+.estado-enviado {
+  background: var(--color-primario-suave);
+  color: var(--color-primario-oscuro);
+}
+
+.estado-recibido {
+  background: var(--color-exito-suave);
+  color: var(--color-exito);
+}
+
+.estado-cancelado {
+  background: var(--color-error-suave);
+  color: var(--color-error);
+}
+
+/* =========================
+   Mobile layout
+========================= */
+.only-desktop {
+  display: block;
+}
+
+.only-mobile {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .provDet-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .provTab-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .only-desktop {
+    display: none;
+  }
+
+  .only-mobile {
+    display: block;
+  }
+
+  .prov-mobileList {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+
+  .prov-mobileCard {
+    border: 1px solid var(--color-borde-suave);
+    border-radius: var(--radius-md);
+    padding: var(--space-md);
+    background: var(--color-fondo-card);
+    box-shadow: var(--shadow-suave);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+
+  .prov-mobileHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-sm);
+  }
+
+  .prov-mobileTitle {
+    font-weight: 700;
+    font-size: var(--font-size-sm);
+    color: var(--color-texto);
+  }
+
+  .prov-mobileGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-sm);
+  }
+
+  .prov-mobileGrid .full {
+    grid-column: 1 / -1;
+  }
+
+  .prov-mobileGrid .k {
+    font-size: var(--font-size-xs);
+    color: var(--color-texto-suave);
+  }
+
+  .prov-mobileGrid .v {
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    color: var(--color-texto);
+  }
+
+  .prov-mobileGrid .v.total {
+    font-size: var(--font-size-md);
+    font-weight: 800;
+    color: var(--color-primario);
+  }
+
+  .prov-mobileActions {
+    display: flex;
+    gap: var(--space-sm);
+  }
+
+  .prov-mobileActions button,
+  .prov-mobileActions a {
+    flex: 1;
+  }
+}

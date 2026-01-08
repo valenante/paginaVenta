@@ -14,7 +14,7 @@ export default function EditPlanModal({ tenant, onClose, onSave }) {
   useEffect(() => {
     const fetchPlanes = async () => {
       try {
-        const { data } = await api.get("/superadminPlans");
+        const { data } = await api.get("/admin/superadminPlans");
         const activos = Array.isArray(data)
           ? data.filter((p) => p.activo !== false)
           : [];

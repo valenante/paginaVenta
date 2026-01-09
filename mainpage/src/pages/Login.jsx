@@ -71,7 +71,7 @@ export default function Login() {
         user.plan === "esencial" || user.plan === "tpv-esencial";
 
       // 2️⃣ Roles ligados a restaurante
-      if (["admin_restaurante", "admin_tienda", "admin", "camarero", "cocinero"].includes(user.role)) {
+      if (["admin_restaurante", "admin_shop", "admin", "camarero", "cocinero"].includes(user.role)) {
         let url;
 
         if (isLocalhost) {

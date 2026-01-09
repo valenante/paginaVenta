@@ -94,7 +94,7 @@ export default function Registro() {
       if (!planSlug) return;
 
       try {
-        const { data } = await api.get("/superadminPlans/publicPlans");
+        const { data } = await api.get("/admin/superadminPlans/publicPlans");
         const encontrado = data.find(
           (p) => p.slug.toLowerCase() === planSlug.toLowerCase()
         );

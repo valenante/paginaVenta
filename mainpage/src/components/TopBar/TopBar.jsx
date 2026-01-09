@@ -171,7 +171,7 @@ export default function TopBar() {
               )}
 
               {/* ADMIN / ADMIN_RESTAURANTE */}
-              {["admin_restaurante", "admin", "admin_tienda"].includes(user.role) && (
+              {["admin_restaurante", "admin", "admin_shop"].includes(user.role) && (
                 <>
                   <button
                     onClick={() => {

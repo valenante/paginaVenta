@@ -48,6 +48,7 @@ export default function Paso4ResumenPago({
         precheckoutId: pre.precheckoutId,
         tenantEmail: tenant.email,
         plan: slugCompleto,
+        tipoNegocio: isShop ? "shop" : "restaurante", // 👈 NUEVO (clave)
       });
 
       if (sesion.url) window.location.href = sesion.url;

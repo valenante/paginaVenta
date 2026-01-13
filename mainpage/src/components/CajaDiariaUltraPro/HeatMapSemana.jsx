@@ -112,10 +112,6 @@ const HeatmapSemana = ({ datos }) => {
 
           <button
             className="heatmap-expand-btn"
-            onClick={() => {
-              // FUTURO: abrir modal fullscreen
-              console.log("Abrir heatmap completo");
-            }}
           >
             Ver mapa completo
           </button>

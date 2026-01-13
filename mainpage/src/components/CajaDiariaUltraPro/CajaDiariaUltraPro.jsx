@@ -58,10 +58,6 @@ const cargarDatos = async () => {
   try {
     const cajas = await obtenerCajasPorRango(fechaInicio, fechaFin, tipoNegocio);
 
-    console.log("[CAJA] tipoNegocio:", tipoNegocio);
-    console.log("[CAJA] respuesta:", cajas);
-    console.log("[CAJA] es array?", Array.isArray(cajas), "len:", cajas?.length);
-
     setDatos(Array.isArray(cajas) ? cajas : []);
     setError(null);
   } catch (err) {

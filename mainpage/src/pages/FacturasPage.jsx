@@ -32,7 +32,7 @@ export default function FacturasPage() {
     const [motivo, setMotivo] = useState("");
 
     // ============================
-    // Cargar facturas
+    // Cargar facturasz
     // ============================
     const cargarFacturas = async () => {
         try {

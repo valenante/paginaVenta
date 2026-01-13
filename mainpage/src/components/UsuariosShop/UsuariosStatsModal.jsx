@@ -68,8 +68,6 @@ const UsuarioStatsModal = ({ usuario, onClose }) => {
           { params }
         );
 
-        console.log(data, "=> stats usuario"); // DEBUG
-
         if (!cancelado) setStats(data);
       } catch (err) {
         logger.error("Error stats usuario:", err);

@@ -11,7 +11,9 @@ import { useTenant } from "../context/TenantContext";
 import PlanFeaturesPanel from "../components/Config/PlanFeaturesPanel.jsx";
 import OperativaSlaCapacidadPanel from "../components/Config/OperativaSlaCapacidadPanel.jsx";
 import { DEFAULT_TEMA_TPV, normalizarTemaTpv } from "../utils/tema";
+import { DEFAULT_TEMA_SHOP, normalizarTemaShop } from "../utils/temaShop";
 import TemaTpvPanel from "../components/Tema/TemaTpvPanel.jsx";
+import TemaShopPanel from "../components/Tema/TemaShopPanel.jsx";
 
 export default function RestauranteConfigPage() {
   const { config, setConfig } = useConfig();
@@ -29,6 +31,7 @@ export default function RestauranteConfigPage() {
     colores: {},
     estilo: {},
     temaTpv: { ...DEFAULT_TEMA_TPV },
+    temaShop: { ...DEFAULT_TEMA_SHOP },
     slaMesas: {
       activo: true,
       porcentajeAvisoRiesgo: 80,
@@ -82,23 +85,8 @@ export default function RestauranteConfigPage() {
   const [editandoSeccion, setEditandoSeccion] = useState(null);
   const [editandoEstacion, setEditandoEstacion] = useState(null);
 
-  // === SIF CONFIG ===
-  const [sifForm, setSifForm] = useState({
-    cif: "",
-    razonSocial: "",
-    direccion: "",
-    municipio: "",
-    provincia: "",
-    codigoPostal: "",
-    pais: "ES",
-  });
-  const [sifMensaje, setSifMensaje] = useState(null);
-  const [sifLoading, setSifLoading] = useState(false);
-
   // === Refs para inputs ===
   const logoInputRef = useRef(null);
-  const faviconInputRef = useRef(null);
-  const fondoInputRef = useRef(null);
 
   useEffect(() => {
     if (!esRestaurante) {
@@ -138,6 +126,7 @@ export default function RestauranteConfigPage() {
       colores: config.colores || {},
       estilo: config.estilo || {},
       temaTpv: normalizarTemaTpv(config.temaTpv),
+      temaShop: normalizarTemaShop(config.temaShop),
       slaMesas: config.slaMesas || prev.slaMesas,
       capacidadEstaciones: config.capacidadEstaciones || prev.capacidadEstaciones,
     }));
@@ -223,6 +212,7 @@ export default function RestauranteConfigPage() {
         colores: form.colores,
         estilo: form.estilo,
         temaTpv: form.temaTpv,
+        temaShop: form.temaShop,
         slaMesas: form.slaMesas,
         capacidadEstaciones: form.capacidadEstaciones,
       });
@@ -499,16 +489,36 @@ export default function RestauranteConfigPage() {
             </div>
           </section>
 
-          {/* === APARIENCIA TPV === */}
-          <TemaTpvPanel
-            temaTpv={form.temaTpv}
-            setTemaTpv={(updater) =>
-              setForm((prev) => ({
-                ...prev,
-                temaTpv: typeof updater === "function" ? updater(prev.temaTpv) : updater,
-              }))
-            }
-          />
+          {/* === APARIENCIA === */}
+          {esRestaurante && (
+            <TemaTpvPanel
+              temaTpv={form.temaTpv}
+              setTemaTpv={(updater) =>
+                setForm((prev) => ({
+                  ...prev,
+                  temaTpv:
+                    typeof updater === "function"
+                      ? updater(prev.temaTpv)
+                      : updater,
+                }))
+              }
+            />
+          )}
+
+          {esTienda && (
+            <TemaShopPanel
+              temaShop={form.temaShop}
+              setTemaShop={(updater) =>
+                setForm((prev) => ({
+                  ...prev,
+                  temaShop:
+                    typeof updater === "function"
+                      ? updater(prev.temaShop)
+                      : updater,
+                }))
+              }
+            />
+          )}
 
           {/* === ESTILO GENERAL === */}
           <section className="config-card card">

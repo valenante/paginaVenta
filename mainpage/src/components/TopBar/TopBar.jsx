@@ -20,6 +20,10 @@ export default function TopBar() {
     if (nuevaVentana) nuevaVentana.focus();
   };
 
+  const irAlPanelPro = (url) => {
+    window.location.href = url;
+  };
+
   // ✅ Mejor que hostname: Vite te da DEV/PROD
   const isDev = import.meta.env.DEV;
 
@@ -52,6 +56,13 @@ export default function TopBar() {
     ? `http://localhost:3003/${tenantSlug}` // por ejemplo
     : `https://${tenantSlug}-shops.${import.meta.env.VITE_MAIN_DOMAIN}`;
 
+  // =========================
+  // URL PANEL PRO (logo click)
+  // =========================
+  const panelProURL = import.meta.env.DEV
+    ? `http://localhost:5173/${tenantSlug}/pro`
+    : `https://${tenantSlug}-panel.${import.meta.env.VITE_MAIN_DOMAIN}/pro`;
+
   // Cerrar menú al cambiar tamaño
   useEffect(() => {
     const manejarResize = () => {
@@ -65,7 +76,10 @@ export default function TopBar() {
     <header className="TopBar">
       <div className="TopBar-container">
         {/* Logo */}
-        <button className="TopBar-logo" onClick={() => navigate("/")}>
+        <button
+          className="TopBar-logo"
+          onClick={() => irAlPanelPro(panelProURL)}
+        >
           <img src={logoAlef} alt="Alef Logo" className="TopBar-logo-img" />
           <span className="TopBar-logo-text">
             Alef <strong>{esTienda ? "Shops" : "TPV"}</strong>

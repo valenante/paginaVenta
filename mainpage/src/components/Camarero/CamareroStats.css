@@ -1,0 +1,240 @@
+/* =====================================================
+   CAMARERO STATS — ALEF
+   Resumen visual y comparativas del camarero
+   ===================================================== */
+
+.camarero-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 1.4rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* =====================================================
+   TITULOS
+   ===================================================== */
+
+.stats-title {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #e5e7eb;
+  letter-spacing: -0.01em;
+}
+
+.stats-subtitle {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #f1f5f9;
+  margin-bottom: 0.4rem;
+}
+
+/* =====================================================
+   SELECTOR DE RANGO
+   ===================================================== */
+
+.stats-rangos {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.stats-rangos button {
+  padding: 0.45rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.06);
+
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+
+  transition: all 0.25s ease;
+}
+
+.stats-rangos button:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.stats-rangos button.active {
+  background: linear-gradient(90deg, #6a0dad, #ff6700);
+  border-color: transparent;
+  color: #ffffff;
+  box-shadow: 0 6px 18px rgba(255, 103, 0, 0.35);
+}
+
+/* =====================================================
+   TARJETAS DE STATS
+   ===================================================== */
+
+.stat-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+/* Etiqueta */
+.stat-label {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+/* Valor principal */
+.stat-value {
+  font-size: 1.8rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+}
+
+/* Subtexto */
+.stat-sub {
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* =====================================================
+   VARIACIONES (comparativas)
+   ===================================================== */
+
+.stat-sub.positivo {
+  color: #4ade80; /* verde */
+}
+
+.stat-sub.negativo {
+  color: #f87171; /* rojo */
+}
+
+.stat-sub.neutral {
+  color: rgba(255, 255, 255, 0.55);
+}
+
+/* =====================================================
+   TOP PRODUCTOS
+   ===================================================== */
+
+.camarero-top-productos {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.stats-muted {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+/* Lista */
+.top-productos-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+/* Item */
+.top-producto-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 0.6rem 0.75rem;
+  border-radius: 0.7rem;
+
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+
+  font-size: 0.85rem;
+  transition: all 0.25s ease;
+}
+
+.top-producto-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-1px);
+}
+
+/* Info producto */
+.top-producto-item .info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.top-producto-item .nombre {
+  font-weight: 600;
+  color: #f1f5f9;
+}
+
+.top-producto-item .cantidad {
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+/* Importe */
+.top-producto-item .importe {
+  font-weight: 600;
+  color: #ffffff;
+  white-space: nowrap;
+}
+
+/* =====================================================
+   SELECTOR FECHA — CAMARERO
+   ===================================================== */
+
+.stats-fecha {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.stats-fecha-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.stats-fecha-input {
+  padding: 0.45rem 0.75rem;
+  border-radius: 0.6rem;
+
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+
+  color: #ffffff;
+  font-size: 0.8rem;
+
+  cursor: pointer;
+}
+
+.stats-fecha-input::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+}
+
+/* =====================================================
+   RESPONSIVE
+   ===================================================== */
+
+@media (max-width: 768px) {
+  .stat-value {
+    font-size: 1.6rem;
+  }
+
+  .stats-rangos {
+    gap: 0.45rem;
+  }
+
+  .stats-rangos button {
+    font-size: 0.7rem;
+    padding: 0.4rem 0.75rem;
+  }
+}

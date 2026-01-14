@@ -1,0 +1,123 @@
+/* =====================================================
+   CAMARERO DASHBOARD — ALEF
+   Panel principal del camarero
+   ===================================================== */
+
+.camarero-dashboard {
+  min-height: calc(100vh - 72px);
+  width: 100%;
+  max-width: 100%;          /* 🔑 CLAVE */
+  box-sizing: border-box;   /* 🔑 CLAVE */
+
+  padding: 2.2rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+
+  background:
+    radial-gradient(
+      circle at top,
+      rgba(106, 13, 173, 0.15),
+      rgba(0, 0, 0, 0.85) 55%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(0, 0, 0, 0.9),
+      rgba(10, 10, 20, 0.96)
+    );
+
+  color: #e5e7eb;
+}
+
+/* ===== HEADER ===== */
+.camarero-dashboard header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+
+  padding-bottom: 1.2rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+/* Título */
+.camarero-dashboard header h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+/* Badge rol */
+.camarero-dashboard .role {
+  padding: 0.35rem 0.9rem;
+  border-radius: 999px;
+
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  color: #f1f5f9;
+}
+
+/* ===== SECCIONES ===== */
+/* CamareroStats y CamareroQuickActions
+   heredan este layout limpio */
+.camarero-dashboard > section,
+.camarero-dashboard > div {
+  width: 100%;
+}
+
+/* ===== TARJETAS BASE (para stats y acciones) ===== */
+.camarero-dashboard .card {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 1rem;
+
+  padding: 1.4rem;
+
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+
+  transition: all 0.25s ease;
+}
+
+.camarero-dashboard .card:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+}
+
+/* ===== GRID HELPERS ===== */
+.camarero-grid {
+  display: grid;
+  gap: 1.4rem;
+}
+
+.camarero-grid.stats {
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+.camarero-grid.actions {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .camarero-dashboard {
+    padding: 1.6rem 1.2rem;
+    gap: 1.6rem;
+  }
+
+  .camarero-dashboard header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .camarero-dashboard header h2 {
+    font-size: 1.3rem;
+  }
+}

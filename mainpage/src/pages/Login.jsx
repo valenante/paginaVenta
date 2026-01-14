@@ -27,6 +27,35 @@ export default function Login() {
     }));
   };
 
+  const redirectByRole = ({ user, tenantSlug, isLocalhost }) => {
+    const baseLocal = `http://localhost:5173/${tenantSlug}`;
+    const baseProd = `https://${tenantSlug}-panel.${import.meta.env.VITE_MAIN_DOMAIN}`;
+
+    const base = isLocalhost ? baseLocal : baseProd;
+
+    switch (user.role) {
+      case "superadmin":
+        return "/superadmin";
+
+      case "admin":
+      case "admin_restaurante":
+        return `${base}/pro`;
+
+      case "camarero":
+        return `${base}/camarero`;
+
+      case "cocinero":
+        return `${base}/cocinero`;
+
+      case "admin_shop":
+      case "vendedor":
+        return `${base}/pro`;
+
+      default:
+        return `${base}/pro`; // fallback seguro
+    }
+  };
+
   // ============================
   // 🚪 Login Global (Alef)
   // ============================
@@ -70,23 +99,19 @@ export default function Login() {
       const isPlanEsencial =
         user.plan === "esencial" || user.plan === "tpv-esencial";
 
-      // 2️⃣ Roles ligados a restaurante
-      if (["admin_restaurante", "admin_shop", "admin", "camarero", "cocinero"].includes(user.role)) {
-        let url;
+      const targetUrl = redirectByRole({
+        user,
+        tenantSlug,
+        isLocalhost,
+      });
 
-        if (isLocalhost) {
-          url = `http://localhost:5173/${tenantSlug}/pro`;
-        } else {
-          const base = `https://${tenantSlug}-panel.${import.meta.env.VITE_MAIN_DOMAIN}`;
-          url = `${base}/pro`;
-        }
-
-        window.location.href = url;
-        return;
+      if (targetUrl.startsWith("/")) {
+        navigate(targetUrl);
+      } else {
+        window.location.href = targetUrl;
       }
 
-      // 3️⃣ Otros roles globales (muy raro)
-      navigate("/");
+      return;
     } catch (err) {
       console.error("❌ Error de inicio de sesión:", err);
 

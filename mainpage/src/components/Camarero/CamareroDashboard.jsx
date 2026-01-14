@@ -1,0 +1,28 @@
+// components/camarero/CamareroDashboard.jsx
+import { useAuth } from "../../context/AuthContext";
+import { Navigate } from "react-router-dom";
+import CamareroStats from "./CamareroStats.jsx";
+import "./CamareroDashboard.css";
+
+export default function CamareroDashboard() {
+  const { user, loading } = useAuth();
+
+  // ⏳ Mientras se comprueba la sesión
+  if (loading) return null;
+
+  // 🔒 Sesión caída o no válida
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return (
+    <div className="camarero-dashboard">
+      <header>
+        <h2>👋 Hola, {user.name}</h2>
+        <span className="role">Camarero</span>
+      </header>
+
+      <CamareroStats />
+    </div>
+  );
+}

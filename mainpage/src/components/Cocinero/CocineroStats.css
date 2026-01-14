@@ -1,0 +1,220 @@
+/* =====================================================
+   COCINERO STATS — ALEF
+   Métricas de actividad y carga de cocina
+   ===================================================== */
+
+.cocinero-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 1.4rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* =====================================================
+   TÍTULOS
+   ===================================================== */
+
+.stats-title-cocinero {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #e5e7eb;
+  letter-spacing: -0.01em;
+}
+
+.stats-subtitle-cocinero {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #f1f5f9;
+  margin-bottom: 0.4rem;
+}
+
+/* =====================================================
+   SELECTOR DE RANGO
+   ===================================================== */
+
+.stats-rangos-cocinero {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.stats-rango-btn-cocinero {
+  padding: 0.45rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.06);
+
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+
+  transition: all 0.25s ease;
+}
+
+.stats-rango-btn-cocinero:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.stats-rango-btn-cocinero.active {
+  background: linear-gradient(90deg, #6a0dad, #ff6700);
+  border-color: transparent;
+  color: #ffffff;
+  box-shadow: 0 6px 18px rgba(255, 103, 0, 0.35);
+}
+
+/* =====================================================
+   TARJETAS
+   ===================================================== */
+
+.cocinero-grid-cocinero {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 0.8rem;
+}
+
+.card-cocinero {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.9rem;
+  padding: 0.9rem 1rem;
+}
+
+.stat-card-cocinero {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.stat-label-cocinero {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.stat-value-cocinero {
+  font-size: 1.8rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+}
+
+.stat-sub-cocinero {
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* =====================================================
+   TOP PRODUCTOS
+   ===================================================== */
+
+.cocinero-top-productos-cocinero {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.stats-muted-cocinero {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.top-productos-list-cocinero {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.top-producto-item-cocinero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 0.6rem 0.75rem;
+  border-radius: 0.7rem;
+
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+
+  font-size: 0.85rem;
+  transition: all 0.25s ease;
+}
+
+.top-producto-item-cocinero:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-1px);
+}
+
+.nombre-cocinero {
+  font-weight: 600;
+  color: #f1f5f9;
+}
+
+.cantidad-cocinero {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #ff6700;
+  white-space: nowrap;
+}
+/* =====================================================
+   SELECTOR DE FECHA — COCINA
+   ===================================================== */
+
+.stats-fecha-cocinero {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.stats-label-fecha-cocinero {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.stats-input-fecha-cocinero {
+  padding: 0.45rem 0.75rem;
+  border-radius: 0.6rem;
+
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+
+  color: #ffffff;
+  font-size: 0.8rem;
+
+  cursor: pointer;
+}
+
+.stats-input-fecha-cocinero::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+}
+
+
+/* =====================================================
+   RESPONSIVE
+   ===================================================== */
+
+@media (max-width: 768px) {
+  .stat-value-cocinero {
+    font-size: 1.6rem;
+  }
+
+  .stats-rangos-cocinero {
+    gap: 0.45rem;
+  }
+
+  .stats-rango-btn-cocinero {
+    font-size: 0.7rem;
+    padding: 0.4rem 0.75rem;
+  }
+}

@@ -116,8 +116,7 @@ export default function UsuariosPage() {
           onClose={() => setUsuarioStats(null)}
         />
       )}
-
-      {usuarioPermisos && (
+      {/*{usuarioPermisos && (
         <UsuarioPermisosModal
           usuario={usuarioPermisos}
           permisosDisponibles={permisosDisponibles}
@@ -125,7 +124,7 @@ export default function UsuariosPage() {
           onSave={actualizarPermisosUsuario}
           onClose={() => setUsuarioPermisos(null)}
         />
-      )} 
+      )} */}
     </div>
   );
 }

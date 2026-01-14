@@ -51,14 +51,15 @@ import AyudaPage from "./pages/Ayuda/AyudaPage.jsx";
 
 
 import TenantTable from "./pages/admin/AdminDashboard/components/TenantTable.jsx";
+import CamareroPanel from "./pages/panel/CamareroPanel";
+import CocineroPanel from "./pages/panel/CocineroPanel";
 
 import VerifactuGlobalModal from "./context/VerifactuGlobalModal/VerifactuGlobalModal.jsx";
 import { FeaturesPlanProvider } from "./context/FeaturesPlanContext.jsx";
 
 // 🧠 Contextos para decidir qué ver en la home
 import { useAuth } from "./context/AuthContext.jsx";
-import { useConfig } from "./context/ConfigContext.jsx";
-import { TenantProvider, useTenant } from "./context/TenantContext.jsx";
+import { useTenant } from "./context/TenantContext.jsx";
 import { useFeaturesPlan } from "./context/FeaturesPlanContext.jsx";
 import { ProductosProvider } from "./context/ProductosContext.jsx";
 import { SocketProvider } from "./utils/socket.jsx";
@@ -231,25 +232,25 @@ function AppRoutes() {
         </UserLayout>
       } />
 
-<Route path="/configuracion/proveedores/:proveedorId" element={
-  <UserLayout>
-    <ProveedorDetalleLayout />
-  </UserLayout>
-}>
-  <Route index element={<ProveedorResumenTab />} />
-  <Route path="productos" element={<ProveedorProductosTab />} />
-  <Route path="pedidos" element={<ProveedorPedidosTab />} />
-  <Route path="facturas" element={<ProveedorFacturasTab />} />
-</Route>
+      <Route path="/configuracion/proveedores/:proveedorId" element={
+        <UserLayout>
+          <ProveedorDetalleLayout />
+        </UserLayout>
+      }>
+        <Route index element={<ProveedorResumenTab />} />
+        <Route path="productos" element={<ProveedorProductosTab />} />
+        <Route path="pedidos" element={<ProveedorPedidosTab />} />
+        <Route path="facturas" element={<ProveedorFacturasTab />} />
+      </Route>
 
-<Route
-  path="/configuracion/proveedores/:proveedorId/pedidos/:pedidoId"
-  element={
-    <UserLayout>
-      <ProveedorPedidoDetallePage />
-    </UserLayout>
-  }
-/>
+      <Route
+        path="/configuracion/proveedores/:proveedorId/pedidos/:pedidoId"
+        element={
+          <UserLayout>
+            <ProveedorPedidoDetallePage />
+          </UserLayout>
+        }
+      />
       <Route path="/configuracion/carta" element={
         <UserLayout>
           <CartaConfigPage />
@@ -322,6 +323,46 @@ function AppRoutes() {
             <VentasProvider tenantId={tenantId}>
               <PanelPro />
             </VentasProvider>
+          </UserLayout>
+        }
+      />
+
+      {/* 👨‍🍽️ PANEL CAMARERO */}
+      <Route
+        path="/camarero"
+        element={
+          <UserLayout>
+            <CamareroPanel />
+          </UserLayout>
+        }
+      />
+
+            {/* 👨‍🍽️ PANEL CAMARERO */}
+      <Route
+        path="/:tenantId/camarero"
+        element={
+          <UserLayout>
+            <CamareroPanel />
+          </UserLayout>
+        }
+      />
+
+            {/* 👨‍🍽️ PANEL COCINER */}
+      <Route
+        path="/cocinero"
+        element={
+          <UserLayout>
+            <CocineroPanel />
+          </UserLayout>
+        }
+      />
+
+            {/* 👨‍🍽️ PANEL COCINERO */}
+      <Route
+        path="/:tenantId/cocinero"
+        element={
+          <UserLayout>
+            <CocineroPanel />
           </UserLayout>
         }
       />

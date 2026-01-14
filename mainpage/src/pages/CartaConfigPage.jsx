@@ -3,6 +3,7 @@ import { useConfig } from "../context/ConfigContext.jsx";
 import api from "../utils/api";
 import AlertaMensaje from "../components/AlertaMensaje/AlertaMensaje.jsx";
 import ModalConfirmacion from "../components/Modal/ModalConfirmacion.jsx";
+import CartaPromocionesPanel from "../components/Promociones/CartaPromocionesPanel.jsx";
 import "../styles/CartaConfigPage.css";
 
 export default function CartaConfigPage() {
@@ -16,11 +17,6 @@ export default function CartaConfigPage() {
 
   // 🔹 Estado para gestión de destacados / promociones
   const [promoPanelAbierto, setPromoPanelAbierto] = useState(false);
-  const [promoTipo, setPromoTipo] = useState("plato"); // 'plato' | 'bebida' | 'extra'
-  const [promoCategoria, setPromoCategoria] = useState("");
-  const [promoProductos, setPromoProductos] = useState([]);
-  const [promoLoading, setPromoLoading] = useState(false);
-  const [promoSeleccionados, setPromoSeleccionados] = useState([]);
 
   useEffect(() => {
     if (config) setForm(config);
@@ -153,34 +149,6 @@ export default function CartaConfigPage() {
     setAlerta({ tipo: "info", mensaje: "Texto eliminado." });
   };
 
-  const handleToggleEstado = async (id, campo, valor) => {
-    try {
-      const { data } = await api.put("/productos/toggle-estado", {
-        id,
-        campo,     // "destacado" o "promocionado"
-        valor      // true o false
-      });
-
-      // actualizar estado local
-      setPromoProductos((prev) =>
-        prev.map((p) =>
-          p._id === id ? { ...p, [campo]: valor } : p
-        )
-      );
-
-      setAlerta({
-        tipo: "exito",
-        mensaje: `${campo === "destacado" ? "Destacado" : "Promoción"} actualizado.`
-      });
-
-    } catch (err) {
-      console.error("❌ Error al actualizar estado:", err);
-      setAlerta({
-        tipo: "error",
-        mensaje: "No se pudo actualizar el estado del producto."
-      });
-    }
-  };
   // ============================
   // 💾 Guardar configuración
   // ============================
@@ -203,109 +171,6 @@ export default function CartaConfigPage() {
       setSaving(false);
     }
   };
-
-  // =====================================================
-  // ⭐ Gestión de productos destacados / en promoción
-  // =====================================================
-
-  // Cargar productos por tipo cuando se abre el panel o cambia el tipo
-  useEffect(() => {
-    const fetchProductos = async () => {
-      if (!promoPanelAbierto || !promoTipo) return;
-      try {
-        setPromoLoading(true);
-        setPromoSeleccionados([]);
-        setPromoCategoria("");
-
-        // Ajusta este endpoint a tu API real
-        const { data } = await api.get(`/productos`, {
-          params: { tipo: promoTipo },
-        });
-
-        setPromoProductos(data || []);
-      } catch (err) {
-        console.error("❌ Error al cargar productos:", err);
-        setAlerta({
-          tipo: "error",
-          mensaje: "No se pudieron cargar los productos.",
-        });
-      } finally {
-        setPromoLoading(false);
-      }
-    };
-
-    fetchProductos();
-  }, [promoPanelAbierto, promoTipo]);
-
-  // 🔹 1) Filtrar productos según el tipo elegido
-  const productosPorTipo = (promoProductos || []).filter((p) => {
-    if (promoTipo === "bebida") return p.tipo === "bebida";
-    if (promoTipo === "extra") return p.tipo === "extra";
-    // 👉 'plato' = todo lo que NO sea bebida ni extra
-    return p.tipo !== "bebida" && p.tipo !== "extra";
-  });
-
-  // 🔹 2) Categorías disponibles según ese tipo
-  const categoriasDisponibles = Array.from(
-    new Set(
-      productosPorTipo
-        .map((p) => p.categoria)
-        .filter((c) => typeof c === "string" && c.trim() !== "")
-    )
-  );
-
-  // 🔹 3) Filtrado final por categoría
-  const productosFiltrados = productosPorTipo.filter((p) =>
-    promoCategoria ? p.categoria === promoCategoria : true
-  );
-
-  const actualizarProductosSeleccionados = async (dataActualizar) => {
-    if (!promoSeleccionados.length) {
-      setAlerta({
-        tipo: "error",
-        mensaje: "Selecciona al menos un producto.",
-      });
-      return;
-    }
-
-    try {
-      // Endpoint genérico de actualización masiva
-      await api.put("/productos/marcar-multiple", {
-        ids: promoSeleccionados,
-        data: dataActualizar,
-      });
-
-      setAlerta({
-        tipo: "exito",
-        mensaje: "Productos actualizados correctamente.",
-      });
-
-      // Refrescar lista
-      const { data } = await api.get(`/productos`, {
-        params: { tipo: promoTipo },
-      });
-      setPromoProductos(data || []);
-      setPromoSeleccionados([]);
-    } catch (err) {
-      console.error("❌ Error al actualizar productos:", err);
-      setAlerta({
-        tipo: "error",
-        mensaje: "Error al actualizar los productos.",
-      });
-    }
-  };
-
-  const handleMarcarPromocion = () =>
-    actualizarProductosSeleccionados({ promocionado: true });
-
-  const handleQuitarPromocion = () =>
-    actualizarProductosSeleccionados({ promocionado: false });
-
-  const handleMarcarDestacado = () =>
-    actualizarProductosSeleccionados({ destacado: true });
-
-  const handleQuitarDestacado = () =>
-    actualizarProductosSeleccionados({ destacado: false });
 
   // ============================
   // RENDER
@@ -808,14 +673,11 @@ export default function CartaConfigPage() {
           </div>
         </section>
 
-        {/* === DESTACADOS / PROMOS === */}
         <section className="config-section">
           <div className="config-section-header">
-            <h3 className="section-title">⭐ Productos destacados y en promoción</h3>
-            <p className="texto-ayuda">
-              Selecciona productos por tipo y categoría, y márcalos como{" "}
-              <strong>destacados</strong> o <strong>en promoción</strong> para
-              resaltarlos en la carta.
+            <h3 className="section-title">⭐ Promociones y destacados</h3>
+            <p className="section-description">
+              Gestiona los productos destacados y las promociones activas en la carta.
             </p>
           </div>
 
@@ -824,7 +686,7 @@ export default function CartaConfigPage() {
             className="btn btn-secundario"
             onClick={() => setPromoPanelAbierto(true)}
           >
-            Gestionar productos destacados / en promoción
+            Gestionar promociones
           </button>
         </section>
 
@@ -840,128 +702,6 @@ export default function CartaConfigPage() {
         </div>
       </div>
 
-      {/* ⭐ MODAL DESTACADOS / PROMOS */}
-      {promoPanelAbierto && (
-        <div className="modal-overlay modal-overlay-promos">
-          <div className="modal-promos card">
-            <div className="modal-promos-header">
-              <div>
-                <h3>Productos destacados y en promoción</h3>
-                <p>
-                  Selecciona uno o varios productos y márcalos como destacados o
-                  en promoción. Los cambios se guardan al instante.
-                </p>
-              </div>
-              <button
-                type="button"
-                className="btn-icon modal-promos-close"
-                onClick={() => setPromoPanelAbierto(false)}
-              >
-                ✕
-              </button>
-            </div>
-
-            <div className="panel-promos">
-              {/* Selección de tipo */}
-              <div className="promo-tipos">
-                <button
-                  type="button"
-                  className={`pill ${promoTipo === "plato" ? "active" : ""}`}
-                  onClick={() => setPromoTipo("plato")}
-                >
-                  Platos
-                </button>
-                <button
-                  type="button"
-                  className={`pill ${promoTipo === "bebida" ? "active" : ""}`}
-                  onClick={() => setPromoTipo("bebida")}
-                >
-                  Bebidas
-                </button>
-                <button
-                  type="button"
-                  className={`pill ${promoTipo === "extra" ? "active" : ""}`}
-                  onClick={() => setPromoTipo("extra")}
-                >
-                  Extras
-                </button>
-              </div>
-
-              {/* Selección de categoría */}
-              <div className="promo-categorias config-field">
-                <label>Categoría</label>
-                <select
-                  value={promoCategoria}
-                  onChange={(e) => setPromoCategoria(e.target.value)}
-                >
-                  <option value="">Todas</option>
-                  {categoriasDisponibles.map((cat) => (
-                    <option key={cat} value={cat}>
-                      {cat}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Listado de productos */}
-              <div className="promo-lista">
-                {promoLoading ? (
-                  <p>Cargando productos...</p>
-                ) : productosFiltrados.length === 0 ? (
-                  <p>No hay productos para este filtro.</p>
-                ) : (
-                  <ul>
-                    {productosFiltrados.map((p) => (
-                      <li key={p._id} className="promo-item card-row">
-                        <div className="promo-label">
-                          <span className="promo-nombre">
-                            {p.nombre} {p.categoria ? `(${p.categoria})` : ""}
-                          </span>
-                        </div>
-
-                        <div className="promo-toggles">
-                          <label className="toggle-row">
-                            <span>Destacado</span>
-                            <input
-                              type="checkbox"
-                              className="toggle-switch"
-                              checked={p.destacado}
-                              onChange={() =>
-                                handleToggleEstado(
-                                  p._id,
-                                  "destacado",
-                                  !p.destacado
-                                )
-                              }
-                            />
-                          </label>
-
-                          <label className="toggle-row">
-                            <span>Promoción</span>
-                            <input
-                              type="checkbox"
-                              className="toggle-switch"
-                              checked={p.promocionado}
-                              onChange={() =>
-                                handleToggleEstado(
-                                  p._id,
-                                  "promocionado",
-                                  !p.promocionado
-                                )
-                              }
-                            />
-                          </label>
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* 🟢 Alerta */}
       {alerta && (
         <AlertaMensaje
@@ -970,6 +710,11 @@ export default function CartaConfigPage() {
           onClose={() => setAlerta(null)}
         />
       )}
+
+      <CartaPromocionesPanel
+        abierto={promoPanelAbierto}
+        onClose={() => setPromoPanelAbierto(false)}
+      />
 
       {/* 🟢 Modal genérico */}
       {modal && (

@@ -199,6 +199,28 @@ export default function Registro() {
     cargarPlan();
   }, [planSlug, navigate]);
 
+  useEffect(() => {
+    document.title = "Registro | Alef";
+
+    // meta robots: noindex
+    let meta = document.querySelector('meta[name="robots"]');
+    if (!meta) {
+      meta = document.createElement("meta");
+      meta.setAttribute("name", "robots");
+      document.head.appendChild(meta);
+    }
+    meta.setAttribute("content", "noindex, nofollow");
+
+    // opcional: canonical para esta página
+    let canonical = document.querySelector('link[rel="canonical"]');
+    if (!canonical) {
+      canonical = document.createElement("link");
+      canonical.setAttribute("rel", "canonical");
+      document.head.appendChild(canonical);
+    }
+    canonical.setAttribute("href", window.location.href);
+  }, []);
+
   // ======== SUBMIT FINAL ========
   const handleSubmit = async () => {
     setLoading(true);
@@ -269,6 +291,7 @@ export default function Registro() {
 
   return (
     <main className="registro-avanzado registro-page">
+
       <div className="registro-shell">
         {/* COLUMNA PRINCIPAL */}
         <div className="registro-main card">

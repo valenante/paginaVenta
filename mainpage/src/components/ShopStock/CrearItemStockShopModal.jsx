@@ -10,6 +10,7 @@ export default function CrearProductoShopModal({ onClose, onSave }) {
     precio: "",
     stock: 0,
     stockMinimo: 0,
+    stockCritico: 0,
     stockMaximo: 100,
     unidadMedida: "ud",
   });
@@ -32,6 +33,7 @@ export default function CrearProductoShopModal({ onClose, onSave }) {
           gestionaStock: true,
           stock: Number(form.stock),
           stockMinimo: Number(form.stockMinimo),
+          stockCritico: Number(form.stockCritico),
           stockMaximo: Number(form.stockMaximo),
           unidadMedida: form.unidadMedida,
           permiteDecimal: false,
@@ -115,6 +117,18 @@ export default function CrearProductoShopModal({ onClose, onSave }) {
               name="stockMinimo"
               value={form.stockMinimo}
               onChange={update}
+            />
+          </label>
+
+          <label className="label--editar">
+            Stock crítico
+            <input
+              className="input--editar"
+              type="number"
+              name="stockCritico"
+              value={form.stockCritico}
+              onChange={update}
+              min={0}
             />
           </label>
 

@@ -215,7 +215,6 @@ html, body {
 
 .btn-ghost {
   background: transparent;
-  color: var(--color-texto);
   border: 1px solid rgba(148, 163, 184, 0.4);
 }
 

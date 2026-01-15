@@ -79,14 +79,6 @@ function VentasPageShopInner() {
           <button className="btn-ghost" type="button" onClick={exportCsv} disabled={loading}>
             Exportar CSV
           </button>
-
-          <button
-            className="btn-secondary"
-            type="button"
-            onClick={() => alert("Nueva venta: ve al POS y cobra desde allí.")}
-          >
-            Nueva venta
-          </button>
         </div>
       </header>
 

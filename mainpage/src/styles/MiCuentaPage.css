@@ -11,6 +11,7 @@
 
 .micuenta-header h1 {
   margin-bottom: 0.2rem;
+  color: var(--color-blanco);
   font-size: var(--font-size-2xl);
   font-weight: 800;
 }
@@ -50,7 +51,7 @@
   gap: var(--space-md);
 
   /* Si la card crece demasiado (como la SIF) → que haga scroll */
-  max-height: 560px;
+  max-height: 80vh;
   overflow: hidden;
 }
 
@@ -240,6 +241,51 @@
   margin-top: var(--space-sm);
   font-size: var(--font-size-sm);
   color: var(--color-primario);
+}
+
+/* =========================================================
+   Estado inline (ACTIVADO / DESACTIVADO) — claro y visible
+   ========================================================= */
+.ok,
+.danger,
+.warn,
+.info {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0.18rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 800;
+  letter-spacing: 0.2px;
+  line-height: 1.2;
+}
+
+/* ✅ ACTIVADO */
+.ok {
+  background: #e7f8ed;
+  color: #167a3f;
+  border: 1px solid rgba(22, 122, 63, 0.18);
+}
+
+/* ⛔ DESACTIVADO */
+.danger {
+  background: #ffe3e3;
+  color: #b30000;
+  border: 1px solid rgba(179, 0, 0, 0.18);
+}
+
+/* (Opcional) otros estados si los usas */
+.warn {
+  background: #fff7db;
+  color: #8a6a00;
+  border: 1px solid rgba(138, 106, 0, 0.18);
+}
+
+.info {
+  background: #eaf2ff;
+  color: #2f66d4;
+  border: 1px solid rgba(47, 102, 212, 0.18);
 }
 
 /*****************************************************

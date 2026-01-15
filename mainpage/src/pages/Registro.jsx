@@ -25,12 +25,15 @@ export default function Registro() {
   // ======== ESTADOS PRINCIPALES ========
   const [tenant, setTenant] = useState({
     nombre: "",
-    email: "",
     plan: "premium",
-    tipoNegocio: null, // 👈 NUEVO (restaurante | shop)
+    tipoNegocio: null,
   });
 
-  const [admin, setAdmin] = useState({ name: "", password: "", admin: "" });
+  const [admin, setAdmin] = useState({
+    name: "",
+    email: "",
+    password: "",
+  });
 
   const [config, setConfig] = useState({
     permitePedidosComida: true,
@@ -307,9 +310,8 @@ export default function Registro() {
               return (
                 <div className="registro-step" key={step.id}>
                   <div
-                    className={`registro-step-circle ${isActive ? "active" : ""} ${
-                      isDone ? "done" : ""
-                    }`}
+                    className={`registro-step-circle ${isActive ? "active" : ""} ${isDone ? "done" : ""
+                      }`}
                   >
                     {isDone ? "✓" : step.id}
                   </div>

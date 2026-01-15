@@ -87,62 +87,6 @@
 }
 
 /*****************************************************
- * Branding / identidad
- *****************************************************/
-
-.branding-layout {
-  display: grid;
-  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1.4fr);
-  gap: var(--space-lg);
-  align-items: flex-start;
-}
-
-.branding-uploads {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-md);
-}
-
-/* Zona de subida de imágenes */
-
-.upload-zone {
-  position: relative;
-  border-radius: var(--radius-md);
-  border: 1px dashed rgba(148, 163, 184, 0.8);
-  padding: var(--space-md);
-  background: #f9fafb;
-  cursor: pointer;
-  text-align: center;
-  transition: border-color 0.15s ease, background 0.15s ease,
-    box-shadow 0.15s ease;
-}
-
-.upload-zone:hover {
-  border-color: var(--color-primario);
-  box-shadow: var(--shadow-suave);
-}
-
-.upload-zone.drag-over {
-  border-style: solid;
-  border-color: var(--color-primario);
-  background: var(--color-primario-suave);
-}
-
-.upload-hint {
-  margin: 0;
-  font-size: var(--font-size-sm);
-  color: var(--color-texto-suave);
-}
-
-.logo-preview {
-  max-width: 160px;
-  max-height: 80px;
-  object-fit: contain;
-  display: block;
-  margin: 0 auto;
-}
-
-/*****************************************************
  * Apariencia del TPV
  *****************************************************/
 
@@ -346,19 +290,24 @@
  *****************************************************/
 
 .rest-config-actions {
-  width: fit-content;
-  position: sticky;
+  position: fixed;
   bottom: 0;
-  z-index: 5;
-  padding: var(--space-sm) 0 var(--space-xs);
-  margin-top: var(--space-xl);
+  left: 0;
+  right: 0;
+
+  z-index: 100;
+
+  padding: var(--space-sm) var(--space-lg);
+
   display: flex;
   justify-content: flex-end;
+  gap: var(--space-sm);
 }
 
 .rest-config-actions .btn {
-  min-width: 220px;
+  min-width: 260px;
 }
+
 .acciones-mini {
   display: flex;
   gap: 8px;
@@ -382,10 +331,6 @@
 
   .config-card {
     padding: var(--space-md) var(--space-lg);
-  }
-
-  .branding-layout {
-    grid-template-columns: 1fr;
   }
 
   .tpv-preview {

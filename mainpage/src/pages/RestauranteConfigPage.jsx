@@ -9,6 +9,8 @@ import EstacionesCapacidadPanel from "../components/Config/EstacionesCapacidadPa
 import AlertaMensaje from "../components/AlertaMensaje/AlertaMensaje.jsx";
 import { useTenant } from "../context/TenantContext";
 import PlanFeaturesPanel from "../components/Config/PlanFeaturesPanel.jsx";
+import SeccionesPanel from "../components/Config/SeccionesPanel.jsx";
+import IdentidadNegocioPanel from "../components/Config/IdentidadNegocioPanel.jsx";
 import OperativaSlaCapacidadPanel from "../components/Config/OperativaSlaCapacidadPanel.jsx";
 import { DEFAULT_TEMA_TPV, normalizarTemaTpv } from "../utils/tema";
 import { DEFAULT_TEMA_SHOP, normalizarTemaShop } from "../utils/temaShop";
@@ -28,6 +30,10 @@ export default function RestauranteConfigPage() {
     user?.plan === "esencial" || user?.plan === "tpv-esencial";
   const [form, setForm] = useState({
     branding: {},
+    informacionRestaurante: {
+      direccion: "",
+      telefono: "",
+    },
     colores: {},
     estilo: {},
     temaTpv: { ...DEFAULT_TEMA_TPV },
@@ -53,22 +59,15 @@ export default function RestauranteConfigPage() {
   });
 
   const [saving, setSaving] = useState(false);
-  const [dragOver, setDragOver] = useState(null);
 
   // === Estado modales y alertas ===
-  const [modalConfirmSif, setModalConfirmSif] = useState(null);
-  const [modalConfirmDelete, setModalConfirmDelete] = useState(null);
+  const [estacionAEliminar, setEstacionAEliminar] = useState(null);
+
   const [alerta, setAlerta] = useState(null);
 
   // === SECCIONES / ESTACIONES ===
-  const [secciones, setSecciones] = useState([]);
   const [estaciones, setEstaciones] = useState([]);
 
-  const [nuevaSeccion, setNuevaSeccion] = useState({
-    nombre: "",
-    slug: "",
-    destino: "cocina",
-  });
   const [nuevaEstacion, setNuevaEstacion] = useState({
     nombre: "",
     slug: "",
@@ -76,39 +75,30 @@ export default function RestauranteConfigPage() {
     esCentral: false,
   });
 
-  const [loadingSecciones, setLoadingSecciones] = useState(true);
   const [loadingEstaciones, setLoadingEstaciones] = useState(true);
 
   const [verifactuEnabled, setVerifactuEnabled] = useState(false);
   const [verifactuLoaded, setVerifactuLoaded] = useState(false);
 
-  const [editandoSeccion, setEditandoSeccion] = useState(null);
   const [editandoEstacion, setEditandoEstacion] = useState(null);
-
-  // === Refs para inputs ===
-  const logoInputRef = useRef(null);
 
   useEffect(() => {
     if (!esRestaurante) {
-      // Para tiendas no existen secciones ni estaciones
-      setLoadingSecciones(false);
+      // Para tiendas no existen estaciones
       setLoadingEstaciones(false);
       return;
     }
 
     const fetchData = async () => {
       try {
-        const sec = await api.get("/secciones");
         const est = await api.get("/estaciones");
-        setSecciones(sec.data || []);
         setEstaciones(est.data || []);
       } catch (err) {
         setAlerta({
           tipo: "error",
-          mensaje: "Error al cargar secciones o estaciones.",
+          mensaje: "Error al cargar estaciones.",
         });
       } finally {
-        setLoadingSecciones(false);
         setLoadingEstaciones(false);
       }
     };
@@ -123,6 +113,7 @@ export default function RestauranteConfigPage() {
     setForm((prev) => ({
       ...prev,
       branding: config.branding || {},
+      informacionRestaurante: config.informacionRestaurante || {},
       colores: config.colores || {},
       estilo: config.estilo || {},
       temaTpv: normalizarTemaTpv(config.temaTpv),
@@ -150,55 +141,6 @@ export default function RestauranteConfigPage() {
     checkVerifactu();
   }, []);
 
-  // Alerta si venimos redirigidos desde el guard
-  useEffect(() => {
-    if (location.state?.fromVerifactuGuard) {
-      setAlerta({
-        tipo: "warning",
-        mensaje:
-          "Debes completar la configuración fiscal (SIF) y activar VeriFactu antes de poder utilizar el TPV.",
-      });
-    }
-  }, [location.state]);
-
-  /** === Subida de imágenes === */
-  const handleFileUpload = async (file) => {
-    if (!file) return;
-
-    const formData = new FormData();
-    formData.append("logo", file);
-
-    const uploadEndpoint = esTienda
-      ? "/shop/configuracion/logo"
-      : "/configuracion/logo";
-
-    const { data } = await api.post(uploadEndpoint, formData, {
-      headers: { "Content-Type": "multipart/form-data" },
-    });
-
-    setForm((prev) => ({
-      ...prev,
-      branding: {
-        ...prev.branding,
-        logoUrl: data.logoUrl,
-      },
-    }));
-
-    setConfig(data.config);
-  };
-
-  const handleDrop = (tipo, e) => {
-    e.preventDefault();
-    setDragOver(null);
-    const file = e.dataTransfer.files[0];
-    if (file) handleFileUpload(file, tipo);
-  };
-
-  const handleFileSelect = (tipo, e) => {
-    const file = e.target.files[0];
-    if (file) handleFileUpload(file, tipo);
-  };
-
   const configEndpoint = esTienda
     ? "/shop/configuracion"
     : "/configuracion";
@@ -209,6 +151,7 @@ export default function RestauranteConfigPage() {
       setSaving(true);
       const { data } = await api.put(configEndpoint, {
         branding: form.branding,
+        informacionRestaurante: form.informacionRestaurante,
         colores: form.colores,
         estilo: form.estilo,
         temaTpv: form.temaTpv,
@@ -228,58 +171,6 @@ export default function RestauranteConfigPage() {
       });
     } finally {
       setSaving(false);
-    }
-  };
-  // === CRUD SECCIONES ===
-  const crearSeccion = async () => {
-    if (!nuevaSeccion.nombre.trim()) return;
-
-    try {
-      const { data } = await api.post("/secciones", nuevaSeccion);
-
-      setSecciones((prev) => [...prev, data]);
-
-      setNuevaSeccion({
-        nombre: "",
-        slug: "",
-        destino: "cocina",
-      });
-
-      setAlerta({
-        tipo: "success",
-        mensaje: "Sección creada correctamente.",
-      });
-    } catch (err) {
-      setAlerta({ tipo: "error", mensaje: "Error al crear sección." });
-    }
-  };
-
-  const eliminarSeccion = async (id) => {
-    try {
-      await api.delete(`/secciones/${id}`);
-      setSecciones((prev) => prev.filter((s) => s._id !== id));
-      setAlerta({ tipo: "success", mensaje: "Sección eliminada." });
-    } catch (err) {
-      setAlerta({ tipo: "error", mensaje: "Error al eliminar sección." });
-    }
-  };
-
-  const iniciarEdicionSeccion = (seccion) => {
-    setEditandoSeccion({ ...seccion });
-  };
-
-  const guardarEdicionSeccion = async () => {
-    try {
-      const { data } = await api.put(`/secciones/${editandoSeccion._id}`, editandoSeccion);
-
-      setSecciones((prev) =>
-        prev.map((s) => (s._id === data._id ? data : s))
-      );
-
-      setEditandoSeccion(null);
-      setAlerta({ tipo: "success", mensaje: "Sección actualizada." });
-    } catch (err) {
-      setAlerta({ tipo: "error", mensaje: "Error al actualizar sección." });
     }
   };
 
@@ -336,43 +227,35 @@ export default function RestauranteConfigPage() {
     }
   };
 
-  // Confirmación de borrado de SECCIÓN
-  const pedirConfirmacionBorrarSeccion = (seccion) => {
-    setModalConfirmDelete({
-      tipo: "seccion",
-      id: seccion._id,
-      nombre: seccion.nombre,
+  /** === Subida de imÃ¡genes === */
+  const handleFileUpload = async (file) => {
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append("logo", file);
+
+    const uploadEndpoint = esTienda
+      ? "/shop/configuracion/logo"
+      : "/configuracion/logo";
+
+    const { data } = await api.post(uploadEndpoint, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
     });
+
+    setForm((prev) => ({
+      ...prev,
+      branding: {
+        ...prev.branding,
+        logoUrl: data.logoUrl,
+      },
+    }));
+
+    setConfig(data.config);
   };
 
   // Confirmación de borrado de ESTACIÓN
   const pedirConfirmacionBorrarEstacion = (estacion) => {
-    setModalConfirmDelete({
-      tipo: "estacion",
-      id: estacion._id,
-      nombre: estacion.nombre,
-    });
-  };
-
-  const confirmarBorrado = async () => {
-    try {
-      if (modalConfirmDelete.tipo === "seccion") {
-        await eliminarSeccion(modalConfirmDelete.id);
-        setAlerta({ tipo: "success", mensaje: "Sección eliminada." });
-      }
-
-      if (modalConfirmDelete.tipo === "estacion") {
-        await eliminarEstacion(modalConfirmDelete.id);
-        setAlerta({ tipo: "success", mensaje: "Estación eliminada." });
-      }
-    } catch (err) {
-      setAlerta({
-        tipo: "error",
-        mensaje: "Error al eliminar.",
-      });
-    } finally {
-      setModalConfirmDelete(null);
-    }
+    setEstacionAEliminar(estacion);
   };
 
   // ===========================
@@ -396,8 +279,6 @@ export default function RestauranteConfigPage() {
         />
       )}
 
-      {modalConfirmSif && <ModalConfirmacion {...modalConfirmSif} />}
-
       {/* Header global */}
       <header className="rest-config-header">
         <div>
@@ -415,79 +296,13 @@ export default function RestauranteConfigPage() {
       <div className="rest-config-layout">
         {/* COLUMNA PRINCIPAL */}
         <div className="rest-config-main">
-          {/* === BRANDING Y LOGO === */}
-          <section className="config-card card config-card--branding">
-            <header className="config-card-header">
-              <h2>
-                🏪 Identidad {esTienda ? "de la shop" : "del restaurante"}
-              </h2>
-              <p className="config-card-subtitle">
-                Nombre comercial y logotipo que se utilizarán en el TPV y en
-                la carta digital.
-              </p>
-            </header>
 
-            <div className="branding-layout">
-              <div className="config-field">
-                <label>
-                  Nombre {esTienda ? "de la shop" : "del restaurante"}
-                </label>
-                <input
-                  type="text"
-                  value={form.branding.nombreRestaurante || ""}
-                  onChange={(e) =>
-                    setForm((prev) => ({
-                      ...prev,
-                      branding: {
-                        ...prev.branding,
-                        nombreRestaurante: e.target.value,
-                      },
-                    }))
-                  }
-                />
-              </div>
-
-              <div className="branding-uploads">
-                {[
-                  { tipo: "logo", label: "Logo principal", ref: logoInputRef },
-                  // Si más adelante quieres favicon/fondo, se añaden aquí
-                ].map(({ tipo, label, ref }) => (
-                  <div
-                    key={tipo}
-                    className={`upload-zone ${dragOver === tipo ? "drag-over" : ""
-                      }`}
-                    onDrop={(e) => handleDrop(tipo, e)}
-                    onDragOver={(e) => {
-                      e.preventDefault();
-                      setDragOver(tipo);
-                    }}
-                    onDragLeave={() => setDragOver(null)}
-                    onClick={() => ref.current?.click()}
-                  >
-                    <input
-                      ref={ref}
-                      type="file"
-                      accept="image/*"
-                      hidden
-                      onChange={(e) => handleFileSelect(tipo, e)}
-                    />
-                    {form.branding[`${tipo}Url`] ? (
-                      <img
-                        src={form.branding[`${tipo}Url`]}
-                        alt={label}
-                        className="logo-preview"
-                      />
-                    ) : (
-                      <p className="upload-hint">
-                        📁 Arrastra o haz clic para subir{" "}
-                        {label.toLowerCase()}.
-                      </p>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-          </section>
+          <IdentidadNegocioPanel
+            form={form}
+            setForm={setForm}
+            esTienda={esTienda}
+            onUploadLogo={handleFileUpload}
+          />
 
           {/* === APARIENCIA === */}
           {esRestaurante && (
@@ -564,97 +379,11 @@ export default function RestauranteConfigPage() {
 
           <PlanFeaturesPanel onAlert={setAlerta} />
 
-          {/* === SECCIONES === */}
           {esRestaurante && (
-            <section className="config-card card">
-              <header className="config-card-header">
-                <h2>
-                  {isPlanEsencial ? "📦 Secciones del pedido" : "📦 Secciones de la carta"}
-                </h2>
-
-                <p className="config-card-subtitle">
-                  {isPlanEsencial
-                    ? "Define cómo se agruparán los productos en el ticket (entrantes, principales, postres, bebidas, etc.) para que la impresión salga organizada por bloques claros y fáciles de leer para sala y cocina."
-                    : "Agrupa tus productos en secciones (entrantes, postres, bebidas, etc.) y define a qué zona llegan sus pedidos dentro de la carta digital."}
-                </p>
-              </header>
-
-              <div className="config-field config-field--stacked">
-                <label>Nueva sección</label>
-
-                <input
-                  type="text"
-                  placeholder="Nombre (Ej: Entrantes)"
-                  value={nuevaSeccion.nombre}
-                  onChange={(e) =>
-                    setNuevaSeccion({
-                      ...nuevaSeccion,
-                      nombre: e.target.value,
-                    })
-                  }
-                />
-
-                <input
-                  type="text"
-                  placeholder="Slug (ej: entrantes)"
-                  value={nuevaSeccion.slug}
-                  onChange={(e) =>
-                    setNuevaSeccion({
-                      ...nuevaSeccion,
-                      slug: e.target.value,
-                    })
-                  }
-                />
-
-                <select
-                  value={nuevaSeccion.destino}
-                  onChange={(e) =>
-                    setNuevaSeccion({
-                      ...nuevaSeccion,
-                      destino: e.target.value,
-                    })
-                  }
-                >
-                  <option value="cocina">Cocina</option>
-                  <option value="barra">Barra</option>
-                </select>
-
-                <button
-                  type="button"
-                  className="btn btn-primario"
-                  onClick={crearSeccion}
-                >
-                  Crear sección
-                </button>
-              </div>
-
-              <ul className="lista-simple">
-                {loadingSecciones && <li>Cargando secciones...</li>}
-                {!loadingSecciones && secciones.length === 0 && (
-                  <li>No hay secciones creadas todavía.</li>
-                )}
-                {secciones.map((s) => (
-                  <li key={s._id}>
-                    <span>
-                      {s.nombre} ({s.slug})
-                    </span>
-
-                    <div className="acciones-mini">
-                      <button type="button" onClick={() => iniciarEdicionSeccion(s)}>
-                        ✏️
-                      </button>
-                      <button
-                        type="button"
-                        className="delete-btn"
-                        onClick={() => pedirConfirmacionBorrarSeccion(s)}
-                      >
-                        ❌
-                      </button>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            </section>
+            <SeccionesPanel
+              isPlanEsencial={isPlanEsencial}
+              onAlert={setAlerta}
+            />
           )}
 
           {esRestaurante && !isPlanEsencial && (
@@ -794,41 +523,6 @@ export default function RestauranteConfigPage() {
         </button>
       </div>
 
-      {editandoEstacion && !isPlanEsencial && (
-        <ModalConfirmacion
-          titulo="Editar sección"
-          mensaje=""
-          placeholder=""
-          onClose={() => setEditandoSeccion(null)}
-          onConfirm={guardarEdicionSeccion}
-        >
-          <div className="modal-form">
-            <input
-              type="text"
-              value={editandoSeccion.nombre}
-              onChange={(e) =>
-                setEditandoSeccion((prev) => ({ ...prev, nombre: e.target.value }))
-              }
-            />
-            <input
-              type="text"
-              value={editandoSeccion.slug}
-              onChange={(e) =>
-                setEditandoSeccion((prev) => ({ ...prev, slug: e.target.value }))
-              }
-            />
-            <select
-              value={editandoSeccion.destino}
-              onChange={(e) =>
-                setEditandoSeccion((prev) => ({ ...prev, destino: e.target.value }))
-              }
-            >
-              <option value="cocina">Cocina</option>
-              <option value="barra">Barra</option>
-            </select>
-          </div>
-        </ModalConfirmacion>
-      )}
 
       {editandoEstacion && (
         <ModalConfirmacion
@@ -882,16 +576,17 @@ export default function RestauranteConfigPage() {
         </ModalConfirmacion>
       )}
 
-      {modalConfirmDelete &&
-        (modalConfirmDelete.tipo === "seccion" || !isPlanEsencial) && (
-          <ModalConfirmacion
-            titulo={`Eliminar ${modalConfirmDelete.tipo === "seccion" ? "sección" : "estación"
-              }`}
-            mensaje={`¿Seguro que deseas eliminar "${modalConfirmDelete.nombre}"? Esta acción NO se puede deshacer.`}
-            onConfirm={confirmarBorrado}
-            onClose={() => setModalConfirmDelete(null)}
-          />
-        )}
+      {estacionAEliminar && (
+        <ModalConfirmacion
+          titulo="Eliminar estación"
+          mensaje={`¿Seguro que deseas eliminar "${estacionAEliminar.nombre}"? Esta acción NO se puede deshacer.`}
+          onConfirm={async () => {
+            await eliminarEstacion(estacionAEliminar._id);
+            setEstacionAEliminar(null);
+          }}
+          onClose={() => setEstacionAEliminar(null)}
+        />
+      )}
 
     </main>
   );

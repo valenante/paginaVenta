@@ -4,6 +4,7 @@
 
 .carta-config-page {
   margin: var(--space-2xl) auto;
+  padding-bottom: 96px; /* espacio para barra fija */
 }
 
 .carta-config-card {
@@ -356,6 +357,29 @@
 }
 
 /*****************************************************
+ * Barra de acciones fija – Carta
+ *****************************************************/
+
+.carta-config-actions {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+
+  z-index: 100;
+
+  padding: var(--space-sm) var(--space-lg);
+
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-sm);
+}
+
+.carta-config-actions .btn {
+  min-width: 260px;
+}
+
+/*****************************************************
  * Responsive
  *****************************************************/
 
@@ -371,7 +395,11 @@
 }
 
 @media (max-width: 768px) {
-  .carta-config-card {
-    padding: var(--space-lg);
+  .carta-config-actions {
+    justify-content: center;
+  }
+
+  .carta-config-actions .btn {
+    width: 100%;
   }
 }

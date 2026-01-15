@@ -46,9 +46,9 @@ export default function Paso4ResumenPago({
       // 2️⃣ Crear sesión de pago
       const { data: sesion } = await api.post("/pago/crear-sesion", {
         precheckoutId: pre.precheckoutId,
-        tenantEmail: tenant.email,
+        adminEmail: admin.email, // ✅ CORRECTO
         plan: slugCompleto,
-        tipoNegocio: isShop ? "shop" : "restaurante", // 👈 NUEVO (clave)
+        tipoNegocio: isShop ? "shop" : "restaurante",
       });
 
       if (sesion.url) window.location.href = sesion.url;

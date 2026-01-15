@@ -38,7 +38,6 @@ export const ConfigProvider = ({ children }) => {
           tipoNegocio === "shop"
             ? "/shop/configuracion"
             : "/configuracion";
-
         const { data } = await api.get(endpoint);
 
         // Backend puede devolver { config, planFeatures } o solo config

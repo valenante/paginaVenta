@@ -51,27 +51,15 @@ export default function Paso1DatosRestaurante({
         />
       </div>
 
-      <div className="form-group">
-        <label>Email de contacto</label>
-        <input
-          type="email"
-          name="email"
-          value={tenant.email}
-          onChange={handleTenantChange}
-          placeholder={isShop ? "Ej. contacto@tienda.com" : "Ej. contacto@restaurante.com"}
-          required
-        />
-      </div>
-
       <h3>👤 Usuario administrador</h3>
 
       <div className="form-group">
-        <label>Nombre de usuario</label>
+        <label>Nombre del administrador</label>
         <input
           name="name"
           value={admin.name}
           onChange={handleAdminChange}
-          placeholder={isShop ? "Ej. admin-tienda" : "Ej. admin-restaurante"}
+          placeholder={isShop ? "Ej. Juan Pérez" : "Ej. María López"}
           required
         />
       </div>

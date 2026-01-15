@@ -690,18 +690,18 @@ export default function CartaConfigPage() {
           </button>
         </section>
 
-        <div className="config-actions">
-          <button
-            type="button"
-            onClick={handleSave}
-            disabled={saving}
-            className="btn btn-primario"
-          >
-            {saving ? "Guardando..." : "Guardar todos los cambios"}
-          </button>
-        </div>
-      </div>
 
+      </div>
+      <div className="carta-config-actions">
+        <button
+          type="button"
+          onClick={handleSave}
+          disabled={saving}
+          className="btn btn-primario"
+        >
+          {saving ? "Guardando..." : "Guardar todos los cambios"}
+        </button>
+      </div>
       {/* 🟢 Alerta */}
       {alerta && (
         <AlertaMensaje

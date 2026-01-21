@@ -1,5 +1,5 @@
 // src/pages/MapaEditor.jsx
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useMemo } from "react";
 import Draggable from "react-draggable";
 import api from "../utils/api";
 import EditarMesa from "../components/EditarMesa/EditarMesa";
@@ -14,14 +14,16 @@ export default function MapaEditor() {
   const [containerSize, setContainerSize] = useState({ width: 1, height: 1 });
   const containerRef = useRef(null);
 
-  // posiciones en píxeles por mesa: { [id]: { x, y } }
-  const [positions, setPositions] = useState({});
-  const nodeRefs = useRef({}); // 👈 para evitar findDOMNode
+  // ✅ posiciones en % (no px)
+  const [positionsPct, setPositionsPct] = useState({});
+  const nodeRefs = useRef({});
 
-  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768);
+  const [viewportW, setViewportW] = useState(() => window.innerWidth);
+  const isMobile = viewportW < 768;
+  const isTablet = viewportW >= 768 && viewportW < 1200;
 
   useEffect(() => {
-    const onResize = () => setIsMobile(window.innerWidth < 768);
+    const onResize = () => setViewportW(window.innerWidth);
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
   }, []);
@@ -30,6 +32,8 @@ export default function MapaEditor() {
 
   useEffect(() => {
     cargarMesas();
+    // (opcional) limpia posiciones del estado al cambiar de zona
+    // setPositionsPct({});
   }, [zona]);
 
   const cargarMesas = async () => {
@@ -41,75 +45,63 @@ export default function MapaEditor() {
     }
   };
 
-  // 🧭 Detectar tamaño del contenedor en tiempo real
+  // 🧭 Tamaño del contenedor en tiempo real
   useEffect(() => {
     if (!containerRef.current) return;
-    const resizeObserver = new ResizeObserver(() => {
+    const ro = new ResizeObserver(() => {
       setContainerSize({
         width: containerRef.current.offsetWidth,
         height: containerRef.current.offsetHeight,
       });
     });
-    resizeObserver.observe(containerRef.current);
-    return () => resizeObserver.disconnect();
+    ro.observe(containerRef.current);
+    return () => ro.disconnect();
   }, []);
 
-  // Convertir posiciones % de la DB → píxeles, solo si aún no tenemos esa mesa en `positions`
+  // ✅ Inicializar positionsPct desde DB (solo si no existe aún)
   useEffect(() => {
-    const { width, height } = containerSize;
-    if (!width || !height) return;
-
-    setPositions((prev) => {
+    setPositionsPct((prev) => {
       const next = { ...prev };
-
       mesas.forEach((m) => {
         if (!next[m._id]) {
-          const xPct = m.posicion?.x ?? 0;
-          const yPct = m.posicion?.y ?? 0;
           next[m._id] = {
-            x: (xPct / 100) * width,
-            y: (yPct / 100) * height,
+            x: m.posicion?.x ?? 0,
+            y: m.posicion?.y ?? 0,
           };
         }
       });
-
       return next;
     });
-  }, [mesas, containerSize]);
+  }, [mesas]);
 
-  // 🧮 Guardar posición proporcional cuando sueltas
-  const handleDragStop = async (e, data, mesa) => {
-    if (!modoEdicion) return;
-
-    const { width, height } = containerSize;
-    if (!width || !height) return;
-
-    // clamped en píxeles
-    const clampedX = Math.max(0, Math.min(width, data.x));
-    const clampedY = Math.max(0, Math.min(height, data.y));
-
-    const x = (clampedX / width) * 100;
-    const y = (clampedY / height) * 100;
-
-    // actualizar estado local en píxeles
-    setPositions((prev) => ({
-      ...prev,
-      [mesa._id]: { x: clampedX, y: clampedY },
-    }));
-
-    try {
-      await api.put(`/mesas/${mesa._id}/posicion`, { x, y });
-      setMesas((prev) =>
-        prev.map((m) =>
-          m._id === mesa._id ? { ...m, posicion: { x, y } } : m
-        )
-      );
-    } catch (err) {
-      console.error("❌ Error al guardar posición:", err);
-    }
+  // helpers % -> px y px -> %
+  const pctToPx = (pct) => {
+    const x = (pct.x / 100) * containerSize.width;
+    const y = (pct.y / 100) * containerSize.height;
+    return { x, y };
   };
 
-  // 🎯 Mantener pulsado para abrir edición
+  const pxToPct = (px) => {
+    const x = (px.x / containerSize.width) * 100;
+    const y = (px.y / containerSize.height) * 100;
+    return { x, y };
+  };
+
+  // clamp teniendo en cuenta tamaño real del nodo (para que no se salga)
+  const clampPx = (mesaId, x, y) => {
+    const el = nodeRefs.current[mesaId]?.current;
+    const w = el?.offsetWidth ?? 72;
+    const h = el?.offsetHeight ?? 72;
+
+    const maxX = Math.max(0, containerSize.width - w);
+    const maxY = Math.max(0, containerSize.height - h);
+
+    return {
+      x: Math.max(0, Math.min(maxX, x)),
+      y: Math.max(0, Math.min(maxY, y)),
+    };
+  };
+
   const handleHoldStart = (mesa) => {
     holdTimeoutRef.current = setTimeout(() => {
       setMesaSeleccionada(mesa);
@@ -120,6 +112,33 @@ export default function MapaEditor() {
     if (holdTimeoutRef.current) {
       clearTimeout(holdTimeoutRef.current);
       holdTimeoutRef.current = null;
+    }
+  };
+
+  // ✅ Guardar en DB en % (lo que tu dashboard ya entiende perfecto)
+  const handleDragStop = async (_e, data, mesa) => {
+    if (!modoEdicion) return;
+
+    const clamped = clampPx(mesa._id, data.x, data.y);
+    const pct = pxToPct(clamped);
+
+    // estado local en %
+    setPositionsPct((prev) => ({
+      ...prev,
+      [mesa._id]: { x: pct.x, y: pct.y },
+    }));
+
+    try {
+      await api.put(`/mesas/${mesa._id}/posicion`, { x: pct.x, y: pct.y });
+
+      // refrescar mesa en memoria (posicion en %)
+      setMesas((prev) =>
+        prev.map((m) =>
+          m._id === mesa._id ? { ...m, posicion: { x: pct.x, y: pct.y } } : m
+        )
+      );
+    } catch (err) {
+      console.error("❌ Error al guardar posición:", err);
     }
   };
 
@@ -144,9 +163,7 @@ export default function MapaEditor() {
     }
   };
 
-  const mesasVisibles = mesas.filter(
-    (m) => m.zona === zona && m.zona !== "auxiliar"
-  );
+  const mesasVisibles = mesas.filter((m) => m.zona === zona && m.zona !== "auxiliar");
   const mesasAuxiliares = mesas.filter((m) => m.zona === "auxiliar");
 
   if (isMobile) {
@@ -154,20 +171,15 @@ export default function MapaEditor() {
       <div className="mapa-mobile-disabled">
         <div className="mapa-mobile-card">
           <h2>Mapa del restaurante</h2>
-          <p>
-            El editor de plano está disponible solo en pantallas grandes.
-          </p>
-
-          <div className="mapa-mobile-hint">
-            💻 Accede desde un ordenador o tablet para editar el mapa.
-          </div>
+          <p>El editor de plano está disponible solo en pantallas grandes.</p>
+          <div className="mapa-mobile-hint">💻 Accede desde un ordenador o tablet para editar el mapa.</div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="mapa-editor-container">
+    <div className={`mapa-editor-container ${isTablet ? "tablet" : ""}`}>
       {/* === Barra superior === */}
       <div className="toolbar-editor">
         <select value={zona} onChange={(e) => setZona(e.target.value)}>
@@ -182,31 +194,27 @@ export default function MapaEditor() {
       {/* === Mapa principal === */}
       <div className="mapa-editor-principal" ref={containerRef}>
         {mesasVisibles.map((mesa) => {
-          // crear ref para este nodo si no existe
-          if (!nodeRefs.current[mesa._id]) {
-            nodeRefs.current[mesa._id] = React.createRef();
-          }
+          if (!nodeRefs.current[mesa._id]) nodeRefs.current[mesa._id] = React.createRef();
 
-          const fallbackX =
-            ((mesa.posicion?.x ?? 0) / 100) * containerSize.width;
-          const fallbackY =
-            ((mesa.posicion?.y ?? 0) / 100) * containerSize.height;
-
-          const currentPos =
-            positions[mesa._id] || { x: fallbackX, y: fallbackY };
+          const pct = positionsPct[mesa._id] ?? { x: mesa.posicion?.x ?? 0, y: mesa.posicion?.y ?? 0 };
+          const px = pctToPx(pct);
 
           return (
             <Draggable
               key={mesa._id}
-              nodeRef={nodeRefs.current[mesa._id]} // 👈 evita findDOMNode
+              nodeRef={nodeRefs.current[mesa._id]}
               disabled={!modoEdicion}
-              position={currentPos}
+              bounds="parent"
+              position={px}
               onStart={() => handleHoldStart(mesa)}
-              onDrag={(e, data) => {
+              onDrag={(_e, data) => {
                 cancelHold();
-                setPositions((prev) => ({
+                const clamped = clampPx(mesa._id, data.x, data.y);
+                const nextPct = pxToPct(clamped);
+
+                setPositionsPct((prev) => ({
                   ...prev,
-                  [mesa._id]: { x: data.x, y: data.y },
+                  [mesa._id]: { x: nextPct.x, y: nextPct.y },
                 }));
               }}
               onStop={(e, data) => {
@@ -214,10 +222,7 @@ export default function MapaEditor() {
                 handleDragStop(e, data, mesa);
               }}
             >
-              <div
-                ref={nodeRefs.current[mesa._id]}
-                className="mesa-editor"
-              >
+              <div ref={nodeRefs.current[mesa._id]} className="mesa-editor">
                 {mesa.numero}
               </div>
             </Draggable>
@@ -225,23 +230,43 @@ export default function MapaEditor() {
         })}
       </div>
 
-      {/* === Barra lateral === */}
-      <div className="sidebar-editor">
-        <h3>Mesas Auxiliares</h3>
-        <div className="sidebar-mesas-list">
-          {mesasAuxiliares.map((mesa) => (
-            <div
-              key={mesa._id}
-              className="mesa-sidebar"
-              onClick={() => setMesaSeleccionada(mesa)}
-            >
-              {mesa.numero}
-            </div>
-          ))}
+      {/* ✅ Desktop: sidebar normal */}
+      {!isTablet && (
+        <div className="sidebar-editor">
+          <h3>Mesas Auxiliares</h3>
+          <div className="sidebar-mesas-list">
+            {mesasAuxiliares.map((mesa) => (
+              <div
+                key={mesa._id}
+                className="mesa-sidebar"
+                onClick={() => setMesaSeleccionada(mesa)}
+              >
+                {mesa.numero}
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
-      {/* === Modal === */}
+      {/* ✅ Tablet/TPV: auxiliares debajo del mapa */}
+      {isTablet && (
+        <div className="aux-below-editor">
+          <h3 className="aux-below-title">Mesas Auxiliares</h3>
+
+          <div className="aux-below-list">
+            {mesasAuxiliares.map((mesa) => (
+              <div
+                key={mesa._id}
+                className="mesa-sidebar"
+                onClick={() => setMesaSeleccionada(mesa)}
+              >
+                {mesa.numero}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {mesaSeleccionada && (
         <EditarMesa
           mesa={mesaSeleccionada}

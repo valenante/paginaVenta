@@ -276,9 +276,12 @@ function AppRoutes() {
         </UserLayout>
       } />
 
-      <Route path="/soporte" element={<SoporteLista />} />
-      <Route path="/soporte/nuevo" element={<SoporteNuevo />} />
-      <Route path="/soporte/:id" element={<SoporteDetalle />} />
+      <Route element={<UserLayout />}>
+        <Route path="soporte" element={<SoporteLista />} />
+        <Route path="soporte/nuevo" element={<SoporteNuevo />} />
+        <Route path="soporte/:id" element={<SoporteDetalle />} />
+      </Route>
+
       <Route
         path="/ayuda"
         element={
@@ -297,7 +300,6 @@ function AppRoutes() {
           </UserLayout>
         }
       />
-
       <Route
         path="/caja-diaria"
         element={
@@ -337,7 +339,7 @@ function AppRoutes() {
         }
       />
 
-            {/* 👨‍🍽️ PANEL CAMARERO */}
+      {/* 👨‍🍽️ PANEL CAMARERO */}
       <Route
         path="/:tenantId/camarero"
         element={
@@ -347,7 +349,7 @@ function AppRoutes() {
         }
       />
 
-            {/* 👨‍🍽️ PANEL COCINER */}
+      {/* 👨‍🍽️ PANEL COCINER */}
       <Route
         path="/cocinero"
         element={
@@ -357,7 +359,7 @@ function AppRoutes() {
         }
       />
 
-            {/* 👨‍🍽️ PANEL COCINERO */}
+      {/* 👨‍🍽️ PANEL COCINERO */}
       <Route
         path="/:tenantId/cocinero"
         element={

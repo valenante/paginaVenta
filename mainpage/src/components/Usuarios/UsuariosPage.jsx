@@ -7,7 +7,6 @@ import UsuarioCreateForm from "./UsuarioCreateForm.jsx";
 import UsuariosTable from "./UsuariosTable.jsx";
 import UsuarioEditModal from "./UsuarioEditModal.jsx";
 import UsuarioStatsModal from "./UsuariosStatsModal.jsx";
-import UsuarioPermisosModal from "./UsuarioPermisosModal.jsx";
 
 import AlertaMensaje from "../AlertaMensaje/AlertaMensaje";
 

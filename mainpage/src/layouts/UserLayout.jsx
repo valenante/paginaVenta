@@ -1,6 +1,7 @@
 // src/layouts/UserLayout.jsx
 import React, { useEffect } from "react";
-import TopBar from "../components/TopBar/TopBar"; // navbar general ALEF
+import { Outlet } from "react-router-dom";
+import TopBar from "../components/TopBar/TopBar";
 import api from "../utils/api";
 import { useAuth } from "../context/AuthContext.jsx";
 import "./UserLayout.css";
@@ -10,7 +11,6 @@ export default function UserLayout({ children }) {
 
   useEffect(() => {
     const onPageShow = async (e) => {
-      // Detecta navegación "volver/adelante" o recuperación desde bfcache
       const nav = performance.getEntriesByType?.("navigation")?.[0];
       const isBackForward = nav?.type === "back_forward";
       const isBFCache = e?.persisted || isBackForward;
@@ -18,19 +18,13 @@ export default function UserLayout({ children }) {
       if (!isBFCache) return;
 
       try {
-        // Revalida la cookie/sesión real en backend
         await api.get("/auth/me/me");
       } catch (err) {
-        // Si no hay sesión, limpiamos y forzamos login
-        try {
-          setUser(null);
-        } catch {}
-
+        try { setUser(null); } catch {}
         sessionStorage.removeItem("tenantId");
         sessionStorage.removeItem("impersonado");
         sessionStorage.removeItem("user");
-
-        window.location.replace("/login"); // ✅ no deja volver atrás al panel
+        window.location.replace("/login");
       }
     };
 
@@ -41,7 +35,9 @@ export default function UserLayout({ children }) {
   return (
     <div className="userlayout-root">
       <TopBar />
-      <main className="userlayout-main">{children}</main>
+      <main className="userlayout-main">
+        {children ?? <Outlet />} {/* ✅ si no hay children, renderiza rutas anidadas */}
+      </main>
     </div>
   );
 }

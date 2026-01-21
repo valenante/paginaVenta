@@ -12,6 +12,7 @@
 .usuarios-table-card {
   background: rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(14px);
+  width: auto;
   -webkit-backdrop-filter: blur(14px);
 
   border-radius: var(--radius-lg);
@@ -60,10 +61,10 @@
    TABLA
    ========================================================= */
 
-.usuarios-table-main {
+.usuarios-table-main{
   width: 100%;
+  min-width: 760px; /* ajusta a gusto: 720-900 */
   border-collapse: collapse;
-  color: #e5e7eb;
 }
 
 /* Encabezados */
@@ -165,16 +166,14 @@
    SCROLL RESPONSIVE PARA TABLAS — ALEF
    ========================================================= */
 
-.usuarios-table-scroll {
+.usuarios-table-scroll{
   width: 100%;
+  max-width: 100%;
   overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
 
-  /* estética elegante compatible con tu diseño */
-  scrollbar-width: thin;
-  scrollbar-color: rgba(255,255,255,0.25) transparent;
-
-  /* padding para que no quede cortado */
-  padding-bottom: 0.4rem;
+  padding-bottom: .4rem;
 }
 
 /* Estilo de scrollbar para Chrome/Safari */

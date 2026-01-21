@@ -20,15 +20,22 @@
   padding: 1.8rem 2rem;
 
   box-shadow:
-    0 16px 36px rgba(0,0,0,0.35),
-    0 0 0 1px rgba(255,255,255,0.04);
+    0 16px 36px rgba(0, 0, 0, 0.35),
+    0 0 0 1px rgba(255, 255, 255, 0.04);
 
   animation: fadeIn 0.35s ease;
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* --- HEADER --- */
@@ -52,7 +59,7 @@
   font-weight: 600;
   font-size: 0.9rem;
   color: #fff;
-  box-shadow: 0 4px 12px rgba(255,103,0,0.3);
+  box-shadow: 0 4px 12px rgba(255, 103, 0, 0.3);
 }
 
 
@@ -85,11 +92,11 @@
 /* Filas */
 .usuarios-table-main tbody td {
   padding: 0.75rem 1rem;
-  border-bottom: 1px solid rgba(255,255,255,0.06);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .usuarios-table-main tbody tr:hover td {
-  background: rgba(255,255,255,0.05);
+  background: rgba(255, 255, 255, 0.05);
   transition: background 0.22s ease;
 }
 
@@ -113,8 +120,8 @@
 }
 
 .usuarios-btn {
-  background: rgba(255,255,255,0.10);
-  border: 1px solid rgba(255,255,255,0.18);
+  background: rgba(255, 255, 255, 0.10);
+  border: 1px solid rgba(255, 255, 255, 0.18);
 
   padding: 0.4rem 0.7rem;
   border-radius: var(--radius-pill);
@@ -127,38 +134,38 @@
 }
 
 .usuarios-btn:hover {
-  background: rgba(255,255,255,0.18);
+  background: rgba(255, 255, 255, 0.18);
   transform: translateY(-2px);
 }
 
 /* Botón stats (naranja) */
 .usuarios-btn-stats {
-  background: rgba(255,103,0,0.22);
-  border-color: rgba(255,103,0,0.45);
+  background: rgba(255, 103, 0, 0.22);
+  border-color: rgba(255, 103, 0, 0.45);
 }
 
 .usuarios-btn-stats:hover {
-  background: rgba(255,103,0,0.35);
+  background: rgba(255, 103, 0, 0.35);
 }
 
 /* Botón editar (azulado) */
 .usuarios-btn-editar {
-  background: rgba(76,94,168,0.25);
-  border-color: rgba(76,94,168,0.4);
+  background: rgba(76, 94, 168, 0.25);
+  border-color: rgba(76, 94, 168, 0.4);
 }
 
 .usuarios-btn-editar:hover {
-  background: rgba(76,94,168,0.38);
+  background: rgba(76, 94, 168, 0.38);
 }
 
 /* Botón eliminar (rojo) */
 .usuarios-btn-eliminar {
-  background: rgba(155,28,28,0.25);
-  border-color: rgba(155,28,28,0.4);
+  background: rgba(155, 28, 28, 0.25);
+  border-color: rgba(155, 28, 28, 0.4);
 }
 
 .usuarios-btn-eliminar:hover {
-  background: rgba(155,28,28,0.38);
+  background: rgba(155, 28, 28, 0.38);
 }
 
 /* =========================================================
@@ -171,7 +178,7 @@
 
   /* estética elegante compatible con tu diseño */
   scrollbar-width: thin;
-  scrollbar-color: rgba(255,255,255,0.25) transparent;
+  scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
 
   /* padding para que no quede cortado */
   padding-bottom: 0.4rem;
@@ -183,17 +190,17 @@
 }
 
 .usuarios-table-scroll::-webkit-scrollbar-track {
-  background: rgba(255,255,255,0.05);
+  background: rgba(255, 255, 255, 0.05);
   border-radius: var(--radius-md);
 }
 
 .usuarios-table-scroll::-webkit-scrollbar-thumb {
-  background: rgba(255,255,255,0.25);
+  background: rgba(255, 255, 255, 0.25);
   border-radius: var(--radius-pill);
 }
 
 .usuarios-table-scroll::-webkit-scrollbar-thumb:hover {
-  background: rgba(255,255,255,0.4);
+  background: rgba(255, 255, 255, 0.4);
 }
 
 
@@ -205,8 +212,8 @@
 }
 
 .usuario-card {
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 14px;
   padding: 0.8rem;
 }
@@ -240,11 +247,11 @@
   font-size: 0.7rem;
   padding: 0.2rem 0.5rem;
   border-radius: 999px;
-  background: rgba(255,255,255,0.15);
+  background: rgba(255, 255, 255, 0.15);
 }
 
 .badge-estacion {
-  background: rgba(106,13,173,0.35);
+  background: rgba(106, 13, 173, 0.35);
 }
 
 /* ===== ACCIONES ===== */
@@ -259,18 +266,24 @@
   margin: 0 0.15rem;
   padding: 0.45rem 0;
   border-radius: 999px;
-  border: 1px solid rgba(255,255,255,0.2);
-  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.12);
   color: white;
 }
 
 .usuario-actions button.danger {
-  background: rgba(155,28,28,0.35);
+  background: rgba(155, 28, 28, 0.35);
 }
 
 /* =========================================================
    RESPONSIVE
    ========================================================= */
+
+@media (max-width: 1200px) {
+  .usuarios-table-card {
+    width: 100%;
+  }
+}
 
 @media (max-width: 768px) {
   .usuarios-table-card {
@@ -287,11 +300,22 @@
     flex-wrap: wrap;
   }
 }
+
 /* ===== VISIBILIDAD ===== */
-.desktop-only { display: block; }
-.mobile-only { display: none; }
+.desktop-only {
+  display: block;
+}
+
+.mobile-only {
+  display: none;
+}
 
 @media (max-width: 768px) {
-  .desktop-only { display: none; }
-  .mobile-only { display: block; }
+  .desktop-only {
+    display: none;
+  }
+
+  .mobile-only {
+    display: block;
+  }
 }

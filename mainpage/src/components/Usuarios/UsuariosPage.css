@@ -12,10 +12,9 @@
    GRID PRINCIPAL — DESKTOP 50 / 50
    ========================================================= */
 
-.usuarios-grid {
+.usuarios-grid{
   display: grid;
   grid-template-columns: 1fr 1fr;
-  /* 50 / 50 */
   gap: 2rem;
   align-items: flex-start;
 }
@@ -274,6 +273,19 @@
 
 .modal-btn-cerrar:hover {
   background: #555;
+}
+
+@media (max-width: 1200px){
+  .usuarios-grid{
+    grid-template-columns: 1fr;          /* una columna */
+    grid-template-areas:
+      "tabla"
+      "crear";
+    gap: 1.5rem;
+  }
+
+  .usuarios-col-table{ grid-area: tabla; }
+  .usuarios-col-create{ grid-area: crear; }
 }
 
 /* =========================================================

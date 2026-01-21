@@ -215,22 +215,37 @@
 /*****************************************************
  * SIF CONFIG – GRID FISCAL
  *****************************************************/
+/* ✅ IMPORTANTE: que las celdas puedan encoger sin desbordar */
 .sif-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-md);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
 }
 
-@media (max-width: 700px) {
-  .sif-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
+/* ✅ cada campo debe poder encoger */
 .sif-grid .micuenta-field {
-  display: flex;
-  flex-direction: column;
+  min-width: 0;
 }
+
+/* ✅ label no debe empujar el ancho */
+.sif-grid .micuenta-field label {
+  display: block;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ✅ input SIEMPRE dentro del contenedor */
+.sif-grid .micuenta-field input {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* ✅ por si algún navegador mete min-width raro a inputs */
+.micuenta-field input {
+  min-width: 0;
+}
+
 
 .sif-grid input {
   background: #fafafa;

@@ -324,11 +324,7 @@
  * Responsive
  *****************************************************/
 
-@media (max-width: 1024px) {
-  .rest-config-layout {
-    grid-template-columns: minmax(0, 1.7fr) minmax(0, 1.1fr);
-  }
-
+@media (max-width: 1200px) {
   .config-card {
     padding: var(--space-md) var(--space-lg);
   }

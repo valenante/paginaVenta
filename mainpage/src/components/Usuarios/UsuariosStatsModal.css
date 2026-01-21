@@ -14,13 +14,15 @@
   -webkit-backdrop-filter: blur(10px);
 
   display: flex;
-  align-items: center;
+  align-items: flex-start;      
   justify-content: center;
 
+  padding: 12px;                
+  overflow: auto;              
   z-index: 3000;
+
   animation: fadeIn 0.25s ease;
 }
-
 @keyframes fadeIn {
   from { opacity: 0; }
   to   { opacity: 1; }
@@ -29,13 +31,15 @@
 /* ===== CONTENEDOR ===== */
 .statsUserModal-container {
   width: min(720px, 95%);
-  max-height: 92vh;
-  overflow-y: auto;
+  max-height: calc(100vh - 24px); /* ✅ usa el alto real de la pantalla */
+  overflow: hidden;              /* ✅ el scroll NO va aquí */
+  display: flex;                 /* ✅ layout header/body/footer */
+  flex-direction: column;
 
   background: rgba(20, 20, 35, 0.55);
   border-radius: var(--radius-lg);
   border: 1px solid rgba(255,255,255,0.10);
-  padding: 2rem;
+  padding: 0;                    /* ✅ el padding pasa a header/body */
 
   box-shadow:
     0 18px 50px rgba(0,0,0,0.6),
@@ -51,10 +55,14 @@
 
 /* ===== HEADER ===== */
 .statsUserModal-header {
+  flex: 0 0 auto;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 1.4rem;
+
+  padding: 1.2rem 1.5rem 1rem;
+  margin: 0; /* ✅ quita margin-bottom */
+  border-bottom: 1px solid rgba(255,255,255,0.08);
 }
 
 .statsUserModal-title {
@@ -94,6 +102,10 @@
 
 /* ===== BODY ===== */
 .statsUserModal-body {
+  flex: 1 1 auto;
+  overflow-y: auto;                 /* ✅ scroll aquí */
+  -webkit-overflow-scrolling: touch;
+  padding: 1.2rem 1.5rem;           /* ✅ padding aquí */
   display: flex;
   flex-direction: column;
   gap: 2rem;
@@ -306,7 +318,10 @@
 
 /* ===== FOOTER ===== */
 .statsUserModal-footer {
-  margin-top: 2rem;
+  flex: 0 0 auto;
+  padding: 1rem 1.5rem 1.2rem;
+  margin: 0; /* ✅ quita margin-top */
+  border-top: 1px solid rgba(255,255,255,0.08);
   text-align: center;
 }
 

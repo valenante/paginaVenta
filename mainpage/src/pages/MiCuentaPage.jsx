@@ -4,17 +4,22 @@ import { useConfig } from "../context/ConfigContext";
 import api from "../utils/api";
 import "../styles/MiCuentaPage.css";
 
+import AlertaMensaje from "../components/AlertaMensaje/AlertaMensaje"; // <- ajusta ruta
+
 export default function MiCuentaPage() {
   const { user, loading: authLoading } = useAuth();
   const { config, loading: configLoading } = useConfig();
 
+  // ✅ ALERTA GLOBAL
+  const [alerta, setAlerta] = useState(null);
+
   // Estados
   const [archivo, setArchivo] = useState(null);
   const [passwordCert, setPasswordCert] = useState("");
-  const [mensajeCert, setMensajeCert] = useState("");
 
   const [verifactuEnabled, setVerifactuEnabled] = useState(false);
   const [toggleLoading, setToggleLoading] = useState(false);
+
   // === SIF CONFIG ===
   const [sifForm, setSifForm] = useState({
     cif: "",
@@ -25,7 +30,6 @@ export default function MiCuentaPage() {
     codigoPostal: "",
     pais: "ES",
   });
-  const [sifMensaje, setSifMensaje] = useState(null);
   const [sifLoading, setSifLoading] = useState(false);
 
   // ==================================================
@@ -36,7 +40,9 @@ export default function MiCuentaPage() {
       try {
         const { data } = await api.get("/admin/verifactu/verifactu");
         setVerifactuEnabled(!!data.enabled);
-      } catch { }
+      } catch {
+        // opcional
+      }
     };
     fetchState();
   }, []);
@@ -49,6 +55,18 @@ export default function MiCuentaPage() {
         enabled: next,
       });
       setVerifactuEnabled(!!data.enabled);
+
+      setAlerta({
+        tipo: "exito",
+        mensaje: `VeriFactu ${next ? "activado" : "desactivado"} correctamente.`,
+      });
+    } catch (err) {
+      setAlerta({
+        tipo: "error",
+        mensaje:
+          err?.response?.data?.error ||
+          "No se pudo cambiar el estado de VeriFactu.",
+      });
     } finally {
       setToggleLoading(false);
     }
@@ -77,6 +95,7 @@ export default function MiCuentaPage() {
   const handleSaveSif = async () => {
     try {
       setSifLoading(true);
+
       const payload = {
         productor: {
           nif: sifForm.cif,
@@ -91,9 +110,17 @@ export default function MiCuentaPage() {
 
       const { data } = await api.post("/admin/verifactu/init-sif", payload);
 
-      setSifMensaje(data.message || "Configuración SIF guardada correctamente.");
+      setAlerta({
+        tipo: "exito",
+        mensaje: data.message || "Configuración SIF guardada correctamente.",
+      });
     } catch (err) {
-      setSifMensaje("Error al guardar configuración SIF.");
+      setAlerta({
+        tipo: "error",
+        mensaje:
+          err?.response?.data?.error ||
+          "Error al guardar configuración SIF.",
+      });
     } finally {
       setSifLoading(false);
     }
@@ -104,19 +131,40 @@ export default function MiCuentaPage() {
   // ==================================================
   const handleUploadCert = async (e) => {
     e.preventDefault();
-    if (!archivo || !passwordCert) return;
+
+    if (!archivo || !passwordCert) {
+      setAlerta({
+        tipo: "warn",
+        mensaje: "Selecciona un certificado y escribe la contraseña.",
+      });
+      return;
+    }
 
     const formData = new FormData();
     formData.append("archivo", archivo);
     formData.append("password", passwordCert);
 
     try {
-      const { data } = await api.post("/admin/firma/subir-certificado", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
+      const { data } = await api.post(
+        "/admin/firma/subir-certificado",
+        formData,
+        { headers: { "Content-Type": "multipart/form-data" } }
+      );
+
+      setAlerta({
+        tipo: "exito",
+        mensaje: data.message || "Certificado subido correctamente.",
       });
-      setMensajeCert(data.message || "Certificado subido correctamente.");
-    } catch {
-      setMensajeCert("Error al subir el certificado.");
+
+      // opcional: limpia campos
+      setArchivo(null);
+      setPasswordCert("");
+    } catch (err) {
+      setAlerta({
+        tipo: "error",
+        mensaje:
+          err?.response?.data?.error || "Error al subir el certificado.",
+      });
     }
   };
 
@@ -149,29 +197,26 @@ export default function MiCuentaPage() {
   // ==================================================
   // 4️⃣ Datos de suscripción Y plan (YA dentro de config)
   // ==================================================
-
-  const sus = config.suscripcion || {};        // ← todo ya viene de config
+  const sus = config.suscripcion || {};
   const estado = sus.estado || "active";
   const rawPlan = sus.plan || config.plan || "esencial";
 
   const PLAN_LABELS = {
     "tpv-premium": "TPV Premium",
     "tpv-avanzado": "TPV Avanzado",
-    "esencial": "Esencial",
+    esencial: "Esencial",
   };
 
-  // Normalizamos el plan (por si viniera con sufijos)
   const normalizedPlan = rawPlan.toLowerCase().trim();
   const plan =
     PLAN_LABELS[normalizedPlan] ||
-    PLAN_LABELS[normalizedPlan.replace(/_.*/, "")] || // ej: tpv-premium_mensual
+    PLAN_LABELS[normalizedPlan.replace(/_.*/, "")] ||
     "Básico";
 
   const renovacion = sus.fechaRenovacion
     ? new Date(sus.fechaRenovacion).toLocaleDateString("es-ES")
     : "—";
 
-  // Badge bonito
   const renderEstado = () => {
     const map = {
       active: { clase: "ok", txt: "Activa" },
@@ -180,17 +225,26 @@ export default function MiCuentaPage() {
       trial: { clase: "info", txt: "Prueba" },
       canceled: { clase: "danger", txt: "Cancelada" },
     };
-
-    const data = map[estado] || map["active"];
+    const data = map[estado] || map.active;
     return <span className={`estado-badge ${data.clase}`}>{data.txt}</span>;
   };
 
   // ==================================================
   // 5️⃣ Render UI
   // ==================================================
-
   return (
     <main className="micuenta-page section section--narrow">
+      {/* ✅ ALERTA ARRIBA */}
+      {alerta && (
+        <AlertaMensaje
+          tipo={alerta.tipo}
+          mensaje={alerta.mensaje}
+          onClose={() => setAlerta(null)}
+          autoCerrar
+          duracion={3200}
+        />
+      )}
+
       <header className="micuenta-header">
         <h1>Mi cuenta</h1>
         <p className="micuenta-sub">
@@ -225,8 +279,11 @@ export default function MiCuentaPage() {
                 try {
                   const { data } = await api.post("/pago/portal-billing");
                   if (data.url) window.location.href = data.url;
-                } catch {
-                  alert("No se pudo abrir la página de facturación");
+                } catch (err) {
+                  setAlerta({
+                    tipo: "error",
+                    mensaje: "No se pudo abrir la página de facturación.",
+                  });
                 }
               }}
             >
@@ -262,8 +319,6 @@ export default function MiCuentaPage() {
               Subir certificado
             </button>
           </form>
-
-          {mensajeCert && <p className="micuenta-msg">{mensajeCert}</p>}
         </div>
 
         {/* CUMPLIMIENTO LEGAL */}
@@ -275,7 +330,10 @@ export default function MiCuentaPage() {
               <h4>Declaración Responsable</h4>
               <p>Documento obligatorio (Ley 11/2021).</p>
             </div>
-            <button className="micuenta-btn-secundario" onClick={descargarDeclaracion}>
+            <button
+              className="micuenta-btn-secundario"
+              onClick={descargarDeclaracion}
+            >
               Descargar PDF
             </button>
           </div>
@@ -301,12 +359,13 @@ export default function MiCuentaPage() {
           </div>
         </div>
 
-        {/* ==================== CONFIGURACIÓN SIF ======================= */}
+        {/* CONFIGURACIÓN SIF */}
         <div className="micuenta-card">
           <h2>Datos fiscales (SIF)</h2>
 
           <p className="micuenta-sub">
-            Estos datos son obligatorios para emitir facturas validadas por VeriFactu.
+            Estos datos son obligatorios para emitir facturas validadas por
+            VeriFactu.
           </p>
 
           <div className="sif-grid">
@@ -335,8 +394,6 @@ export default function MiCuentaPage() {
           >
             {sifLoading ? "Guardando..." : "Guardar datos fiscales"}
           </button>
-
-          {sifMensaje && <p className="micuenta-msg">{sifMensaje}</p>}
         </div>
       </div>
     </main>

@@ -10,7 +10,7 @@
   position: fixed;
   inset: 0;
   background: radial-gradient(circle at top, rgba(110, 66, 193, 0.45), transparent 55%),
-              rgba(15, 23, 42, 0.85);
+    rgba(15, 23, 42, 0.85);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   display: flex;
@@ -44,6 +44,7 @@
     opacity: 0;
     transform: translateY(10px) scale(0.98);
   }
+
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
@@ -73,16 +74,19 @@
   flex-direction: column;
   gap: 1.5rem;
   overflow-y: auto;
-  padding-right: 0.25rem; /* para que no muerda el scroll */
+  padding-right: 0.25rem;
+  /* para que no muerda el scroll */
 }
 
 /* Scroll fino dentro del modal */
 .form--crear::-webkit-scrollbar {
   width: 6px;
 }
+
 .form--crear::-webkit-scrollbar-track {
   background: transparent;
 }
+
 .form--crear::-webkit-scrollbar-thumb {
   background: rgba(148, 163, 184, 0.55);
   border-radius: 999px;
@@ -97,7 +101,7 @@
 
 .form-section--crear {
   background: radial-gradient(circle at top left, rgba(88, 28, 135, 0.35), transparent 55%),
-              rgba(15, 23, 42, 0.75);
+    rgba(15, 23, 42, 0.75);
   border-radius: 1rem;
   border: 1px solid rgba(75, 85, 99, 0.7);
   padding: 1.25rem 1.25rem 1rem;
@@ -161,7 +165,7 @@
 .textarea--crear:focus {
   border-color: #a855f7;
   box-shadow: 0 0 0 1px rgba(168, 85, 247, 0.7),
-              0 0 0 10px rgba(76, 29, 149, 0.35);
+    0 0 0 10px rgba(76, 29, 149, 0.35);
   background: radial-gradient(circle at top, rgba(30, 64, 175, 0.35), rgba(15, 23, 42, 0.98));
   transform: translateY(-0.5px);
 }
@@ -332,11 +336,9 @@
   letter-spacing: 0.04em;
   text-transform: uppercase;
   cursor: pointer;
-  background: linear-gradient(135deg, #a855f7, #ec4899);
+  background: linear-gradient(90deg, #6a0dad, #ff6700);
   color: #f9fafb;
-  box-shadow:
-    0 10px 25px rgba(168, 85, 247, 0.45),
-    0 0 0 1px rgba(248, 250, 252, 0.02);
+  box-shadow: 0 4px 18px rgba(255, 103, 0, 0.25);
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
@@ -404,11 +406,9 @@
   gap: 0.6rem;
   padding: 0.55rem 0.75rem;
 
-  background: radial-gradient(
-      circle at top right,
+  background: radial-gradient(circle at top right,
       rgba(91, 33, 182, 0.28),
-      transparent 55%
-    ),
+      transparent 55%),
     rgba(15, 23, 42, 0.75);
   border: 1px solid rgba(75, 85, 99, 0.7);
   border-radius: 0.7rem;

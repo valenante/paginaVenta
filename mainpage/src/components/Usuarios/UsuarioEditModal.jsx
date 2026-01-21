@@ -106,7 +106,7 @@ export default function UsuarioEditModal({
 
         <div className="modal-buttons">
           <button
-            className="modal-btn modal-btn-confirmar"
+            className="statsUserModal-close-btn"
             onClick={handleSave}
           >
             Guardar cambios

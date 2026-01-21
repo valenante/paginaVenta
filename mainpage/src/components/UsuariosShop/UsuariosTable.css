@@ -279,12 +279,6 @@
    RESPONSIVE
    ========================================================= */
 
-@media (max-width: 1200px) {
-  .usuarios-table-card {
-    width: 100%;
-  }
-}
-
 @media (max-width: 768px) {
   .usuarios-table-card {
     padding: 1.4rem;

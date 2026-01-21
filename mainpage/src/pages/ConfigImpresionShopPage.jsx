@@ -4,6 +4,8 @@ import api from "../utils/api";
 import { useConfig } from "../context/ConfigContext.jsx";
 import "../styles/ConfigImpresionPage.css";
 
+import AlertaMensaje from "../components/AlertaMensaje/AlertaMensaje"; // <- ajusta ruta
+
 export default function ConfigImpresionShopPage() {
   const { config } = useConfig();
 
@@ -12,8 +14,10 @@ export default function ConfigImpresionShopPage() {
 
   const [impresoras, setImpresoras] = useState([]);
   const [estado, setEstado] = useState("unknown");
-  const [mensaje, setMensaje] = useState("");
   const [loading, setLoading] = useState(false);
+
+  // ✅ ALERTA
+  const [alerta, setAlerta] = useState(null);
 
   /* =====================
      Cargar configuración
@@ -29,17 +33,26 @@ export default function ConfigImpresionShopPage() {
   const listarImpresoras = async () => {
     try {
       setLoading(true);
-      setMensaje("🔎 Buscando impresoras...");
+      setAlerta({ tipo: "info", mensaje: "🔎 Buscando impresoras..." });
 
       const { data } = await api.get("/impresoras/listar");
       const lista = Array.isArray(data?.impresoras) ? data.impresoras : [];
 
       setImpresoras(lista);
       setEstado(data?.estado || "unknown");
-      setMensaje(`✅ Se detectaron ${lista.length} impresoras`);
+
+      setAlerta({
+        tipo: "exito",
+        mensaje: `✅ Se detectaron ${lista.length} impresoras`,
+      });
     } catch (e) {
       console.error(e);
-      setMensaje("❌ No se pudo obtener la lista de impresoras");
+      setAlerta({
+        tipo: "error",
+        mensaje:
+          e?.response?.data?.error ||
+          "❌ No se pudo obtener la lista de impresoras",
+      });
     } finally {
       setLoading(false);
     }
@@ -51,7 +64,7 @@ export default function ConfigImpresionShopPage() {
   const guardar = async () => {
     try {
       setLoading(true);
-      setMensaje("💾 Guardando configuración...");
+      setAlerta({ tipo: "info", mensaje: "💾 Guardando configuración..." });
 
       await api.post("/impresoras/configurar", {
         impresoras: {
@@ -60,10 +73,14 @@ export default function ConfigImpresionShopPage() {
         },
       });
 
-      setMensaje("✅ Configuración guardada");
+      setAlerta({ tipo: "exito", mensaje: "✅ Configuración guardada" });
     } catch (e) {
       console.error(e);
-      setMensaje("❌ Error al guardar la configuración");
+      setAlerta({
+        tipo: "error",
+        mensaje:
+          e?.response?.data?.error || "❌ Error al guardar la configuración",
+      });
     } finally {
       setLoading(false);
     }
@@ -72,19 +89,26 @@ export default function ConfigImpresionShopPage() {
   /* =====================
      Test impresión
   ===================== */
-  const testPrint = async (impresora) => {
+  const testPrint = async (impresora, label) => {
     try {
       setLoading(true);
-      setMensaje("🧾 Enviando prueba...");
+      setAlerta({ tipo: "info", mensaje: `🧾 Enviando prueba (${label})...` });
 
       const { data } = await api.post("/impresoras/test", {
         impresora: impresora || "",
       });
 
-      setMensaje(data?.message || "✅ Prueba enviada");
+      setAlerta({
+        tipo: "exito",
+        mensaje: data?.message || `✅ Prueba enviada (${label})`,
+      });
     } catch (e) {
       console.error(e);
-      setMensaje("❌ Error al enviar prueba");
+      setAlerta({
+        tipo: "error",
+        mensaje:
+          e?.response?.data?.error || `❌ Error al enviar prueba (${label})`,
+      });
     } finally {
       setLoading(false);
     }
@@ -109,6 +133,17 @@ export default function ConfigImpresionShopPage() {
   ===================== */
   return (
     <main className="section section--wide">
+      {/* ✅ ALERTA ARRIBA */}
+      {alerta && (
+        <AlertaMensaje
+          tipo={alerta.tipo}
+          mensaje={alerta.mensaje}
+          onClose={() => setAlerta(null)}
+          autoCerrar
+          duracion={3000}
+        />
+      )}
+
       <div className="card config-impresion">
         <h1>🖨️ Impresión</h1>
 
@@ -153,7 +188,7 @@ export default function ConfigImpresionShopPage() {
         <div className="config-impresion__actions">
           <button
             className="btn"
-            onClick={() => testPrint(impCaja)}
+            onClick={() => testPrint(impCaja, "Caja")}
             disabled={loading}
           >
             🧾 Probar Caja
@@ -161,7 +196,7 @@ export default function ConfigImpresionShopPage() {
 
           <button
             className="btn"
-            onClick={() => testPrint(impTickets)}
+            onClick={() => testPrint(impTickets, "Tickets")}
             disabled={loading}
           >
             🧾 Probar Tickets
@@ -171,8 +206,6 @@ export default function ConfigImpresionShopPage() {
         <p className="text-suave">
           Estado del servicio de impresión: <b>{estado}</b>
         </p>
-
-        {mensaje && <p className="mensaje">{mensaje}</p>}
       </div>
     </main>
   );

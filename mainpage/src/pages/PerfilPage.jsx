@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
 import api from "../utils/api";
+import AlertaMensaje from "../components/AlertaMensaje/AlertaMensaje";
 import "../styles/PerfilPage.css";
 
 export default function PerfilPage() {
@@ -9,7 +10,7 @@ export default function PerfilPage() {
   const [nuevaPassword, setNuevaPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [avatar, setAvatar] = useState(null);
-  const [mensaje, setMensaje] = useState("");
+  const [alerta, setAlerta] = useState(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -18,10 +19,10 @@ export default function PerfilPage() {
 
   const handleActualizar = async (e) => {
     e.preventDefault();
-    setMensaje("");
+    setAlerta(null);
 
     if (nuevaPassword && nuevaPassword !== confirmPassword) {
-      setMensaje("❌ Las contraseñas no coinciden.");
+      setAlerta({ tipo: "error", mensaje: "Las contraseñas no coinciden." });
       return;
     }
 
@@ -37,14 +38,12 @@ export default function PerfilPage() {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      if (data?.user) {
-        setUser(data.user);
-      }
+      if (data?.user) setUser(data.user);
 
-      setMensaje("✅ Perfil actualizado correctamente.");
+      setAlerta({ tipo: "exito", mensaje: "Perfil actualizado correctamente." });
     } catch (err) {
       console.error(err);
-      setMensaje("❌ Error al actualizar perfil.");
+      setAlerta({ tipo: "error", mensaje: "Error al actualizar perfil." });
     } finally {
       setLoading(false);
     }
@@ -58,12 +57,18 @@ export default function PerfilPage() {
     );
   }
 
-  const esError = mensaje.startsWith("❌");
-  const esOk = mensaje.startsWith("✅");
-
   return (
     <main className="perfil-page section section--wide">
       <section className="perfil-card card">
+        {alerta && (
+          <AlertaMensaje
+            tipo={alerta.tipo}
+            mensaje={alerta.mensaje}
+            onClose={() => setAlerta(null)}
+            autoCerrar
+            duracion={3000}
+          />
+        )}
         <header className="perfil-header">
           <div className="perfil-header-left">
             <img
@@ -165,20 +170,6 @@ export default function PerfilPage() {
               PNG o JPG. Se recomienda formato cuadrado.
             </span>
           </label>
-
-          {mensaje && (
-            <p
-              className={[
-                "perfil-mensaje",
-                esError && "perfil-mensaje--error",
-                esOk && "perfil-mensaje--ok",
-              ]
-                .filter(Boolean)
-                .join(" ")}
-            >
-              {mensaje}
-            </p>
-          )}
 
           <div className="perfil-actions">
             <button

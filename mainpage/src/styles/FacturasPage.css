@@ -233,6 +233,160 @@
   justify-content: flex-end;
   gap: var(--space-sm);
 }
+/* =====================================================
+   VISIBILIDAD TOTAL DE ACCIONES (DESKTOP / TPV)
+   ===================================================== */
+
+/* Columna de acciones sticky */
+.acciones-sticky {
+  position: sticky;
+  right: 0;
+  background: #fff;
+  z-index: 5;
+  box-shadow: -6px 0 8px rgba(0,0,0,0.04);
+}
+
+/* Header sticky coherente */
+.facturaspage-table th.acciones-sticky {
+  z-index: 6;
+  background: #f3f4f6;
+}
+
+/* Asegura ancho mínimo de acciones */
+.facturaspage-table td.acciones-sticky,
+.facturaspage-table th.acciones-sticky {
+  min-width: 210px;
+}
+
+/* Área de botones clara */
+.facturaspage-table-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* Botones visibles y táctiles */
+.facturaspage-table-actions button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 34px;
+  font-weight: 600;
+  background: #fff;
+}
+
+/* =====================================================
+   TPV TÁCTIL (pantallas grandes, dedos)
+   ===================================================== */
+@media (pointer: coarse) {
+  .facturaspage-table-actions button {
+    min-height: 42px;
+    font-size: 0.85rem;
+  }
+
+  .facturaspage-table td,
+  .facturaspage-table th {
+    padding: 12px;
+  }
+}
+
+/* =====================================================
+   MOBILE: USAR CARDS, OCULTAR TABLA
+   ===================================================== */
+
+/* Ocultar tabla en móvil */
+.facturaspage-desktop {
+  display: block;
+}
+
+.facturaspage-mobile {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .facturaspage-desktop {
+    display: none;
+  }
+
+  .facturaspage-mobile {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+}
+
+/* =====================================================
+   CARD DE FACTURA (MÓVIL)
+   ===================================================== */
+.factura-card {
+  background: #fff;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-suave);
+  padding: var(--space-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.factura-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 700;
+}
+
+.factura-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: var(--font-size-sm);
+}
+
+/* Acciones SIEMPRE visibles en móvil */
+.factura-card-actions {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin-top: var(--space-sm);
+}
+
+.factura-card-actions button {
+  padding: 10px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-borde-suave);
+  background: #fff;
+}
+
+/* Botón peligro */
+.factura-card-actions button.danger {
+  border-color: var(--color-error);
+  color: var(--color-error);
+}
+
+/* =====================================================
+   ESTADOS MÁS CLAROS
+   ===================================================== */
+.estado-factura {
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  background: #f3f4f6;
+}
+
+.estado-factura.correcto {
+  background: rgba(16,185,129,0.15);
+}
+
+.estado-factura.enviado {
+  background: rgba(245,158,11,0.15);
+}
+
+.estado-factura.incorrecto {
+  background: rgba(239,68,68,0.15);
+}
 
 /* ===========================
    RESPONSIVE REAL

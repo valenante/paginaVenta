@@ -9,6 +9,7 @@ export default function UsuariosTable({
   onPermisos,
   isPlanEsencial,
 }) {
+
   return (
     <section className="usuarios-table-card">
       <div className="usuarios-table-header">
@@ -44,7 +45,12 @@ export default function UsuariosTable({
                     )}
                     <button className="usuarios-btn" onClick={() => onEditar(u)}>✏️</button>
                     <button className="usuarios-btn" onClick={() => onPermisos(u)}>🔐</button>
-                    <button className="usuarios-btn danger" onClick={() => onEliminar(u._id)}>🗑️</button>
+                    <button
+                      className="usuarios-btn danger"
+                      onClick={() => onEliminar(u)}
+                    >
+                      🗑️
+                    </button>
                   </div>
                 </td>
               </tr>
@@ -75,7 +81,12 @@ export default function UsuariosTable({
               )}
               <button onClick={() => onEditar(u)}>✏️</button>
               <button onClick={() => onPermisos(u)}>🔐</button>
-              <button className="danger" onClick={() => onEliminar(u._id)}>🗑️</button>
+              <button
+                className="danger"
+                onClick={() => onEliminar(u)}
+              >
+                🗑️
+              </button>
             </div>
           </div>
         ))}

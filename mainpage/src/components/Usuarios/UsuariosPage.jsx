@@ -7,6 +7,7 @@ import UsuarioCreateForm from "./UsuarioCreateForm.jsx";
 import UsuariosTable from "./UsuariosTable.jsx";
 import UsuarioEditModal from "./UsuarioEditModal.jsx";
 import UsuarioStatsModal from "./UsuariosStatsModal.jsx";
+import ModalConfirmacion from "../Modal/ModalConfirmacion";
 
 import AlertaMensaje from "../AlertaMensaje/AlertaMensaje";
 
@@ -29,6 +30,7 @@ export default function UsuariosPage() {
   const [usuarioEdit, setUsuarioEdit] = useState(null);
   const [usuarioStats, setUsuarioStats] = useState(null);
   const [usuarioPermisos, setUsuarioPermisos] = useState(null);
+  const [usuarioAEliminar, setUsuarioAEliminar] = useState(null);
   const { user } = useAuth();
 
   const { tenant } = useTenant();
@@ -44,12 +46,8 @@ export default function UsuariosPage() {
     else setAlerta({ tipo: "error", mensaje: r.error });
   };
 
-  const onEliminar = async (id) => {
-    const ok = await eliminarUsuario(id);
-    setAlerta({
-      tipo: ok ? "exito" : "error",
-      mensaje: ok ? "Usuario eliminado" : "Error al eliminar",
-    });
+  const onEliminar = (usuario) => {
+    setUsuarioAEliminar(usuario);
   };
 
   const onEditar = async (id, payload) => {
@@ -123,7 +121,24 @@ export default function UsuariosPage() {
           onSave={actualizarPermisosUsuario}
           onClose={() => setUsuarioPermisos(null)}
         />
-      )} */}
+      )} */}{usuarioAEliminar && (
+        <ModalConfirmacion
+          titulo="Eliminar usuario"
+          mensaje={`¿Seguro que quieres eliminar al usuario "${usuarioAEliminar.name}"? Esta acción no se puede deshacer.`}
+          onClose={() => setUsuarioAEliminar(null)}
+          onConfirm={async () => {
+            const ok = await eliminarUsuario(usuarioAEliminar._id);
+
+            setAlerta({
+              tipo: ok ? "exito" : "error",
+              mensaje: ok ? "Usuario eliminado" : "Error al eliminar",
+            });
+
+            setUsuarioAEliminar(null);
+          }}
+        />
+      )}
+
     </div>
   );
 }

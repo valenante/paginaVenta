@@ -266,12 +266,20 @@ export default function FacturasPage() {
 
                     <div className="config-field">
                         <label>Desde</label>
-                        <input type="date" value={fechaInicio} onChange={(e) => setFechaInicio(e.target.value)} />
+                        <input
+                            type="date"
+                            value={fechaInicio}
+                            onChange={(e) => setFechaInicio(e.target.value)}
+                        />
                     </div>
 
                     <div className="config-field">
                         <label>Hasta</label>
-                        <input type="date" value={fechaFin} onChange={(e) => setFechaFin(e.target.value)} />
+                        <input
+                            type="date"
+                            value={fechaFin}
+                            onChange={(e) => setFechaFin(e.target.value)}
+                        />
                     </div>
 
                     <div className="config-field">
@@ -289,15 +297,17 @@ export default function FacturasPage() {
             {/* ACCIONES */}
             <section className="facturaspage-actions">
                 <button className="btn btn-secundario" onClick={exportarCSV}>
-                    Exportar CSV
+                    📤 Exportar CSV
                 </button>
                 <button className="btn-primario" onClick={exportarPDF}>
-                    Exportar PDF
+                    📄 Exportar PDF
                 </button>
             </section>
 
-            {/* TABLA */}
-            <section className="facturaspage-card">
+            {/* ============================
+        LISTADO DESKTOP / TPV
+    ============================ */}
+            <section className="facturaspage-card facturaspage-desktop">
                 <div className="facturaspage-card-header">
                     <h2>Listado de Facturas</h2>
                 </div>
@@ -313,7 +323,7 @@ export default function FacturasPage() {
                                 <th>NIF</th>
                                 <th>Importe</th>
                                 <th>Hash</th>
-                                <th>Acciones</th>
+                                <th className="acciones-sticky">Acciones</th>
                             </tr>
                         </thead>
 
@@ -321,19 +331,25 @@ export default function FacturasPage() {
                             {facturasFiltradas.map((f) => (
                                 <tr key={f._id}>
                                     <td>
-                                        <span className={`estado-factura ${f.estado}`}>{f.estado}</span>
+                                        <span className={`estado-factura ${f.estado}`}>
+                                            {f.estado}
+                                        </span>
                                     </td>
                                     <td>{f.numeroFactura}</td>
-                                    <td>{new Date(f.fechaExpedicion).toLocaleString("es-ES")}</td>
+                                    <td>
+                                        {new Date(f.fechaExpedicion).toLocaleString("es-ES")}
+                                    </td>
                                     <td>{f.clienteNombre || "-"}</td>
                                     <td>{f.clienteNIF || "-"}</td>
                                     <td>{f.importeTotal} €</td>
-                                    <td className="facturaspage-hash">{f.hash}</td>
+                                    <td className="facturaspage-hash">
+                                        {f.hash}
+                                    </td>
 
-                                    <td>
+                                    <td className="acciones-sticky">
                                         <div className="facturaspage-table-actions">
                                             <button onClick={() => abrirModalRectificacion(f._id)}>
-                                                Rectificar
+                                                ✏️ Rectificar
                                             </button>
 
                                             {f.estado !== "anulada" && (
@@ -344,15 +360,17 @@ export default function FacturasPage() {
                                                         setMostrarConfirmacion(true);
                                                     }}
                                                 >
-                                                    Anular
+                                                    🗑 Anular
                                                 </button>
                                             )}
 
-                                            <button onClick={() => verXML(f.xmlFirmado)}>XML</button>
+                                            <button onClick={() => verXML(f.xmlFirmado)}>
+                                                📄 XML
+                                            </button>
 
                                             {f.respuestaAEAT && (
                                                 <button onClick={() => verRespuestaAEAT(f.respuestaAEAT)}>
-                                                    Respuesta AEAT
+                                                    🏛 AEAT
                                                 </button>
                                             )}
                                         </div>
@@ -370,9 +388,9 @@ export default function FacturasPage() {
                             >
                                 ← Anterior
                             </button>
-
-                            <span>Página {pagina} de {totalPaginas}</span>
-
+                            <span>
+                                Página {pagina} de {totalPaginas}
+                            </span>
                             <button
                                 disabled={pagina === totalPaginas}
                                 onClick={() => setPagina(pagina + 1)}
@@ -381,11 +399,60 @@ export default function FacturasPage() {
                             </button>
                         </div>
                     )}
-
                 </div>
             </section>
 
-            {/* Modales */}
+            {/* ============================
+        LISTADO MÓVIL (CARDS)
+    ============================ */}
+            <section className="facturaspage-mobile">
+                {facturasFiltradas.map((f) => (
+                    <div key={f._id} className="factura-card">
+                        <div className="factura-card-header">
+                            <span className={`estado-factura ${f.estado}`}>
+                                {f.estado}
+                            </span>
+                            <strong>{f.numeroFactura}</strong>
+                        </div>
+
+                        <div className="factura-card-body">
+                            <div><strong>Fecha:</strong> {new Date(f.fechaExpedicion).toLocaleDateString("es-ES")}</div>
+                            <div><strong>Cliente:</strong> {f.clienteNombre || "Consumidor final"}</div>
+                            <div><strong>Importe:</strong> {f.importeTotal} €</div>
+                        </div>
+
+                        <div className="factura-card-actions">
+                            <button onClick={() => abrirModalRectificacion(f._id)}>
+                                ✏️ Rectificar
+                            </button>
+
+                            {f.estado !== "anulada" && (
+                                <button
+                                    className="danger"
+                                    onClick={() => {
+                                        setFacturaAAnular(f._id);
+                                        setMostrarConfirmacion(true);
+                                    }}
+                                >
+                                    🗑 Anular
+                                </button>
+                            )}
+
+                            <button onClick={() => verXML(f.xmlFirmado)}>
+                                📄 XML
+                            </button>
+
+                            {f.respuestaAEAT && (
+                                <button onClick={() => verRespuestaAEAT(f.respuestaAEAT)}>
+                                    🏛 AEAT
+                                </button>
+                            )}
+                        </div>
+                    </div>
+                ))}
+            </section>
+
+            {/* MODALES */}
             {mostrarModal && (
                 <div className="modal-overlay_facturaspage">
                     <div className="modal-contenido_facturaspage">
@@ -426,7 +493,11 @@ export default function FacturasPage() {
 
                         <div className="config-field">
                             <label>Importe</label>
-                            <input type="number" value={importeTotal} onChange={(e) => setImporteTotal(e.target.value)} />
+                            <input
+                                type="number"
+                                value={importeTotal}
+                                onChange={(e) => setImporteTotal(e.target.value)}
+                            />
                         </div>
 
                         <div className="config-field">

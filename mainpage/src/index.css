@@ -2,7 +2,7 @@
   /* 🎨 Brand Alef */
   --color-primario: #60b5ff;   /* Azul Alef principal */
   --color-primario-oscuro: #2f7ed8;
-  --color-primario-suave: #afddff;
+  --color-primario-suave: hsl(206, 100%, 84%);
 
   --color-secundario: #ff9149; /* Naranja acento (botones, highlights) */
   --color-secundario-oscuro: #e86f1c;

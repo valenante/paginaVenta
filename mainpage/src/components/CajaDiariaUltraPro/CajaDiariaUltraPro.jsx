@@ -29,6 +29,42 @@ ChartJS.register(
   Legend
 );
 
+const toISODateKey = (value) => {
+  if (!value) return "";
+
+  // Date object
+  if (value instanceof Date && !Number.isNaN(value.getTime())) {
+    return value.toISOString().slice(0, 10);
+  }
+
+  const s = String(value).trim();
+
+  // "YYYY-MM-DD..." (ISO o similar)
+  if (/^\d{4}-\d{2}-\d{2}/.test(s)) return s.slice(0, 10);
+
+  // "DD/MM/YYYY"
+  const m = s.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+  if (m) return `${m[3]}-${m[2]}-${m[1]}`;
+
+  // Último intento
+  const d = new Date(s);
+  if (!Number.isNaN(d.getTime())) return d.toISOString().slice(0, 10);
+
+  return "";
+};
+
+const safeDateObjFromISO = (iso) => {
+  if (!iso) return null;
+  const d = new Date(`${iso}T00:00:00`);
+  return Number.isNaN(d.getTime()) ? null : d;
+};
+
+const formatFechaUI = (iso) => {
+  const d = safeDateObjFromISO(iso);
+  return d ? d.toLocaleDateString("es-ES") : "—";
+};
+
+
 export default function CajaDiariaUltraPro() {
   const [fechaInicio, setFechaInicio] = useState("");
   const [fechaFin, setFechaFin] = useState("");
@@ -54,18 +90,18 @@ export default function CajaDiariaUltraPro() {
   }, []);
 
   /* 🔄 Cargar datos desde el backend */
-const cargarDatos = async () => {
-  try {
-    const cajas = await obtenerCajasPorRango(fechaInicio, fechaFin, tipoNegocio);
+  const cargarDatos = async () => {
+    try {
+      const cajas = await obtenerCajasPorRango(fechaInicio, fechaFin, tipoNegocio);
 
-    setDatos(Array.isArray(cajas) ? cajas : []);
-    setError(null);
-  } catch (err) {
-    console.error("[CAJA] ERROR:", err?.response?.status, err?.response?.data || err);
-    setDatos([]);
-    setError("Error al cargar datos.");
-  }
-};
+      setDatos(Array.isArray(cajas) ? cajas : []);
+      setError(null);
+    } catch (err) {
+      console.error("[CAJA] ERROR:", err?.response?.status, err?.response?.data || err);
+      setDatos([]);
+      setError("Error al cargar datos.");
+    }
+  };
 
 
   useEffect(() => {
@@ -80,18 +116,17 @@ const cargarDatos = async () => {
     const map = {};
 
     datos.forEach((d) => {
-      if (!map[d.fecha]) {
-        map[d.fecha] = {
-          fecha: d.fecha,
-          total: 0,
-          numTickets: 0,
-        };
+      const fechaKey = toISODateKey(d.fecha);
+      if (!fechaKey) return;
+
+      if (!map[fechaKey]) {
+        map[fechaKey] = { fecha: fechaKey, total: 0, numTickets: 0 };
       }
-      map[d.fecha].total += d.total;
-      map[d.fecha].numTickets += d.numTickets;
+
+      map[fechaKey].total += Number(d.total || 0);
+      map[fechaKey].numTickets += Number(d.numTickets || 0);
     });
 
-    // Convertimos a array ordenado por fecha
     return Object.values(map).sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
   }, [datos]);
 
@@ -135,11 +170,15 @@ const cargarDatos = async () => {
      ========================================================================= */
 
   const handlePDF = () => {
-    const heatmapImg = document
-      .querySelector("#heatmap-canvas")
-      ?.toDataURL("image/png");
+    const el = document.querySelector("#heatmap-canvas");
 
-    const chartImg = chartRef?.current?.toBase64Image() ?? null;
+    const heatmapImg =
+      el && typeof el.toDataURL === "function"
+        ? el.toDataURL("image/png")
+        : null;
+
+    const chartImg =
+      chartRef?.current?.toBase64Image?.() ?? null;
 
     generarPDFCaja({
       datos: datosDiarios,
@@ -147,6 +186,11 @@ const cargarDatos = async () => {
       fechaFin,
       heatmapDataURL: heatmapImg,
       chartDataURL: chartImg,
+      brand: {
+        nombre: tenant?.nombre || "Alef",
+        primary: "#60b5ff",
+        accent: "#ff9149",
+      },
     });
   };
 
@@ -170,7 +214,7 @@ const cargarDatos = async () => {
           <input type="date" value={fechaInicio} onChange={(e) => setFechaInicio(e.target.value)} />
           <input type="date" value={fechaFin} onChange={(e) => setFechaFin(e.target.value)} />
           {error && <div style={{ padding: 10, background: "#300", color: "#fff" }}>{error}</div>}
-{!error && datos.length === 0 && <div style={{ padding: 10 }}>No hay datos en este rango.</div>}
+          {!error && datos.length === 0 && <div style={{ padding: 10 }}>No hay datos en este rango.</div>}
 
           <button onClick={cargarDatos}>Actualizar</button>
 
@@ -220,7 +264,7 @@ const cargarDatos = async () => {
             {diaMasFuerte && (
               <div className="kpi-card highlight">
                 <span>Mejor día</span>
-                <strong>{new Date(diaMasFuerte.fecha).toLocaleDateString()}</strong>
+                <strong>{formatFechaUI(diaMasFuerte.fecha)}</strong>
                 <small>{diaMasFuerte.total.toFixed(2)} €</small>
               </div>
             )}
@@ -228,7 +272,7 @@ const cargarDatos = async () => {
             {diaMasDebil && (
               <div className="kpi-card worst">
                 <span>Peor día</span>
-                <strong>{new Date(diaMasDebil.fecha).toLocaleDateString()}</strong>
+                <strong>{formatFechaUI(diaMasDebil.fecha)}</strong>
                 <small>{diaMasDebil.total.toFixed(2)} €</small>
               </div>
             )}
@@ -240,7 +284,7 @@ const cargarDatos = async () => {
             <ul>
               {variaciones.map((d) => (
                 <li key={d.fecha} className="dia-item">
-                  <strong>{new Date(d.fecha).toLocaleDateString()}</strong>
+                  <strong>{formatFechaUI(d.fecha)}</strong>
                   <span>{d.total.toFixed(2)} €</span>
                   <small>{d.numTickets} tickets</small>
                   <span className={"variacion " + (d.variacion >= 0 ? "up" : "down")}>

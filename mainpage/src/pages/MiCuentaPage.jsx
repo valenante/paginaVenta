@@ -4,6 +4,7 @@ import { useConfig } from "../context/ConfigContext";
 import api from "../utils/api";
 import "../styles/MiCuentaPage.css";
 
+import ModalConfirmacion from "../components/Modal/ModalConfirmacion";
 import AlertaMensaje from "../components/AlertaMensaje/AlertaMensaje"; // <- ajusta ruta
 
 export default function MiCuentaPage() {
@@ -19,6 +20,8 @@ export default function MiCuentaPage() {
 
   const [verifactuEnabled, setVerifactuEnabled] = useState(false);
   const [toggleLoading, setToggleLoading] = useState(false);
+
+  const [mostrarConfirmacionVF, setMostrarConfirmacionVF] = useState(false);
 
   // === SIF CONFIG ===
   const [sifForm, setSifForm] = useState({
@@ -352,7 +355,7 @@ export default function MiCuentaPage() {
             <button
               className="micuenta-btn"
               disabled={toggleLoading}
-              onClick={toggleVerifactu}
+              onClick={() => setMostrarConfirmacionVF(true)}
             >
               {verifactuEnabled ? "Desactivar" : "Activar"}
             </button>
@@ -394,6 +397,29 @@ export default function MiCuentaPage() {
           >
             {sifLoading ? "Guardando..." : "Guardar datos fiscales"}
           </button>
+          {mostrarConfirmacionVF && (
+            <ModalConfirmacion
+              titulo={
+                verifactuEnabled
+                  ? "Desactivar VeriFactu"
+                  : "Activar VeriFactu"
+              }
+              mensaje={
+                verifactuEnabled
+                  ? "Desactivar VeriFactu implica que las facturas dejarán de enviarse a la Agencia Tributaria. ¿Deseas continuar?"
+                  : "Activar VeriFactu enviará automáticamente las facturas a la Agencia Tributaria conforme a la ley. Esta acción tiene implicaciones legales."
+              }
+              onClose={() => setMostrarConfirmacionVF(false)}
+              onConfirm={async () => {
+                setMostrarConfirmacionVF(false);
+                await toggleVerifactu();
+              }}
+            >
+              <p className="text-suave">
+                Esta acción solo debe realizarse por un administrador del restaurante.
+              </p>
+            </ModalConfirmacion>
+          )}
         </div>
       </div>
     </main>

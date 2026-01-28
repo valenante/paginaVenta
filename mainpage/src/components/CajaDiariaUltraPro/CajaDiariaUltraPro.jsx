@@ -6,6 +6,7 @@ import { generarPDFCaja } from "./pdfs/pdfCajaUltraPro";
 import { useTenant } from "../../context/TenantContext";
 import HeatmapSemana from "./HeatMapSemana";
 import CajaIngresosChart from "./CajaIngresosChart";
+import DiasPeriodo from "./DiaDetalleModal/DiasPeriodo";
 import "./CajaDiariaUltraPro.css";
 
 import {
@@ -120,7 +121,12 @@ export default function CajaDiariaUltraPro() {
       if (!fechaKey) return;
 
       if (!map[fechaKey]) {
-        map[fechaKey] = { fecha: fechaKey, total: 0, numTickets: 0 };
+        map[fechaKey] = {
+          fecha: fechaKey,
+          total: 0,
+          numTickets: 0,
+          mensajeCierre: d.mensajeCierre || null
+        };
       }
 
       map[fechaKey].total += Number(d.total || 0);
@@ -278,23 +284,7 @@ export default function CajaDiariaUltraPro() {
             )}
           </section>
 
-          {/* LISTA DIARIA */}
-          <section className="caja-ultra-lista">
-            <h3>Días del periodo</h3>
-            <ul>
-              {variaciones.map((d) => (
-                <li key={d.fecha} className="dia-item">
-                  <strong>{formatFechaUI(d.fecha)}</strong>
-                  <span>{d.total.toFixed(2)} €</span>
-                  <small>{d.numTickets} tickets</small>
-                  <span className={"variacion " + (d.variacion >= 0 ? "up" : "down")}>
-                    {d.variacion >= 0 ? "+" : ""}
-                    {d.variacion.toFixed(1)}%
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </section>
+          <DiasPeriodo dias={variaciones} />
 
           {/* HEATMAP */}
           <HeatmapSemana datos={datos} />

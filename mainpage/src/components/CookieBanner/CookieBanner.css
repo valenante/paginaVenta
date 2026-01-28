@@ -1,0 +1,100 @@
+/*****************************************************
+ * COOKIE BANNER – ALEF (RGPD TÉCNICAS)
+ *****************************************************/
+
+.alef-cookie {
+  position: fixed;
+  bottom: var(--space-lg);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9000;
+
+  width: calc(100% - var(--space-xl));
+  max-width: 980px;
+}
+
+.alef-cookie__content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+
+  padding: var(--space-md) var(--space-lg);
+  border-radius: var(--radius-lg);
+
+  /* Fondo que SIEMPRE se ve */
+  background-color: rgba(11, 16, 32, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+
+  border: 1px solid rgba(255, 255, 255, 0.15);
+
+  box-shadow: var(--shadow-suave);
+
+  color: var(--color-texto-invertido);
+  font-family: var(--font-base);
+  font-size: var(--font-size-sm);
+}
+
+.alef-cookie__text {
+  margin: 0;
+  line-height: 1.5;
+  color: var(--color-texto-invertido);
+}
+
+.alef-cookie__text strong {
+  font-weight: 600;
+}
+
+.alef-cookie__link {
+  margin-left: var(--space-xs);
+  color: var(--color-primario);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.alef-cookie__link:hover {
+  text-decoration: underline;
+}
+
+/* BOTÓN */
+.alef-cookie__button {
+  flex-shrink: 0;
+
+  padding: 0.5rem 1.25rem;
+  border-radius: var(--radius-pill);
+
+  border: none;
+  cursor: pointer;
+
+  background: linear-gradient(
+    135deg,
+    var(--color-primario),
+    var(--color-secundario)
+  );
+
+  color: #0b1020;
+  font-weight: 600;
+  font-size: var(--font-size-sm);
+
+  box-shadow: var(--shadow-hover);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.alef-cookie__button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.35);
+}
+
+/* MOBILE */
+@media (max-width: 640px) {
+  .alef-cookie__content {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+  }
+
+  .alef-cookie__button {
+    width: 100%;
+  }
+}

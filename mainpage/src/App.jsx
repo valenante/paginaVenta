@@ -17,6 +17,11 @@ import About from "./components/About/About";
 import Contact from "./components/Contact/Contact";
 import LoadingScreen from "./components/LoadingScreen/LoadingScreen";
 import TenantErrorScreen from "./components/TenantErrorScreen/TenantErrorScreen";
+import CookieBanner from "./components/CookieBanner/CookieBanner";
+import AvisoLegal from "./pages/legal/AvisoLegal";
+import Privacidad from "./pages/legal/Privacidad";
+import Cookies from "./pages/legal/Cookies";
+import Footer from "./components/Footer/Footer";
 
 // 🔐 Auth
 import Login from "./pages/Login";
@@ -118,6 +123,7 @@ function LandingPage() {
       <Packs />
       <About />
       <Contact />
+      <Footer />
     </div>
   );
 }
@@ -179,6 +185,9 @@ function AppRoutes() {
       <Route path="/registro/cancel" element={<RegistroSuccess />} />
       <Route path="/pago/exito" element={<RegistroSuccess />} />
       <Route path="/pago/cancelado" element={<RegistroSuccess />} />
+      <Route path="/aviso-legal" element={<AvisoLegal />} />
+      <Route path="/privacidad" element={<Privacidad />} />
+      <Route path="/cookies" element={<Cookies />} />
 
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route
@@ -407,6 +416,7 @@ export default function App() {
                   {!loadingApp && (
                     <>
                       <VerifactuGlobalModal />
+                      <CookieBanner />
                       <AppRoutes />
                     </>
                   )}

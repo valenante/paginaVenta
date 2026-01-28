@@ -35,10 +35,6 @@ export default function LogsPage() {
     }
   };
 
-  useEffect(() => {
-    fetchLogs();
-  }, [nivel, search, tenant]);
-
   // ============================
   // ❌ Borrar todos los logs
   // ============================

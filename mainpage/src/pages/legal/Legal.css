@@ -1,0 +1,90 @@
+/*****************************************************
+ * LEGAL PAGES – ALEF
+ *****************************************************/
+
+.legal-wrapper {
+  min-height: 100vh;
+  padding: var(--space-2xl) var(--space-md);
+  background:
+    radial-gradient(circle at top left, var(--color-primario) 0%, transparent 40%),
+    radial-gradient(circle at bottom right, var(--color-secundario) 0%, transparent 40%),
+    var(--color-fondo-claro);
+
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.legal-card {
+  width: 100%;
+  max-width: 860px;
+  background: var(--color-fondo-card);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-hover);
+  padding: var(--space-xl);
+  position: relative;
+}
+
+/* Línea decorativa superior */
+.legal-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 6px;
+  width: 100%;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  background: linear-gradient(
+    90deg,
+    var(--color-primario),
+    var(--color-secundario)
+  );
+}
+
+.legal-header {
+  text-align: center;
+  margin-bottom: var(--space-xl);
+}
+
+.legal-logo {
+  width: 72px;
+  margin-bottom: var(--space-sm);
+}
+
+.legal-header h1 {
+  font-size: var(--font-size-2xl);
+  color: var(--color-texto);
+}
+
+.legal-content h2 {
+  margin-top: var(--space-xl);
+  font-size: var(--font-size-lg);
+  color: var(--color-primario-oscuro);
+}
+
+.legal-content p,
+.legal-content li {
+  font-size: var(--font-size-md);
+  line-height: 1.7;
+  color: var(--color-texto-suave);
+}
+
+.legal-content ul {
+  padding-left: 1.2rem;
+  margin-top: var(--space-sm);
+}
+
+.legal-footer {
+  margin-top: var(--space-xl);
+  text-align: center;
+}
+
+.legal-footer a {
+  color: var(--color-primario);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.legal-footer a:hover {
+  text-decoration: underline;
+}

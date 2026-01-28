@@ -113,12 +113,6 @@
   box-shadow: 0 6px 18px rgba(255, 103, 0, 0.35);
 }
 
-@media (max-width: 1200px){
-.usuarios-card{
-  width: 100%;
-}
-}
-
 /* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
   .usuarios-card {

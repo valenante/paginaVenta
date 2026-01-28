@@ -170,61 +170,6 @@
   font-size: 1.25rem;
 }
 
-/* LISTA CON SCROLL CONTROLADO */
-.caja-ultra-lista ul {
-  max-height: 300px;
-  /* Ajustable */
-  overflow-y: auto;
-  padding-right: 4px;
-  /* evita cortar la barra */
-}
-
-/* Scrollbar elegante */
-.caja-ultra-lista ul::-webkit-scrollbar {
-  width: 6px;
-}
-
-.caja-ultra-lista ul::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.25);
-  border-radius: 4px;
-}
-
-.dia-item {
-  display: grid;
-  grid-template-columns: 150px 120px 120px auto;
-  align-items: center;
-  padding: 0.75rem 1rem;
-  margin-bottom: 0.4rem;
-  background: rgba(255, 255, 255, 0.04);
-  border-radius: var(--radius-md);
-  transition: 0.2s ease;
-  border: 1px solid rgba(255, 255, 255, 0.06);
-}
-
-.dia-item:hover {
-  background: rgba(255, 255, 255, 0.08);
-  transform: translateY(-2px);
-}
-
-.dia-item strong {
-  color: #fff;
-  font-weight: 600;
-}
-
-.variacion {
-  font-weight: 700;
-}
-
-.variacion.up {
-  color: #4ade80;
-  /* verde */
-}
-
-.variacion.down {
-  color: #f87171;
-  /* rojo */
-}
-
 /* ===============================
    HEATMAP
    =============================== */

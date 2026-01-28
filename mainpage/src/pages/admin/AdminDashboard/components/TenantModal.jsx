@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import Modal from "react-modal";
 import api from "../../../../utils/api";
+import AlertaMensaje from "../../../../components/AlertaMensaje/AlertaMensaje";
 import "../../../../styles/TenantModal.css";
 
 Modal.setAppElement("#root");
@@ -11,7 +12,7 @@ export default function TenantModal({ tenant, onClose }) {
   // =========================
   const [ipTailscale, setIpTailscale] = useState(tenant?.ipTailscale || "");
   const [printSecret, setPrintSecret] = useState(tenant?.printSecret || "");
-  const [printerName, setPrinterName] = useState(tenant?.printerName || ""); // default
+  const [printerName, setPrinterName] = useState(tenant?.printerName || "");
 
   // =========================
   // Estado (Impresoras por estación)
@@ -20,18 +21,27 @@ export default function TenantModal({ tenant, onClose }) {
   const [impBarra, setImpBarra] = useState(tenant?.impresoras?.barra || "");
   const [impCaja, setImpCaja] = useState(tenant?.impresoras?.caja || "");
 
-  // Lista de impresoras CUPS detectadas por el agente
   const [impresoras, setImpresoras] = useState([]);
 
+  // =========================
   // Estado agente
+  // =========================
   const [estado, setEstado] = useState(tenant?.estadoAgente || "offline");
+  const [versionAgente, setVersionAgente] = useState(null);
 
+  // =========================
   // UX
-  const [mensaje, setMensaje] = useState("");
+  // =========================
+  const [alerta, setAlerta] = useState(null);
   const [loading, setLoading] = useState(false);
 
   // =========================
-  // Sync cuando cambia el tenant
+  // Update
+  // =========================
+  const [refUpdate, setRefUpdate] = useState("origin/master");
+
+  // =========================
+  // Sync tenant
   // =========================
   useEffect(() => {
     setIpTailscale(tenant?.ipTailscale || "");
@@ -39,16 +49,14 @@ export default function TenantModal({ tenant, onClose }) {
     setPrinterName(tenant?.printerName || "");
     setEstado(tenant?.estadoAgente || "offline");
 
-    // Si tu API ya devuelve estas tres en tenant, perfecto.
-    // Si no las trae, igual queda vacío hasta que las cargues desde otro endpoint.
     setImpCocina(tenant?.impresoras?.cocina || "");
     setImpBarra(tenant?.impresoras?.barra || "");
     setImpCaja(tenant?.impresoras?.caja || "");
 
     setImpresoras([]);
-    setMensaje("");
+    setAlerta(null);
     setLoading(false);
-  }, [tenant?._id]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [tenant?._id]);
 
   // =========================
   // Actions
@@ -58,15 +66,22 @@ export default function TenantModal({ tenant, onClose }) {
 
     try {
       setLoading(true);
-      setMensaje("🔎 Buscando impresoras...");
-      const { data } = await api.get(`/impresoras/${tenant._id}/listar`);
+      setAlerta({ tipo: "info", mensaje: "🔎 Buscando impresoras..." });
 
+      const { data } = await api.get(`/impresoras/${tenant._id}/listar`);
       const lista = Array.isArray(data?.impresoras) ? data.impresoras : [];
+
       setImpresoras(lista);
-      setMensaje(`✅ Se detectaron ${lista.length} impresoras`);
+      setAlerta({
+        tipo: "success",
+        mensaje: `Se detectaron ${lista.length} impresoras`,
+      });
     } catch (err) {
-      console.error("Error al listar impresoras:", err);
-      setMensaje("❌ No se pudo obtener la lista de impresoras");
+      console.error(err);
+      setAlerta({
+        tipo: "error",
+        mensaje: "No se pudo obtener la lista de impresoras",
+      });
     } finally {
       setLoading(false);
     }
@@ -77,12 +92,12 @@ export default function TenantModal({ tenant, onClose }) {
 
     try {
       setLoading(true);
-      setMensaje("💾 Guardando configuración...");
+      setAlerta({ tipo: "info", mensaje: "Guardando configuración..." });
 
-      await api.put(`/tenants/${tenant._id}/config-impresion`, {
+      await api.put(`/admin/tenant/${tenant._id}/config-impresion`, {
         ipTailscale,
         printSecret,
-        printerName, // default
+        printerName,
         impresoras: {
           cocina: impCocina,
           barra: impBarra,
@@ -90,10 +105,45 @@ export default function TenantModal({ tenant, onClose }) {
         },
       });
 
-      setMensaje("✅ Configuración guardada correctamente");
+      setAlerta({
+        tipo: "success",
+        mensaje: "Configuración guardada correctamente",
+      });
     } catch (err) {
-      console.error("Error al guardar config:", err);
-      setMensaje("❌ Error al guardar la configuración");
+      console.error(err);
+      setAlerta({
+        tipo: "error",
+        mensaje: "Error al guardar la configuración",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const actualizarAgente = async () => {
+    if (!tenant?._id) return;
+
+    try {
+      setLoading(true);
+      setAlerta({ tipo: "info", mensaje: "Actualizando agente..." });
+
+      const { data } = await api.post(
+        `/admin/tenant/${tenant._id}/actualizar-agente`,
+        { version: refUpdate }
+      );
+
+      setAlerta({
+        tipo: "success",
+        mensaje: data?.message || "Actualización iniciada",
+      });
+    } catch (err) {
+      const msg =
+        err?.response?.data?.error ||
+        err?.response?.data?.detalle ||
+        err.message ||
+        "Error desconocido";
+
+      setAlerta({ tipo: "error", mensaje: msg });
     } finally {
       setLoading(false);
     }
@@ -104,15 +154,21 @@ export default function TenantModal({ tenant, onClose }) {
 
     try {
       setLoading(true);
-      setMensaje("🧾 Enviando prueba de impresión...");
+      setAlerta({ tipo: "info", mensaje: "Enviando prueba de impresión..." });
 
       const payload = impresora ? { impresora } : {};
       const { data } = await api.post(`/impresoras/${tenant._id}/test`, payload);
 
-      setMensaje(data?.message || `✅ Prueba enviada (${impresora || "default"})`);
+      setAlerta({
+        tipo: "success",
+        mensaje: data?.message || "Prueba enviada",
+      });
     } catch (err) {
-      console.error("Error test print:", err);
-      setMensaje("❌ Error al enviar prueba de impresión");
+      console.error(err);
+      setAlerta({
+        tipo: "error",
+        mensaje: "Error al enviar prueba de impresión",
+      });
     } finally {
       setLoading(false);
     }
@@ -123,21 +179,72 @@ export default function TenantModal({ tenant, onClose }) {
 
     try {
       setLoading(true);
-      const { data } = await api.get(`/tenants/${tenant._id}/ping-agente`);
 
-      setEstado(data?.estado || "offline");
-      if (data?.ok) setMensaje(`🟢 Agente en línea (${data.ms} ms)`);
-      else setMensaje("🔴 Agente fuera de línea");
+      const { data } = await api.get(`/admin/tenant/${tenant._id}/ping-agente`);
+
+      setEstado(data?.ok ? "online" : "offline");
+      if (data?.version) setVersionAgente(data.version);
+
+      setAlerta({
+        tipo: data?.ok ? "success" : "error",
+        mensaje: data?.ok
+          ? `Agente en línea (${data.ms} ms)`
+          : "Agente fuera de línea",
+      });
     } catch (err) {
-      console.error("Error ping:", err);
-      setMensaje("⚠️ No se pudo contactar con el agente");
+      console.error(err);
       setEstado("offline");
+      setAlerta({
+        tipo: "error",
+        mensaje: "No se pudo contactar con el agente",
+      });
     } finally {
       setLoading(false);
     }
   };
 
+  const accederTPV = async () => {
+    if (!ipTailscale) {
+      setAlerta({
+        tipo: "error",
+        mensaje: "IP Tailscale no configurada",
+      });
+      return;
+    }
+
+    const sshUser = "alef";
+    const comando = `tailscale ssh ${sshUser}@${ipTailscale}`;
+
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(comando);
+        setAlerta({
+          tipo: "info",
+          mensaje: `Comando copiado al portapapeles:\n\n${comando}\n\nPégalo en tu terminal.`,
+        });
+      } else {
+        // Fallback seguro
+        setAlerta({
+          tipo: "info",
+          mensaje: `Ejecuta este comando en tu terminal:\n\n${comando}`,
+        });
+      }
+    } catch {
+      setAlerta({
+        tipo: "info",
+        mensaje: `Ejecuta este comando en tu terminal:\n\n${comando}`,
+      });
+    }
+  };
+
+  useEffect(() => {
+    if (tenant?._id) verificarConexion();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tenant?._id]);
+
+  // =========================
   // Helpers
+  // =========================
   const renderPrinterOptions = () => (
     <>
       <option value="">-- (sin asignar / usar predeterminada) --</option>
@@ -163,50 +270,33 @@ export default function TenantModal({ tenant, onClose }) {
     >
       <h2>Detalles del Restaurante</h2>
 
-      <div className="tenant-info">
-        <p><strong>Nombre:</strong> {tenant?.nombre}</p>
-        <p><strong>Email:</strong> {tenant?.email}</p>
-        <p><strong>Plan:</strong> {tenant?.plan}</p>
-        <p><strong>VeriFactu:</strong> {tenant?.verifactuEnabled ? "Activo ✅" : "Inactivo ❌"}</p>
-        <p><strong>Creado:</strong> {tenant?.createdAt ? new Date(tenant.createdAt).toLocaleString() : "-"}</p>
-      </div>
-
-      <hr />
-
-      <h3>🖨️ Configuración del agente de impresión</h3>
-
       <div className="impresora-section">
+        <button
+          className="btn-acceso-tpv"
+          onClick={accederTPV}
+        >
+          🖥️ Acceder al TPV (Tailscale SSH)
+        </button>
+
         <label>IP Tailscale</label>
-        <input
-          type="text"
-          value={ipTailscale}
-          onChange={(e) => setIpTailscale(e.target.value)}
-          placeholder="ej: lovepizza-tpv.tailscale.net"
-        />
+        <input value={ipTailscale} onChange={(e) => setIpTailscale(e.target.value)} />
 
-        <label>Clave secreta (printSecret)</label>
-        <input
-          type="text"
-          value={printSecret}
-          onChange={(e) => setPrintSecret(e.target.value)}
-          placeholder="clave-secreta..."
-        />
+        <label>Clave secreta</label>
+        <input value={printSecret} onChange={(e) => setPrintSecret(e.target.value)} />
 
-        <label>Impresora predeterminada (fallback)</label>
+        <label>Impresora predeterminada</label>
         <select value={printerName} onChange={(e) => setPrinterName(e.target.value)}>
           <option value="">-- Selecciona una impresora --</option>
           {impresoras.map((imp) => (
-            <option key={imp} value={imp}>
-              {imp}
-            </option>
+            <option key={imp} value={imp}>{imp}</option>
           ))}
         </select>
 
         <div className="hint">
           <small>
-            Cocina: <strong>{defaultOrHint(impCocina)}</strong> · Barra:{" "}
-            <strong>{defaultOrHint(impBarra)}</strong> · Caja:{" "}
-            <strong>{defaultOrHint(impCaja)}</strong>
+            Cocina: <strong>{defaultOrHint(impCocina)}</strong> ·
+            Barra: <strong>{defaultOrHint(impBarra)}</strong> ·
+            Caja: <strong>{defaultOrHint(impCaja)}</strong>
           </small>
         </div>
 
@@ -214,60 +304,67 @@ export default function TenantModal({ tenant, onClose }) {
 
         <h4>Impresoras por estación</h4>
 
-        <label>Impresora Cocina</label>
+        <label>Cocina</label>
         <select value={impCocina} onChange={(e) => setImpCocina(e.target.value)}>
           {renderPrinterOptions()}
         </select>
 
-        <label>Impresora Barra</label>
+        <label>Barra</label>
         <select value={impBarra} onChange={(e) => setImpBarra(e.target.value)}>
           {renderPrinterOptions()}
         </select>
 
-        <label>Impresora Caja</label>
+        <label>Caja</label>
         <select value={impCaja} onChange={(e) => setImpCaja(e.target.value)}>
           {renderPrinterOptions()}
         </select>
 
         <div className="impresora-buttons">
-          <button onClick={listarImpresoras} disabled={loading}>
-            🔍 Listar impresoras
-          </button>
+          <button onClick={listarImpresoras}>🔍 Listar impresoras</button>
+          <button onClick={guardarConfig}>💾 Guardar configuración</button>
+          <button onClick={verificarConexion}>🔄 Verificar conexión</button>
+        </div>
 
-          <button onClick={guardarConfig} disabled={loading}>
-            💾 Guardar configuración
-          </button>
-
-          <button onClick={verificarConexion} disabled={loading}>
-            🔄 Verificar conexión
+        <div className="agente-update-box">
+          <h4>🔧 Actualización del agente</h4>
+          <select value={refUpdate} onChange={(e) => setRefUpdate(e.target.value)}>
+            <option value="origin/master">Última estable (origin/master)</option>
+          </select>
+          <button
+            className="btn-update-agente"
+            onClick={actualizarAgente}
+            disabled={estado !== "online"}
+          >
+            🔄 Actualizar agente
           </button>
         </div>
 
         <div className="impresora-buttons">
-          <button onClick={() => testPrint(printerName)} disabled={loading}>
-            🧾 Prueba (predeterminada)
-          </button>
-
-          <button onClick={() => testPrint(impCocina || printerName)} disabled={loading}>
-            🧾 Probar Cocina
-          </button>
-
-          <button onClick={() => testPrint(impBarra || printerName)} disabled={loading}>
-            🧾 Probar Barra
-          </button>
-
-          <button onClick={() => testPrint(impCaja || printerName)} disabled={loading}>
-            🧾 Probar Caja
-          </button>
+          <button onClick={() => testPrint(printerName)}>🧾 Prueba</button>
+          <button onClick={() => testPrint(impCocina || printerName)}>Cocina</button>
+          <button onClick={() => testPrint(impBarra || printerName)}>Barra</button>
+          <button onClick={() => testPrint(impCaja || printerName)}>Caja</button>
         </div>
 
         <p className={`estado ${estado}`}>
-          Estado del agente:{" "}
-          <strong>{estado === "online" ? "🟢 Online" : "🔴 Offline"}</strong>
+          Estado: <strong>{estado === "online" ? "🟢 Online" : "🔴 Offline"}</strong>
         </p>
 
-        {mensaje && <p className="mensaje">{mensaje}</p>}
+        <p>
+          <strong>Versión:</strong>{" "}
+          {versionAgente
+            ? `${versionAgente.pkgVersion} · ${versionAgente.commit}`
+            : "—"}
+        </p>
       </div>
+
+      {alerta && (
+        <AlertaMensaje
+          tipo={alerta.tipo}
+          mensaje={alerta.mensaje}
+          onClose={() => setAlerta(null)}
+        />
+      )}
 
       <button className="close-btn" onClick={onClose}>
         Cerrar

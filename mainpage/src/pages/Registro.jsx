@@ -47,13 +47,32 @@ export default function Registro() {
   const [precioBasePlan, setPrecioBasePlan] = useState(0);
 
   const [servicios, setServicios] = useState({
+    // servicios previos
     vozCocina: false,
     vozComandas: false,
+
+    // puesta en marcha
+    cargaProductos: false,
+    mesasQr: false,
+    mesasQrCantidad: "",
+
+    // hardware
+    tpvOpcion: "propio",          // "propio" | "nuevo"
+    instalacionTpvPropio: true,   // bool
+    tpvNuevo: 0,                  // nº de TPV nuevos (normalmente 1)
+
     impresoras: 0,
+
+    pantallaTipo: "tablet",       // "tablet" | "pro"
     pantallas: 0,
+
     pda: 0,
+    scanner: 0,                   // shop
+
+    // extras
     fotografia: false,
-    cargaDatos: false,
+    formacion: false,
+    formacionPersonas: "",
   });
 
   const [precio, setPrecio] = useState({
@@ -143,14 +162,43 @@ export default function Registro() {
       (servicios.vozCocina ? 10 : 0) +
       (servicios.vozComandas ? 10 : 0);
 
+    const PRECIO_TPV_NUEVO = 550;
+    const PRECIO_INSTALACION_TPV_PROPIO = 120;
+
+    const PRECIO_TABLET = 180;
+    const PRECIO_PANTALLA_PRO = 450;
+
+    const PRECIO_IMPRESORA = 150;
+    const PRECIO_PDA = 180;
+
+    const PRECIO_FORMACION = 120;
+    const PRECIO_FOTOGRAFIA = 120;
+    const PRECIO_CARGA_PRODUCTOS = 80;
+    const PRECIO_MESAS_QR = 80;
+
     const unico =
-      servicios.impresoras * 150 +
-      servicios.pantallas * 250 +
-      servicios.pda * 180 +
-      (servicios.fotografia ? 120 : 0) +
-      (servicios.cargaDatos ? 100 : 0) +
-      (servicios.cargaProductos ? 80 : 0) +
-      (servicios.mesasQr ? 80 : 0);
+      // TPV principal
+      (servicios.tpvOpcion === "nuevo"
+        ? servicios.tpvNuevo * PRECIO_TPV_NUEVO
+        : servicios.instalacionTpvPropio
+          ? PRECIO_INSTALACION_TPV_PROPIO
+          : 0) +
+
+      // pantallas
+      servicios.pantallas *
+      (servicios.pantallaTipo === "pro"
+        ? PRECIO_PANTALLA_PRO
+        : PRECIO_TABLET) +
+
+      // hardware
+      servicios.impresoras * PRECIO_IMPRESORA +
+      servicios.pda * PRECIO_PDA +
+
+      // servicios
+      (servicios.cargaProductos ? PRECIO_CARGA_PRODUCTOS : 0) +
+      (servicios.mesasQr ? PRECIO_MESAS_QR : 0) +
+      (servicios.formacion ? PRECIO_FORMACION : 0) +
+      (servicios.fotografia ? PRECIO_FOTOGRAFIA : 0);
 
     setPrecio({
       mensual,

@@ -5,20 +5,29 @@ import "./Paso3ServiciosExtras.css";
 export default function Paso3ServiciosExtras({
   servicios,
   setServicios,
-  isShop = false, // 👈 NUEVO
+  isShop = false,
 }) {
+  /* =====================
+     Handlers
+  ===================== */
+
   const handleChange = (e) => {
     const { name, type, value, checked } = e.target;
 
-    setServicios((prev) => ({
-      ...prev,
-      [name]:
-        type === "checkbox"
-          ? checked
-          : value === ""
-          ? ""
-          : Number(value),
-    }));
+    setServicios((prev) => {
+      // ✅ checkbox
+      if (type === "checkbox") {
+        return { ...prev, [name]: checked };
+      }
+
+      // ✅ number
+      if (type === "number") {
+        return { ...prev, [name]: value === "" ? "" : Number(value) };
+      }
+
+      // ✅ radio/select/text
+      return { ...prev, [name]: value };
+    });
   };
 
   const handleFileChange = (e) => {
@@ -29,6 +38,22 @@ export default function Paso3ServiciosExtras({
       [name]: Array.from(files || []),
     }));
   };
+
+  const handleTpvOptionChange = (e) => {
+    const opcion = e.target.value; // "propio" | "nuevo"
+
+    setServicios((prev) => ({
+      ...prev,
+      tpvOpcion: opcion,
+      // Si usa su TPV, la instalación aplica (precio desde X)
+      instalacionTpvPropio: opcion === "propio",
+      // Si compra TPV nuevo, lo marcamos (1 unidad por defecto)
+      tpvNuevo: opcion === "nuevo" ? 1 : 0,
+    }));
+  };
+
+  const precioPantalla =
+    servicios?.pantallaTipo === "pro" ? 450 : 180; // 👈 AJUSTA SI QUIERES
 
   return (
     <section className="paso3-servicios section section--wide">
@@ -105,7 +130,7 @@ export default function Paso3ServiciosExtras({
           </div>
         </label>
 
-        {/* En restaurante: mesas + QR. En shop: lo ocultamos */}
+        {/* En restaurante: mesas + QR */}
         {!isShop && (
           <label className="servicio-item servicio-item--checkbox">
             <input
@@ -120,12 +145,14 @@ export default function Paso3ServiciosExtras({
                 <span className="servicio-title">
                   Configuración de mesas + QR impresos
                 </span>
-                <span className="servicio-price badge badge-aviso">desde 80 € único</span>
+                <span className="servicio-price badge badge-aviso">
+                  desde 80 € único
+                </span>
               </div>
               <p className="servicio-description">
                 Nos envías el plano o listado de mesas y configuramos toda la
-                estructura en Alef. Te mandamos los QR de la carta con número de
-                mesa, plastificados y listos para colocar en cada mesa.
+                estructura en Alef. Te mandamos los QR con número de mesa,
+                plastificados y listos para colocar.
               </p>
 
               {servicios.mesasQr && (
@@ -181,6 +208,66 @@ export default function Paso3ServiciosExtras({
             : "Indícanos el hardware que quieres que incluyamos en la instalación estándar. Te llegará listo para usar."}
         </p>
 
+        {/* ✅ NUEVO: TPV principal */}
+        <div className="servicio-item servicio-item--radio">
+          <div className="servicio-number-text">
+            <label>Terminal principal (TPV / PC)</label>
+            <small className="servicio-helper">
+              Es el equipo principal (caja/administración) desde el que se gestiona Alef.
+            </small>
+          </div>
+
+          <div className="servicio-content">
+            <label className="servicio-item servicio-item--checkbox" style={{ marginTop: 8 }}>
+              <input
+                type="radio"
+                name="tpvOpcion"
+                value="propio"
+                checked={(servicios.tpvOpcion ?? "propio") === "propio"}
+                onChange={handleTpvOptionChange}
+              />
+              <div className="servicio-content">
+                <div className="servicio-header-row">
+                  <span className="servicio-title">Usar mi TPV/PC</span>
+                  <span className="servicio-price badge badge-aviso">
+                    Instalación: desde 120 € único
+                  </span>
+                </div>
+                <p className="servicio-description">
+                  Aprovechas tu equipo actual y reduces el coste inicial. Nosotros lo dejamos configurado
+                  (Softalef + impresoras + red) y listo para trabajar.
+                </p>
+                <small className="servicio-helper">
+                  *El precio puede variar si se requiere visita presencial o el equipo necesita puesta a punto extra.
+                </small>
+              </div>
+            </label>
+
+            <label className="servicio-item servicio-item--checkbox" style={{ marginTop: 8 }}>
+              <input
+                type="radio"
+                name="tpvOpcion"
+                value="nuevo"
+                checked={servicios.tpvOpcion === "nuevo"}
+                onChange={handleTpvOptionChange}
+              />
+              <div className="servicio-content">
+                <div className="servicio-header-row">
+                  <span className="servicio-title">Quiero un TPV nuevo (recomendado si no tienes)</span>
+                  <span className="servicio-price badge badge-aviso">+550 € aprox.</span>
+                </div>
+                <p className="servicio-description">
+                  Te llega ya instalado y preparado: lo conectas, lo enciendes y con Internet ya puedes entrar a Softalef.
+                </p>
+                <small className="servicio-helper">
+                  Incluye configuración inicial (software + drivers + base lista). Solo conectar y listo.
+                </small>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        {/* Impresoras */}
         <div className="servicio-item servicio-item--number">
           <div className="servicio-number-text">
             <label>Impresoras térmicas</label>
@@ -192,17 +279,72 @@ export default function Paso3ServiciosExtras({
             name="impresoras"
             min="0"
             max="10"
-            value={servicios.impresoras}
+            value={servicios.impresoras ?? 0}
             onChange={handleChange}
           />
         </div>
 
-        {/* En shop: "Pantalla TPV" reutilizando el mismo campo pantallas */}
+        {/* ✅ NUEVO: Tipo de pantalla (tablet vs pro) */}
+        <div className="servicio-item servicio-item--radio" style={{ marginTop: 10 }}>
+          <div className="servicio-number-text">
+            <label>{isShop ? "Pantalla TPV" : "Pantalla cocina/barra"}</label>
+            <small className="servicio-helper">
+              Elige el formato: tablet (rápida y barata) o pantalla pro (más robusta).
+            </small>
+          </div>
+
+          <div className="servicio-content">
+            <label className="servicio-item servicio-item--checkbox" style={{ marginTop: 8 }}>
+              <input
+                type="radio"
+                name="pantallaTipo"
+                value="tablet"
+                checked={(servicios.pantallaTipo ?? "tablet") === "tablet"}
+                onChange={handleChange}
+              />
+              <div className="servicio-content">
+                <div className="servicio-header-row">
+                  <span className="servicio-title">Tablet (11")</span>
+                  <span className="servicio-price badge badge-aviso">+180 € / ud</span>
+                </div>
+                <p className="servicio-description">
+                  ✅ Más barata, rápida de instalar y portátil.  
+                  ⚠️ Menos “pro”, más sensible a grasa/golpes si no va protegida.
+                </p>
+              </div>
+            </label>
+
+            <label className="servicio-item servicio-item--checkbox" style={{ marginTop: 8 }}>
+              <input
+                type="radio"
+                name="pantallaTipo"
+                value="pro"
+                checked={servicios.pantallaTipo === "pro"}
+                onChange={handleChange}
+              />
+              <div className="servicio-content">
+                <div className="servicio-header-row">
+                  <span className="servicio-title">Pantalla táctil PRO (AIO)</span>
+                  <span className="servicio-price badge badge-aviso">+450 € / ud aprox.</span>
+                </div>
+                <p className="servicio-description">
+                  ✅ Más robusta y profesional, fija y siempre lista (tipo TPV).  
+                  ⚠️ Más cara y requiere instalación fija (enchufe/soporte).
+                </p>
+                <small className="servicio-helper">
+                  Ideal para barra y cocinas con mucho uso.
+                </small>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        {/* Cantidad de pantallas */}
         <div className="servicio-item servicio-item--number">
           <div className="servicio-number-text">
-            <label>{isShop ? "Pantalla TPV" : "Pantallas de cocina/barra"}</label>
+            <label>{isShop ? "Cantidad de pantallas TPV" : "Cantidad de pantallas (cocina/barra)"}</label>
             <small className="servicio-helper">
-              {isShop ? "250 € por unidad" : "250 € por unidad"}
+              {precioPantalla} € por unidad (según tipo elegido)
             </small>
           </div>
           <input
@@ -211,7 +353,7 @@ export default function Paso3ServiciosExtras({
             name="pantallas"
             min="0"
             max="10"
-            value={servicios.pantallas}
+            value={servicios.pantallas ?? 0}
             onChange={handleChange}
           />
         </div>
@@ -220,7 +362,7 @@ export default function Paso3ServiciosExtras({
         {!isShop ? (
           <div className="servicio-item servicio-item--number">
             <div className="servicio-number-text">
-              <label>PDA o tablet para camareros</label>
+              <label>PDA para camareros</label>
               <small className="servicio-helper">180 € por unidad</small>
             </div>
             <input
@@ -229,7 +371,7 @@ export default function Paso3ServiciosExtras({
               name="pda"
               min="0"
               max="10"
-              value={servicios.pda}
+              value={servicios.pda ?? 0}
               onChange={handleChange}
             />
           </div>
@@ -237,14 +379,12 @@ export default function Paso3ServiciosExtras({
           <div className="servicio-item servicio-item--number">
             <div className="servicio-number-text">
               <label>Scanner de códigos de barras</label>
-              <small className="servicio-helper">
-                (precio a definir) por unidad
-              </small>
+              <small className="servicio-helper">(precio a definir) por unidad</small>
             </div>
             <input
               className="servicio-number-input"
               type="number"
-              name="scanner"       // 👈 NUEVO CAMPO
+              name="scanner"
               min="0"
               max="10"
               value={servicios.scanner ?? 0}
@@ -255,46 +395,84 @@ export default function Paso3ServiciosExtras({
       </div>
 
       {/* === Servicios adicionales === */}
-      {!isShop && (
-        <div className="servicios-grupo card">
-          <h3>📷 Servicios adicionales</h3>
-          <p className="servicios-help">
-            Opciones únicas para presentar mejor tu marca y empezar con todo
-            configurado.
-          </p>
+      <div className="servicios-grupo card">
+        <h3>🎓 Formación y servicios adicionales</h3>
+        <p className="servicios-help">
+          Formación para que el equipo use Alef desde el minuto uno.
+        </p>
 
+        {/* ✅ NUEVO: Formación */}
+        <label className="servicio-item servicio-item--checkbox">
+          <input
+            type="checkbox"
+            name="formacion"
+            checked={!!servicios.formacion}
+            onChange={handleChange}
+          />
+          <div className="servicio-content">
+            <div className="servicio-header-row">
+              <span className="servicio-title">Formación al equipo (60–90 min)</span>
+              <span className="servicio-price badge badge-aviso">+120 € único</span>
+            </div>
+            <p className="servicio-description">
+              Explicamos el flujo completo (caja, cocina, barra y sala), mejores prácticas y resolución de dudas.
+              Puede ser presencial u online según disponibilidad.
+            </p>
+
+            {servicios.formacion && (
+              <div className="servicio-item servicio-item--number servicio-item--inline">
+                <div className="servicio-number-text">
+                  <label>¿Cuántas personas aprox.?</label>
+                  <small className="servicio-helper">Solo para organizar la sesión.</small>
+                </div>
+                <input
+                  className="servicio-number-input"
+                  type="number"
+                  name="formacionPersonas"
+                  min="1"
+                  max="50"
+                  value={servicios.formacionPersonas ?? ""}
+                  onChange={handleChange}
+                />
+              </div>
+            )}
+          </div>
+        </label>
+
+        {/* Fotografía solo en restaurante */}
+        {!isShop && (
           <label className="servicio-item servicio-item--checkbox">
             <input
               type="checkbox"
               name="fotografia"
-              checked={servicios.fotografia}
+              checked={!!servicios.fotografia}
               onChange={handleChange}
             />
             <div className="servicio-content">
               <div className="servicio-header-row">
-                <span className="servicio-title">
-                  Servicio de fotografía profesional
-                </span>
-                <span className="servicio-price badge badge-aviso">
-                  +120 € único
-                </span>
+                <span className="servicio-title">Servicio de fotografía profesional</span>
+                <span className="servicio-price badge badge-aviso">+120 € único</span>
               </div>
               <p className="servicio-description">
-                Fotografíamos tus platos y tu local con calidad profesional para
-                usarlos en la carta digital y en tu web.
+                Fotografíamos platos/local con calidad profesional para carta digital y presencia online.
               </p>
             </div>
           </label>
-        </div>
-      )}
+        )}
+      </div>
 
       {/* === Info final === */}
       <div className="servicios-nota card">
         <p className="servicios-nota-text">
           💬 Todos los precios incluyen soporte técnico y actualizaciones de Alef.
-          {isShop
-            ? " El hardware se envía configurado y listo para conectar."
-            : " El hardware se envía configurado y listo para conectar."}
+          {" "}
+          {servicios.tpvOpcion === "nuevo"
+            ? " El TPV nuevo llega ya instalado y listo para conectar."
+            : " Si usas tu TPV/PC, lo dejamos configurado para que funcione desde el primer día."}
+          {" "}
+          {servicios.pantallaTipo === "pro"
+            ? " Las pantallas PRO se entregan preparadas para usar (enchufar y trabajar)."
+            : " Las tablets se entregan configuradas (Wi-Fi + acceso directo a Softalef)."}
         </p>
       </div>
     </section>

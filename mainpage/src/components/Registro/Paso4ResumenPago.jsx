@@ -249,10 +249,37 @@ export default function Paso4ResumenPago({
               </li>
             )}
 
+            {servicios.tpvOpcion === "nuevo" && (
+              <li>
+                + TPV nuevo instalado y listo — 550 €
+              </li>
+            )}
+
+            {servicios.tpvOpcion === "propio" && servicios.instalacionTpvPropio && (
+              <li>
+                + Instalación en TPV propio — 120 €
+              </li>
+            )}
+
             {servicios.pantallas > 0 && (
               <li>
-                {servicios.pantallas} × {isShop ? "Pantalla TPV" : "Pantalla de cocina/barra"} —{" "}
-                {PRECIO_PANTALLA * servicios.pantallas} €
+                {servicios.pantallas} ×{" "}
+                {servicios.pantallaTipo === "pro"
+                  ? "Pantalla táctil PRO"
+                  : "Tablet táctil"}{" "}
+                —{" "}
+                {(servicios.pantallaTipo === "pro" ? 450 : 180) *
+                  servicios.pantallas} €
+              </li>
+            )}
+
+            {servicios.formacion && (
+              <li>
+                + Formación al equipo{" "}
+                {servicios.formacionPersonas
+                  ? `(${servicios.formacionPersonas} personas)`
+                  : ""}{" "}
+                — 120 €
               </li>
             )}
 

@@ -234,10 +234,13 @@
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 105%;                 /* ⬅️ antes era ~65%, ahora ocupa casi todo */
-  max-width: 640px;            /* tope para pantallas grandes */
+  width: 105%;
+  /* ⬅️ antes era ~65%, ahora ocupa casi todo */
+  max-width: 640px;
+  /* tope para pantallas grandes */
   transform: translate(-50%, -50%) translateZ(-30px);
-  opacity: 0.42;               /* un poco más visible */
+  opacity: 0.42;
+  /* un poco más visible */
   filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.65));
   z-index: 1;
   animation: logoPulse 10s ease-in-out infinite;
@@ -302,6 +305,44 @@
   animation: pillDrift3 14s ease-in-out infinite;
 }
 
+.Introduccion-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* “chip” pequeño dentro del badge */
+.badge-verifactu {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.45);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.35);
+  background-color: white;
+}
+
+.badge-verifactu-logo {
+  height: 20px;
+  /* prueba 20–24 para más “a simple vista” */
+  width: auto;
+  opacity: 0.95;
+  filter: drop-shadow(0 8px 14px rgba(0, 0, 0, 0.45));
+  transform: translateY(1px);
+}
+
+/* en móvil, que no se coma espacio */
+@media (max-width: 480px) {
+  .badge-verifactu {
+    padding: 3px 8px;
+  }
+
+  .badge-verifactu-logo {
+    height: 18px;
+  }
+}
+
 /* =======================================================
    ANIMACIONES
    ======================================================= */
@@ -311,10 +352,12 @@
     transform: translate(-50%, -50%) translateZ(-30px) scale(1);
     opacity: 0.32;
   }
+
   50% {
     transform: translate(-50%, -50%) translateZ(-20px) scale(1.06);
     opacity: 0.42;
   }
+
   100% {
     transform: translate(-50%, -50%) translateZ(-30px) scale(1);
     opacity: 0.32;
@@ -325,36 +368,47 @@
   0% {
     transform: translate(10%, -6%) rotate(-10deg) translateZ(70px);
   }
+
   50% {
     transform: translate(8%, 0%) rotate(-8deg) translateZ(80px);
   }
+
   100% {
     transform: translate(10%, -6%) rotate(-10deg) translateZ(70px);
   }
 }
 
 @keyframes pillDrift1 {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translate(0, 0);
   }
+
   50% {
     transform: translate(-8px, 6px);
   }
 }
 
 @keyframes pillDrift2 {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translate(0, 0);
   }
+
   50% {
     transform: translate(10px, -6px);
   }
 }
 
 @keyframes pillDrift3 {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translateY(-50%);
   }
+
   50% {
     transform: translateY(-60%);
   }

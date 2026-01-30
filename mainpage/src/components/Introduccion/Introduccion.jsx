@@ -2,6 +2,7 @@ import React from "react";
 import "./Introduccion.css";
 import letrasalefsinfondo from "../../assets/imagenes/letrasalefsinfondo.png";
 import cartaMain from "../../assets/imagenes/cartaMain.png";
+import verifactuLogo from "../../assets/imagenes/verifactu.png";
 
 const Introduccion = () => {
   return (
@@ -11,7 +12,17 @@ const Introduccion = () => {
         <div className="Introduccion-left">
           <div className="Introduccion-contenido">
             <div className="Introduccion-badge">
-              La plataforma que se adapta a tu negocio
+              <span>La plataforma que se adapta a tu negocio</span>
+
+              <span className="badge-verifactu" title="Compatible con VERI*FACTU">
+                <img
+                  src={verifactuLogo}
+                  alt="VERI*FACTU"
+                  className="badge-verifactu-logo"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </span>
             </div>
 
             <h1 className="Introduccion-titulo">

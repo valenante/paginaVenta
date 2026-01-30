@@ -466,6 +466,38 @@ export default function CartaConfigPage() {
               </option>
             </select>
           </div>
+          <div className="config-field-row">
+            <div className="config-field">
+              <label>Columnas en escritorio</label>
+              <select
+                name="carta.columnasDesktop"
+                value={form.carta?.columnasDesktop ?? "auto"}
+                onChange={handleChange}
+              >
+                <option value="auto">Automático (recomendado)</option>
+                <option value="2">2 columnas</option>
+                <option value="4">4 columnas</option>
+              </select>
+              <small className="theme-help">
+                En pantallas grandes podrás elegir 2 o 4. “Automático” mantiene el comportamiento actual.
+              </small>
+            </div>
+
+            <div className="config-field">
+              <label>Columnas en móvil</label>
+              <select
+                name="carta.columnasMovil"
+                value={form.carta?.columnasMovil ?? "1"}
+                onChange={handleChange}
+              >
+                <option value="1">1 columna</option>
+                <option value="2">2 columnas</option>
+              </select>
+              <small className="theme-help">
+                En móvil solo 1 o 2 para que no se rompa el diseño.
+              </small>
+            </div>
+          </div>
         </section>
 
         {/* === TEMA VISUAL DE LA CARTA === */}

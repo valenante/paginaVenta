@@ -5,6 +5,7 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import * as logger from "../utils/logger";
 import AlertaMensaje from "../components/AlertaMensaje/AlertaMensaje.jsx";
+import FacturasHelpModal from "../components/Facturas/FacturasHelpModal.jsx";
 import ModalConfirmacion from "../components/Modal/ModalConfirmacion.jsx";
 
 import "../styles/FacturasPage.css";
@@ -23,6 +24,7 @@ export default function FacturasPage() {
     const [facturaAAnular, setFacturaAAnular] = useState(null);
     const [pagina, setPagina] = useState(1);
     const [totalPaginas, setTotalPaginas] = useState(1);
+    const [mostrarAyuda, setMostrarAyuda] = useState(false);
 
     // Formulario rectificación:
     const [tipo, setTipo] = useState("");
@@ -239,9 +241,20 @@ export default function FacturasPage() {
         <main className="facturaspage section section--wide">
             {/* HEADER */}
             <header className="facturaspage-header">
-                <div>
-                    <h1>📄 Facturas Encadenadas</h1>
-                    <p>Consulta, exporta y gestiona tu historial fiscal.</p>
+                <div className="facturaspage-header-row">
+                    <div>
+                        <h1>📄 Facturas Encadenadas</h1>
+                        <p>Consulta, exporta y gestiona tu historial fiscal.</p>
+                    </div>
+
+                    <button
+                        className="facturaspage-help-btn"
+                        onClick={() => setMostrarAyuda(true)}
+                        type="button"
+                        title="Ayuda"
+                    >
+                        ℹ️ Ayuda
+                    </button>
                 </div>
             </header>
 
@@ -537,6 +550,9 @@ export default function FacturasPage() {
                     }}
                     onClose={() => setMostrarConfirmacion(false)}
                 />
+            )}
+            {mostrarAyuda && (
+                <FacturasHelpModal onClose={() => setMostrarAyuda(false)} />
             )}
         </main>
     );

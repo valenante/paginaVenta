@@ -2,11 +2,7 @@ import React, { useState } from "react";
 import { useShopCategorias } from "../../context/ShopCategoriasContext";
 import "../Categories/CrearProducto.css";
 
-export default function CrearProductoShop({
-  defaultCategory,
-  onClose,
-  onCreated,
-}) {
+export default function CrearProductoShop({ defaultCategory, onClose, onCreated }) {
   const { createProduct } = useShopCategorias();
 
   const [formData, setFormData] = useState({
@@ -39,26 +35,29 @@ export default function CrearProductoShop({
         sku: formData.sku || "",
         barcode: formData.barcode || "",
 
-        // 👇 IMPORTANTE: tu schema usa itemType, no "type"
-        itemType: "producto", // o "servicio" si aplica
+        // 👇 tu schema usa itemType
+        itemType: "producto",
 
-        // 👇 IMPORTANTE: precios requerido y precios.venta requerido
+        // 👇 precios requerido
         precios: {
           venta: Number(formData.precio) || 0,
           oferta: null,
           coste: null,
         },
 
-        // 👇 Stock va dentro de inventario en tu schema (no stockActual suelto)
+        // 👇 inventario embebido
         inventario: {
           gestionaStock: true,
           stock: Number(formData.stockActual) || 0,
           stockMinimo: Number(formData.stockMinimo) || 0,
-          stockMaximo: Number(formData.stockMax) || null,
+          // stockCritico no lo estás usando en schema: si lo tienes, lo añadimos
+          stockCritico: Number(formData.stockCritico) || 0,
+          stockMaximo: formData.stockMax === "" ? null : Number(formData.stockMax),
           unidadMedida: "ud",
           permiteDecimal: false,
         },
       });
+
       onCreated?.();
       onClose();
     } finally {
@@ -72,134 +71,210 @@ export default function CrearProductoShop({
         className="crear-producto-modal--crear"
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 className="titulo--crear">Crear producto</h2>
+        <h2 className="titulo--crear">Crear producto (Shop)</h2>
 
         <form onSubmit={handleSubmit} className="form--crear">
-          <div className="form-columns--crear">
-            {/* ===== COLUMNA 1 ===== */}
-            <section className="form-section--crear">
-              <div className="form-group--crear">
-                <label className="label--crear">
-                  Nombre
-                  <input
-                    className="input--crear"
-                    name="nombre"
-                    value={formData.nombre}
-                    onChange={handleChange}
-                    required
-                  />
-                </label>
-
-                <label className="label--crear">
-                  Categoría
-                  <input
-                    className="input--crear"
-                    name="categoria"
-                    value={formData.categoria}
-                    onChange={handleChange}
-                    required
-                  />
-                </label>
-              </div>
-            </section>
-
-            {/* ===== COLUMNA 2 ===== */}
-            <section className="form-section--crear">
-              <div className="form-group--crear">
-                <label className="label--crear">
-                  SKU
-                  <input
-                    className="input--crear"
-                    name="sku"
-                    value={formData.sku}
-                    onChange={handleChange}
-                  />
-                </label>
-
-                <label className="label--crear">
-                  Barcode
-                  <input
-                    className="input--crear"
-                    name="barcode"
-                    value={formData.barcode}
-                    onChange={handleChange}
-                  />
-                </label>
-
-                <label className="label--crear">
-                  Precio
-                  <input
-                    type="number"
-                    step="0.01"
-                    className="input--crear"
-                    name="precio"
-                    value={formData.precio}
-                    onChange={handleChange}
-                    required
-                  />
-                </label>
-              </div>
-            </section>
-          </div>
-
-          {/* ===== STOCK ===== */}
+          {/* =========================
+              BLOQUE: Información básica
+              ========================= */}
           <section className="form-section--crear">
+            <h4 className="subtitulo--crear">🧾 Información básica</h4>
+            <p className="help-text--crear">
+              Estos datos son los que usarás para identificar el producto dentro del catálogo.
+              La categoría sirve para agrupar y filtrar productos.
+            </p>
+
             <div className="form-group--crear">
               <label className="label--crear">
-                Stock actual
+                Nombre
                 <input
-                  type="number"
                   className="input--crear"
-                  name="stockActual"
-                  value={formData.stockActual}
+                  name="nombre"
+                  value={formData.nombre}
                   onChange={handleChange}
+                  required
+                  placeholder="Ej: Detergente 1L"
                 />
+                <p className="help-text--crear">
+                  Nombre visible en el catálogo y en el panel de gestión.
+                </p>
               </label>
 
               <label className="label--crear">
-                Stock mínimo
+                Categoría
                 <input
-                  type="number"
                   className="input--crear"
-                  name="stockMinimo"
-                  value={formData.stockMinimo}
+                  name="categoria"
+                  value={formData.categoria}
                   onChange={handleChange}
+                  required
+                  placeholder="Ej: limpieza"
                 />
-              </label>
-
-              <label className="label--crear">
-                Stock crítico
-                <input
-                  type="number"
-                  className="input--crear"
-                  name="stockCritico"
-                  value={formData.stockCritico}
-                  onChange={handleChange}
-                />
-              </label>
-
-              <label className="label--crear">
-                Stock máximo
-                <input
-                  type="number"
-                  className="input--crear"
-                  name="stockMax"
-                  value={formData.stockMax}
-                  onChange={handleChange}
-                />
+                <p className="help-text--crear">
+                  Puedes crear una categoría nueva escribiéndola aquí.
+                </p>
               </label>
             </div>
           </section>
 
-          {/* ===== BOTONES ===== */}
+          {/* =========================
+              BLOQUE: Identificadores
+              ========================= */}
+          <section className="form-section--crear">
+            <h4 className="subtitulo--crear">🏷️ Identificadores (opcional)</h4>
+            <p className="help-text--crear">
+              Sirven para control interno, inventario y escaneo rápido en caja.
+            </p>
+
+            <div className="form-group--crear">
+              <label className="label--crear">
+                SKU
+                <input
+                  className="input--crear"
+                  name="sku"
+                  value={formData.sku}
+                  onChange={handleChange}
+                  placeholder="Ej: LIM-DET-001"
+                />
+                <p className="help-text--crear">
+                  Código interno del producto (si usas SKUs).
+                </p>
+              </label>
+
+              <label className="label--crear">
+                Barcode / EAN
+                <input
+                  className="input--crear"
+                  name="barcode"
+                  value={formData.barcode}
+                  onChange={handleChange}
+                  placeholder="Ej: 8412345678901"
+                />
+                <p className="help-text--crear">
+                  Código de barras para escaneo (EAN / UPC).
+                </p>
+              </label>
+            </div>
+          </section>
+
+          {/* =========================
+              BLOQUE: Precio de venta
+              ========================= */}
+          <section className="form-section--crear">
+            <h4 className="subtitulo--crear">💰 Precio</h4>
+            <p className="help-text--crear">
+              Este es el precio de venta que verá el cliente o que se usará en caja.
+            </p>
+
+            <div className="form-group--crear">
+              <label className="label--crear">
+                Precio de venta (€)
+                <input
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  className="input--crear"
+                  name="precio"
+                  value={formData.precio}
+                  onChange={handleChange}
+                  required
+                  placeholder="Ej: 3.50"
+                />
+                <p className="help-text--crear">
+                  Requerido. Puedes ajustar ofertas y costes más adelante si lo necesitas.
+                </p>
+              </label>
+            </div>
+          </section>
+
+          {/* =========================
+              BLOQUE: Stock / Inventario
+              ========================= */}
+          <section className="form-section--crear">
+            <h4 className="subtitulo--crear">📦 Stock e inventario</h4>
+            <p className="help-text--crear">
+              Define el stock actual y los umbrales. Útil para avisos y control de reposición.
+            </p>
+
+            <div className="form-columns--crear">
+              <div className="form-group--crear">
+                <label className="label--crear">
+                  Stock actual
+                  <input
+                    type="number"
+                    min="0"
+                    className="input--crear"
+                    name="stockActual"
+                    value={formData.stockActual}
+                    onChange={handleChange}
+                    placeholder="Ej: 30"
+                  />
+                  <p className="help-text--crear">
+                    Cantidad disponible ahora mismo.
+                  </p>
+                </label>
+
+                <label className="label--crear">
+                  Stock mínimo
+                  <input
+                    type="number"
+                    min="0"
+                    className="input--crear"
+                    name="stockMinimo"
+                    value={formData.stockMinimo}
+                    onChange={handleChange}
+                    placeholder="Ej: 10"
+                  />
+                  <p className="help-text--crear">
+                    Cuando baje de este valor, deberías reponer.
+                  </p>
+                </label>
+              </div>
+
+              <div className="form-group--crear">
+                <label className="label--crear">
+                  Stock crítico
+                  <input
+                    type="number"
+                    min="0"
+                    className="input--crear"
+                    name="stockCritico"
+                    value={formData.stockCritico}
+                    onChange={handleChange}
+                    placeholder="Ej: 3"
+                  />
+                  <p className="help-text--crear">
+                    Umbral de alerta fuerte (para avisos urgentes).
+                  </p>
+                </label>
+
+                <label className="label--crear">
+                  Stock máximo
+                  <input
+                    type="number"
+                    min="0"
+                    className="input--crear"
+                    name="stockMax"
+                    value={formData.stockMax}
+                    onChange={handleChange}
+                    placeholder="Ej: 100"
+                  />
+                  <p className="help-text--crear">
+                    Opcional. Útil si quieres un objetivo de reposición.
+                  </p>
+                </label>
+              </div>
+            </div>
+          </section>
+
+          {/* =========================
+              BOTONES
+              ========================= */}
           <div className="botones--crear">
-            <button
-              type="submit"
-              className="boton--crear"
-              disabled={saving}
-            >
+            <button type="submit" className="boton--crear" disabled={saving}>
               {saving ? "Guardando..." : "Guardar"}
             </button>
+
             <button
               type="button"
               className="boton--cancelar"

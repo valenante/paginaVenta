@@ -3,6 +3,7 @@ import React, { useEffect, useState, useRef, useMemo } from "react";
 import Draggable from "react-draggable";
 import api from "../utils/api";
 import EditarMesa from "../components/EditarMesa/EditarMesa";
+import MapaEditorHelp from "../components/MapaEditor/MapaEditorHelp";
 import "../styles/MapaEditor.css";
 
 export default function MapaEditor() {
@@ -266,7 +267,6 @@ export default function MapaEditor() {
           </div>
         </div>
       )}
-
       {mesaSeleccionada && (
         <EditarMesa
           mesa={mesaSeleccionada}
@@ -275,6 +275,8 @@ export default function MapaEditor() {
           onDelete={eliminarMesa}
         />
       )}
+
+      <MapaEditorHelp />
     </div>
   );
 }

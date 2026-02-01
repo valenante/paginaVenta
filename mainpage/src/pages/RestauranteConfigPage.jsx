@@ -336,46 +336,46 @@ export default function RestauranteConfigPage() {
           )}
 
           {/* === ESTILO GENERAL === */}
-          <section className="config-card card">
-            <header className="config-card-header">
-              <h2>🎨 Estilo general</h2>
-              <p className="config-card-subtitle">
-                Ajustes de fuente y tema del backoffice (no afectan a TPV ni a la
-                carta de los clientes).
-              </p>
-            </header>
+          {/* <section className="config-card card">
+                <header className="config-card-header">
+                  <h2>🎨 Estilo general</h2>
+                  <p className="config-card-subtitle">
+                  Ajustes de fuente y tema del backoffice (no afectan a TPV ni a la
+                  carta de los clientes).
+                  </p>
+                </header>
 
-            <div className="config-field">
-              <label>Fuente principal</label>
-              <input
-                type="text"
-                value={form.estilo.fuente || ""}
-                onChange={(e) =>
-                  setForm((prev) => ({
+                <div className="config-field">
+                  <label>Fuente principal</label>
+                  <input
+                  type="text"
+                  value={form.estilo.fuente || ""}
+                  onChange={(e) =>
+                    setForm((prev) => ({
                     ...prev,
                     estilo: { ...prev.estilo, fuente: e.target.value },
-                  }))
-                }
-              />
-            </div>
+                    }))
+                  }
+                  />
+                </div>
 
-            <div className="config-field">
-              <label>Tema</label>
-              <select
-                value={form.estilo.tema || "claro"}
-                onChange={(e) =>
-                  setForm((prev) => ({
+                <div className="config-field">
+                  <label>Tema</label>
+                  <select
+                  value={form.estilo.tema || "claro"}
+                  onChange={(e) =>
+                    setForm((prev) => ({
                     ...prev,
                     estilo: { ...prev.estilo, tema: e.target.value },
-                  }))
-                }
-              >
-                <option value="claro">Claro</option>
-                <option value="oscuro">Oscuro</option>
-                <option value="auto">Automático</option>
-              </select>
-            </div>
-          </section>
+                    }))
+                  }
+                  >
+                  <option value="claro">Claro</option>
+                  <option value="oscuro">Oscuro</option>
+                  <option value="auto">Automático</option>
+                  </select>
+                </div>
+                </section> */}
 
           <PlanFeaturesPanel onAlert={setAlerta} />
 
@@ -493,6 +493,8 @@ export default function RestauranteConfigPage() {
             </section>
           )}
 
+          {/* === CAPACIDAD Y SLA DE MESAS === 
+          
           {esRestaurante && !isPlanEsencial && (
             <OperativaSlaCapacidadPanel
               form={form}
@@ -508,6 +510,8 @@ export default function RestauranteConfigPage() {
               onAlert={setAlerta}
             />
           )}
+          
+          */}
         </div>
       </div>
 

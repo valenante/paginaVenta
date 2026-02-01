@@ -1,23 +1,60 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useEffect, useMemo, useState, useContext } from "react";
 import { ImageContext } from "../../context/ImagesContext";
 import { cargarSeccionesAPI, cargarEstacionesAPI } from "../../utils/apiCocina";
 import AlefSelect from "../AlefSelect/AlefSelect";
-import "./EditProducts.css";
 
-/* helpers num */
-const normalizeNumberOrNull = (v) => {
+// ✅ reutiliza el CSS del CrearProducto (recomendado)
+// Ajusta la ruta real a tu proyecto:
+import "./CrearProducto.css";
+
+// Si prefieres, puedes dejar EditProducts.css y copiar ahí los estilos --crear.
+// import "./EditProducts.css";
+
+/* =========================
+   Helpers
+========================= */
+const toNumOrNull = (v) => {
   if (v === "" || v == null) return null;
   const n = Number(v);
   return Number.isFinite(n) ? n : null;
 };
 
-const clampNum = (v, min, max) => {
-  const n = Number(v);
-  if (!Number.isFinite(n)) return min;
-  return Math.min(max, Math.max(min, n));
+const safeStr = (v) => (v == null ? "" : String(v));
+
+const ensureTraducciones = (t) => {
+  const base = t && typeof t === "object" ? t : {};
+  return {
+    en: { nombre: safeStr(base?.en?.nombre), descripcion: safeStr(base?.en?.descripcion) },
+    fr: { nombre: safeStr(base?.fr?.nombre), descripcion: safeStr(base?.fr?.descripcion) },
+  };
 };
 
-const EditProduct = ({ product, onSave, onCancel, onDelete }) => {
+const normalizePrecios = (precios) => {
+  const p = precios && typeof precios === "object" ? precios : {};
+  return {
+    // platos
+    precioBase: safeStr(p.precioBase ?? ""),
+    tapa: safeStr(p.tapa ?? ""),
+    racion: safeStr(p.racion ?? ""),
+
+    // bebidas (compatibilidad: a veces guardabas copa/botella)
+    precioCopa: safeStr(p.precioCopa ?? p.copa ?? ""),
+    precioBotella: safeStr(p.precioBotella ?? p.botella ?? ""),
+  };
+};
+
+const EditProduct = ({
+  product,
+  onSave,
+  onCancel,
+
+  // ✅ pásalas desde el padre si las tienes (como en CrearProducto)
+  categorias = [],
+  ingredientesStock = [],
+
+  // ✅ para bloquear receta como en CrearProducto
+  isPlanEsencial = false,
+}) => {
   const {
     dragging,
     handleDragOver,
@@ -26,29 +63,75 @@ const EditProduct = ({ product, onSave, onCancel, onDelete }) => {
     handleFileChange,
   } = useContext(ImageContext);
 
-  const normalizarMapAObjeto = (m) => {
-    if (!m) return {};
-    if (m instanceof Map) return Object.fromEntries(m);
-    if (typeof m === "object") return { ...m };
-    return {};
-  };
-
-  const [formData, setFormData] = useState({
-    ...product,
-
-    // SLA
-    slaDefaultMinutos: product?.slaDefaultMinutos ?? "",
-    slaPorEstacion: normalizarMapAObjeto(product?.slaPorEstacion),
-
-    // CARGA
-    cargaEstacion: product?.cargaEstacion ?? 1,
-    cargaPorEstacion: normalizarMapAObjeto(product?.cargaPorEstacion),
-  });
-
-  const [errors, setErrors] = useState({});
   const [secciones, setSecciones] = useState([]);
   const [estaciones, setEstaciones] = useState([]);
 
+  // === categoría: selector + "Otra..." como en CrearProducto
+  const [usarOtraCategoria, setUsarOtraCategoria] = useState(false);
+
+  // === imagen preview local (sin romper tu subida)
+  const [imageFile, setImageFile] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState("");
+
+  // =========================
+  // FormData inicial = product
+  // =========================
+  const initial = useMemo(() => {
+    const aliasesArr = Array.isArray(product?.aliases) ? product.aliases : [];
+    const alergenosArr = Array.isArray(product?.alergenos) ? product.alergenos : [];
+
+    // receta
+    const recetaArr = Array.isArray(product?.receta) ? product.receta : [];
+
+    return {
+      _id: product?._id,
+
+      nombre: safeStr(product?.nombre),
+      descripcion: safeStr(product?.descripcion),
+
+      traducciones: ensureTraducciones(product?.traducciones),
+
+      categoria: safeStr(product?.categoria),
+      tipo: safeStr(product?.tipo || "plato"), // "plato" | "bebida"
+
+      seccion: safeStr(product?.seccion),
+      estacion: safeStr(product?.estacion),
+
+      precios: normalizePrecios(product?.precios),
+
+      // adicional (unidad extra)
+      adicionales: Array.isArray(product?.adicionales) ? product.adicionales : [],
+      // para UI de input cómodo:
+      adicionalPrecioUI: safeStr(product?.adicionales?.[0]?.precio ?? ""),
+
+      // voz + alergias
+      aliases: aliasesArr,
+      aliasesString: aliasesArr.join(", "),
+      alergenos: alergenosArr,
+
+      // imagen
+      img: safeStr(product?.img || product?.imagen || ""), // compat
+
+      // receta
+      receta: recetaArr,
+      nuevoIng: "",
+      nuevaCantidad: "",
+    };
+  }, [product]);
+
+  const [formData, setFormData] = useState(initial);
+
+  // rehidratar si cambia el producto
+  useEffect(() => setFormData(initial), [initial]);
+
+  // usarOtraCategoria: si hay lista de categorias y la actual no está, abre input
+  useEffect(() => {
+    if (!categorias?.length) return;
+    const actual = safeStr(formData.categoria);
+    setUsarOtraCategoria(actual && !categorias.includes(actual));
+  }, [categorias, formData.categoria]);
+
+  // cargar secciones/estaciones
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -57,666 +140,646 @@ const EditProduct = ({ product, onSave, onCancel, onDelete }) => {
         setSecciones(secs || []);
         setEstaciones(ests || []);
       } catch (err) {
-        console.error("❌ Error cargando secciones/estaciones dinámicas:", err);
+        console.error("❌ Error cargando secciones/estaciones:", err);
       }
     };
-
     fetchData();
   }, []);
 
-  const validateField = (name, value) => {
-    let error = "";
-    switch (name) {
-      case "nombre":
-        if (!value?.trim()) error = "El nombre es obligatorio.";
-        else if (value.length < 3)
-          error = "El nombre debe tener al menos 3 caracteres.";
-        break;
-      case "categoria":
-        if (!value?.trim()) error = "La categoría es obligatoria.";
-        break;
-      case "tipo":
-        if (!value?.trim()) error = "El tipo es obligatorio.";
-        break;
-      case "seccion":
-        if (!value?.trim()) error = "La sección es obligatoria.";
-        break;
-      case "imagen":
-        if (!value?.trim()) error = "La imagen es obligatoria.";
-        break;
-      case "precios.tapa":
-      case "precios.racion":
-        if (value && Number(value) <= 0)
-          error = "El precio debe ser mayor a 0 si está definido.";
-        break;
+  // limpiar preview URL
+  useEffect(() => {
+    return () => {
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
+    };
+  }, [previewUrl]);
 
-      // opcionales (si quieres validar)
-      case "cargaEstacion":
-        if (value !== "" && value != null && Number(value) <= 0)
-          error = "La carga debe ser mayor a 0.";
-        break;
-
-      default:
-        break;
-    }
-    return error;
-  };
-
+  // =========================
+  // Handlers
+  // =========================
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
+    const { name, value } = e.target;
 
-    if (type === "checkbox") {
-      setFormData((prev) => ({
-        ...prev,
-        [name]: checked ? "habilitado" : "deshabilitado",
-      }));
-    } else if (name.startsWith("precios.")) {
+    // precios.*
+    if (name.startsWith("precios.")) {
       const key = name.split(".")[1];
       setFormData((prev) => ({
         ...prev,
-        precios: {
-          ...prev.precios,
-          [key]: value,
-        },
+        precios: { ...prev.precios, [key]: value },
       }));
-    } else {
-      setFormData((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
+      return;
     }
 
-    setErrors((prev) => ({
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const setTraduccion = (lang, campo, value) => {
+    setFormData((prev) => ({
       ...prev,
-      [name]: validateField(name, value),
+      traducciones: {
+        ...prev.traducciones,
+        [lang]: {
+          ...prev.traducciones?.[lang],
+          [campo]: value,
+        },
+      },
     }));
+  };
+
+  const onBlurAliases = (value) => {
+    const parsed = value
+      .split(",")
+      .map((a) => a.trim())
+      .filter(Boolean);
+
+    setFormData((prev) => ({
+      ...prev,
+      aliases: parsed,
+      aliasesString: parsed.join(", "),
+    }));
+  };
+
+  const onChangeAlergenos = (value) => {
+    const arr = value
+      .split(",")
+      .map((a) => a.trim().toLowerCase())
+      .filter(Boolean);
+
+    setFormData((prev) => ({ ...prev, alergenos: arr }));
+  };
+
+  const manejarCambioArchivo = (e) => {
+    const file = e?.target?.files?.[0];
+    if (file) {
+      setImageFile(file);
+      const url = URL.createObjectURL(file);
+      setPreviewUrl(url);
+    }
+    // tu lógica de subida (deja que setee formData.img si subes a cloud)
+    handleFileChange(e, setFormData);
+  };
+
+  const manejarDropArchivo = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const file = e?.dataTransfer?.files?.[0];
+    if (file) {
+      setImageFile(file);
+      const url = URL.createObjectURL(file);
+      setPreviewUrl(url);
+    }
+
+    // tu lógica de subida
+    handleDrop(e, setFormData);
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // ✅ validar (manteniendo tu lógica)
-    const newErrors = {};
-    for (const key in formData) {
-      if (key === "precios") {
-        for (const priceKey in formData.precios) {
-          const error = validateField(
-            `precios.${priceKey}`,
-            formData.precios[priceKey]
-          );
-          if (error) newErrors[`precios.${priceKey}`] = error;
-        }
-      } else {
-        // 🔧 no validar seccion si el tipo NO es "plato"
-        if (key === "seccion" && formData.tipo !== "plato") continue;
+    // ✅ construir payload final como en CrearProducto
+    const precioBase = toNumOrNull(formData.precios.precioBase);
+    if (precioBase == null || precioBase <= 0) return;
 
-        const error = validateField(key, formData[key]);
-        if (error) newErrors[key] = error;
-      }
-    }
+    // adicional
+    const adicionalPrecio = toNumOrNull(formData.adicionalPrecioUI);
+    const adicionales =
+      adicionalPrecio != null && adicionalPrecio > 0
+        ? [{ nombre: "Unidad adicional", precio: adicionalPrecio }]
+        : [];
 
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      return;
-    }
-
-    // ✅ aliases
-    const aliases = (formData.aliasesText || "")
-      .split(",")
-      .map((a) => a.trim())
-      .filter(Boolean);
-
-    // ✅ limpiar SLA por estación: quitar null/"" y dejar números
-    const slaPorEstacionClean = {};
-    for (const [k, v] of Object.entries(formData.slaPorEstacion || {})) {
-      const n = normalizeNumberOrNull(v);
-      if (n != null) slaPorEstacionClean[k] = n;
-    }
-
-    // ✅ limpiar carga por estación: quitar null/"" y dejar números > 0
-    const cargaPorEstacionClean = {};
-    for (const [k, v] of Object.entries(formData.cargaPorEstacion || {})) {
-      const n = normalizeNumberOrNull(v);
-      if (n != null && n > 0) cargaPorEstacionClean[k] = n;
-    }
-
-    const productoFinal = {
+    const payload = {
+      ...product, // conserva campos no editados
       ...formData,
 
-      // SLA
-      slaDefaultMinutos:
-        formData.slaDefaultMinutos === "" ? null : Number(formData.slaDefaultMinutos),
-      slaPorEstacion: slaPorEstacionClean,
+      // precios normalizados
+      precios: {
+        precioBase: toNumOrNull(formData.precios.precioBase) ?? 0,
 
-      // CARGA
-      cargaEstacion: clampNum(formData.cargaEstacion, 0.01, 100),
-      cargaPorEstacion: cargaPorEstacionClean,
+        // platos
+        tapa: toNumOrNull(formData.precios.tapa),
+        racion: toNumOrNull(formData.precios.racion),
+
+        // bebidas
+        precioCopa: toNumOrNull(formData.precios.precioCopa),
+        precioBotella: toNumOrNull(formData.precios.precioBotella),
+      },
+
+      adicionales,
+      aliases: formData.aliases,
+      alergenos: formData.alergenos,
+
+      // receta tal cual (ya son ids + cantidad)
+      receta: Array.isArray(formData.receta) ? formData.receta : [],
     };
 
-    onSave({ ...productoFinal, aliases });
+    // limpia helpers UI
+    delete payload.aliasesString;
+    delete payload.adicionalPrecioUI;
+    delete payload.nuevoIng;
+    delete payload.nuevaCantidad;
+
+    onSave(payload);
   };
 
-  const hasErrors = Object.entries(errors).some(([key, error]) => {
-    if (!error) return false;
-    if (key === "seccion" && formData.tipo !== "plato") return false;
-    return true;
-  });
-
+  // =========================
+  // Render
+  // =========================
   return (
+    <div className="crear-producto-overlay--crear" onClick={onCancel}>
+      <div className="crear-producto-modal--crear" onClick={(e) => e.stopPropagation()}>
+        <h2 className="titulo--crear">Editar producto</h2>
 
-  <div className="alef-modal-overlay">
-    <div className="alef-modal-content-editar">
-      <div className="edit-product--editar">
-        <form onSubmit={handleSubmit} className="form--editar" noValidate>
-          {/* Nombre */}
-          <label className="label--editar">
-            Nombre:
-            <input
-              type="text"
-              name="nombre"
-              value={formData.nombre}
-              onChange={handleChange}
-              className="input--editar"
-            />
-          </label>
-          {errors.nombre && <p className="error--editar">{errors.nombre}</p>}
+        <form onSubmit={handleSubmit} className="form--crear">
+          {/* === COLUMNAS PRINCIPALES === */}
+          <div className="form-columns--crear">
+            {/* -------- Columna 1 -------- */}
+            <section className="form-section--crear">
+              <div className="form-group--crear">
+                <label className="label--crear">
+                  Nombre:
+                  <input
+                    type="text"
+                    name="nombre"
+                    value={formData.nombre}
+                    onChange={handleChange}
+                    className="input--crear"
+                    required
+                  />
+                  <p className="help-text--crear">
+                    Nombre del producto tal y como aparecerá en la carta digital y en el TPV.
+                  </p>
+                </label>
 
-          {/* Descripción */}
-          <label className="label--editar">
-            Descripción:
-            <textarea
-              name="descripcion"
-              value={formData.descripcion}
-              onChange={handleChange}
-              className="textarea--editar"
-            />
-          </label>
-          {errors.descripcion && (
-            <p className="error--editar">{errors.descripcion}</p>
-          )}
+                <label className="label--crear">
+                  Descripción:
+                  <textarea
+                    name="descripcion"
+                    value={formData.descripcion}
+                    onChange={handleChange}
+                    className="textarea--crear"
+                    required
+                  />
+                  <p className="help-text--crear">
+                    Descripción visible para el cliente en la carta digital.
+                  </p>
+                </label>
 
-          {/* Traducciones en Inglés */}
-          <fieldset className="fieldset--editar">
-            <legend className="legend--editar">Traducción en Inglés</legend>
+                {/* === BLOQUE TRADUCCIONES === */}
+                <h4 className="subtitulo--crear">🌍 Traducciones para la carta</h4>
+                <p className="help-text--crear">
+                  Se mostrarán automáticamente cuando el cliente cambie el idioma en la carta.
+                </p>
 
-            <label className="label--editar">
-              Nombre (EN):
-              <input
-                type="text"
-                value={formData.traducciones?.en?.nombre || ""}
-                onChange={(e) =>
-                  setFormData((prev) => ({
-                    ...prev,
-                    traducciones: {
-                      ...prev.traducciones,
-                      en: {
-                        ...prev.traducciones?.en,
-                        nombre: e.target.value,
-                      },
-                    },
-                  }))
-                }
-                className="input--editar"
-                placeholder="Ej: Ham Croquettes"
-              />
-            </label>
+                <label className="label--editar">
+                  Nombre en inglés:
+                  <input
+                    type="text"
+                    value={formData.traducciones?.en?.nombre || ""}
+                    onChange={(e) => setTraduccion("en", "nombre", e.target.value)}
+                    className="input--editar"
+                    placeholder="Ej: Ham croquettes"
+                  />
+                  <p className="help-text--crear">Nombre en inglés visible en la carta.</p>
+                </label>
 
-            <label className="label--editar">
-              Descripción (EN):
-              <textarea
-                value={formData.traducciones?.en?.descripcion || ""}
-                onChange={(e) =>
-                  setFormData((prev) => ({
-                    ...prev,
-                    traducciones: {
-                      ...prev.traducciones,
-                      en: {
-                        ...prev.traducciones?.en,
-                        descripcion: e.target.value,
-                      },
-                    },
-                  }))
-                }
-                className="textarea--editar"
-                placeholder="Ej: Delicious ham croquettes..."
-              />
-            </label>
-          </fieldset>
+                <label className="label--editar">
+                  Descripción en inglés:
+                  <input
+                    type="text"
+                    value={formData.traducciones?.en?.descripcion || ""}
+                    onChange={(e) => setTraduccion("en", "descripcion", e.target.value)}
+                    className="input--editar"
+                    placeholder="Ej: Delicious ham croquettes"
+                  />
+                  <p className="help-text--crear">Descripción en inglés visible en la carta.</p>
+                </label>
 
-          {/* Traducciones en Francés */}
-          <fieldset className="fieldset--editar">
-            <legend className="legend--editar">Traducción en Francés</legend>
+                <label className="label--editar">
+                  Nombre en francés:
+                  <input
+                    type="text"
+                    value={formData.traducciones?.fr?.nombre || ""}
+                    onChange={(e) => setTraduccion("fr", "nombre", e.target.value)}
+                    className="input--editar"
+                    placeholder="Ej: Croquettes au jambon"
+                  />
+                  <p className="help-text--crear">Nombre en francés visible en la carta.</p>
+                </label>
 
-            <label className="label--editar">
-              Nombre (FR):
-              <input
-                type="text"
-                value={formData.traducciones?.fr?.nombre || ""}
-                onChange={(e) =>
-                  setFormData((prev) => ({
-                    ...prev,
-                    traducciones: {
-                      ...prev.traducciones,
-                      fr: {
-                        ...prev.traducciones?.fr,
-                        nombre: e.target.value,
-                      },
-                    },
-                  }))
-                }
-                className="input--editar"
-                placeholder="Ej: Croquettes au jambon"
-              />
-            </label>
+                <label className="label--editar">
+                  Descripción en francés:
+                  <input
+                    type="text"
+                    value={formData.traducciones?.fr?.descripcion || ""}
+                    onChange={(e) => setTraduccion("fr", "descripcion", e.target.value)}
+                    className="input--editar"
+                    placeholder="Ej: Délicieuses croquettes au jambon"
+                  />
+                  <p className="help-text--crear">Descripción en francés visible en la carta.</p>
+                </label>
+              </div>
+            </section>
 
-            <label className="label--editar">
-              Descripción (FR):
-              <textarea
-                value={formData.traducciones?.fr?.descripcion || ""}
-                onChange={(e) =>
-                  setFormData((prev) => ({
-                    ...prev,
-                    traducciones: {
-                      ...prev.traducciones,
-                      fr: {
-                        ...prev.traducciones?.fr,
-                        descripcion: e.target.value,
-                      },
-                    },
-                  }))
-                }
-                className="textarea--editar"
-                placeholder="Ej: Délicieuses croquettes au jambon..."
-              />
-            </label>
-          </fieldset>
+            {/* -------- Columna 2 -------- */}
+            <section className="form-section--crear">
+              <div className="form-group--crear">
+                {/* === CATEGORÍA === */}
+                <label className="label--crear">
+                  Categoría:
+                  {categorias?.length ? (
+                    !usarOtraCategoria ? (
+                      <AlefSelect
+                        label=""
+                        value={formData.categoria}
+                        options={[...categorias, "Otra..."]}
+                        onChange={(value) => {
+                          if (value === "Otra...") {
+                            setUsarOtraCategoria(true);
+                            setFormData((prev) => ({ ...prev, categoria: "" }));
+                          } else {
+                            setUsarOtraCategoria(false);
+                            setFormData((prev) => ({ ...prev, categoria: value }));
+                          }
+                        }}
+                      />
+                    ) : (
+                      <input
+                        type="text"
+                        name="categoria"
+                        placeholder="Escribe nueva categoría"
+                        value={formData.categoria}
+                        onChange={handleChange}
+                        className="input--crear"
+                        required
+                      />
+                    )
+                  ) : (
+                    <input
+                      type="text"
+                      name="categoria"
+                      placeholder="Ej: entrantes, postres..."
+                      value={formData.categoria}
+                      onChange={handleChange}
+                      className="input--crear"
+                      required
+                    />
+                  )}
 
-          {/* Ingredientes */}
-          <label className="label--editar">
-            Ingredientes:
-            <textarea
-              name="ingredientes"
-              value={formData.ingredientes}
-              onChange={handleChange}
-              className="textarea--editar"
-            />
-          </label>
+                  <p className="help-text--crear">
+                    Organiza productos en TPV y permite filtrar la carta por tipo.
+                  </p>
+                </label>
 
-          {/* Categoría */}
-          <label className="label--editar">
-            Categoría:
-            <input
-              type="text"
-              name="categoria"
-              value={formData.categoria}
-              onChange={handleChange}
-              className="input--editar"
-            />
-          </label>
-          {errors.categoria && (
-            <p className="error--editar">{errors.categoria}</p>
-          )}
+                {/* === TIPO === */}
+                <label className="label--crear">
+                  Tipo:
+                  <AlefSelect
+                    value={formData.tipo}
+                    options={["plato", "bebida"]}
+                    onChange={(value) => setFormData((prev) => ({ ...prev, tipo: value }))}
+                  />
+                  <p className="help-text--crear">
+                    Define si se gestiona como plato o bebida.
+                  </p>
+                </label>
 
-          {/* Tipo */}
-          <label className="label--editar">
-            Tipo:
-            <AlefSelect
-              value={formData.tipo}
-              options={[
-                { label: "Plato", value: "plato" },
-                { label: "Bebida", value: "bebida" }
-              ]}
-              placeholder="Selecciona un tipo"
-              onChange={(value) =>
-                setFormData((prev) => ({ ...prev, tipo: value }))
-              }
-            />
-          </label>
+                {/* === SECCIÓN === */}
+                <label className="label--crear">
+                  Sección:
+                  <AlefSelect
+                    value={formData.seccion}
+                    options={secciones.map((sec) => ({ label: sec.nombre, value: sec.slug }))}
+                    onChange={(value) => setFormData((prev) => ({ ...prev, seccion: value }))}
+                  />
+                  <p className="help-text--crear">
+                    Sección predeterminada en cocina (Entrantes, Principales, Postres…).
+                  </p>
+                </label>
 
-          {errors.tipo && <p className="error--editar">{errors.tipo}</p>}
+                {/* === ESTACIÓN === */}
+                {!isPlanEsencial && (
+                  <label className="label--crear">
+                    Estación:
+                    <AlefSelect
+                      value={formData.estacion}
+                      options={estaciones.map((est) => ({ label: est.nombre, value: est.slug }))}
+                      onChange={(value) => setFormData((prev) => ({ ...prev, estacion: value }))}
+                    />
+                    <p className="help-text--crear">
+                      Subdivisión (plancha, freidora, barra, postres…).
+                    </p>
+                  </label>
+                )}
+              </div>
 
-          {formData.tipo === "plato" && (
-            <>
+              {/* === PRECIOS === */}
+              {formData.tipo === "plato" && (
+                <fieldset className="fieldset--crear">
+                  <legend className="legend--crear">Precios plato</legend>
+
+                  <div className="form-group--crear">
+                    <label className="label--crear">
+                      Precio base:
+                      <input
+                        type="number"
+                        name="precios.precioBase"
+                        value={formData.precios.precioBase}
+                        onChange={handleChange}
+                        className="input--crear"
+                        min="0"
+                        step="0.01"
+                        required
+                      />
+                      <p className="help-text--crear">Precio estándar del producto.</p>
+                    </label>
+
+                    <label className="label--crear">
+                      Precio tapa:
+                      <input
+                        type="number"
+                        name="precios.tapa"
+                        value={formData.precios.tapa || ""}
+                        onChange={handleChange}
+                        className="input--crear"
+                        min="0"
+                        step="0.01"
+                      />
+                      <p className="help-text--crear">Opcional si se vende como tapa.</p>
+                    </label>
+
+                    <label className="label--crear">
+                      Precio ración:
+                      <input
+                        type="number"
+                        name="precios.racion"
+                        value={formData.precios.racion || ""}
+                        onChange={handleChange}
+                        className="input--crear"
+                        min="0"
+                        step="0.01"
+                      />
+                      <p className="help-text--crear">Opcional si se vende como ración.</p>
+                    </label>
+                  </div>
+
+                  <fieldset className="fieldset--crear fieldset--adicional">
+                    <legend className="legend--crear">Adicional (unidad extra)</legend>
+                    <p className="help-text--crear">
+                      Permite añadir una unidad extra (ej: 1 croqueta extra).
+                    </p>
+
+                    <label className="label--crear">
+                      Precio del adicional:
+                      <input
+                        type="number"
+                        value={formData.adicionalPrecioUI}
+                        onChange={(e) =>
+                          setFormData((prev) => ({ ...prev, adicionalPrecioUI: e.target.value }))
+                        }
+                        className="input--crear"
+                        min="0"
+                        step="0.01"
+                      />
+                    </label>
+                  </fieldset>
+                </fieldset>
+              )}
+
+              {formData.tipo === "bebida" && (
+                <fieldset className="fieldset--crear">
+                  <legend className="legend--crear">Precios bebida</legend>
+
+                  <label className="label--crear">
+                    Precio base:
+                    <input
+                      type="number"
+                      name="precios.precioBase"
+                      value={formData.precios.precioBase}
+                      onChange={handleChange}
+                      className="input--crear"
+                      min="0"
+                      step="0.01"
+                      required
+                    />
+                    <p className="help-text--crear">Precio estándar si no aplica copa/botella.</p>
+                  </label>
+
+                  <label className="label--crear">
+                    Precio copa:
+                    <input
+                      type="number"
+                      name="precios.precioCopa"
+                      value={formData.precios.precioCopa || ""}
+                      onChange={handleChange}
+                      className="input--crear"
+                      min="0"
+                      step="0.01"
+                    />
+                    <p className="help-text--crear">Opcional para vinos/servicio por copa.</p>
+                  </label>
+
+                  <label className="label--crear">
+                    Precio botella:
+                    <input
+                      type="number"
+                      name="precios.precioBotella"
+                      value={formData.precios.precioBotella || ""}
+                      onChange={handleChange}
+                      className="input--crear"
+                      min="0"
+                      step="0.01"
+                    />
+                    <p className="help-text--crear">Opcional para venta por botella.</p>
+                  </label>
+                </fieldset>
+              )}
+            </section>
+          </div>
+
+          {/* === BLOQUE INFERIOR === */}
+          <section className="form-section--crear">
+            <div className="form-group--crear">
+              <h4 className="subtitulo--crear">🎙️ Aliases para comandas por voz</h4>
+              <p className="help-text--crear">
+                Añade formas habituales de pedirlo (ej: “croqueta”, “croquetas de jamón”, “jamón”).
+              </p>
+
               <label className="label--editar">
-                Sección:
-                <AlefSelect
-                  value={formData.seccion}
-                  options={secciones.map((sec) => ({
-                    label: sec.nombre,
-                    value: sec.slug
-                  }))}
-                  placeholder="Selecciona una sección"
-                  onChange={(value) =>
-                    setFormData((prev) => ({ ...prev, seccion: value }))
-                  }
+                Aliases (separados por comas):
+                <input
+                  type="text"
+                  value={formData.aliasesString}
+                  onChange={(e) => setFormData((prev) => ({ ...prev, aliasesString: e.target.value }))}
+                  onBlur={(e) => onBlurAliases(e.target.value)}
+                  className="input--editar"
+                  placeholder="Ej: croqueta, jamon, croquetas jamon"
                 />
               </label>
 
-              {errors.seccion && <p className="error--editar">{errors.seccion}</p>}
-            </>
-          )}
+              <label className="label--editar">
+                Alérgenos (separados por comas):
+                <input
+                  type="text"
+                  value={formData.alergenos?.join(", ") || ""}
+                  onChange={(e) => onChangeAlergenos(e.target.value)}
+                  className="input--editar"
+                  placeholder="Ej: gluten, lactosa, huevo"
+                />
+                <p className="help-text--crear">Se muestra en carta y ayuda a cocina.</p>
+              </label>
+            </div>
 
-          {/* Estación */}
-          <label className="label--editar">
-            Estación:
-            <AlefSelect
-              value={formData.estacion}
-              options={estaciones.map((est) => ({
-                label: est.nombre,
-                value: est.slug
-              }))}
-              placeholder="Selecciona una estación"
-              onChange={(value) =>
-                setFormData((prev) => ({ ...prev, estacion: value }))
-              }
-            />
-          </label>
+            {/* === IMAGEN === */}
+            <h4 className="subtitulo--crear">🖼️ Imagen del producto</h4>
+            <p className="help-text--crear">
+              Puedes mantener la imagen actual o reemplazarla subiendo una nueva.
+            </p>
 
-          {errors.estacion && <p className="error--editar">{errors.estacion}</p>}
-
-          {/* Precios */}
-          <fieldset className="fieldset--editar">
-            <legend className="legend--editar">Precios</legend>
-
-            {formData.tipo === "bebida" ? (
-              <>
-                <label className="label--editar">
-                  Precio Base:
-                  <input
-                    type="number"
-                    name="precios.precioBase"
-                    value={formData.precios.precioBase || ""}
-                    onChange={handleChange}
-                    className="input--editar"
-                  />
-                </label>
-                <label className="label--editar">
-                  Precio Copa:
-                  <input
-                    type="number"
-                    name="precios.copa"
-                    value={formData.precios.copa || ""}
-                    onChange={handleChange}
-                    className="input--editar"
-                  />
-                </label>
-                <label className="label--editar">
-                  Precio Botella:
-                  <input
-                    type="number"
-                    name="precios.botella"
-                    value={formData.precios.botella || ""}
-                    onChange={handleChange}
-                    className="input--editar"
-                  />
-                </label>
-              </>
-            ) : (
-              <>
-                <label className="label--editar">
-                  Precio Base:
-                  <input
-                    type="number"
-                    name="precios.precioBase"
-                    value={formData.precios.precioBase || ""}
-                    onChange={handleChange}
-                    className="input--editar"
-                  />
-                </label>
-                <label className="label--editar">
-                  Precio Tapa:
-                  <input
-                    type="number"
-                    name="precios.tapa"
-                    value={formData.precios.tapa || ""}
-                    onChange={handleChange}
-                    className="input--editar"
-                  />
-                </label>
-                <label className="label--editar">
-                  Precio Ración:
-                  <input
-                    type="number"
-                    name="precios.racion"
-                    value={formData.precios.racion || ""}
-                    onChange={handleChange}
-                    className="input--editar"
-                  />
-                </label>
-              </>
+            {/* preview actual (si hay URL previa y no hay preview nuevo) */}
+            {!previewUrl && formData.img && (
+              <div className="preview-container" style={{ marginTop: 10 }}>
+                <img src={formData.img} alt="Imagen actual" className="preview-img" />
+              </div>
             )}
-          </fieldset>
 
-          {/* Alérgenos */}
-          <label className="label--editar">
-            Alérgenos (separados por comas):
-            <input
-              type="text"
-              name="alergenos"
-              value={formData.alergenos?.join(", ") || ""}
-              onChange={(e) => {
-                const value = e.target.value
-                  .split(",")
-                  .map((a) => a.trim())
-                  .filter(Boolean);
-                setFormData((prev) => ({ ...prev, alergenos: value }));
-              }}
-              className="input--editar"
-              placeholder="Ej: gluten, lactosa, frutos secos"
-            />
-          </label>
-
-          {/* 🔹 Subida de Imágenes */}
-          <label className="label--editar">
-            Imagen:
-            {/* Campo de texto para URL de la imagen */}
-            <input
-              type="text"
-              name="img"
-              value={formData.img}
-              onChange={handleChange}
-              className="input--editar"
-              placeholder="URL de la imagen"
-            />
-            {/* ✅ Área de subida de imágenes con Drag & Drop */}
             <div
               className={`drop-zone ${dragging ? "dragging" : ""}`}
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
-              onDrop={(e) => handleDrop(e, setFormData)} // Pasamos setFormData aquí
-              onClick={() => document.getElementById("file-upload").click()} // 🔹 Abre el input de archivos al hacer clic
+              onDrop={manejarDropArchivo}
+              onClick={() => document.getElementById("file-upload-edit").click()}
             >
               <p>Arrastra una imagen aquí o haz clic para subir</p>
+
               <input
                 type="file"
-                id="file-upload" // 🔹 ID único para activar con clic
-                onChange={(e) => handleFileChange(e, setFormData)} // Pasamos setFormData aquí
+                id="file-upload-edit"
                 accept="image/*"
+                onChange={manejarCambioArchivo}
                 className="hidden-file-input"
               />
+
+              {imageFile && <p>📂 {imageFile.name}</p>}
             </div>
-          </label>
 
-          {/* Adicional */}
-          <label className="label--editar">
-            Precio Adicional (Unidad extra):
-            <input
-              type="number"
-              value={formData.adicionales?.[0]?.precio || ""}
-              placeholder="Precio del adicional"
-              onChange={(e) => {
-                const nuevoPrecio = parseFloat(e.target.value);
-                setFormData((prev) => ({
-                  ...prev,
-                  adicionales: [{ nombre: "Unidad adicional", precio: nuevoPrecio }],
-                }));
-              }}
-              className="input--editar"
-            />
-          </label>
-
-          {/* ===========================
-                SLA (tiempo)
-            =========================== */}
-          <fieldset className="fieldset--editar">
-            <legend className="legend--editar">⏱️ Tiempo aprox de preparación (min)</legend>
-
-            <label className="label--editar">
-              SLA general (minutos):
-              <input
-                type="number"
-                min="0"
-                value={formData.slaDefaultMinutos ?? ""}
-                onChange={(e) =>
-                  setFormData((prev) => ({
-                    ...prev,
-                    slaDefaultMinutos: e.target.value === "" ? "" : Number(e.target.value),
-                  }))
-                }
-                className="input--editar"
-                placeholder="Ej: 12"
-              />
-            </label>
-            {errors.slaDefaultMinutos && (
-              <p className="error--editar">{errors.slaDefaultMinutos}</p>
+            {previewUrl && (
+              <div className="preview-container">
+                <img src={previewUrl} alt="Vista previa" className="preview-img" />
+              </div>
             )}
+          </section>
 
-            <p className="help-text">
-              Este tiempo se usa si la estación no tiene un SLA específico.
+          {/* === RECETA === */}
+          <fieldset className="fieldset--crear">
+            <legend className="legend--crear">
+              🧪 Receta y control de stock
+              {isPlanEsencial && (
+                <span style={{ marginLeft: 8, fontSize: "14px", color: "#ff6700" }}>
+                  🔒 Solo en plan Profesional
+                </span>
+              )}
+            </legend>
+
+            <p className="help-text--crear">
+              Vincula ingredientes del stock para descontarlos automáticamente cuando se sirve.
             </p>
 
-            <div className="sla-por-estacion">
-              <p className="sla-subtitle">SLA por estación (opcional)</p>
+            <div
+              className="receta-crear-lista"
+              style={{
+                opacity: isPlanEsencial ? 0.45 : 1,
+                pointerEvents: isPlanEsencial ? "none" : "auto",
+              }}
+            >
+              {formData.receta.map((item, index) => {
+                const ing = ingredientesStock.find((i) => i._id === item.ingrediente);
+                return (
+                  <div key={index} className="receta-item--crear">
+                    <span className="receta-nombre--crear">
+                      {ing?.nombre || "Ingrediente eliminado"}
+                    </span>
 
-              {estaciones.map((est) => (
-                <label key={est.slug} className="label--editar sla-row">
-                  {est.nombre}:
-                  <input
-                    type="number"
-                    min="0"
-                    value={formData.slaPorEstacion?.[est.slug] ?? ""}
-                    onChange={(e) => {
-                      const v = e.target.value === "" ? null : Number(e.target.value);
+                    <strong className="receta-cant--crear">
+                      {item.cantidad}
+                      {ing?.unidad || ""}
+                    </strong>
 
-                      setFormData((prev) => {
-                        const next = { ...(prev.slaPorEstacion || {}) };
-                        if (v == null) delete next[est.slug];
-                        else next[est.slug] = v;
-                        return { ...prev, slaPorEstacion: next };
-                      });
-                    }}
-                    className="input--editar"
-                    placeholder="Ej: 8"
-                  />
-                </label>
-              ))}
+                    <button
+                      type="button"
+                      className="btn-icon--crear"
+                      onClick={() => {
+                        const nueva = formData.receta.filter((_, i) => i !== index);
+                        setFormData((prev) => ({ ...prev, receta: nueva }));
+                      }}
+                    >
+                      ❌
+                    </button>
+                  </div>
+                );
+              })}
             </div>
-          </fieldset>
 
-          {/* ===========================
-                CARGA (peso)
-            =========================== */}
-          <fieldset className="fieldset--editar">
-            <legend className="legend--editar">⚖️ Peso / carga de estación (slots)</legend>
+            <div
+              className="receta-add--crear"
+              style={{
+                opacity: isPlanEsencial ? 0.45 : 1,
+                pointerEvents: isPlanEsencial ? "none" : "auto",
+              }}
+            >
+              <AlefSelect
+                label="Ingrediente"
+                options={ingredientesStock.map((i) => ({ label: i.nombre, value: i._id }))}
+                value={formData.nuevoIng}
+                onChange={(v) => setFormData((prev) => ({ ...prev, nuevoIng: v }))}
+                placeholder="Selecciona ingrediente"
+              />
 
-            <label className="label--editar">
-              Carga default (slots):
               <input
                 type="number"
-                min="0.01"
-                step="0.05"
-                value={formData.cargaEstacion ?? 1}
+                className="input--crear"
+                placeholder="Cantidad"
+                value={formData.nuevaCantidad || ""}
                 onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, nuevaCantidad: e.target.value }))
+                }
+              />
+
+              <button
+                type="button"
+                className="boton--secundario"
+                onClick={() => {
+                  if (!formData.nuevoIng || !formData.nuevaCantidad) return;
+
+                  const nuevaLinea = {
+                    ingrediente: formData.nuevoIng,
+                    cantidad: Number(formData.nuevaCantidad),
+                  };
+
                   setFormData((prev) => ({
                     ...prev,
-                    cargaEstacion: e.target.value === "" ? 1 : Number(e.target.value),
-                  }))
-                }
-                className="input--editar"
-                placeholder="Ej: 1"
-              />
-            </label>
-            {errors.cargaEstacion && <p className="error--editar">{errors.cargaEstacion}</p>}
-
-            <p className="help-text">
-              1 = plato normal. 2 = ocupa el doble. 0.5 = rápido/ligero. Decimales permitidos.
-            </p>
-
-            <div className="sla-por-estacion">
-              <p className="sla-subtitle">Carga por estación (opcional)</p>
-
-              {estaciones.map((est) => (
-                <label key={est.slug} className="label--editar sla-row">
-                  {est.nombre}:
-                  <input
-                    type="number"
-                    min="0.01"
-                    step="0.05"
-                    value={formData.cargaPorEstacion?.[est.slug] ?? ""}
-                    onChange={(e) => {
-                      const v = e.target.value === "" ? null : Number(e.target.value);
-
-                      setFormData((prev) => {
-                        const next = { ...(prev.cargaPorEstacion || {}) };
-                        if (v == null) delete next[est.slug];
-                        else next[est.slug] = v;
-                        return { ...prev, cargaPorEstacion: next };
-                      });
-                    }}
-                    className="input--editar"
-                    placeholder="Ej: 1.5"
-                  />
-                </label>
-              ))}
+                    receta: [...prev.receta, nuevaLinea],
+                    nuevoIng: "",
+                    nuevaCantidad: "",
+                  }));
+                }}
+              >
+                ➕ Añadir
+              </button>
             </div>
+
+            {isPlanEsencial && (
+              <p style={{ marginTop: 12, fontSize: 14, textAlign: "center", color: "#ff6700" }}>
+                Para gestionar recetas completas, mejora tu plan a <strong>Profesional</strong>.
+              </p>
+            )}
           </fieldset>
 
-          {/* Aliases */}
-          <label className="label--editar">
-            Aliases (separados por comas):
-            <input
-              type="text"
-              value={formData.aliasesText || formData.aliases?.join(", ") || ""}
-              onChange={(e) =>
-                setFormData((prev) => ({
-                  ...prev,
-                  aliasesText: e.target.value, // guardamos texto plano
-                }))
-              }
-              className="input--editar"
-              placeholder="Ej: croqueta, jamón, croquetas jamón"
-            />
-          </label>
-
-          {/* Editar Stock */}
-          <label className="label--editar">
-            Stock:
-            <input
-              type="number"
-              name="stock"
-              value={formData.stock || ""}
-              onChange={handleChange}
-              className="input--editar"
-            />
-          </label>
-
-          {/* Estado */}
-          <label className="label--editar estado--editar">
-            <input
-              type="checkbox"
-              name="estado"
-              checked={formData.estado === "habilitado"}
-              onChange={handleChange}
-              className="checkbox--editar"
-            />
-            Habilitado
-          </label>
-
-          {/* Botones */}
-          <div className="botones--editar">
-            <button type="submit" disabled={hasErrors} className="boton--editar">
-              Guardar
+          {/* === BOTONES === */}
+          <div className="botones--crear">
+            <button type="submit" className="boton--crear">
+              Guardar cambios
             </button>
+
             <button type="button" onClick={onCancel} className="boton--cancelar">
               Cancelar
             </button>
@@ -724,8 +787,7 @@ const EditProduct = ({ product, onSave, onCancel, onDelete }) => {
         </form>
       </div>
     </div>
-  </div>
-);
+  );
 };
 
 export default EditProduct;

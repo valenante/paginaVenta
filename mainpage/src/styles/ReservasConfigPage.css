@@ -242,7 +242,7 @@
 .modal-config-contenido {
   width: 100%;
   max-width: 960px;
-  max-height: 90vh;
+  max-height: 80vh;
   display: flex;
   flex-direction: column;
   padding: var(--space-lg);

@@ -1,5 +1,6 @@
 // src/components/AlefSelect/AlefSelect.jsx
-import React, { useState, useRef, useEffect } from "react";
+import React, { useEffect, useMemo, useRef, useState, useCallback } from "react";
+import { createPortal } from "react-dom";
 import "./AlefSelect.css";
 
 export default function AlefSelect({
@@ -7,94 +8,168 @@ export default function AlefSelect({
   value,
   options = [],
   onChange,
-  placeholder,
+  placeholder = "Seleccionar...",
+  portal = true,
+  maxHeight = 240,
 }) {
   const [open, setOpen] = useState(false);
-  const ref = useRef();
+  const [pos, setPos] = useState({ top: 0, left: 0, width: 0 });
 
-  /* ================================
-   * Cerrar cuando clicas fuera
-   * ================================ */
+  const wrapperRef = useRef(null);
+  const triggerRef = useRef(null);
+  const menuRef = useRef(null);
+
+  // ---------------------------
+  // Normalizar opciones
+  // ---------------------------
+  const normalizedOptions = useMemo(() => {
+    const normalize = (opt) => {
+      if (!opt) return null;
+
+      if (typeof opt === "string") {
+        return { label: opt, value: opt };
+      }
+
+      if (typeof opt === "object" && ("value" in opt)) {
+        return {
+          label: opt.label ?? String(opt.value),
+          value: opt.value,
+        };
+      }
+
+      return null;
+    };
+
+    return options.map(normalize).filter(Boolean);
+  }, [options]);
+
+  const selected = useMemo(() => {
+    return normalizedOptions.find((o) => o.value === value) || null;
+  }, [normalizedOptions, value]);
+
+  // ---------------------------
+  // Posicionar menú (fixed)
+  // ---------------------------
+  const updatePosition = useCallback(() => {
+    const el = triggerRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    setPos({
+      top: rect.bottom + 6,
+      left: rect.left,
+      width: rect.width,
+    });
+  }, []);
+
   useEffect(() => {
-    const close = (e) => {
-      if (ref.current && !ref.current.contains(e.target)) {
+    if (!open) return;
+
+    updatePosition();
+
+    // IMPORTANTÍSIMO: capture=true para pillar scroll dentro de modales/containers
+    const onScroll = () => updatePosition();
+    const onResize = () => updatePosition();
+
+    window.addEventListener("scroll", onScroll, true);
+    window.addEventListener("resize", onResize);
+
+    return () => {
+      window.removeEventListener("scroll", onScroll, true);
+      window.removeEventListener("resize", onResize);
+    };
+  }, [open, updatePosition]);
+
+  // ---------------------------
+  // Cerrar clic fuera (soporta portal)
+  // ---------------------------
+  useEffect(() => {
+    if (!open) return;
+
+    const onDown = (e) => {
+      const w = wrapperRef.current;
+      const m = menuRef.current;
+
+      const clickInsideWrapper = w && w.contains(e.target);
+      const clickInsideMenu = m && m.contains(e.target);
+
+      if (!clickInsideWrapper && !clickInsideMenu) {
         setOpen(false);
       }
     };
-    document.addEventListener("mousedown", close);
-    return () => document.removeEventListener("mousedown", close);
-  }, []);
 
-  /* ================================
-   * Normalizar opciones SIEMPRE:
-   *  - string → {label, value}
-   *  - object → se usa tal cual
-   * ================================ */
-  const normalizeOption = (opt) => {
-    if (!opt) return null;
+    document.addEventListener("mousedown", onDown, true);
+    return () => document.removeEventListener("mousedown", onDown, true);
+  }, [open]);
 
-    if (typeof opt === "string") {
-      return { label: opt, value: opt };
-    }
+  // Escape para cerrar
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open]);
 
-    if (typeof opt === "object" && opt.value) {
-      return {
-        label: opt.label ?? opt.value,
-        value: opt.value,
-      };
-    }
+  // ---------------------------
+  // Render menu
+  // ---------------------------
+  const menu = open ? (
+    <div
+      ref={menuRef}
+      className="alef-select-menu"
+      style={
+        portal
+          ? {
+              position: "fixed",
+              top: pos.top,
+              left: pos.left,
+              width: pos.width,
+              maxHeight,
+              zIndex: 2147483647, // máximo práctico
+            }
+          : { maxHeight }
+      }
+    >
+      {normalizedOptions.length === 0 ? (
+        <div className="alef-select-option disabled">Sin opciones</div>
+      ) : (
+        normalizedOptions.map((opt, index) => (
+          <div
+            key={`${String(opt.value)}-${index}`}
+            className={`alef-select-option ${value === opt.value ? "selected" : ""}`}
+            onMouseDown={(e) => {
+              // mouseDown > click: evita que se “pierda” el click por blur/capas
+              e.preventDefault();
+              onChange?.(opt.value);
+              setOpen(false);
+            }}
+          >
+            {opt.label}
+          </div>
+        ))
+      )}
+    </div>
+  ) : null;
 
-    return null;
-  };
-
-  const normalizedOptions = options
-    .map(normalizeOption)
-    .filter(Boolean); // evitar nulls
-
-  /* ================================
-   * Seleccionado actual
-   * ================================ */
-  const selected = normalizedOptions.find((o) => o.value === value) || null;
-
-  /* ================================
-   * Render
-   * ================================ */
   return (
-    <div className="alef-select-wrapper" ref={ref}>
+    <div className="alef-select-wrapper" ref={wrapperRef}>
       {label && <label className="alef-select-label">{label}</label>}
 
       <div
+        ref={triggerRef}
         className="alef-select-trigger"
-        onClick={() => setOpen((prev) => !prev)}
+        onClick={() => setOpen((p) => !p)}
       >
-        <span>{selected?.label || placeholder || "Seleccionar..."}</span>
+        <span>{selected?.label || placeholder}</span>
         <div className="alef-select-arrow">▾</div>
       </div>
 
-      {open && (
-        <div className="alef-select-menu">
-          {normalizedOptions.length === 0 && (
-            <div className="alef-select-option disabled">
-              Sin opciones
-            </div>
-          )}
+      {/* Si NO usas portal, el menú vive aquí */}
+      {!portal && menu}
 
-          {normalizedOptions.map((opt, index) => (
-            <div
-              key={`${opt.value}-${index}`}
-              className={`alef-select-option ${
-                value === opt.value ? "selected" : ""
-              }`}
-              onClick={() => {
-                onChange(opt.value); // ← SIEMPRE string correcto
-                setOpen(false);
-              }}
-            >
-              {opt.label}
-            </div>
-          ))}
-        </div>
-      )}
+      {/* Si usas portal, el menú va a document.body */}
+      {portal && menu ? createPortal(menu, document.body) : null}
     </div>
   );
 }

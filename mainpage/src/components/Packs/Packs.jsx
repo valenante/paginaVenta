@@ -68,14 +68,12 @@ const Packs = () => {
 
             {planes.map((plan, index) => {
               const features = Array.isArray(plan.features) ? plan.features : [];
-              const esDestacado =
-                plan.destacado || plan.recomendado || index === 1; // fallback
+              const esDestacado = (plan?.slug || "").toLowerCase() === "tpv-premium";
 
               return (
                 <article
-                  className={`PackCard PackCard-${index} ${
-                    esDestacado ? "PackCard--destacado" : ""
-                  }`}
+                  className={`PackCard PackCard-${index} ${esDestacado ? "PackCard--destacado" : ""
+                    }`}
                   key={plan._id}
                 >
                   {esDestacado && (

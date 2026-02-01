@@ -1,8 +1,11 @@
 /* ============================================================================
-   CREAR PRODUCTO — MODAL ALEF PRO
-   - Fondo: overlay oscuro con blur
-   - Modal: glassmorphism, bordes redondeados, sombra elegante
-   - Layout: 2 columnas en desktop, 1 en mobile
+   CREAR PRODUCTO — MODAL ALEF PRO (v2)
+   Ajustado para:
+   ✅ nuevos subtítulos (subtitulo--crear)
+   ✅ textos explicativos (help-text--crear)
+   ✅ buen espaciado desktop + mobile
+   ✅ tipografías coherentes, sin “ruido”
+   ✅ alineación y jerarquía visual profesional
    ========================================================================== */
 
 /* === OVERLAY === */
@@ -42,9 +45,8 @@
 @keyframes crearModalIn {
   from {
     opacity: 0;
-    transform: translateY(10px) scale(0.98);
+    transform: translateY(10px) scale(0.985);
   }
-
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
@@ -55,12 +57,13 @@
 .titulo--crear {
   margin: 0 0 1.25rem;
   font-size: 1.45rem;
-  font-weight: 600;
+  font-weight: 650;
   letter-spacing: 0.02em;
   color: #e5e7eb;
   display: flex;
   align-items: center;
   gap: 0.6rem;
+  line-height: 1.2;
 }
 
 .titulo--crear::before {
@@ -74,19 +77,16 @@
   flex-direction: column;
   gap: 1.5rem;
   overflow-y: auto;
-  padding-right: 0.25rem;
-  /* para que no muerda el scroll */
+  padding-right: 0.35rem; /* evita que el scroll muerda contenido */
 }
 
 /* Scroll fino dentro del modal */
 .form--crear::-webkit-scrollbar {
   width: 6px;
 }
-
 .form--crear::-webkit-scrollbar-track {
   background: transparent;
 }
-
 .form--crear::-webkit-scrollbar-thumb {
   background: rgba(148, 163, 184, 0.55);
   border-radius: 999px;
@@ -99,15 +99,17 @@
   gap: 1.5rem;
 }
 
+/* === SECCIONES === */
 .form-section--crear {
   background: radial-gradient(circle at top left, rgba(88, 28, 135, 0.35), transparent 55%),
     rgba(15, 23, 42, 0.75);
   border-radius: 1rem;
   border: 1px solid rgba(75, 85, 99, 0.7);
-  padding: 1.25rem 1.25rem 1rem;
+  padding: 1.25rem 1.25rem 1.05rem;
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  overflow: visible;
 }
 
 /* === GRUPOS DE CAMPOS === */
@@ -117,27 +119,62 @@
   gap: 0.85rem;
 }
 
+/* === LABELS === */
 .label--crear,
 .label--editar {
   display: flex;
   flex-direction: column;
   gap: 0.35rem;
   font-size: 0.8rem;
-  font-weight: 500;
+  font-weight: 550;
   text-transform: uppercase;
   letter-spacing: 0.06em;
   color: #9ca3af;
 }
 
-/* Inputs y textareas base */
+/* === SUBTÍTULOS (NUEVO) === */
+.subtitulo--crear {
+  margin: 0.6rem 0 0.25rem;
+  padding: 0;
+  font-size: 0.86rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: #e5e7eb;
+  text-transform: none;
+  line-height: 1.2;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.subtitulo--crear + .help-text--crear {
+  margin-top: 0.1rem;
+}
+
+/* === HELP TEXT (NUEVO) === */
+.help-text--crear {
+  margin: 0.1rem 0 0;
+  font-size: 0.78rem;
+  line-height: 1.45;
+  color: rgba(156, 163, 175, 0.92);
+  text-transform: none;
+  letter-spacing: 0.01em;
+}
+
+.help-text--crear em {
+  font-style: normal;
+  color: rgba(203, 213, 225, 0.9);
+}
+
+/* === Inputs y textareas base === */
 .input--crear,
 .input--editar,
 .textarea--crear {
   border-radius: 0.75rem;
   border: 1px solid rgba(55, 65, 81, 0.9);
   background: radial-gradient(circle at top, rgba(15, 23, 42, 0.3), rgba(15, 23, 42, 0.95));
-  padding: 0.6rem 0.7rem;
-  font-size: 0.88rem;
+  padding: 0.62rem 0.75rem;
+  font-size: 0.9rem;
   color: #e5e7eb;
   outline: none;
   transition:
@@ -148,7 +185,7 @@
 }
 
 .textarea--crear {
-  min-height: 70px;
+  min-height: 78px;
   resize: vertical;
 }
 
@@ -164,13 +201,14 @@
 .input--editar:focus,
 .textarea--crear:focus {
   border-color: #a855f7;
-  box-shadow: 0 0 0 1px rgba(168, 85, 247, 0.7),
+  box-shadow:
+    0 0 0 1px rgba(168, 85, 247, 0.7),
     0 0 0 10px rgba(76, 29, 149, 0.35);
   background: radial-gradient(circle at top, rgba(30, 64, 175, 0.35), rgba(15, 23, 42, 0.98));
   transform: translateY(-0.5px);
 }
 
-/* Disabled / read-only (por si los usas después) */
+/* Disabled / read-only */
 .input--crear[disabled],
 .input--editar[disabled],
 .textarea--crear[disabled] {
@@ -178,29 +216,37 @@
   cursor: not-allowed;
 }
 
-/* === FIELDSETS (Ingredientes / Precios / Adicional) === */
+/* === FIELDSETS === */
 .fieldset--crear {
-  border-radius: 0.9rem;
+  border-radius: 0.95rem;
   border: 1px solid rgba(75, 85, 99, 0.9);
-  padding: 0.9rem 0.95rem 1rem;
+  padding: 0.95rem 1rem 1.05rem;
   margin: 0;
   background: radial-gradient(circle at top left, rgba(55, 65, 81, 0.6), rgba(15, 23, 42, 0.9));
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
 }
 
 .legend--crear {
-  padding: 0 0.4rem;
+  padding: 0 0.45rem;
   font-size: 0.78rem;
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.12em;
   color: #e5e7eb;
 }
 
-/* === LISTA DE INGREDIENTES === */
+/* Si pones help text justo bajo legend */
+.fieldset--crear > .help-text--crear {
+  margin-top: -0.15rem;
+}
+
+/* === LISTA INGREDIENTES (si se usa) === */
 .ingredientes-lista--crear {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.55rem;
   margin-top: 0.35rem;
 }
 
@@ -211,14 +257,14 @@
   align-items: center;
 }
 
-/* Botón icono (X de ingredientes) */
+/* === Botón icono (X) === */
 .btn-icon--crear {
   border: none;
   outline: none;
   cursor: pointer;
-  padding: 0.35rem 0.45rem;
+  padding: 0.35rem 0.48rem;
   border-radius: 999px;
-  font-size: 0.7rem;
+  font-size: 0.72rem;
   background: rgba(127, 29, 29, 0.18);
   color: #fecaca;
   display: inline-flex;
@@ -236,18 +282,19 @@
   transform: translateY(-0.5px) scale(1.02);
 }
 
-/* === BOTÓN SECUNDARIO (Agregar ingrediente) === */
+/* === BOTÓN SECUNDARIO === */
 .boton--secundario {
-  margin-top: 0.4rem;
+  margin-top: 0.2rem;
   border-radius: 999px;
   border: 1px dashed rgba(156, 163, 175, 0.8);
   background: transparent;
   color: #e5e7eb;
-  font-size: 0.82rem;
-  padding: 0.45rem 0.85rem;
+  font-size: 0.84rem;
+  padding: 0.48rem 0.95rem;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 0.35rem;
   transition:
     background 0.16s ease,
@@ -263,25 +310,30 @@
 
 /* === DROPZONE IMAGEN === */
 .drop-zone {
-  margin-top: 0.75rem;
-  border-radius: 0.9rem;
+  margin-top: 0.6rem;
+  border-radius: 0.95rem;
   border: 1px dashed rgba(156, 163, 175, 0.85);
   background: radial-gradient(circle at top, rgba(30, 64, 175, 0.18), rgba(15, 23, 42, 0.9));
-  padding: 0.9rem 0.8rem;
+  padding: 0.95rem 0.9rem;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 0.4rem;
+  gap: 0.45rem;
   text-align: center;
   cursor: pointer;
-  font-size: 0.82rem;
-  color: #9ca3af;
+  font-size: 0.84rem;
+  color: rgba(156, 163, 175, 0.95);
   transition:
     border-color 0.16s ease,
     background 0.16s ease,
     transform 0.06s ease,
     box-shadow 0.16s ease;
+}
+
+.drop-zone:hover {
+  border-color: rgba(248, 250, 252, 0.55);
+  transform: translateY(-0.5px);
 }
 
 .drop-zone.dragging {
@@ -303,12 +355,12 @@
 
 /* === PREVIEW IMAGEN === */
 .preview-container {
-  margin-top: 0.8rem;
-  border-radius: 0.9rem;
+  margin-top: 0.9rem;
+  border-radius: 0.95rem;
   overflow: hidden;
   border: 1px solid rgba(55, 65, 81, 0.9);
   background: radial-gradient(circle at top, rgba(15, 23, 42, 0.7), rgba(15, 23, 42, 1));
-  max-width: 220px;
+  max-width: 240px;
 }
 
 .preview-img {
@@ -320,7 +372,7 @@
 
 /* === FOOTER BOTONES === */
 .botones--crear {
-  margin-top: 0.5rem;
+  margin-top: 0.25rem;
   display: flex;
   justify-content: flex-end;
   gap: 0.75rem;
@@ -330,9 +382,9 @@
 .boton--crear {
   border: none;
   border-radius: 999px;
-  padding: 0.55rem 1.4rem;
-  font-size: 0.9rem;
-  font-weight: 600;
+  padding: 0.58rem 1.45rem;
+  font-size: 0.92rem;
+  font-weight: 700;
   letter-spacing: 0.04em;
   text-transform: uppercase;
   cursor: pointer;
@@ -341,6 +393,7 @@
   box-shadow: 0 4px 18px rgba(255, 103, 0, 0.25);
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 0.4rem;
   transition:
     transform 0.08s ease,
@@ -367,11 +420,12 @@
   border: 1px solid rgba(148, 163, 184, 0.6);
   background: rgba(15, 23, 42, 0.9);
   color: #e5e7eb;
-  font-size: 0.88rem;
-  padding: 0.55rem 1.2rem;
+  font-size: 0.9rem;
+  padding: 0.58rem 1.25rem;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 0.35rem;
   transition:
     background 0.16s ease,
@@ -387,10 +441,8 @@
 
 /* ============================================================================
    RECETA — Estilo Alef PRO
-   Integrado totalmente con el modal CrearProducto
    ========================================================================== */
 
-/* === CONTENEDOR DE LÍNEAS DE RECETA === */
 .receta-crear-lista {
   margin-top: 0.6rem;
   display: flex;
@@ -398,40 +450,32 @@
   gap: 0.55rem;
 }
 
-/* === LÍNEA DE RECETA (Ingrediente + Cantidad + X) === */
 .receta-item--crear {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto auto;
   align-items: center;
   gap: 0.6rem;
   padding: 0.55rem 0.75rem;
-
-  background: radial-gradient(circle at top right,
-      rgba(91, 33, 182, 0.28),
-      transparent 55%),
+  background: radial-gradient(circle at top right, rgba(91, 33, 182, 0.28), transparent 55%),
     rgba(15, 23, 42, 0.75);
   border: 1px solid rgba(75, 85, 99, 0.7);
-  border-radius: 0.7rem;
+  border-radius: 0.75rem;
 }
 
-/* Nombre del ingrediente */
 .receta-nombre--crear {
-  font-size: 0.88rem;
+  font-size: 0.9rem;
   color: #e5e7eb;
-  font-weight: 500;
+  font-weight: 550;
   letter-spacing: 0.01em;
 }
 
-/* Cantidad + unidad */
 .receta-cant--crear {
-  font-size: 0.82rem;
+  font-size: 0.84rem;
   color: #c084fc;
-  font-weight: 600;
+  font-weight: 700;
 }
 
-/* Botón eliminar ya utiliza .btn-icon--crear → no necesita extra */
-
-/* === ÁREA PARA AÑADIR NUEVO INGREDIENTE === */
+/* Área para añadir ingrediente */
 .receta-add--crear {
   margin-top: 0.85rem;
   display: flex;
@@ -440,39 +484,21 @@
   align-items: center;
 }
 
-/* El select AlefSelect ya tiene su propio estilo */
-
-/* Input de cantidad */
+/* Input cantidad receta */
 .receta-add--crear .input--crear {
-  width: 110px;
+  width: 120px;
   text-align: center;
-  padding: 0.55rem;
+  padding: 0.6rem;
 }
 
-/* Botón "Añadir" ya usa .boton--secundario y queda perfecto */
+/* ============================================================================
+   RESPONSIVE
+   ========================================================================== */
 
-/* === Ajuste para móviles === */
-@media (max-width: 680px) {
-  .receta-item--crear {
-    grid-template-columns: 1fr auto;
-    gap: 0.45rem;
-  }
-
-  .receta-add--crear {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .receta-add--crear .input--crear {
-    width: 100%;
-  }
-}
-
-/* === RESPONSIVE === */
 @media (max-width: 960px) {
   .crear-producto-modal--crear {
     max-width: 100%;
-    padding: 1.4rem 1.3rem 1.2rem;
+    padding: 1.35rem 1.2rem 1.15rem;
   }
 
   .form-columns--crear {
@@ -486,8 +512,23 @@
 
   .boton--cancelar,
   .boton--crear {
-    justify-content: center;
     width: 100%;
+  }
+
+  .preview-container {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 680px) {
+  .receta-item--crear {
+    grid-template-columns: 1fr auto;
+    gap: 0.5rem;
+  }
+
+  .receta-add--crear {
+    flex-direction: column;
+    align-items: stretch;
   }
 }
 
@@ -498,9 +539,22 @@
 
   .crear-producto-modal--crear {
     border-radius: 1rem;
+    padding: 1.15rem 1rem 1rem;
   }
 
   .titulo--crear {
     font-size: 1.25rem;
+  }
+
+  .form-section--crear {
+    padding: 1.05rem 1rem 0.95rem;
+  }
+
+  .subtitulo--crear {
+    font-size: 0.86rem;
+  }
+
+  .help-text--crear {
+    font-size: 0.77rem;
   }
 }

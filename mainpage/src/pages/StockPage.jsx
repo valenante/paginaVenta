@@ -15,6 +15,8 @@ const StockPage = () => {
     const [modal, setModal] = useState(null);
     // 🔎 Buscador
     const [search, setSearch] = useState("");
+    const [estadoFiltro, setEstadoFiltro] = useState("todos");
+    // "todos" | "ok" | "bajo" | "critico"
     const { user } = useAuth();
     const isPlanEsencial =
         user?.plan === "esencial" || user?.plan === "tpv-esencial";
@@ -53,6 +55,11 @@ const StockPage = () => {
         if (it.stockActual <= it.stockMinimo) return "bajo";
         return "ok";
     };
+
+    const ingredientesFiltrados = React.useMemo(() => {
+        if (estadoFiltro === "todos") return ingredientes;
+        return ingredientes.filter((ing) => getEstado(ing) === estadoFiltro);
+    }, [ingredientes, estadoFiltro]);
 
     /** ================
      * ELIMINAR INGREDIENTE
@@ -94,6 +101,41 @@ const StockPage = () => {
                                 setPage(1);
                             }}
                         />
+
+                        {/* ✅ Filtro por estado */}
+                        <div className="stock-header-filtros">
+                            <button
+                                type="button"
+                                className={`btn-toggle ${estadoFiltro === "todos" ? "active" : ""}`}
+                                onClick={() => { setEstadoFiltro("todos"); setPage(1); }}
+                            >
+                                Todos
+                            </button>
+
+                            <button
+                                type="button"
+                                className={`btn-toggle ${estadoFiltro === "ok" ? "active" : ""}`}
+                                onClick={() => { setEstadoFiltro("ok"); setPage(1); }}
+                            >
+                                🟢 Óptimo
+                            </button>
+
+                            <button
+                                type="button"
+                                className={`btn-toggle ${estadoFiltro === "bajo" ? "active" : ""}`}
+                                onClick={() => { setEstadoFiltro("bajo"); setPage(1); }}
+                            >
+                                🟠 Bajo
+                            </button>
+
+                            <button
+                                type="button"
+                                className={`btn-toggle ${estadoFiltro === "critico" ? "active" : ""}`}
+                                onClick={() => { setEstadoFiltro("critico"); setPage(1); }}
+                            >
+                                🔴 Crítico
+                            </button>
+                        </div>
                     </div>
                 )}
             </header>
@@ -114,7 +156,7 @@ const StockPage = () => {
                         <div className="stock-error">{error}</div>
                     ) : (
                         <div className="stock-grid">
-                            {ingredientes.map((ing) => {
+                            {ingredientesFiltrados.map((ing) => {
                                 const estado = getEstado(ing);
                                 const porcentaje = Math.min(
                                     100,

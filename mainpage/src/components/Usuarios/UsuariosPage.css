@@ -12,7 +12,7 @@
    GRID PRINCIPAL — DESKTOP 50 / 50
    ========================================================= */
 
-.usuarios-grid{
+.usuarios-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 2rem;
@@ -275,18 +275,106 @@
   background: #555;
 }
 
-@media (max-width: 1200px){
-  .usuarios-grid{
-    grid-template-columns: 1fr;          /* una columna */
+@media (max-width: 1200px) {
+  .usuarios-grid {
+    grid-template-columns: 1fr;
+    /* una columna */
     grid-template-areas:
       "tabla"
       "crear";
     gap: 1.5rem;
   }
 
-  .usuarios-col-table{ grid-area: tabla; }
-  .usuarios-col-create{ grid-area: crear; }
+  .usuarios-col-table {
+    grid-area: tabla;
+  }
+
+  .usuarios-col-create {
+    grid-area: crear;
+  }
 }
+
+/* =========================================================
+   BLOQUE EXPLICATIVO — USUARIOS (INFO)
+   ========================================================= */
+
+.usuarios-info {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  padding: 1.6rem 1.6rem 1.4rem;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.28);
+}
+
+.usuarios-info-header {
+  display: grid;
+  gap: 0.35rem;
+  margin-bottom: 1.2rem;
+}
+
+.usuarios-info-title {
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: 750;
+  color: #f8fafc;
+  letter-spacing: 0.01em;
+}
+
+.usuarios-info-subtitle {
+  margin: 0;
+  color: #cbd5e1;
+  font-size: 0.95rem;
+  line-height: 1.45;
+  opacity: 0.95;
+}
+
+.usuarios-info-cards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.usuarios-info-card {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 1.1rem 1.1rem 1rem;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.22);
+}
+
+.usuarios-info-card h3 {
+  margin: 0 0 0.55rem;
+  font-size: 0.98rem;
+  font-weight: 750;
+  color: #ff6700;
+  letter-spacing: 0.01em;
+}
+
+.usuarios-info-card p {
+  margin: 0;
+  color: #e5e7eb;
+  font-size: 0.9rem;
+  line-height: 1.45;
+  opacity: 0.95;
+}
+
+.usuarios-info-note {
+  margin-top: 0.7rem !important;
+  padding-top: 0.7rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  color: #cbd5e1 !important;
+  opacity: 0.85 !important;
+  font-size: 0.85rem !important;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .usuarios-info-cards {
+    grid-template-columns: 1fr;
+  }
+}
+
 
 /* =========================================================
    RESPONSIVE

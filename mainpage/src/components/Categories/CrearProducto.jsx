@@ -43,7 +43,6 @@ const CrearProducto = ({ onClose, onCreated }) => {
     descripcion: "",
     categoria: "",
     tipo: "",
-    stock: 0,
     seccion: "",
     img: "",
     estacion: "",
@@ -240,6 +239,9 @@ const CrearProducto = ({ onClose, onCreated }) => {
                     className="input--crear"
                     required
                   />
+                  <p className="help-text--crear">
+                    Nombre del producto tal y como aparecerá en la carta digital y en el TPV.
+                  </p>
                 </label>
 
                 <label className="label--crear">
@@ -251,7 +253,17 @@ const CrearProducto = ({ onClose, onCreated }) => {
                     className="textarea--crear"
                     required
                   />
+                  <p className="help-text--crear">
+                    Descripción visible para el cliente en la carta digital. Úsala para detallar
+                    ingredientes, elaboración o características importantes.
+                  </p>
                 </label>
+
+                {/* === BLOQUE TRADUCCIONES === */}
+                <h4 className="subtitulo--crear">🌍 Traducciones para la carta</h4>
+                <p className="help-text--crear">
+                  Estos textos se mostrarán automáticamente cuando el cliente cambie el idioma en la carta.
+                </p>
 
                 {/* Traducciones EN / FR */}
                 <label className="label--editar">
@@ -274,6 +286,9 @@ const CrearProducto = ({ onClose, onCreated }) => {
                     className="input--editar"
                     placeholder="Ej: Ham croquettes"
                   />
+                  <p className="help-text--crear">
+                    Nombre en inglés que verá el cliente en la carta si selecciona ese idioma.
+                  </p>
                 </label>
 
                 <label className="label--editar">
@@ -296,6 +311,9 @@ const CrearProducto = ({ onClose, onCreated }) => {
                     className="input--editar"
                     placeholder="Ej: Delicious ham croquettes"
                   />
+                  <p className="help-text--crear">
+                    Descripción en inglés visible en la carta digital.
+                  </p>
                 </label>
 
                 <label className="label--editar">
@@ -318,6 +336,9 @@ const CrearProducto = ({ onClose, onCreated }) => {
                     className="input--editar"
                     placeholder="Ej: Croquettes au jambon"
                   />
+                  <p className="help-text--crear">
+                    Nombre en francés que verá el cliente en la carta si selecciona ese idioma.
+                  </p>
                 </label>
 
                 <label className="label--editar">
@@ -340,6 +361,9 @@ const CrearProducto = ({ onClose, onCreated }) => {
                     className="input--editar"
                     placeholder="Ej: Délicieuses croquettes au jambon"
                   />
+                  <p className="help-text--crear">
+                    Descripción en francés visible en la carta digital.
+                  </p>
                 </label>
               </div>
             </section>
@@ -350,7 +374,6 @@ const CrearProducto = ({ onClose, onCreated }) => {
                 {/* === CATEGORÍA === */}
                 <label className="label--crear">
                   Categoría:
-
                   {!usarOtraCategoria ? (
                     <AlefSelect
                       label=""
@@ -377,6 +400,10 @@ const CrearProducto = ({ onClose, onCreated }) => {
                       required
                     />
                   )}
+                  <p className="help-text--crear">
+                    La categoría sirve para organizar los productos al tomar nota en el TPV y permite
+                    a los clientes filtrar la carta por tipo de producto.
+                  </p>
                 </label>
 
                 {/* === TIPO === */}
@@ -389,6 +416,9 @@ const CrearProducto = ({ onClose, onCreated }) => {
                       setFormData((prev) => ({ ...prev, tipo: value }))
                     }
                   />
+                  <p className="help-text--crear">
+                    Define si el producto se gestiona como plato o bebida (afecta a precios y flujo de trabajo).
+                  </p>
                 </label>
 
                 {/* === SECCIÓN === */}
@@ -398,12 +428,18 @@ const CrearProducto = ({ onClose, onCreated }) => {
                     value={formData.seccion}
                     options={secciones.map((sec) => ({
                       label: sec.nombre,
-                      value: sec.slug
+                      value: sec.slug,
                     }))}
                     onChange={(value) =>
                       setFormData((prev) => ({ ...prev, seccion: value }))
                     }
                   />
+                  <p className="help-text--crear">
+                    Sección predeterminada del producto en cocina (Entrantes, Principales, Postres…).
+                    Al tomar nota, esta sección se puede modificar si es necesario.
+                    <br />
+                    <em>Las secciones se crean en Dashboard → Datos del restaurante.</em>
+                  </p>
                 </label>
 
                 {/* === ESTACIÓN (solo si el plan NO es esencial) === */}
@@ -420,9 +456,12 @@ const CrearProducto = ({ onClose, onCreated }) => {
                         setFormData((prev) => ({ ...prev, estacion: value }))
                       }
                     />
+                    <p className="help-text--crear">
+                      Subdivisión de cocina/barra a la que irá dirigido este producto al tomar la comanda
+                      (por ejemplo: plancha, freidora, barra, postres…).
+                    </p>
                   </label>
                 )}
-
               </div>
 
               {/* Precios */}
@@ -443,6 +482,9 @@ const CrearProducto = ({ onClose, onCreated }) => {
                         step="0.01"
                         required
                       />
+                      <p className="help-text--crear">
+                        Precio estándar del producto si no aplica “tapa” o “ración”.
+                      </p>
                     </label>
 
                     <label className="label--crear">
@@ -456,6 +498,9 @@ const CrearProducto = ({ onClose, onCreated }) => {
                         min="0"
                         step="0.01"
                       />
+                      <p className="help-text--crear">
+                        Opcional. Se usa si el plato puede pedirse en formato tapa.
+                      </p>
                     </label>
 
                     <label className="label--crear">
@@ -469,6 +514,9 @@ const CrearProducto = ({ onClose, onCreated }) => {
                         min="0"
                         step="0.01"
                       />
+                      <p className="help-text--crear">
+                        Opcional. Se usa si el plato puede pedirse en formato ración.
+                      </p>
                     </label>
                   </div>
 
@@ -476,6 +524,10 @@ const CrearProducto = ({ onClose, onCreated }) => {
                     <legend className="legend--crear">
                       Adicional (unidad extra)
                     </legend>
+                    <p className="help-text--crear">
+                      Permite añadir una unidad extra del producto (por ejemplo: 1 croqueta extra).
+                    </p>
+
                     <label className="label--crear">
                       Precio del adicional:
                       <input
@@ -518,6 +570,9 @@ const CrearProducto = ({ onClose, onCreated }) => {
                       step="0.01"
                       required
                     />
+                    <p className="help-text--crear">
+                      Precio estándar si no aplica “copa” o “botella”.
+                    </p>
                   </label>
 
                   <label className="label--crear">
@@ -531,6 +586,9 @@ const CrearProducto = ({ onClose, onCreated }) => {
                       min="0"
                       step="0.01"
                     />
+                    <p className="help-text--crear">
+                      Opcional. Útil para vinos o bebidas servidas por copa.
+                    </p>
                   </label>
 
                   <label className="label--crear">
@@ -544,6 +602,9 @@ const CrearProducto = ({ onClose, onCreated }) => {
                       min="0"
                       step="0.01"
                     />
+                    <p className="help-text--crear">
+                      Opcional. Útil para vinos o bebidas vendidas por botella.
+                    </p>
                   </label>
                 </fieldset>
               )}
@@ -553,6 +614,12 @@ const CrearProducto = ({ onClose, onCreated }) => {
           {/* === BLOQUE INFERIOR: stock, alias, alérgenos, imagen === */}
           <section className="form-section--crear">
             <div className="form-group--crear">
+              <h4 className="subtitulo--crear">🎙️ Aliases para comandas por voz</h4>
+              <p className="help-text--crear">
+                Los aliases son “subnombres” que el sistema utiliza para reconocer este producto en las comandas por voz.
+                Añade formas habituales de pedirlo (ej: “croqueta”, “croquetas de jamón”, “jamón”).
+              </p>
+
               <label className="label--editar">
                 Aliases (separados por comas):
                 <input
@@ -582,20 +649,6 @@ const CrearProducto = ({ onClose, onCreated }) => {
                 />
               </label>
 
-              <label className="label--crear">
-                Stock:
-                <input
-                  type="number"
-                  name="stock"
-                  value={formData.stock}
-                  onChange={handleChange}
-                  className="input--crear"
-                  min="0"
-                  step="1"
-                  required
-                />
-              </label>
-
               <label className="label--editar">
                 Alérgenos (separados por comas):
                 <input
@@ -612,8 +665,17 @@ const CrearProducto = ({ onClose, onCreated }) => {
                   className="input--editar"
                   placeholder="Ej: gluten, lactosa, huevo"
                 />
+                <p className="help-text--crear">
+                  Ayuda a informar al cliente en la carta y a mejorar la seguridad en cocina.
+                </p>
               </label>
             </div>
+
+            {/* === IMAGEN === */}
+            <h4 className="subtitulo--crear">🖼️ Imagen del producto</h4>
+            <p className="help-text--crear">
+              Esta imagen se mostrará en la carta digital para los clientes. Recomendamos usar una imagen clara y bien iluminada.
+            </p>
 
             {/* Subida de imagen */}
             <div
@@ -656,16 +718,20 @@ const CrearProducto = ({ onClose, onCreated }) => {
           </section>
 
           {/* === RECETA OPCIONAL === */}
-          {/* === RECETA OPCIONAL === */}
           <fieldset className="fieldset--crear">
             <legend className="legend--crear">
-              Receta (opcional)
+              🧪 Receta y control de stock
               {isPlanEsencial && (
                 <span style={{ marginLeft: 8, fontSize: "14px", color: "#ff6700" }}>
                   🔒 Solo en plan Profesional
                 </span>
               )}
             </legend>
+
+            <p className="help-text--crear">
+              La receta sirve para vincular ingredientes del stock a este producto y descontarlos automáticamente cuando se sirve.
+              Es fundamental para controlar inventario y costes con precisión.
+            </p>
 
             {/* LISTA DE INGREDIENTES (DESACTIVADA SI ESENCIAL) */}
             <div

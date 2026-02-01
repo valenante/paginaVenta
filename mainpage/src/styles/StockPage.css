@@ -26,8 +26,15 @@
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(6px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* ===== HEADER ===== */
@@ -105,7 +112,7 @@
   cursor: pointer;
 
   box-shadow: 0 4px 14px rgba(255, 103, 0, 0.28),
-              0 0 0 1px rgba(255, 255, 255, 0.06);
+    0 0 0 1px rgba(255, 255, 255, 0.06);
 
   transition: all 0.22s ease;
 }
@@ -276,6 +283,7 @@
   text-align: center;
   font-size: 1.1rem;
 }
+
 .stock-header-actions {
   display: flex;
   align-items: center;
@@ -323,12 +331,34 @@
   cursor: not-allowed;
 }
 
+.stock-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  /* ✅ importante: evita desbordes */
+}
+
+.stock-header-filtros {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  /* ✅ si no entra, baja línea */
+}
+
+/* (Ya tienes .btn-toggle y .btn-toggle.active definidos) */
+.btn-toggle {
+  white-space: nowrap;
+}
+
 /* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
   .stock-root {
     padding: 1.2rem;
   }
-    /* Asegura que nada se desborde */
+
+  /* Asegura que nada se desborde */
   .stock-header {
     max-width: 100%;
     overflow-x: hidden;
@@ -343,7 +373,15 @@
     align-items: stretch;
   }
 
+  .stock-header-filtros {
+    width: 100%;
+    justify-content: flex-start;
+  }
 
+  .btn-toggle {
+    flex: 1;
+    text-align: center;
+  }
 
   /* Ajuste de grid para cartas */
   .stock-grid {

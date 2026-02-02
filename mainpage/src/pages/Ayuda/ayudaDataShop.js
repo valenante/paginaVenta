@@ -36,7 +36,7 @@ Los cambios se ven de inmediato en la interfaz.
 
 ---
 
-## 🔹 3) Configuración fiscal y VeriFactu (SIF)
+## 🔹 3) Configuración fiscal y VeriFactu (CIF)
 
 Antes de activar facturación avanzada / VeriFactu completa:
 

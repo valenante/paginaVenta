@@ -1,7 +1,7 @@
 import React from "react";
 import { Outlet, NavLink, useNavigate } from "react-router-dom";
 import "../../../styles/AdminLayout.css";
-import { FiHome, FiUsers, FiFileText, FiList, FiSettings, FiLogOut } from "react-icons/fi";
+import { FiHome, FiUsers, FiFileText, FiList, FiSettings, FiLogOut, FiActivity } from "react-icons/fi";
 import api from "../../../utils/api";
 
 export default function AdminLayout() {
@@ -30,6 +30,10 @@ export default function AdminLayout() {
 
           <NavLink to="/superadmin/planes">
             <FiUsers /> Planes
+          </NavLink>
+
+          <NavLink to="/superadmin/monitor">
+            <FiActivity /> Estado del sistema
           </NavLink>
 
           <NavLink to="/superadmin/logs">

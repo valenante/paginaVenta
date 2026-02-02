@@ -23,7 +23,7 @@ export default function MiCuentaPage() {
 
   const [mostrarConfirmacionVF, setMostrarConfirmacionVF] = useState(false);
 
-  // === SIF CONFIG ===
+  // === CIF CONFIG ===
   const [sifForm, setSifForm] = useState({
     cif: "",
     razonSocial: "",
@@ -89,7 +89,7 @@ export default function MiCuentaPage() {
           pais: data.pais || "ES",
         });
       } catch (err) {
-        console.error("Error SIF:", err);
+        console.error("Error CIF:", err);
       }
     };
     fetchSifConfig();
@@ -115,14 +115,14 @@ export default function MiCuentaPage() {
 
       setAlerta({
         tipo: "exito",
-        mensaje: data.message || "Configuración SIF guardada correctamente.",
+        mensaje: data.message || "Configuración CIF guardada correctamente.",
       });
     } catch (err) {
       setAlerta({
         tipo: "error",
         mensaje:
           err?.response?.data?.error ||
-          "Error al guardar configuración SIF.",
+          "Error al guardar configuración CIF.",
       });
     } finally {
       setSifLoading(false);
@@ -362,9 +362,9 @@ export default function MiCuentaPage() {
           </div>
         </div>
 
-        {/* CONFIGURACIÓN SIF */}
+        {/* CONFIGURACIÓN CIF */}
         <div className="micuenta-card">
-          <h2>Datos fiscales (SIF)</h2>
+          <h2>Datos fiscales (CIF)</h2>
 
           <p className="micuenta-sub">
             Estos datos son obligatorios para emitir facturas validadas por

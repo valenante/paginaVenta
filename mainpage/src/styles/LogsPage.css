@@ -5,123 +5,129 @@
 .logs-page-logsAdmin {
   display: flex;
   flex-direction: column;
-  gap: 22px;
+  gap: 18px;
   color: #e5e7eb;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.logs-header-logsAdmin {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
 }
 
 .logs-title-logsAdmin {
-  font-size: 26px;
-  font-weight: 800;
-  margin-bottom: 4px;
+  font-size: 28px;
+  font-weight: 900;
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.logs-subtitle-logsAdmin {
+  margin: 6px 0 0;
+  color: #94a3b8;
+  font-size: 14px;
 }
 
 /* ===== FILTROS ===== */
 
 .logs-filtros-logsAdmin {
-  display: flex;
-  gap: 14px;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: 160px 1fr 220px;
+  gap: 12px;
+  align-items: center;
 
   background: rgba(255,255,255,0.05);
   backdrop-filter: blur(14px);
-  padding: 16px 18px;
+  padding: 14px 16px;
   border-radius: 14px;
   border: 1px solid rgba(255,255,255,0.08);
-
   box-shadow:
     0 10px 30px rgba(0,0,0,0.25),
     0 0 0 1px rgba(255,255,255,0.05);
 }
 
+@media (max-width: 900px) {
+  .logs-filtros-logsAdmin {
+    grid-template-columns: 1fr;
+  }
+}
+
 .logs-input-logsAdmin,
 .logs-select-logsAdmin {
-  padding: 9px 12px;
-  border-radius: 10px;
-  background: rgba(255,255,255,0.12);
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.10);
   border: 1px solid rgba(255,255,255,0.18);
   color: #fff;
   outline: none;
-  min-width: 180px;
-  transition: background 0.2s ease, border-color 0.2s ease;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.12s ease;
 }
 
 .logs-input-logsAdmin:focus,
 .logs-select-logsAdmin:focus {
-  background: rgba(255,255,255,0.15);
-  border-color: #6a0dad;
-  box-shadow: 0 0 0 1px rgba(106,13,173,0.4);
+  background: rgba(255,255,255,0.14);
+  border-color: rgba(106,13,173,0.9);
+  box-shadow: 0 0 0 3px rgba(106,13,173,0.25);
 }
 
 .logs-delete-btn-logsAdmin {
   padding: 10px 14px;
-  background: rgba(239,68,68,0.14);
-  border-radius: 10px;
+  background: rgba(239,68,68,0.16);
+  border-radius: 12px;
   color: #fee2e2;
-  border: none;
+  border: 1px solid rgba(239,68,68,0.25);
   cursor: pointer;
-  font-weight: 600;
-
-  transition: background 0.2s, transform 0.15s ease;
+  font-weight: 700;
+  transition: transform 0.15s ease, background 0.2s ease;
+  white-space: nowrap;
 }
 
 .logs-delete-btn-logsAdmin:hover {
-  background: #ef4444;
-  color: #fff;
-  transform: translateY(-2px);
-}
-
-.logs-pagination-logsAdmin {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 14px;
-  margin-top: 14px;
-}
-
-.logs-pagination-logsAdmin button {
-  padding: 8px 16px;
-  border-radius: 10px;
-  border: none;
-  background: rgba(255,255,255,0.15);
-  color: #fff;
-  cursor: pointer;
-  font-weight: 600;
-  transition: background 0.2s ease;
-}
-
-.logs-pagination-logsAdmin button:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
-.logs-pagination-logsAdmin button:hover:not(:disabled) {
-  background: rgba(255,255,255,0.25);
+  background: rgba(239,68,68,0.28);
+  transform: translateY(-1px);
 }
 
 /* ===== TABLA ===== */
 
+.logs-table-wrapper-logsAdmin {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: 16px;
+}
+
 .logs-table-logsAdmin {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
   background: rgba(255,255,255,0.06);
   backdrop-filter: blur(10px);
-  border-radius: 16px;
-  overflow: hidden;
-
   border: 1px solid rgba(255,255,255,0.08);
+  min-width: 760px;
+}
+
+.logs-table-logsAdmin thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: rgba(2,6,23,0.75);
+  backdrop-filter: blur(10px);
 }
 
 .logs-table-logsAdmin th {
-  background: rgba(0,0,0,0.35);
-  padding: 12px;
+  padding: 12px 12px;
   text-align: left;
-  font-size: 14px;
+  font-size: 13px;
   color: #cbd5e1;
-  font-weight: 600;
+  font-weight: 700;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
 }
 
 .logs-table-logsAdmin td {
-  padding: 10px 12px;
+  padding: 12px 12px;
   font-size: 14px;
   color: #e2e8f0;
   border-bottom: 1px solid rgba(255,255,255,0.05);
@@ -129,46 +135,86 @@
 
 .logs-row-logsAdmin {
   cursor: pointer;
-  transition: background 0.15s ease, transform 0.1s ease;
+  transition: background 0.15s ease;
+}
+
+.logs-row-logsAdmin:nth-child(odd) {
+  background: rgba(255,255,255,0.02);
 }
 
 .logs-row-logsAdmin:hover {
   background: rgba(255,255,255,0.10);
-  transform: translateY(-1px);
-}
-
-/* ===== Niveles ===== */
-
-.logs-nivel-logsAdmin {
-  font-weight: 700;
-  padding: 6px 10px;
-  border-radius: 8px;
-  text-transform: uppercase;
-  font-size: 12px;
-  display: inline-block;
-}
-
-/* INFO */
-.nivel-info {
-  background: rgba(96,165,250,0.2);
-  color: #93c5fd;
-}
-/* WARN */
-.nivel-warn {
-  background: rgba(251,191,36,0.2);
-  color: #fbbf24;
-}
-/* ERROR */
-.nivel-error {
-  background: rgba(239,68,68,0.2);
-  color: #ef4444;
 }
 
 .logs-mensaje-logsAdmin {
-  max-width: 380px;
+  max-width: 440px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.logs-mono-logsAdmin {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 12.5px;
+  color: #dbeafe;
+}
+
+/* ===== Niveles (chip) ===== */
+
+.logs-nivel-logsAdmin {
+  font-weight: 800;
+  padding: 6px 10px;
+  border-radius: 999px;
+  text-transform: uppercase;
+  font-size: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgba(255,255,255,0.10);
+}
+
+.nivel-info {
+  background: rgba(96,165,250,0.18);
+  color: #93c5fd;
+}
+.nivel-warn {
+  background: rgba(251,191,36,0.18);
+  color: #fbbf24;
+}
+.nivel-error {
+  background: rgba(239,68,68,0.18);
+  color: #ef4444;
+}
+
+/* ===== PAGINACIÓN ===== */
+
+.logs-pagination-logsAdmin {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 14px;
+  margin-top: 8px;
+}
+
+.logs-pagination-logsAdmin button {
+  padding: 9px 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.10);
+  color: #fff;
+  cursor: pointer;
+  font-weight: 700;
+  transition: background 0.2s ease, transform 0.12s ease;
+}
+
+.logs-pagination-logsAdmin button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.logs-pagination-logsAdmin button:hover:not(:disabled) {
+  background: rgba(255,255,255,0.18);
+  transform: translateY(-1px);
 }
 
 /* ===== LOADING / EMPTY ===== */
@@ -176,91 +222,183 @@
 .logs-loading-logsAdmin,
 .logs-empty-logsAdmin {
   color: #94a3b8;
-  padding: 20px 4px;
+  padding: 14px 4px;
 }
 
 /* =========================================================
-   MODAL DETALLES LOG
+   MODAL DETALLES LOG (PORTAL)
    ========================================================= */
 
 .logs-modal-logsAdmin {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.65);
-  backdrop-filter: blur(6px);
+  background: rgba(0,0,0,0.70);
+  backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 99;
-
-  animation: fadeLogModal 0.25s ease forwards;
-}
-
-@keyframes fadeLogModal {
-  from { opacity: 0; }
-  to   { opacity: 1; }
+  z-index: 9999; /* 👈 importante */
+  padding: 18px;
 }
 
 .logs-modal-content-logsAdmin {
   width: 100%;
-  max-width: 600px;
+  max-width: 860px;
 
-  background: rgba(15,23,42,0.75);
+  background: rgba(15,23,42,0.82);
   backdrop-filter: blur(18px);
   border-radius: 20px;
-  padding: 26px 30px;
+  border: 1px solid rgba(255,255,255,0.12);
 
-  border: 1px solid rgba(255,255,255,0.1);
   box-shadow:
-    0 28px 60px rgba(0,0,0,0.55),
-    0 0 0 1px rgba(255,255,255,0.05);
+    0 28px 60px rgba(0,0,0,0.60),
+    0 0 0 1px rgba(255,255,255,0.06);
 
-  animation: slideLogModal 0.25s ease;
   color: #fff;
+  overflow: hidden;
 }
 
-@keyframes slideLogModal {
-  from { opacity: 0; transform: translateY(14px); }
-  to   { opacity: 1; transform: translateY(0); }
+.logs-modal-header-logsAdmin {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 18px 18px 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.logs-modal-title-logsAdmin {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 900;
+}
+
+.logs-modal-subtitle-logsAdmin {
+  margin: 6px 0 0;
+  font-size: 13px;
+  color: #94a3b8;
+}
+
+.logs-modal-x-logsAdmin {
+  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(255,255,255,0.10);
+  color: #fff;
+  border-radius: 12px;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  font-weight: 900;
+}
+
+.logs-modal-x-logsAdmin:hover {
+  background: rgba(255,255,255,0.16);
+}
+
+.logs-modal-body-logsAdmin {
+  padding: 16px 18px 18px;
+  max-height: 78vh;
+  overflow: auto;
+}
+
+.logs-modal-grid-logsAdmin {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+@media (max-width: 720px) {
+  .logs-modal-grid-logsAdmin {
+    grid-template-columns: 1fr;
+  }
+}
+
+.logs-kv-logsAdmin {
+  padding: 12px;
+  border-radius: 14px;
+  background: rgba(0,0,0,0.20);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+.logs-kv-logsAdmin span {
+  display: block;
+  color: #94a3b8;
+  font-size: 12px;
+  margin-bottom: 6px;
+}
+
+.logs-kv-logsAdmin strong {
+  font-size: 14px;
+  font-weight: 800;
+  color: #e5e7eb;
+}
+
+.logs-kv-span-logsAdmin {
+  grid-column: span 2;
+}
+
+@media (max-width: 720px) {
+  .logs-kv-span-logsAdmin {
+    grid-column: auto;
+  }
+}
+
+.nivel-chip-logsAdmin {
+  display: inline-flex;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.12);
+}
+
+.logs-json-sections-logsAdmin h3 {
+  margin: 14px 0 8px;
+  font-size: 13px;
+  color: #cbd5e1;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
 }
 
 .logs-pre-logsAdmin {
   background: rgba(0,0,0,0.35);
   padding: 12px;
-  border-radius: 8px;
-  max-height: 260px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.08);
   overflow-y: auto;
   white-space: pre-wrap;
-  font-size: 13px;
+  font-size: 12.5px;
   color: #e5e7eb;
 }
 
-.logs-modal-close-logsAdmin {
+.logs-modal-footer-logsAdmin {
   margin-top: 14px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.logs-modal-close-logsAdmin {
   padding: 10px 16px;
   border-radius: 999px;
-  border: none;
-
-  background: rgba(255,255,255,0.16);
+  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(255,255,255,0.12);
   color: #fff;
-  font-weight: 600;
+  font-weight: 800;
   cursor: pointer;
-
-  transition: background 0.2s ease, transform 0.15s ease;
 }
 
 .logs-modal-close-logsAdmin:hover {
-  background: rgba(255,255,255,0.26);
-  transform: translateY(-2px);
+  background: rgba(255,255,255,0.18);
 }
 
-/* === TABLA RESPONSIVE === */
-.logs-table-wrapper-logsAdmin {
-  width: 100%;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
+/* skeleton loading */
+.logs-modal-loading-logsAdmin {
+  padding: 18px;
+  display: grid;
+  gap: 10px;
 }
 
-.logs-table-logsAdmin {
-  min-width: 700px; /* evita romper diseños en móvil */
+.logs-skeleton-logsAdmin {
+  height: 14px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.10);
 }

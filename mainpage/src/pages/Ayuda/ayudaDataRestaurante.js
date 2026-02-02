@@ -86,7 +86,7 @@ Puedes marcar una estación como **Central**, que ve todos los productos.
 
 ---
 
-## 🔹 7) Configuración SIF / VeriFactu
+## 🔹 7) Configuración CIF / VeriFactu
 
 Antes de activar VeriFactu debes completar:
 
@@ -95,7 +95,7 @@ Antes de activar VeriFactu debes completar:
 - Dirección completa  
 - Municipio, provincia y país  
 
-Después pulsa **Guardar configuración SIF**.
+Después pulsa **Guardar configuración CIF**.
 
 VeriFactu garantizará cumplimiento con la **Ley Antifraude 11/2021**.
 

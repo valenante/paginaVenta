@@ -80,13 +80,13 @@ export default function VerifactuGlobalModal() {
           <h2>VeriFactu pendiente de configurar</h2>
           <p className="vf-modal-text">
             Para poder utilizar el TPV y emitir facturas válidas ante la AEAT,
-            primero debes completar la configuración fiscal (SIF) y activar el
+            primero debes completar la configuración fiscal (CIF) y activar el
             sistema VeriFactu para este restaurante.
           </p>
 
           <p className="vf-modal-text vf-modal-text-sec">
             Rellena los datos fiscales del restaurante, guarda la
-            configuración SIF y después activa VeriFactu desde el panel
+            configuración CIF y después activa VeriFactu desde el panel
             de administración.
           </p>
 

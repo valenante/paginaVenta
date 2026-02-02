@@ -50,7 +50,7 @@
   flex-direction: column;
   gap: var(--space-md);
 
-  /* Si la card crece demasiado (como la SIF) → que haga scroll */
+  /* Si la card crece demasiado (como la CIF) → que haga scroll */
   max-height: 80vh;
   overflow: hidden;
 }
@@ -213,7 +213,7 @@
 }
 
 /*****************************************************
- * SIF CONFIG – GRID FISCAL
+ * CIF CONFIG – GRID FISCAL
  *****************************************************/
 /* ✅ IMPORTANTE: que las celdas puedan encoger sin desbordar */
 .sif-grid {
@@ -251,7 +251,7 @@
   background: #fafafa;
 }
 
-/* Mensaje SIF */
+/* Mensaje CIF */
 .sif-mensaje {
   margin-top: var(--space-sm);
   font-size: var(--font-size-sm);

@@ -103,7 +103,7 @@ export default function TopBar() {
             <>
               <a href="#inicio" onClick={() => setMenuAbierto(false)}>Inicio</a>
               <a href="#ventajas" onClick={() => setMenuAbierto(false)}>Ventajas</a>
-              <a href="#packs" onClick={() => setMenuAbierto(false)}>Packs</a>
+              {/*<a href="#packs" onClick={() => setMenuAbierto(false)}>Packs</a>*/}
               <a href="#capturas" onClick={() => setMenuAbierto(false)}>Capturas</a>
               <a href="#contacto" onClick={() => setMenuAbierto(false)}>Contacto</a>
 
@@ -115,7 +115,7 @@ export default function TopBar() {
                 Iniciar sesión
               </Link>
 
-              <button
+              {/*<button
                 className="TopBar-btn cta"
                 onClick={() => {
                   setMenuAbierto(false);
@@ -124,6 +124,7 @@ export default function TopBar() {
               >
                 Solicitar demo
               </button>
+              */}
             </>
           ) : (
             <>

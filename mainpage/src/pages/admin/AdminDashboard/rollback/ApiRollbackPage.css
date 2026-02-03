@@ -1,0 +1,317 @@
+/* =========================================================
+   API ROLLBACK — PANEL PREMIUM ALEF (estilo AdminMonitor)
+   ========================================================= */
+
+.rb-page {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  color: #e5e7eb;
+}
+
+/* ===== HEADER ===== */
+
+.rb-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.rb-header h2 {
+  font-size: 26px;
+  font-weight: 800;
+  margin: 0;
+}
+
+.rb-muted {
+  opacity: 0.85;
+  margin: 6px 0 0 0;
+  color: #cbd5e1;
+}
+
+/* ===== BUTTONS ===== */
+
+.rb-btn {
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: none;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.rb-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.rb-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+}
+
+.rb-btn-ghost {
+  background: rgba(255,255,255,0.14);
+  color: #f1f5f9;
+}
+
+.rb-btn-ghost:hover:not(:disabled) {
+  background: rgba(255,255,255,0.26);
+}
+
+.rb-btn-danger {
+  background: rgba(239,68,68,0.35);
+  color: #fecaca;
+  border: 1px solid rgba(239,68,68,0.35);
+}
+
+.rb-btn-danger:hover:not(:disabled) {
+  background: rgba(239,68,68,0.45);
+}
+
+/* ===== CARDS (Glass) ===== */
+
+.rb-card {
+  background: rgba(255,255,255,0.06);
+  backdrop-filter: blur(14px);
+  padding: 18px 20px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.08);
+
+  box-shadow:
+    0 12px 32px rgba(0,0,0,0.35),
+    0 0 0 1px rgba(255,255,255,0.05);
+}
+
+.rb-card h3 {
+  margin: 0 0 10px;
+  font-size: 16px;
+  font-weight: 800;
+  color: #cbd5f5;
+}
+
+/* En tu monitor hay “cards” como secciones sueltas.
+   Aquí hacemos una variante nota: */
+.rb-card-note {
+  background: rgba(255,255,255,0.05);
+}
+
+/* ===== GRID ROW ===== */
+
+.rb-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+@media (max-width: 900px) {
+  .rb-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.rb-col {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.rb-line {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0;
+}
+
+/* ===== CODE TAG ===== */
+
+.rb-code {
+  background: rgba(255,255,255,0.10);
+  border: 1px solid rgba(255,255,255,0.12);
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  font-size: 12px;
+  color: #e2e8f0;
+}
+
+/* ===== BADGES ===== */
+
+.rb-badge {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 900;
+  text-transform: uppercase;
+  border: 1px solid rgba(255,255,255,0.12);
+}
+
+.rb-badge.neutral {
+  background: rgba(255,255,255,0.10);
+  color: #e2e8f0;
+}
+
+.rb-badge.warn {
+  background: rgba(251,146,60,0.22);
+  color: #fb923c;
+}
+
+.rb-badge.blue {
+  background: rgba(96,165,250,0.25);
+  color: #93c5fd;
+}
+
+.rb-badge.green {
+  background: rgba(34,197,94,0.20);
+  color: #86efac;
+}
+
+/* ===== SLOTS ===== */
+
+.rb-slots {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.rb-slot {
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.10);
+  border: 1px solid rgba(255,255,255,0.12);
+  font-weight: 900;
+  font-size: 12px;
+  color: #e2e8f0;
+}
+
+.rb-slot.active {
+  background: rgba(255,255,255,0.16);
+  border-color: rgba(255,255,255,0.18);
+}
+
+/* ===== ALERTS ===== */
+
+.rb-alert {
+  border-radius: 14px;
+  padding: 12px 14px;
+  font-weight: 800;
+  margin-top: 10px;
+
+  box-shadow:
+    0 12px 32px rgba(0,0,0,0.25),
+    0 0 0 1px rgba(255,255,255,0.05);
+}
+
+.rb-alert-error {
+  background: rgba(239,68,68,0.20);
+  border: 1px solid rgba(239,68,68,0.22);
+  color: #fecaca;
+}
+
+.rb-alert-ok {
+  background: rgba(34,197,94,0.16);
+  border: 1px solid rgba(34,197,94,0.20);
+  color: #86efac;
+}
+
+/* ===== FORM ===== */
+
+.rb-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 12px;
+}
+
+.rb-label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 800;
+  color: #e2e8f0;
+}
+
+.rb-label input,
+.rb-label textarea {
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.18);
+  color: #fff;
+  outline: none;
+}
+
+.rb-label input:focus,
+.rb-label textarea:focus {
+  background: rgba(255,255,255,0.16);
+  border-color: #6a0dad;
+  box-shadow: 0 0 0 1px rgba(106,13,173,0.45);
+}
+
+.rb-help {
+  font-size: 12px;
+  font-weight: 600;
+  color: #cbd5e1;
+  opacity: 0.95;
+}
+
+/* ===== TARGET BUTTONS ===== */
+
+.rb-targets {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.rb-target {
+  padding: 10px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.18);
+  background: rgba(255,255,255,0.10);
+  color: #f1f5f9;
+  font-weight: 900;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.rb-target:hover:not(:disabled) {
+  background: rgba(255,255,255,0.18);
+  transform: translateY(-2px);
+}
+
+.rb-target.selected {
+  background: rgba(255,255,255,0.22);
+  border-color: rgba(255,255,255,0.26);
+}
+
+.rb-target:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ===== ACTIONS ===== */
+
+.rb-actions {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+/* ===== LIST ===== */
+
+.rb-ul {
+  margin: 8px 0 0 18px;
+  color: #e2e8f0;
+  opacity: 0.9;
+}
+
+.rb-ul li {
+  margin: 8px 0;
+}

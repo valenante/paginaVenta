@@ -11,7 +11,7 @@ const api = axios.create({
 
 const RUTAS_SIN_REFRESH = [
   "/auth/login",
-  "/auth/registro",
+  "/auth/register",
   "/auth/refresh-token",       // <- IMPORTANTE: no intentes refrescar si falla refresh
   "/auth/logout",
 ];
@@ -25,14 +25,36 @@ const runQueue = (error) => {
 };
 
 api.interceptors.request.use((config) => {
+  const userStr = sessionStorage.getItem("user");
+  let role = null;
+
+  try {
+    role = userStr ? JSON.parse(userStr)?.role : null;
+  } catch {
+    role = null;
+  }
+
+  // ✅ superadmin => NUNCA enviar tenant headers
+  if (role === "superadmin") {
+    delete config.headers["x-tenant-id"];
+    delete config.headers["x-tenant-slug"];
+    delete config.headers["X-Tenant-Slug"];
+    delete config.headers["X-Tenant-ID"];
+    return config;
+  }
+
   const tenantId = sessionStorage.getItem("tenantId");
+
   if (tenantId) {
+    // ✅ usa solo UNA convención (te recomiendo x-tenant-id)
     config.headers["x-tenant-id"] = tenantId;
-    config.headers["X-Tenant-Slug"] = tenantId;
+    // si quieres, elimina el slug para no duplicar:
+    delete config.headers["X-Tenant-Slug"];
   } else {
     delete config.headers["x-tenant-id"];
     delete config.headers["X-Tenant-Slug"];
   }
+
   return config;
 });
 

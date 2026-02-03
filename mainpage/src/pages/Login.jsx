@@ -84,6 +84,9 @@ export default function Login() {
 
       // 1️⃣ SUPERADMIN → Panel central Alef
       if (user.role === "superadmin") {
+        sessionStorage.removeItem("tenantId");
+        localStorage.removeItem("tenantId");
+        clearTenant();
         return navigate("/superadmin");
       }
 

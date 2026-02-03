@@ -49,6 +49,8 @@ import SettingsPage from "./pages/admin/SettingsPage";
 import PlanesAdmin from "./pages/admin/PlanesAdmin/PlanesAdmin.jsx";
 import PanelPro from "./pages/PanelPro";
 import AdminMonitorPage from "./pages/admin/AdminMonitor/AdminMonitorPage.jsx";
+import ApiRollbackPage from "./pages/admin/AdminDashboard/rollback/ApiRollbackPage";
+import RestorePage from "./pages/admin/restore/RestorePage";
 
 import SoporteDetalle from "./pages/SoporteDetalle.jsx";
 import SoporteLista from "./pages/SoporteLista.jsx";
@@ -121,7 +123,7 @@ function LandingPage() {
       <Funcionamiento />
       <Features />
       <Gallery />
-      {/*      <Packs />*/  }
+      {/*      <Packs />*/}
       <About />
       <Contact />
       <Footer />
@@ -388,7 +390,9 @@ function AppRoutes() {
         <Route path="logs" element={<LogsPage />} />
         <Route path="tickets" element={<TicketsPage />} />
         <Route path="settings" element={<SettingsPage />} />
-          <Route path="monitor" element={<AdminMonitorPage />} />
+        <Route path="monitor" element={<AdminMonitorPage />} />
+        <Route path="rollback" element={<ApiRollbackPage />} />
+        <Route path="restore" element={<RestorePage />} />
       </Route>
     </Routes>
   );

@@ -12,7 +12,7 @@ import api from "../utils/api";
 const TenantContext = createContext();
 
 /* ================================
-   Helpers: detectar tenantId en URL
+   Helpers: detectar tenantId en aURL
 ================================ */
 const RESERVED_FIRST_SEGMENTS = new Set([
   "", "login", "registro", "forgot-password", "reset-password",
@@ -49,11 +49,7 @@ export const TenantProvider = ({ children }) => {
   const location = useLocation();
 
   const [tenantId, setTenantId] = useState(() => {
-    return (
-      sessionStorage.getItem("tenantId") ||
-      localStorage.getItem("tenantId") ||
-      null
-    );
+    return sessionStorage.getItem("tenantId") || null;
   });
 
   const [tenant, setTenant] = useState(null);
@@ -73,17 +69,6 @@ export const TenantProvider = ({ children }) => {
   useEffect(() => {
     if (tenantId) sessionStorage.setItem("tenantId", tenantId);
     else sessionStorage.removeItem("tenantId"); // ✅
-  }, [tenantId]);
-
-  // ✅ 3) Inyectar X-Tenant-ID en Axios
-  useEffect(() => {
-    const interceptor = api.interceptors.request.use((config) => {
-      const t = tenantId || sessionStorage.getItem("tenantId");
-      if (t) config.headers["X-Tenant-ID"] = t;
-      return config;
-    });
-
-    return () => api.interceptors.request.eject(interceptor);
   }, [tenantId]);
 
   // ✅ 4) Cargar tenant real desde backend cuando haya tenantId

@@ -76,6 +76,12 @@ export default function RestorePage() {
   // ---- Diff expand/collapse
   const [expanded, setExpanded] = useState(() => new Set());
 
+  // ---- Snapshot workflow
+  const [snapshotOpen, setSnapshotOpen] = useState(false);
+  const [snapshotReason, setSnapshotReason] = useState("");
+  const [snapshotType, setSnapshotType] = useState("manual");
+  const [snapshotting, setSnapshotting] = useState(false);
+
   const DOC_TEXT = useMemo(() => {
     return `DISASTER RECOVERY — ALEF (SaaS)
 
@@ -352,6 +358,46 @@ El sistema está preparado para operación real SaaS.
     });
   };
 
+  const doCreateSnapshot = async () => {
+    if (snapshotReason.trim().length < 10) {
+      setError("Motivo obligatorio (mín. 10 caracteres).");
+      return;
+    }
+
+    setSnapshotting(true);
+    setError("");
+    setOkMsg("");
+
+    try {
+      const payload = {
+        reason: snapshotReason.trim(),
+        type: snapshotType, // manual | golden | pre-deploy
+      };
+
+      const { data } = await api.post(
+        `${API_BASE}/backup/snapshot`,
+        payload
+      );
+
+      setSnapshotOpen(false);
+      setSnapshotReason("");
+      setSnapshotType("manual");
+
+      setOkMsg(`📸 Snapshot creado correctamente: ${data?.snapshotId || "—"}`);
+
+      // refrescamos lista
+      await fetchAll();
+    } catch (e) {
+      setError(
+        e?.response?.data?.message ||
+        e?.message ||
+        "No se pudo crear el snapshot"
+      );
+    } finally {
+      setSnapshotting(false);
+    }
+  };
+
   const hasChanges = useMemo(() => {
     return (diffs || []).some((d) => d?.changed === true);
   }, [diffs]);
@@ -427,7 +473,23 @@ El sistema está preparado para operación real SaaS.
       <section className="restore-card">
         <div className="restore-card-header">
           <h3>🗂 Snapshots disponibles</h3>
-          <span className="muted">Selecciona uno para hacer <strong>Stage</strong>.</span>
+
+          <div className="restore-right-actions">
+            <span className="muted">Selecciona uno para hacer <strong>Stage</strong>.</span>
+
+            <button
+              className="rb-btn rb-btn-primary"
+              onClick={() => {
+                setError("");
+                setOkMsg("");
+                setSnapshotReason("");
+                setSnapshotType("manual");
+                setSnapshotOpen(true);
+              }}
+            >
+              📸 Crear snapshot
+            </button>
+          </div>
         </div>
 
         {!snapshots.length && <p className="muted">No hay snapshots disponibles.</p>}
@@ -646,6 +708,63 @@ El sistema está preparado para operación real SaaS.
           </button>
 
           <button className="rb-btn rb-btn-ghost" onClick={() => setApplyOpen(false)} disabled={applying}>
+            Cancelar
+          </button>
+        </div>
+      </Modal>
+      {/* ====== MODAL SNAPSHOT ====== */}
+      <Modal
+        open={snapshotOpen}
+        title="Crear snapshot del sistema"
+        onClose={() => (snapshotting ? null : setSnapshotOpen(false))}
+      >
+        <p className="muted">
+          Esto crea un snapshot completo del sistema (configuración, nginx, scripts y datos compartidos).
+          No afecta a producción.
+        </p>
+
+        <label className="rb-label">
+          Tipo de snapshot
+          <select
+            value={snapshotType}
+            onChange={(e) => setSnapshotType(e.target.value)}
+            disabled={snapshotting}
+          >
+            <option value="manual">Manual</option>
+            <option value="golden">Golden (estado estable)</option>
+            <option value="pre-deploy">Pre-deploy</option>
+          </select>
+          <small className="rb-help">
+            Golden = punto estable recomendado antes de releases importantes.
+          </small>
+        </label>
+
+        <label className="rb-label">
+          Motivo (obligatorio)
+          <textarea
+            rows={4}
+            value={snapshotReason}
+            onChange={(e) => setSnapshotReason(e.target.value)}
+            placeholder="Ej: Snapshot estable previo a venta / restore drill mensual."
+            disabled={snapshotting}
+          />
+          <small className="rb-help">Mínimo 10 caracteres.</small>
+        </label>
+
+        <div className="rb-actions">
+          <button
+            className="rb-btn rb-btn-primary"
+            onClick={doCreateSnapshot}
+            disabled={snapshotting}
+          >
+            {snapshotting ? "Creando…" : "Crear snapshot"}
+          </button>
+
+          <button
+            className="rb-btn rb-btn-ghost"
+            onClick={() => setSnapshotOpen(false)}
+            disabled={snapshotting}
+          >
             Cancelar
           </button>
         </div>

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import api from "../../../utils/api";
 import "./RestorePage.css";
+import MongoTenantRestoreCard from "./components/MongoTenantRestoreCard";
 
 const API_BASE = "/admin/system";
 
@@ -468,6 +469,8 @@ El sistema está preparado para operación real SaaS.
 
         <pre className="restore-doc">{DOC_TEXT}</pre>
       </section>
+
+      <MongoTenantRestoreCard />
 
       {/* ====== SNAPSHOTS ====== */}
       <section className="restore-card">

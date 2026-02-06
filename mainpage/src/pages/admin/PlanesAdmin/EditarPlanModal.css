@@ -1,0 +1,334 @@
+/* EditarPlanModal.css */
+
+/* Overlay */
+.modal-overlay-plansEdit{
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+
+  background: rgba(0,0,0,0.58);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+/* Card */
+.modal-card-plansEdit{
+  width: 90%;
+  max-width: 900px;
+
+  background: rgba(20, 10, 30, 0.92);
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 18px;
+
+  box-shadow: 0 20px 60px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.05);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+
+  overflow: hidden;
+
+  /* Para que en móvil no se salga */
+  max-height: 92vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Title */
+.modal-title-plansEdit{
+  margin: 0;
+  padding: 14px 16px;
+
+  font-size: 20px;
+  font-weight: 900;
+  color: #e5e7eb;
+
+  background: rgba(255,255,255,0.06);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+/* Form wrapper */
+.modal-form-plansEdit{
+  padding: 16px;
+  display: grid;
+
+  /* Desktop: 2 columnas cuando hay espacio */
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 14px;
+
+  /* Scroll interno si hay muchas features */
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Labels */
+.form-label-plansEdit{
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  font-weight: 900;
+  font-size: 13px;
+  color: #e5e7eb;
+}
+
+/* Inputs */
+.input-plansEdit,
+.textarea-plansEdit{
+  width: 90%;
+  padding: 10px 12px;
+
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.14);
+
+  background: rgba(255,255,255,0.10);
+  color: #ffffff;
+
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.2s ease;
+}
+
+.input-plansEdit::placeholder,
+.textarea-plansEdit::placeholder{
+  color: rgba(203,213,225,0.75);
+}
+
+.input-plansEdit:focus,
+.textarea-plansEdit:focus{
+  border-color: rgba(106,13,173,0.70);
+  box-shadow: 0 0 0 2px rgba(106,13,173,0.25);
+  background: rgba(255,255,255,0.12);
+}
+
+/* Textarea */
+.textarea-plansEdit{
+  min-height: 90px;
+  resize: vertical;
+  line-height: 1.45;
+}
+
+/* Full width sections */
+.features-title-plansEdit,
+.features-list-plansEdit,
+.modal-buttons-plansEdit{
+  grid-column: 1 / -1;
+}
+
+/* Features title */
+.features-title-plansEdit{
+  margin: 6px 0 0;
+  font-size: 14px;
+  font-weight: 900;
+  color: #cbd5e1;
+  opacity: 0.95;
+}
+
+/* Empty state */
+.features-empty-plansEdit{
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(0,0,0,0.22);
+  color: #cbd5e1;
+  opacity: 0.95;
+}
+
+/* Features list */
+.features-list-plansEdit{
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+
+  padding: 12px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.08);
+
+  background: rgba(0,0,0,0.22);
+}
+
+/* Feature card */
+.feature-card-plansEdit{
+  display: grid;
+  grid-template-columns: 1fr 44px;
+  gap: 12px;
+  align-items: start;
+
+  padding: 12px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.08);
+
+  background: rgba(255,255,255,0.06);
+  color: #e5e7eb;
+
+  transition: transform 0.15s ease, background 0.2s ease, border-color 0.2s ease;
+}
+
+.feature-card-plansEdit:hover{
+  background: rgba(255,255,255,0.10);
+  border-color: rgba(255,255,255,0.12);
+  transform: translateY(-2px);
+}
+
+.feature-info-plansEdit strong{
+  display: block;
+  font-size: 13px;
+  font-weight: 900;
+  line-height: 1.25;
+}
+
+.feature-desc-plansEdit{
+  margin: 6px 0 0;
+  font-size: 12px;
+  color: #cbd5e1;
+  opacity: 0.92;
+  line-height: 1.35;
+}
+
+.feature-tag-plansEdit{
+  display: block;
+  margin-top: 8px;
+  font-size: 12px;
+  color: #cbd5e1;
+  opacity: 0.85;
+  line-height: 1.35;
+}
+
+.feature-tag-plansEdit code{
+  background: rgba(0,0,0,0.35);
+  padding: 2px 8px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.08);
+  color: #e2e8f0;
+}
+
+/* Checkbox area */
+.feature-checkbox-plansEdit{
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-top: 2px;
+}
+
+.checkbox-plansEdit{
+  width: 18px;
+  height: 18px;
+  accent-color: #6A0DAD;
+  cursor: pointer;
+}
+
+/* Buttons area */
+.modal-buttons-plansEdit{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  padding-top: 6px;
+}
+
+/* Buttons base */
+.btn-primary-plansEdit,
+.btn-secondary-plansEdit{
+  width: 90%;
+  padding: 11px 14px;
+
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.10);
+
+  font-weight: 900;
+  cursor: pointer;
+
+  color: #f1f5f9;
+  transition: transform 0.15s ease, background 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
+}
+
+/* Primary */
+.btn-primary-plansEdit{
+  background: rgba(106,13,173,0.26);
+  border-color: rgba(106,13,173,0.42);
+}
+
+.btn-primary-plansEdit:hover{
+  background: rgba(106,13,173,0.36);
+  transform: translateY(-2px);
+}
+
+/* Secondary */
+.btn-secondary-plansEdit{
+  background: rgba(255,255,255,0.08);
+  border-color: rgba(255,255,255,0.12);
+}
+
+.btn-secondary-plansEdit:hover{
+  background: rgba(255,255,255,0.14);
+  transform: translateY(-2px);
+}
+
+.btn-primary-plansEdit:active,
+.btn-secondary-plansEdit:active{
+  transform: translateY(0px);
+}
+
+.btn-primary-plansEdit:disabled,
+.btn-secondary-plansEdit:disabled{
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Scrollbar (subtle) */
+.modal-form-plansEdit::-webkit-scrollbar{
+  width: 10px;
+}
+.modal-form-plansEdit::-webkit-scrollbar-thumb{
+  background: rgba(255,255,255,0.14);
+  border-radius: 999px;
+  border: 2px solid rgba(0,0,0,0);
+  background-clip: padding-box;
+}
+.modal-form-plansEdit::-webkit-scrollbar-track{
+  background: rgba(0,0,0,0.18);
+}
+
+/* MOBILE */
+@media (max-width: 560px){
+  .modal-overlay-plansEdit{
+    padding: 12px;
+    align-items: center; /* estilo bottom-sheet suave */
+  }
+
+  .modal-card-plansEdit{
+    border-radius: 18px 18px 14px 14px;
+    max-height: 92vh;
+  }
+
+  .modal-title-plansEdit{
+    font-size: 18px;
+    padding: 12px 14px;
+  }
+
+  .modal-form-plansEdit{
+    padding: 14px;
+    gap: 12px;
+    grid-template-columns: 1fr;
+  }
+
+  .features-list-plansEdit{
+    grid-template-columns: 1fr; /* cards en una columna */
+    padding: 10px;
+  }
+
+  .modal-buttons-plansEdit{
+    gap: 10px;
+  }
+}
+
+/* Reduce motion */
+@media (prefers-reduced-motion: reduce){
+  .feature-card-plansEdit,
+  .btn-primary-plansEdit,
+  .btn-secondary-plansEdit{
+    transition: none;
+  }
+}

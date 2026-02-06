@@ -1,7 +1,7 @@
-/* featureModal.css */
+/* featureEditModal.css  (archivo aparte) */
 
 /* Overlay */
-.modal-overlay-featureCreate{
+.modal-overlay-featureEdit{
   position: fixed;
   inset: 0;
   z-index: 9999;
@@ -16,9 +16,9 @@
 }
 
 /* Card */
-.modal-card-featureCreate{
+.modal-card-featureEdit{
   width: 90%;
-  max-width: 760px;
+  max-width: 780px;
 
   background: rgba(20, 10, 30, 0.92);
   border: 1px solid rgba(255,255,255,0.10);
@@ -30,14 +30,13 @@
 
   overflow: hidden;
 
-  /* Para que no se salga en móvil */
   max-height: 92vh;
   display: flex;
   flex-direction: column;
 }
 
 /* Title */
-.modal-title-featureCreate{
+.modal-title-featureEdit{
   margin: 0;
   padding: 14px 16px;
 
@@ -50,11 +49,9 @@
 }
 
 /* Form */
-.modal-form-featureCreate{
+.modal-form-featureEdit{
   padding: 16px;
   display: grid;
-
-  /* 2 columnas en desktop si hay espacio */
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 14px;
 
@@ -63,7 +60,7 @@
 }
 
 /* Labels */
-.form-label-featureCreate{
+.form-label-featureEdit{
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -74,9 +71,9 @@
 }
 
 /* Inputs / Select / Textarea */
-.input-featureCreate,
-.select-featureCreate,
-.textarea-featureCreate{
+.input-featureEdit,
+.select-featureEdit,
+.textarea-featureEdit{
   width: 90%;
   padding: 10px 12px;
 
@@ -90,48 +87,106 @@
   transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.2s ease;
 }
 
-.input-featureCreate::placeholder,
-.textarea-featureCreate::placeholder{
+.input-featureEdit::placeholder,
+.textarea-featureEdit::placeholder{
   color: rgba(203,213,225,0.75);
 }
 
-.input-featureCreate:focus,
-.select-featureCreate:focus,
-.textarea-featureCreate:focus{
+.input-featureEdit:focus,
+.select-featureEdit:focus,
+.textarea-featureEdit:focus{
   border-color: rgba(106,13,173,0.70);
   box-shadow: 0 0 0 2px rgba(106,13,173,0.25);
   background: rgba(255,255,255,0.12);
 }
 
-/* Select */
-.select-featureCreate{
+.select-featureEdit{
   cursor: pointer;
 }
 
-/* Textarea */
-.textarea-featureCreate{
+.textarea-featureEdit{
   min-height: 110px;
   resize: vertical;
   line-height: 1.45;
 }
 
-/* Full width areas */
-.form-label-featureCreate:last-of-type,
-.modal-buttons-featureCreate{
+/* Full width sections */
+.form-label-featureEdit:last-of-type,
+.switch-label-featureEdit,
+.modal-buttons-featureEdit{
   grid-column: 1 / -1;
 }
 
+/* ===== SWITCH ===== */
+.switch-label-featureEdit{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  padding: 12px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(0,0,0,0.22);
+}
+
+/* Checkbox hidden, we draw the switch */
+.switch-checkbox-featureEdit{
+  appearance: none;
+  -webkit-appearance: none;
+  width: 46px;
+  height: 26px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(255,255,255,0.10);
+  position: relative;
+  cursor: pointer;
+  outline: none;
+  transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.switch-checkbox-featureEdit::after{
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 4px;
+  transform: translateY(-50%);
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+
+  background: rgba(255,255,255,0.85);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.35);
+  transition: left 0.2s ease, background 0.2s ease;
+}
+
+.switch-checkbox-featureEdit:checked{
+  background: rgba(34,197,94,0.18);
+  border-color: rgba(34,197,94,0.30);
+  box-shadow: 0 0 0 2px rgba(34,197,94,0.18);
+}
+
+.switch-checkbox-featureEdit:checked::after{
+  left: 24px;
+  background: rgba(255,255,255,0.95);
+}
+
+.switch-text-featureEdit{
+  font-weight: 900;
+  font-size: 13px;
+  color: #e5e7eb;
+  opacity: 0.95;
+}
+
 /* Buttons */
-.modal-buttons-featureCreate{
+.modal-buttons-featureEdit{
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 12px;
   padding-top: 6px;
 }
 
-/* Button base */
-.btn-primary-featureCreate,
-.btn-secondary-featureCreate{
+.btn-primary-featureEdit,
+.btn-secondary-featureEdit{
   width: 90%;
   padding: 11px 14px;
 
@@ -146,85 +201,90 @@
 }
 
 /* Primary */
-.btn-primary-featureCreate{
+.btn-primary-featureEdit{
   background: rgba(106,13,173,0.26);
   border-color: rgba(106,13,173,0.42);
 }
 
-.btn-primary-featureCreate:hover{
+.btn-primary-featureEdit:hover{
   background: rgba(106,13,173,0.36);
   transform: translateY(-2px);
 }
 
 /* Secondary */
-.btn-secondary-featureCreate{
+.btn-secondary-featureEdit{
   background: rgba(255,255,255,0.08);
   border-color: rgba(255,255,255,0.12);
 }
 
-.btn-secondary-featureCreate:hover{
+.btn-secondary-featureEdit:hover{
   background: rgba(255,255,255,0.14);
   transform: translateY(-2px);
 }
 
-.btn-primary-featureCreate:active,
-.btn-secondary-featureCreate:active{
+.btn-primary-featureEdit:active,
+.btn-secondary-featureEdit:active{
   transform: translateY(0px);
 }
 
-.btn-primary-featureCreate:disabled,
-.btn-secondary-featureCreate:disabled{
+.btn-primary-featureEdit:disabled,
+.btn-secondary-featureEdit:disabled{
   opacity: 0.55;
   cursor: not-allowed;
   transform: none;
 }
 
 /* Scrollbar */
-.modal-form-featureCreate::-webkit-scrollbar{
+.modal-form-featureEdit::-webkit-scrollbar{
   width: 10px;
 }
-.modal-form-featureCreate::-webkit-scrollbar-thumb{
+.modal-form-featureEdit::-webkit-scrollbar-thumb{
   background: rgba(255,255,255,0.14);
   border-radius: 999px;
   border: 2px solid rgba(0,0,0,0);
   background-clip: padding-box;
 }
-.modal-form-featureCreate::-webkit-scrollbar-track{
+.modal-form-featureEdit::-webkit-scrollbar-track{
   background: rgba(0,0,0,0.18);
 }
 
 /* MOBILE */
 @media (max-width: 560px){
-  .modal-overlay-featureCreate{
+  .modal-overlay-featureEdit{
     padding: 12px;
-    align-items: center; /* look tipo bottom-sheet */
+    align-items: center; /* tipo bottom-sheet */
   }
 
-  .modal-card-featureCreate{
+  .modal-card-featureEdit{
     border-radius: 18px 18px 14px 14px;
     max-height: 92vh;
   }
 
-  .modal-title-featureCreate{
+  .modal-title-featureEdit{
     font-size: 18px;
     padding: 12px 14px;
   }
 
-  .modal-form-featureCreate{
+  .modal-form-featureEdit{
     padding: 14px;
     gap: 12px;
     grid-template-columns: 1fr;
   }
 
-  .modal-buttons-featureCreate{
+  .modal-buttons-featureEdit{
     gap: 10px;
+  }
+
+  .switch-label-featureEdit{
+    padding: 10px 10px;
   }
 }
 
 /* Reduce motion */
 @media (prefers-reduced-motion: reduce){
-  .btn-primary-featureCreate,
-  .btn-secondary-featureCreate{
+  .btn-primary-featureEdit,
+  .btn-secondary-featureEdit,
+  .switch-checkbox-featureEdit{
     transition: none;
   }
 }

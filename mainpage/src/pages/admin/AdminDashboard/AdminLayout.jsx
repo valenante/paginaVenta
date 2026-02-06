@@ -10,6 +10,7 @@ import {
   FiLogOut,
   FiActivity,
   FiRefreshCcw,
+  FiDatabase,
 } from "react-icons/fi";
 import api from "../../../utils/api";
 
@@ -64,6 +65,10 @@ export default function AdminLayout() {
 
           <NavLink to="/superadmin/rgpd">
             <FiFileText /> RGPD & Datos
+          </NavLink>
+
+          <NavLink to="/superadmin/migrations">
+            <FiDatabase /> Migraciones DB
           </NavLink>
 
           <NavLink to="/superadmin/logs">

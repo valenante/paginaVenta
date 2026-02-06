@@ -1,0 +1,239 @@
+/* ===============================
+   MIGRATIONS TENANT PAGE
+=============================== */
+
+.mig-tenant-page {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  color: #e5e7eb;
+}
+
+/* ===============================
+   HEADER
+=============================== */
+
+.mig-tenant-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.mig-tenant-header h2 {
+  font-size: 26px;
+  font-weight: 900;
+  margin: 6px 0 0;
+}
+
+.mig-sub {
+  opacity: 0.85;
+  color: #cbd5e1;
+  margin-top: 6px;
+  font-size: 13px;
+}
+
+.mig-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* ===============================
+   BUTTONS
+=============================== */
+
+.mig-btn {
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.10);
+  font-weight: 800;
+  cursor: pointer;
+  background: rgba(255,255,255,0.10);
+  color: #f1f5f9;
+  transition: transform 0.15s ease, background 0.2s ease, opacity 0.2s ease;
+}
+
+.mig-btn:hover {
+  background: rgba(255,255,255,0.18);
+  transform: translateY(-2px);
+}
+
+.mig-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.mig-btn.ghost {
+  background: rgba(255,255,255,0.06);
+}
+
+.mig-btn.ghost:hover {
+  background: rgba(255,255,255,0.14);
+}
+
+/* ===============================
+   PANELS (Pending / Dry-run)
+=============================== */
+
+.mig-tenant-panels {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 16px;
+}
+
+.mig-panel {
+  background: rgba(255,255,255,0.06);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 16px;
+  padding: 16px 18px;
+  box-shadow:
+    0 12px 32px rgba(0,0,0,0.35),
+    0 0 0 1px rgba(255,255,255,0.05);
+}
+
+.mig-panel-title {
+  font-size: 14px;
+  font-weight: 900;
+  margin-bottom: 10px;
+  color: #f1f5f9;
+}
+
+/* ===============================
+   LISTS
+=============================== */
+
+.mig-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.mig-list li {
+  background: rgba(0,0,0,0.30);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  padding: 6px 10px;
+  font-size: 13px;
+}
+
+/* ===============================
+   TABLE WRAPPER
+=============================== */
+
+.mig-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.mig-table-wrap h3 {
+  font-size: 18px;
+  font-weight: 900;
+  margin: 4px 0 12px;
+}
+
+/* ===============================
+   TABLE
+=============================== */
+
+.mig-table {
+  width: 100%;
+  min-width: 920px;
+  border-collapse: collapse;
+  background: rgba(255,255,255,0.06);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+.mig-table th {
+  background: rgba(0,0,0,0.35);
+  padding: 12px;
+  text-align: left;
+  font-size: 13px;
+  color: #cbd5e1;
+}
+
+.mig-table td {
+  padding: 10px 12px;
+  font-size: 14px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  color: #e2e8f0;
+}
+
+.mig-table tr:hover {
+  background: rgba(255,255,255,0.10);
+}
+
+/* ===============================
+   BADGES
+=============================== */
+
+.mig-badge {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 900;
+  text-transform: uppercase;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(255,255,255,0.08);
+}
+
+.mig-badge.ok {
+  background: rgba(34,197,94,0.18);
+  border-color: rgba(34,197,94,0.25);
+  color: #86efac;
+}
+
+.mig-badge.warn {
+  background: rgba(251,146,60,0.18);
+  border-color: rgba(251,146,60,0.25);
+  color: #fdba74;
+}
+
+.mig-badge.bad {
+  background: rgba(239,68,68,0.18);
+  border-color: rgba(239,68,68,0.25);
+  color: #fecaca;
+}
+
+.mig-badge.neutral {
+  opacity: 0.9;
+}
+
+/* ===============================
+   STATES
+=============================== */
+
+.mig-loading,
+.mig-empty {
+  padding: 22px;
+  text-align: center;
+  opacity: 0.85;
+  color: #cbd5e1;
+}
+
+.mig-error {
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(239,68,68,0.25);
+  background: rgba(239,68,68,0.14);
+  color: #fecaca;
+}
+
+/* ===============================
+   MONO TEXT
+=============================== */
+
+.mig-mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 13px;
+}

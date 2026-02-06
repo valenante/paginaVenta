@@ -52,11 +52,12 @@ import AdminMonitorPage from "./pages/admin/AdminMonitor/AdminMonitorPage.jsx";
 import ApiRollbackPage from "./pages/admin/AdminDashboard/rollback/ApiRollbackPage";
 import RestorePage from "./pages/admin/restore/RestorePage";
 import RgpdPage from "./pages/admin/restore/RgpdPage.jsx";
-
+import MigrationsPage from "./pages/admin/AdminDashboard/migrations/MigrationsPage.jsx";
 import SoporteDetalle from "./pages/SoporteDetalle.jsx";
 import SoporteLista from "./pages/SoporteLista.jsx";
 import SoporteNuevo from "./pages/SoporteNuevo.jsx";
 import AyudaPage from "./pages/Ayuda/AyudaPage.jsx";
+import MigrationsTenantPage from "./pages/admin/AdminDashboard/migrations/MigrationsTenantPage.jsx";
 
 
 import TenantTable from "./pages/admin/AdminDashboard/components/TenantTable.jsx";
@@ -395,6 +396,8 @@ function AppRoutes() {
         <Route path="rollback" element={<ApiRollbackPage />} />
         <Route path="restore" element={<RestorePage />} />
         <Route path="rgpd" element={<RgpdPage />} />
+        <Route path="migrations" element={<MigrationsPage />} />
+        <Route path="migrations/:slug" element={<MigrationsTenantPage />} />
       </Route>
     </Routes>
   );

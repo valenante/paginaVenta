@@ -1,7 +1,7 @@
 // src/pages/admin/AdminDashboard/components/ConfirmDeleteModal.jsx
 import Modal from "react-modal";
 Modal.setAppElement("#root");
-
+import "./ConfirmDeleteModal.css";
 export default function ConfirmDeleteModal({ tenant, onCancel, onConfirm }) {
   return (
     <Modal

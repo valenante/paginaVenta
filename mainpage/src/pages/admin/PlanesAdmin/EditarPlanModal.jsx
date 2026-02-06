@@ -1,6 +1,7 @@
 // src/pages/admin/PlanesAdmin/EditarPlanModal.jsx
 import { useState } from "react";
 import api from "../../../utils/api";
+import './EditarPlanModal.css';
 
 export default function EditarPlanModal({ plan, onClose, onSave, features = [] }) {
   const [form, setForm] = useState({

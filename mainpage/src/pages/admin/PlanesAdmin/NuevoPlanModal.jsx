@@ -1,6 +1,7 @@
 // NuevoPlanModal.jsx
 import { useState, useEffect } from "react";
 import api from "../../../utils/api";
+import './NuevoPlanModal.css';
 
 export default function NuevoPlanModal({ onClose, onSave }) {
   const [form, setForm] = useState({

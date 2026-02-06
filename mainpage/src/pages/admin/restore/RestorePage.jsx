@@ -269,28 +269,6 @@ El sistema está preparado para operación real SaaS.
     setStageOpen(true);
   };
 
-  const doRgpdExport = async (confirmValue) => {
-    if (confirmValue !== rgpdTenant) {
-      setError("El texto de confirmación no coincide con el tenant.");
-      return;
-    }
-
-    setRgpdExporting(true);
-    setError("");
-    setOkMsg("");
-
-    try {
-      window.location.href = `${API_BASE}/rgpd/export?tenant=${encodeURIComponent(rgpdTenant)}`;
-
-      setOkMsg(`📄 Exportación RGPD iniciada para tenant: ${rgpdTenant}`);
-      setRgpdOpen(false);
-    } catch (e) {
-      setError("No se pudo iniciar la exportación RGPD.");
-    } finally {
-      setRgpdExporting(false);
-    }
-  };
-
   const doStage = async () => {
     if (!stageSnapshot?.id) return;
 
@@ -499,42 +477,6 @@ El sistema está preparado para operación real SaaS.
       </section>
 
       <MongoTenantRestoreCard />
-
-      {/* ====== RGPD EXPORT ====== */}
-      <section className="restore-card">
-        <div className="restore-card-header">
-          <h3>📄 Exportación RGPD (Legal)</h3>
-          <Badge tone="warn">SUPERADMIN</Badge>
-        </div>
-
-        <p className="muted">
-          Permite exportar todos los datos personales asociados a un tenant
-          (derecho de acceso y portabilidad – RGPD).
-        </p>
-
-        <div className="rb-row">
-          <label className="rb-label">
-            Tenant
-            <input
-              value={rgpdTenant}
-              onChange={(e) => setRgpdTenant(e.target.value)}
-              placeholder="ej: zabor-feten"
-              disabled={rgpdExporting}
-            />
-            <small className="rb-help">
-              Slug del tenant (base de datos).
-            </small>
-          </label>
-
-          <button
-            className="rb-btn rb-btn-danger"
-            onClick={() => setRgpdOpen(true)}
-            disabled={!rgpdTenant}
-          >
-            📄 Exportar RGPD
-          </button>
-        </div>
-      </section>
 
       {/* ====== SNAPSHOTS ====== */}
       <section className="restore-card">
@@ -836,22 +778,6 @@ El sistema está preparado para operación real SaaS.
           </button>
         </div>
       </Modal>
-      {/* ====== MODAL RGPD (ModalConfirmacion reutilizado) ====== */}
-      {rgpdOpen && (
-        <ModalConfirmacion
-          titulo="Exportación RGPD"
-          mensaje={`⚠️ Vas a exportar datos personales del tenant "${rgpdTenant}". 
-Esta acción solo debe realizarse ante una solicitud legal válida (RGPD).`}
-          placeholder={`Escribe "${rgpdTenant}" para confirmar`}
-          onConfirm={doRgpdExport}
-          onClose={() => setRgpdOpen(false)}
-        >
-          <p className="muted">
-            La exportación incluirá todos los datos personales asociados al tenant:
-            usuarios, clientes, reservas, pedidos y facturación.
-          </p>
-        </ModalConfirmacion>
-      )}
     </div>
   );
 }

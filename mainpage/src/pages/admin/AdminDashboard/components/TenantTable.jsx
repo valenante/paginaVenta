@@ -267,11 +267,13 @@ export default function TenantTable({ tenants, onRefresh }) {
       )}
 
       {estadoTarget && (
-        <EditEstadoModal
-          tenant={estadoTarget}
-          onClose={() => setEstadoTarget(null)}
-          onSave={handleEstadoChange}
-        />
+        <Portal>
+          <EditEstadoModal
+            tenant={estadoTarget}
+            onClose={() => setEstadoTarget(null)}
+            onSave={handleEstadoChange}
+          />
+        </Portal>
       )}
 
       {planTarget && (

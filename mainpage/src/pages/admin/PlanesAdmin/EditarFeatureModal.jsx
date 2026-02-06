@@ -1,6 +1,6 @@
 import { useState } from "react";
 import api from "../../../utils/api";
-import "./featureModal.css";
+import "./EditarFeatureModal.css";
 
 export default function EditarFeatureModal({ feature, onClose, onSave }) {
   const [form, setForm] = useState({

@@ -51,6 +51,7 @@ import PanelPro from "./pages/PanelPro";
 import AdminMonitorPage from "./pages/admin/AdminMonitor/AdminMonitorPage.jsx";
 import ApiRollbackPage from "./pages/admin/AdminDashboard/rollback/ApiRollbackPage";
 import RestorePage from "./pages/admin/restore/RestorePage";
+import RgpdPage from "./pages/admin/restore/RgpdPage.jsx";
 
 import SoporteDetalle from "./pages/SoporteDetalle.jsx";
 import SoporteLista from "./pages/SoporteLista.jsx";
@@ -393,6 +394,7 @@ function AppRoutes() {
         <Route path="monitor" element={<AdminMonitorPage />} />
         <Route path="rollback" element={<ApiRollbackPage />} />
         <Route path="restore" element={<RestorePage />} />
+        <Route path="rgpd" element={<RgpdPage />} />
       </Route>
     </Routes>
   );

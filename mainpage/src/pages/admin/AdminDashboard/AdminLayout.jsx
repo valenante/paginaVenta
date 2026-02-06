@@ -62,6 +62,10 @@ export default function AdminLayout() {
             <FiFileText /> Restore & DR
           </NavLink>
 
+          <NavLink to="/superadmin/rgpd">
+            <FiFileText /> RGPD & Datos
+          </NavLink>
+
           <NavLink to="/superadmin/logs">
             <FiList /> Logs del sistema
           </NavLink>
@@ -73,6 +77,7 @@ export default function AdminLayout() {
           <NavLink to="/superadmin/settings">
             <FiSettings /> Ajustes
           </NavLink>
+
         </nav>
 
         <button className="logout-btn" onClick={logout}>

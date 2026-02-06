@@ -1,0 +1,293 @@
+/* =========================
+   RGPD PAGE — estilo Restore
+   ========================= */
+
+.rgpd-page {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  color: #e5e7eb;
+}
+
+.rgpd-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.rgpd-header h2 {
+  font-size: 26px;
+  font-weight: 900;
+  margin: 0;
+}
+
+.rgpd-header p {
+  opacity: 0.85;
+  color: #cbd5e1;
+  margin: 6px 0 0;
+}
+
+/* Cards */
+.rgpd-card {
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 18px 20px;
+  box-shadow: 0 12px 32px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.05);
+}
+
+.rgpd-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.rgpd-muted {
+  opacity: 0.85;
+  color: #cbd5e1;
+}
+
+/* Layout */
+.rgpd-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+@media (max-width: 1000px) {
+  .rgpd-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Alerts wrapper */
+.rgpd-alert {
+  padding: 0;
+}
+
+/* List */
+.rgpd-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.rgpd-tenant {
+  width: 100%;
+  text-align: left;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(0,0,0,0.18);
+  border-radius: 14px;
+  padding: 12px 14px;
+  cursor: pointer;
+  color: #e5e7eb;
+  transition: transform 0.15s ease, background 0.2s ease, border-color 0.2s ease;
+}
+
+.rgpd-tenant:hover {
+  background: rgba(255,255,255,0.10);
+  transform: translateY(-2px);
+}
+
+.rgpd-tenant.is-selected {
+  border-color: rgba(96,181,255,0.35);
+  box-shadow: 0 0 0 1px rgba(96,181,255,0.22);
+}
+
+.rgpd-tenant-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: baseline;
+}
+
+.rgpd-slug {
+  font-size: 12px;
+  opacity: 0.9;
+  color: #cbd5e1;
+  background: rgba(0,0,0,0.35);
+  border: 1px solid rgba(255,255,255,0.08);
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+
+.rgpd-tenant-meta {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+/* Actions */
+.rgpd-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 12px 0 6px;
+}
+
+/* Boxes inside right card */
+.rgpd-box {
+  background: rgba(0,0,0,0.25);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 14px;
+  padding: 12px 14px;
+  margin-top: 12px;
+}
+
+.rgpd-box h4 {
+  margin: 0 0 8px;
+  font-weight: 900;
+}
+
+/* Status block */
+.rgpd-status {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.rgpd-status-lines {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* History */
+.rgpd-history {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.rgpd-history-item {
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 14px;
+  overflow: hidden;
+  background: rgba(0,0,0,0.18);
+}
+
+.rgpd-history-top {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  padding: 12px 14px;
+  background: rgba(255,255,255,0.06);
+  color: #e5e7eb;
+}
+
+.rgpd-history-body {
+  padding: 12px 14px;
+}
+
+/* Buttons (reutilizo tu estética rb) */
+.rgpd-btn {
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.10);
+  font-weight: 800;
+  cursor: pointer;
+  background: rgba(255,255,255,0.10);
+  color: #f1f5f9;
+  transition: transform 0.15s ease, background 0.2s ease, opacity 0.2s ease;
+}
+
+.rgpd-btn:hover {
+  background: rgba(255,255,255,0.18);
+  transform: translateY(-2px);
+}
+
+.rgpd-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.rgpd-btn-primary {
+  background: rgba(34,197,94,0.18);
+  border-color: rgba(34,197,94,0.35);
+}
+.rgpd-btn-primary:hover { background: rgba(34,197,94,0.28); }
+
+.rgpd-btn-danger {
+  background: rgba(239,68,68,0.20);
+  border-color: rgba(239,68,68,0.35);
+}
+.rgpd-btn-danger:hover { background: rgba(239,68,68,0.30); }
+
+.rgpd-btn-ghost {
+  background: rgba(255,255,255,0.08);
+}
+.rgpd-btn-ghost:hover { background: rgba(255,255,255,0.16); }
+
+/* Badges */
+.rgpd-badge {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 900;
+  text-transform: uppercase;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(255,255,255,0.08);
+  opacity: 0.95;
+}
+
+.rgpd-badge.ok {
+  background: rgba(34,197,94,0.18);
+  border-color: rgba(34,197,94,0.25);
+  color: #86efac;
+}
+
+.rgpd-badge.warn {
+  background: rgba(251,146,60,0.18);
+  border-color: rgba(251,146,60,0.25);
+  color: #fdba74;
+}
+
+.rgpd-badge.danger {
+  background: rgba(239,68,68,0.18);
+  border-color: rgba(239,68,68,0.25);
+  color: #fecaca;
+}
+
+.rgpd-badge.neutral {
+  opacity: 0.9;
+}
+
+/* Modal body inputs (si ModalConfirmacion renderiza children) */
+.rgpd-modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.rgpd-label {
+  display: block;
+  color: var(--color-texto);
+}
+
+.rgpd-input {
+  width: 90%;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border:2px solid var(--color-primario);
+  background: rgba(255,255,255,0.10);
+  color: var(--color-texto);
+  outline: none;
+  margin-top: 6px;
+}
+
+.rgpd-input:focus {
+  border-color: var(--color-secundario);
+}

@@ -16,8 +16,13 @@ export function AuthProvider({ children }) {
         const usuario = res.data.user;
 
         setUser(usuario);
+        sessionStorage.setItem("user", JSON.stringify(usuario));
 
-        // ✅ SOLO aquí tocamos tenant: dato confirmado por backend
+        if (usuario?.role === "superadmin") {
+          clearTenant();
+          return;
+        }
+
         if (usuario?.tenantId) {
           setTenantId(usuario.tenantId);
         }

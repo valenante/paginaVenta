@@ -16,6 +16,13 @@ const RUTAS_SIN_REFRESH = [
   "/auth/logout",
 ];
 
+const RUTAS_SIN_TENANT = [
+  "/auth/login",
+  "/auth/me/me",
+  "/auth/refresh-token",
+  "/auth/logout",
+];
+
 let refreshing = false;
 let queue = [];
 
@@ -25,34 +32,35 @@ const runQueue = (error) => {
 };
 
 api.interceptors.request.use((config) => {
-  const userStr = sessionStorage.getItem("user");
-  let role = null;
+  const url = config.url || "";
 
-  try {
-    role = userStr ? JSON.parse(userStr)?.role : null;
-  } catch {
-    role = null;
-  }
-
-  // ✅ superadmin => NUNCA enviar tenant headers
-  if (role === "superadmin") {
+  // ❌ nunca enviar tenant en rutas auth
+  if (RUTAS_SIN_TENANT.some((r) => url.includes(r))) {
     delete config.headers["x-tenant-id"];
+    delete config.headers["X-Tenant-ID"];
     delete config.headers["x-tenant-slug"];
     delete config.headers["X-Tenant-Slug"];
+    return config;
+  }
+
+  const userStr = sessionStorage.getItem("user");
+  let role = null;
+  try {
+    role = userStr ? JSON.parse(userStr)?.role : null;
+  } catch {}
+
+  // superadmin nunca lleva tenant
+  if (role === "superadmin") {
+    delete config.headers["x-tenant-id"];
     delete config.headers["X-Tenant-ID"];
     return config;
   }
 
   const tenantId = sessionStorage.getItem("tenantId");
-
   if (tenantId) {
-    // ✅ usa solo UNA convención (te recomiendo x-tenant-id)
     config.headers["x-tenant-id"] = tenantId;
-    // si quieres, elimina el slug para no duplicar:
-    delete config.headers["X-Tenant-Slug"];
   } else {
     delete config.headers["x-tenant-id"];
-    delete config.headers["X-Tenant-Slug"];
   }
 
   return config;

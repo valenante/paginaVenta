@@ -11,22 +11,27 @@ export default function Paso4ResumenPago({
   servicios,
   precio,
   admin,
-  onSubmit,
   loading,
-  success,
+  setLoading,
+  error,
+  setError,
   precioBasePlan,
   plan,
   periodo,
   setPeriodo,
-  isShop = false, // 👈 NUEVO
+  isShop = false,
 }) {
   const handlePago = async () => {
+    if (loading) return; // evita doble click
+
+    setLoading(true);
+    setError("");
+
     try {
-      const stripe = await stripePromise;
+      if (!plan?.slug) throw new Error("PLAN_NO_CARGADO");
 
       const slugCompleto = `${plan.slug}_${periodo}`;
 
-      // 1️⃣ Crear precheckout
       const { data: pre } = await api.post("/pago/precheckout", {
         tenant,
         config,
@@ -35,27 +40,27 @@ export default function Paso4ResumenPago({
         admin,
         plan: slugCompleto,
         colores: config.colores,
-        tipoNegocio: isShop ? "shop" : "restaurante", // 👈 NUEVO (clave)
-      });
-
-      if (!pre.precheckoutId) {
-        alert("Error al crear pre-checkout.");
-        return;
-      }
-
-      // 2️⃣ Crear sesión de pago
-      const { data: sesion } = await api.post("/pago/crear-sesion", {
-        precheckoutId: pre.precheckoutId,
-        adminEmail: admin.email, // ✅ CORRECTO
-        plan: slugCompleto,
         tipoNegocio: isShop ? "shop" : "restaurante",
       });
 
-      if (sesion.url) window.location.href = sesion.url;
-      else alert("No se pudo crear la sesión de pago.");
+      if (!pre?.precheckoutId) {
+        throw new Error("PRECHECKOUT_FAIL");
+      }
+
+      const { data: sesion } = await api.post("/pago/crear-sesion", {
+        precheckoutId: pre.precheckoutId,
+      });
+
+      if (!sesion?.url) {
+        throw new Error("SESSION_FAIL");
+      }
+
+      window.location.href = sesion.url; // aquí te vas a Stripe
+      // NO pongas setLoading(false) aquí porque ya te vas
     } catch (err) {
       console.error("❌ Error al procesar pago:", err);
-      alert("Error al procesar el pago. Inténtalo de nuevo.");
+      setError("Error al procesar el pago. Inténtalo de nuevo.");
+      setLoading(false);
     }
   };
 
@@ -112,7 +117,7 @@ export default function Paso4ResumenPago({
           </div>
           <div className="resumen-dato">
             <dt>Email de contacto</dt>
-            <dd>{tenant.email || "—"}</dd>
+            <dd>{admin?.email || "—"}</dd>
           </div>
           <div className="resumen-dato">
             <dt>Teléfono</dt>
@@ -386,14 +391,10 @@ export default function Paso4ResumenPago({
           onClick={handlePago}
           disabled={loading}
         >
-          {loading ? "Procesando..." : "Pagar y finalizar registro"}
+          {loading ? "Redirigiendo a Stripe..." : "Pagar y finalizar registro"}
         </button>
 
-        {success && (
-          <p className="mensaje-exito badge badge-exito">
-            ✅ {isShop ? "Tienda creada" : "Restaurante creado"} correctamente. Redirigiendo...
-          </p>
-        )}
+        {error && <p className="registro-error">{error}</p>}
       </div>
 
       <p className="nota-legal text-suave">

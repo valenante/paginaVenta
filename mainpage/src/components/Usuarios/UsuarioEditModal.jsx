@@ -10,7 +10,6 @@ export default function UsuarioEditModal({
 }) {
   const [form, setForm] = useState({
     name: usuario.name || "",
-    email: usuario.email || "",
     role: usuario.role || "",
     estacion: usuario.estacion || "",
   });
@@ -20,7 +19,6 @@ export default function UsuarioEditModal({
   const validate = () => {
     const e = {};
     if (!form.name.trim()) e.name = "Nombre requerido";
-    if (!/\S+@\S+\.\S+/.test(form.email)) e.email = "Email inválido";
     if (!["admin", "cocinero", "camarero"].includes(form.role))
       e.role = "Rol inválido";
 
@@ -60,12 +58,14 @@ export default function UsuarioEditModal({
         <div className="field">
           <label>Email</label>
           <input
-            value={form.email}
-            onChange={(e) =>
-              setForm({ ...form, email: e.target.value })
-            }
+            value={usuario.email}
+            readOnly
+            disabled
+            className="input-readonly"
           />
-          {errors.email && <p className="error">{errors.email}</p>}
+          <p className="field-hint">
+            El email identifica la cuenta y no se puede modificar.
+          </p>
         </div>
 
         <div className="field">

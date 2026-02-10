@@ -1,307 +1,445 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import api from "../../utils/api";
-import ModalConfirmacion from "../Modal/ModalConfirmacion";
+import "./SeccionesPanel.css";
+import "./SeccionesModal.css";
 
-/**
- * Panel de gestión de secciones (ALEF)
- * - CRUD completo
- * - Orden editable mediante select (1..N)
- * - Backend es la fuente de verdad del orden
- */
-export default function SeccionesPanel({ isPlanEsencial, onAlert }) {
+const DESTINOS = [
+  { value: "cocina", label: "Cocina" },
+  { value: "barra", label: "Barra" },
+];
+
+function normalizeErr(err) {
+  const data = err?.response?.data || {};
+  const code = data?.code || data?.error || "";
+  const msg = data?.message || data?.details || data?.error || "";
+  return { code: String(code || ""), msg: String(msg || "") };
+}
+
+export default function SeccionesPanel({
+  isPlanEsencial,
+  onAlert,
+  disabled = false,
+}) {
   const [secciones, setSecciones] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const [nuevaSeccion, setNuevaSeccion] = useState({
+  const [nueva, setNueva] = useState({
     nombre: "",
     slug: "",
     destino: "cocina",
+    activa: true,
+    orden: 0,
   });
 
   const [editando, setEditando] = useState(null);
-  const [confirmDelete, setConfirmDelete] = useState(null);
+  const [aEliminar, setAEliminar] = useState(null);
 
-  /* =========================
-     CARGA INICIAL
-  ========================= */
-  useEffect(() => {
-    cargarSecciones();
-  }, []);
+  const puedeGestionar = useMemo(
+    () => !disabled && !isPlanEsencial,
+    [disabled, isPlanEsencial]
+  );
 
-  const cargarSecciones = async () => {
+  // ============================
+  // Cargar secciones
+  // ============================
+  const cargar = async () => {
     try {
       setLoading(true);
-      const { data } = await api.get("/secciones");
-
-      // 🔒 Siempre ordenar por seguridad
-      const ordenadas = (data || []).sort((a, b) => a.orden - b.orden);
-      setSecciones(ordenadas);
+      // includeInactive=0 por defecto (si tu backend no lo usa, lo ignora)
+      const { data } = await api.get("/secciones?includeInactive=0");
+      setSecciones(Array.isArray(data) ? data : []);
     } catch {
-      onAlert?.({ tipo: "error", mensaje: "Error cargando secciones." });
+      onAlert?.({ tipo: "error", mensaje: "Error al cargar secciones." });
     } finally {
       setLoading(false);
     }
   };
 
-  /* =========================
-     CREAR
-  ========================= */
-  const crearSeccion = async () => {
-    if (!nuevaSeccion.nombre.trim()) return;
+  useEffect(() => {
+    cargar();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // ============================
+  // Crear
+  // ============================
+  const crear = async () => {
+    const nombre = (nueva.nombre || "").trim();
+    if (!nombre) {
+      return onAlert?.({ tipo: "error", mensaje: "El nombre es obligatorio." });
+    }
 
     try {
-      const orden = secciones.length + 1;
+      const payload = {
+        nombre,
+        slug: (nueva.slug || "").trim(),
+        destino: nueva.destino,
+        activa: !!nueva.activa,
+        orden: Number(nueva.orden) || 0,
+      };
 
-      await api.post("/secciones", {
-        ...nuevaSeccion,
-        orden,
+      const { data } = await api.post("/secciones", payload);
+
+      setSecciones((prev) =>
+        [data, ...prev].sort((a, b) => (a.orden ?? 0) - (b.orden ?? 0))
+      );
+
+      setNueva({
+        nombre: "",
+        slug: "",
+        destino: "cocina",
+        activa: true,
+        orden: 0,
       });
 
-      await cargarSecciones();
-      setNuevaSeccion({ nombre: "", slug: "", destino: "cocina" });
+      onAlert?.({ tipo: "success", mensaje: "Sección creada correctamente." });
+    } catch (err) {
+      const e = normalizeErr(err);
+      const slugDup =
+        e.code === "SLUG_DUPLICADO" ||
+        /slug/i.test(e.msg) ||
+        /slug/i.test(e.code);
 
-      onAlert?.({ tipo: "success", mensaje: "Sección creada." });
-    } catch {
+      if (slugDup) {
+        return onAlert?.({
+          tipo: "error",
+          mensaje: "Ese slug ya existe en ese destino.",
+        });
+      }
+
       onAlert?.({ tipo: "error", mensaje: "Error al crear sección." });
     }
   };
 
-  /* =========================
-     EDITAR (sin tocar orden)
-  ========================= */
-  const guardarEdicion = async () => {
-    try {
-      await api.put(`/secciones/${editando._id}`, {
-        nombre: editando.nombre,
-        slug: editando.slug,
-        destino: editando.destino,
-      });
+  // ============================
+  // Editar
+  // ============================
+  const iniciarEdicion = (sec) => {
+    setEditando({
+      ...sec,
+      orden: Number(sec.orden ?? 0),
+      activa: sec.activa !== false,
+      slug: sec.slug || "",
+    });
+  };
 
-      await cargarSecciones();
+  const guardarEdicion = async () => {
+    if (!editando) return;
+
+    const nombre = (editando.nombre || "").trim();
+    if (!nombre) {
+      return onAlert?.({ tipo: "error", mensaje: "El nombre es obligatorio." });
+    }
+
+    try {
+      const payload = {
+        nombre,
+        slug: (editando.slug || "").trim(),
+        destino: editando.destino,
+        activa: !!editando.activa,
+        orden: Number(editando.orden) || 0,
+      };
+
+      const { data } = await api.put(`/secciones/${editando._id}`, payload);
+
+      setSecciones((prev) =>
+        prev.map((s) => (s._id === data._id ? data : s))
+      );
       setEditando(null);
 
       onAlert?.({ tipo: "success", mensaje: "Sección actualizada." });
-    } catch {
-      onAlert?.({ tipo: "error", mensaje: "Error al editar sección." });
+    } catch (err) {
+      const e = normalizeErr(err);
+      const slugDup =
+        e.code === "SLUG_DUPLICADO" ||
+        /slug/i.test(e.msg) ||
+        /slug/i.test(e.code);
+
+      if (slugDup) {
+        return onAlert?.({
+          tipo: "error",
+          mensaje: "Ese slug ya existe en ese destino.",
+        });
+      }
+
+      onAlert?.({ tipo: "error", mensaje: "Error al actualizar sección." });
     }
   };
 
-  /* =========================
-     ELIMINAR + REORDENAR
-  ========================= */
-  const eliminarSeccion = async (id) => {
+  // ============================
+  // Eliminar
+  // ============================
+  const eliminar = async (id) => {
     try {
       await api.delete(`/secciones/${id}`);
-
-      // Reordenar las restantes (1..N)
-      const restantes = secciones
-        .filter((s) => s._id !== id)
-        .sort((a, b) => a.orden - b.orden)
-        .map((s, index) => ({ ...s, orden: index + 1 }));
-
-      await Promise.all(
-        restantes.map((s) =>
-          api.put(`/secciones/${s._id}`, { orden: s.orden })
-        )
-      );
-
-      await cargarSecciones();
-
+      setSecciones((prev) => prev.filter((s) => s._id !== id));
       onAlert?.({ tipo: "success", mensaje: "Sección eliminada." });
     } catch {
       onAlert?.({ tipo: "error", mensaje: "Error al eliminar sección." });
     }
   };
 
-  /* =========================
-     CAMBIO DE ORDEN (SELECT)
-  ========================= */
-  const cambiarOrden = async (seccionId, nuevoOrden) => {
-    const actual = secciones.find((s) => s._id === seccionId);
-    if (!actual || actual.orden === nuevoOrden) return;
-
-    try {
-      const reordenadas = secciones.map((s) => {
-        if (s._id === seccionId) {
-          return { ...s, orden: nuevoOrden };
-        }
-
-        // Ajuste de las demás
-        if (
-          actual.orden < nuevoOrden &&
-          s.orden > actual.orden &&
-          s.orden <= nuevoOrden
-        ) {
-          return { ...s, orden: s.orden - 1 };
-        }
-
-        if (
-          actual.orden > nuevoOrden &&
-          s.orden < actual.orden &&
-          s.orden >= nuevoOrden
-        ) {
-          return { ...s, orden: s.orden + 1 };
-        }
-
-        return s;
-      });
-
-      await Promise.all(
-        reordenadas.map((s) =>
-          api.put(`/secciones/${s._id}`, { orden: s.orden })
-        )
-      );
-
-      await cargarSecciones();
-    } catch {
-      onAlert?.({
-        tipo: "error",
-        mensaje: "Error al cambiar el orden de las secciones.",
-      });
-    }
-  };
-
-  /* =========================
-     RENDER
-  ========================= */
+  // ============================
+  // UI
+  // ============================
   return (
-    <section className="config-card card">
+    <section className="config-card card secciones-panel">
       <header className="config-card-header">
-        <h2>
-          {isPlanEsencial
-            ? "📦 Secciones del pedido"
-            : "📦 Secciones de la carta"}
-        </h2>
+        <h2>🧩 Secciones (cocina / barra)</h2>
         <p className="config-card-subtitle">
-          Define el orden en el que aparecen los bloques en el ticket y en cocina.
+          Define secciones para agrupar la producción (fríos, plancha, postres,
+          barra, etc.).
         </p>
       </header>
 
-      {/* CREAR */}
-      <div className="config-field config-field--stacked">
-        <label>Nueva sección</label>
+      {isPlanEsencial ? (
+        <div className="config-empty">
+          <p>Las secciones no están disponibles en el plan esencial.</p>
+        </div>
+      ) : (
+        <>
+          {/* NUEVA */}
+          <div className="config-field config-field--stacked">
+            <label>Nueva sección</label>
 
-        <input
-          type="text"
-          placeholder="Nombre (Ej: Entrantes)"
-          value={nuevaSeccion.nombre}
-          onChange={(e) =>
-            setNuevaSeccion((p) => ({ ...p, nombre: e.target.value }))
-          }
-        />
+            <input
+              type="text"
+              placeholder="Nombre (Ej: Plancha)"
+              value={nueva.nombre}
+              disabled={!puedeGestionar}
+              onChange={(e) => setNueva((p) => ({ ...p, nombre: e.target.value }))}
+            />
 
-        <input
-          type="text"
-          placeholder="Slug (entrantes)"
-          value={nuevaSeccion.slug}
-          onChange={(e) =>
-            setNuevaSeccion((p) => ({ ...p, slug: e.target.value }))
-          }
-        />
+            <input
+              type="text"
+              placeholder="Slug (plancha) — opcional"
+              value={nueva.slug}
+              disabled={!puedeGestionar}
+              onChange={(e) => setNueva((p) => ({ ...p, slug: e.target.value }))}
+            />
 
-        <select
-          value={nuevaSeccion.destino}
-          onChange={(e) =>
-            setNuevaSeccion((p) => ({ ...p, destino: e.target.value }))
-          }
-        >
-          <option value="cocina">Cocina</option>
-          <option value="barra">Barra</option>
-        </select>
-
-        <button className="btn btn-primario" onClick={crearSeccion}>
-          Crear sección
-        </button>
-      </div>
-
-      {/* LISTADO */}
-      <ul className="lista-simple">
-        {loading && <li>Cargando secciones...</li>}
-        {!loading && secciones.length === 0 && (
-          <li>No hay secciones creadas.</li>
-        )}
-
-        {secciones.map((s) => (
-          <li key={s._id} className="fila-seccion">
-            <span>
-              {s.nombre} ({s.slug})
-            </span>
-
-            <div className="acciones-mini">
+            <div className="config-grid-2">
               <select
-                value={s.orden}
-                onChange={(e) =>
-                  cambiarOrden(s._id, Number(e.target.value))
-                }
+                value={nueva.destino}
+                disabled={!puedeGestionar}
+                onChange={(e) => setNueva((p) => ({ ...p, destino: e.target.value }))}
               >
-                {secciones.map((_, i) => (
-                  <option key={i + 1} value={i + 1}>
-                    {i + 1}
+                {DESTINOS.map((d) => (
+                  <option key={d.value} value={d.value}>
+                    {d.label}
                   </option>
                 ))}
               </select>
 
-              <button onClick={() => setEditando({ ...s })}>✏️</button>
-
-              <button
-                className="delete-btn"
-                onClick={() =>
-                  setConfirmDelete({ id: s._id, nombre: s.nombre })
-                }
-              >
-                ❌
-              </button>
+              <input
+                type="number"
+                min={0}
+                step={1}
+                disabled={!puedeGestionar}
+                value={nueva.orden}
+                onChange={(e) => setNueva((p) => ({ ...p, orden: e.target.value }))}
+                placeholder="Orden"
+                title="Orden (menor = aparece antes)"
+              />
             </div>
-          </li>
-        ))}
-      </ul>
 
-      {/* MODAL EDITAR */}
-      {editando && (
-        <ModalConfirmacion
-          titulo="Editar sección"
-          onConfirm={guardarEdicion}
-          onClose={() => setEditando(null)}
-        >
-          <div className="modal-form">
-            <input
-              type="text"
-              value={editando.nombre}
-              onChange={(e) =>
-                setEditando((p) => ({ ...p, nombre: e.target.value }))
-              }
-            />
-            <input
-              type="text"
-              value={editando.slug}
-              onChange={(e) =>
-                setEditando((p) => ({ ...p, slug: e.target.value }))
-              }
-            />
-            <select
-              value={editando.destino}
-              onChange={(e) =>
-                setEditando((p) => ({ ...p, destino: e.target.value }))
-              }
+            <label className="secciones-check">
+              <input
+                type="checkbox"
+                checked={!!nueva.activa}
+                disabled={!puedeGestionar}
+                onChange={(e) => setNueva((p) => ({ ...p, activa: e.target.checked }))}
+              />
+              Activa
+            </label>
+
+            <button
+              type="button"
+              className="btn btn-primario"
+              onClick={crear}
+              disabled={!puedeGestionar}
             >
-              <option value="cocina">Cocina</option>
-              <option value="barra">Barra</option>
-            </select>
+              Crear sección
+            </button>
           </div>
-        </ModalConfirmacion>
+
+          {/* LISTA */}
+          <div className="config-sep" />
+
+          <div className="config-row">
+            <strong>Secciones</strong>
+            <button
+              type="button"
+              className="btn btn-secundario"
+              onClick={cargar}
+              disabled={disabled}
+            >
+              Recargar
+            </button>
+          </div>
+
+          <ul className="secciones-lista">
+            {loading && <li className="secciones-item">Cargando secciones…</li>}
+
+            {!loading && secciones.length === 0 && (
+              <li className="secciones-item">No hay secciones creadas todavía.</li>
+            )}
+
+            {secciones.map((s) => (
+              <li key={s._id} className="secciones-item">
+                <span className="secciones-item-info">
+                  <strong>{s.nombre}</strong>{" "}
+                  <span className="text-suave">
+                    ({s.slug}) — {s.destino} — orden {s.orden ?? 0}{" "}
+                    {s.activa === false ? "⛔ Inactiva" : ""}
+                  </span>
+                </span>
+
+                <div className="secciones-actions">
+                  <button
+                    type="button"
+                    onClick={() => iniciarEdicion(s)}
+                    disabled={!puedeGestionar}
+                    title="Editar"
+                  >
+                    ✏️
+                  </button>
+
+                  <button
+                    type="button"
+                    className="secciones-delete"
+                    onClick={() => setAEliminar(s)}
+                    disabled={!puedeGestionar}
+                    title="Eliminar"
+                  >
+                    ❌
+                  </button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </>
       )}
 
-      {/* MODAL ELIMINAR */}
-      {confirmDelete && (
-        <ModalConfirmacion
-          titulo="Eliminar sección"
-          mensaje={`¿Eliminar "${confirmDelete.nombre}"?`}
-          onConfirm={() => {
-            eliminarSeccion(confirmDelete.id);
-            setConfirmDelete(null);
-          }}
-          onClose={() => setConfirmDelete(null)}
-        />
+      {/* ===== MODAL EDITAR ===== */}
+      {editando && (
+        <div className="secciones-modal-overlay" role="dialog" aria-modal="true">
+          <div className="secciones-modal">
+            <header className="secciones-modal-header">
+              <h3>Editar sección</h3>
+            </header>
+
+            <div className="secciones-modal-body">
+              <input
+                type="text"
+                value={editando.nombre || ""}
+                onChange={(e) =>
+                  setEditando((p) => ({ ...p, nombre: e.target.value }))
+                }
+                placeholder="Nombre"
+              />
+
+              <input
+                type="text"
+                value={editando.slug || ""}
+                onChange={(e) =>
+                  setEditando((p) => ({ ...p, slug: e.target.value }))
+                }
+                placeholder="Slug"
+              />
+
+              <div className="config-grid-2">
+                <select
+                  value={editando.destino}
+                  onChange={(e) =>
+                    setEditando((p) => ({ ...p, destino: e.target.value }))
+                  }
+                >
+                  {DESTINOS.map((d) => (
+                    <option key={d.value} value={d.value}>
+                      {d.label}
+                    </option>
+                  ))}
+                </select>
+
+                <input
+                  type="number"
+                  min={0}
+                  step={1}
+                  value={Number(editando.orden ?? 0)}
+                  onChange={(e) =>
+                    setEditando((p) => ({ ...p, orden: e.target.value }))
+                  }
+                  placeholder="Orden"
+                />
+              </div>
+
+              <label className="secciones-check">
+                <input
+                  type="checkbox"
+                  checked={!!editando.activa}
+                  onChange={(e) =>
+                    setEditando((p) => ({ ...p, activa: e.target.checked }))
+                  }
+                />
+                Activa
+              </label>
+            </div>
+
+            <footer className="secciones-modal-footer">
+              <button
+                type="button"
+                className="btn btn-secundario"
+                onClick={() => setEditando(null)}
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                className="btn btn-primario"
+                onClick={guardarEdicion}
+              >
+                Guardar
+              </button>
+            </footer>
+          </div>
+        </div>
+      )}
+
+      {/* ===== MODAL ELIMINAR ===== */}
+      {aEliminar && (
+        <div className="secciones-modal-overlay" role="dialog" aria-modal="true">
+          <div className="secciones-modal">
+            <header className="secciones-modal-header">
+              <h3>Eliminar sección</h3>
+            </header>
+
+            <div className="secciones-modal-body">
+              ¿Seguro que deseas eliminar <strong>{aEliminar.nombre}</strong>?{" "}
+              Esta acción no se puede deshacer.
+            </div>
+
+            <footer className="secciones-modal-footer">
+              <button
+                type="button"
+                className="btn btn-secundario"
+                onClick={() => setAEliminar(null)}
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                className="btn btn-peligro"
+                onClick={async () => {
+                  await eliminar(aEliminar._id);
+                  setAEliminar(null);
+                }}
+              >
+                Eliminar
+              </button>
+            </footer>
+          </div>
+        </div>
       )}
     </section>
   );

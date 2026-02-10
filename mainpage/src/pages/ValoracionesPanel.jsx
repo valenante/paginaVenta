@@ -54,27 +54,27 @@ export default function ValoracionesPanel() {
   const mediaGlobal =
     totalValoraciones > 0
       ? (
-          resumen.reduce(
-            (acc, p) => acc + (p.avgPuntuacion || 0) * (p.totalValoraciones || 0),
-            0
-          ) / totalValoraciones
-        ).toFixed(2)
+        resumen.reduce(
+          (acc, p) => acc + (p.avgPuntuacion || 0) * (p.totalValoraciones || 0),
+          0
+        ) / totalValoraciones
+      ).toFixed(2)
       : 0;
 
   const mejorProducto =
     resumen.length > 0
       ? [...resumen]
-          .filter((p) => p.totalValoraciones > 0)
-          .sort((a, b) => (b.avgPuntuacion || 0) - (a.avgPuntuacion || 0))[0] ||
-        null
+        .filter((p) => p.totalValoraciones > 0)
+        .sort((a, b) => (b.avgPuntuacion || 0) - (a.avgPuntuacion || 0))[0] ||
+      null
       : null;
 
   const peorProducto =
     resumen.length > 0
       ? [...resumen]
-          .filter((p) => p.totalValoraciones > 0)
-          .sort((a, b) => (a.avgPuntuacion || 0) - (b.avgPuntuacion || 0))[0] ||
-        null
+        .filter((p) => p.totalValoraciones > 0)
+        .sort((a, b) => (a.avgPuntuacion || 0) - (b.avgPuntuacion || 0))[0] ||
+      null
       : null;
 
   // ========= CARGA RESUMEN =========
@@ -83,7 +83,7 @@ export default function ValoracionesPanel() {
     setError("");
 
     try {
-      const { data } = await api.get("/valoraciones/valoraciones/mas-valorados");
+      const { data } = await api.get("/valoraciones/mas-valorados");
       setResumen(data || []);
       setPage(1); // reset de página al recargar
     } catch (err) {

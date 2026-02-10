@@ -1,44 +1,46 @@
 /*****************************************************
- * Modal Nueva Reserva – Alef (Profesional)
- * Versión aislada con sufijo --modalnuevareserva
+ * Modal Nueva Reserva – Alef (LISTO PARA VENDER)
+ * Namespaces: .mnr-*
  *****************************************************/
 
-/* ===== Overlay ===== */
-.modal-overlay-reservas--modalnuevareserva {
+/* Overlay */
+.mnr-overlay {
   position: fixed;
   inset: 0;
+  z-index: 9999;
   background: rgba(15, 23, 42, 0.55);
   backdrop-filter: blur(4px);
-  z-index: 9999;
 
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: var(--space-lg);
+
+  padding: var(--space-md);
 }
 
-/* ===== Card principal ===== */
-.modal-nueva-reserva--modalnuevareserva {
+/* Dialog (card) */
+.mnr-dialog {
   width: 100%;
-  max-width: 680px;
-  background: var(--color-card-bg, #ffffff);
+  max-width: 720px;
   border-radius: var(--radius-xl);
-
   padding: var(--space-xl);
-  box-shadow: var(--shadow-md);
 
   display: flex;
   flex-direction: column;
-  gap: var(--space-xl);
+  gap: var(--space-lg);
 
-  animation: modalFadeIn--modalnuevareserva 0.22s ease-out;
+  box-shadow: 0 18px 60px rgba(15, 23, 42, 0.35);
+  animation: mnr-in 0.18s ease-out;
+
+  /* mobile-friendly height */
+  max-height: 86vh;
+  overflow: hidden; /* body scrollea */
 }
 
-/* Animación */
-@keyframes modalFadeIn--modalnuevareserva {
+@keyframes mnr-in {
   from {
     opacity: 0;
-    transform: translateY(6px);
+    transform: translateY(8px);
   }
   to {
     opacity: 1;
@@ -46,117 +48,154 @@
   }
 }
 
-/* ===== Header ===== */
-.modal-nueva-header--modalnuevareserva {
+/* Header */
+.mnr-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   gap: var(--space-md);
 }
 
-.modal-nueva-title--modalnuevareserva {
+.mnr-headtext {
+  min-width: 0;
+}
+
+.mnr-title {
   margin: 0;
   font-size: var(--font-size-xl);
-  line-height: 1.25;
+  line-height: 1.2;
 }
 
-.modal-nueva-subtitle--modalnuevareserva {
-  margin-top: 0.25rem;
+.mnr-subtitle {
+  margin: 0.35rem 0 0 0;
   font-size: var(--font-size-sm);
-  color: var(--color-texto-suave);
-  max-width: 90%;
+  max-width: 60ch;
 }
 
-/* Botón cerrar */
-.modal-nueva-close--modalnuevareserva {
-  font-size: 1.4rem;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  color: var(--color-texto-suave);
-  transition: opacity 0.15s ease;
+/* Close button */
+.mnr-close {
+  flex: 0 0 auto;
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-pill);
 }
 
-.modal-nueva-close--modalnuevareserva:hover {
+.mnr-close:disabled {
   opacity: 0.6;
+  cursor: not-allowed;
 }
 
-/* ===== Formulario ===== */
-.modal-nueva-form--modalnuevareserva {
+/* Form layout */
+.mnr-form {
   display: flex;
   flex-direction: column;
-  gap: var(--space-xl);
+  gap: var(--space-md);
+
+  /* body scroll interno */
+  overflow: auto;
+  padding-right: 2px;
 }
 
-/* Grid */
-.form-grid--modalnuevareserva {
+.mnr-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--space-md);
 }
 
-.form-group--modalnuevareserva {
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-}
-
-.form-group-full--modalnuevareserva {
+.mnr-full {
   grid-column: 1 / -1;
 }
 
-.form-group--modalnuevareserva label {
-  font-weight: 600;
-  font-size: var(--font-size-sm);
+/* Field */
+.mnr-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 0;
 }
 
-.form-group--modalnuevareserva input,
-.form-group--modalnuevareserva textarea {
-  padding: 0.65rem 0.75rem;
+.mnr-field label {
+  font-size: var(--font-size-xs);
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-texto-suave);
+}
+
+.mnr-field input,
+.mnr-field textarea {
+  padding: 0.7rem 0.85rem;
   border-radius: var(--radius-md);
   border: 1px solid var(--color-borde-suave);
-  background: var(--color-card-elevated);
+  background: #fff;
+  font-size: var(--font-size-sm);
+  font-family: var(--font-base);
+  color: var(--color-texto);
 
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.05s ease;
 }
 
-.form-group--modalnuevareserva input:focus,
-.form-group--modalnuevareserva textarea:focus {
-  border-color: var(--color-primario);
-  box-shadow: 0 0 0 2px rgba(106, 13, 173, 0.25);
+.mnr-field textarea {
+  resize: vertical;
+  min-height: 72px;
+}
+
+/* Focus pro */
+.mnr-field input:focus,
+.mnr-field textarea:focus {
   outline: none;
+  border-color: var(--color-primario);
+  box-shadow: 0 0 0 3px rgba(106, 13, 173, 0.18);
 }
 
-/* ===== Botones ===== */
-.modal-botones--modalnuevareserva {
-  display: flex;
-  justify-content: flex-end;
-  gap: var(--space-md);
-  margin-top: var(--space-md);
+/* Disabled */
+.mnr-field input:disabled,
+.mnr-field textarea:disabled {
+  background: #f8fafc;
+  color: #64748b;
+  cursor: not-allowed;
 }
 
-.boton-cancelar-modal-confirmacion--modalnuevareserva,
-.boton-aceptar-modal-confirmacion--modalnuevareserva {
+.mnr-help {
+  margin: 0.25rem 0 0 0;
+  font-size: var(--font-size-xs);
+}
+
+/* Actions (50/50) */
+.mnr-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-sm);
+  margin-top: var(--space-sm);
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--color-borde-suave);
+}
+
+.mnr-btn {
   width: 100%;
-  max-width: 140px;
-  padding: 0.7rem 1rem;
+  justify-content: center;
+  padding: 0.85rem 1rem;
   border-radius: var(--radius-lg);
-  font-weight: 600;
+  font-weight: 800;
 }
 
-/* ===== Alerta ===== */
-.modal-alerta-wrapper--modalnuevareserva {
+/* Alert */
+.mnr-alert {
   margin-top: var(--space-md);
 }
 
-/* ===== Responsive ===== */
+/* Responsive */
 @media (max-width: 768px) {
-  .modal-nueva-reserva--modalnuevareserva {
+  .mnr-dialog {
     padding: var(--space-lg);
+    max-height: 90vh;
   }
 
-  .modal-nueva-header--modalnuevareserva {
-    flex-direction: column;
-    align-items: flex-start;
+  .mnr-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .mnr-subtitle {
+    max-width: none;
   }
 }

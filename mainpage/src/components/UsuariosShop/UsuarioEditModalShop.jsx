@@ -9,7 +9,6 @@ export default function UsuarioEditModalShop({
 }) {
   const [form, setForm] = useState({
     name: usuario.name || "",
-    email: usuario.email || "",
     role: usuario.role || "",
   });
 
@@ -70,11 +69,13 @@ export default function UsuarioEditModalShop({
           <label>Email</label>
           <input
             value={form.email}
-            onChange={(e) =>
-              setForm({ ...form, email: e.target.value })
-            }
+            readOnly
+            disabled
+            className="input-readonly"
           />
-          {errors.email && <p className="error">{errors.email}</p>}
+          <p className="field-hint">
+            El email identifica la cuenta y no se puede modificar.
+          </p>
         </div>
 
         {/* Rol */}

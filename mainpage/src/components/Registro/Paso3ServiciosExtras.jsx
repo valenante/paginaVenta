@@ -1,5 +1,6 @@
 // src/components/Paso3ServiciosExtras.jsx
-import React from "react";
+import React, { useState } from "react";
+import api from "../../utils/api"; // ajusta si tu path es distinto
 import "./Paso3ServiciosExtras.css";
 
 export default function Paso3ServiciosExtras({
@@ -7,6 +8,9 @@ export default function Paso3ServiciosExtras({
   setServicios,
   isShop = false,
 }) {
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState("");
+
   /* =====================
      Handlers
   ===================== */
@@ -30,13 +34,77 @@ export default function Paso3ServiciosExtras({
     });
   };
 
-  const handleFileChange = (e) => {
+  const handleFileChange = async (e) => {
     const { name, files } = e.target;
+    const list = Array.from(files || []);
+    if (!list.length) return;
 
-    setServicios((prev) => ({
-      ...prev,
-      [name]: Array.from(files || []),
-    }));
+    setUploading(true);
+    setUploadError("");
+
+    try {
+      // 1) pedir presigned URLs (backend lo haremos luego)
+      const payload = {
+        files: list.map((f) => ({
+          name: f.name,
+          type: f.type || "application/octet-stream",
+          size: f.size,
+        })),
+        purpose: name, // "cartaAdjuntos" | "mesasAdjuntos"
+      };
+
+      const { data } = await api.post("/uploads/presign", payload);
+      // esperamos: data.items = [{ key, uploadUrl, publicUrl }]
+      const items = data?.items || [];
+
+      if (items.length !== list.length) {
+        throw new Error("PRESIGN_MISMATCH");
+      }
+
+      // 2) subir a R2 usando PUT directo al uploadUrl
+      const uploadedMeta = [];
+
+      for (let i = 0; i < list.length; i++) {
+        const file = list[i];
+        const presigned = items[i];
+
+        const putRes = await fetch(presigned.uploadUrl, {
+          method: "PUT",
+          headers: {
+            "Content-Type": file.type || "application/octet-stream",
+          },
+          body: file,
+        });
+
+        if (!putRes.ok) {
+          throw new Error(`UPLOAD_FAILED_${file.name}`);
+        }
+
+        uploadedMeta.push({
+          key: presigned.key,
+          url: presigned.publicUrl, // URL pública (R2 public base)
+          name: file.name,
+          size: file.size,
+          type: file.type,
+        });
+      }
+
+      // 3) guardar metadata (NO File[])
+      setServicios((prev) => ({
+        ...prev,
+        [name]: [...(prev[name] || []), ...uploadedMeta],
+      }));
+
+      // limpiar input para permitir volver a subir el mismo fichero si hace falta
+      e.target.value = "";
+    } catch (err) {
+      console.error("Upload error:", err);
+      setUploadError(
+        err?.message || "No se pudieron subir los archivos. Inténtalo de nuevo."
+      );
+    } finally {
+      setUploading(false);
+    }
   };
 
   const handleTpvOptionChange = (e) => {
@@ -119,12 +187,23 @@ export default function Paso3ServiciosExtras({
                     multiple
                     onChange={handleFileChange}
                     accept=".pdf,.jpg,.jpeg,.png,.xlsx,.xls,.csv"
+                    disabled={uploading}
                   />
                 </label>
                 <small className="servicio-helper">
                   Usaremos estos archivos como base. Si prefieres, también podrás
                   enviarlos luego por email o WhatsApp.
                 </small>
+                {uploading && <p className="registro-info">Subiendo archivos...</p>}
+                {uploadError && <p className="registro-error">{uploadError}</p>}
+
+                {(servicios.cartaAdjuntos?.length ?? 0) > 0 && (
+                  <ul className="adjuntos-list">
+                    {servicios.cartaAdjuntos.map((f, idx) => (
+                      <li key={f.key || idx}>{f.name}</li>
+                    ))}
+                  </ul>
+                )}
               </div>
             )}
           </div>
@@ -184,6 +263,7 @@ export default function Paso3ServiciosExtras({
                         multiple
                         onChange={handleFileChange}
                         accept=".pdf,.jpg,.jpeg,.png"
+                        disabled={uploading}
                       />
                     </label>
                     <small className="servicio-helper">
@@ -191,6 +271,16 @@ export default function Paso3ServiciosExtras({
                       los números de mesa. Si lo prefieres, también podrás
                       enviarlo después por email/WhatsApp.
                     </small>
+                    {uploading && <p className="registro-info">Subiendo archivos...</p>}
+                    {uploadError && <p className="registro-error">{uploadError}</p>}
+
+                    {(servicios.mesasAdjuntos?.length ?? 0) > 0 && (
+                      <ul className="adjuntos-list">
+                        {servicios.mesasAdjuntos.map((f, idx) => (
+                          <li key={f.key || idx}>{f.name}</li>
+                        ))}
+                      </ul>
+                    )}
                   </div>
                 </>
               )}
@@ -308,7 +398,7 @@ export default function Paso3ServiciosExtras({
                   <span className="servicio-price badge badge-aviso">+180 € / ud</span>
                 </div>
                 <p className="servicio-description">
-                  ✅ Más barata, rápida de instalar y portátil.  
+                  ✅ Más barata, rápida de instalar y portátil.
                   ⚠️ Menos “pro”, más sensible a grasa/golpes si no va protegida.
                 </p>
               </div>
@@ -328,7 +418,7 @@ export default function Paso3ServiciosExtras({
                   <span className="servicio-price badge badge-aviso">+450 € / ud aprox.</span>
                 </div>
                 <p className="servicio-description">
-                  ✅ Más robusta y profesional, fija y siempre lista (tipo TPV).  
+                  ✅ Más robusta y profesional, fija y siempre lista (tipo TPV).
                   ⚠️ Más cara y requiere instalación fija (enchufe/soporte).
                 </p>
                 <small className="servicio-helper">

@@ -14,6 +14,7 @@ export default function CartaConfigPage() {
   const [modal, setModal] = useState(null);
   const [dragOverSection, setDragOverSection] = useState(null);
   const fileInputRef = useRef(null);
+  const uploadTargetRef = useRef("carrousel");
 
   // 🔹 Estado para gestión de destacados / promociones
   const [promoPanelAbierto, setPromoPanelAbierto] = useState(false);
@@ -72,7 +73,7 @@ export default function CartaConfigPage() {
         ...prev,
         imagenesHome: {
           ...prev.imagenesHome,
-          [section]: [...(prev.imagenesHome?.[section] || []), data.imageUrl],
+          [section]: [...prev.imagenesHome?.[section] || [], data.imageUrl],
         },
       }));
 
@@ -292,12 +293,14 @@ export default function CartaConfigPage() {
                   }`}
                 onDragOver={(e) => {
                   e.preventDefault();
-                  setDragOverSection(section);
+                  uploadTargetRef.current = section;
+                  setDragOverSection(section); // solo para UI
                 }}
                 onDragLeave={() => setDragOverSection(null)}
                 onDrop={(e) => handleDrop(section, e)}
                 onClick={() => {
-                  setDragOverSection(section);
+                  uploadTargetRef.current = section;
+                  setDragOverSection(section); // solo para UI                  
                   fileInputRef.current?.click();
                 }}
               >
@@ -322,6 +325,7 @@ export default function CartaConfigPage() {
                   className="config-btn-add"
                   onClick={(ev) => {
                     ev.stopPropagation();
+                    uploadTargetRef.current = section;
                     setDragOverSection(section);
                     fileInputRef.current?.click();
                   }}
@@ -338,7 +342,7 @@ export default function CartaConfigPage() {
             accept="image/*"
             hidden
             onChange={(e) =>
-              handleSelectFile(dragOverSection || "carrousel", e)
+              handleSelectFile(uploadTargetRef.current, e)
             }
           />
         </section>

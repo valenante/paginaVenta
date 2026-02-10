@@ -1,0 +1,58 @@
+/* =========================================================
+   MODAL ELIMINAR MESA — ALEF PREMIUM (extras “danger”)
+   ========================================================= */
+
+/* Si ya tienes estos estilos globales del otro modal,
+   puedes NO duplicarlos y dejar solo lo danger.
+   (Los dejo aquí solo por si quieres aislarlo)
+*/
+
+/* Zona de peligro */
+.dangerZone{
+  margin-top: 6px;
+  padding: 0.95rem;
+
+  border-radius: var(--radius-md, 14px);
+  border: 1px solid rgba(255,107,107,0.22);
+  background: rgba(255,107,107,0.08);
+
+  backdrop-filter: blur(14px);
+}
+
+.dangerZone-top{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.dangerZone-title{
+  color: rgba(255,255,255,0.92);
+  font-weight: 700;
+}
+
+/* Chip IRREVERSIBLE */
+.pill{
+  padding: 0.28rem 0.7rem;
+  border-radius: var(--radius-pill, 999px);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+
+  color: #ffd6d6;
+  background: rgba(255,107,107,0.18);
+  border: 1px solid rgba(255,107,107,0.30);
+}
+
+/* Botón danger */
+.alefBtn.danger{
+  color: #fff;
+  background: linear-gradient(135deg, #b31237, #ff6b6b);
+  box-shadow: 0 8px 22px rgba(255,107,107,0.25);
+}
+
+.alefBtn.danger:hover{
+  transform: translateY(-2px);
+  background: linear-gradient(135deg, #cf1b44, #ff7b7b);
+}

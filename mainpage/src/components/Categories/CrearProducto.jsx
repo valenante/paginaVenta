@@ -83,7 +83,7 @@ const CrearProducto = ({ onClose, onCreated }) => {
     const fetchCategorias = async () => {
       try {
         const response = await api.get("/productos");
-        const productos = response.data;
+        const productos = response?.data?.data ?? [];
 
         const categoriasUnicas = [
           ...new Set(

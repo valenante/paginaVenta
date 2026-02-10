@@ -1,24 +1,43 @@
 // src/pages/ProductsPage.jsx
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import Products from "../components/Products/Products";
 import ExtrasPanel from "../components/Extras/ExtrasPanel";
-import { CategoriasContext } from "../context/CategoriasContext";
+import { useCategorias } from "../context/CategoriasContext";
 import "../styles/ProductsMenu.css";
 
 const ProductsPage = () => {
-  const [selectedType, setSelectedType] = useState(null); // 'bebida', 'plato' o 'extras'
-  const { categories, fetchCategories } = useContext(CategoriasContext);
+  // 'bebida' | 'plato' | 'extras' | null
+  const [selectedType, setSelectedType] = useState(null);
 
+  const {
+    categoriesByTipo,
+    fetchCategories,
+    loading,
+    error,
+  } = useCategorias();
+
+  /* =====================================================
+     Cargar categorías cuando se selecciona tipo
+  ===================================================== */
   useEffect(() => {
     if (selectedType && selectedType !== "extras") {
       fetchCategories(selectedType);
     }
   }, [selectedType, fetchCategories]);
 
-  const handleTypeSelection = (type) => {
-    setSelectedType(type);
-  };
+  /* =====================================================
+     Categorías seguras para el tipo actual
+  ===================================================== */
+  const categories = useMemo(() => {
+    if (!selectedType || selectedType === "extras") return [];
+    return Array.isArray(categoriesByTipo[selectedType])
+      ? categoriesByTipo[selectedType]
+      : [];
+  }, [categoriesByTipo, selectedType]);
 
+  /* =====================================================
+     Helpers UI
+  ===================================================== */
   const resetSelection = () => setSelectedType(null);
 
   const getTitle = () => {
@@ -41,6 +60,9 @@ const ProductsPage = () => {
     return "";
   };
 
+  /* =====================================================
+     Render
+  ===================================================== */
   return (
     <div className="products-page--productos alef-products-page">
       {/* ===== HEADER ===== */}
@@ -58,17 +80,16 @@ const ProductsPage = () => {
           >
             ← Cambiar tipo
           </button>
-        )
-        }
+        )}
       </header>
 
-      {/* ===== SELECTOR DE TIPO (pantalla inicial) ===== */}
+      {/* ===== SELECTOR DE TIPO ===== */}
       {!selectedType && (
         <section className="products-selector-card--productos">
           <div className="products-type-buttons--productos">
             <button
               type="button"
-              onClick={() => handleTypeSelection("bebida")}
+              onClick={() => setSelectedType("bebida")}
               className="products-type-btn--productos bebidas"
             >
               🥂 Bebidas
@@ -79,7 +100,7 @@ const ProductsPage = () => {
 
             <button
               type="button"
-              onClick={() => handleTypeSelection("plato")}
+              onClick={() => setSelectedType("plato")}
               className="products-type-btn--productos platos"
             >
               🍽️ Platos
@@ -90,7 +111,7 @@ const ProductsPage = () => {
 
             <button
               type="button"
-              onClick={() => handleTypeSelection("extras")}
+              onClick={() => setSelectedType("extras")}
               className="products-type-btn--productos extras"
             >
               ➕ Extras
@@ -102,13 +123,32 @@ const ProductsPage = () => {
         </section>
       )}
 
-      {/* ===== CONTENIDO SEGÚN TIPO ===== */}
+      {/* ===== CONTENIDO ===== */}
       {selectedType && (
         <section className="products-content-card--productos">
           {selectedType === "extras" ? (
             <ExtrasPanel onBack={resetSelection} />
           ) : (
-            <Products type={selectedType} categories={categories} />
+            <>
+              {loading?.categories && (
+                <p className="products-loading--productos">
+                  Cargando categorías…
+                </p>
+              )}
+
+              {error?.categories && (
+                <p className="products-error--productos">
+                  Error cargando categorías.
+                </p>
+              )}
+
+              {!loading?.categories && !error?.categories && (
+                <Products
+                  type={selectedType}
+                  categories={categories}
+                />
+              )}
+            </>
           )}
         </section>
       )}

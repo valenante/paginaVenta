@@ -4,6 +4,8 @@ import Draggable from "react-draggable";
 import api from "../utils/api";
 import EditarMesa from "../components/EditarMesa/EditarMesa";
 import MapaEditorHelp from "../components/MapaEditor/MapaEditorHelp";
+import ModalCrearMesa from "../components/MapaEditor/ModalCrearMesa";
+import ModalEliminarMesa from "../components/MapaEditor/ModalEliminarMesa";
 import "../styles/MapaEditor.css";
 
 export default function MapaEditor() {
@@ -22,6 +24,9 @@ export default function MapaEditor() {
   const [viewportW, setViewportW] = useState(() => window.innerWidth);
   const isMobile = viewportW < 768;
   const isTablet = viewportW >= 768 && viewportW < 1200;
+
+  const [openCrear, setOpenCrear] = useState(false);
+  const [openEliminar, setOpenEliminar] = useState(false);
 
   useEffect(() => {
     const onResize = () => setViewportW(window.innerWidth);
@@ -187,8 +192,18 @@ export default function MapaEditor() {
           <option value="interior">Interior</option>
           <option value="exterior">Terraza</option>
         </select>
+
         <button onClick={() => setModoEdicion(!modoEdicion)}>
           {modoEdicion ? "Bloquear plano" : "Editar plano"}
+        </button>
+
+        {/* ✅ Acciones PRO */}
+        <button onClick={() => setOpenCrear(true)} disabled={!modoEdicion}>
+          + Nueva mesa
+        </button>
+
+        <button onClick={() => setOpenEliminar(true)} disabled={!modoEdicion}>
+          🗑️ Eliminar mesa
         </button>
       </div>
 
@@ -275,6 +290,33 @@ export default function MapaEditor() {
           onDelete={eliminarMesa}
         />
       )}
+      <ModalCrearMesa
+        open={openCrear}
+        onClose={() => setOpenCrear(false)}
+        zonaDefault={zona}
+        mesasZona={mesasVisibles}
+        onCreated={cargarMesas}
+      />
+
+      <ModalEliminarMesa
+        open={openEliminar}
+        onClose={() => setOpenEliminar(false)}
+        mesas={mesas}
+        onDeleted={() => {
+          setMesaSeleccionada(null);
+          cargarMesas();
+          // limpieza de cache de posiciones (por si borras una mesa)
+          setPositionsPct((prev) => {
+            const next = { ...prev };
+            // opcional: reconstruir en vez de adivinar
+            // aquí basta con recargar mesas; pero evitamos basura
+            Object.keys(next).forEach((id) => {
+              if (!mesas.some((m) => m._id === id)) delete next[id];
+            });
+            return next;
+          });
+        }}
+      />
 
       <MapaEditorHelp />
     </div>

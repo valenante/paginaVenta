@@ -32,7 +32,6 @@ export default function Registro() {
   const [admin, setAdmin] = useState({
     name: "",
     email: "",
-    password: "",
   });
 
   const [config, setConfig] = useState({
@@ -55,6 +54,8 @@ export default function Registro() {
     cargaProductos: false,
     mesasQr: false,
     mesasQrCantidad: "",
+    cartaAdjuntos: [], // [{ key, url, name, size, type }]
+    mesasAdjuntos: [], // [{ key, url, name, size, type }]
 
     // hardware
     tpvOpcion: "propio",          // "propio" | "nuevo"
@@ -207,46 +208,6 @@ export default function Registro() {
     });
   }, [servicios, precioBasePlan]);
 
-  // ======== CARGAR PLAN (2) – mantiene compatibilidad con tu código original ========
-  useEffect(() => {
-    const cargarPlan = async () => {
-      if (!planSlug) return;
-
-      try {
-        const { data } = await api.get("/admin/superadminPlans/publicPlans");
-        const encontrado = data.find(
-          (p) => p.slug.toLowerCase() === planSlug.toLowerCase()
-        );
-
-        if (!encontrado) {
-          alert("El plan seleccionado no existe.");
-          navigate("/");
-          return;
-        }
-
-        const tipoNegocio =
-          (encontrado.tipoNegocio || "").toLowerCase() ||
-          (planSlug === "shop" || planSlug.includes("shop") ? "shop" : "restaurante");
-
-        setTenant((prev) => ({
-          ...prev,
-          plan: encontrado.slug,
-          tipoNegocio, // 👈 NUEVO también aquí
-        }));
-
-        setPrecio((prev) => ({
-          ...prev,
-          mensual: encontrado.precioMensual,
-          totalPrimerMes: encontrado.precioMensual + prev.unico,
-        }));
-      } catch (err) {
-        console.error("Error cargando plan:", err);
-      }
-    };
-
-    cargarPlan();
-  }, [planSlug, navigate]);
-
   useEffect(() => {
     document.title = "Registro | Alef";
 
@@ -268,35 +229,6 @@ export default function Registro() {
     }
     canonical.setAttribute("href", window.location.href);
   }, []);
-
-  // ======== SUBMIT FINAL ========
-  const handleSubmit = async () => {
-    setLoading(true);
-    setError("");
-    setSuccess(false);
-
-    try {
-      await api.post("/admin/tenants/registro-avanzado", {
-        tenant: {
-          ...tenant,
-          // ✅ asegura tipoNegocio aunque no viniera del plan
-          tipoNegocio: tenant.tipoNegocio || (isShop ? "shop" : "restaurante"),
-        },
-        admin,
-        config,
-        servicios,
-        precio,
-        pago,
-      });
-
-      setSuccess(true);
-      setTimeout(() => navigate("/"), 1500);
-    } catch (err) {
-      setError(err.response?.data?.error || "Error al registrar el entorno.");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const pasos = [
     <Paso1DatosRestaurante
@@ -324,9 +256,11 @@ export default function Registro() {
       servicios={servicios}
       precio={precio}
       pago={pago}
-      onSubmit={handleSubmit}
       loading={loading}
-      success={success}
+      setLoading={setLoading}
+      error={error}
+      setError={setError}
+      // success no lo uses aquí (Stripe te saca de la página)
       precioBasePlan={precioBasePlan}
       plan={planSeleccionado}
       periodo={periodo}

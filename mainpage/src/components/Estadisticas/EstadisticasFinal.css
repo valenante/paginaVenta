@@ -297,6 +297,11 @@
   min-width: 190px;
 }
 
+.mensaje-vacio--estadisticas{
+  text-align: center;
+  color: white;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .stats-filter-bar {

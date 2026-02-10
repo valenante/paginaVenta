@@ -1,0 +1,130 @@
+/* =========================================================
+   MODAL CREAR MESA — ALEF PREMIUM
+   (usa ModalBase oscuro + blur)
+   ========================================================= */
+
+.alefForm{
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.alefForm-grid{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+/* en modal: si es estrecho, 1 columna */
+@media (max-width: 620px){
+  .alefForm-grid{
+    grid-template-columns: 1fr;
+  }
+}
+
+.alefField{
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.alefField-label{
+  color: rgba(255,255,255,0.88);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.alefField-input{
+  padding: 0.7rem 0.85rem;
+  border-radius: var(--radius-md, 14px);
+
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.20);
+
+  color: #fff;
+  outline: none;
+
+  transition: all .22s ease;
+}
+
+.alefField-input::placeholder{
+  color: rgba(255,255,255,0.55);
+}
+
+.alefField-input:focus{
+  border-color: rgba(255,103,0,0.55);
+  box-shadow: 0 0 0 3px rgba(255,103,0,0.22);
+  background: rgba(255,255,255,0.14);
+}
+
+/* hint */
+.alefHint{
+  margin-top: 4px;
+  font-size: 0.95rem;
+  color: rgba(229,229,229,0.88);
+
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: var(--radius-md, 14px);
+  padding: 0.85rem 0.9rem;
+
+  backdrop-filter: blur(14px);
+}
+
+/* error */
+.alefError{
+  color: #ff6b6b;
+  text-align: center;
+  font-size: 1rem;
+  padding: 0.75rem 0.9rem;
+
+  background: rgba(255,107,107,0.12);
+  border: 1px solid rgba(255,107,107,0.25);
+  border-radius: var(--radius-md, 14px);
+}
+
+/* footer actions (ModalBase.footer) */
+.alefForm-actions{
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+/* botones premium */
+.alefBtn{
+  border: none;
+  cursor: pointer;
+  font-weight: 700;
+  border-radius: var(--radius-pill, 999px);
+  padding: 0.78rem 1.25rem;
+  font-size: 0.95rem;
+
+  transition: all .22s ease;
+}
+
+.alefBtn:disabled{
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.alefBtn.ghost{
+  background: rgba(255,255,255,0.10);
+  border: 1px solid rgba(255,255,255,0.22);
+  color: #fff;
+}
+
+.alefBtn.ghost:hover{
+  background: rgba(255,255,255,0.16);
+  transform: translateY(-1px);
+}
+
+.alefBtn.primary{
+  color: #fff;
+  background: linear-gradient(135deg, #6a0dad, #ff6700);
+  box-shadow: 0 6px 18px rgba(255,103,0,0.35);
+}
+
+.alefBtn.primary:hover{
+  transform: translateY(-2px);
+  background: linear-gradient(135deg, #7c1fcf, #ff7a22);
+}

@@ -58,7 +58,9 @@ import SoporteLista from "./pages/SoporteLista.jsx";
 import SoporteNuevo from "./pages/SoporteNuevo.jsx";
 import AyudaPage from "./pages/Ayuda/AyudaPage.jsx";
 import MigrationsTenantPage from "./pages/admin/AdminDashboard/migrations/MigrationsTenantPage.jsx";
-
+import SuperadminAltaTenant from "./pages/admin/SuperadminAltaTenant/SuperadminAltaTenant.jsx";
+import TenantsPage from "./pages/admin/tenants/TenantsPage";
+import SetPassword from "./components/ForgotPassword/SetPassword";
 
 import TenantTable from "./pages/admin/AdminDashboard/components/TenantTable.jsx";
 import CamareroPanel from "./pages/panel/CamareroPanel";
@@ -125,7 +127,7 @@ function LandingPage() {
       <Funcionamiento />
       <Features />
       <Gallery />
-      {/*      <Packs />*/}
+      <Packs />
       <About />
       <Contact />
       <Footer />
@@ -195,7 +197,8 @@ function AppRoutes() {
       <Route path="/cookies" element={<Cookies />} />
 
       <Route path="/forgot-password" element={<ForgotPassword />} />
-      <Route
+      <Route path="/set-password" element={<SetPassword />} />
+      <Route path="/set-password/:tenantId/:token" element={<SetPassword />} />      <Route
         path="/reset-password/:tenantId/:token"
         element={<ResetPassword />}
       />
@@ -398,6 +401,8 @@ function AppRoutes() {
         <Route path="rgpd" element={<RgpdPage />} />
         <Route path="migrations" element={<MigrationsPage />} />
         <Route path="migrations/:slug" element={<MigrationsTenantPage />} />
+        <Route path="tenants" element={<TenantsPage />} />
+        <Route path="tenants/nuevo" element={<SuperadminAltaTenant />} />
       </Route>
     </Routes>
   );

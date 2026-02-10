@@ -5,7 +5,7 @@ import { useAuth } from "../context/AuthContext.jsx";
 import api from "../utils/api";
 import "../styles/RestauranteConfigPage.css";
 import ModalConfirmacion from "../components/Modal/ModalConfirmacion.jsx";
-import EstacionesCapacidadPanel from "../components/Config/EstacionesCapacidadPanel.jsx";
+import EstacionesPanel from "../components/Config/EstacionesPanel.jsx";
 import AlertaMensaje from "../components/AlertaMensaje/AlertaMensaje.jsx";
 import { useTenant } from "../context/TenantContext";
 import PlanFeaturesPanel from "../components/Config/PlanFeaturesPanel.jsx";
@@ -60,51 +60,10 @@ export default function RestauranteConfigPage() {
 
   const [saving, setSaving] = useState(false);
 
-  // === Estado modales y alertas ===
-  const [estacionAEliminar, setEstacionAEliminar] = useState(null);
-
   const [alerta, setAlerta] = useState(null);
-
-  // === SECCIONES / ESTACIONES ===
-  const [estaciones, setEstaciones] = useState([]);
-
-  const [nuevaEstacion, setNuevaEstacion] = useState({
-    nombre: "",
-    slug: "",
-    destino: "cocina",
-    esCentral: false,
-  });
-
-  const [loadingEstaciones, setLoadingEstaciones] = useState(true);
 
   const [verifactuEnabled, setVerifactuEnabled] = useState(false);
   const [verifactuLoaded, setVerifactuLoaded] = useState(false);
-
-  const [editandoEstacion, setEditandoEstacion] = useState(null);
-
-  useEffect(() => {
-    if (!esRestaurante) {
-      // Para tiendas no existen estaciones
-      setLoadingEstaciones(false);
-      return;
-    }
-
-    const fetchData = async () => {
-      try {
-        const est = await api.get("/estaciones");
-        setEstaciones(est.data || []);
-      } catch (err) {
-        setAlerta({
-          tipo: "error",
-          mensaje: "Error al cargar estaciones.",
-        });
-      } finally {
-        setLoadingEstaciones(false);
-      }
-    };
-
-    fetchData();
-  }, [esRestaurante]);
 
   // Cargar config en el formulario
   useEffect(() => {
@@ -159,7 +118,7 @@ export default function RestauranteConfigPage() {
         slaMesas: form.slaMesas,
         capacidadEstaciones: form.capacidadEstaciones,
       });
-      setConfig(data);
+      setConfig(data.config);
       setAlerta({
         tipo: "success",
         mensaje: "Configuración guardada correctamente ✅",
@@ -172,44 +131,6 @@ export default function RestauranteConfigPage() {
     } finally {
       setSaving(false);
     }
-  };
-
-  // === CRUD ESTACIONES ===
-  const crearEstacion = async () => {
-    if (!nuevaEstacion.nombre.trim()) return;
-
-    try {
-      const { data } = await api.post("/estaciones", nuevaEstacion);
-      setEstaciones((prev) => [...prev, data]);
-
-      setNuevaEstacion({
-        nombre: "",
-        slug: "",
-        destino: "cocina",
-        esCentral: false,
-      });
-
-      setAlerta({
-        tipo: "success",
-        mensaje: "Estación creada correctamente.",
-      });
-    } catch (err) {
-      setAlerta({ tipo: "error", mensaje: "Error al crear estación." });
-    }
-  };
-
-  const eliminarEstacion = async (id) => {
-    try {
-      await api.delete(`/estaciones/${id}`);
-      setEstaciones((prev) => prev.filter((s) => s._id !== id));
-      setAlerta({ tipo: "success", mensaje: "Estación eliminada." });
-    } catch (err) {
-      setAlerta({ tipo: "error", mensaje: "Error al eliminar estación." });
-    }
-  };
-
-  const iniciarEdicionEstacion = (estacion) => {
-    setEditandoEstacion({ ...estacion });
   };
 
   const guardarEdicionEstacion = async () => {
@@ -251,11 +172,6 @@ export default function RestauranteConfigPage() {
     }));
 
     setConfig(data.config);
-  };
-
-  // Confirmación de borrado de ESTACIÓN
-  const pedirConfirmacionBorrarEstacion = (estacion) => {
-    setEstacionAEliminar(estacion);
   };
 
   // ===========================
@@ -386,111 +302,11 @@ export default function RestauranteConfigPage() {
             />
           )}
 
-          {esRestaurante && !isPlanEsencial && (
-            <section className="config-card card">
-              <header className="config-card-header">
-                <h2>🔥 Estaciones de cocina / barra</h2>
-                <p className="config-card-subtitle">
-                  Define las estaciones donde se preparan los productos
-                  (plancha, frío, barra, etc.) y marca cuál es la estación
-                  central.
-                </p>
-              </header>
-
-              <div className="config-field config-field--stacked">
-                <label>Nueva estación</label>
-
-                <input
-                  type="text"
-                  placeholder="Nombre (Ej: Plancha)"
-                  value={nuevaEstacion.nombre}
-                  onChange={(e) =>
-                    setNuevaEstacion({
-                      ...nuevaEstacion,
-                      nombre: e.target.value,
-                    })
-                  }
-                />
-
-                <input
-                  type="text"
-                  placeholder="Slug (plancha)"
-                  value={nuevaEstacion.slug}
-                  onChange={(e) =>
-                    setNuevaEstacion({
-                      ...nuevaEstacion,
-                      slug: e.target.value,
-                    })
-                  }
-                />
-
-                <select
-                  value={nuevaEstacion.destino}
-                  onChange={(e) =>
-                    setNuevaEstacion({
-                      ...nuevaEstacion,
-                      destino: e.target.value,
-                    })
-                  }
-                >
-                  <option value="cocina">Cocina</option>
-                  <option value="barra">Barra</option>
-                </select>
-
-                <label className="check-central">
-                  <input
-                    type="checkbox"
-                    checked={nuevaEstacion.esCentral}
-                    onChange={(e) =>
-                      setNuevaEstacion({
-                        ...nuevaEstacion,
-                        esCentral: e.target.checked,
-                      })
-                    }
-                  />
-                  Estación central
-                </label>
-
-                <button
-                  type="button"
-                  className="btn btn-primario"
-                  onClick={crearEstacion}
-                >
-                  Crear estación
-                </button>
-              </div>
-
-              <ul className="lista-simple">
-                {loadingEstaciones && <li>Cargando estaciones...</li>}
-                {!loadingEstaciones && estaciones.length === 0 && (
-                  <li>No hay estaciones creadas todavía.</li>
-                )}
-                {estaciones.map((e) => (
-                  <li key={e._id}>
-                    <span>
-                      {e.nombre} ({e.slug}) — {e.destino}{" "}
-                      {e.esCentral ? "⭐ Central" : ""}
-                    </span>
-
-                    <div className="acciones-mini">
-                      <button
-                        type="button"
-                        onClick={() => iniciarEdicionEstacion(e)}
-                      >
-                        ✏️
-                      </button>
-                      <button
-                        type="button"
-                        className="delete-btn"
-                        onClick={() => pedirConfirmacionBorrarEstacion(e)}
-                      >
-                        ❌
-                      </button>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            </section>
+          {esRestaurante && (
+            <EstacionesPanel
+              isPlanEsencial={isPlanEsencial}
+              onAlert={setAlerta}
+            />
           )}
 
           {/* === CAPACIDAD Y SLA DE MESAS === 
@@ -526,72 +342,6 @@ export default function RestauranteConfigPage() {
           {saving ? "Guardando..." : "Guardar configuración general"}
         </button>
       </div>
-
-
-      {editandoEstacion && (
-        <ModalConfirmacion
-          titulo="Editar estación"
-          mensaje=""
-          placeholder=""
-          onClose={() => setEditandoEstacion(null)}
-          onConfirm={guardarEdicionEstacion}
-        >
-          <div className="modal-form">
-            <input
-              type="text"
-              value={editandoEstacion.nombre}
-              onChange={(e) =>
-                setEditandoEstacion((prev) => ({ ...prev, nombre: e.target.value }))
-              }
-            />
-
-            <input
-              type="text"
-              value={editandoEstacion.slug}
-              onChange={(e) =>
-                setEditandoEstacion((prev) => ({ ...prev, slug: e.target.value }))
-              }
-            />
-
-            <select
-              value={editandoEstacion.destino}
-              onChange={(e) =>
-                setEditandoEstacion((prev) => ({ ...prev, destino: e.target.value }))
-              }
-            >
-              <option value="cocina">Cocina</option>
-              <option value="barra">Barra</option>
-            </select>
-
-            <label className="check-central">
-              <input
-                type="checkbox"
-                checked={editandoEstacion.esCentral}
-                onChange={(e) =>
-                  setEditandoEstacion((prev) => ({
-                    ...prev,
-                    esCentral: e.target.checked,
-                  }))
-                }
-              />
-              Estación central
-            </label>
-          </div>
-        </ModalConfirmacion>
-      )}
-
-      {estacionAEliminar && (
-        <ModalConfirmacion
-          titulo="Eliminar estación"
-          mensaje={`¿Seguro que deseas eliminar "${estacionAEliminar.nombre}"? Esta acción NO se puede deshacer.`}
-          onConfirm={async () => {
-            await eliminarEstacion(estacionAEliminar._id);
-            setEstacionAEliminar(null);
-          }}
-          onClose={() => setEstacionAEliminar(null)}
-        />
-      )}
-
     </main>
   );
 }

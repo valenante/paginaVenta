@@ -1,45 +1,46 @@
 /*****************************************************
- * Página de ajustes de reservas – DISEÑO PROFESIONAL
+ * ReservasAjustesPage – Alef (Listo para vender)
+ * Mobile-first · sin scroll horizontal · consistente
  *****************************************************/
 
+/* ===== Root container ===== */
 .reservas-ajustes-page {
+  width: 100%;
   max-width: 1200px;
-  margin: var(--space-3xl) auto;
-  padding: 0 var(--space-lg) var(--space-3xl);
+  margin: var(--space-2xl) auto;
+  padding: 0 var(--space-md) var(--space-3xl);
   display: flex;
   flex-direction: column;
-  gap: var(--space-2xl);
+  gap: var(--space-xl);
+  overflow-x: hidden; /* ✅ evita scroll horizontal accidental */
 }
 
-/* =========================== */
-/* HEADER PRINCIPAL */
-/* =========================== */
-
+/* ===== Header ===== */
 .reservas-ajustes-header {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: var(--space-2xl);
-  padding-bottom: var(--space-lg);
+  flex-direction: column;
+  gap: var(--space-md);
+  padding-bottom: var(--space-md);
   border-bottom: 1px solid var(--color-borde-suave);
 }
 
 .reservas-ajustes-header .config-title {
-  margin-bottom: var(--space-xs);
-  font-size: var(--font-size-2xl);
+  margin: 0 0 var(--space-xxs);
+  font-size: var(--font-size-xl);
+  line-height: 1.2;
 }
 
-/* Pill del día seleccionado */
+/* Pill día seleccionado */
 .reservas-ajustes-fecha-pill {
-  padding: var(--space-sm) var(--space-lg);
+  width: 100%;
+  padding: var(--space-sm) var(--space-md);
   border-radius: var(--radius-lg);
-  background: #ffffff;
+  background: #fff;
   border: 1px solid var(--color-borde-suave);
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-sm);
   display: flex;
   flex-direction: column;
   gap: var(--space-xxs);
-  min-width: 260px;
 }
 
 .pill-label {
@@ -51,70 +52,85 @@
 
 .pill-value {
   font-size: var(--font-size-sm);
-  font-weight: 600;
+  font-weight: 700;
+  color: var(--color-texto);
 }
 
-/* =========================== */
-/* GRID GENERAL */
-/* =========================== */
-
+/* ===== Grid general (mobile: 1 columna) ===== */
 .reservas-ajustes-grid {
   display: grid;
-  grid-template-columns: 2fr 1.2fr;
-  gap: var(--space-2xl);
+  grid-template-columns: 1fr;
+  gap: var(--space-lg);
 }
 
-/* =========================== */
-/* TARJETAS BASE */
-/* =========================== */
-
+/* ===== Tarjetas base ===== */
 .config-section.card {
   background: #ffffff;
   border-radius: var(--radius-xl);
-  padding: var(--space-xl);
+  padding: var(--space-lg);
   box-shadow: var(--shadow-md);
   border: 1px solid var(--color-borde-medio);
   display: flex;
   flex-direction: column;
-  gap: var(--space-xl);
+  gap: var(--space-lg);
+
+  /* ✅ clave para que los hijos no rompan el grid en móvil */
+  min-width: 0;
 }
 
-/* =========================== */
-/* BLOQUE IZQUIERDO */
-/* =========================== */
-
-.reservas-ajustes-main {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-xl);
-}
-
-.reservas-main-header {
+/* ===== Títulos ===== */
+.reservas-main-header,
+.reservas-especial-card {
   display: flex;
   flex-direction: column;
   gap: var(--space-xs);
 }
 
-/* Grid 2 columnas: franjas + días */
-.reservas-main-layout {
-  display: grid;
-  grid-template-columns: 1.7fr 1.3fr;
-  gap: var(--space-xl);
+.section-title {
+  margin: 0;
+  font-size: var(--font-size-lg);
 }
 
-/* =========================== */
-/* PANEL IZQUIERDO: FRANJAS */
-/* =========================== */
+.section-description {
+  margin: 0;
+}
 
+/* ===== Layout interno (mobile: 1 columna) ===== */
+.reservas-main-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-lg);
+  min-width: 0;
+}
+
+/* ===== Panel franjas ===== */
 .reservas-franjas-panel {
   display: flex;
   flex-direction: column;
-  gap: var(--space-lg);
+  gap: var(--space-md);
+  min-width: 0;
 }
 
-/* Inputs */
+/* Campo fecha */
+.config-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xxs);
+}
+
+.config-field label {
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  color: var(--color-texto-suave);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* Input date (react-datepicker) */
 .input-date {
-  padding: 0.65rem 0.9rem;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.65rem 0.85rem;
   border-radius: var(--radius-md);
   border: 1px solid var(--color-borde-medio);
   background: #ffffff;
@@ -122,24 +138,35 @@
   box-shadow: var(--shadow-xs);
 }
 
+.react-datepicker-wrapper,
+.react-datepicker__input-container {
+  width: 100%;
+}
+
+.react-datepicker__input-container input {
+  width: 100%;
+}
+
+/* Lista de franjas */
 .reservas-franjas-list {
   display: flex;
   flex-direction: column;
-  gap: var(--space-md);
+  gap: var(--space-sm);
 }
 
-/* CARD DE FRANJA */
+/* ===== Card franja (general y especial) ===== */
 .franja-item,
 .franja-especial-item {
   background: #ffffff;
-  padding: var(--space-md) var(--space-lg);
+  padding: var(--space-md);
   border-radius: var(--radius-lg);
   border: 1px solid var(--color-borde-suave);
   box-shadow: var(--shadow-sm);
   display: flex;
   flex-direction: column;
   gap: var(--space-md);
-  transition: 0.15s ease;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  min-width: 0;
 }
 
 .franja-item:hover,
@@ -148,59 +175,74 @@
   box-shadow: var(--shadow-md);
 }
 
+/* Horas: MOBILE → apilado */
 .franja-horas {
-  display: flex;
-  align-items: center;
-  gap: var(--space-lg);
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-sm);
+  align-items: start;
+  min-width: 0;
 }
 
-/* Campos individuales */
+.franja-separador {
+  display: none; /* ✅ en móvil no aporta, estorba */
+}
+
+/* Campo dentro de franja */
 .franja-field {
   display: flex;
   flex-direction: column;
   gap: var(--space-xxs);
-  flex: 1;
+  min-width: 0;
 }
 
 .franja-field label {
   font-size: var(--font-size-xs);
-  font-weight: 600;
+  font-weight: 700;
   color: var(--color-texto-suave);
 }
 
 .franja-field input {
-  padding: 0.55rem 0.75rem;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.6rem 0.75rem;
   border-radius: var(--radius-md);
   border: 1px solid var(--color-borde-medio);
   font-size: var(--font-size-sm);
   background: #ffffff;
 }
 
-.franja-separador {
-  font-size: var(--font-size-xl);
-  color: var(--color-texto-suave);
-}
-
+/* Extra: MOBILE → max + delete alineados */
 .franja-extra {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--space-sm);
+  align-items: end;
 }
 
 /* Botón eliminar */
 .btn-icon.btn-delete-franja {
   background: #fee2e2;
   color: #b91c1c;
-  border: none;
-  padding: 0.45rem 0.75rem;
+  border: 1px solid rgba(185, 28, 28, 0.18);
+  padding: 0.55rem 0.75rem;
   border-radius: var(--radius-md);
   cursor: pointer;
-  transition: 0.2s ease;
+  transition: background 0.15s ease, transform 0.15s ease;
   font-size: var(--font-size-sm);
+  line-height: 1;
+  height: 40px; /* ✅ consistente con inputs */
 }
 
 .btn-icon.btn-delete-franja:hover {
   background: #fecaca;
+  transform: translateY(-1px);
+}
+
+.btn-icon.btn-delete-franja:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
 }
 
 /* Botón añadir */
@@ -210,33 +252,38 @@
   margin-top: var(--space-xs);
 }
 
-/* =========================== */
-/* PANEL DERECHO: DÍAS HABILITADOS */
-/* =========================== */
-
+/* ===== Panel días habilitados ===== */
 .reservas-dias-panel {
   display: flex;
   flex-direction: column;
-  gap: var(--space-md);
+  gap: var(--space-sm);
+  min-width: 0;
 }
 
 .dias-grid {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-sm);
+  min-width: 0;
 }
 
 .dia-pill {
   display: inline-flex;
   align-items: center;
   gap: var(--space-xs);
-  padding: 0.45rem 0.9rem;
+  padding: 0.45rem 0.85rem;
   border-radius: 999px;
   border: 1px solid var(--color-borde-medio);
   background: #fafafa;
   cursor: pointer;
   font-size: var(--font-size-xs);
-  transition: 0.2s ease;
+  transition: background 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
+  user-select: none;
+}
+
+.dia-pill input {
+  width: 16px;
+  height: 16px;
 }
 
 .dia-activo {
@@ -246,80 +293,128 @@
 }
 
 .dia-inactivo {
-  opacity: 0.6;
+  opacity: 0.65;
 }
 
-/* =========================== */
-/* ACCIONES */
-/* =========================== */
-
-.config-actions {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: var(--space-md);
-}
-
-/* =========================== */
-/* BLOQUE DERECHA: FECHA ESPECIAL */
-/* =========================== */
-
-.reservas-especial-card {
+/* ===== Toggle fecha especial ===== */
+.toggle-especial {
   display: flex;
   flex-direction: column;
-  gap: var(--space-xl);
+  gap: var(--space-xs);
 }
 
+.checkbox-row {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: var(--font-size-sm);
+}
+
+.checkbox-row input {
+  width: 16px;
+  height: 16px;
+}
+
+/* ===== Franjas especiales wrapper ===== */
 .franjas-especiales {
   display: flex;
   flex-direction: column;
-  gap: var(--space-lg);
+  gap: var(--space-md);
 }
 
-/* Botón guardar fecha especial */
+/* ===== Estados / badges ===== */
+.estado-especial.badge,
+.estado-normal {
+  align-self: flex-start;
+}
+
+/* ===== Acciones (botones guardar) ===== */
+.config-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-sm);
+  margin-top: var(--space-sm);
+}
+
+/* ✅ En móvil: botón ocupa todo el ancho (más usable) */
+.btn-guardar-config,
 .btn-guardar-especial {
-  margin-top: var(--space-md);
+  width: 100%;
 }
 
-/* =========================== */
-/* ALERTA GLOBAL */
-/* =========================== */
-
+/* ===== Alerta global ===== */
 .reservas-ajustes-alerta {
-  margin-top: var(--space-xl);
+  margin-top: var(--space-lg);
 }
 
-/* =========================== */
-/* RESPONSIVE */
-/* =========================== */
+/* =====================================================
+   BREAKPOINTS
+   ===================================================== */
 
-@media (max-width: 960px) {
-  .reservas-ajustes-grid {
-    grid-template-columns: 1fr;
-    gap: var(--space-xl);
+/* >= 768px (tablet) */
+@media (min-width: 768px) {
+  .reservas-ajustes-page {
+    padding: 0 var(--space-lg) var(--space-3xl);
+    gap: var(--space-2xl);
   }
 
   .reservas-ajustes-header {
-    flex-direction: column;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--space-2xl);
+  }
+
+  .reservas-ajustes-fecha-pill {
+    width: auto;
+    min-width: 260px;
+  }
+
+  .config-section.card {
+    padding: var(--space-xl);
+    gap: var(--space-xl);
+  }
+
+  /* Franjas: en tablet ya podés poner horas en 2 columnas */
+  .franja-horas {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-md);
+  }
+
+  .franja-separador {
+    display: none;
+  }
+
+  /* Acciones */
+  .btn-guardar-config,
+  .btn-guardar-especial {
+    width: auto;
+    min-width: 220px;
   }
 }
 
-@media (max-width: 768px) {
+/* >= 960px (desktop) */
+@media (min-width: 960px) {
+  .reservas-ajustes-grid {
+    grid-template-columns: 2fr 1.2fr;
+    gap: var(--space-2xl);
+  }
+
   .reservas-main-layout {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1.7fr 1.3fr;
+    gap: var(--space-xl);
   }
 
+  /* Franjas: desktop con separador visual opcional */
   .franja-horas {
-    flex-direction: column;
-    gap: var(--space-sm);
-    align-items: stretch;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: end;
   }
 
-  .franja-extra {
-    flex-direction: row;
-    justify-content: space-between;
-  }
-
-  .reservas-ajustes-page {
-    padding-inline: var(--space-sm);
+  .franja-separador {
+    display: inline-block;
+    font-size: var(--font-size-xl);
+    color: var(--color-texto-suave);
+    padding-bottom: 0.35rem;
   }
 }

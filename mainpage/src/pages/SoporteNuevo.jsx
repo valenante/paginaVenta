@@ -4,81 +4,138 @@ import api from "../utils/api";
 import "../styles/Soporte.css";
 
 export default function SoporteNuevo() {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
-    const [form, setForm] = useState({
-        asunto: "",
-        descripcion: "",
-        prioridad: "media"
-    });
+  const [form, setForm] = useState({
+    asunto: "",
+    descripcion: "",
+    prioridad: "media",
+  });
 
-    const [enviando, setEnviando] = useState(false);
-    const [error, setError] = useState("");
+  const [enviando, setEnviando] = useState(false);
+  const [error, setError] = useState("");
 
-    const handleChange = (e) => {
-        setForm({
-            ...form,
-            [e.target.name]: e.target.value
-        });
-    };
+  const handleChange = (e) => {
+    setForm((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
+  };
 
-    const enviar = async (e) => {
-        e.preventDefault();
-        setEnviando(true);
-        setError("");
+  const validar = () => {
+    if (form.asunto.trim().length < 5) {
+      return "El asunto debe tener al menos 5 caracteres.";
+    }
+    if (form.descripcion.trim().length < 10) {
+      return "Describe el problema con un poco más de detalle.";
+    }
+    return null;
+  };
 
-        try {
-            await api.post("/admin/tickets/cliente", form);
-            navigate("/soporte");
+  const enviar = async (e) => {
+    e.preventDefault();
+    if (enviando) return;
 
-        } catch (err) {
-            setError(err.response?.data?.error || "Error al crear ticket");
-        } finally {
-            setEnviando(false);
-        }
-    };
+    const errorValidacion = validar();
+    if (errorValidacion) {
+      setError(errorValidacion);
+      return;
+    }
 
-    return (
-        <div className="soporte-contenedor">
-            <h1>Nuevo ticket</h1>
+    setEnviando(true);
+    setError("");
 
-            <form className="soporte-form" onSubmit={enviar}>
+    try {
+      await api.post("/tickets", {
+        asunto: form.asunto.trim(),
+        descripcion: form.descripcion.trim(),
+        prioridad: form.prioridad,
+      });
 
-                <label>Asunto:</label>
-                <input
-                    type="text"
-                    name="asunto"
-                    value={form.asunto}
-                    onChange={handleChange}
-                    required
-                />
+      navigate("/soporte");
+    } catch (err) {
+      setError(
+        err.response?.data?.message ||
+          "No se pudo crear el ticket. Inténtalo de nuevo."
+      );
+    } finally {
+      setEnviando(false);
+    }
+  };
 
-                <label>Descripción:</label>
-                <textarea
-                    name="descripcion"
-                    value={form.descripcion}
-                    onChange={handleChange}
-                    required
-                />
-
-                <label>Prioridad:</label>
-                <select
-                    name="prioridad"
-                    value={form.prioridad}
-                    onChange={handleChange}
-                >
-                    <option value="baja">Baja</option>
-                    <option value="media">Media</option>
-                    <option value="alta">Alta</option>
-                    <option value="urgente">Urgente</option>
-                </select>
-
-                {error && <p className="soporte-error">{error}</p>}
-
-                <button className="btn-primario" disabled={enviando}>
-                    {enviando ? "Enviando..." : "Crear ticket"}
-                </button>
-            </form>
+  return (
+    <div className="soporte-contenedor">
+      <div className="soporte-header">
+        <div>
+          <h1>Nuevo ticket de soporte</h1>
+          <p className="soporte-subtitulo">
+            Describe tu incidencia y el equipo de soporte te responderá lo antes
+            posible.
+          </p>
         </div>
-    );
+      </div>
+
+      <form className="soporte-form" onSubmit={enviar} noValidate>
+        <label htmlFor="asunto">Asunto</label>
+        <input
+          id="asunto"
+          type="text"
+          name="asunto"
+          value={form.asunto}
+          onChange={handleChange}
+          maxLength={120}
+          placeholder="Ej: No imprime la cocina"
+          disabled={enviando}
+          required
+        />
+        <small className="soporte-hint">
+          {form.asunto.length}/120 caracteres
+        </small>
+
+        <label htmlFor="descripcion">Descripción</label>
+        <textarea
+          id="descripcion"
+          name="descripcion"
+          value={form.descripcion}
+          onChange={handleChange}
+          maxLength={2000}
+          placeholder="Explica qué ocurre, cuándo empezó y cómo te afecta…"
+          rows={6}
+          disabled={enviando}
+          required
+        />
+        <small className="soporte-hint">
+          {form.descripcion.length}/2000 caracteres
+        </small>
+
+        <label htmlFor="prioridad">Prioridad</label>
+        <select
+          id="prioridad"
+          name="prioridad"
+          value={form.prioridad}
+          onChange={handleChange}
+          disabled={enviando}
+        >
+          <option value="baja">Baja — duda o mejora</option>
+          <option value="media">Media — algo no funciona bien</option>
+          <option value="alta">Alta — afecta al servicio</option>
+          <option value="critica">
+            Crítica — no puedo operar el negocio
+          </option>
+        </select>
+
+        {error && <p className="soporte-error">{error}</p>}
+
+        <div className="soporte-form-actions">
+          <button
+            type="submit"
+            className="btn-primario"
+            disabled={enviando}
+          >
+            {enviando ? "Enviando ticket…" : "Crear ticket"}
+          </button>
+        </div>
+      </form>
+    </div>
+  );
 }

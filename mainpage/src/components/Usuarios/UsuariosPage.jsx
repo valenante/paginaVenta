@@ -30,6 +30,7 @@ export default function UsuariosPage() {
   const [usuarioEdit, setUsuarioEdit] = useState(null);
   const [usuarioStats, setUsuarioStats] = useState(null);
   const [usuarioPermisos, setUsuarioPermisos] = useState(null);
+  const [deletingId, setDeletingId] = useState(null);
   const [usuarioAEliminar, setUsuarioAEliminar] = useState(null);
   const { user } = useAuth();
 
@@ -145,6 +146,7 @@ export default function UsuariosPage() {
             onStats={setUsuarioStats}
             onPermisos={setUsuarioPermisos}
             isPlanEsencial={isPlanEsencial}
+            deletingId={deletingId}
           />
         </div>
 
@@ -177,24 +179,26 @@ export default function UsuariosPage() {
           onSave={actualizarPermisosUsuario}
           onClose={() => setUsuarioPermisos(null)}
         />
-      )} */}{usuarioAEliminar && (
+      )} */}
+      {usuarioAEliminar && (
         <ModalConfirmacion
-          titulo="Eliminar usuario"
-          mensaje={`¿Seguro que quieres eliminar al usuario "${usuarioAEliminar.name}"? Esta acción no se puede deshacer.`}
+          titulo="Desactivar usuario"
+          mensaje={`¿Seguro que quieres desactivar a "${usuarioAEliminar.name}"? Perderá acceso al TPV inmediatamente. Podrás reactivarlo más adelante.`}
           onClose={() => setUsuarioAEliminar(null)}
           onConfirm={async () => {
+            setDeletingId(usuarioAEliminar._id);
             const ok = await eliminarUsuario(usuarioAEliminar._id);
 
             setAlerta({
               tipo: ok ? "exito" : "error",
-              mensaje: ok ? "Usuario eliminado" : "Error al eliminar",
+              mensaje: ok ? "Usuario desactivado" : "Error al desactivar",
             });
 
+            setDeletingId(null);
             setUsuarioAEliminar(null);
           }}
         />
       )}
-
     </div>
   );
 }

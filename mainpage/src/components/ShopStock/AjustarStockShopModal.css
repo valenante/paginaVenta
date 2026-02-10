@@ -23,8 +23,7 @@
 
 /* === CONTENEDOR === */
 .alef-modal-content {
-  width: 100%;
-  max-width: 420px;
+  width: fit-content;
   background: rgba(15, 23, 42, 0.8);
   backdrop-filter: blur(14px);
   border-radius: 18px;

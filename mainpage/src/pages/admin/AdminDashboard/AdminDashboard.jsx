@@ -1,15 +1,16 @@
 // src/pages/admin/AdminDashboard/AdminDashboard.jsx
 import React from "react";
-import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "../../../styles/AdminDashboard.css";
 import useTenantsData from "../../../Hooks/useTenantsData";
 import DashboardHeader from "./components/DashboardHeader";
 import StatsCards from "./components/StatsCards";
 import TenantTable from "./components/TenantTable";
 import ChartsSection from "./components/ChartsSection";
-import NuevoTenantModal from "./components/NuevoTenantModal/NuevoTenantModal";
 
 export default function AdminDashboard() {
+  const navigate = useNavigate();
+
   const {
     filtered,
     loading,
@@ -19,7 +20,6 @@ export default function AdminDashboard() {
     setPlanFilter,
     fetchTenants,
   } = useTenantsData();
-  const [modalOpen, setModalOpen] = useState(false);
 
   if (loading) return <p>Cargando datos...</p>;
 
@@ -33,16 +33,12 @@ export default function AdminDashboard() {
         onRefresh={fetchTenants}
       />
 
-      <button className="refresh-btn" onClick={() => setModalOpen(true)}>
+      <button
+        className="refresh-btn"
+        onClick={() => navigate("/superadmin/tenants/nuevo")}
+      >
         ➕ Nuevo negocio
       </button>
-
-      <NuevoTenantModal
-        isOpen={modalOpen}
-        onClose={() => setModalOpen(false)}
-        onCreated={fetchTenants}
-        defaultTipo="restaurante" // 👈 por ahora
-      />
 
       <StatsCards tenants={filtered} />
       <ChartsSection tenants={filtered} />

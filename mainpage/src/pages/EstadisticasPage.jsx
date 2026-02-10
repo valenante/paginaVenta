@@ -1,5 +1,5 @@
 // src/pages/Estadisticas/EstadisticasPage.jsx
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useCategorias } from "../context/CategoriasContext";
 import { useFeaturesPlan } from "../context/FeaturesPlanContext";
 import { useEstadisticasCategoria } from "../Hooks/useEstadisticasCategoria";
@@ -14,8 +14,15 @@ import UpsellEstadisticasPro from "../components/Estadisticas/UpsellEstadisticas
 
 import "../components/Estadisticas/EstadisticasFinal.css";
 
-const EstadisticasPage = ({ type = "plato" }) => {
-  const { categories, fetchCategories, products, fetchProducts } = useCategorias();
+export default function EstadisticasPage({ type = "plato" }) {
+  const {
+    categoriesByTipo,
+    productsByKey,
+    loading,
+    error,
+    fetchCategories,
+    fetchProducts,
+  } = useCategorias();
 
   const { hasFeature } = useFeaturesPlan();
 
@@ -25,123 +32,160 @@ const EstadisticasPage = ({ type = "plato" }) => {
 
   const isPro = hasFeature("estadisticas_avanzadas");
 
+  const userChangedCategoryRef = useRef(false);
+
   /* =====================================================
-   * NORMALIZAR CATEGORÍAS
+   * 1) Categorías del tipo actual
    * ===================================================== */
+  const categorias = categoriesByTipo[tipo] || [];
+
   const categoriasNormalizadas = useMemo(() => {
-
-    if (!categories) return [];
-
-    const limpias = categories.filter(Boolean);
-    const sinDuplicados = [...new Set(limpias)];
-
-    const ordenadas = sinDuplicados.sort((a, b) => a.localeCompare(b));
-
-    return ordenadas;
-  }, [categories]);
+    return categorias
+      .filter((c) => typeof c === "string" && c.trim().length > 0)
+      .sort((a, b) => a.localeCompare(b));
+  }, [categorias]);
 
   /* =====================================================
-   * 1) Cargar categorías según tipo
+   * 2) Cargar categorías al cambiar tipo
    * ===================================================== */
   useEffect(() => {
     if (!tipo) return;
 
     fetchCategories(tipo);
-
-    // reset solo si se cambia plato <-> bebida
     setSelectedCategory(null);
     setSelectedDate(null);
-  }, [tipo]);
+    userChangedCategoryRef.current = false;
+  }, [tipo, fetchCategories]);
 
   /* =====================================================
-   * 2) Seleccionar primera categoría SOLO si es null
+   * 3) Autoselect de categoría (solo si procede)
    * ===================================================== */
   useEffect(() => {
+    if (selectedCategory) return;
+    if (userChangedCategoryRef.current) return;
+    if (categoriasNormalizadas.length === 0) return;
 
-    if (!selectedCategory && categoriasNormalizadas.length > 0) {
-      setSelectedCategory(categoriasNormalizadas[0]);
-    }
-  }, [categoriasNormalizadas]);
+    setSelectedCategory(categoriasNormalizadas[0]);
+  }, [categoriasNormalizadas, selectedCategory]);
 
   /* =====================================================
-   * 3) Cargar productos cuando cambia la categoría
+   * 4) Validar categoría seleccionada
    * ===================================================== */
   useEffect(() => {
-    fetchProducts(selectedCategory);
+    if (!selectedCategory) return;
+    if (categoriasNormalizadas.includes(selectedCategory)) return;
 
-  }, [selectedCategory]);
+    setSelectedCategory(categoriasNormalizadas[0] || null);
+    userChangedCategoryRef.current = false;
+  }, [categoriasNormalizadas, selectedCategory]);
 
   /* =====================================================
-   * 4) Filtrar productos
+   * 5) Cargar productos por tipo + categoría
+   * ===================================================== */
+  useEffect(() => {
+    if (!tipo || !selectedCategory) return;
+
+    fetchProducts({ tipo, categoria: selectedCategory });
+  }, [tipo, selectedCategory, fetchProducts]);
+
+  /* =====================================================
+   * 6) Productos de la categoría actual (desde cache)
    * ===================================================== */
   const productosCategoria = useMemo(() => {
-    const result = (products || []).filter(
-      (p) => p.categoria === selectedCategory
-    );
-    return result;
-  }, [products, selectedCategory]);
+    if (!tipo || !selectedCategory) return [];
+    const key = `${tipo}::${selectedCategory}`;
+    return productsByKey[key] || [];
+  }, [tipo, selectedCategory, productsByKey]);
 
   /* =====================================================
-   * 5) Hook estadísticas
+   * 7) Estadísticas
    * ===================================================== */
   const stats = useEstadisticasCategoria(productosCategoria, selectedDate);
 
   const {
-    loading,
+    loading: loadingStats,
     productosConStats,
     resumenCategoria,
     estadisticasPorMesa,
     estadisticasPorHora,
     topProductos,
     horaPunta,
-  } = stats;
+  } = stats || {};
 
   const fechaTexto = selectedDate
     ? selectedDate.toLocaleDateString()
     : "todas las fechas";
 
   const totalIngresosCategoria = resumenCategoria?.totalIngresos || 0;
-  const productoEstrella =
-    topProductos?.length > 0 ? topProductos[0] : null;
+  const productoEstrella = topProductos?.[0] ?? null;
 
   /* =====================================================
-   * 6) Estado de carga inicial
+   * 8) Estados UI PROFESIONALES
    * ===================================================== */
-  if (!categoriasNormalizadas || categoriasNormalizadas.length === 0) {
+
+  // ⏳ loading real
+  if (loading.categories) {
     return (
       <div className="estadisticas-final--estadisticas">
         <p className="mensaje-carga--estadisticas">
-          Cargando categorías...
+          Cargando categorías…
+        </p>
+      </div>
+    );
+  }
+
+  // ❌ error real
+  if (error.categories) {
+    return (
+      <div className="estadisticas-final--estadisticas">
+        <p className="mensaje-error--estadisticas">
+          Error al cargar las categorías
+        </p>
+      </div>
+    );
+  }
+
+  // 📭 empty state real (PRO)
+  if (categoriasNormalizadas.length === 0) {
+    return (
+      <div className="estadisticas-final--estadisticas">
+        <p className="mensaje-vacio--estadisticas">
+          Todavía no hay estadisticas para mostrar.
         </p>
       </div>
     );
   }
 
   /* =====================================================
-   * 7) Render principal
+   * 9) Handlers
+   * ===================================================== */
+  const handleChangeTipo = (t) => setTipo(t);
+
+  const handleChangeCategory = (cat) => {
+    userChangedCategoryRef.current = true;
+    setSelectedCategory(cat);
+  };
+
+  const handleChangeDate = (d) => setSelectedDate(d);
+
+  /* =====================================================
+   * 10) Render
    * ===================================================== */
   return (
     <div className="estadisticas-root">
       <div className="estadisticas-page">
         <StatsFilterBar
           tipo={tipo}
-          onChangeTipo={(t) => {
-            setTipo(t);
-          }}
+          onChangeTipo={handleChangeTipo}
           categories={categoriasNormalizadas}
           selectedCategory={selectedCategory}
-          onChangeCategory={(cat) => {
-            setSelectedCategory(cat);
-          }}
+          onChangeCategory={handleChangeCategory}
           selectedDate={selectedDate}
-          onChangeDate={(d) => {
-            setSelectedDate(d);
-          }}
+          onChangeDate={handleChangeDate}
         />
 
         {selectedCategory && (
           <>
-            {/* SIEMPRE visible */}
             <StatsResumenCategoria
               category={selectedCategory}
               resumenCategoria={resumenCategoria}
@@ -152,43 +196,29 @@ const EstadisticasPage = ({ type = "plato" }) => {
               tipo={tipo}
             />
 
-            {/* =============================
-        BLOQUE AVANZADO — SOLO PRO
-       ============================= */}
             {isPro ? (
-              <>
-                <div className="stats-pro-section">
-                  <div className="stats-pro-grid">
-                    <StatsPorMesa data={estadisticasPorMesa} />
-                    <StatsPorHora data={estadisticasPorHora} />
-                  </div>
-
-                  <StatsTopProductos
-                    topProductos={topProductos}
-                    totalIngresosCategoria={totalIngresosCategoria}
-                  />
+              <div className="stats-pro-section">
+                <div className="stats-pro-grid">
+                  <StatsPorMesa data={estadisticasPorMesa} />
+                  <StatsPorHora data={estadisticasPorHora} />
                 </div>
-              </>
-            ) : (
-              // ⛔ SOLO ESTO, nada más debajo
-              <UpsellEstadisticasPro fullscreen={true} />
-            )}
 
-            {/* =============================
-        LISTA DE PRODUCTOS
-       ============================= */}
-            {/* LISTA DE PRODUCTOS */}
-            {isPro && (
-              <StatsListaProductos
-                productosConStats={productosConStats}
-                loading={loading}
-              />
+                <StatsTopProductos
+                  topProductos={topProductos}
+                  totalIngresosCategoria={totalIngresosCategoria}
+                />
+
+                <StatsListaProductos
+                  productosConStats={productosConStats}
+                  loading={loadingStats}
+                />
+              </div>
+            ) : (
+              <UpsellEstadisticasPro fullscreen />
             )}
           </>
         )}
       </div>
     </div>
   );
-};
-
-export default EstadisticasPage;
+}

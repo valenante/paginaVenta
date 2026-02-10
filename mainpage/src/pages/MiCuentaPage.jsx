@@ -67,6 +67,7 @@ export default function MiCuentaPage() {
       setAlerta({
         tipo: "error",
         mensaje:
+          err?.response?.data?.message ||   // 👈 primero message
           err?.response?.data?.error ||
           "No se pudo cambiar el estado de VeriFactu.",
       });
@@ -121,6 +122,7 @@ export default function MiCuentaPage() {
       setAlerta({
         tipo: "error",
         mensaje:
+          err?.response?.data?.message ||
           err?.response?.data?.error ||
           "Error al guardar configuración CIF.",
       });

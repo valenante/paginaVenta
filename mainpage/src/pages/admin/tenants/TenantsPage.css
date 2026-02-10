@@ -1,0 +1,9 @@
+.tenants-page-header{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:16px;
+  margin-bottom:16px;
+}
+.tenants-page-sub{ opacity:.8; margin:6px 0 0; }
+.tenants-page-actions{ display:flex; gap:10px; }

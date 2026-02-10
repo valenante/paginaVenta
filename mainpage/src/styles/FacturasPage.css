@@ -1,8 +1,11 @@
 /*****************************************************
- * Facturas Encadenadas – Alef SaaS (RESPONSIVE PRO)
+ * Facturas Encadenadas – ALEF Premium (BRUTAL)
+ * Desktop + TPV + Mobile
  *****************************************************/
 
-/* FORZAR contenedor centrado ignorando estilos globales */
+/* =====================================================
+   BASE LAYOUT
+   ===================================================== */
 .facturaspage.section.section--wide {
   width: 100%;
   max-width: 1280px !important;
@@ -11,84 +14,113 @@
   padding-left: var(--space-lg) !important;
   padding-right: var(--space-lg) !important;
   box-sizing: border-box;
+
   display: flex;
   flex-direction: column;
   gap: var(--space-xl);
 }
 
-/* ===========================
-   HEADER
-   =========================== */
+/* Utilidad: separación meta en header (si existe) */
+.facturaspage-meta {
+  margin-top: 6px;
+  font-size: var(--font-size-sm);
+  color: var(--color-texto-suave);
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+/* =====================================================
+   HEADER – ALEF STYLE
+   ===================================================== */
+.facturaspage-header {
+  position: relative;
+}
+
+.facturaspage-header-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
 .facturaspage-header h1 {
   margin: 0 0 var(--space-xs);
   font-size: var(--font-size-2xl);
   color: var(--color-primario);
+  letter-spacing: -0.02em;
 }
 
 .facturaspage-header p {
   margin: 0;
-  max-width: 620px;
+  max-width: 720px;
   color: var(--color-texto-suave);
+  line-height: 1.35;
 }
 
-/* ===========================
-   CARD GENÉRICA
-   =========================== */
+/* Botón ayuda estilo SaaS */
+.facturaspage-help-btn {
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  color: #111827;
+  padding: 0.55rem 0.9rem;
+  border-radius: 14px;
+  cursor: pointer;
+  font-weight: 800;
+  transition: transform .12s ease, background .15s ease, box-shadow .15s ease;
+  white-space: nowrap;
+  box-shadow: 0 8px 18px rgba(17, 24, 39, 0.05);
+}
+
+.facturaspage-help-btn:hover {
+  background: #f3f4f6;
+  transform: translateY(-1px);
+  box-shadow: 0 12px 24px rgba(17, 24, 39, 0.08);
+}
+
+.facturaspage-help-btn:active {
+  transform: translateY(0px);
+}
+
+/* =====================================================
+   CARD GENÉRICA – PREMIUM
+   ===================================================== */
 .facturaspage-card {
   background: #fff;
-  border-radius: var(--radius-md);
+  border-radius: 18px;
   padding: var(--space-lg) var(--space-xl);
-  box-shadow: var(--shadow-suave);
+  border: 1px solid #eef2f7;
+  box-shadow: 0 12px 30px rgba(17, 24, 39, 0.06);
   overflow: hidden;
-  /* evita overflow en móvil */
 }
 
+/* “Glass hint” muy sutil para estética Alef */
+.facturaspage-card::before {
+  content: "";
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Header interno */
 .facturaspage-card-header {
   margin-bottom: var(--space-md);
 }
 
 .facturaspage-card-header h2 {
   margin: 0;
+  letter-spacing: -0.01em;
 }
 
 .facturaspage-card-subtitle {
-  margin: 0;
+  margin: 6px 0 0;
   font-size: var(--font-size-sm);
   color: var(--color-texto-suave);
 }
 
-.facturaspage-pagination {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 14px;
-  margin-top: 18px;
-  padding: 10px 0;
-}
-
-.facturaspage-pagination button {
-  padding: 8px 16px;
-  border-radius: 8px;
-  border: 1px solid #d1d5db;
-  background: #fff;
-  cursor: pointer;
-  font-weight: 600;
-  transition: background 0.2s ease, transform 0.15s ease;
-}
-
-.facturaspage-pagination button:hover:not(:disabled) {
-  background: #f3f4f6;
-  transform: translateY(-2px);
-}
-
-.facturaspage-pagination button:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
-/* ===========================
-   FILTROS
-   =========================== */
+/* =====================================================
+   FILTROS – SAAS FORM
+   ===================================================== */
 .facturaspage-filtros-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
@@ -96,9 +128,67 @@
   margin-top: var(--space-md);
 }
 
-/* ===========================
-   ACCIONES SUPERIORES
-   =========================== */
+/* Mejor look para inputs dentro de .config-field (asumiendo que existe global) */
+.config-field label {
+  font-weight: 800;
+  font-size: var(--font-size-sm);
+  color: #111827;
+  margin-bottom: 6px;
+  display: inline-block;
+}
+
+.config-field input,
+.config-field select,
+.config-field textarea {
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  border-radius: 14px;
+  padding: 0.6rem 0.8rem;
+  outline: none;
+  transition: box-shadow .15s ease, border-color .15s ease, transform .12s ease;
+  font-size: var(--font-size-sm);
+  color: #111827;
+}
+
+.config-field textarea {
+  min-height: 88px;
+  resize: vertical;
+}
+
+.config-field input::placeholder {
+  color: #9ca3af;
+}
+
+.config-field input:focus,
+.config-field select:focus,
+.config-field textarea:focus {
+  border-color: rgba(96, 181, 255, 0.65); /* Alef blue-ish */
+  box-shadow: 0 0 0 4px rgba(96, 181, 255, 0.18);
+}
+
+.config-field--inline {
+  display: flex;
+  align-items: flex-end;
+}
+
+.checkbox-line {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 800;
+  color: #111827;
+  user-select: none;
+}
+
+.checkbox-line input {
+  width: 18px;
+  height: 18px;
+  border-radius: 6px;
+}
+
+/* =====================================================
+   ACCIONES SUPERIORES – BUTTONS ALEF
+   ===================================================== */
 .facturaspage-actions {
   display: flex;
   gap: var(--space-sm);
@@ -106,211 +196,341 @@
   flex-wrap: wrap;
 }
 
-/* Botones */
+/* Botones principales */
+.btn-primario,
+.btn-secundario,
+.btn {
+  border-radius: 14px;
+  padding: 0.62rem 1.05rem;
+  font-weight: 900;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: transform .12s ease, box-shadow .15s ease, background .15s ease, border-color .15s ease;
+  user-select: none;
+}
+
 .btn-primario {
   background: var(--color-primario);
   color: #fff;
-  border: none;
-  padding: 0.6rem 1.1rem;
-  border-radius: var(--radius-md);
-  cursor: pointer;
+  box-shadow: 0 14px 28px rgba(106, 13, 173, 0.18);
+}
+
+.btn-primario:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 18px 34px rgba(106, 13, 173, 0.22);
 }
 
 .btn-secundario {
-  background: var(--color-secundario-suave);
+  background: rgba(255, 103, 0, 0.12);
   color: var(--color-secundario);
-  border: none;
-  padding: 0.6rem 1.1rem;
-  border-radius: var(--radius-md);
-  cursor: pointer;
+  border-color: rgba(255, 103, 0, 0.35);
 }
 
-/* ===========================
-   TABLA (responsive pro)
-   =========================== */
+.btn-secundario:hover {
+  transform: translateY(-1px);
+  background: rgba(255, 103, 0, 0.16);
+}
 
+.btn {
+  background: #fff;
+  color: #111827;
+  border-color: #e5e7eb;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+  background: #f9fafb;
+}
+
+.btn:disabled,
+.btn-primario:disabled,
+.btn-secundario:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* focus accesible */
+.btn:focus,
+.btn-primario:focus,
+.btn-secundario:focus,
+.facturaspage-help-btn:focus,
+.facturaspage-table-actions button:focus,
+.factura-card-actions button:focus {
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(96, 181, 255, 0.18);
+}
+
+/* =====================================================
+   TABLA – PREMIUM DATA GRID
+   ===================================================== */
 .facturaspage-card table {
   width: 100%;
 }
 
-/* <--- WRAPPER que permite scroll en móvil --- */
+/* wrapper scroll */
 .facturaspage-table-wrapper {
   overflow-x: auto;
   overflow-y: hidden;
   -webkit-overflow-scrolling: touch;
-  scroll-snap-type: x mandatory;
-  border-radius: var(--radius-md);
+  border-radius: 16px;
+  border: 1px solid #eef2f7;
 }
 
+/* tabla */
 .facturaspage-table {
   width: 100%;
-  min-width: 960px;
-  /* evita roturas en pantallas pequeñas */
-  border-collapse: collapse;
+  min-width: 1020px;
+  border-collapse: separate;
+  border-spacing: 0;
 }
 
-/* HEADER */
+/* header */
 .facturaspage-table th {
   text-align: left;
   font-size: var(--font-size-sm);
-  padding: var(--space-sm);
-  background: #f3f4f6;
-  border-bottom: 1px solid #e5e7eb;
+  padding: 12px 12px;
+  background: #f9fafb;
+  border-bottom: 1px solid #eef2f7;
   white-space: nowrap;
+  color: #111827;
+  font-weight: 900;
 }
 
-/* FILAS */
+/* celdas */
 .facturaspage-table td {
-  padding: var(--space-sm);
-  border-bottom: 1px solid #e5e7eb;
+  padding: 12px 12px;
+  border-bottom: 1px solid #f1f5f9;
   font-size: var(--font-size-sm);
   vertical-align: middle;
   white-space: nowrap;
+  color: #111827;
 }
 
-/* HASH mega largo */
+/* zebra + hover */
+.facturaspage-table tbody tr:nth-child(odd) td {
+  background: #ffffff;
+}
+.facturaspage-table tbody tr:nth-child(even) td {
+  background: #fcfcfd;
+}
+.facturaspage-table tbody tr:hover td {
+  background: rgba(96, 181, 255, 0.06);
+}
+
+/* hash largo */
 .facturaspage-hash {
-  max-width: 260px;
+  max-width: 320px;
   white-space: normal;
   word-break: break-all;
+  color: #334155;
 }
 
-/* ===========================
-   ESTADOS
-   =========================== */
+/* =====================================================
+   ESTADOS – BADGES ROBUSTOS
+   ===================================================== */
 .estado-factura {
-  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 900;
+  letter-spacing: .01em;
+  background: #f3f4f6;
+  color: #111827;
+  border: 1px solid #e5e7eb;
   text-transform: capitalize;
 }
 
-.estado-factura.correcto {
-  color: var(--color-exito);
+/* Estados típicos */
+.estado-factura.correcto,
+.estado-factura.aceptado {
+  background: rgba(16, 185, 129, 0.14);
+  border-color: rgba(16, 185, 129, 0.28);
+  color: #047857;
 }
 
-.estado-factura.enviado {
-  color: var(--color-aviso);
+.estado-factura.enviado,
+.estado-factura.pendiente,
+.estado-factura.aceptado_con_errores {
+  background: rgba(245, 158, 11, 0.14);
+  border-color: rgba(245, 158, 11, 0.30);
+  color: #92400e;
 }
 
-.estado-factura.incorrecto {
-  color: var(--color-error);
+.estado-factura.incorrecto,
+.estado-factura.error,
+.estado-factura.rechazado {
+  background: rgba(239, 68, 68, 0.14);
+  border-color: rgba(239, 68, 68, 0.30);
+  color: #b91c1c;
 }
 
-/* ===========================
-   ACCIONES DE TABLA
-   =========================== */
+.estado-factura.anulada {
+  background: rgba(148, 163, 184, 0.18);
+  border-color: rgba(148, 163, 184, 0.32);
+  color: #475569;
+}
+
+/* =====================================================
+   ACCIONES TABLA – STICKY PERFECTO
+   ===================================================== */
+.acciones-sticky {
+  position: sticky;
+  right: 0;
+  background: linear-gradient(90deg, rgba(255,255,255,0.75), #fff 22%);
+  z-index: 5;
+  box-shadow: -10px 0 18px rgba(17, 24, 39, 0.06);
+  border-left: 1px solid #eef2f7;
+}
+
+/* header sticky coherente */
+.facturaspage-table th.acciones-sticky {
+  z-index: 6;
+  background: #f9fafb;
+}
+
+/* ancho mínimo */
+.facturaspage-table td.acciones-sticky,
+.facturaspage-table th.acciones-sticky {
+  min-width: 220px;
+}
+
+/* botones columna */
 .facturaspage-table-actions {
   display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
+  flex-direction: column;
+  gap: 8px;
 }
 
+/* botones tabla */
 .facturaspage-table-actions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 36px;
+  font-weight: 900;
   font-size: var(--font-size-xs);
-  padding: 0.35rem 0.7rem;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--color-borde-suave);
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
   background: #fff;
   cursor: pointer;
+  transition: transform .12s ease, background .15s ease, box-shadow .15s ease, border-color .15s ease;
 }
 
+.facturaspage-table-actions button:hover:not(:disabled) {
+  background: #f9fafb;
+  transform: translateY(-1px);
+  box-shadow: 0 10px 18px rgba(17, 24, 39, 0.06);
+}
+
+.facturaspage-table-actions button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+/* peligro */
 .facturaspage-table-actions button.danger {
-  color: var(--color-error);
-  border-color: var(--color-error);
+  color: #b91c1c;
+  border-color: rgba(239, 68, 68, 0.40);
+  background: rgba(239, 68, 68, 0.06);
 }
 
-/* ===========================
-   MODAL
-   =========================== */
+.facturaspage-table-actions button.danger:hover:not(:disabled) {
+  background: rgba(239, 68, 68, 0.10);
+  box-shadow: 0 12px 22px rgba(239, 68, 68, 0.10);
+}
+
+/* =====================================================
+   PAGINACIÓN – PRO
+   ===================================================== */
+.facturaspage-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 14px;
+  margin-top: 18px;
+  padding: 12px 0;
+}
+
+.facturaspage-pagination button {
+  padding: 9px 16px;
+  border-radius: 14px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  cursor: pointer;
+  font-weight: 900;
+  transition: background 0.2s ease, transform 0.15s ease, box-shadow .15s ease;
+  box-shadow: 0 10px 18px rgba(17, 24, 39, 0.05);
+}
+
+.facturaspage-pagination button:hover:not(:disabled) {
+  background: #f3f4f6;
+  transform: translateY(-2px);
+  box-shadow: 0 14px 24px rgba(17, 24, 39, 0.08);
+}
+
+.facturaspage-pagination button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* =====================================================
+   MODAL – PREMIUM
+   ===================================================== */
 .modal-overlay_facturaspage {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.55);
+  background: rgba(3, 7, 18, 0.6);
+  backdrop-filter: blur(6px);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 9000;
+  padding: 18px;
 }
 
 .modal-contenido_facturaspage {
-  width: 420px;
-  max-width: 92%;
+  width: 460px;
+  max-width: 96%;
   background: #fff;
-  border-radius: var(--radius-md);
+  border-radius: 18px;
   padding: var(--space-lg);
+  border: 1px solid #eef2f7;
+  box-shadow: 0 20px 70px rgba(17, 24, 39, 0.22);
   display: flex;
   flex-direction: column;
   gap: var(--space-md);
 }
 
+.modal-contenido_facturaspage h2 {
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
 .modal-botones_facturaspage {
-  display: flex;
-  justify-content: flex-end;
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* 50/50 pro */
   gap: var(--space-sm);
 }
 
-/* =====================================================
-   VISIBILIDAD TOTAL DE ACCIONES (DESKTOP / TPV)
-   ===================================================== */
-
-/* Columna de acciones sticky */
-.acciones-sticky {
-  position: sticky;
-  right: 0;
-  background: #fff;
-  z-index: 5;
-  box-shadow: -6px 0 8px rgba(0, 0, 0, 0.04);
-}
-
-/* Header sticky coherente */
-.facturaspage-table th.acciones-sticky {
-  z-index: 6;
-  background: #f3f4f6;
-}
-
-/* Asegura ancho mínimo de acciones */
-.facturaspage-table td.acciones-sticky,
-.facturaspage-table th.acciones-sticky {
-  min-width: 210px;
-}
-
-/* Área de botones clara */
-.facturaspage-table-actions {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-/* Botones visibles y táctiles */
-.facturaspage-table-actions button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  min-height: 34px;
-  font-weight: 600;
-  background: #fff;
+.modal-botones_facturaspage button {
+  min-height: 44px;
+  border-radius: 14px;
+  font-weight: 900;
 }
 
 /* =====================================================
-   TPV TÁCTIL (pantallas grandes, dedos)
+   MOBILE CARDS – CRM STYLE
    ===================================================== */
-@media (pointer: coarse) {
-  .facturaspage-table-actions button {
-    min-height: 42px;
-    font-size: 0.85rem;
-  }
-
-  .facturaspage-table td,
-  .facturaspage-table th {
-    padding: 12px;
-  }
-}
-
-/* =====================================================
-   MOBILE: USAR CARDS, OCULTAR TABLA
-   ===================================================== */
-
-/* Ocultar tabla en móvil */
 .facturaspage-desktop {
   display: block;
 }
@@ -331,13 +551,11 @@
   }
 }
 
-/* =====================================================
-   CARD DE FACTURA (MÓVIL)
-   ===================================================== */
 .factura-card {
   background: #fff;
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-suave);
+  border-radius: 18px;
+  box-shadow: 0 14px 30px rgba(17, 24, 39, 0.08);
+  border: 1px solid #eef2f7;
   padding: var(--space-md);
   display: flex;
   flex-direction: column;
@@ -348,93 +566,92 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-weight: 700;
+  font-weight: 900;
+  gap: 10px;
+}
+
+.factura-card-header strong {
+  color: #111827;
 }
 
 .factura-card-body {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
   font-size: var(--font-size-sm);
+  color: #111827;
 }
 
-/* Acciones SIEMPRE visibles en móvil */
+.factura-card-body strong {
+  color: #475569;
+}
+
 .factura-card-actions {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 8px;
+  gap: 10px;
   margin-top: var(--space-sm);
 }
 
 .factura-card-actions button {
-  padding: 10px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--color-borde-suave);
+  padding: 12px 10px;
+  font-size: 0.9rem;
+  font-weight: 900;
+  border-radius: 14px;
+  border: 1px solid #e5e7eb;
   background: #fff;
+  cursor: pointer;
+  transition: transform .12s ease, background .15s ease, box-shadow .15s ease;
+  box-shadow: 0 10px 18px rgba(17, 24, 39, 0.05);
 }
 
-/* Botón peligro */
+.factura-card-actions button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  background: #f9fafb;
+  box-shadow: 0 14px 24px rgba(17, 24, 39, 0.08);
+}
+
+.factura-card-actions button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
 .factura-card-actions button.danger {
-  border-color: var(--color-error);
-  color: var(--color-error);
+  border-color: rgba(239, 68, 68, 0.40);
+  color: #b91c1c;
+  background: rgba(239, 68, 68, 0.06);
 }
 
 /* =====================================================
-   ESTADOS MÁS CLAROS
+   TPV TÁCTIL – más grande y cómodo
    ===================================================== */
-.estado-factura {
-  padding: 2px 8px;
-  border-radius: 999px;
-  font-size: 0.75rem;
-  background: #f3f4f6;
+@media (pointer: coarse) {
+  .facturaspage-table-actions button {
+    min-height: 44px;
+    font-size: 0.9rem;
+    border-radius: 14px;
+  }
+
+  .facturaspage-table td,
+  .facturaspage-table th {
+    padding: 14px;
+  }
+
+  .btn-primario,
+  .btn-secundario,
+  .btn {
+    min-height: 46px;
+  }
 }
 
-.estado-factura.correcto {
-  background: rgba(16, 185, 129, 0.15);
-}
-
-.estado-factura.enviado {
-  background: rgba(245, 158, 11, 0.15);
-}
-
-.estado-factura.incorrecto {
-  background: rgba(239, 68, 68, 0.15);
-}
-
-.facturaspage-header-row {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 1rem;
-}
-
-.facturaspage-help-btn {
-  border: 1px solid #e5e7eb;
-  background: #fff;
-  color: #111827;
-  padding: 0.55rem 0.85rem;
-  border-radius: 12px;
-  cursor: pointer;
-  font-weight: 800;
-  transition: transform .12s ease, background .15s ease;
-  white-space: nowrap;
-}
-
-.facturaspage-help-btn:hover {
-  background: #f3f4f6;
-  transform: translateY(-1px);
-}
-
-/* ===========================
+/* =====================================================
    RESPONSIVE REAL
-   =========================== */
-
+   ===================================================== */
 @media (max-width: 768px) {
   .facturaspage.section.section--wide {
     gap: var(--space-lg);
-    /* menos espacio vertical */
   }
 
   .facturaspage-card {
@@ -444,11 +661,6 @@
   .facturaspage-actions {
     flex-direction: column;
     align-items: stretch;
-  }
-
-  .facturaspage-table-wrapper {
-    border: 1px solid #e5e7eb;
-    border-radius: var(--radius-md);
   }
 
   .facturaspage-header h1 {

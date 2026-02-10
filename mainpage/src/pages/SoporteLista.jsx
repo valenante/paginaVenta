@@ -1,4 +1,3 @@
-// src/pages/SoporteLista.jsx
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import api from "../utils/api";
@@ -13,22 +12,32 @@ export default function SoporteLista() {
   const [filtroPrioridad, setFiltroPrioridad] = useState("todas");
   const [busqueda, setBusqueda] = useState("");
 
+  const [page, setPage] = useState(1);
+  const [pages, setPages] = useState(1);
+
   const cargarTickets = async ({
     estado = filtroEstado,
     prioridad = filtroPrioridad,
-    search = "",
+    search = busqueda,
+    pageParam = page,
   } = {}) => {
     try {
       setLoading(true);
       setError("");
 
-      const params = {};
+      const params = {
+        page: pageParam,
+        limit: 12,
+      };
+
       if (estado && estado !== "todos") params.estado = estado;
       if (prioridad && prioridad !== "todas") params.prioridad = prioridad;
       if (search.trim()) params.search = search.trim();
 
-      const res = await api.get("/admin/tickets/cliente", { params });
+      const res = await api.get("/tickets", { params });
+
       setTickets(res.data.tickets || []);
+      setPages(res.data.meta?.pages || 1);
     } catch (err) {
       console.error("Error cargando tickets", err);
       setError(
@@ -39,21 +48,40 @@ export default function SoporteLista() {
     }
   };
 
-  // Cargar al entrar y cuando cambien filtros de estado / prioridad
+  // recargar al cambiar filtros
   useEffect(() => {
-    cargarTickets({ estado: filtroEstado, prioridad: filtroPrioridad });
+    setPage(1);
+    setBusqueda("");
+    cargarTickets({
+      estado: filtroEstado,
+      prioridad: filtroPrioridad,
+      pageParam: 1,
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filtroEstado, filtroPrioridad]);
 
   const handleBuscar = () => {
+    setPage(1);
     cargarTickets({
       estado: filtroEstado,
       prioridad: filtroPrioridad,
       search: busqueda,
+      pageParam: 1,
     });
   };
 
-  const hayTickets = tickets && tickets.length > 0;
+  const cambiarPagina = (nuevaPagina) => {
+    if (nuevaPagina < 1 || nuevaPagina > pages) return;
+    setPage(nuevaPagina);
+    cargarTickets({
+      estado: filtroEstado,
+      prioridad: filtroPrioridad,
+      search: busqueda,
+      pageParam: nuevaPagina,
+    });
+  };
+
+  const hayTickets = tickets.length > 0;
 
   return (
     <div className="soporte-contenedor">
@@ -69,12 +97,13 @@ export default function SoporteLista() {
         <div className="soporte-header-acciones">
           <button
             type="button"
-            className="btn btn-secundario"
+            className="btn-secundario"
             onClick={() =>
               cargarTickets({
                 estado: filtroEstado,
                 prioridad: filtroPrioridad,
                 search: busqueda,
+                pageParam: page,
               })
             }
           >
@@ -124,9 +153,7 @@ export default function SoporteLista() {
               placeholder="Buscar por asunto…"
               value={busqueda}
               onChange={(e) => setBusqueda(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") handleBuscar();
-              }}
+              onKeyDown={(e) => e.key === "Enter" && handleBuscar()}
             />
             <button type="button" className="btn-buscar" onClick={handleBuscar}>
               Buscar
@@ -135,7 +162,7 @@ export default function SoporteLista() {
         </div>
       </div>
 
-      {/* ESTADOS DE CARGA / ERROR */}
+      {/* ESTADOS */}
       {loading && <p className="soporte-loading">Cargando tickets…</p>}
 
       {error && !loading && <p className="soporte-error">{error}</p>}
@@ -149,47 +176,66 @@ export default function SoporteLista() {
 
       {/* LISTA */}
       {!loading && !error && hayTickets && (
-        <div className="soporte-lista">
-          {tickets.map((t) => (
-            <Link
-              to={`/soporte/${t._id}`}
-              className="soporte-item"
-              key={t._id}
-            >
-              <div className="soporte-item-main">
-                <h3>{t.asunto}</h3>
-                <p className="soporte-item-descripcion">
-                  {t.descripcion?.slice(0, 140) || "Sin descripción"}
-                  {t.descripcion && t.descripcion.length > 140 ? "…" : ""}
-                </p>
-              </div>
-
-              <div className="soporte-item-meta">
-                <div className="soporte-badges">
-                  <span
-                    className={`badge-estado estado-${t.estado || "abierto"}`}
-                  >
-                    {t.estado || "abierto"}
-                  </span>
-                  <span
-                    className={`badge-prioridad prioridad-${
-                      t.prioridad || "media"
-                    }`}
-                  >
-                    {t.prioridad || "media"}
-                  </span>
+        <>
+          <div className="soporte-lista">
+            {tickets.map((t) => (
+              <Link
+                to={`/soporte/${t._id}`}
+                className="soporte-item"
+                key={t._id}
+              >
+                <div className="soporte-item-main">
+                  <h3>{t.asunto}</h3>
+                  <p className="soporte-item-descripcion">
+                    {t.descripcion?.slice(0, 140) || "Sin descripción"}
+                    {t.descripcion && t.descripcion.length > 140 ? "…" : ""}
+                  </p>
                 </div>
-                <small className="soporte-fecha">
-                  {new Date(t.createdAt).toLocaleDateString()} •{" "}
-                  {new Date(t.createdAt).toLocaleTimeString([], {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}
-                </small>
-              </div>
-            </Link>
-          ))}
-        </div>
+
+                <div className="soporte-item-meta">
+                  <div className="soporte-badges">
+                    <span className={`badge-estado estado-${t.estado}`}>
+                      {t.estado}
+                    </span>
+                    <span
+                      className={`badge-prioridad prioridad-${t.prioridad}`}
+                    >
+                      {t.prioridad}
+                    </span>
+                  </div>
+                  <small className="soporte-fecha">
+                    {new Date(t.createdAt).toLocaleDateString()} •{" "}
+                    {new Date(t.createdAt).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </small>
+                </div>
+              </Link>
+            ))}
+          </div>
+
+          {/* PAGINACIÓN */}
+          {pages > 1 && (
+            <div className="soporte-paginacion">
+              <button
+                disabled={page === 1}
+                onClick={() => cambiarPagina(page - 1)}
+              >
+                ← Anterior
+              </button>
+              <span>
+                Página {page} de {pages}
+              </span>
+              <button
+                disabled={page === pages}
+                onClick={() => cambiarPagina(page + 1)}
+              >
+                Siguiente →
+              </button>
+            </div>
+          )}
+        </>
       )}
     </div>
   );

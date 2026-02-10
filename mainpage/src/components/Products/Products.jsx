@@ -98,7 +98,7 @@ const Products = ({ type, categories }) => {
           </div>
 
           {/* 👇 contenido original: listado + edición de productos */}
-          <Categories category={selectedCategory} />
+          <Categories category={selectedCategory} tipo={type} />
         </section>
       )}
 

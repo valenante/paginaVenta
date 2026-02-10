@@ -1,98 +1,233 @@
-import React, { createContext, useState, useContext } from "react";
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import api from "../utils/api";
-import * as logger from '../utils/logger';
+import * as logger from "../utils/logger";
 
-export const CategoriasContext = createContext();
+/* =====================================================
+   Context
+===================================================== */
+export const CategoriasContext = createContext(null);
 
+/* =====================================================
+   Utils
+===================================================== */
+const keyOf = (tipo, categoria) => `${tipo}::${categoria}`;
+
+/* =====================================================
+   Provider
+===================================================== */
 export const CategoriasProvider = ({ children }) => {
-  const [categories, setCategories] = useState([]);
-  const [products, setProducts] = useState([]);
-  const [lastFetchedCategory, setLastFetchedCategory] = useState(null);
+  /**
+   * Cache de categorías por tipo
+   * { plato: [...], bebida: [...] }
+   */
+  const [categoriesByTipo, setCategoriesByTipo] = useState({});
 
+  /**
+   * Cache de productos por tipo+categoría
+   * { "plato::Entrantes": [...], "bebida::Refrescos": [...] }
+   */
+  const [productsByKey, setProductsByKey] = useState({});
 
-  const fetchCategories = async (type) => {
-    if (!type) {
-      logger.error("Tipo inválido:", type);
-      return;
-    }
+  /**
+   * Estados de carga reales
+   */
+  const [loading, setLoading] = useState({
+    categories: false,
+    products: false,
+  });
 
-    try {
-      const response = await api.get(`/productos/categories/${type}`);
-      setCategories((prevCategories) => {
-        // Si las categorías ya coinciden, no hagas nada
-        const newCategories = response.data.categories;
-        if (JSON.stringify(prevCategories) !== JSON.stringify(newCategories)) {
-          return newCategories;
+  /**
+   * Estados de error reales
+   */
+  const [error, setError] = useState({
+    categories: null,
+    products: null,
+  });
+
+  /**
+   * Requests en vuelo (para abortar correctamente)
+   */
+  const inFlight = useRef(new Map());
+
+  /* =====================================================
+     Fetch categorías por tipo
+  ===================================================== */
+  const fetchCategories = useCallback(
+    async (tipo, { force = false } = {}) => {
+      if (!tipo) return [];
+
+      // Cache hit
+      if (!force && Array.isArray(categoriesByTipo[tipo])) {
+        return categoriesByTipo[tipo];
+      }
+
+      setLoading((s) => ({ ...s, categories: true }));
+      setError((e) => ({ ...e, categories: null }));
+
+      try {
+        const res = await api.get(`/productos/categories/${tipo}`);
+
+        /**
+         * Backend devuelve:
+         * { ok: true, data: [...] }
+         */
+        const raw = res?.data?.data ?? res?.data?.categories ?? [];
+
+        const categorias = raw
+          .filter((c) => typeof c === "string" && c.trim().length > 0)
+          .sort((a, b) => a.localeCompare(b));
+
+        setCategoriesByTipo((prev) => ({
+          ...prev,
+          [tipo]: categorias,
+        }));
+
+        return categorias;
+      } catch (err) {
+        logger.error("[CategoriasContext] Error al obtener categorías", err);
+        setError((e) => ({ ...e, categories: err }));
+        return [];
+      } finally {
+        setLoading((s) => ({ ...s, categories: false }));
+      }
+    },
+    [categoriesByTipo]
+  );
+
+  /* =====================================================
+     Fetch productos por tipo + categoría
+  ===================================================== */
+  const fetchProducts = useCallback(
+    async ({ tipo, categoria }, { force = false } = {}) => {
+      if (!tipo || !categoria) return [];
+
+      const key = keyOf(tipo, categoria);
+
+      // Cache hit
+      if (!force && Array.isArray(productsByKey[key])) {
+        return productsByKey[key];
+      }
+
+      // Abort request anterior de esta key
+      if (inFlight.current.has(key)) {
+        inFlight.current.get(key).abort();
+      }
+
+      const controller = new AbortController();
+      inFlight.current.set(key, controller);
+
+      setLoading((s) => ({ ...s, products: true }));
+      setError((e) => ({ ...e, products: null }));
+
+      try {
+        const res = await api.get(
+          `/productos/category/${encodeURIComponent(categoria)}?tipo=${encodeURIComponent(tipo)}`,
+          { signal: controller.signal }
+        );
+
+        /**
+         * Backend devuelve:
+         * { ok: true, data: [...] }
+         */
+        const productos = res?.data?.data ?? res?.data?.products ?? [];
+
+        setProductsByKey((prev) => ({
+          ...prev,
+          [key]: productos,
+        }));
+
+        return productos;
+      } catch (err) {
+        // Abort no es error real
+        if (err?.name === "CanceledError" || err?.name === "AbortError") {
+          return [];
         }
-        return prevCategories; // Mantén las categorías actuales
-      });
-    } catch (error) {
-      logger.error("Error al obtener categorías:", error);
-    }
-  };
 
-  const fetchProducts = async (category) => {
-    if (!category) {
-      logger.error("Categoría inválida:", category);
-      return [];
+        logger.error("[CategoriasContext] Error al obtener productos", err);
+        setError((e) => ({ ...e, products: err }));
+        return [];
+      } finally {
+        inFlight.current.delete(key);
+        setLoading((s) => ({ ...s, products: false }));
+      }
+    },
+    [productsByKey]
+  );
+
+  // Dentro de CategoriasProvider (debajo de fetchProducts)
+
+  const updateProduct = useCallback(async (productOrId, maybePayload) => {
+    let id;
+    let payload;
+
+    if (typeof productOrId === "string") {
+      id = productOrId;
+      payload = maybePayload;
+    } else {
+      id = productOrId?._id || productOrId?.id;
+      payload = productOrId;
     }
 
-    // ✅ Protege contra peticiones repetidas
-    if (category === lastFetchedCategory) {
-      return products;
-    }
+    if (!id) throw new Error("ID requerido para updateProduct");
 
-    try {
-      const response = await api.get(`/productos/category/${encodeURIComponent(category)}`);
-      const loadedProducts = response.data.products || [];
-      setProducts(loadedProducts);
-      setLastFetchedCategory(category); // Guarda la última categoría consultada
-      return loadedProducts;
-    } catch (error) {
-      logger.error("Error al obtener productos:", error);
-      return [];
-    }
-  };
+    const isFormData =
+      typeof FormData !== "undefined" && payload instanceof FormData;
 
+    const res = await api.put(`/productos/${id}`, payload, {
+      headers: isFormData ? { "Content-Type": "multipart/form-data" } : undefined,
+      withCredentials: true,
+    });
 
-  const updateProduct = async (product) => {
-    try {
-      await api.put(`/productos/${product._id}`, product);
-      setProducts((prev) =>
-        prev.map((p) => (p._id === product._id ? product : p))
-      );
-    } catch (error) {
-      logger.error("Error al actualizar producto:", error);
-      throw error;
-    }
-  };
+    return res.data;
+  }, []);
 
-  const deleteProduct = async (id) => {
-    try {
-      await api.delete(`/productos/${id}`);
-      setProducts((prev) => prev.filter((product) => product._id !== id));
-    } catch (error) {
-      logger.error("Error al eliminar producto:", error);
-      throw error;
-    }
-  };
+  const deleteProduct = useCallback(async (id) => {
+    if (!id) throw new Error("ID requerido para deleteProduct");
+
+    const res = await api.delete(`/productos/${id}`, { withCredentials: true });
+    return res.data;
+  }, []);
+
+  /* =====================================================
+     Valor del contexto (memoizado)
+  ===================================================== */
+  const value = useMemo(
+    () => ({
+      categoriesByTipo,
+      productsByKey,
+      loading,
+      error,
+      fetchCategories,
+      fetchProducts,
+      updateProduct,
+      deleteProduct,
+    }),
+    [categoriesByTipo, productsByKey, loading, error, fetchCategories, fetchProducts, updateProduct, deleteProduct]
+  );
 
   return (
-    <CategoriasContext.Provider
-      value={{
-        categories,
-        fetchCategories,
-        products,
-        fetchProducts,
-        updateProduct,
-        deleteProduct,
-      }}
-    >
+    <CategoriasContext.Provider value={value}>
       {children}
     </CategoriasContext.Provider>
   );
 };
 
+/* =====================================================
+   Hook
+===================================================== */
 export const useCategorias = () => {
-  return useContext(CategoriasContext);
+  const ctx = useContext(CategoriasContext);
+  if (!ctx) {
+    throw new Error(
+      "useCategorias debe usarse dentro de <CategoriasProvider>"
+    );
+  }
+  return ctx;
 };

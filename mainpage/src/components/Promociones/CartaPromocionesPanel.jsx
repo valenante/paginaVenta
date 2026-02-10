@@ -27,7 +27,7 @@ export default function CartaPromocionesPanel({ abierto, onClose }) {
                     params: { tipo: promoTipo },
                 });
 
-                setPromoProductos(data || []);
+                setPromoProductos(data?.data || []);
             } catch (err) {
                 console.error("❌ Error cargando productos:", err);
                 setAlerta({

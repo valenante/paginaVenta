@@ -1,0 +1,65 @@
+/*****************************************************
+ * Modal ALEF – Secciones
+ *****************************************************/
+
+.secciones-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 220;
+}
+
+.secciones-modal {
+  width: 100%;
+  max-width: 460px;
+  background: #ffffff;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-fuerte);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.secciones-modal-header {
+  padding: var(--space-md) var(--space-lg);
+  border-bottom: 1px solid var(--color-borde-suave);
+}
+
+.secciones-modal-header h3 {
+  margin: 0;
+  font-size: var(--font-size-md);
+}
+
+.secciones-modal-body {
+  padding: var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.secciones-modal-body input,
+.secciones-modal-body select {
+  padding: 0.55rem 0.75rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-borde-suave);
+  font-size: var(--font-size-sm);
+  background: #fff;
+}
+
+.secciones-modal-footer {
+  padding: var(--space-md) var(--space-lg);
+  border-top: 1px solid var(--color-borde-suave);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-sm);
+}
+
+@media (max-width: 520px) {
+  .secciones-modal {
+    margin: 0 var(--space-sm);
+  }
+}

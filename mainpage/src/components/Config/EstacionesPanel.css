@@ -1,0 +1,147 @@
+/*****************************************************
+ * Estaciones (Cocina / Barra)
+ * Archivo: EstacionesPanel.css
+ *****************************************************/
+
+/* ===== Card de estaciones ===== */
+
+.config-card {
+  padding: var(--space-lg) var(--space-xl);
+}
+
+.config-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-lg);
+  margin-bottom: var(--space-md);
+}
+
+.config-card-header h2 {
+  margin: 0 0 var(--space-xs);
+  font-size: var(--font-size-lg);
+}
+
+.config-card-subtitle {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-texto-suave);
+}
+
+/* ===== Formularios de estaciones ===== */
+
+.config-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  margin-bottom: var(--space-md);
+}
+
+.config-field--stacked > * + * {
+  margin-top: var(--space-xs);
+}
+
+.config-field label {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+}
+
+.config-field input,
+.config-field select {
+  font-family: var(--font-base);
+  font-size: var(--font-size-sm);
+  padding: 0.55rem 0.75rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-borde-suave);
+  background: #ffffff;
+}
+
+.config-field select {
+  cursor: pointer;
+}
+
+/* ===== Grids ===== */
+
+.config-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-sm);
+}
+
+/* ===== Lista de estaciones ===== */
+
+.lista-simple {
+  list-style: none;
+  padding: 0;
+  margin: var(--space-sm) 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.lista-simple li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: 0.45rem 0.75rem;
+  border-radius: var(--radius-sm);
+  background: #f9fafb;
+  font-size: var(--font-size-sm);
+}
+
+/* ===== Acciones ===== */
+
+.acciones-mini {
+  display: flex;
+  gap: 8px;
+}
+
+.acciones-mini button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+}
+
+.delete-btn {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: var(--font-size-sm);
+}
+
+.delete-btn:hover {
+  transform: scale(1.05);
+}
+
+/* ===== Checkbox estación central ===== */
+
+.check-central {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: var(--font-size-sm);
+}
+
+/* ===== Separador ===== */
+
+.config-sep {
+  height: 1px;
+  background: var(--color-borde-suave);
+  margin: var(--space-md) 0;
+}
+
+/* ===== Responsive ===== */
+
+@media (max-width: 1200px) {
+  .config-card {
+    padding: var(--space-md) var(--space-lg);
+  }
+}
+
+@media (max-width: 768px) {
+  .config-grid-2 {
+    grid-template-columns: 1fr;
+  }
+}

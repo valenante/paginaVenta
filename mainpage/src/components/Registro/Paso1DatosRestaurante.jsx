@@ -64,16 +64,11 @@ export default function Paso1DatosRestaurante({
         />
       </div>
 
-      <div className="form-group">
-        <label>Contraseña</label>
-        <input
-          type="password"
-          name="password"
-          value={admin.password}
-          onChange={handleAdminChange}
-          placeholder="********"
-          required
-        />
+      <div className="info-box">
+        <p>
+          🔒 Tras completar el pago, te enviaremos un email para crear la contraseña
+          del administrador de forma segura.
+        </p>
       </div>
 
       <div className="info-box">

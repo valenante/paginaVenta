@@ -1,123 +1,189 @@
 /*****************************************************
- * Config Impresión – Alef
+ * Config Impresión – Alef (v1.0 · listo para venta)
+ * - Responsive perfecto (desktop/tablet/móvil)
+ * - Grid auto-fit (no se rompe al agregar/quitar estaciones)
+ * - Acciones en “sticky” en pantallas grandes (opcional)
+ * - Estados online/offline con chips
  *****************************************************/
 
-.imp-config-page {
-  margin: var(--space-2xl) auto var(--space-3xl);
-}
-
-/* Card principal */
 .config-impresion {
-  padding: var(--space-lg) var(--space-xl);
+  padding: var(--space-xl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
 }
 
-/* Título y descripción */
+/* =========================
+   Header
+========================= */
 .config-impresion h1 {
-  margin: 0 0 var(--space-xs);
-  font-size: var(--font-size-2xl);
+  margin: 0;
+  font-size: clamp(1.35rem, 2.2vw, var(--font-size-2xl));
+  letter-spacing: -0.02em;
   color: var(--color-primario);
 }
 
 .config-impresion .text-suave {
   margin: 0;
-  max-width: 720px;
+  max-width: 820px;
   color: var(--color-texto-suave);
+  line-height: 1.45;
 }
 
-/* Separación general */
+/* =========================
+   Grid de campos
+========================= */
 .config-impresion__grid {
-  margin-top: var(--space-lg);
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: var(--space-md);
-  align-items: flex-start;
+  align-items: start;
 }
 
-/* Campos */
 .config-impresion__field {
   display: flex;
   flex-direction: column;
-  gap: var(--space-xs);
+  gap: 0.45rem;
 }
 
 .config-impresion__field label {
   font-size: var(--font-size-sm);
-  font-weight: 600;
+  font-weight: 700;
+  color: var(--color-texto);
 }
 
+/* Controles */
 .config-impresion__field select,
 .config-impresion__field input {
+  width: 100%;
   font-family: var(--font-base);
   font-size: var(--font-size-sm);
-  padding: 0.55rem 0.75rem;
-  border-radius: var(--radius-sm);
+  line-height: 1.2;
+  padding: 0.7rem 0.85rem;
+  border-radius: var(--radius-md);
   border: 1px solid var(--color-borde-suave);
-  background: #ffffff;
+  background: var(--color-superficie, #ffffff);
+  color: var(--color-texto);
+  outline: none;
+  transition: border-color 140ms ease, box-shadow 140ms ease,
+    transform 80ms ease, background 140ms ease;
 }
 
 .config-impresion__field select {
   cursor: pointer;
+  appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, var(--color-texto-suave) 50%),
+    linear-gradient(135deg, var(--color-texto-suave) 50%, transparent 50%);
+  background-position: calc(100% - 18px) 50%, calc(100% - 12px) 50%;
+  background-size: 6px 6px, 6px 6px;
+  background-repeat: no-repeat;
+  padding-right: 2.4rem;
 }
 
-/* Acciones */
+.config-impresion__field select:focus,
+.config-impresion__field input:focus {
+  border-color: var(--color-secundario, #4465e7);
+  box-shadow: 0 0 0 3px rgba(68, 101, 231, 0.18);
+}
+
+.config-impresion__field select:disabled,
+.config-impresion__field input:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  background: var(--color-gris-claro, #f5f5f5);
+}
+
+/* =========================
+   Acciones (botoneras)
+========================= */
 .config-impresion__actions {
   display: flex;
   gap: var(--space-sm);
-  margin-top: var(--space-md);
   flex-wrap: wrap;
   align-items: center;
 }
 
-/* Que los botones respiren y queden parejos */
+/* Botones más “premium” sin romper tu sistema .btn */
 .config-impresion__actions .btn {
   min-width: 190px;
+  border-radius: var(--radius-md);
 }
 
-/* Estado + mensaje */
+.config-impresion__actions .btn:active {
+  transform: translateY(1px);
+}
+
+/* Separador visual entre bloques */
+.config-impresion__actions + .config-impresion__actions {
+  margin-top: -0.25rem;
+  padding-top: var(--space-sm);
+  border-top: 1px solid var(--color-borde-suave);
+}
+
+/* =========================
+   Estado agente (chip)
+========================= */
+.config-impresion__estado {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-size: var(--font-size-sm);
+  color: var(--color-texto);
+}
+
+.config-impresion__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.35rem 0.6rem;
+  border-radius: 999px;
+  border: 1px solid var(--color-borde-suave);
+  background: rgba(255, 255, 255, 0.6);
+  box-shadow: var(--shadow-suave);
+}
+
+.config-impresion__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--color-gris-medio, #cccccc);
+}
+
+.config-impresion__chip--online .config-impresion__dot {
+  background: var(--color-success, #16a34a);
+}
+.config-impresion__chip--offline .config-impresion__dot {
+  background: var(--color-danger, #dc2626);
+}
+.config-impresion__chip--unknown .config-impresion__dot {
+  background: var(--color-warning, #f59e0b);
+}
+
+/* Si quieres usarlo sin tocar JSX, tu <p className="text-suave"> queda bien igual */
 .config-impresion .text-suave b {
   color: var(--color-texto);
 }
 
-.mensaje {
-  margin-top: var(--space-sm);
-  padding: 0.65rem 0.85rem;
-  border-radius: var(--radius-md);
+/* =========================
+   Pequeños refinamientos UI
+========================= */
+.config-impresion .card {
   border: 1px solid var(--color-borde-suave);
-  background: #f9fafb;
-  font-size: var(--font-size-sm);
-  color: var(--color-texto);
-  box-shadow: var(--shadow-suave);
 }
 
-/* (Opcional) “hint” visual si quieres que se vea más pro */
-.config-impresion .mensaje::before {
-  content: "";
-  display: inline-block;
-  width: 10px;
-  height: 10px;
-  border-radius: 999px;
-  margin-right: 8px;
-  background: var(--color-borde-suave);
-  vertical-align: middle;
-}
-
-/* =====================================================
- * Responsive
- * ===================================================== */
-
+/* =========================
+   Responsive
+========================= */
 @media (max-width: 1024px) {
   .config-impresion {
-    padding: var(--space-md) var(--space-lg);
-  }
-
-  .config-impresion__grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    padding: var(--space-lg);
   }
 }
 
 @media (max-width: 768px) {
-  .config-impresion__grid {
-    grid-template-columns: 1fr;
+  .config-impresion {
+    padding: var(--space-md);
+    gap: var(--space-md);
   }
 
   .config-impresion__actions {
@@ -128,5 +194,18 @@
   .config-impresion__actions .btn {
     width: 100%;
     min-width: unset;
+  }
+}
+
+/* =========================
+   Opcional: reduce animaciones
+========================= */
+@media (prefers-reduced-motion: reduce) {
+  .config-impresion__field select,
+  .config-impresion__field input {
+    transition: none;
+  }
+  .config-impresion__actions .btn:active {
+    transform: none;
   }
 }

@@ -75,8 +75,10 @@
 }
 
 .btn-compact {
-  padding: 0.35rem 0.7rem;
+  padding: 0.45rem 0.75rem;
   font-size: var(--font-size-xs);
+  line-height: 1.1;
+  border-radius: var(--radius-sm);
 }
 
 /*****************************************************
@@ -99,14 +101,14 @@
 
 .filtro-label {
   font-size: var(--font-size-xs);
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--color-texto-suave);
 }
 
 .filtro-control {
-  padding: 0.55rem 0.8rem;
+  padding: 0.6rem 0.85rem;
   border-radius: var(--radius-sm);
   border: 1px solid var(--color-borde-suave);
   font-size: var(--font-size-sm);
@@ -134,7 +136,7 @@
 }
 
 /*****************************************************
- * Tabla de reservas
+ * Tabla de reservas (desktop/tablet)
  *****************************************************/
 
 .tabla-reservas-wrapper {
@@ -148,14 +150,17 @@
 
 .tabla-reservas-scroll {
   width: 100%;
-  overflow-x: auto;
+  overflow-x: auto; /* desktop ok */
+  -webkit-overflow-scrolling: touch;
+  border-radius: var(--radius-md);
 }
 
+/* tabla */
 .tabla-reservas {
   width: 100%;
   border-collapse: collapse;
   font-size: var(--font-size-sm);
-  min-width: 720px;
+  min-width: 900px; /* desktop: mantiene columnas respirables */
 }
 
 .tabla-reservas thead {
@@ -164,9 +169,10 @@
 
 .tabla-reservas th,
 .tabla-reservas td {
-  padding: 0.6rem 0.75rem;
+  padding: 0.7rem 0.8rem;
   text-align: left;
   border-bottom: 1px solid var(--color-borde-suave);
+  vertical-align: middle;
 }
 
 .tabla-reservas th {
@@ -182,18 +188,16 @@
 }
 
 /* Columna acciones */
-
-.col-acciones {
-  text-align: right;
-}
-
+.col-acciones,
 .acciones {
   text-align: right;
+  white-space: nowrap;
 }
 
 .acciones-buttons {
   display: inline-flex;
   gap: var(--space-xs);
+  align-items: center;
 }
 
 .no-acciones {
@@ -207,6 +211,10 @@
 .estado-reserva {
   font-size: var(--font-size-xs);
   text-transform: capitalize;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  white-space: nowrap;
 }
 
 .estado-reserva.estado-pendiente {
@@ -237,6 +245,7 @@
   align-items: center;
   justify-content: center;
   z-index: 40;
+  padding: var(--space-md);
 }
 
 .modal-config-contenido {
@@ -263,16 +272,15 @@
 
 .modal-config-body {
   overflow-y: auto;
-  padding-right: 2px; /* evitar scrollbars feos */
+  padding-right: 2px;
 }
 
 /* Botón cerrar (icon-only) */
-
 .btn-icon-only {
   border: none;
   background: transparent;
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   border-radius: var(--radius-pill);
   display: flex;
   align-items: center;
@@ -289,7 +297,7 @@
 }
 
 /*****************************************************
- * Responsive
+ * Responsive: tablet
  *****************************************************/
 
 @media (max-width: 900px) {
@@ -309,22 +317,124 @@
   .filtro-actions {
     justify-content: flex-start;
   }
+
+  .btn-nueva-reserva {
+    width: 100%;
+    min-width: 0;
+  }
 }
+
+/*****************************************************
+ * Responsive: mobile (cero scroll horizontal)
+ * Convertimos la tabla en "cards" por fila.
+ *****************************************************/
 
 @media (max-width: 768px) {
   .reservas-card {
     padding: var(--space-lg);
   }
 
+  /* cortamos el scroll horizontal: en mobile NO se usa tabla real */
+  .tabla-reservas-scroll {
+    overflow-x: visible;
+  }
+
   .tabla-reservas {
-    min-width: 640px;
+    min-width: 0;
+    border-collapse: separate;
+    border-spacing: 0 var(--space-md);
+  }
+
+  .tabla-reservas thead {
+    display: none;
+  }
+
+  .tabla-reservas tbody {
+    display: block;
+  }
+
+  .tabla-reservas tbody tr {
+    display: block;
+    background: #fff;
+    border: 1px solid var(--color-borde-suave);
+    border-radius: var(--radius-lg);
+    padding: var(--space-md);
+    box-shadow: 0 1px 10px rgba(15, 23, 42, 0.06);
+  }
+
+  .tabla-reservas tbody tr:hover {
+    background: #fff; /* no “parpadeos” en cards */
+  }
+
+  .tabla-reservas td {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-md);
+    padding: 0;
+    border: 0;
+    margin-top: 0.55rem;
+    text-align: left;
+    word-break: break-word;
+  }
+
+  .tabla-reservas td:first-child {
+    margin-top: 0;
+  }
+
+  /* labels (sin tocar JSX) */
+  .tabla-reservas td::before {
+    content: "";
+    flex: 0 0 110px;
+    max-width: 110px;
+    font-size: var(--font-size-xs);
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-texto-suave);
+    padding-top: 0.05rem;
+  }
+
+  .tabla-reservas td:nth-child(1)::before { content: "Cliente"; }
+  .tabla-reservas td:nth-child(2)::before { content: "Personas"; }
+  .tabla-reservas td:nth-child(3)::before { content: "Fecha"; }
+  .tabla-reservas td:nth-child(4)::before { content: "Teléfono"; }
+  .tabla-reservas td:nth-child(5)::before { content: "Email"; }
+  .tabla-reservas td:nth-child(6)::before { content: "Estado"; }
+  .tabla-reservas td:nth-child(7)::before { content: "Acciones"; }
+
+  /* Estado badge alineado bonito */
+  .estado-reserva {
+    justify-content: center;
+  }
+
+  /* Acciones: SIEMPRE visibles y usables (50/50) */
+  .acciones {
+    margin-top: var(--space-md);
+    text-align: left;
   }
 
   .acciones-buttons {
-    flex-direction: column;
+    display: flex;
+    width: 100%;
+    gap: var(--space-sm);
   }
 
-  .btn-compact {
+  .acciones-buttons .btn {
+    flex: 1;
     width: 100%;
+    justify-content: center;
+  }
+
+  /* Si solo hay un botón (cancelar), que ocupe todo */
+  .acciones > .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* compact a tamaño finger-friendly */
+  .btn-compact {
+    padding: 0.7rem 0.9rem;
+    font-size: var(--font-size-sm);
   }
 }

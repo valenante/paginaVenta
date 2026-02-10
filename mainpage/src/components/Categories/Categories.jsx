@@ -1,5 +1,5 @@
 // src/components/Categories/Categories.jsx
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useCategorias } from "../../context/CategoriasContext";
 import * as logger from "../../utils/logger";
 import { useAuth } from "../../context/AuthContext";
@@ -14,7 +14,7 @@ import Portal from "../ui/Portal";
 
 import "./Categories.css";
 
-const Categories = ({ category }) => {
+const Categories = ({ category, tipo }) => {
   const [editingProduct, setEditingProduct] = useState(null);
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
   const [mensajeAlerta, setMensajeAlerta] = useState(null);
@@ -23,15 +23,23 @@ const Categories = ({ category }) => {
   const { user } = useAuth();
   const isPlanEsencial = user?.plan === "esencial" || user?.plan === "tpv-esencial";
 
-  const { products, fetchProducts, updateProduct, deleteProduct } =
-    useCategorias();
+  const { productsByKey, fetchProducts, updateProduct, deleteProduct, fetchCategories } = useCategorias();
 
   // Cargar productos de la categoría seleccionada
+  const key = useMemo(() => {
+    if (!tipo || !category) return null;
+    return `${tipo}::${category}`;
+  }, [tipo, category]);
+
+  const products = key ? (productsByKey[key] || []) : [];
+
   useEffect(() => {
-    if (category) {
-      fetchProducts(category);
+    if (tipo && category) {
+      fetchProducts({ tipo, categoria: category });
     }
-  }, [category, fetchProducts]);
+  }, [tipo, category, fetchProducts]);
+
+  const totalProductos = products.length;
 
   // --- EDITAR PRODUCTO ---
   const handleEdit = (product) => setEditingProduct(product);
@@ -40,9 +48,9 @@ const Categories = ({ category }) => {
 
   const handleSave = async (updatedProduct) => {
     try {
-      await updateProduct(updatedProduct);
+      await updateProduct(updatedProduct._id, updatedProduct);
       setEditingProduct(null);
-      await fetchProducts(category);
+      await fetchProducts({ tipo, categoria: category }, { force: true });
 
       setMensajeAlerta({
         tipo: "exito",
@@ -61,7 +69,7 @@ const Categories = ({ category }) => {
   const confirmarEliminacion = async (id) => {
     try {
       await deleteProduct(id);
-      await fetchProducts(category);
+      await fetchProducts({ tipo, categoria: category }, { force: true });
 
       setMensajeAlerta({
         tipo: "exito",
@@ -77,8 +85,6 @@ const Categories = ({ category }) => {
       setProductoAEliminar(null);
     }
   };
-
-  const totalProductos = products?.length || 0;
 
   return (
     <div className="categories--categories alef-categories-root">
@@ -236,9 +242,12 @@ const Categories = ({ category }) => {
       {mostrarFormulario && (
         <Portal>
           <CrearProducto
-            onClose={() => setMostrarFormulario(false)}
-            onCreated={() => fetchProducts(category)}
-          />
+  onClose={() => setMostrarFormulario(false)}
+  onCreated={() => {
+    fetchProducts({ tipo, categoria: category }, { force: true });
+    fetchCategories(tipo, { force: true }); // 👈 para categorías nuevas
+  }}
+/>
         </Portal>
       )}
 

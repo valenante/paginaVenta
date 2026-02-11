@@ -63,7 +63,7 @@ export default function TenantModalShop({ tenant, onClose }) {
       setLoading(true);
       setMensaje("🔎 Buscando impresoras...");
 
-      const { data } = await api.get(`/impresoras/${tenant._id}/listar`);
+      const { data } = await api.get(`/impresoras/admin/${tenant._id}/listar`);
       const lista = Array.isArray(data?.impresoras) ? data.impresoras : [];
 
       setImpresoras(lista);

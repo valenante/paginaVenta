@@ -68,7 +68,7 @@ export default function TenantModal({ tenant, onClose }) {
       setLoading(true);
       setAlerta({ tipo: "info", mensaje: "🔎 Buscando impresoras..." });
 
-      const { data } = await api.get(`/impresoras/${tenant._id}/listar`);
+      const { data } = await api.get(`/impresoras/admin/${tenant._id}/listar`);
       const lista = Array.isArray(data?.impresoras) ? data.impresoras : [];
 
       setImpresoras(lista);
@@ -157,7 +157,7 @@ export default function TenantModal({ tenant, onClose }) {
       setAlerta({ tipo: "info", mensaje: "Enviando prueba de impresión..." });
 
       const payload = impresora ? { impresora } : {};
-      const { data } = await api.post(`/impresoras/${tenant._id}/test`, payload);
+      const { data } = await api.post(`/impresoras/admin/${tenant._id}/test`, payload);
 
       setAlerta({
         tipo: "success",

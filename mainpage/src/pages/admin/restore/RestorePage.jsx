@@ -89,6 +89,12 @@ export default function RestorePage() {
   const [snapshotType, setSnapshotType] = useState("manual");
   const [snapshotting, setSnapshotting] = useState(false);
 
+  // ---- Pagination snapshots
+  const [limit] = useState(20);
+  const [offset, setOffset] = useState(0);
+  const [totalSnapshots, setTotalSnapshots] = useState(0);
+  const [snapshotTypeFilter, setSnapshotTypeFilter] = useState("");
+
   const DOC_TEXT = useMemo(() => {
     return `DISASTER RECOVERY — ALEF (SaaS)
 
@@ -215,17 +221,31 @@ El sistema está preparado para operación real SaaS.
     try {
       const [st, sn] = await Promise.all([
         api.get(`${API_BASE}/backup/status`),
-        api.get(`${API_BASE}/backup/snapshots`),
+        api.get(`${API_BASE}/backup/snapshots`, {
+          params: {
+            limit,
+            offset,
+            type: snapshotTypeFilter || undefined,
+          },
+        }),
       ]);
 
       setBackupStatus(st.data?.ok ? st.data : null);
+
       setSnapshots(sn.data?.snapshots || []);
+      setTotalSnapshots(sn.data?.total || 0);
+
     } catch (e) {
-      setError(e?.response?.data?.message || e?.message || "No se pudo cargar el estado de backups");
+      setError(
+        e?.response?.data?.message ||
+        e?.message ||
+        "No se pudo cargar el estado de backups"
+      );
     } finally {
       setLoading(false);
     }
   };
+
 
   const fetchDiff = async (rid) => {
     if (!rid) return;
@@ -434,6 +454,48 @@ El sistema está preparado para operación real SaaS.
           🔄 Actualizar
         </button>
       </header>
+
+      <div className="snapshot-controls">
+
+        <div className="snapshot-filter">
+          <select
+            value={snapshotTypeFilter}
+            onChange={(e) => {
+              setOffset(0);
+              setSnapshotTypeFilter(e.target.value);
+            }}
+          >
+            <option value="">Todos</option>
+            <option value="manual">Manual</option>
+            <option value="golden">Golden</option>
+            <option value="pre-deploy">Pre-deploy</option>
+          </select>
+        </div>
+
+        <div className="snapshot-pagination">
+          <button
+            className="rb-btn rb-btn-ghost"
+            disabled={offset === 0}
+            onClick={() => setOffset(Math.max(0, offset - limit))}
+          >
+            ◀
+          </button>
+
+          <span className="muted">
+            {totalSnapshots === 0
+              ? "0"
+              : `${offset + 1}–${Math.min(offset + limit, totalSnapshots)} / ${totalSnapshots}`}
+          </span>
+
+          <button
+            className="rb-btn rb-btn-ghost"
+            disabled={offset + limit >= totalSnapshots}
+            onClick={() => setOffset(offset + limit)}
+          >
+            ▶
+          </button>
+        </div>
+      </div>
 
       {error && <div className="rb-alert rb-alert-error">❌ {error}</div>}
       {okMsg && <div className="rb-alert rb-alert-ok">{okMsg}</div>}

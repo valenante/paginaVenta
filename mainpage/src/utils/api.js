@@ -6,7 +6,6 @@ const API_BASE_URL = import.meta.env.VITE_API_URL;
 const api = axios.create({
   baseURL: API_BASE_URL,
   withCredentials: true,
-  headers: { "Content-Type": "application/json" },
 });
 
 const AUTH_ROUTES = [
@@ -79,8 +78,16 @@ api.interceptors.request.use((config) => {
   if (tenantId) config.headers["x-tenant-id"] = tenantId;
   else delete config.headers["x-tenant-id"];
 
+  // 🔥 Soporte correcto FormData
+  if (typeof FormData !== "undefined" && config.data instanceof FormData) {
+    delete config.headers["Content-Type"];
+  } else {
+    config.headers["Content-Type"] = "application/json";
+  }
+
   return config;
 });
+
 
 api.interceptors.response.use(
   (response) => response,

@@ -65,10 +65,10 @@ export default function CartaConfigPage() {
     formData.append("seccion", section);
 
     try {
-      const { data } = await api.post("/configuracion/imagen", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-
+      const { data } = await api.post(
+        "/configuracion/imagen",
+        formData
+      );
       setForm((prev) => ({
         ...prev,
         imagenesHome: {

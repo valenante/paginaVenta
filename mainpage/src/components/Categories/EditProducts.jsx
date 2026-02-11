@@ -1,7 +1,8 @@
-import React, { useEffect, useMemo, useState, useContext } from "react";
+import React, { useEffect, useMemo, useState, useContext, useRef } from "react";
 import { ImageContext } from "../../context/ImagesContext";
-import { cargarSeccionesAPI, cargarEstacionesAPI } from "../../utils/apiCocina";
+import api from "../../utils/api";
 import AlefSelect from "../AlefSelect/AlefSelect";
+import AlertaMensaje from "../AlertaMensaje/AlertaMensaje";
 
 // ✅ reutiliza el CSS del CrearProducto (recomendado)
 // Ajusta la ruta real a tu proyecto:
@@ -72,6 +73,9 @@ const EditProduct = ({
   // === imagen preview local (sin romper tu subida)
   const [imageFile, setImageFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState("");
+  const [alerta, setAlerta] = useState(null);
+  const [saving, setSaving] = useState(false);
+  const fileInputRef = useRef(null);
 
   // =========================
   // FormData inicial = product
@@ -133,17 +137,34 @@ const EditProduct = ({
 
   // cargar secciones/estaciones
   useEffect(() => {
-    const fetchData = async () => {
+    if (!formData.tipo) return;
+
+    const destino =
+      formData.tipo === "bebida" ? "barra" : "cocina";
+
+    api
+      .get("/estaciones", {
+        params: { destino, includeInactive: 0 },
+      })
+      .then(({ data }) => {
+        setEstaciones(Array.isArray(data) ? data : []);
+      })
+      .catch((err) =>
+        console.error("❌ Error cargando estaciones:", err)
+      );
+  }, [formData.tipo]);
+
+  useEffect(() => {
+    const fetchSecciones = async () => {
       try {
-        const secs = await cargarSeccionesAPI();
-        const ests = await cargarEstacionesAPI();
-        setSecciones(secs || []);
-        setEstaciones(ests || []);
+        const { data } = await api.get("/secciones");
+        setSecciones(Array.isArray(data) ? data : []);
       } catch (err) {
-        console.error("❌ Error cargando secciones/estaciones:", err);
+        console.error("Error cargando secciones:", err);
       }
     };
-    fetchData();
+
+    fetchSecciones();
   }, []);
 
   // limpiar preview URL
@@ -233,12 +254,31 @@ const EditProduct = ({
     handleDrop(e, setFormData);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     // ✅ construir payload final como en CrearProducto
-    const precioBase = toNumOrNull(formData.precios.precioBase);
-    if (precioBase == null || precioBase <= 0) return;
+    const precioBase = toNumOrNull(formData.precios.precioBase) ?? 0;
+    const precioCopa = toNumOrNull(formData.precios.precioCopa) ?? 0;
+    const precioBotella = toNumOrNull(formData.precios.precioBotella) ?? 0;
+    const tapa = toNumOrNull(formData.precios.tapa) ?? 0;
+    const racion = toNumOrNull(formData.precios.racion) ?? 0;
+
+    const tienePrecio =
+      formData.tipo === "plato"
+        ? precioBase > 0 || tapa > 0 || racion > 0
+        : precioBase > 0 || precioCopa > 0 || precioBotella > 0;
+
+    if (!tienePrecio) {
+      setAlerta({
+        tipo: "error",
+        mensaje:
+          formData.tipo === "plato"
+            ? "Debes indicar al menos un precio (base, tapa o ración)."
+            : "Debes indicar al menos un precio (base, copa o botella).",
+      });
+      return;
+    }
 
     // adicional
     const adicionalPrecio = toNumOrNull(formData.adicionalPrecioUI);
@@ -278,7 +318,28 @@ const EditProduct = ({
     delete payload.nuevoIng;
     delete payload.nuevaCantidad;
 
-    onSave(payload);
+    try {
+      setSaving(true);
+
+      await onSave(payload);
+
+      setAlerta({
+        tipo: "success",
+        mensaje: "✅ Producto actualizado correctamente",
+      });
+
+      setTimeout(onCancel, 800);
+
+    } catch (error) {
+      setAlerta({
+        tipo: "error",
+        mensaje:
+          error.response?.data?.message ||
+          "❌ Error al actualizar el producto",
+      });
+    } finally {
+      setSaving(false);
+    }
   };
 
   // =========================
@@ -288,6 +349,14 @@ const EditProduct = ({
     <div className="crear-producto-overlay--crear" onClick={onCancel}>
       <div className="crear-producto-modal--crear" onClick={(e) => e.stopPropagation()}>
         <h2 className="titulo--crear">Editar producto</h2>
+
+        {alerta && (
+          <AlertaMensaje
+            tipo={alerta.tipo}
+            mensaje={alerta.mensaje}
+            onClose={() => setAlerta(null)}
+          />
+        )}
 
         <form onSubmit={handleSubmit} className="form--crear">
           {/* === COLUMNAS PRINCIPALES === */}
@@ -647,13 +716,13 @@ const EditProduct = ({
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
               onDrop={manejarDropArchivo}
-              onClick={() => document.getElementById("file-upload-edit").click()}
+              onClick={() => fileInputRef.current?.click()}
             >
               <p>Arrastra una imagen aquí o haz clic para subir</p>
 
               <input
+                ref={fileInputRef}
                 type="file"
-                id="file-upload-edit"
                 accept="image/*"
                 onChange={manejarCambioArchivo}
                 className="hidden-file-input"
@@ -776,8 +845,12 @@ const EditProduct = ({
 
           {/* === BOTONES === */}
           <div className="botones--crear">
-            <button type="submit" className="boton--crear">
-              Guardar cambios
+            <button
+              type="submit"
+              className="boton--crear"
+              disabled={saving}
+            >
+              {saving ? "Guardando..." : "Guardar cambios"}
             </button>
 
             <button type="button" onClick={onCancel} className="boton--cancelar">

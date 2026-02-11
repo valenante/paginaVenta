@@ -63,7 +63,7 @@ export default function ProveedorDetalleLayout() {
     }
   };
 
-  const nombre = proveedor?.nombreComercial || proveedor?.razonSocial || "Proveedor";
+  const nombre = proveedor?.nombreRestaurante|| proveedor?.razonSocial || "Proveedor";
 
  return (
   <main className="provDet-page section section--wide">

@@ -59,7 +59,7 @@ export default function ProveedorDetallePage() {
     }
   };
 
-  const nombre = proveedor?.nombreComercial || proveedor?.razonSocial || "Proveedor";
+  const nombre = proveedor?.nombreRestaurante|| proveedor?.razonSocial || "Proveedor";
   const contacto = proveedor?.contacto || {};
   const direccion = proveedor?.direccion || {};
   const condiciones = proveedor?.condicionesPago || {};
@@ -156,7 +156,7 @@ export default function ProveedorDetallePage() {
 
               <div className="provDet-row">
                 <span className="provDet-k">Nombre comercial</span>
-                <span className="provDet-v">{proveedor?.nombreComercial || "—"}</span>
+                <span className="provDet-v">{proveedor?.nombreRestaurante|| "—"}</span>
               </div>
 
               <div className="provDet-row">

@@ -29,7 +29,7 @@ export default function DashboardPage() {
     const fallback =
       tipoNegocio === "shop" ? "Tienda" : "Restaurante";
 
-    document.title = `${config?.branding?.nombreRestaurante || fallback
+    document.title = `${config?.branding?.nombreRestaurante|| fallback
       } | Dashboard`;
   }, [config, tipoNegocio]);
 
@@ -42,7 +42,7 @@ export default function DashboardPage() {
   }
 
   const nombreNegocio =
-    config?.branding?.nombreRestaurante ||
+    config?.branding?.nombreRestaurante||
     (tipoNegocio === "shop" ? "Tu shop" : "Tu restaurante");
   const direccion = config?.informacionRestaurante?.direccion || "";
   const telefono = config?.informacionRestaurante?.telefono || "";

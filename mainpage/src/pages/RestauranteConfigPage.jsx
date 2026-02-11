@@ -133,20 +133,6 @@ export default function RestauranteConfigPage() {
     }
   };
 
-  const guardarEdicionEstacion = async () => {
-    try {
-      const { data } = await api.put(`/estaciones/${editandoEstacion._id}`, editandoEstacion);
-
-      setEstaciones((prev) =>
-        prev.map((s) => (s._id === data._id ? data : s))
-      );
-
-      setEditandoEstacion(null);
-      setAlerta({ tipo: "success", mensaje: "Estación actualizada." });
-    } catch (err) {
-      setAlerta({ tipo: "error", mensaje: "Error al actualizar estación." });
-    }
-  };
 
   /** === Subida de imÃ¡genes === */
   const handleFileUpload = async (file) => {

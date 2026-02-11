@@ -3,11 +3,12 @@ import "./AlertaMensaje.css";
 
 const AlertaMensaje = ({ tipo = "info", mensaje, onClose, autoCerrar = true, duracion = 3000 }) => {
   useEffect(() => {
-    if (autoCerrar) {
+    if (autoCerrar && onClose) {
       const timer = setTimeout(onClose, duracion);
       return () => clearTimeout(timer);
     }
   }, [autoCerrar, duracion, onClose]);
+
 
   return (
     <div className={`alerta-mensaje alerta-${tipo}`}>

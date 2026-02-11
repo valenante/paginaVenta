@@ -101,7 +101,12 @@ export default function CrearIngredienteModal({ onClose, onSave }) {
       onSave?.();
       onClose?.();
     } catch (e) {
-      setError("⚠ Error creando el ítem. Intenta de nuevo.");
+      const msg =
+        e.response?.data?.message ||
+        e.response?.data?.error ||
+        "Error creando el ítem.";
+
+      setError(msg);
     } finally {
       setLoading(false);
     }

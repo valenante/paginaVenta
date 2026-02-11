@@ -206,7 +206,7 @@ export default function ProveedoresPage() {
                                             <td>
                                                 <div className="prov-nameCell">
                                                     <div className="prov-name">
-                                                        {p.nombreComercial || p.razonSocial || "—"}
+                                                        {p.nombreRestaurante|| p.razonSocial || "—"}
                                                     </div>
                                                     <div className="prov-sub">
                                                         {p.nif ? `CIF/NIF: ${p.nif}` : "—"}
@@ -330,7 +330,7 @@ export default function ProveedoresPage() {
             {modal?.type === "delete" && (
                 <ModalConfirmacion
                     titulo="Eliminar proveedor"
-                    mensaje={`¿Seguro que deseas eliminar "${modal?.proveedor?.nombreComercial || "este proveedor"
+                    mensaje={`¿Seguro que deseas eliminar "${modal?.proveedor?.nombreRestaurante|| "este proveedor"
                         }"? Esta acción no se puede deshacer.`}
                     onConfirm={() =>
                         handleDelete(modal?.proveedor?._id)

@@ -1,13 +1,10 @@
 // src/components/Categories/CrearProducto.jsx
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext, useEffect, useMemo } from "react";
 import { ProductosContext } from "../../context/ProductosContext";
 import { useAuth } from "../../context/AuthContext";
 import { ImageContext } from "../../context/ImagesContext";
-import {
-  cargarSeccionesAPI,
-  cargarEstacionesAPI,
-} from "../../utils/apiCocina";
 import AlefSelect from "../AlefSelect/AlefSelect";
+import AlertaMensaje from "../AlertaMensaje/AlertaMensaje";
 import * as logger from "../../utils/logger";
 import api from "../../utils/api";
 import "./CrearProducto.css";
@@ -34,6 +31,7 @@ const CrearProducto = ({ onClose, onCreated }) => {
   const [usarOtraCategoria, setUsarOtraCategoria] = useState(false);
   const [secciones, setSecciones] = useState([]);
   const [estaciones, setEstaciones] = useState([]);
+  const [alerta, setAlerta] = useState(null);
 
   const isPlanEsencial =
     user?.plan === "esencial" || user?.plan === "tpv-esencial";
@@ -64,6 +62,27 @@ const CrearProducto = ({ onClose, onCreated }) => {
     receta: [],
   });
   const [ingredientesStock, setIngredientesStock] = useState([]);
+
+
+  const estacionesFiltradas = useMemo(() => {
+    if (!formData.tipo || estaciones.length === 0) return [];
+
+    const destinoObjetivo =
+      formData.tipo === "bebida" ? "barra" : "cocina";
+
+    return estaciones.filter((e) => e.destino === destinoObjetivo);
+  }, [formData.tipo, estaciones]);
+
+  const seccionesFiltradas = useMemo(() => {
+    if (!formData.tipo || secciones.length === 0) return [];
+
+    const destinoObjetivo =
+      formData.tipo === "bebida" ? "barra" : "cocina";
+
+    return secciones.filter(
+      (s) => s.destino === destinoObjetivo
+    );
+  }, [formData.tipo, secciones]);
 
   useEffect(() => {
     const loadIngredientes = async () => {
@@ -101,15 +120,35 @@ const CrearProducto = ({ onClose, onCreated }) => {
     fetchCategorias();
   }, []);
 
-  // 🔥 Cargar secciones y estaciones desde Cocina
+  useEffect(() => {
+    setFormData((prev) => ({
+      ...prev,
+      estacion: "",
+    }));
+  }, [formData.tipo]);
+
+  useEffect(() => {
+    setFormData((prev) => ({
+      ...prev,
+      estacion: "",
+      seccion: "",
+    }));
+  }, [formData.tipo]);
+
+  // 🔥 Cargar secciones y estaciones
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const seccionesDB = await cargarSeccionesAPI();
-        const estacionesDB = await cargarEstacionesAPI();
+        const [{ data: seccionesDB }, { data: estacionesDB }] =
+          await Promise.all([
+            api.get("/secciones"),
+            api.get("/estaciones", {
+              params: { includeInactive: 0 },
+            }),
+          ]);
 
-        setSecciones(seccionesDB || []);
-        setEstaciones(estacionesDB || []);
+        setSecciones(Array.isArray(seccionesDB) ? seccionesDB : []);
+        setEstaciones(Array.isArray(estacionesDB) ? estacionesDB : []);
       } catch (err) {
         logger.error("❌ Error cargando secciones/estaciones:", err);
       }
@@ -174,19 +213,31 @@ const CrearProducto = ({ onClose, onCreated }) => {
       });
 
       if (response.status === 201) {
-        // 🔹 Si existe contexto de productos, recarga
         if (typeof cargarProductos === "function") {
           cargarProductos();
         }
 
-        // 🔹 Si el padre (Categories) pasa onCreated, recarga allí también
         if (typeof onCreated === "function") {
           onCreated(response.data);
         }
 
-        onClose();
+        setAlerta({
+          tipo: "success",
+          mensaje: "✅ Producto creado correctamente",
+        });
+
+        setTimeout(() => {
+          onClose();
+        }, 1200);
       }
     } catch (error) {
+      setAlerta({
+        tipo: "error",
+        mensaje:
+          error.response?.data?.message ||
+          "❌ Error al crear el producto",
+      });
+
       logger.error(
         "Error al crear el producto:",
         error.response?.data || error.message
@@ -222,6 +273,14 @@ const CrearProducto = ({ onClose, onCreated }) => {
         onClick={(e) => e.stopPropagation()}
       >
         <h2 className="titulo--crear">Crear producto</h2>
+
+        {alerta && (
+          <AlertaMensaje
+            tipo={alerta.tipo}
+            mensaje={alerta.mensaje}
+            onClose={() => setAlerta(null)}
+          />
+        )}
 
         <form onSubmit={handleSubmit} className="form--crear">
           {/* === COLUMNAS PRINCIPALES === */}
@@ -426,7 +485,7 @@ const CrearProducto = ({ onClose, onCreated }) => {
                   Sección:
                   <AlefSelect
                     value={formData.seccion}
-                    options={secciones.map((sec) => ({
+                    options={seccionesFiltradas.map((sec) => ({
                       label: sec.nombre,
                       value: sec.slug,
                     }))}
@@ -448,7 +507,7 @@ const CrearProducto = ({ onClose, onCreated }) => {
                     Estación:
                     <AlefSelect
                       value={formData.estacion}
-                      options={estaciones.map((est) => ({
+                      options={estacionesFiltradas.map((est) => ({
                         label: est.nombre,
                         value: est.slug,
                       }))}

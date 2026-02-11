@@ -49,19 +49,25 @@ const Categories = ({ category, tipo }) => {
   const handleSave = async (updatedProduct) => {
     try {
       await updateProduct(updatedProduct._id, updatedProduct);
-      setEditingProduct(null);
+
+      setEditingProduct(null); // ✅ cierra modal en éxito
       await fetchProducts({ tipo, categoria: category }, { force: true });
 
       setMensajeAlerta({
-        tipo: "exito",
+        tipo: "success", // ✅ NO "exito"
         mensaje: "Producto actualizado correctamente",
       });
+
+      return true;
     } catch (error) {
       logger.error("Error al guardar producto:", error);
+
       setMensajeAlerta({
         tipo: "error",
         mensaje: "No se pudo guardar el producto",
       });
+
+      throw error; // ✅ CLAVE: permite que el modal muestre alerta
     }
   };
 
@@ -242,12 +248,12 @@ const Categories = ({ category, tipo }) => {
       {mostrarFormulario && (
         <Portal>
           <CrearProducto
-  onClose={() => setMostrarFormulario(false)}
-  onCreated={() => {
-    fetchProducts({ tipo, categoria: category }, { force: true });
-    fetchCategories(tipo, { force: true }); // 👈 para categorías nuevas
-  }}
-/>
+            onClose={() => setMostrarFormulario(false)}
+            onCreated={() => {
+              fetchProducts({ tipo, categoria: category }, { force: true });
+              fetchCategories(tipo, { force: true }); // 👈 para categorías nuevas
+            }}
+          />
         </Portal>
       )}
 

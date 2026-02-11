@@ -28,13 +28,13 @@ export default function IdentidadNegocioPanel({
                             <label>Nombre comercial</label>
                             <input
                                 type="text"
-                                value={form.branding.nombreRestaurante || ""}
+                                value={form.branding.nombreRestaurante|| ""}
                                 onChange={(e) =>
                                     setForm((prev) => ({
                                         ...prev,
                                         branding: {
                                             ...prev.branding,
-                                            nombreRestaurante: e.target.value,
+                                           nombreRestaurante: e.target.value,
                                         },
                                     }))
                                 }

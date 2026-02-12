@@ -161,17 +161,12 @@ export default function MiCuentaPage() {
       setArchivo(null);
       setPasswordCert("");
     } catch (err) {
-      console.log("🔥 ERROR CERT DEBUG:", err?.response?.data);
-
       setAlerta({
         tipo: "error",
         mensaje:
-          err?.response?.data?.message ||
-          err?.response?.data?.error ||
-          "Error al subir el certificado.",
+          err?.response?.data?.error || "Error al subir el certificado.",
       });
     }
-
   };
 
   const descargarDeclaracion = () => {

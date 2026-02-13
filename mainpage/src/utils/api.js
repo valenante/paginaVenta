@@ -12,6 +12,7 @@ const AUTH_ROUTES = [
   "/auth/login",
   "/auth/registro",
   "/auth/register",
+  "/auth/me/me",
   "/auth/refresh-token",
   "/auth/logout",
   "/auth/password-setup",

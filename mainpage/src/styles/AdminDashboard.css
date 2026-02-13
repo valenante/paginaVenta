@@ -52,12 +52,8 @@
   letter-spacing: 0.02em;
   text-transform: none;
   cursor: pointer;
-  background: linear-gradient(135deg, var(--color-primario), var(--color-secundario));
+  background: linear-gradient(135deg, rgba(106, 13, 173, 0.55), rgba(255, 103, 0, 0.4));
   color: #ffffff;
-  box-shadow:
-    0 12px 24px rgba(15, 23, 42, 0.6),
-    0 0 0 1px rgba(148, 163, 184, 0.4);
-  transform: translateY(0);
   transition:
     transform 0.15s ease,
     box-shadow 0.15s ease,
@@ -276,14 +272,11 @@
   padding: 0.55rem 1rem;
   font-size: var(--font-size-sm);
   border-radius: var(--radius-pill);
-  background: linear-gradient(135deg, var(--color-primario), var(--color-secundario));
+  background: linear-gradient(135deg, rgba(106, 13, 173, 0.55), rgba(255, 103, 0, 0.4));
   color: #ffffff;
   border: none;
   cursor: pointer;
   white-space: nowrap;
-  box-shadow:
-    0 10px 22px rgba(0, 0, 0, 0.45),
-    0 0 0 1px rgba(255, 255, 255, 0.08);
   transition: 0.15s ease;
 }
 

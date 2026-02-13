@@ -50,9 +50,12 @@ function Modal({ open, title, onClose, children }) {
 }
 
 export default function RestorePage() {
-  const [loading, setLoading] = useState(true);
+  const [statusLoading, setStatusLoading] = useState(true);
+  const [snapshotsLoading, setSnapshotsLoading] = useState(true);
+  const [lastRefresh, setLastRefresh] = useState(null);
   const [snapshots, setSnapshots] = useState([]);
   const [backupStatus, setBackupStatus] = useState(null);
+  const [docOpen, setDocOpen] = useState(false);
 
   const [error, setError] = useState("");
   const [okMsg, setOkMsg] = useState("");
@@ -213,39 +216,38 @@ El sistema está preparado para operación real SaaS.
     URL.revokeObjectURL(url);
   };
 
-  const fetchAll = async () => {
-    setError("");
-    setOkMsg("");
-    setLoading(true);
-
+  const fetchStatus = async () => {
+    setStatusLoading(true);
     try {
-      const [st, sn] = await Promise.all([
-        api.get(`${API_BASE}/backup/status`),
-        api.get(`${API_BASE}/backup/snapshots`, {
-          params: {
-            limit,
-            offset,
-            type: snapshotTypeFilter || undefined,
-          },
-        }),
-      ]);
-
-      setBackupStatus(st.data?.ok ? st.data : null);
-
-      setSnapshots(sn.data?.snapshots || []);
-      setTotalSnapshots(sn.data?.total || 0);
-
+      const { data } = await api.get(`${API_BASE}/backup/status`);
+      setBackupStatus(data?.ok ? data : null);
     } catch (e) {
-      setError(
-        e?.response?.data?.message ||
-        e?.message ||
-        "No se pudo cargar el estado de backups"
-      );
+      setError(e?.response?.data?.message || e?.message || "Error status");
     } finally {
-      setLoading(false);
+      setStatusLoading(false);
+      setLastRefresh(Date.now());
     }
   };
 
+  const fetchSnapshots = async () => {
+    setSnapshotsLoading(true);
+    try {
+      const { data } = await api.get(`${API_BASE}/backup/snapshots`, {
+        params: {
+          limit,
+          offset,
+          type: snapshotTypeFilter || undefined,
+        },
+      });
+
+      setSnapshots(data?.snapshots || []);
+      setTotalSnapshots(data?.total || 0);
+    } catch (e) {
+      setError(e?.response?.data?.message || e?.message || "Error snapshots");
+    } finally {
+      setSnapshotsLoading(false);
+    }
+  };
 
   const fetchDiff = async (rid) => {
     if (!rid) return;
@@ -271,14 +273,18 @@ El sistema está preparado para operación real SaaS.
   };
 
   useEffect(() => {
-    fetchAll();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    fetchStatus();
   }, []);
 
+  useEffect(() => {
+    fetchSnapshots();
+  }, [offset, snapshotTypeFilter]);
+
   const repoTone = useMemo(() => {
+    if (statusLoading) return "neutral";
     if (!backupStatus) return "neutral";
     return backupStatus.repoOk ? "ok" : "warn";
-  }, [backupStatus]);
+  }, [backupStatus, statusLoading]);
 
   const openStageModal = (snap) => {
     setOkMsg("");
@@ -366,7 +372,10 @@ El sistema está preparado para operación real SaaS.
       setOkMsg(`✅ Restore aplicado correctamente. Backup local: ${data?.backupDir || "—"}`);
 
       // refrescamos estado general
-      await fetchAll();
+      await Promise.all([
+        fetchStatus(),
+        fetchSnapshots()
+      ]);
       // y re-diff por si quieres ver que quedó igual
       await fetchDiff(restoreId);
     } catch (e) {
@@ -413,7 +422,10 @@ El sistema está preparado para operación real SaaS.
       setOkMsg(`📸 Snapshot creado correctamente: ${data?.snapshotId || "—"}`);
 
       // refrescamos lista
-      await fetchAll();
+      await Promise.all([
+        fetchStatus(),
+        fetchSnapshots()
+      ]);
     } catch (e) {
       setError(
         e?.response?.data?.message ||
@@ -429,17 +441,6 @@ El sistema está preparado para operación real SaaS.
     return (diffs || []).some((d) => d?.changed === true);
   }, [diffs]);
 
-  if (loading) {
-    return (
-      <div className="restore-page">
-        <header className="restore-header">
-          <h2>Restore & Disaster Recovery</h2>
-          <p className="muted">Cargando…</p>
-        </header>
-      </div>
-    );
-  }
-
   return (
     <div className="restore-page">
       <header className="restore-header">
@@ -450,7 +451,15 @@ El sistema está preparado para operación real SaaS.
           </p>
         </div>
 
-        <button className="rb-btn rb-btn-ghost" onClick={fetchAll}>
+        <button
+          className="rb-btn rb-btn-ghost"
+          onClick={() => {
+            setError("");
+            setOkMsg("");
+            fetchStatus();
+            fetchSnapshots();
+          }}
+        >
           🔄 Actualizar
         </button>
       </header>
@@ -504,18 +513,22 @@ El sistema está preparado para operación real SaaS.
       <section className="restore-card">
         <div className="restore-card-header">
           <h3>🧠 Estado de backups</h3>
-          <Badge tone={repoTone}>{backupStatus?.repoOk ? "REPO OK" : "REPO ?"}</Badge>
+          <Badge tone={repoTone}>
+            {statusLoading ? "…" : backupStatus?.repoOk ? "REPO OK" : "REPO ?"}
+          </Badge>
         </div>
 
         <div className="restore-kpis">
           <div className="restore-kpi">
             <span className="kpi-label">Snapshots</span>
-            <span className="kpi-value">{backupStatus?.snapshotsCount ?? "—"}</span>
+            <span className="kpi-value">  {statusLoading ? "..." : backupStatus?.snapshotsCount ?? "—"}</span>
           </div>
 
           <div className="restore-kpi">
             <span className="kpi-label">Último refresh</span>
-            <span className="kpi-value">{formatDate(Date.now())}</span>
+            <span className="kpi-value">
+              {lastRefresh ? formatDate(lastRefresh) : "—"}
+            </span>
           </div>
         </div>
 
@@ -535,7 +548,16 @@ El sistema está preparado para operación real SaaS.
 
         <p className="muted">Este documento es la fuente de verdad operativa. Descárgalo y guárdalo.</p>
 
-        <pre className="restore-doc">{DOC_TEXT}</pre>
+        <button
+          className="rb-btn rb-btn-ghost"
+          onClick={() => setDocOpen(!docOpen)}
+        >
+          {docOpen ? "Ocultar documento" : "Ver documento"}
+        </button>
+
+        {docOpen && (
+          <pre className="restore-doc">{DOC_TEXT}</pre>
+        )}
       </section>
 
       <MongoTenantRestoreCard />
@@ -550,6 +572,7 @@ El sistema está preparado para operación real SaaS.
 
             <button
               className="rb-btn rb-btn-primary"
+              disabled={snapshotting}
               onClick={() => {
                 setError("");
                 setOkMsg("");
@@ -563,9 +586,14 @@ El sistema está preparado para operación real SaaS.
           </div>
         </div>
 
-        {!snapshots.length && <p className="muted">No hay snapshots disponibles.</p>}
+        {snapshotsLoading && (
+          <p className="muted">Cargando snapshots…</p>
+        )}
 
-        {!!snapshots.length && (
+        {!snapshotsLoading && !snapshots.length && (
+          <p className="muted">No hay snapshots disponibles.</p>
+        )}
+        {!!snapshots.length && !snapshotsLoading && (
           <div className="table-wrapper">
             <table className="restore-table">
               <thead>
@@ -585,9 +613,16 @@ El sistema está preparado para operación real SaaS.
                     </td>
                     <td>{formatDate(s.time)}</td>
                     <td>{s.hostname || "—"}</td>
-                    <td className="paths">{(s.paths || []).join(", ")}</td>
+                    <td className="paths">
+                      {(s.paths || []).slice(0, 2).join(", ")}
+                      {(s.paths || []).length > 2 && "…"}
+                    </td>
                     <td style={{ textAlign: "right" }}>
-                      <button className="rb-btn rb-btn-danger" onClick={() => openStageModal(s)}>
+                      <button
+                        className="rb-btn rb-btn-danger"
+                        onClick={() => openStageModal(s)}
+                        disabled={staging}
+                      >
                         🧪 Stage
                       </button>
                     </td>

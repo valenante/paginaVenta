@@ -255,7 +255,7 @@ export default function SeccionesPanel({
 
             <button
               type="button"
-              className="btn btn-primario"
+              className="btn btn-primario "
               onClick={crear}
               disabled={!puedeGestionar}
             >
@@ -396,7 +396,7 @@ export default function SeccionesPanel({
               </button>
               <button
                 type="button"
-                className="btn btn-primario"
+                className="btn btn-primario "
                 onClick={guardarEdicion}
               >
                 Guardar

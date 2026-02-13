@@ -184,6 +184,8 @@ html, body {
   padding: 0.7rem 1.3rem;
   border-radius: var(--radius-pill);
   font-size: var(--font-size-sm);
+  background-color: var(--color-primario);
+  color: var(--color-blanco);
   font-weight: 600;
   border: none;
   cursor: pointer;
@@ -191,13 +193,13 @@ html, body {
   transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
 }
 
-.btn-primario {
+.btn btn-primario  {
   background: var(--color-primario);
   color: var(--color-texto-invertido);
   box-shadow: var(--shadow-suave);
 }
 
-.btn-primario:hover {
+.btn btn-primario :hover {
   background: var(--color-primario-oscuro);
   box-shadow: var(--shadow-hover);
   transform: translateY(-1px);
@@ -215,6 +217,7 @@ html, body {
 
 .btn-ghost {
   background: transparent;
+  color: gray;
   border: 1px solid rgba(148, 163, 184, 0.4);
 }
 

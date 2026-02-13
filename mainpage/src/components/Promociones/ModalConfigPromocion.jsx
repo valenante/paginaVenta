@@ -104,11 +104,11 @@ export default function ModalConfigPromocion({ producto, onClose, onSaved }) {
         </div>
 
         <footer className="modal-actions">
-          <button className="btn-secundario" onClick={onClose}>
+          <button className="btn btn-secundario" onClick={onClose}>
             Cancelar
           </button>
           <button
-            className="btn-primario"
+            className="btn btn-primario "
             onClick={guardarPromocion}
             disabled={saving}
           >

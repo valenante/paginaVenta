@@ -50,7 +50,7 @@ export default function TenantsPage() {
           </button>
 
           <button
-            className="btn btn-primario"
+            className="btn btn-primario "
             onClick={() => navigate("/superadmin/tenants/nuevo")}
           >
             + Nuevo tenant

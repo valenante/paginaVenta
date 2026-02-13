@@ -50,7 +50,7 @@ export default function ProveedorProductosTab() {
         <div className="provTab-header">
           <h2 className="provDet-cardTitle">Productos del proveedor</h2>
           <button
-            className="btn btn-primario"
+            className="btn btn-primario "
             onClick={() => setModalProducto({ mode: "create" })}
           >
             ➕ Nuevo producto
@@ -98,7 +98,7 @@ export default function ProveedorProductosTab() {
                     <td className="t-right">
                       <div className="prov-rowActions">
                         <button
-                          className="btn btn-primario"
+                          className="btn btn-primario "
                           onClick={() =>
                             setModalProducto({ mode: "edit", producto: p })
                           }
@@ -153,7 +153,7 @@ export default function ProveedorProductosTab() {
 
                 <div className="prov-mobileActions">
                   <button
-                    className="btn btn-primario"
+                    className="btn btn-primario "
                     onClick={() => setModalProducto({ mode: "edit", producto: p })}
                   >
                     Editar

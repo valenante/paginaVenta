@@ -123,7 +123,7 @@ export default function ProveedorDetalleLayout() {
           </Link>
 
           <button
-            className="btn btn-primario"
+            className="btn btn-primario "
             type="button"
             onClick={() => setModalEdit(true)}
             disabled={loading || !proveedor}
@@ -132,7 +132,7 @@ export default function ProveedorDetalleLayout() {
           </button>
 
           <button
-            className="btn btn-danger"
+            className="btn btn-secundario"
             type="button"
             onClick={() => setModalDelete(true)}
             disabled={loading || !proveedor}

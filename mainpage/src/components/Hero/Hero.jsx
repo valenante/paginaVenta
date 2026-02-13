@@ -39,7 +39,7 @@ const Hero = () => {
           </p>
 
           <div className="Hero-acciones">
-            <a href="#packs" className="Hero-boton btn-primario">
+            <a href="#packs" className="Hero-boton btn btn-primario ">
               Ver planes con facturación antifraude
             </a>
             <a href="#contacto" className="Hero-link">

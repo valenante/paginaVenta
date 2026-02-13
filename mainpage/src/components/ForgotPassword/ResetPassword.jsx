@@ -75,7 +75,7 @@ export default function ResetPassword() {
 
             {error && <p className="login-error">{error}</p>}
 
-            <button type="submit" className="login-btn" disabled={loading}>
+            <button type="submit" className="btn btn-primario" disabled={loading}>
               {loading ? "Restableciendo..." : "Guardar nueva contraseña"}
             </button>
           </form>

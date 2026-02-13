@@ -174,7 +174,7 @@ export default function PerfilPage() {
           <div className="perfil-actions">
             <button
               type="submit"
-              className="btn btn-primario"
+              className="btn btn-primario "
               disabled={loading}
             >
               {loading ? "Actualizando..." : "Guardar cambios"}

@@ -321,7 +321,7 @@ export default function RestauranteConfigPage() {
       <div className="rest-config-actions">
         <button
           type="button"
-          className="btn btn-primario"
+          className="btn btn-primario "
           onClick={handleSave}
           disabled={saving}
         >

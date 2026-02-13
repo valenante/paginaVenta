@@ -66,7 +66,7 @@ const Gallery = () => {
         </div>
 
         <div className="Gallery-footer">
-          <a href="#contacto" className="btn btn-primario">
+          <a href="#contacto" className="btn btn-primario ">
             Quiero ver Alef en funcionamiento
           </a>
         </div>

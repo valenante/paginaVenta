@@ -72,7 +72,7 @@
 }
 
 .Hero-boton {
-  /* Usa las clases globales: btn-primario ya la tienes en index.css */
+  /* Usa las clases globales: btn btn-primario  ya la tienes en index.css */
   text-decoration: none;
 }
 

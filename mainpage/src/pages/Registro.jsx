@@ -353,7 +353,7 @@ export default function Registro() {
             {paso < STEPS.length && (
               <button
                 type="button"
-                className="registro-btn registro-btn-primario"
+                className="registro-btn registro-btn btn-primario "
                 onClick={() => setPaso(paso + 1)}
                 disabled={loading}
               >

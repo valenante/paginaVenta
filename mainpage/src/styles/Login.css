@@ -189,29 +189,6 @@
   padding: 0.45rem 0.6rem;
 }
 
-/* ===== BOTÓN ENTRAR ===== */
-
-.login-btn {
-  margin-top: 0.25rem;
-  width: 100%;
-  justify-content: center;
-  padding: 0.7rem 1.2rem;
-  border-radius: var(--radius-pill);
-  border: none;
-  font-size: var(--font-size-sm);
-  font-weight: 600;
-  cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.15s ease,
-    background 0.15s ease, opacity 0.15s ease;
-}
-
-.login-btn:disabled {
-  opacity: 0.7;
-  cursor: default;
-  box-shadow: none;
-  transform: none;
-}
-
 /* ===== OLVIDAR CONTRASEÑA ===== */
 
 .login-forgot {

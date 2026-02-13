@@ -19,7 +19,7 @@ export default function CocineroWelcome({ onStart }) {
         <div className="card">🍳 Prioriza platos sin errores</div>
       </div>
 
-      <button className="btn-primario" onClick={onStart}>
+      <button className="btn btn-primario " onClick={onStart}>
         Empezar turno en cocina
       </button>
     </div>

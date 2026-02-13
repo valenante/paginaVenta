@@ -376,7 +376,7 @@ export default function ReservasAjustesPage() {
             <button
               type="button"
               onClick={guardarGeneral}
-              className="btn btn-primario btn-guardar-config"
+              className="btn btn-primario  btn-guardar-config"
               disabled={loading || savingGeneral || savingEspecial}
             >
               {savingGeneral ? "Guardando..." : "💾 Guardar cambios generales"}

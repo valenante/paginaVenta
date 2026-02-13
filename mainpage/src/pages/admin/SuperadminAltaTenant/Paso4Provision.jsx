@@ -69,7 +69,7 @@ export default function Paso4Provision({
 
       <div className="resumen-pago">
         <button
-          className="boton-pago btn btn-primario"
+          className="boton-pago btn btn-primario "
           onClick={onProvision}
           disabled={loading}
         >

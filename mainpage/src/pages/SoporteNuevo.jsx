@@ -129,7 +129,7 @@ export default function SoporteNuevo() {
         <div className="soporte-form-actions">
           <button
             type="submit"
-            className="btn-primario"
+            className="btn btn-primario "
             disabled={enviando}
           >
             {enviando ? "Enviando ticket…" : "Crear ticket"}

@@ -118,7 +118,7 @@ export default function ProveedoresPage() {
                         </button>
 
                         <button
-                            className="btn btn-primario"
+                            className="btn btn-primario "
                             type="button"
                             onClick={onCreate}
                         >
@@ -179,7 +179,7 @@ export default function ProveedoresPage() {
                             Crea tu primer proveedor para empezar a gestionar pedidos y recepción.
                         </div>
                         <button
-                            className="btn btn-primario"
+                            className="btn btn-primario "
                             type="button"
                             onClick={onCreate}
                         >
@@ -248,7 +248,7 @@ export default function ProveedoresPage() {
                                                     </Link>
 
                                                     <button
-                                                        className="btn btn-primario"
+                                                        className="btn btn-primario "
                                                         type="button"
                                                         onClick={() => onEdit(p)}
                                                     >
@@ -256,7 +256,7 @@ export default function ProveedoresPage() {
                                                     </button>
 
                                                     <button
-                                                        className="btn btn-danger"
+                                                        className="btn btn-secundario"
                                                         type="button"
                                                         onClick={() => onDelete(p)}
                                                     >

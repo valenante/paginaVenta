@@ -42,7 +42,7 @@
 /*****************************************************
  *   BOTONES GENERALES
  *****************************************************/
-.btn-primario {
+.btn btn-primario  {
   background: var(--color-primario);
   padding: 10px 18px;
   color: #fff;
@@ -58,7 +58,7 @@
   gap: 6px;
 }
 
-.btn-primario:hover {
+.btn btn-primario :hover {
   background: #5b0a99;
 }
 

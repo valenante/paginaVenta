@@ -44,7 +44,7 @@ export default function ProveedorFacturasTab() {
         <div className="provTab-header">
           <h2 className="provDet-cardTitle">Facturas</h2>
           <button
-            className="btn btn-primario"
+            className="btn btn-primario "
             onClick={() => setModalCrear(true)}
           >
             ➕ Nueva factura

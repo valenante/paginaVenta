@@ -733,7 +733,7 @@ export default function CartaConfigPage() {
           type="button"
           onClick={handleSave}
           disabled={saving}
-          className="btn btn-primario"
+          className="btn btn-primario "
         >
           {saving ? "Guardando..." : "Guardar todos los cambios"}
         </button>

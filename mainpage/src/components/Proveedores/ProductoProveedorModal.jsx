@@ -286,7 +286,7 @@ export default function ProductoProveedorModal({
               </button>
               <button
                 type="submit"
-                className="btn btn-primario"
+                className="btn btn-primario "
                 disabled={saving}
               >
                 {saving ? "Guardando…" : "Guardar"}

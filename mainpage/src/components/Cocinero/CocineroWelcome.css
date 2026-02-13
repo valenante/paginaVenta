@@ -89,7 +89,7 @@
 }
 
 /* ===== BOTÓN ===== */
-.cocinero-welcome .btn-primario {
+.cocinero-welcome .btn btn-primario  {
   padding: 0.9rem 2.6rem;
   border-radius: 999px;
 
@@ -106,12 +106,12 @@
   box-shadow: 0 10px 30px rgba(255, 103, 0, 0.35);
 }
 
-.cocinero-welcome .btn-primario:hover {
+.cocinero-welcome .btn btn-primario :hover {
   transform: translateY(-2px);
   box-shadow: 0 16px 40px rgba(255, 103, 0, 0.45);
 }
 
-.cocinero-welcome .btn-primario:active {
+.cocinero-welcome .btn btn-primario :active {
   transform: translateY(0);
 }
 

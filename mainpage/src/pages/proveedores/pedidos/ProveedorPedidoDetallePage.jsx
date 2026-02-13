@@ -103,7 +103,7 @@ export default function ProveedorPedidoDetallePage() {
 
                         {pedido?.estado === "borrador" && (
                             <button
-                                className="btn btn-primario"
+                                className="btn btn-primario "
                                 onClick={() => setModalRecibir(true)}
                             >
                                 📦 Recibir pedido
@@ -112,7 +112,7 @@ export default function ProveedorPedidoDetallePage() {
 
                         {pedido?.estado === "borrador" && (
                             <button
-                                className="btn btn-danger"
+                                className="btn btn-secundario"
                                 onClick={() => setModalCancel(true)}
                             >
                                 Cancelar pedido

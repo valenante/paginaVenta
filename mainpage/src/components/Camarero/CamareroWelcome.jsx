@@ -19,7 +19,7 @@ export default function CamareroWelcome({ onStart }) {
         <div className="card">📊 Sigue tu rendimiento</div>
       </div>
 
-      <button className="btn-primario" onClick={onStart}>
+      <button className="btn btn-primario " onClick={onStart}>
         Empezar mi turno
       </button>
     </div>

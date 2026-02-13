@@ -387,7 +387,7 @@ export default function Paso4ResumenPago({
       {/* === PAGO === */}
       <div className="resumen-pago">
         <button
-          className="boton-pago btn btn-primario"
+          className="boton-pago btn btn-primario "
           onClick={handlePago}
           disabled={loading}
         >

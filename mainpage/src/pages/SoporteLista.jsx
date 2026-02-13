@@ -97,7 +97,7 @@ export default function SoporteLista() {
         <div className="soporte-header-acciones">
           <button
             type="button"
-            className="btn-secundario"
+            className="btn btn-secundario"
             onClick={() =>
               cargarTickets({
                 estado: filtroEstado,
@@ -110,7 +110,7 @@ export default function SoporteLista() {
             Recargar
           </button>
 
-          <Link to="/soporte/nuevo" className="btn-primario">
+          <Link to="/soporte/nuevo" className="btn btn-primario ">
             Nuevo ticket
           </Link>
         </div>

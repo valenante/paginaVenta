@@ -417,7 +417,7 @@ export default function ProveedorModal({ mode, proveedor, onClose, onSaved }) {
 
                             <button
                                 type="submit"
-                                className="btn btn-primario"
+                                className="btn btn-primario "
                                 disabled={saving}
                             >
                                 {saving ? "Guardando…" : "Guardar"}

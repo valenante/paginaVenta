@@ -116,7 +116,7 @@ const Contact = () => {
               resolver tu consulta. No compartimos tus datos con terceros.
             </p>
 
-            <button type="submit" className="btn btn-primario Contact-submit">
+            <button type="submit" className="btn btn-primario  Contact-submit">
               Enviar consulta
             </button>
           </form>

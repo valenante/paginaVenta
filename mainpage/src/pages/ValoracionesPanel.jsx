@@ -214,6 +214,24 @@ export default function ValoracionesPanel() {
         )}
       </header>
 
+      <section className="valoraciones-info">
+        <div className="valoraciones-info-card">
+          <h4>¿Cómo se generan estas valoraciones?</h4>
+
+          <p>
+            Las valoraciones las dejan los clientes desde la <b>Carta QR</b>.
+            Cuando un cliente <b>pide la cuenta</b>, el sistema le muestra un botón para
+            valorar <b>solo los productos que pidió en esa mesa</b> (estrellas y comentario opcional).
+          </p>
+
+          <p className="valoraciones-info-muted">
+            Puedes decidir si estas valoraciones se muestran o no en la Carta QR.
+            Ve a <b>Dashboard → Datos del restaurante</b> y activa/desactiva la opción de{" "}
+            <b>“Mostrar valoraciones”</b>.
+          </p>
+        </div>
+      </section>
+
       {/* 🔒 SI ESENCIAL → SOLO UPSELL */}
       {isPlanEsencial ? (
         <div className="valoraciones-upsell-wrapper">

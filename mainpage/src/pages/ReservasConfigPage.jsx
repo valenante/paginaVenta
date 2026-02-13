@@ -158,7 +158,7 @@ export default function ReservasConfigPage() {
         {/* === BOTÓN NUEVA RESERVA === */}
         <section className="nueva-reserva-bar">
           <button
-            className="btn btn-primario btn-nueva-reserva"
+            className="btn btn-primario  btn-nueva-reserva"
             onClick={() => setModal({ tipo: "nueva" })}
           >
             ➕ Nueva reserva
@@ -210,7 +210,7 @@ export default function ReservasConfigPage() {
                         {r.estado === "pendiente" ? (
                           <div className="acciones-buttons">
                             <button
-                              className="btn btn-primario btn-compact btn-confirmar"
+                              className="btn btn-primario  btn-compact btn-confirmar"
                               onClick={() => confirmarReserva(r._id)}
                             >
                               ✅ Confirmar

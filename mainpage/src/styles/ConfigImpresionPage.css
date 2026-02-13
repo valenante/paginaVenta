@@ -103,16 +103,6 @@
   align-items: center;
 }
 
-/* Botones más “premium” sin romper tu sistema .btn */
-.config-impresion__actions .btn {
-  min-width: 190px;
-  border-radius: var(--radius-md);
-}
-
-.config-impresion__actions .btn:active {
-  transform: translateY(1px);
-}
-
 /* Separador visual entre bloques */
 .config-impresion__actions + .config-impresion__actions {
   margin-top: -0.25rem;

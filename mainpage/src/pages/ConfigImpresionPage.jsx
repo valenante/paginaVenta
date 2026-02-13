@@ -181,10 +181,10 @@ export default function ConfigImpresionPage() {
         </div>
 
         <div className="config-impresion__actions">
-          <button className="btn" onClick={listarImpresoras} disabled={loading}>
+          <button className="btn btn-primario" onClick={listarImpresoras} disabled={loading}>
             🔍 Listar impresoras
           </button>
-          <button className="btn btn--primary" onClick={guardar} disabled={loading}>
+          <button className="btn btn--primario" onClick={guardar} disabled={loading}>
             💾 Guardar
           </button>
         </div>

@@ -103,6 +103,66 @@
   filter: brightness(1.08);
 }
 
+/* =========================================================
+   INFO BLOCK (Cómo se generan las valoraciones)
+   ========================================================= */
+
+.valoraciones-info {
+  margin-top: -1rem;         /* lo pega un poco al header (opcional) */
+  margin-bottom: 1.6rem;     /* separación con los KPI */
+}
+
+.valoraciones-info-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(14px);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-deep);
+  padding: 1.15rem 1.4rem;
+  color: #e5e7eb;
+}
+
+.valoraciones-info-card h4 {
+  margin: 0 0 0.55rem;
+  font-size: 0.95rem;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #ffffff;
+  opacity: 0.95;
+}
+
+.valoraciones-info-card p {
+  margin: 0.45rem 0 0;
+  font-size: 0.92rem;
+  line-height: 1.45;
+  opacity: 0.88;
+}
+
+.valoraciones-info-muted {
+  opacity: 0.75;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .valoraciones-info {
+    margin-top: -0.7rem;
+    margin-bottom: 1.2rem;
+  }
+
+  .valoraciones-info-card {
+    padding: 1rem 1.05rem;
+  }
+
+  .valoraciones-info-card h4 {
+    font-size: 0.9rem;
+  }
+
+  .valoraciones-info-card p {
+    font-size: 0.9rem;
+  }
+}
+
 /* ===== KPI CARDS ===== */
 .valoraciones-kpi {
   display: grid;

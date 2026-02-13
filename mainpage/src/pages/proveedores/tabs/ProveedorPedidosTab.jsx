@@ -60,7 +60,7 @@ return (
         <h2 className="provDet-cardTitle">Pedidos al proveedor</h2>
 
         <button
-          className="btn btn-primario"
+          className="btn btn-primario "
           onClick={() => setModalNuevo(true)}
         >
           ➕ Nuevo pedido
@@ -133,7 +133,7 @@ return (
 
                       {p.estado === "borrador" && (
                         <button
-                          className="btn btn-danger"
+                          className="btn btn-secundario"
                           onClick={() => setModalDelete(p)}
                         >
                           Cancelar
@@ -199,7 +199,7 @@ return (
 
                 {p.estado === "borrador" && (
                   <button
-                    className="btn btn-danger"
+                    className="btn btn-secundario"
                     onClick={() => setModalDelete(p)}
                   >
                     Cancelar

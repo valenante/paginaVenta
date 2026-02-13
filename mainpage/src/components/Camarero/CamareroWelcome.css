@@ -90,7 +90,7 @@
 }
 
 /* ===== BOTÓN PRINCIPAL ===== */
-.camarero-welcome .btn-primario {
+.camarero-welcome .btn btn-primario  {
   padding: 0.9rem 2.6rem;
   border-radius: 999px;
 
@@ -107,12 +107,12 @@
   box-shadow: 0 10px 30px rgba(255, 103, 0, 0.35);
 }
 
-.camarero-welcome .btn-primario:hover {
+.camarero-welcome .btn btn-primario :hover {
   transform: translateY(-2px);
   box-shadow: 0 16px 40px rgba(255, 103, 0, 0.45);
 }
 
-.camarero-welcome .btn-primario:active {
+.camarero-welcome .btn btn-primario :active {
   transform: translateY(0);
 }
 

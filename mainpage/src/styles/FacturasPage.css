@@ -197,7 +197,7 @@
 }
 
 /* Botones principales */
-.btn-primario,
+.btn btn-primario ,
 .btn-secundario,
 .btn {
   border-radius: 14px;
@@ -209,13 +209,13 @@
   user-select: none;
 }
 
-.btn-primario {
+.btn btn-primario  {
   background: var(--color-primario);
   color: #fff;
   box-shadow: 0 14px 28px rgba(106, 13, 173, 0.18);
 }
 
-.btn-primario:hover {
+.btn btn-primario :hover {
   transform: translateY(-1px);
   box-shadow: 0 18px 34px rgba(106, 13, 173, 0.22);
 }
@@ -243,7 +243,7 @@
 }
 
 .btn:disabled,
-.btn-primario:disabled,
+.btn btn-primario :disabled,
 .btn-secundario:disabled {
   opacity: 0.55;
   cursor: not-allowed;
@@ -253,7 +253,7 @@
 
 /* focus accesible */
 .btn:focus,
-.btn-primario:focus,
+.btn btn-primario :focus,
 .btn-secundario:focus,
 .facturaspage-help-btn:focus,
 .facturaspage-table-actions button:focus,
@@ -639,7 +639,7 @@
     padding: 14px;
   }
 
-  .btn-primario,
+  .btn btn-primario ,
   .btn-secundario,
   .btn {
     min-height: 46px;

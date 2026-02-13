@@ -272,7 +272,7 @@ export default function ModalNuevaReserva({ onClose, onCreated }) {
             </button>
             <button
               type="submit"
-              className="btn btn-primario mnr-btn"
+              className="btn btn-primario  mnr-btn"
               disabled={saving || !canSubmit}
               title={!canSubmit ? "Completa los campos obligatorios" : "Guardar"}
             >

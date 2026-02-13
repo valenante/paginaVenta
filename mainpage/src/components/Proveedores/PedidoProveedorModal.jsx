@@ -217,7 +217,7 @@ export default function PedidoProveedorModal({ onClose, onSaved }) {
                       {/* Remove */}
                       <button
                         type="button"
-                        className="btn btn-danger ppPed-lineRemove"
+                        className="btn btn-secundario ppPed-lineRemove"
                         onClick={() => removeLinea(idx)}
                         aria-label="Eliminar línea"
                       >
@@ -294,7 +294,7 @@ export default function PedidoProveedorModal({ onClose, onSaved }) {
 
             <button
               type="submit"
-              className="btn btn-primario"
+              className="btn btn-primario "
               disabled={saving}
             >
               {saving ? "Creando…" : "Crear pedido"}

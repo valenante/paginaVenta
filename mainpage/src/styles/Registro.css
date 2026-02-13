@@ -180,13 +180,13 @@
   transition: 0.15s ease;
 }
 
-.registro-btn-primario {
+.registro-btn btn-primario  {
   background: var(--color-primario);
   color: var(--color-texto-invertido);
   box-shadow: var(--shadow-suave);
 }
 
-.registro-btn-primario:hover {
+.registro-btn btn-primario :hover {
   background: var(--color-primario-oscuro);
   box-shadow: var(--shadow-hover);
   transform: translateY(-1px);

@@ -40,7 +40,7 @@
   font-weight: 800;
   letter-spacing: 0.5px;
 
-  color: #ffd6d6;
+  color: var(--color-error);
   background: rgba(255,107,107,0.18);
   border: 1px solid rgba(255,107,107,0.30);
 }

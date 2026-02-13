@@ -183,7 +183,7 @@ export default function EstacionesCapacidadPanel({
 
                 <button
                   type="button"
-                  className="btn btn-primario"
+                  className="btn btn-primario "
                   onClick={() => guardarUna(e)}
                   disabled={disabled || !changed}
                   title={!changed ? "No hay cambios" : "Guardar"}

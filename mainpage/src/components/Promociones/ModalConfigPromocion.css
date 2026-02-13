@@ -116,7 +116,7 @@
   color: var(--color-texto);
 }
 
-.modal-actions .btn-primario {
+.modal-actions .btn btn-primario  {
   background: var(--color-primario);
   color: var(--color-texto-invertido);
 }

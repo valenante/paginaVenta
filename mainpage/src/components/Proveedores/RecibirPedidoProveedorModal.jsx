@@ -154,7 +154,7 @@ export default function RecibirPedidoProveedorModal({
 
                             <button
                                 type="submit"
-                                className="btn btn-primario"
+                                className="btn btn-primario "
                                 disabled={saving}
                             >
                                 {saving ? "Recibiendo…" : "Confirmar recepción"}

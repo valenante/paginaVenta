@@ -159,7 +159,9 @@ export default function EstacionesPanel({
       <header className="config-card-header">
         <h2>🔥 Estaciones de cocina / barra</h2>
         <p className="config-card-subtitle">
-          Define estaciones y marca cuál es la estación central.
+          La estación central puede ver todos los pedidos del sistema y coordinar
+          solicitudes entre estaciones. Las estaciones normales solo reciben los
+          pedidos asignados a su destino.
         </p>
       </header>
 
@@ -235,9 +237,8 @@ export default function EstacionesPanel({
                 Estación central
               </label>
             </div>
-
             <button
-              className="btn btn-primario"
+              className="btn btn-primario "
               onClick={crear}
               disabled={!puedeGestionar}
             >
@@ -360,6 +361,12 @@ export default function EstacionesPanel({
                   />
                   Estación central
                 </label>
+                {editando?.esCentral && (
+                  <div className="estacion-central-info">
+                    ⭐ La estación central puede ver todos los pedidos y coordinar
+                    solicitudes entre estaciones.
+                  </div>
+                )}
               </div>
             </div>
 
@@ -370,7 +377,7 @@ export default function EstacionesPanel({
               >
                 Cancelar
               </button>
-              <button className="btn btn-primario" onClick={guardarEdicion}>
+              <button className="btn btn-primario " onClick={guardarEdicion}>
                 Guardar
               </button>
             </footer>

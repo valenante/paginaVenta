@@ -533,7 +533,7 @@ export default function FacturasPage() {
         <button className="btn btn-secundario" onClick={exportarCSV} disabled={exportLoading}>
           {exportLoading ? "📤 Exportando…" : "📤 Exportar CSV"}
         </button>
-        <button className="btn-primario" onClick={exportarPDF} disabled={exportLoading}>
+        <button className="btn btn-primario " onClick={exportarPDF} disabled={exportLoading}>
           {exportLoading ? "📄 Generando…" : "📄 Exportar PDF"}
         </button>
       </section>
@@ -760,7 +760,7 @@ export default function FacturasPage() {
               </button>
 
               <button
-                className="btn-primario"
+                className="btn btn-primario "
                 onClick={confirmarRectificacion}
                 disabled={
                   rectificando ||

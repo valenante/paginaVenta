@@ -121,7 +121,7 @@ export default function SoporteDetalle() {
             required
           />
           <button
-            className="btn-primario"
+            className="btn btn-primario "
             type="submit"
             disabled={enviando}
           >

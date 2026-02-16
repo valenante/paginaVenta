@@ -62,8 +62,9 @@
 
 .field label {
   font-size: 0.95rem;
+  font-weight: 600;
   margin-bottom: 0.35rem;
-  color: #e2e8f0;
+  color: var(--color-texto);
 }
 
 .field input,
@@ -72,7 +73,7 @@
   border: 1px solid rgba(255,255,255,0.20);
   padding: 0.75rem 0.9rem;
   border-radius: var(--radius-md);
-  color: white;
+  color: var(--color-texto);
   outline: none;
   font-size: 0.95rem;
   transition: all .22s ease;

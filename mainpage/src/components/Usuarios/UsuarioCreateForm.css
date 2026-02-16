@@ -43,13 +43,6 @@
   flex-direction: column;
 }
 
-.field label {
-  font-size: 0.95rem;
-  font-weight: 500;
-  margin-bottom: 0.35rem;
-  color: #e2e8f0;
-}
-
 /* ===== INPUTS & SELECTS ===== */
 .field input,
 .field select {
@@ -59,7 +52,7 @@
 
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.18);
-  color: #fff;
+  color: var(--color-texto);
 
   outline: none;
   transition: all 0.25s ease;

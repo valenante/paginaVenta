@@ -35,7 +35,7 @@
 /* ===== TOOLBAR SUPERIOR (zona / modo edición) ===== */
 .toolbar-editor {
   position: absolute;
-  top: 1.2rem;
+  top: .5rem;
   left: 50%;
   transform: translateX(-50%);
   z-index: 20;

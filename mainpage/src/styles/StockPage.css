@@ -257,25 +257,48 @@
   color: #fff;
 }
 
-/* ===== BUTTON ===== */
-.btn-ajustar {
-  width: 100%;
+/* ================= ACTIONS ROW ================= */
+
+.stock-card-actions{
+  display: flex;
+  gap: 10px;
+  margin-top: 0.8rem;
+}
+
+/* ambos botones comparten base */
+.stock-card-actions button{
+  flex: 1;
+  border-radius: 999px;
   padding: 0.65rem 1rem;
-  background: linear-gradient(90deg, #6a0dad, #ff6700);
-  border: none;
-  border-radius: var(--radius-pill);
   font-weight: 600;
   cursor: pointer;
-  color: white;
   transition: 0.25s ease;
+  border: none;
+}
+
+/* botón principal */
+.stock-card-actions .btn-ajustar{
+  background: linear-gradient(90deg, #6a0dad, #ff6700);
+  color: #fff;
   box-shadow: 0 4px 18px rgba(255, 103, 0, 0.25);
 }
 
-.btn-ajustar:hover {
-  opacity: 0.9;
+.stock-card-actions .btn-ajustar:hover{
   transform: translateY(-2px);
+  opacity: 0.95;
 }
 
+/* botón secundario editar */
+.stock-card-actions .btn-editar{
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.15);
+  color: #e5e7eb;
+}
+
+.stock-card-actions .btn-editar:hover{
+  background: rgba(255,255,255,0.16);
+  transform: translateY(-2px);
+}
 /* ===== LOADING & ERROR ===== */
 .stock-loading,
 .stock-error {

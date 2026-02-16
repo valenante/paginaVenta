@@ -7,6 +7,7 @@ import AjustarStockModal from "../components/Stock/AjustarStockModal";
 import CrearIngredienteModal from "../components/Stock/CrearIngredienteModal";
 import UpsellStock from "../components/Stock/UpsellStock";
 import ModalConfirmacion from "../components/Modal/ModalConfirmacion.jsx";
+import EditarIngredienteModal from "../components/Stock/EditarIngredienteModal";
 
 import "../styles/StockPage.css";
 
@@ -102,7 +103,7 @@ const StockPage = () => {
     } catch (err) {
       alert(
         err?.response?.data?.message ||
-          "Error eliminando el ingrediente."
+        "Error eliminando el ingrediente."
       );
     }
   };
@@ -148,9 +149,8 @@ const StockPage = () => {
                 <button
                   key={key}
                   type="button"
-                  className={`btn-toggle ${
-                    estadoFiltro === key ? "active" : ""
-                  }`}
+                  className={`btn-toggle ${estadoFiltro === key ? "active" : ""
+                    }`}
                   onClick={() => {
                     setEstadoFiltro(key);
                     setPage(1);
@@ -250,17 +250,31 @@ const StockPage = () => {
                       </span>
                     </div>
 
-                    <button
-                      className="btn-ajustar"
-                      onClick={() =>
-                        setModal({
-                          type: "ajustar",
-                          ingrediente: ing,
-                        })
-                      }
-                    >
-                      Ajustar stock
-                    </button>
+                    <div className="stock-card-actions">
+                      <button
+                        className="btn-ajustar"
+                        onClick={() =>
+                          setModal({
+                            type: "ajustar",
+                            ingrediente: ing,
+                          })
+                        }
+                      >
+                        Ajustar stock
+                      </button>
+
+                      <button
+                        className="btn-editar"
+                        onClick={() =>
+                          setModal({
+                            type: "editar",
+                            ingrediente: ing,
+                          })
+                        }
+                      >
+                        Editar
+                      </button>
+                    </div>
                   </div>
                 );
               })}
@@ -320,6 +334,16 @@ const StockPage = () => {
                 eliminarIngrediente(modal.ingrediente._id)
               }
               onClose={() => setModal(null)}
+            />
+          )}
+          {modal?.type === "editar" && (
+            <EditarIngredienteModal
+              ingrediente={modal.ingrediente}
+              onClose={() => setModal(null)}
+              onSave={() => {
+                showFlash("Ítem actualizado correctamente");
+                fetchStock();
+              }}
             />
           )}
         </>

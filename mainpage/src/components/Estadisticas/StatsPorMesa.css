@@ -1,8 +1,7 @@
 /* =========================================================
-   STATS POR MESA — DISEÑO PROFESIONAL ALEF
+   STATS POR MESA — ALEF (TABLE DESKTOP + CARDS MOBILE)
    ========================================================= */
 
-/* ===== CONTENEDOR ===== */
 .statsmesa-container {
   background: rgba(255, 255, 255, 0.06);
   border-radius: var(--radius-lg);
@@ -11,7 +10,7 @@
   box-shadow:
     0 8px 24px rgba(0, 0, 0, 0.25),
     0 0 0 1px rgba(255, 255, 255, 0.05);
-  animation: fadeInStatsMesa 0.3s ease;;
+  animation: fadeInStatsMesa 0.3s ease;
 }
 
 @keyframes fadeInStatsMesa {
@@ -19,15 +18,15 @@
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ===== HEADER ===== */
 .statsmesa-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1.4rem;
+  gap: 1rem;
+  margin-bottom: 1.2rem;
 }
 
-.statsmesa-header h3 {
+.statsmesa-title h3 {
   font-size: 1.25rem;
   margin: 0;
   color: #ffffff;
@@ -39,18 +38,17 @@
   margin-top: 0.25rem;
 }
 
-/* ===== BADGE ===== */
 .statsmesa-badge {
   background: linear-gradient(90deg, #6a0dad, #ff6700);
   padding: 0.35rem 0.75rem;
   border-radius: 999px;
   font-size: 0.75rem;
-  font-weight: 600;
+  font-weight: 700;
   color: #fff;
   box-shadow: 0 3px 12px rgba(255, 103, 0, 0.35);
+  white-space: nowrap;
 }
 
-/* ===== EMPTY STATE ===== */
 .statsmesa-empty {
   padding: 1rem 0;
   text-align: center;
@@ -58,32 +56,28 @@
   font-size: 0.95rem;
 }
 
-/* ===== TABLE WRAPPER ===== */
+/* =========================
+   DESKTOP TABLE
+========================= */
 .statsmesa-table-wrapper {
   width: 100%;
-  overflow-x: auto;
-  overflow-y: hidden;
-  -webkit-overflow-scrolling: touch;
 }
 
-
-/* ===== TABLE ===== */
 .statsmesa-table {
-  width: max-content;
-  min-width: 100%;
+  width: 100%;
   border-collapse: collapse;
   font-size: 0.95rem;
   color: #e6e8eb;
+  table-layout: auto;
 }
 
-/* HEAD */
 .statsmesa-table thead tr {
   background: rgba(255, 255, 255, 0.06);
 }
 
 .statsmesa-table th {
   text-align: left;
-  font-weight: 600;
+  font-weight: 700;
   padding: 0.9rem 1rem;
   color: #f0f4f8;
   letter-spacing: 0.03em;
@@ -92,7 +86,6 @@
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* BODY */
 .statsmesa-table tbody tr {
   background: rgba(255, 255, 255, 0.025);
   transition: background 0.2s ease, transform 0.2s ease;
@@ -107,32 +100,119 @@
   transform: translateY(-1px);
 }
 
-/* CELLS */
 .statsmesa-table td {
-  padding: 0.8rem 1rem;
+  padding: 0.85rem 1rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   white-space: nowrap;
 }
 
 .mesa-name {
-  font-weight: 600;
+  font-weight: 700;
   color: #ffffff;
 }
 
 .stats-money {
-  font-weight: 600;
-  color: #6bdcff; /* azul analítico */
+  font-weight: 700;
+  color: #6bdcff;
 }
 
-/* ===== RESPONSIVE ===== */
+.stats-num {
+  font-weight: 600;
+  color: #e9eef5;
+}
+
+/* =========================
+   MOBILE: NO HORIZONTAL SCROLL
+   - convert rows into cards
+========================= */
 @media (max-width: 768px) {
   .statsmesa-container {
-    padding: 1.2rem 1.3rem;
+    padding: 1.15rem 1.15rem;
+    max-height: 40vh;
+    overflow-y: auto;
   }
 
   .statsmesa-header {
     flex-direction: column;
     align-items: flex-start;
-    gap: 0.4rem;
+    gap: 0.5rem;
+  }
+
+  /* ✅ no wrapper scroll */
+  .statsmesa-table-wrapper {
+    overflow: visible;
+  }
+
+  /* hide thead */
+  .statsmesa-table thead {
+    display: none;
+  }
+
+  /* table becomes blocks */
+  .statsmesa-table,
+  .statsmesa-table tbody,
+  .statsmesa-table tr,
+  .statsmesa-table td {
+    display: block;
+  }
+
+  /* each row is a card */
+  .statsmesa-table tbody tr {
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: var(--radius-lg);
+    padding: 0.85rem 0.9rem;
+    margin-bottom: 0.75rem;
+    box-shadow:
+      0 10px 22px rgba(0, 0, 0, 0.20),
+      0 0 0 1px rgba(255, 255, 255, 0.04);
+    transform: none;
+  }
+
+  .statsmesa-table tbody tr:hover {
+    transform: none;
+  }
+
+  /* each cell becomes "label : value" */
+  .statsmesa-table td {
+    border: 0;
+    padding: 0.55rem 0;
+    white-space: normal;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 0.8rem;
+  }
+
+  .statsmesa-table td::before {
+    content: attr(data-label);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: rgba(240, 244, 248, 0.75);
+    flex: 0 0 auto;
+  }
+
+  /* Mesa arriba como “título” dentro de la card */
+  .statsmesa-table td.mesa-name {
+    padding-top: 0.15rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    margin-bottom: 0.2rem;
+  }
+
+  .statsmesa-table td.mesa-name::before {
+    content: "Mesa";
+  }
+
+  .statsmesa-table td.mesa-name {
+    font-size: 1rem;
+  }
+
+  /* Valores alineados a la derecha */
+  .stats-num,
+  .stats-money {
+    text-align: right;
   }
 }

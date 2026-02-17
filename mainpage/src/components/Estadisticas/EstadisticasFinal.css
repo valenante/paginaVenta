@@ -15,7 +15,6 @@
   color: #f5f7fa;
   display: flex;
   flex-direction: column;
-  gap: 2.5rem;
   animation: fadeIn 0.3s ease;
 }
 
@@ -330,11 +329,6 @@
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
-  .estadisticas-page {
-    padding: 1.5rem;
-    gap: 1.5rem;
-  }
-
   .stats-filter-bar {
     flex-direction: column;
     align-items: stretch;

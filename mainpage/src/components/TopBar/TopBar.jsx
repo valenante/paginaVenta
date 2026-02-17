@@ -77,7 +77,7 @@ export default function TopBar() {
       <div className="TopBar-container">
         {/* Logo */}
         <button
-          className="TopBar-logo"
+          className="TopBar-logo" f
           onClick={() => irAlPanelPro(panelProURL)}
         >
           <img src={logoAlef} alt="Alef Logo" className="TopBar-logo-img" />
@@ -188,6 +188,15 @@ export default function TopBar() {
               {/* ADMIN / ADMIN_RESTAURANTE */}
               {["admin_restaurante", "admin", "admin_shop"].includes(user.role) && (
                 <>
+                  <button
+                    onClick={() => {
+                      setMenuAbierto(false);
+                      navigate("/pro");
+                    }}
+                    className="TopBar-btn special"
+                  >
+                    Panel de Gestión
+                  </button>
                   <button
                     onClick={() => {
                       setMenuAbierto(false);

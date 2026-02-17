@@ -11,7 +11,15 @@ export default function CartaConfigPage() {
   const [form, setForm] = useState(config || {});
   const [saving, setSaving] = useState(false);
   const [alerta, setAlerta] = useState(null);
+
+  /**
+   * modal:
+   * - modo: "confirm" | "prompt"
+   * - titulo, mensaje, placeholder (opcional)
+   * - onConfirm(valor) / onClose()
+   */
   const [modal, setModal] = useState(null);
+
   const [dragOverSection, setDragOverSection] = useState(null);
   const fileInputRef = useRef(null);
   const uploadTargetRef = useRef("carrousel");
@@ -32,6 +40,46 @@ export default function CartaConfigPage() {
       </div>
     );
   }
+
+  /* ======================================================
+     🧠 Helpers de MODAL (confirm / prompt)
+  ====================================================== */
+  const closeModal = () => setModal(null);
+
+  const openModalConfirm = ({ titulo, mensaje, onConfirm }) => {
+    setModal({
+      modo: "confirm",
+      titulo,
+      mensaje,
+      placeholder: "", // 👈 sin input
+      onConfirm: async () => {
+        try {
+          await onConfirm?.();
+        } finally {
+          closeModal();
+        }
+      },
+      onClose: closeModal,
+    });
+  };
+
+  const openModalPrompt = ({ titulo, mensaje, placeholder, onConfirm }) => {
+    setModal({
+      modo: "prompt",
+      titulo,
+      mensaje,
+      placeholder: placeholder || "",
+      onConfirm: async (valor) => {
+        try {
+          await onConfirm?.(valor);
+        } finally {
+          // si onConfirm hace validación y quiere mantener modal, que no llame closeModal
+          // en este componente lo controlamos abajo
+        }
+      },
+      onClose: closeModal,
+    });
+  };
 
   // ============================
   // 🔧 Manejo genérico del form
@@ -65,15 +113,13 @@ export default function CartaConfigPage() {
     formData.append("seccion", section);
 
     try {
-      const { data } = await api.post(
-        "/configuracion/imagen",
-        formData
-      );
+      const { data } = await api.post("/configuracion/imagen", formData);
+
       setForm((prev) => ({
         ...prev,
         imagenesHome: {
           ...prev.imagenesHome,
-          [section]: [...prev.imagenesHome?.[section] || [], data.imageUrl],
+          [section]: [...(prev.imagenesHome?.[section] || []), data.imageUrl],
         },
       }));
 
@@ -96,58 +142,77 @@ export default function CartaConfigPage() {
     if (file) handleFileUpload(section, file);
   };
 
-  const handleRemoveImage = (section, index) => {
-    const updated = { ...form };
-    if (!updated.imagenesHome?.[section]) return;
+  // ✅ AHORA: eliminar imagen pasa por confirmación
+  const requestRemoveImage = (section, index) => {
+    const url = form.imagenesHome?.[section]?.[index];
 
-    updated.imagenesHome[section] = [
-      ...updated.imagenesHome[section].slice(0, index),
-      ...updated.imagenesHome[section].slice(index + 1),
-    ];
+    openModalConfirm({
+      titulo: "Eliminar imagen",
+      mensaje: `¿Seguro que deseas eliminar esta imagen de "${
+        section === "carrousel" ? "Carrusel" : "Secciones"
+      }"? Esta acción no se puede deshacer.`,
+      onConfirm: () => {
+        const updated = { ...form };
+        if (!updated.imagenesHome?.[section]) return;
 
-    setForm(updated);
-    setAlerta({ tipo: "info", mensaje: "Imagen eliminada." });
+        updated.imagenesHome[section] = [
+          ...updated.imagenesHome[section].slice(0, index),
+          ...updated.imagenesHome[section].slice(index + 1),
+        ];
+
+        setForm(updated);
+        setAlerta({ tipo: "info", mensaje: "Imagen eliminada." });
+      },
+    });
   };
 
   // ============================
   // 📝 Textos del Home
   // ============================
   const handleAddText = (section) => {
-    setModal({
+    openModalPrompt({
       titulo: "Añadir texto",
       mensaje: "Introduce un texto para esta sección:",
       placeholder: "Ej: Bienvenidos a nuestro restaurante",
-      onConfirm: (text) => {
+      onConfirm: (textRaw) => {
+        const text = (textRaw || "").trim();
         if (!text) {
-          return setAlerta({
-            tipo: "error",
-            mensaje: "El texto no puede estar vacío.",
-          });
+          setAlerta({ tipo: "error", mensaje: "El texto no puede estar vacío." });
+          return; // 👈 mantenemos el modal abierto
         }
+
         const updated = { ...form };
         if (!updated.textosHome) updated.textosHome = {};
         if (!updated.textosHome[section]) updated.textosHome[section] = [];
         updated.textosHome[section].push(text);
 
         setForm(updated);
-        setModal(null);
+        closeModal();
         setAlerta({ tipo: "exito", mensaje: "Texto añadido correctamente." });
       },
-      onClose: () => setModal(null),
     });
   };
 
-  const handleRemoveText = (section, index) => {
-    const updated = { ...form };
-    if (!updated.textosHome?.[section]) return;
+  // ✅ AHORA: eliminar texto pasa por confirmación
+  const requestRemoveText = (section, index) => {
+    const txt = form.textosHome?.[section]?.[index];
 
-    updated.textosHome[section] = [
-      ...updated.textosHome[section].slice(0, index),
-      ...updated.textosHome[section].slice(index + 1),
-    ];
+    openModalConfirm({
+      titulo: "Eliminar texto",
+      mensaje: `¿Seguro que deseas eliminar este texto?\n\n“${txt || ""}”`,
+      onConfirm: () => {
+        const updated = { ...form };
+        if (!updated.textosHome?.[section]) return;
 
-    setForm(updated);
-    setAlerta({ tipo: "info", mensaje: "Texto eliminado." });
+        updated.textosHome[section] = [
+          ...updated.textosHome[section].slice(0, index),
+          ...updated.textosHome[section].slice(index + 1),
+        ];
+
+        setForm(updated);
+        setAlerta({ tipo: "info", mensaje: "Texto eliminado." });
+      },
+    });
   };
 
   // ============================
@@ -158,7 +223,7 @@ export default function CartaConfigPage() {
       setSaving(true);
       const { data } = await api.put("/configuracion", form);
 
-      const cfg = data.config ?? data;   // 👈 desenvolver por si acaso
+      const cfg = data.config ?? data;
       setConfig(cfg);
 
       setAlerta({
@@ -233,9 +298,7 @@ export default function CartaConfigPage() {
                   ...form,
                   informacionRestaurante: {
                     ...form.informacionRestaurante,
-                    diasApertura: e.target.value
-                      .split(",")
-                      .map((d) => d.trim()),
+                    diasApertura: e.target.value.split(",").map((d) => d.trim()),
                   },
                 })
               }
@@ -289,18 +352,19 @@ export default function CartaConfigPage() {
               </div>
 
               <div
-                className={`imagenes-grid card-border-dashed ${dragOverSection === section ? "drag-over" : ""
-                  }`}
+                className={`imagenes-grid card-border-dashed ${
+                  dragOverSection === section ? "drag-over" : ""
+                }`}
                 onDragOver={(e) => {
                   e.preventDefault();
                   uploadTargetRef.current = section;
-                  setDragOverSection(section); // solo para UI
+                  setDragOverSection(section);
                 }}
                 onDragLeave={() => setDragOverSection(null)}
                 onDrop={(e) => handleDrop(section, e)}
                 onClick={() => {
                   uploadTargetRef.current = section;
-                  setDragOverSection(section); // solo para UI                  
+                  setDragOverSection(section);
                   fileInputRef.current?.click();
                 }}
               >
@@ -312,8 +376,9 @@ export default function CartaConfigPage() {
                       className="config-btn-delete"
                       onClick={(ev) => {
                         ev.stopPropagation();
-                        handleRemoveImage(section, i);
+                        requestRemoveImage(section, i); // ✅ confirmación
                       }}
+                      title="Eliminar imagen"
                     >
                       🗑
                     </button>
@@ -341,9 +406,7 @@ export default function CartaConfigPage() {
             type="file"
             accept="image/*"
             hidden
-            onChange={(e) =>
-              handleSelectFile(uploadTargetRef.current, e)
-            }
+            onChange={(e) => handleSelectFile(uploadTargetRef.current, e)}
           />
         </section>
 
@@ -375,7 +438,8 @@ export default function CartaConfigPage() {
                     <button
                       type="button"
                       className="config-btn-delete"
-                      onClick={() => handleRemoveText(section, i)}
+                      onClick={() => requestRemoveText(section, i)} // ✅ confirmación
+                      title="Eliminar texto"
                     >
                       🗑
                     </button>
@@ -459,9 +523,7 @@ export default function CartaConfigPage() {
               value={form.carta?.modoOrden || "por_categoria"}
               onChange={handleChange}
             >
-              <option value="por_categoria">
-                Por categorías (por defecto)
-              </option>
+              <option value="por_categoria">Por categorías (por defecto)</option>
               <option value="alfabetico">Alfabético (A-Z)</option>
               <option value="precio_asc">Precio: de menor a mayor</option>
               <option value="precio_desc">Precio: de mayor a menor</option>
@@ -470,6 +532,7 @@ export default function CartaConfigPage() {
               </option>
             </select>
           </div>
+
           <div className="config-field-row">
             <div className="config-field">
               <label>Columnas en escritorio</label>
@@ -515,7 +578,6 @@ export default function CartaConfigPage() {
           </div>
 
           <div className="theme-grid">
-            {/* Color principal */}
             <div className="theme-row">
               <label>Color principal</label>
               <div className="theme-inputs">
@@ -534,12 +596,9 @@ export default function CartaConfigPage() {
                   className="theme-text-input"
                 />
               </div>
-              <small className="theme-help">
-                Botones principales, títulos y acentos.
-              </small>
+              <small className="theme-help">Botones principales, títulos y acentos.</small>
             </div>
 
-            {/* Color secundario */}
             <div className="theme-row">
               <label>Color secundario</label>
               <div className="theme-inputs">
@@ -558,12 +617,9 @@ export default function CartaConfigPage() {
                   className="theme-text-input"
                 />
               </div>
-              <small className="theme-help">
-                Elementos secundarios, etiquetas o detalles.
-              </small>
+              <small className="theme-help">Elementos secundarios, etiquetas o detalles.</small>
             </div>
 
-            {/* Fondo */}
             <div className="theme-row">
               <label>Fondo de la página</label>
               <div className="theme-inputs">
@@ -584,7 +640,6 @@ export default function CartaConfigPage() {
               </div>
             </div>
 
-            {/* Texto */}
             <div className="theme-row">
               <label>Color del texto</label>
               <div className="theme-inputs">
@@ -605,7 +660,6 @@ export default function CartaConfigPage() {
               </div>
             </div>
 
-            {/* Card fondo */}
             <div className="theme-row">
               <label>Fondo de tarjetas / productos</label>
               <div className="theme-inputs">
@@ -626,7 +680,6 @@ export default function CartaConfigPage() {
               </div>
             </div>
 
-            {/* Botón carta */}
             <div className="theme-row">
               <label>Color de botones</label>
               <div className="theme-inputs">
@@ -647,7 +700,6 @@ export default function CartaConfigPage() {
               </div>
             </div>
 
-            {/* Botón hover */}
             <div className="theme-row">
               <label>Hover de botones</label>
               <div className="theme-inputs">
@@ -669,7 +721,6 @@ export default function CartaConfigPage() {
             </div>
           </div>
 
-          {/* Vista previa mini de la carta */}
           <div className="theme-preview">
             <div
               className="theme-preview-inner"
@@ -684,6 +735,7 @@ export default function CartaConfigPage() {
               >
                 Vista previa de la carta
               </h4>
+
               <div
                 className="theme-preview-card"
                 style={{
@@ -691,16 +743,12 @@ export default function CartaConfigPage() {
                   borderColor: form.temaCarta?.cardBorde || "#CCCCCC",
                 }}
               >
-                <span className="theme-preview-producto">
-                  Producto de ejemplo
-                </span>
+                <span className="theme-preview-producto">Producto de ejemplo</span>
                 <span className="theme-preview-precio">12,00 €</span>
                 <button
                   type="button"
                   className="theme-preview-btn"
-                  style={{
-                    backgroundColor: form.temaCarta?.boton || "#9B1C1C",
-                  }}
+                  style={{ backgroundColor: form.temaCarta?.boton || "#9B1C1C" }}
                 >
                   Añadir
                 </button>
@@ -709,6 +757,7 @@ export default function CartaConfigPage() {
           </div>
         </section>
 
+        {/* === PROMOS === */}
         <section className="config-section">
           <div className="config-section-header">
             <h3 className="section-title">⭐ Promociones y destacados</h3>
@@ -725,19 +774,19 @@ export default function CartaConfigPage() {
             Gestionar promociones
           </button>
         </section>
-
-
       </div>
+
       <div className="carta-config-actions">
         <button
           type="button"
           onClick={handleSave}
           disabled={saving}
-          className="btn btn-primario "
+          className="btn btn-primario"
         >
           {saving ? "Guardando..." : "Guardar todos los cambios"}
         </button>
       </div>
+
       {/* 🟢 Alerta */}
       {alerta && (
         <AlertaMensaje
@@ -752,7 +801,7 @@ export default function CartaConfigPage() {
         onClose={() => setPromoPanelAbierto(false)}
       />
 
-      {/* 🟢 Modal genérico */}
+      {/* 🟢 Modal (confirmación y prompt) */}
       {modal && (
         <ModalConfirmacion
           titulo={modal.titulo}

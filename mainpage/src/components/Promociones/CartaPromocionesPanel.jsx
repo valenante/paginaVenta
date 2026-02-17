@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import api from "../../utils/api";
 import AlertaMensaje from "../AlertaMensaje/AlertaMensaje";
 import ModalConfigPromocion from "./ModalConfigPromocion";
+import ModalConfirmacion from "../Modal/ModalConfirmacion";
 import "./CartaPromocionesPanel.css";
 
 export default function CartaPromocionesPanel({ abierto, onClose }) {
@@ -11,6 +12,8 @@ export default function CartaPromocionesPanel({ abierto, onClose }) {
     const [promoLoading, setPromoLoading] = useState(false);
     const [productoPromo, setProductoPromo] = useState(null);
     const [alerta, setAlerta] = useState(null);
+    const [savingId, setSavingId] = useState(null);
+    const [confirmData, setConfirmData] = useState(null);
 
     /* ============================
        📦 Cargar productos
@@ -49,7 +52,7 @@ export default function CartaPromocionesPanel({ abierto, onClose }) {
         try {
             await api.put("/productos/toggle-estado", {
                 id,
-                campo, // destacado | promocionado
+                campo, // destacado
                 valor,
             });
 
@@ -72,6 +75,25 @@ export default function CartaPromocionesPanel({ abierto, onClose }) {
                 tipo: "error",
                 mensaje: "No se pudo actualizar el producto.",
             });
+        }
+    };
+
+    const desactivarPromocion = async (id) => {
+        try {
+            setSavingId(id);
+
+            const { data } = await api.delete(`/productos/${id}/promocion`);
+            const productoActualizado = data?.producto || data;
+
+            setPromoProductos((prev) =>
+                prev.map((p) => (p._id === id ? productoActualizado : p))
+            );
+
+            setAlerta({ tipo: "exito", mensaje: "Promoción desactivada." });
+        } catch (err) {
+            setAlerta({ tipo: "error", mensaje: "No se pudo desactivar la promoción." });
+        } finally {
+            setSavingId(null);
         }
     };
 
@@ -186,8 +208,23 @@ export default function CartaPromocionesPanel({ abierto, onClose }) {
                                                 Promoción
                                                 <input
                                                     type="checkbox"
-                                                    checked={p.promocion?.activa}
-                                                    onChange={() => abrirModalPromocion(p)}
+                                                    disabled={savingId === p._id}
+                                                    checked={!!p.promocion?.activa}
+                                                    onChange={async () => {
+                                                        const estaActiva = !!p.promocion?.activa;
+
+                                                        // ✅ Si la promo está activa → desactivar con confirmación
+                                                        if (estaActiva) {
+                                                            setConfirmData({
+                                                                id: p._id,
+                                                                nombre: p.nombre,
+                                                            });
+                                                            return;
+                                                        }
+
+                                                        // ✅ Si NO está activa → abrir modal para configurar y activar
+                                                        abrirModalPromocion(p);
+                                                    }}
                                                 />
                                             </label>
                                         </div>
@@ -219,6 +256,17 @@ export default function CartaPromocionesPanel({ abierto, onClose }) {
                     tipo={alerta.tipo}
                     mensaje={alerta.mensaje}
                     onClose={() => setAlerta(null)}
+                />
+            )}
+            {confirmData && (
+                <ModalConfirmacion
+                    titulo="Desactivar promoción"
+                    mensaje={`¿Seguro que quieres desactivar la promoción de "${confirmData.nombre}"?`}
+                    onClose={() => setConfirmData(null)}
+                    onConfirm={async () => {
+                        await desactivarPromocion(confirmData.id);
+                        setConfirmData(null);
+                    }}
                 />
             )}
         </div>

@@ -154,3 +154,55 @@
   background: linear-gradient(90deg, #6a0dad, #ff6700);
   box-shadow: 0 6px 18px rgba(106,13,173,0.4);
 }
+
+/* ===============================
+   MOBILE FULL VIEW
+   =============================== */
+
+.heatmap-mobile-full {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.heatmap-mobile-full-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.heatmap-close-btn {
+  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(255,255,255,0.06);
+  color: #fff;
+  padding: 0.45rem 0.8rem;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.82rem;
+  cursor: pointer;
+}
+
+.heatmap-close-btn:hover {
+  background: rgba(255,255,255,0.10);
+}
+
+/* Ajustes para que el grid se vea bien en móvil sin romper layout */
+.heatmap-grid--mobile {
+  grid-template-columns: 52px repeat(7, minmax(22px, 1fr));
+  gap: 3px;
+}
+
+.heatmap-grid--mobile .heatmap-cell {
+  height: 18px;
+  border-radius: 6px;
+}
+
+.heatmap-grid--mobile .heatmap-label {
+  font-size: 0.75rem;
+  padding-bottom: 0.35rem;
+  opacity: 0.8;
+}
+
+.heatmap-grid--mobile .heatmap-hour-label {
+  font-size: 0.72rem;
+}

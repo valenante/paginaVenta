@@ -14,25 +14,36 @@
   max-width: 1180px;
   margin: 0 auto;
   padding: 0.7rem 1.5rem;
+
   display: flex;
   align-items: center;
   justify-content: space-between;
+
+  position: relative; /* ✅ para anclar el dropdown correctamente */
 }
 
 /*****************************************************
  * LOGO
  *****************************************************/
 
-
 .TopBar-logo {
   border: none;
   background: transparent;
   padding: 0;
   margin: 0;
+
   cursor: pointer;
-  display: flex;
+
+  display: inline-flex;
   align-items: center;
   gap: 0.45rem;
+
+  border-radius: 12px;
+}
+
+.TopBar-logo:focus-visible {
+  outline: 3px solid rgba(106, 13, 173, 0.25);
+  outline-offset: 3px;
 }
 
 .TopBar-logo-img {
@@ -46,10 +57,54 @@
   font-weight: 800;
   color: #111827;
   letter-spacing: 0.02em;
+  line-height: 1;
 }
 
 .TopBar-logo-text strong {
   color: var(--color-primario);
+}
+
+/*****************************************************
+ * BOTONES ACTIVE — igual que CTA (Cerrar sesión)
+ *****************************************************/
+
+/* Estado active general (por si lo aplicas a otros botones) */
+.TopBar-btn.active {
+  background: var(--color-primario);
+  color: #ffffff;
+  border-color: transparent;
+  box-shadow: var(--shadow-suave);
+  transform: none;
+}
+
+/* Active explícito para login (queda EXACTO al CTA) */
+.TopBar-btn.login.active {
+  background: var(--color-primario);
+  color: #ffffff;
+  border-color: transparent;
+  box-shadow: var(--shadow-suave);
+}
+
+/* Active para special: conserva el estilo “negro” pero con el mismo punch del CTA */
+.TopBar-btn.special.active {
+  background: #020617;
+  color: #ffffff;
+  border-color: transparent;
+  box-shadow: var(--shadow-suave);
+}
+
+/* CTA active (por consistencia) */
+.TopBar-btn.cta.active {
+  background: var(--color-primario);
+  color: #ffffff;
+  border-color: transparent;
+  box-shadow: var(--shadow-suave);
+}
+
+/* Hover cuando ya está active: mismo comportamiento que CTA:hover */
+.TopBar-btn.active:hover {
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-1px);
 }
 
 /*****************************************************
@@ -61,13 +116,27 @@
   flex-direction: column;
   justify-content: center;
   gap: 4px;
-  width: 28px;
-  height: 28px;
-  padding: 0;
+
+  width: auto;
+  height: 34px;
+
+  padding: 1vh;
   border-radius: 999px;
-  border: none;
-  background: transparent;
+  border: 1px solid rgba(15, 23, 42, 0.10);
+  background: #ffffff;
+
   cursor: pointer;
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.TopBar-menu:hover {
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.10);
+  transform: translateY(-1px);
+}
+
+.TopBar-menu:focus-visible {
+  outline: 3px solid rgba(106, 13, 173, 0.25);
+  outline-offset: 3px;
 }
 
 .TopBar-menu span {
@@ -97,13 +166,19 @@
 
 .TopBar-dropdown {
   position: absolute;
-  inset: 60px 1rem auto 1rem;
+  top: calc(100% + 10px);
+  left: 1rem;
+  right: 1rem;
+
   background: #ffffff;
   border-radius: 16px;
   padding: 0.9rem 1rem 1rem;
+
   display: none;
   flex-direction: column;
   gap: 0.6rem;
+
+  border: 1px solid rgba(15, 23, 42, 0.08);
   box-shadow: 0 16px 40px rgba(15, 23, 42, 0.18);
 }
 
@@ -123,12 +198,20 @@
 .TopBar-dropdown a {
   text-decoration: none;
   color: #111827;
-  padding: 0.3rem 0.2rem;
+  padding: 0.35rem 0.2rem;
   font-weight: 500;
+  border-radius: 10px;
+  transition: background 0.15s ease, color 0.15s ease;
 }
 
 .TopBar-dropdown a:hover {
   color: var(--color-primario);
+  background: rgba(15, 23, 42, 0.03);
+}
+
+.TopBar-dropdown a:focus-visible {
+  outline: 3px solid rgba(106, 13, 173, 0.25);
+  outline-offset: 2px;
 }
 
 /*****************************************************
@@ -139,33 +222,40 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.45rem 1.1rem;
+
+  padding: 0.52rem 1.05rem;
   border-radius: 999px;
+
   border: 1px solid transparent;
-  font-size: 0.85rem;
+  font-size: 0.88rem;
   font-weight: 600;
+
   cursor: pointer;
   background: transparent;
   text-decoration: none;
+
   transition: background 0.15s ease, color 0.15s ease,
-    box-shadow 0.15s ease, transform 0.15s ease;
+    box-shadow 0.15s ease, transform 0.15s ease, border-color 0.15s ease;
+}
+
+.TopBar-btn:focus-visible {
+  outline: 3px solid rgba(106, 13, 173, 0.25);
+  outline-offset: 3px;
 }
 
 /* “Login” / botones neutros */
 .TopBar-btn.login {
   color: var(--color-primario-oscuro);
-  border-color: rgba(148, 163, 184, 0.5);
+  border-color: rgba(148, 163, 184, 0.55);
   background: #ffffff;
-  padding: 1vh;
 }
 
 .TopBar-btn.login:hover {
-  background: #f9fafb;
   box-shadow: var(--shadow-suave);
   transform: translateY(-1px);
 }
 
-/* CTA principal: Solicitar demo / Cerrar sesión */
+/* CTA principal */
 .TopBar-btn.cta {
   background: var(--color-primario);
   color: #ffffff;
@@ -176,16 +266,6 @@
 .TopBar-btn.cta:hover {
   box-shadow: var(--shadow-hover);
   transform: translateY(-1px);
-}
-
-/* Botón especial SuperAdmin */
-.TopBar-btn.special {
-  background: #111827;
-  color: #f9fafb;
-}
-
-.TopBar-btn.special:hover {
-  background: #020617;
 }
 
 /*****************************************************
@@ -200,36 +280,36 @@
   .TopBar-dropdown {
     position: static;
     display: flex !important;
+
     flex-direction: row;
     align-items: center;
-    gap: 1.6rem;
+    justify-content: flex-end;
+
+    gap: 0.9rem;
     padding: 0;
+
+    border: none;
     box-shadow: none;
     background: transparent;
   }
 
   .TopBar-dropdown a {
-    font-size: 0.9rem;
+    font-size: 0.92rem;
+    padding: 0.35rem 0.5rem;
   }
 
   .TopBar-dropdown .TopBar-btn.login {
-    margin-left: 0.8rem;
+    margin-left: 0.4rem;
   }
 
   .TopBar-dropdown .TopBar-btn.cta {
-    margin-left: 0.4rem;
+    margin-left: 0.15rem;
   }
 }
 
 /*****************************************************
- * PEQUEÑOS AJUSTES EXTRA PEQUEÑO
+ * AJUSTES EXTRA PEQUEÑO
  *****************************************************/
-
-@media (max-width: 360px) {
-  .TopBar-dropdown {
-    inset: 56px 0.6rem auto 0.6rem;
-  }
-}
 
 @media (max-width: 480px) {
   .TopBar-logo-img {
@@ -238,5 +318,11 @@
 
   .TopBar-logo-text {
     font-size: 1rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .TopBar-container {
+    padding: 0.65rem 1rem;
   }
 }

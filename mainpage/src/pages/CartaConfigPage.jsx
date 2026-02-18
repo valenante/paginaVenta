@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { useConfig } from "../context/ConfigContext.jsx";
 import api from "../utils/api";
 import AlertaMensaje from "../components/AlertaMensaje/AlertaMensaje.jsx";
@@ -6,8 +6,11 @@ import ModalConfirmacion from "../components/Modal/ModalConfirmacion.jsx";
 import CartaPromocionesPanel from "../components/Promociones/CartaPromocionesPanel.jsx";
 import "../styles/CartaConfigPage.css";
 
+const HOME_SECTIONS = ["carrousel", "secciones"];
+
 export default function CartaConfigPage() {
   const { config, setConfig } = useConfig();
+
   const [form, setForm] = useState(config || {});
   const [saving, setSaving] = useState(false);
   const [alerta, setAlerta] = useState(null);
@@ -16,21 +19,284 @@ export default function CartaConfigPage() {
    * modal:
    * - modo: "confirm" | "prompt"
    * - titulo, mensaje, placeholder (opcional)
-   * - onConfirm(valor) / onClose()
+   * - onConfirm(valor?) / onClose()
    */
   const [modal, setModal] = useState(null);
 
   const [dragOverSection, setDragOverSection] = useState(null);
+  const [promoPanelAbierto, setPromoPanelAbierto] = useState(false);
+
   const fileInputRef = useRef(null);
   const uploadTargetRef = useRef("carrousel");
 
-  // 🔹 Estado para gestión de destacados / promociones
-  const [promoPanelAbierto, setPromoPanelAbierto] = useState(false);
-
+  // Sync cuando llega config
   useEffect(() => {
     if (config) setForm(config);
   }, [config]);
 
+  // ----------------------------
+  // Helpers UI
+  // ----------------------------
+  const showAlert = useCallback((tipo, mensaje) => {
+    setAlerta({ tipo, mensaje });
+  }, []);
+
+  const closeModal = useCallback(() => setModal(null), []);
+
+  const openModalConfirm = useCallback(
+    ({ titulo, mensaje, onConfirm }) => {
+      setModal({
+        modo: "confirm",
+        titulo,
+        mensaje,
+        onConfirm: async () => {
+          try {
+            await onConfirm?.();
+          } finally {
+            closeModal();
+          }
+        },
+        onClose: closeModal,
+      });
+    },
+    [closeModal]
+  );
+
+  const openModalPrompt = useCallback(
+    ({ titulo, mensaje, placeholder, onConfirm }) => {
+      setModal({
+        modo: "prompt",
+        titulo,
+        mensaje,
+        placeholder: placeholder || "",
+        onConfirm: async (valor) => {
+          await onConfirm?.(valor); // 👈 si valida y no quiere cerrar, que no llame closeModal
+        },
+        onClose: closeModal,
+      });
+    },
+    [closeModal]
+  );
+
+  // ----------------------------
+  // Form helpers
+  // ----------------------------
+  const handleChange = useCallback((e) => {
+    const { name, value, type, checked } = e.target;
+    const path = name.split(".");
+
+    setForm((prev) => {
+      const updated = { ...prev };
+      let obj = updated;
+
+      for (let i = 0; i < path.length - 1; i++) {
+        const key = path[i];
+        if (typeof obj[key] !== "object" || obj[key] === null) obj[key] = {};
+        obj = obj[key];
+      }
+
+      obj[path[path.length - 1]] = type === "checkbox" ? checked : value;
+      return updated;
+    });
+  }, []);
+
+  const diasAperturaValue = useMemo(() => {
+    const arr = form?.informacionRestaurante?.diasApertura;
+    return Array.isArray(arr) ? arr.join(", ") : "";
+  }, [form?.informacionRestaurante?.diasApertura]);
+
+  const handleDiasAperturaChange = useCallback((e) => {
+    const raw = e.target.value;
+    const dias = raw
+      .split(",")
+      .map((d) => d.trim())
+      .filter(Boolean);
+
+    setForm((prev) => ({
+      ...prev,
+      informacionRestaurante: {
+        ...prev.informacionRestaurante,
+        diasApertura: dias,
+      },
+    }));
+  }, []);
+
+  // ----------------------------
+  // Upload helpers
+  // ----------------------------
+  const openFilePicker = useCallback((section) => {
+    uploadTargetRef.current = section;
+    setDragOverSection(section);
+    fileInputRef.current?.click();
+  }, []);
+
+  const handleFileUpload = useCallback(
+    async (section, file) => {
+      if (!file) return;
+
+      const formData = new FormData();
+      formData.append("imagen", file);
+      formData.append("seccion", section);
+
+      try {
+        const { data } = await api.post("/configuracion/imagen", formData);
+
+        setForm((prev) => ({
+          ...prev,
+          imagenesHome: {
+            ...prev.imagenesHome,
+            [section]: [...(prev.imagenesHome?.[section] || []), data.imageUrl],
+          },
+        }));
+
+        showAlert("exito", "Imagen subida correctamente");
+      } catch (err) {
+        console.error("❌ Error al subir imagen:", err);
+        showAlert("error", "Error al subir imagen.");
+      } finally {
+        setDragOverSection(null);
+        if (fileInputRef.current) fileInputRef.current.value = "";
+      }
+    },
+    [showAlert]
+  );
+
+  const handleDrop = useCallback(
+    (section, e) => {
+      e.preventDefault();
+      setDragOverSection(null);
+      const file = e.dataTransfer.files?.[0];
+      if (file) handleFileUpload(section, file);
+    },
+    [handleFileUpload]
+  );
+
+  const handleSelectFile = useCallback(
+    (e) => {
+      const file = e.target.files?.[0];
+      if (file) handleFileUpload(uploadTargetRef.current, file);
+    },
+    [handleFileUpload]
+  );
+
+  // ----------------------------
+  // Remove (con confirm)
+  // ----------------------------
+  const requestRemoveImage = useCallback(
+    (section, index) => {
+      openModalConfirm({
+        titulo: "Eliminar imagen",
+        mensaje: `¿Seguro que deseas eliminar esta imagen de "${
+          section === "carrousel" ? "Carrusel" : "Secciones"
+        }"? Esta acción no se puede deshacer.`,
+        onConfirm: () => {
+          setForm((prev) => {
+            const updated = { ...prev };
+            const list = updated.imagenesHome?.[section] || [];
+            updated.imagenesHome = { ...updated.imagenesHome };
+            updated.imagenesHome[section] = [
+              ...list.slice(0, index),
+              ...list.slice(index + 1),
+            ];
+            return updated;
+          });
+
+          showAlert("info", "Imagen eliminada.");
+        },
+      });
+    },
+    [openModalConfirm, showAlert]
+  );
+
+  const handleAddText = useCallback(
+    (section) => {
+      openModalPrompt({
+        titulo: "Añadir texto",
+        mensaje: "Introduce un texto para esta sección:",
+        placeholder: "Ej: Bienvenidos a nuestro restaurante",
+        onConfirm: (textRaw) => {
+          const text = (textRaw || "").trim();
+          if (!text) {
+            showAlert("error", "El texto no puede estar vacío.");
+            return; // 👈 mantenemos el modal abierto
+          }
+
+          setForm((prev) => {
+            const updated = { ...prev };
+            updated.textosHome = { ...(updated.textosHome || {}) };
+            updated.textosHome[section] = [
+              ...(updated.textosHome?.[section] || []),
+              text,
+            ];
+            return updated;
+          });
+
+          closeModal();
+          showAlert("exito", "Texto añadido correctamente.");
+        },
+      });
+    },
+    [openModalPrompt, closeModal, showAlert]
+  );
+
+  const requestRemoveText = useCallback(
+    (section, index) => {
+      const txt = form.textosHome?.[section]?.[index] || "";
+
+      openModalConfirm({
+        titulo: "Eliminar texto",
+        mensaje: `¿Seguro que deseas eliminar este texto?\n\n“${txt}”`,
+        onConfirm: () => {
+          setForm((prev) => {
+            const updated = { ...prev };
+            const list = updated.textosHome?.[section] || [];
+            updated.textosHome = { ...(updated.textosHome || {}) };
+            updated.textosHome[section] = [
+              ...list.slice(0, index),
+              ...list.slice(index + 1),
+            ];
+            return updated;
+          });
+
+          showAlert("info", "Texto eliminado.");
+        },
+      });
+    },
+    [form.textosHome, openModalConfirm, showAlert]
+  );
+
+  // ----------------------------
+  // Save
+  // ----------------------------
+  const handleSave = useCallback(async () => {
+    try {
+      setSaving(true);
+      const { data } = await api.put("/configuracion", form);
+
+      const cfg = data.config ?? data;
+      setConfig(cfg);
+
+      showAlert("exito", "Configuración actualizada correctamente");
+    } catch (err) {
+      console.error("❌ Error al guardar configuración:", err);
+      showAlert("error", "Error al guardar los cambios.");
+    } finally {
+      setSaving(false);
+    }
+  }, [form, setConfig, showAlert]);
+
+  // ----------------------------
+  // UX: cerrar menú dragOver al resize (por si acaso)
+  // ----------------------------
+  useEffect(() => {
+    const onResize = () => setDragOverSection(null);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
+  // ----------------------------
+  // Guard: config
+  // ----------------------------
   if (!config) {
     return (
       <div className="carta-config-page section section--wide">
@@ -41,206 +307,6 @@ export default function CartaConfigPage() {
     );
   }
 
-  /* ======================================================
-     🧠 Helpers de MODAL (confirm / prompt)
-  ====================================================== */
-  const closeModal = () => setModal(null);
-
-  const openModalConfirm = ({ titulo, mensaje, onConfirm }) => {
-    setModal({
-      modo: "confirm",
-      titulo,
-      mensaje,
-      placeholder: "", // 👈 sin input
-      onConfirm: async () => {
-        try {
-          await onConfirm?.();
-        } finally {
-          closeModal();
-        }
-      },
-      onClose: closeModal,
-    });
-  };
-
-  const openModalPrompt = ({ titulo, mensaje, placeholder, onConfirm }) => {
-    setModal({
-      modo: "prompt",
-      titulo,
-      mensaje,
-      placeholder: placeholder || "",
-      onConfirm: async (valor) => {
-        try {
-          await onConfirm?.(valor);
-        } finally {
-          // si onConfirm hace validación y quiere mantener modal, que no llame closeModal
-          // en este componente lo controlamos abajo
-        }
-      },
-      onClose: closeModal,
-    });
-  };
-
-  // ============================
-  // 🔧 Manejo genérico del form
-  // ============================
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    const path = name.split(".");
-    const updatedForm = { ...form };
-
-    let obj = updatedForm;
-    for (let i = 0; i < path.length - 1; i++) {
-      const key = path[i];
-      if (typeof obj[key] !== "object" || obj[key] === null) {
-        obj[key] = {};
-      }
-      obj = obj[key];
-    }
-    obj[path[path.length - 1]] = type === "checkbox" ? checked : value;
-
-    setForm(updatedForm);
-  };
-
-  // ============================
-  // 📸 Subida de imagen
-  // ============================
-  const handleFileUpload = async (section, file) => {
-    if (!file) return;
-
-    const formData = new FormData();
-    formData.append("imagen", file);
-    formData.append("seccion", section);
-
-    try {
-      const { data } = await api.post("/configuracion/imagen", formData);
-
-      setForm((prev) => ({
-        ...prev,
-        imagenesHome: {
-          ...prev.imagenesHome,
-          [section]: [...(prev.imagenesHome?.[section] || []), data.imageUrl],
-        },
-      }));
-
-      setAlerta({ tipo: "exito", mensaje: "Imagen subida correctamente" });
-    } catch (err) {
-      console.error("❌ Error al subir imagen:", err);
-      setAlerta({ tipo: "error", mensaje: "Error al subir imagen." });
-    }
-  };
-
-  const handleDrop = (section, e) => {
-    e.preventDefault();
-    setDragOverSection(null);
-    const file = e.dataTransfer.files[0];
-    if (file) handleFileUpload(section, file);
-  };
-
-  const handleSelectFile = (section, e) => {
-    const file = e.target.files[0];
-    if (file) handleFileUpload(section, file);
-  };
-
-  // ✅ AHORA: eliminar imagen pasa por confirmación
-  const requestRemoveImage = (section, index) => {
-    const url = form.imagenesHome?.[section]?.[index];
-
-    openModalConfirm({
-      titulo: "Eliminar imagen",
-      mensaje: `¿Seguro que deseas eliminar esta imagen de "${
-        section === "carrousel" ? "Carrusel" : "Secciones"
-      }"? Esta acción no se puede deshacer.`,
-      onConfirm: () => {
-        const updated = { ...form };
-        if (!updated.imagenesHome?.[section]) return;
-
-        updated.imagenesHome[section] = [
-          ...updated.imagenesHome[section].slice(0, index),
-          ...updated.imagenesHome[section].slice(index + 1),
-        ];
-
-        setForm(updated);
-        setAlerta({ tipo: "info", mensaje: "Imagen eliminada." });
-      },
-    });
-  };
-
-  // ============================
-  // 📝 Textos del Home
-  // ============================
-  const handleAddText = (section) => {
-    openModalPrompt({
-      titulo: "Añadir texto",
-      mensaje: "Introduce un texto para esta sección:",
-      placeholder: "Ej: Bienvenidos a nuestro restaurante",
-      onConfirm: (textRaw) => {
-        const text = (textRaw || "").trim();
-        if (!text) {
-          setAlerta({ tipo: "error", mensaje: "El texto no puede estar vacío." });
-          return; // 👈 mantenemos el modal abierto
-        }
-
-        const updated = { ...form };
-        if (!updated.textosHome) updated.textosHome = {};
-        if (!updated.textosHome[section]) updated.textosHome[section] = [];
-        updated.textosHome[section].push(text);
-
-        setForm(updated);
-        closeModal();
-        setAlerta({ tipo: "exito", mensaje: "Texto añadido correctamente." });
-      },
-    });
-  };
-
-  // ✅ AHORA: eliminar texto pasa por confirmación
-  const requestRemoveText = (section, index) => {
-    const txt = form.textosHome?.[section]?.[index];
-
-    openModalConfirm({
-      titulo: "Eliminar texto",
-      mensaje: `¿Seguro que deseas eliminar este texto?\n\n“${txt || ""}”`,
-      onConfirm: () => {
-        const updated = { ...form };
-        if (!updated.textosHome?.[section]) return;
-
-        updated.textosHome[section] = [
-          ...updated.textosHome[section].slice(0, index),
-          ...updated.textosHome[section].slice(index + 1),
-        ];
-
-        setForm(updated);
-        setAlerta({ tipo: "info", mensaje: "Texto eliminado." });
-      },
-    });
-  };
-
-  // ============================
-  // 💾 Guardar configuración
-  // ============================
-  const handleSave = async () => {
-    try {
-      setSaving(true);
-      const { data } = await api.put("/configuracion", form);
-
-      const cfg = data.config ?? data;
-      setConfig(cfg);
-
-      setAlerta({
-        tipo: "exito",
-        mensaje: "Configuración actualizada correctamente",
-      });
-    } catch (err) {
-      console.error("❌ Error al guardar configuración:", err);
-      setAlerta({ tipo: "error", mensaje: "Error al guardar los cambios." });
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  // ============================
-  // RENDER
-  // ============================
   return (
     <div className="carta-config-page section section--wide">
       <div className="card carta-config-card">
@@ -291,17 +357,9 @@ export default function CartaConfigPage() {
             <label>Días de apertura (separados por coma)</label>
             <input
               type="text"
-              name="informacionRestaurante.diasApertura"
-              value={form.informacionRestaurante?.diasApertura?.join(", ") || ""}
-              onChange={(e) =>
-                setForm({
-                  ...form,
-                  informacionRestaurante: {
-                    ...form.informacionRestaurante,
-                    diasApertura: e.target.value.split(",").map((d) => d.trim()),
-                  },
-                })
-              }
+              value={diasAperturaValue}
+              onChange={handleDiasAperturaChange}
+              placeholder="Ej: lunes, martes, miércoles"
             />
           </div>
 
@@ -340,7 +398,7 @@ export default function CartaConfigPage() {
             </p>
           </div>
 
-          {["carrousel", "secciones"].map((section) => (
+          {HOME_SECTIONS.map((section) => (
             <div key={section} className="imagenes-bloque">
               <div className="section-subheader">
                 <h4 className="subsection-title">
@@ -362,23 +420,25 @@ export default function CartaConfigPage() {
                 }}
                 onDragLeave={() => setDragOverSection(null)}
                 onDrop={(e) => handleDrop(section, e)}
-                onClick={() => {
-                  uploadTargetRef.current = section;
-                  setDragOverSection(section);
-                  fileInputRef.current?.click();
+                onClick={() => openFilePicker(section)}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") openFilePicker(section);
                 }}
               >
-                {form.imagenesHome?.[section]?.map((url, i) => (
-                  <div key={i} className="imagen-item">
+                {(form.imagenesHome?.[section] || []).map((url, i) => (
+                  <div key={`${url}-${i}`} className="imagen-item">
                     <img src={url} alt={`${section}-${i}`} />
                     <button
                       type="button"
                       className="config-btn-delete"
                       onClick={(ev) => {
                         ev.stopPropagation();
-                        requestRemoveImage(section, i); // ✅ confirmación
+                        requestRemoveImage(section, i);
                       }}
                       title="Eliminar imagen"
+                      aria-label="Eliminar imagen"
                     >
                       🗑
                     </button>
@@ -390,9 +450,7 @@ export default function CartaConfigPage() {
                   className="config-btn-add"
                   onClick={(ev) => {
                     ev.stopPropagation();
-                    uploadTargetRef.current = section;
-                    setDragOverSection(section);
-                    fileInputRef.current?.click();
+                    openFilePicker(section);
                   }}
                 >
                   ➕ Añadir
@@ -406,7 +464,7 @@ export default function CartaConfigPage() {
             type="file"
             accept="image/*"
             hidden
-            onChange={(e) => handleSelectFile(uploadTargetRef.current, e)}
+            onChange={handleSelectFile}
           />
         </section>
 
@@ -420,44 +478,49 @@ export default function CartaConfigPage() {
             </p>
           </div>
 
-          {["carrousel", "secciones"].map((section) => (
-            <div key={section} className="textos-section">
-              <div className="textos-header">
-                <h4 className="subsection-title">
-                  {section === "carrousel" ? "Carrusel" : "Secciones"}{" "}
-                  <span className="badge badge-aviso contador">
-                    {form.textosHome?.[section]?.length || 0} textos
-                  </span>
-                </h4>
-              </div>
+          {HOME_SECTIONS.map((section) => {
+            const count = form.textosHome?.[section]?.length || 0;
 
-              <ul className="textos-lista">
-                {form.textosHome?.[section]?.map((t, i) => (
-                  <li key={i} className="texto-item card-row">
-                    <span>{t}</span>
+            return (
+              <div key={section} className="textos-section">
+                <div className="textos-header">
+                  <h4 className="subsection-title">
+                    {section === "carrousel" ? "Carrusel" : "Secciones"}{" "}
+                    <span className="badge badge-aviso contador">
+                      {count} textos
+                    </span>
+                  </h4>
+                </div>
+
+                <ul className="textos-lista">
+                  {(form.textosHome?.[section] || []).map((t, i) => (
+                    <li key={`${t}-${i}`} className="texto-item card-row">
+                      <span>{t}</span>
+                      <button
+                        type="button"
+                        className="config-btn-delete"
+                        onClick={() => requestRemoveText(section, i)}
+                        title="Eliminar texto"
+                        aria-label="Eliminar texto"
+                      >
+                        🗑
+                      </button>
+                    </li>
+                  ))}
+
+                  <li className="li-add">
                     <button
                       type="button"
-                      className="config-btn-delete"
-                      onClick={() => requestRemoveText(section, i)} // ✅ confirmación
-                      title="Eliminar texto"
+                      className="config-btn-add"
+                      onClick={() => handleAddText(section)}
                     >
-                      🗑
+                      ➕ Añadir texto
                     </button>
                   </li>
-                ))}
-
-                <li className="li-add">
-                  <button
-                    type="button"
-                    className="config-btn-add"
-                    onClick={() => handleAddText(section)}
-                  >
-                    ➕ Añadir texto
-                  </button>
-                </li>
-              </ul>
-            </div>
-          ))}
+                </ul>
+              </div>
+            );
+          })}
         </section>
 
         {/* === CONFIGURACIÓN CARTA === */}
@@ -776,6 +839,7 @@ export default function CartaConfigPage() {
         </section>
       </div>
 
+      {/* Barra de acciones */}
       <div className="carta-config-actions">
         <button
           type="button"
@@ -787,7 +851,7 @@ export default function CartaConfigPage() {
         </button>
       </div>
 
-      {/* 🟢 Alerta */}
+      {/* Alerta */}
       {alerta && (
         <AlertaMensaje
           tipo={alerta.tipo}
@@ -796,12 +860,13 @@ export default function CartaConfigPage() {
         />
       )}
 
+      {/* Panel promociones */}
       <CartaPromocionesPanel
         abierto={promoPanelAbierto}
         onClose={() => setPromoPanelAbierto(false)}
       />
 
-      {/* 🟢 Modal (confirmación y prompt) */}
+      {/* Modal confirm/prompt */}
       {modal && (
         <ModalConfirmacion
           titulo={modal.titulo}

@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState, useContext, useRef } from "react";
-import { ImageContext } from "../../context/ImagesContext";
 import api from "../../utils/api";
 import AlefSelect from "../AlefSelect/AlefSelect";
+import { useImageUpload } from "../../Hooks/useImageUpload";
 import AlertaMensaje from "../AlertaMensaje/AlertaMensaje";
 
 // ✅ reutiliza el CSS del CrearProducto (recomendado)
@@ -58,12 +58,11 @@ const EditProduct = ({
 }) => {
   const {
     dragging,
-    handleDragOver,
-    handleDragLeave,
-    handleDrop,
-    handleFileChange,
-  } = useContext(ImageContext);
-
+    onDragOver: handleDragOver,
+    onDragLeave: handleDragLeave,
+    onDrop: handleDrop,
+    onFileChange: handleFileChange,
+  } = useImageUpload();
   const [secciones, setSecciones] = useState([]);
   const [estaciones, setEstaciones] = useState([]);
 
@@ -347,7 +346,10 @@ const EditProduct = ({
   // =========================
   return (
     <div className="crear-producto-overlay--crear" onClick={onCancel}>
-      <div className="crear-producto-modal--crear" onClick={(e) => e.stopPropagation()}>
+      <div
+        className="crear-producto-modal--crear"
+        onClick={(e) => e.stopPropagation()}
+      >
         <h2 className="titulo--crear">Editar producto</h2>
 
         {alerta && (
@@ -361,7 +363,7 @@ const EditProduct = ({
         <form onSubmit={handleSubmit} className="form--crear">
           {/* === COLUMNAS PRINCIPALES === */}
           <div className="form-columns--crear">
-            {/* -------- Columna 1 -------- */}
+            {/* -------- Columna 1: Identidad + textos (carta) -------- */}
             <section className="form-section--crear">
               <div className="form-group--crear">
                 <label className="label--crear">
@@ -375,7 +377,8 @@ const EditProduct = ({
                     required
                   />
                   <p className="help-text--crear">
-                    Nombre del producto tal y como aparecerá en la carta digital y en el TPV.
+                    Nombre del producto tal y como aparecerá en la carta digital y
+                    en el TPV.
                   </p>
                 </label>
 
@@ -393,10 +396,29 @@ const EditProduct = ({
                   </p>
                 </label>
 
+                {/* === ALÉRGENOS (no mezclado con VOZ) === */}
+                <h4 className="subtitulo--crear">⚠️ Alérgenos</h4>
+                <p className="help-text--crear">
+                  Se muestra al cliente en la carta digital y ayuda a cocina a
+                  identificar riesgos.
+                </p>
+
+                <label className="label--editar">
+                  Alérgenos (separados por comas):
+                  <input
+                    type="text"
+                    value={formData.alergenos?.join(", ") || ""}
+                    onChange={(e) => onChangeAlergenos(e.target.value)}
+                    className="input--editar"
+                    placeholder="Ej: gluten, lactosa, huevo"
+                  />
+                </label>
+
                 {/* === BLOQUE TRADUCCIONES === */}
                 <h4 className="subtitulo--crear">🌍 Traducciones para la carta</h4>
                 <p className="help-text--crear">
-                  Se mostrarán automáticamente cuando el cliente cambie el idioma en la carta.
+                  Se mostrarán automáticamente cuando el cliente cambie el idioma
+                  en la carta.
                 </p>
 
                 <label className="label--editar">
@@ -404,11 +426,15 @@ const EditProduct = ({
                   <input
                     type="text"
                     value={formData.traducciones?.en?.nombre || ""}
-                    onChange={(e) => setTraduccion("en", "nombre", e.target.value)}
+                    onChange={(e) =>
+                      setTraduccion("en", "nombre", e.target.value)
+                    }
                     className="input--editar"
                     placeholder="Ej: Ham croquettes"
                   />
-                  <p className="help-text--crear">Nombre en inglés visible en la carta.</p>
+                  <p className="help-text--crear">
+                    Nombre en inglés visible en la carta.
+                  </p>
                 </label>
 
                 <label className="label--editar">
@@ -416,11 +442,15 @@ const EditProduct = ({
                   <input
                     type="text"
                     value={formData.traducciones?.en?.descripcion || ""}
-                    onChange={(e) => setTraduccion("en", "descripcion", e.target.value)}
+                    onChange={(e) =>
+                      setTraduccion("en", "descripcion", e.target.value)
+                    }
                     className="input--editar"
                     placeholder="Ej: Delicious ham croquettes"
                   />
-                  <p className="help-text--crear">Descripción en inglés visible en la carta.</p>
+                  <p className="help-text--crear">
+                    Descripción en inglés visible en la carta.
+                  </p>
                 </label>
 
                 <label className="label--editar">
@@ -428,11 +458,15 @@ const EditProduct = ({
                   <input
                     type="text"
                     value={formData.traducciones?.fr?.nombre || ""}
-                    onChange={(e) => setTraduccion("fr", "nombre", e.target.value)}
+                    onChange={(e) =>
+                      setTraduccion("fr", "nombre", e.target.value)
+                    }
                     className="input--editar"
                     placeholder="Ej: Croquettes au jambon"
                   />
-                  <p className="help-text--crear">Nombre en francés visible en la carta.</p>
+                  <p className="help-text--crear">
+                    Nombre en francés visible en la carta.
+                  </p>
                 </label>
 
                 <label className="label--editar">
@@ -440,16 +474,20 @@ const EditProduct = ({
                   <input
                     type="text"
                     value={formData.traducciones?.fr?.descripcion || ""}
-                    onChange={(e) => setTraduccion("fr", "descripcion", e.target.value)}
+                    onChange={(e) =>
+                      setTraduccion("fr", "descripcion", e.target.value)
+                    }
                     className="input--editar"
                     placeholder="Ej: Délicieuses croquettes au jambon"
                   />
-                  <p className="help-text--crear">Descripción en francés visible en la carta.</p>
+                  <p className="help-text--crear">
+                    Descripción en francés visible en la carta.
+                  </p>
                 </label>
               </div>
             </section>
 
-            {/* -------- Columna 2 -------- */}
+            {/* -------- Columna 2: Clasificación + flujo (TPV) -------- */}
             <section className="form-section--crear">
               <div className="form-group--crear">
                 {/* === CATEGORÍA === */}
@@ -505,7 +543,9 @@ const EditProduct = ({
                   <AlefSelect
                     value={formData.tipo}
                     options={["plato", "bebida"]}
-                    onChange={(value) => setFormData((prev) => ({ ...prev, tipo: value }))}
+                    onChange={(value) =>
+                      setFormData((prev) => ({ ...prev, tipo: value }))
+                    }
                   />
                   <p className="help-text--crear">
                     Define si se gestiona como plato o bebida.
@@ -517,11 +557,17 @@ const EditProduct = ({
                   Sección:
                   <AlefSelect
                     value={formData.seccion}
-                    options={secciones.map((sec) => ({ label: sec.nombre, value: sec.slug }))}
-                    onChange={(value) => setFormData((prev) => ({ ...prev, seccion: value }))}
+                    options={secciones.map((sec) => ({
+                      label: sec.nombre,
+                      value: sec.slug,
+                    }))}
+                    onChange={(value) =>
+                      setFormData((prev) => ({ ...prev, seccion: value }))
+                    }
                   />
                   <p className="help-text--crear">
-                    Sección predeterminada en cocina (Entrantes, Principales, Postres…).
+                    Sección predeterminada en cocina (Entrantes, Principales,
+                    Postres…).
                   </p>
                 </label>
 
@@ -531,8 +577,13 @@ const EditProduct = ({
                     Estación:
                     <AlefSelect
                       value={formData.estacion}
-                      options={estaciones.map((est) => ({ label: est.nombre, value: est.slug }))}
-                      onChange={(value) => setFormData((prev) => ({ ...prev, estacion: value }))}
+                      options={estaciones.map((est) => ({
+                        label: est.nombre,
+                        value: est.slug,
+                      }))}
+                      onChange={(value) =>
+                        setFormData((prev) => ({ ...prev, estacion: value }))
+                      }
                     />
                     <p className="help-text--crear">
                       Subdivisión (plancha, freidora, barra, postres…).
@@ -573,7 +624,9 @@ const EditProduct = ({
                         min="0"
                         step="0.01"
                       />
-                      <p className="help-text--crear">Opcional si se vende como tapa.</p>
+                      <p className="help-text--crear">
+                        Opcional si se vende como tapa.
+                      </p>
                     </label>
 
                     <label className="label--crear">
@@ -587,7 +640,9 @@ const EditProduct = ({
                         min="0"
                         step="0.01"
                       />
-                      <p className="help-text--crear">Opcional si se vende como ración.</p>
+                      <p className="help-text--crear">
+                        Opcional si se vende como ración.
+                      </p>
                     </label>
                   </div>
 
@@ -603,7 +658,10 @@ const EditProduct = ({
                         type="number"
                         value={formData.adicionalPrecioUI}
                         onChange={(e) =>
-                          setFormData((prev) => ({ ...prev, adicionalPrecioUI: e.target.value }))
+                          setFormData((prev) => ({
+                            ...prev,
+                            adicionalPrecioUI: e.target.value,
+                          }))
                         }
                         className="input--crear"
                         min="0"
@@ -630,7 +688,9 @@ const EditProduct = ({
                       step="0.01"
                       required
                     />
-                    <p className="help-text--crear">Precio estándar si no aplica copa/botella.</p>
+                    <p className="help-text--crear">
+                      Precio estándar si no aplica copa/botella.
+                    </p>
                   </label>
 
                   <label className="label--crear">
@@ -644,7 +704,9 @@ const EditProduct = ({
                       min="0"
                       step="0.01"
                     />
-                    <p className="help-text--crear">Opcional para vinos/servicio por copa.</p>
+                    <p className="help-text--crear">
+                      Opcional para vinos/servicio por copa.
+                    </p>
                   </label>
 
                   <label className="label--crear">
@@ -658,19 +720,66 @@ const EditProduct = ({
                       min="0"
                       step="0.01"
                     />
-                    <p className="help-text--crear">Opcional para venta por botella.</p>
+                    <p className="help-text--crear">
+                      Opcional para venta por botella.
+                    </p>
                   </label>
                 </fieldset>
               )}
             </section>
           </div>
 
-          {/* === BLOQUE INFERIOR === */}
+          {/* === BLOQUE INFERIOR: imagen + voz === */}
           <section className="form-section--crear">
             <div className="form-group--crear">
+              {/* === IMAGEN === */}
+              <h4 className="subtitulo--crear">🖼️ Imagen del producto</h4>
+              <p className="help-text--crear">
+                Puedes mantener la imagen actual o reemplazarla subiendo una nueva.
+              </p>
+
+              {/* preview actual (si hay URL previa y no hay preview nuevo) */}
+              {!previewUrl && formData.img && (
+                <div className="preview-container" style={{ marginTop: 10 }}>
+                  <img
+                    src={formData.img}
+                    alt="Imagen actual"
+                    className="preview-img"
+                  />
+                </div>
+              )}
+
+              <div
+                className={`drop-zone ${dragging ? "dragging" : ""}`}
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={manejarDropArchivo}
+                onClick={() => fileInputRef.current?.click()}
+              >
+                <p>Arrastra una imagen aquí o haz clic para subir</p>
+
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={manejarCambioArchivo}
+                  className="hidden-file-input"
+                />
+
+                {imageFile && <p>📂 {imageFile.name}</p>}
+              </div>
+
+              {previewUrl && (
+                <div className="preview-container">
+                  <img src={previewUrl} alt="Vista previa" className="preview-img" />
+                </div>
+              )}
+
+              {/* === VOZ (aliases) === */}
               <h4 className="subtitulo--crear">🎙️ Aliases para comandas por voz</h4>
               <p className="help-text--crear">
-                Añade formas habituales de pedirlo (ej: “croqueta”, “croquetas de jamón”, “jamón”).
+                Añade formas habituales de pedirlo (ej: “croqueta”, “croquetas de
+                jamón”, “jamón”).
               </p>
 
               <label className="label--editar">
@@ -678,64 +787,18 @@ const EditProduct = ({
                 <input
                   type="text"
                   value={formData.aliasesString}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, aliasesString: e.target.value }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      aliasesString: e.target.value,
+                    }))
+                  }
                   onBlur={(e) => onBlurAliases(e.target.value)}
                   className="input--editar"
                   placeholder="Ej: croqueta, jamon, croquetas jamon"
                 />
               </label>
-
-              <label className="label--editar">
-                Alérgenos (separados por comas):
-                <input
-                  type="text"
-                  value={formData.alergenos?.join(", ") || ""}
-                  onChange={(e) => onChangeAlergenos(e.target.value)}
-                  className="input--editar"
-                  placeholder="Ej: gluten, lactosa, huevo"
-                />
-                <p className="help-text--crear">Se muestra en carta y ayuda a cocina.</p>
-              </label>
             </div>
-
-            {/* === IMAGEN === */}
-            <h4 className="subtitulo--crear">🖼️ Imagen del producto</h4>
-            <p className="help-text--crear">
-              Puedes mantener la imagen actual o reemplazarla subiendo una nueva.
-            </p>
-
-            {/* preview actual (si hay URL previa y no hay preview nuevo) */}
-            {!previewUrl && formData.img && (
-              <div className="preview-container" style={{ marginTop: 10 }}>
-                <img src={formData.img} alt="Imagen actual" className="preview-img" />
-              </div>
-            )}
-
-            <div
-              className={`drop-zone ${dragging ? "dragging" : ""}`}
-              onDragOver={handleDragOver}
-              onDragLeave={handleDragLeave}
-              onDrop={manejarDropArchivo}
-              onClick={() => fileInputRef.current?.click()}
-            >
-              <p>Arrastra una imagen aquí o haz clic para subir</p>
-
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
-                onChange={manejarCambioArchivo}
-                className="hidden-file-input"
-              />
-
-              {imageFile && <p>📂 {imageFile.name}</p>}
-            </div>
-
-            {previewUrl && (
-              <div className="preview-container">
-                <img src={previewUrl} alt="Vista previa" className="preview-img" />
-              </div>
-            )}
           </section>
 
           {/* === RECETA === */}
@@ -750,7 +813,8 @@ const EditProduct = ({
             </legend>
 
             <p className="help-text--crear">
-              Vincula ingredientes del stock para descontarlos automáticamente cuando se sirve.
+              Vincula ingredientes del stock para descontarlos automáticamente
+              cuando se sirve.
             </p>
 
             <div
@@ -761,7 +825,9 @@ const EditProduct = ({
               }}
             >
               {formData.receta.map((item, index) => {
-                const ing = ingredientesStock.find((i) => i._id === item.ingrediente);
+                const ing = ingredientesStock.find(
+                  (i) => i._id === item.ingrediente
+                );
                 return (
                   <div key={index} className="receta-item--crear">
                     <span className="receta-nombre--crear">
@@ -797,9 +863,14 @@ const EditProduct = ({
             >
               <AlefSelect
                 label="Ingrediente"
-                options={ingredientesStock.map((i) => ({ label: i.nombre, value: i._id }))}
+                options={ingredientesStock.map((i) => ({
+                  label: i.nombre,
+                  value: i._id,
+                }))}
                 value={formData.nuevoIng}
-                onChange={(v) => setFormData((prev) => ({ ...prev, nuevoIng: v }))}
+                onChange={(v) =>
+                  setFormData((prev) => ({ ...prev, nuevoIng: v }))
+                }
                 placeholder="Selecciona ingrediente"
               />
 
@@ -837,19 +908,23 @@ const EditProduct = ({
             </div>
 
             {isPlanEsencial && (
-              <p style={{ marginTop: 12, fontSize: 14, textAlign: "center", color: "#ff6700" }}>
-                Para gestionar recetas completas, mejora tu plan a <strong>Profesional</strong>.
+              <p
+                style={{
+                  marginTop: 12,
+                  fontSize: 14,
+                  textAlign: "center",
+                  color: "#ff6700",
+                }}
+              >
+                Para gestionar recetas completas, mejora tu plan a{" "}
+                <strong>Profesional</strong>.
               </p>
             )}
           </fieldset>
 
           {/* === BOTONES === */}
           <div className="botones--crear">
-            <button
-              type="submit"
-              className="boton--crear"
-              disabled={saving}
-            >
+            <button type="submit" className="boton--crear" disabled={saving}>
               {saving ? "Guardando..." : "Guardar cambios"}
             </button>
 

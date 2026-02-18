@@ -1,5 +1,5 @@
 /*****************************************************
- * Configuración Carta – Layout general
+ * Configuración Carta – Layout general (PRO)
  *****************************************************/
 
 .carta-config-page {
@@ -69,6 +69,7 @@
   font-weight: 600;
 }
 
+/* Inputs consistentes (focus visible) */
 .config-field input,
 .config-field select,
 .config-field textarea {
@@ -78,6 +79,16 @@
   font-size: var(--font-size-sm);
   font-family: var(--font-base);
   background: #ffffff;
+  color: var(--color-texto, #111827);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.config-field input:focus,
+.config-field select:focus,
+.config-field textarea:focus {
+  outline: none;
+  border-color: rgba(106, 13, 173, 0.45);
+  box-shadow: 0 0 0 4px rgba(106, 13, 173, 0.14);
 }
 
 /*****************************************************
@@ -110,9 +121,11 @@
   grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
   gap: var(--space-md);
   padding: var(--space-md);
+
   border-radius: var(--radius-md);
   border: 1px dashed var(--color-borde-suave);
   background: #f9fafb;
+
   cursor: pointer;
   transition: border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
 }
@@ -125,6 +138,15 @@
   border-color: var(--color-primario);
   background: var(--color-primario-suave);
   box-shadow: var(--shadow-suave);
+}
+
+/* Accesibilidad: foco cuando el grid tiene tabIndex */
+.imagenes-grid:focus {
+  outline: none;
+}
+.imagenes-grid:focus-visible {
+  border-color: rgba(106, 13, 173, 0.55);
+  box-shadow: 0 0 0 4px rgba(106, 13, 173, 0.14);
 }
 
 .imagen-item {
@@ -144,54 +166,67 @@
 
 /* Botón eliminar (icono basura) */
 .config-btn-delete {
+  position: absolute;
   top: 6px;
   right: 6px;
+
   border: none;
   border-radius: var(--radius-pill);
-  padding: 0.25rem 0.4rem;
+  padding: 0.28rem 0.45rem;
   font-size: var(--font-size-xs);
-  cursor: pointer;
+  line-height: 1;
 
-  background: rgba(15, 23, 42, 0.8);
+  cursor: pointer;
+  background: rgba(15, 23, 42, 0.86);
   color: #fff;
 
-  transition: opacity 0.2s ease;
+  opacity: 0.95;
+  transition: opacity 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .config-btn-delete:hover {
-  opacity: 0.85;
-
+  opacity: 1;
+  transform: translateY(-1px);
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.18);
 }
 
-/* Botón añadir */
+.config-btn-delete:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(106, 13, 173, 0.18), 0 10px 22px rgba(15, 23, 42, 0.18);
+}
+
+/* Botón añadir (reutilizable) */
 .config-btn-add {
   min-height: 120px;
+
   border-radius: var(--radius-md);
   border: 1px dashed var(--color-borde-suave);
   background: transparent;
+
   cursor: pointer;
 
   font-size: var(--font-size-sm);
+  font-weight: 600;
   color: var(--color-texto-suave);
 
   display: flex;
   align-items: center;
   justify-content: center;
+
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease,
+    box-shadow 0.15s ease, transform 0.15s ease;
 }
 
 .config-btn-add:hover {
-  background: rgba(0, 0, 0, 0.04);
+  background: rgba(15, 23, 42, 0.04);
+  border-color: rgba(106, 13, 173, 0.30);
+  color: var(--color-primario-oscuro, #4b0a78);
+  transform: translateY(-1px);
 }
 
-/* Botón añadir dentro del grid */
-.imagenes-grid .btn-add {
-  min-height: 120px;
-  border-radius: var(--radius-md);
-  border-style: dashed;
-  border-width: 1px;
-  border-color: var(--color-borde-suave);
-  background: transparent;
-  font-size: var(--font-size-sm);
+.config-btn-add:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(106, 13, 173, 0.14);
 }
 
 /*****************************************************
@@ -210,6 +245,7 @@
   list-style: none;
   padding: 0;
   margin: 0;
+
   display: flex;
   flex-direction: column;
   gap: var(--space-xs);
@@ -220,11 +256,19 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--space-sm);
+
   padding: var(--space-sm) var(--space-md);
   border-radius: var(--radius-md);
   border: 1px solid var(--color-borde-suave);
   background: #ffffff;
+
   font-size: var(--font-size-sm);
+  transition: box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.texto-item:hover {
+  border-color: rgba(148, 163, 184, 0.7);
+  box-shadow: 0 10px 26px rgba(15, 23, 42, 0.06);
 }
 
 .texto-item span {
@@ -235,8 +279,11 @@
   margin-top: var(--space-xs);
 }
 
-.btn-icon.btn-delete {
+/* En textos, el delete NO debe ser absolute */
+.textos-lista .config-btn-delete {
+  position: static;
   flex-shrink: 0;
+  padding: 0.35rem 0.55rem;
 }
 
 /*****************************************************
@@ -254,6 +301,7 @@
 .checkbox-row input[type="checkbox"] {
   width: 16px;
   height: 16px;
+  accent-color: var(--color-primario);
 }
 
 /*****************************************************
@@ -342,18 +390,25 @@
 }
 
 .theme-preview-precio {
-  font-weight: 600;
+  font-weight: 700;
   font-size: var(--font-size-sm);
 }
 
 .theme-preview-btn {
   border: none;
   border-radius: var(--radius-pill);
-  padding: 0.4rem 0.9rem;
+  padding: 0.4rem 0.95rem;
   font-size: var(--font-size-xs);
-  font-weight: 600;
+  font-weight: 700;
   color: var(--color-texto-invertido);
   cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+}
+
+.theme-preview-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.14);
+  filter: brightness(0.98);
 }
 
 /*****************************************************
@@ -365,7 +420,6 @@
   bottom: 0;
   left: 0;
   right: 0;
-
   z-index: 100;
 
   padding: var(--space-sm) var(--space-lg);
@@ -391,7 +445,6 @@
   .theme-grid {
     grid-template-columns: 1fr;
   }
-
 }
 
 @media (max-width: 768px) {

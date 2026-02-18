@@ -92,7 +92,6 @@ import ProveedorFacturasTab from "./pages/proveedores/tabs/ProveedorFacturasTab.
 import "./index.css";
 import { CategoriasProvider } from "./context/CategoriasContext";
 import { ShopCategoriasProvider } from "./context/ShopCategoriasContext";
-import { ImagesProvider } from "./context/ImagesContext";
 import Funcionamiento from "./components/Funcionamiento/Funcionamiento";
 import ConfigImpresionPage from "./pages/ConfigImpresionPage";
 import ConfigImpresionShopPage from "./pages/ConfigImpresionShopPage";
@@ -422,7 +421,6 @@ export default function App() {
   return (
     <>
       <SocketProvider>
-        <ImagesProvider>
           <FeaturesPlanProvider>
             <CategoriasProvider>
               <ShopCategoriasProvider>
@@ -440,7 +438,6 @@ export default function App() {
               </ShopCategoriasProvider>
             </CategoriasProvider>
           </FeaturesPlanProvider>
-        </ImagesProvider>
       </SocketProvider>
     </>
   );

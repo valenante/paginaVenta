@@ -1,48 +1,60 @@
-import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext.jsx";
-import { useTenant } from "../../context/TenantContext"; // ✅ si ya lo tienes
+import { useTenant } from "../../context/TenantContext";
 import logoAlef from "../../assets/imagenes/alef.png";
 import "./TopBar.css";
 
 export default function TopBar() {
   const [menuAbierto, setMenuAbierto] = useState(false);
+
   const { user, logout } = useAuth();
-  const { tenant, tenantId, loadingTenant } = useTenant();
+  const { tenant, tenantId } = useTenant();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const isActive = (path) => location.pathname.startsWith(path);
 
   // ✅ Plan esencial: tanto 'esencial' como 'tpv-esencial'
   const isPlanEsencial =
     user?.plan === "esencial" || user?.plan === "tpv-esencial";
 
-  const abrirEnNuevaPestana = (url) => {
-    const nuevaVentana = window.open(url, "_blank", "noopener,noreferrer");
-    if (nuevaVentana) nuevaVentana.focus();
-  };
-
-  const irAlPanelPro = (url) => {
-    window.location.href = url;
-  };
-
-  // ✅ Mejor que hostname: Vite te da DEV/PROD
   const isDev = import.meta.env.DEV;
 
-  // ✅ tenantSlug: usa tenant.slug primero, y cae a user.tenantId como fallback
-  const tenantSlug = tenant?.slug || tenantId || user?.tenantId || "demo";
+  // ✅ tenantSlug: usa tenant.slug primero, y cae a tenantId/user.tenantId como fallback
+  const tenantSlug = useMemo(() => {
+    return tenant?.slug || tenantId || user?.tenantId || "demo";
+  }, [tenant?.slug, tenantId, user?.tenantId]);
+
   // ✅ tipoNegocio (soporta ambos modelos)
-  const tipoNegocio = (
-    tenant?.tipoNegocio ||
-    tenant?.suscripcion?.tipoNegocio ||
-    "restaurante"
-  ).toLowerCase();
+  const tipoNegocio = useMemo(() => {
+    return (
+      tenant?.tipoNegocio ||
+      tenant?.suscripcion?.tipoNegocio ||
+      "restaurante"
+    ).toLowerCase();
+  }, [tenant?.tipoNegocio, tenant?.suscripcion?.tipoNegocio]);
 
   const esTienda =
-    tipoNegocio === "shop" || tipoNegocio === "peluqueria" || tipoNegocio === "otro";
+    tipoNegocio === "shop" ||
+    tipoNegocio === "peluqueria" ||
+    tipoNegocio === "otro";
+
+  const abrirEnNuevaPestana = useCallback((url) => {
+    const nuevaVentana = window.open(url, "_blank", "noopener,noreferrer");
+    if (nuevaVentana) nuevaVentana.focus();
+  }, []);
+
+  const irAlPanelPro = useCallback((url) => {
+    window.location.href = url;
+  }, []);
+
+  const cerrarMenu = useCallback(() => setMenuAbierto(false), []);
+  const toggleMenu = useCallback(() => setMenuAbierto((v) => !v), []);
 
   // =========================
   // URLs por tipo de negocio
   // =========================
-  // Ajusta estos puertos/subdominios si tu arquitectura es distinta.
   const tpvURL = isDev
     ? `http://localhost:3002/${tenantSlug}`
     : `https://${tenantSlug}-tpv.${import.meta.env.VITE_MAIN_DOMAIN}`;
@@ -51,15 +63,15 @@ export default function TopBar() {
     ? `http://localhost:3001/${tenantSlug}`
     : `https://${tenantSlug}-carta.${import.meta.env.VITE_MAIN_DOMAIN}`;
 
-  // 👉 SHOPS (shop) — AJUSTA a tu realidad (subdominio/host)
+  // 👉 SHOPS (shop) — AJUSTA a tu realidad
   const shopsURL = isDev
-    ? `http://localhost:3003/${tenantSlug}` // por ejemplo
+    ? `http://localhost:3003/${tenantSlug}`
     : `https://${tenantSlug}-shops.${import.meta.env.VITE_MAIN_DOMAIN}`;
 
   // =========================
   // URL PANEL PRO (logo click)
   // =========================
-  const panelProURL = import.meta.env.DEV
+  const panelProURL = isDev
     ? `http://localhost:5173/${tenantSlug}/pro`
     : `https://${tenantSlug}-panel.${import.meta.env.VITE_MAIN_DOMAIN}/pro`;
 
@@ -77,10 +89,12 @@ export default function TopBar() {
       <div className="TopBar-container">
         {/* Logo */}
         <button
-          className="TopBar-logo" f
+          type="button"
+          className="TopBar-logo"
           onClick={() => irAlPanelPro(panelProURL)}
+          aria-label="Ir al Panel"
         >
-          <img src={logoAlef} alt="Alef Logo" className="TopBar-logo-img" />
+          <img src={logoAlef} alt="Alef" className="TopBar-logo-img" />
           <span className="TopBar-logo-text">
             Alef <strong>{esTienda ? "Shops" : "TPV"}</strong>
           </span>
@@ -88,37 +102,53 @@ export default function TopBar() {
 
         {/* Hamburguesa */}
         <button
+          type="button"
           className={`TopBar-menu ${menuAbierto ? "active" : ""}`}
-          onClick={() => setMenuAbierto(!menuAbierto)}
+          onClick={toggleMenu}
           aria-label="Abrir menú"
+          aria-expanded={menuAbierto}
+          aria-controls="topbar-menu"
         >
-          <span></span>
-          <span></span>
-          <span></span>
+          <span />
+          <span />
+          <span />
         </button>
 
         {/* Menú */}
-        <nav className={`TopBar-dropdown ${menuAbierto ? "open" : ""}`}>
+        <nav
+          id="topbar-menu"
+          className={`TopBar-dropdown ${menuAbierto ? "open" : ""}`}
+        >
           {!user ? (
             <>
-              <a href="#inicio" onClick={() => setMenuAbierto(false)}>Inicio</a>
-              <a href="#ventajas" onClick={() => setMenuAbierto(false)}>Ventajas</a>
-              {/*<a href="#packs" onClick={() => setMenuAbierto(false)}>Packs</a>*/}
-              <a href="#capturas" onClick={() => setMenuAbierto(false)}>Capturas</a>
-              <a href="#contacto" onClick={() => setMenuAbierto(false)}>Contacto</a>
+              <a href="#inicio" onClick={cerrarMenu}>
+                Inicio
+              </a>
+              <a href="#ventajas" onClick={cerrarMenu}>
+                Ventajas
+              </a>
+              {/* <a href="#packs" onClick={cerrarMenu}>Packs</a> */}
+              <a href="#capturas" onClick={cerrarMenu}>
+                Capturas
+              </a>
+              <a href="#contacto" onClick={cerrarMenu}>
+                Contacto
+              </a>
 
               <Link
                 to="/login"
-                onClick={() => setMenuAbierto(false)}
+                onClick={cerrarMenu}
                 className="TopBar-btn login"
               >
                 Iniciar sesión
               </Link>
 
-              {/*<button
+              {/*
+              <button
+                type="button"
                 className="TopBar-btn cta"
                 onClick={() => {
-                  setMenuAbierto(false);
+                  cerrarMenu();
                   navigate("/?seleccionarPlan=1#packs");
                 }}
               >
@@ -133,18 +163,19 @@ export default function TopBar() {
                 <>
                   <Link
                     to="/superadmin"
-                    className="TopBar-btn special"
-                    onClick={() => setMenuAbierto(false)}
+                    className={`TopBar-btn special ${isActive("/superadmin") ? "active" : ""}`}
+                    onClick={cerrarMenu}
                   >
                     Panel SuperAdmin
                   </Link>
 
                   <button
+                    type="button"
                     onClick={() => {
-                      setMenuAbierto(false);
+                      cerrarMenu();
                       navigate("/dashboard");
                     }}
-                    className="TopBar-btn login"
+                    className={`TopBar-btn login ${isActive("/dashboard") ? "active" : ""}`}
                   >
                     Dashboard
                   </button>
@@ -153,6 +184,7 @@ export default function TopBar() {
                   {!esTienda ? (
                     <>
                       <button
+                        type="button"
                         onClick={() => abrirEnNuevaPestana(tpvURL)}
                         className="TopBar-btn login"
                       >
@@ -160,6 +192,7 @@ export default function TopBar() {
                       </button>
 
                       <button
+                        type="button"
                         onClick={() => abrirEnNuevaPestana(cartaURL)}
                         className="TopBar-btn login"
                       >
@@ -168,106 +201,100 @@ export default function TopBar() {
                     </>
                   ) : (
                     <button
+                      type="button"
                       onClick={() => abrirEnNuevaPestana(shopsURL)}
                       className="TopBar-btn login"
                     >
                       Alef Shops
                     </button>
                   )}
-
-                  <Link
-                    to="/perfil"
-                    onClick={() => setMenuAbierto(false)}
-                    className="TopBar-btn login"
-                  >
-                    Perfil
-                  </Link>
                 </>
               )}
 
-              {/* ADMIN / ADMIN_RESTAURANTE */}
-              {["admin_restaurante", "admin", "admin_shop"].includes(user.role) && (
-                <>
-                  <button
-                    onClick={() => {
-                      setMenuAbierto(false);
-                      navigate("/pro");
-                    }}
-                    className="TopBar-btn special"
-                  >
-                    Panel de Gestión
-                  </button>
-                  <button
-                    onClick={() => {
-                      setMenuAbierto(false);
-                      navigate("/dashboard");
-                    }}
-                    className="TopBar-btn login"
-                  >
-                    Dashboard
-                  </button>
+              {/* ADMIN / ADMIN_RESTAURANTE / ADMIN_SHOP */}
+              {["admin_restaurante", "admin", "admin_shop"].includes(
+                user.role
+              ) && (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        cerrarMenu();
+                        navigate("/pro");
+                      }}
+                      className={`TopBar-btn login ${isActive("/pro") ? "active" : ""}`}
+                    >
+                      Panel de Gestión
+                    </button>
 
-                  {/* ✅ ENLACES EXTERNOS segun tipoNegocio */}
-                  {!esTienda ? (
-                    <>
-                      <button
-                        onClick={() => abrirEnNuevaPestana(tpvURL)}
-                        className="TopBar-btn login"
-                      >
-                        TPV
-                      </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        cerrarMenu();
+                        navigate("/dashboard");
+                      }}
+                      className={`TopBar-btn login ${isActive("/dashboard") ? "active" : ""}`}
+                    >
+                      Dashboard
+                    </button>
 
-                      {/* Carta SOLO si NO es esencial */}
-                      {!isPlanEsencial && (
+                    {/* ✅ ENLACES EXTERNOS segun tipoNegocio */}
+                    {!esTienda ? (
+                      <>
                         <button
-                          onClick={() => abrirEnNuevaPestana(cartaURL)}
+                          type="button"
+                          onClick={() => abrirEnNuevaPestana(tpvURL)}
                           className="TopBar-btn login"
                         >
-                          Carta
+                          TPV
                         </button>
-                      )}
-                    </>
-                  ) : (
-                    <button
-                      onClick={() => abrirEnNuevaPestana(shopsURL)}
-                      className="TopBar-btn login"
+
+                        {/* Carta SOLO si NO es esencial */}
+                        {!isPlanEsencial && (
+                          <button
+                            type="button"
+                            onClick={() => abrirEnNuevaPestana(cartaURL)}
+                            className="TopBar-btn login"
+                          >
+                            Carta
+                          </button>
+                        )}
+                      </>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => abrirEnNuevaPestana(shopsURL)}
+                        className="TopBar-btn login"
+                      >
+                        Shop
+                      </button>
+                    )}
+
+                    <Link
+                      to="/ayuda"
+                      onClick={cerrarMenu}
+                      className={`TopBar-btn login ${isActive("/ayuda") ? "active" : ""}`}
                     >
-                      Shop
-                    </button>
-                  )}
+                      Ayuda
+                    </Link>
 
-                  <Link
-                    to="/perfil"
-                    onClick={() => setMenuAbierto(false)}
-                    className="TopBar-btn login"
-                  >
-                    Perfil
-                  </Link>
+                    <Link
+                      to="/soporte"
+                      onClick={cerrarMenu}
+                      className={`TopBar-btn login ${isActive("/soporte") ? "active" : ""}`}
+                    >
+                      Soporte
+                    </Link>
+                  </>
+                )}
 
-                  <Link
-                    to="/ayuda"
-                    onClick={() => setMenuAbierto(false)}
-                    className="TopBar-btn login"
-                  >
-                    Ayuda
-                  </Link>
-
-                  <Link
-                    to="/soporte"
-                    onClick={() => setMenuAbierto(false)}
-                    className="TopBar-btn login"
-                  >
-                    Soporte
-                  </Link>
-                </>
-              )}
-
-              {/* EMPLEADOS (camarero/cocinero) — en shop quizá será "dependiente" */}
+              {/* EMPLEADOS (camarero/cocinero) */}
               {["camarero", "cocinero"].includes(user.role) && (
                 <>
                   {!esTienda ? (
                     <>
                       <button
+                        type="button"
                         onClick={() => abrirEnNuevaPestana(tpvURL)}
                         className="TopBar-btn login"
                       >
@@ -276,6 +303,7 @@ export default function TopBar() {
 
                       {!isPlanEsencial && (
                         <button
+                          type="button"
                           onClick={() => abrirEnNuevaPestana(cartaURL)}
                           className="TopBar-btn login"
                         >
@@ -285,6 +313,7 @@ export default function TopBar() {
                     </>
                   ) : (
                     <button
+                      type="button"
                       onClick={() => abrirEnNuevaPestana(shopsURL)}
                       className="TopBar-btn login"
                     >
@@ -294,11 +323,12 @@ export default function TopBar() {
 
                   {!esTienda && (
                     <button
+                      type="button"
                       onClick={() => {
-                        setMenuAbierto(false);
+                        cerrarMenu();
                         navigate("/personalizar");
                       }}
-                      className="TopBar-btn login"
+                      className={`TopBar-btn login ${isActive("/perfil") ? "active" : ""}`}
                     >
                       Personalizar
                     </button>
@@ -308,17 +338,16 @@ export default function TopBar() {
 
               {/* VENDEDOR (SHOP) */}
               {user.role === "vendedor" && (
-                <>
-                  <button
-                    onClick={() => abrirEnNuevaPestana(shopsURL)}
-                    className="TopBar-btn login"
-                  >
-                    Shop
-                  </button>
-                </>
+                <button
+                  type="button"
+                  onClick={() => abrirEnNuevaPestana(shopsURL)}
+                  className="TopBar-btn login"
+                >
+                  Shop
+                </button>
               )}
 
-              <button onClick={logout} className="TopBar-btn cta">
+              <button type="button" onClick={logout} className="TopBar-btn cta">
                 Cerrar sesión
               </button>
             </>

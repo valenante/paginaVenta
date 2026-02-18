@@ -188,8 +188,7 @@ export default function RestauranteConfigPage() {
             ⚙️ Configuración {esTienda ? "de la shop" : "del restaurante"}
           </h1>
           <p className="text-suave">
-            Define la identidad visual, las funcionalidades y la configuración
-            fiscal de tu entorno Alef.
+            Define la identidad visual y las funcionalidades de tu entorno Alef.
           </p>
         </div>
         <div className="rest-config-header-status">{verifactuBadge}</div>

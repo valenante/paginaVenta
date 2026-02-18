@@ -2,7 +2,7 @@
 import React, { useState, useContext, useEffect, useMemo } from "react";
 import { ProductosContext } from "../../context/ProductosContext";
 import { useAuth } from "../../context/AuthContext";
-import { ImageContext } from "../../context/ImagesContext";
+import { useImageUpload } from "../../Hooks/useImageUpload";
 import AlefSelect from "../AlefSelect/AlefSelect";
 import AlertaMensaje from "../AlertaMensaje/AlertaMensaje";
 import * as logger from "../../utils/logger";
@@ -15,15 +15,13 @@ const CrearProducto = ({ onClose, onCreated }) => {
   const { user } = useAuth();
   const cargarProductos = productosCtx?.cargarProductos;
 
-  // 🔹 ImageContext — opcional, con fallbacks
-  const imageCtx = useContext(ImageContext) || {};
   const {
-    dragging = false,
-    handleDragOver = (e) => e.preventDefault(),
-    handleDragLeave = () => { },
-    handleDrop = () => { },
-    handleFileChange = () => { },
-  } = imageCtx;
+    dragging,
+    onDragOver: handleDragOver,
+    onDragLeave: handleDragLeave,
+    onDrop: handleDrop,
+    onFileChange: handleFileChange,
+  } = useImageUpload();
 
   const [imageFile, setImageFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState("");
@@ -264,10 +262,7 @@ const CrearProducto = ({ onClose, onCreated }) => {
   }, [previewUrl]);
 
   return (
-    <div
-      className="crear-producto-overlay--crear"
-      onClick={onClose}
-    >
+    <div className="crear-producto-overlay--crear" onClick={onClose}>
       <div
         className="crear-producto-modal--crear"
         onClick={(e) => e.stopPropagation()}
@@ -285,7 +280,7 @@ const CrearProducto = ({ onClose, onCreated }) => {
         <form onSubmit={handleSubmit} className="form--crear">
           {/* === COLUMNAS PRINCIPALES === */}
           <div className="form-columns--crear">
-            {/* -------- Columna 1 -------- */}
+            {/* -------- Columna 1: Identidad + textos (lo que ve el cliente) -------- */}
             <section className="form-section--crear">
               <div className="form-group--crear">
                 <label className="label--crear">
@@ -299,7 +294,8 @@ const CrearProducto = ({ onClose, onCreated }) => {
                     required
                   />
                   <p className="help-text--crear">
-                    Nombre del producto tal y como aparecerá en la carta digital y en el TPV.
+                    Nombre del producto tal y como aparecerá en la carta digital y
+                    en el TPV.
                   </p>
                 </label>
 
@@ -313,18 +309,43 @@ const CrearProducto = ({ onClose, onCreated }) => {
                     required
                   />
                   <p className="help-text--crear">
-                    Descripción visible para el cliente en la carta digital. Úsala para detallar
-                    ingredientes, elaboración o características importantes.
+                    Descripción visible para el cliente en la carta digital. Úsala
+                    para detallar ingredientes, elaboración o características
+                    importantes.
                   </p>
+                </label>
+
+                {/* === ALÉRGENOS (no mezclado con VOZ) === */}
+                <h4 className="subtitulo--crear">⚠️ Alérgenos</h4>
+                <p className="help-text--crear">
+                  Se muestra al cliente en la carta digital y ayuda a cocina a
+                  identificar riesgos.
+                </p>
+                <label className="label--editar">
+                  Alérgenos (separados por comas):
+                  <input
+                    type="text"
+                    name="alergenos"
+                    value={formData.alergenos?.join(", ") || ""}
+                    onChange={(e) => {
+                      const value = e.target.value
+                        .split(",")
+                        .map((a) => a.trim().toLowerCase())
+                        .filter(Boolean);
+                      setFormData((prev) => ({ ...prev, alergenos: value }));
+                    }}
+                    className="input--editar"
+                    placeholder="Ej: gluten, lactosa, huevo"
+                  />
                 </label>
 
                 {/* === BLOQUE TRADUCCIONES === */}
                 <h4 className="subtitulo--crear">🌍 Traducciones para la carta</h4>
                 <p className="help-text--crear">
-                  Estos textos se mostrarán automáticamente cuando el cliente cambie el idioma en la carta.
+                  Estos textos se mostrarán automáticamente cuando el cliente
+                  cambie el idioma en la carta.
                 </p>
 
-                {/* Traducciones EN / FR */}
                 <label className="label--editar">
                   Nombre en inglés:
                   <input
@@ -346,7 +367,8 @@ const CrearProducto = ({ onClose, onCreated }) => {
                     placeholder="Ej: Ham croquettes"
                   />
                   <p className="help-text--crear">
-                    Nombre en inglés que verá el cliente en la carta si selecciona ese idioma.
+                    Nombre en inglés que verá el cliente en la carta si selecciona
+                    ese idioma.
                   </p>
                 </label>
 
@@ -396,7 +418,8 @@ const CrearProducto = ({ onClose, onCreated }) => {
                     placeholder="Ej: Croquettes au jambon"
                   />
                   <p className="help-text--crear">
-                    Nombre en francés que verá el cliente en la carta si selecciona ese idioma.
+                    Nombre en francés que verá el cliente en la carta si selecciona
+                    ese idioma.
                   </p>
                 </label>
 
@@ -427,7 +450,7 @@ const CrearProducto = ({ onClose, onCreated }) => {
               </div>
             </section>
 
-            {/* -------- Columna 2 -------- */}
+            {/* -------- Columna 2: Clasificación + flujo (TPV / cocina / barra) -------- */}
             <section className="form-section--crear">
               <div className="form-group--crear">
                 {/* === CATEGORÍA === */}
@@ -460,8 +483,9 @@ const CrearProducto = ({ onClose, onCreated }) => {
                     />
                   )}
                   <p className="help-text--crear">
-                    La categoría sirve para organizar los productos al tomar nota en el TPV y permite
-                    a los clientes filtrar la carta por tipo de producto.
+                    La categoría sirve para organizar los productos al tomar nota
+                    en el TPV y permite a los clientes filtrar la carta por tipo
+                    de producto.
                   </p>
                 </label>
 
@@ -476,7 +500,8 @@ const CrearProducto = ({ onClose, onCreated }) => {
                     }
                   />
                   <p className="help-text--crear">
-                    Define si el producto se gestiona como plato o bebida (afecta a precios y flujo de trabajo).
+                    Define si el producto se gestiona como plato o bebida (afecta a
+                    precios y flujo de trabajo).
                   </p>
                 </label>
 
@@ -494,8 +519,9 @@ const CrearProducto = ({ onClose, onCreated }) => {
                     }
                   />
                   <p className="help-text--crear">
-                    Sección predeterminada del producto en cocina (Entrantes, Principales, Postres…).
-                    Al tomar nota, esta sección se puede modificar si es necesario.
+                    Sección predeterminada del producto en cocina (Entrantes,
+                    Principales, Postres…). Al tomar nota, esta sección se puede
+                    modificar si es necesario.
                     <br />
                     <em>Las secciones se crean en Dashboard → Datos del restaurante.</em>
                   </p>
@@ -516,14 +542,15 @@ const CrearProducto = ({ onClose, onCreated }) => {
                       }
                     />
                     <p className="help-text--crear">
-                      Subdivisión de cocina/barra a la que irá dirigido este producto al tomar la comanda
-                      (por ejemplo: plancha, freidora, barra, postres…).
+                      Subdivisión de cocina/barra a la que irá dirigido este producto
+                      al tomar la comanda (por ejemplo: plancha, freidora, barra,
+                      postres…).
                     </p>
                   </label>
                 )}
               </div>
 
-              {/* Precios */}
+              {/* === PRECIOS (dependen de tipo) === */}
               {formData.tipo === "plato" && (
                 <fieldset className="fieldset--crear">
                   <legend className="legend--crear">Precios plato</legend>
@@ -580,11 +607,10 @@ const CrearProducto = ({ onClose, onCreated }) => {
                   </div>
 
                   <fieldset className="fieldset--crear fieldset--adicional">
-                    <legend className="legend--crear">
-                      Adicional (unidad extra)
-                    </legend>
+                    <legend className="legend--crear">Adicional (unidad extra)</legend>
                     <p className="help-text--crear">
-                      Permite añadir una unidad extra del producto (por ejemplo: 1 croqueta extra).
+                      Permite añadir una unidad extra del producto (por ejemplo: 1
+                      croqueta extra).
                     </p>
 
                     <label className="label--crear">
@@ -670,13 +696,60 @@ const CrearProducto = ({ onClose, onCreated }) => {
             </section>
           </div>
 
-          {/* === BLOQUE INFERIOR: stock, alias, alérgenos, imagen === */}
+          {/* === BLOQUE INFERIOR: imagen + voz + receta/stock === */}
           <section className="form-section--crear">
             <div className="form-group--crear">
+              {/* === IMAGEN === */}
+              <h4 className="subtitulo--crear">🖼️ Imagen del producto</h4>
+              <p className="help-text--crear">
+                Esta imagen se mostrará en la carta digital para los clientes.
+                Recomendamos usar una imagen clara y bien iluminada.
+              </p>
+
+              <div
+                className={`drop-zone ${dragging ? "dragging" : ""}`}
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+
+                  const file = e.dataTransfer.files[0];
+                  if (file) {
+                    manejarCambioArchivo({ target: { files: [file] } });
+                  }
+                }}
+                onClick={() => document.getElementById("file-upload").click()}
+              >
+                <p>Arrastra una imagen aquí o haz clic para subir</p>
+
+                <input
+                  type="file"
+                  id="file-upload"
+                  accept="image/*"
+                  onChange={manejarCambioArchivo}
+                  className="hidden-file-input"
+                />
+
+                {imageFile && <p>📂 {imageFile.name}</p>}
+              </div>
+
+              {previewUrl && (
+                <div className="preview-container">
+                  <img
+                    src={previewUrl}
+                    alt="Vista previa del producto"
+                    className="preview-img"
+                  />
+                </div>
+              )}
+
+              {/* === VOZ (aliases) === */}
               <h4 className="subtitulo--crear">🎙️ Aliases para comandas por voz</h4>
               <p className="help-text--crear">
-                Los aliases son “subnombres” que el sistema utiliza para reconocer este producto en las comandas por voz.
-                Añade formas habituales de pedirlo (ej: “croqueta”, “croquetas de jamón”, “jamón”).
+                Los aliases son “subnombres” que el sistema utiliza para reconocer
+                este producto en las comandas por voz. Añade formas habituales de
+                pedirlo (ej: “croqueta”, “croquetas de jamón”, “jamón”).
               </p>
 
               <label className="label--editar">
@@ -707,73 +780,7 @@ const CrearProducto = ({ onClose, onCreated }) => {
                   placeholder="Ej: croqueta, jamon, croquetas jamon"
                 />
               </label>
-
-              <label className="label--editar">
-                Alérgenos (separados por comas):
-                <input
-                  type="text"
-                  name="alergenos"
-                  value={formData.alergenos?.join(", ") || ""}
-                  onChange={(e) => {
-                    const value = e.target.value
-                      .split(",")
-                      .map((a) => a.trim().toLowerCase())
-                      .filter(Boolean);
-                    setFormData((prev) => ({ ...prev, alergenos: value }));
-                  }}
-                  className="input--editar"
-                  placeholder="Ej: gluten, lactosa, huevo"
-                />
-                <p className="help-text--crear">
-                  Ayuda a informar al cliente en la carta y a mejorar la seguridad en cocina.
-                </p>
-              </label>
             </div>
-
-            {/* === IMAGEN === */}
-            <h4 className="subtitulo--crear">🖼️ Imagen del producto</h4>
-            <p className="help-text--crear">
-              Esta imagen se mostrará en la carta digital para los clientes. Recomendamos usar una imagen clara y bien iluminada.
-            </p>
-
-            {/* Subida de imagen */}
-            <div
-              className={`drop-zone ${dragging ? "dragging" : ""}`}
-              onDragOver={handleDragOver}
-              onDragLeave={handleDragLeave}
-              onDrop={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-
-                const file = e.dataTransfer.files[0];
-                if (file) {
-                  manejarCambioArchivo({ target: { files: [file] } });
-                }
-              }}
-              onClick={() => document.getElementById("file-upload").click()}
-            >
-              <p>Arrastra una imagen aquí o haz clic para subir</p>
-
-              <input
-                type="file"
-                id="file-upload"
-                accept="image/*"
-                onChange={manejarCambioArchivo}
-                className="hidden-file-input"
-              />
-
-              {imageFile && <p>📂 {imageFile.name}</p>}
-            </div>
-
-            {previewUrl && (
-              <div className="preview-container">
-                <img
-                  src={previewUrl}
-                  alt="Vista previa del producto"
-                  className="preview-img"
-                />
-              </div>
-            )}
           </section>
 
           {/* === RECETA OPCIONAL === */}
@@ -788,8 +795,9 @@ const CrearProducto = ({ onClose, onCreated }) => {
             </legend>
 
             <p className="help-text--crear">
-              La receta sirve para vincular ingredientes del stock a este producto y descontarlos automáticamente cuando se sirve.
-              Es fundamental para controlar inventario y costes con precisión.
+              La receta sirve para vincular ingredientes del stock a este producto
+              y descontarlos automáticamente cuando se sirve. Es fundamental para
+              controlar inventario y costes con precisión.
             </p>
 
             {/* LISTA DE INGREDIENTES (DESACTIVADA SI ESENCIAL) */}
@@ -801,7 +809,9 @@ const CrearProducto = ({ onClose, onCreated }) => {
               }}
             >
               {formData.receta.map((item, index) => {
-                const ing = ingredientesStock.find((i) => i._id === item.ingrediente);
+                const ing = ingredientesStock.find(
+                  (i) => i._id === item.ingrediente
+                );
                 return (
                   <div key={index} className="receta-item--crear">
                     <span className="receta-nombre--crear">
@@ -843,9 +853,7 @@ const CrearProducto = ({ onClose, onCreated }) => {
                   value: i._id,
                 }))}
                 value={formData.nuevoIng}
-                onChange={(v) =>
-                  setFormData((prev) => ({ ...prev, nuevoIng: v }))
-                }
+                onChange={(v) => setFormData((prev) => ({ ...prev, nuevoIng: v }))}
                 placeholder="Selecciona ingrediente"
               />
 
@@ -895,7 +903,8 @@ const CrearProducto = ({ onClose, onCreated }) => {
                   color: "#ff6700",
                 }}
               >
-                Para gestionar recetas completas, mejora tu plan a <strong>Profesional</strong>.
+                Para gestionar recetas completas, mejora tu plan a{" "}
+                <strong>Profesional</strong>.
               </p>
             )}
           </fieldset>
@@ -905,11 +914,7 @@ const CrearProducto = ({ onClose, onCreated }) => {
             <button type="submit" className="boton--crear">
               Guardar
             </button>
-            <button
-              type="button"
-              onClick={onClose}
-              className="boton--cancelar"
-            >
+            <button type="button" onClick={onClose} className="boton--cancelar">
               Cancelar
             </button>
           </div>

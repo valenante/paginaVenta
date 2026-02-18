@@ -82,6 +82,117 @@
   padding-bottom: 2rem; /* espacio preventivo */
 }
 
+/* ===== WRAPPER PARA INDICADOR DE SCROLL ===== */
+.panelpro-tabs-wrap {
+  position: relative;
+}
+
+/* Deja aire para que el fade/arrow no tape el último/primero */
+.panelpro-tabs {
+  padding-right: 48px;
+  padding-left: 48px;
+}
+
+/* ===== FADES (gradiente) ===== */
+.panelpro-tabs-wrap::after,
+.panelpro-tabs-wrap::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  width: 64px;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  z-index: 2;
+}
+
+/* Derecha */
+.panelpro-tabs-wrap::after {
+  right: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(10, 12, 20, 0),
+    rgba(10, 12, 20, 0.95)
+  );
+}
+
+/* Izquierda */
+.panelpro-tabs-wrap::before {
+  left: 0;
+  background: linear-gradient(
+    270deg,
+    rgba(10, 12, 20, 0),
+    rgba(10, 12, 20, 0.95)
+  );
+}
+
+.panelpro-tabs-wrap.can-right::after {
+  opacity: 1;
+}
+.panelpro-tabs-wrap.can-left::before {
+  opacity: 1;
+}
+
+/* ===== FLECHAS (affordance brutal en móvil) ===== */
+.panelpro-tabs-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 3;
+
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: linear-gradient(90deg, #6a0dad, #ff6700);
+  color: rgba(255, 255, 255, 0.9);
+
+  display: grid;
+  place-items: center;
+
+  cursor: pointer;
+  user-select: none;
+
+  transition: transform 0.2s ease, background 0.2s ease;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.panelpro-tabs-arrow:hover {
+  background: rgba(0, 0, 0, 0.38);
+  transform: translateY(-50%) scale(1.06);
+}
+
+.panelpro-tabs-arrow.left {
+  left: 10px;
+}
+
+.panelpro-tabs-arrow.right {
+  right: 10px;
+  animation: panelpro-arrow-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes panelpro-arrow-pulse {
+  0%,
+  100% {
+    transform: translateY(-50%) translateX(0);
+    opacity: 0.85;
+  }
+  50% {
+    transform: translateY(-50%) translateX(4px);
+    opacity: 1;
+  }
+}
+
+/* En desktop podés dejar flechas o apagarlas si querés */
+@media (min-width: 900px) {
+  .panelpro-tabs-arrow.right {
+    animation: none;
+  }
+}
+
 /* ===== RESPONSIVE ===== */
 @media (max-width: 650px) {
   .panelpro-tabs {

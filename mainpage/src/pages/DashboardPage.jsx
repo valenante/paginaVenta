@@ -14,11 +14,8 @@ export default function DashboardPage() {
   const isPlanEsencial =
     user?.plan === "esencial" || user?.plan === "tpv-esencial";
 
-  const labelNegocio =
-    tipoNegocio === "shop" ? "shop" : "restaurante";
-
-  const labelArticulo =
-    tipoNegocio === "shop" ? "la shop" : "el restaurante";
+  const labelNegocio = tipoNegocio === "shop" ? "shop" : "restaurante";
+  const labelArticulo = tipoNegocio === "shop" ? "la shop" : "el restaurante";
 
   const impresionTexto =
     tipoNegocio === "shop"
@@ -26,11 +23,8 @@ export default function DashboardPage() {
       : "Asigna impresoras a cocina, barra y caja y realiza pruebas.";
 
   useEffect(() => {
-    const fallback =
-      tipoNegocio === "shop" ? "Tienda" : "Restaurante";
-
-    document.title = `${config?.branding?.nombreRestaurante|| fallback
-      } | Dashboard`;
+    const fallback = tipoNegocio === "shop" ? "Tienda" : "Restaurante";
+    document.title = `${config?.branding?.nombreRestaurante || fallback} | Dashboard`;
   }, [config, tipoNegocio]);
 
   if (loading) {
@@ -42,8 +36,9 @@ export default function DashboardPage() {
   }
 
   const nombreNegocio =
-    config?.branding?.nombreRestaurante||
+    config?.branding?.nombreRestaurante ||
     (tipoNegocio === "shop" ? "Tu shop" : "Tu restaurante");
+
   const direccion = config?.informacionRestaurante?.direccion || "";
   const telefono = config?.informacionRestaurante?.telefono || "";
 
@@ -87,74 +82,62 @@ export default function DashboardPage() {
 
       {/* Grid de accesos rápidos */}
       <section className="dashboard-grid">
-        <Link to="/perfil" className="dashboard-tile card">
-          <div className="dashboard-tile-icon">👤</div>
-          <h2>Perfil</h2>
-          <p>
-            Gestiona tus datos personales, login y preferencias de usuario.
-          </p>
+        {/* 1) Operación / Negocio (lo más importante) */}
+        <Link to="/configuracion/restaurante" className="dashboard-tile card">
+          <div className="dashboard-tile-icon">🏪</div>
+          <h2>Datos de {labelNegocio}</h2>
+          <p>Actualiza branding, contacto y configuración general del entorno Alef.</p>
         </Link>
 
+        <Link to={impresionPath} className="dashboard-tile card">
+          <div className="dashboard-tile-icon">🖨️</div>
+          <h2>Impresión</h2>
+          <p>{impresionTexto}</p>
+        </Link>
+
+        {tipoNegocio === "restaurante" && !isPlanEsencial && (
+          <>
+            <Link to="/configuracion/carta" className="dashboard-tile card">
+              <div className="dashboard-tile-icon">📋</div>
+              <h2>Carta</h2>
+              <p>Gestiona la carta digital, alérgenos, platos, bebidas y visibilidad.</p>
+            </Link>
+
+            <Link to="/configuracion/reservas" className="dashboard-tile card">
+              <div className="dashboard-tile-icon">📅</div>
+              <h2>Reservas</h2>
+              <p>Administra días disponibles, capacidad y solicitudes de reservas.</p>
+            </Link>
+          </>
+        )}
+
+        <Link to="/configuracion/proveedores" className="dashboard-tile card">
+          <div className="dashboard-tile-icon">🚚</div>
+          <h2>Proveedores</h2>
+          <p>Gestiona proveedores, contactos, condiciones y relaciones comerciales.</p>
+        </Link>
+
+        {/* 2) Cuenta / Facturación (administrativo) */}
         <Link to="/mi-cuenta" className="dashboard-tile card">
           <div className="dashboard-tile-icon">💼</div>
           <h2>Mi cuenta</h2>
           <p>
-            Consulta tu plan, fecha de renovación, estado de tu suscripción y
-            datos de facturación.
+            Consulta tu plan, fecha de renovación, estado de tu suscripción y datos de
+            facturación.
           </p>
         </Link>
 
         <Link to="/facturas" className="dashboard-tile card">
           <div className="dashboard-tile-icon">🧾</div>
           <h2>Facturas</h2>
-          <p>
-            Visualiza facturas encadenadas, XML firmados y envíos AEAT.
-          </p>
+          <p>Visualiza facturas encadenadas, XML firmados y envíos AEAT.</p>
         </Link>
 
-        {/* 👉 SIEMPRE visible */}
-        <Link
-          to="/configuracion/restaurante"
-          className="dashboard-tile card"
-        >
-          <div className="dashboard-tile-icon">🏪</div>
-          <h2>Datos de {labelNegocio}</h2>
-          <p>
-            Actualiza branding, contacto y configuración general del entorno Alef.
-          </p>
-        </Link>
-        {/* 👉 SIEMPRE visible */}
-        <Link to={impresionPath} className="dashboard-tile card">
-          <div className="dashboard-tile-icon">🖨️</div>
-          <h2>Impresión</h2>
-          <p>{impresionTexto}</p>
-        </Link>
-        {/* Estas dos solo si el plan NO es esencial */}
-        {tipoNegocio === "restaurante" && !isPlanEsencial && (
-          <>
-            <Link to="/configuracion/carta" className="dashboard-tile card">
-              <div className="dashboard-tile-icon">📋</div>
-              <h2>Carta</h2>
-              <p>
-                Gestiona la carta digital, alérgenos, platos, bebidas y visibilidad.
-              </p>
-            </Link>
-
-            <Link to="/configuracion/reservas" className="dashboard-tile card">
-              <div className="dashboard-tile-icon">📅</div>
-              <h2>Reservas</h2>
-              <p>
-                Administra días disponibles, capacidad y solicitudes de reservas.
-              </p>
-            </Link>
-          </>
-        )}
-        <Link to="/configuracion/proveedores" className="dashboard-tile card">
-          <div className="dashboard-tile-icon">🚚</div>
-          <h2>Proveedores</h2>
-          <p>
-            Gestiona proveedores, contactos, condiciones y relaciones comerciales.
-          </p>
+        {/* 3) Usuario (personal, al final) */}
+        <Link to="/perfil" className="dashboard-tile card">
+          <div className="dashboard-tile-icon">👤</div>
+          <h2>Perfil</h2>
+          <p>Gestiona tus datos personales, login y preferencias de usuario.</p>
         </Link>
       </section>
     </main>

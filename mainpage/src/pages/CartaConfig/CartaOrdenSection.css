@@ -1,0 +1,212 @@
+/* =====================================================
+ * CartaOrdenSection — Estilo PRO (tabs + DnD + cards)
+ * ===================================================== */
+
+.carta-orden {
+  display: grid;
+  gap: var(--space-md);
+}
+
+/* Bloque: contenedor del orden personalizado */
+.carta-orden__box {
+  margin-top: var(--space-sm);
+  padding: var(--space-md);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-borde-suave);
+  background: #ffffff;
+  box-shadow: var(--shadow-sm);
+}
+
+/* Label principal */
+.carta-orden__label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: var(--color-texto);
+}
+
+/* Help / descripción */
+.carta-orden__help {
+  margin: 0;
+  font-size: var(--font-size-xs);
+  color: var(--color-texto-suave);
+}
+
+/* ==============================
+ * Tabs tipo pills (Platos/Bebidas)
+ * ============================== */
+
+.carta-orden__tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+  margin-top: var(--space-sm);
+}
+
+.carta-orden__tab {
+  padding: 0.38rem 0.95rem;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--color-borde-suave);
+  background: #ffffff;
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+  color: var(--color-texto);
+}
+
+.carta-orden__tab:hover {
+  background: rgba(0, 0, 0, 0.04);
+  transform: translateY(-1px);
+}
+
+.carta-orden__tab.is-active {
+  border-color: var(--color-primario);
+  background: var(--color-primario-suave);
+  color: var(--color-primario-oscuro);
+}
+
+/* Reset */
+.carta-orden__reset {
+  margin-left: auto;
+  padding: 0.38rem 0.95rem;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--color-borde-suave);
+  background: #ffffff;
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+  color: var(--color-texto);
+}
+
+.carta-orden__reset:hover:enabled {
+  background: rgba(0, 0, 0, 0.04);
+  transform: translateY(-1px);
+}
+
+.carta-orden__reset:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ==============================
+ * Lista DnD
+ * ============================== */
+
+.carta-orden__dnd {
+  margin-top: var(--space-md);
+  padding: var(--space-md);
+  border-radius: var(--radius-md);
+  border: 1px dashed var(--color-borde-suave);
+  background: #f9fafb;
+  display: grid;
+  gap: var(--space-sm);
+}
+
+.carta-orden__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+
+  padding: 0.75rem 0.85rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-borde-suave);
+  background: #ffffff;
+
+  box-shadow: var(--shadow-xs);
+  cursor: grab;
+
+  transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease;
+}
+
+.carta-orden__item:hover {
+  border-color: rgba(0, 0, 0, 0.12);
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-1px);
+}
+
+.carta-orden__item:active {
+  cursor: grabbing;
+  transform: scale(0.99);
+}
+
+.carta-orden__item-left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  min-width: 0;
+}
+
+.carta-orden__index {
+  width: 26px;
+  height: 26px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+
+  font-size: var(--font-size-xs);
+  font-weight: 800;
+  color: var(--color-primario-oscuro);
+  background: var(--color-primario-suave);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  flex-shrink: 0;
+}
+
+.carta-orden__name {
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: var(--color-texto);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Icono drag */
+.carta-orden__grip {
+  flex-shrink: 0;
+  font-size: 1rem;
+  opacity: 0.65;
+}
+
+/* Estados vacíos / loading */
+.carta-orden__state {
+  margin-top: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-borde-suave);
+  background: #ffffff;
+  font-size: var(--font-size-sm);
+  color: var(--color-texto-suave);
+}
+
+/* ==============================
+ * Responsive
+ * ============================== */
+
+@media (max-width: 768px) {
+  .carta-orden__box {
+    padding: var(--space-md);
+  }
+
+  .carta-orden__tabs {
+    gap: 8px;
+  }
+
+  .carta-orden__reset {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .carta-orden__dnd {
+    padding: var(--space-sm);
+  }
+
+  .carta-orden__item {
+    padding: 0.7rem 0.75rem;
+  }
+}

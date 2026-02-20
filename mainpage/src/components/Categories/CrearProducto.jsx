@@ -489,6 +489,36 @@ const CrearProducto = ({ onClose, onCreated }) => {
                   </p>
                 </label>
 
+                {/* === VISIBILIDAD EN CARTA === */}
+                <label className="label--crear">
+                  Visible en carta:
+                  <div className="estado-toggle--crear">
+                    <input
+                      type="checkbox"
+                      checked={formData.estado === "habilitado"}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          estado: e.target.checked ? "habilitado" : "deshabilitado",
+                        }))
+                      }
+                    />
+                    <span>
+                      {formData.estado === "habilitado" ? "Habilitado" : "Deshabilitado"}
+                    </span>
+                  </div>
+
+                  <p className="help-text--crear">
+                    Si lo deshabilitas, <strong>no aparecerá en la carta digital</strong> (clientes),
+                    pero <strong>seguirá disponible en el panel interno</strong> para que los camareros
+                    puedan seguir tomando nota si lo necesitas.
+                    <br />
+                    <em>Ejemplo:</em> si hoy te quedas sin “Tarta de queso”, la deshabilitas y no la
+                    verá el cliente en su móvil, pero el camarero podrá seguir añadiéndola desde el TPV
+                    si aún te interesa venderla en sala.
+                  </p>
+                </label>
+
                 {/* === TIPO === */}
                 <label className="label--crear">
                   Tipo:

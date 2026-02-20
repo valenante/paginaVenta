@@ -35,7 +35,7 @@ import LoginImpersonar from "./pages/LoginImpersonar";
 import DashboardPage from "./pages/DashboardPage";
 import PerfilPage from "./pages/PerfilPage";
 import RestauranteConfigPage from "./pages/RestauranteConfigPage";
-import CartaConfigPage from "./pages/CartaConfigPage";
+import CartaConfigPage from "./pages/CartaConfig/CartaConfigPage";
 import ReservasConfigPage from "./pages/ReservasConfigPage";
 import MiCuentaPage from "./pages/MiCuentaPage";
 import FacturasPage from "./pages/FacturasPage";

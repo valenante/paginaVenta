@@ -11,6 +11,7 @@
     "start": "vite"
   },
   "dependencies": {
+    "@hello-pangea/dnd": "^18.0.1",
     "@reactour/tour": "^3.8.0",
     "@stripe/stripe-js": "^8.3.0",
     "axios": "^1.13.1",

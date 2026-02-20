@@ -8,6 +8,36 @@ const api = axios.create({
   withCredentials: true,
 });
 
+/* =====================================================
+   🏷️ Inferir tenant desde hostname (subdominio)
+===================================================== */
+
+const KNOWN_APPS = new Set(["tpv", "panel", "carta", "shops", "shop", "pos"]);
+
+function inferTenantFromFrontendHost() {
+  try {
+    const host = window.location.hostname.toLowerCase();
+    const main = String(import.meta.env.VITE_MAIN_DOMAIN || "").toLowerCase();
+
+    if (!main || !host.endsWith(main)) return null;
+
+    // la-campana-panel.softalef.com
+    const sub = host.replace(`.${main}`, "");
+    const parts = sub.split("-").filter(Boolean);
+
+    const last = parts[parts.length - 1];
+    if (KNOWN_APPS.has(last)) parts.pop();
+
+    return parts.join("-") || null;
+  } catch {
+    return null;
+  }
+}
+
+/* =====================================================
+   🧠 CONFIG
+===================================================== */
+
 const AUTH_ROUTES = [
   "/auth/login",
   "/auth/registro",
@@ -26,6 +56,17 @@ const NO_REFRESH_ROUTES = [
   "/auth/logout",
 ];
 
+const HARD_INVALID_ERRORS = [
+  "TOKEN_INVALID",
+  "SESSION_REVOKED",
+  "SESSION_STALE",
+  "USER_NOT_FOUND",
+];
+
+/* =====================================================
+   🧹 SESSION HELPERS
+===================================================== */
+
 const clearClientSession = () => {
   sessionStorage.removeItem("user");
   sessionStorage.removeItem("tenantId");
@@ -33,11 +74,14 @@ const clearClientSession = () => {
 };
 
 const hardRedirectLogin = () => {
-  // evita bucle si ya estás en /login
   if (window.location.pathname !== "/login") {
     window.location.replace("/login");
   }
 };
+
+/* =====================================================
+   🔄 REFRESH CONTROL
+===================================================== */
 
 let refreshing = false;
 let queue = [];
@@ -47,38 +91,50 @@ const runQueue = (error) => {
   queue = [];
 };
 
-const isAuthRoute = (url = "") => AUTH_ROUTES.some((r) => url.includes(r));
-const isNoRefreshRoute = (url = "") => NO_REFRESH_ROUTES.some((r) => url.includes(r));
+const isAuthRoute = (url = "") =>
+  AUTH_ROUTES.some((r) => url.includes(r));
+
+const isNoRefreshRoute = (url = "") =>
+  NO_REFRESH_ROUTES.some((r) => url.includes(r));
+
+/* =====================================================
+   📤 REQUEST INTERCEPTOR
+===================================================== */
 
 api.interceptors.request.use((config) => {
   const url = config.url || "";
 
-  // Nunca mandes tenant en auth
   if (isAuthRoute(url)) {
     delete config.headers["x-tenant-id"];
     delete config.headers["X-Tenant-ID"];
     return config;
   }
 
-  // Lee user/tenant desde sessionStorage (source of truth en cliente)
   let user = null;
   try {
-    const u = sessionStorage.getItem("user");
-    user = u ? JSON.parse(u) : null;
+    const raw = sessionStorage.getItem("user");
+    user = raw ? JSON.parse(raw) : null;
   } catch { }
 
-  // superadmin nunca manda tenant
   if (user?.role === "superadmin") {
     delete config.headers["x-tenant-id"];
     delete config.headers["X-Tenant-ID"];
     return config;
   }
 
-  const tenantId = sessionStorage.getItem("tenantId") || user?.tenantId;
+  let tenantId =
+    sessionStorage.getItem("tenantId") ||
+    user?.tenantId ||
+    inferTenantFromFrontendHost();
+
+  // Si lo inferimos por hostname, lo persistimos
+  if (tenantId && !sessionStorage.getItem("tenantId")) {
+    sessionStorage.setItem("tenantId", tenantId);
+  }
+
   if (tenantId) config.headers["x-tenant-id"] = tenantId;
   else delete config.headers["x-tenant-id"];
 
-  // 🔥 Soporte correcto FormData
   if (typeof FormData !== "undefined" && config.data instanceof FormData) {
     delete config.headers["Content-Type"];
   } else {
@@ -88,55 +144,77 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+/* =====================================================
+   📥 RESPONSE INTERCEPTOR (BLINDADO)
+===================================================== */
 
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const status = error.response?.status;
-    const code = error.response?.data?.error; // tu backend devuelve { error: "TOKEN_EXPIRED" }
+    const code = error.response?.data?.error;
     const original = error.config;
 
-    // Si no es 401 -> normal
-    if (status !== 401) return Promise.reject(error);
-
-    // Si es 401 pero no es expiración -> sesión rota / inválida
-    // (NO_AUTH, TOKEN_INVALID, SESSION_REVOKED, SESSION_STALE, USER_NOT_FOUND, etc.)
-    // Si no es expiración
-    if (code !== "TOKEN_EXPIRED") {
-      const hadSession = !!sessionStorage.getItem("user");
-
-      // Solo redirigir si había sesión previa
-      if (hadSession) {
-        clearClientSession();
-        hardRedirectLogin();
-      }
-
+    if (status !== 401) {
       return Promise.reject(error);
     }
-    // Evitar bucle
-    if (!original || original._retry) return Promise.reject(error);
 
-    // No intentes refrescar en rutas auth
-    if (isNoRefreshRoute(original.url || "")) return Promise.reject(error);
+    /* =====================================================
+       🔴 ERRORES FATALES → cerrar sesión
+    ===================================================== */
+
+    if (HARD_INVALID_ERRORS.includes(code)) {
+      clearClientSession();
+      hardRedirectLogin();
+      return Promise.reject(error);
+    }
+
+    /* =====================================================
+       🟡 SI NO ES TOKEN_EXPIRED → NO TOCAR SESIÓN
+    ===================================================== */
+
+    const SHOULD_REFRESH_ERRORS = ["TOKEN_EXPIRED", "NO_AUTH"];
+
+    if (!SHOULD_REFRESH_ERRORS.includes(code)) {
+      return Promise.reject(error);
+    }
+
+    /* =====================================================
+       🟢 TOKEN_EXPIRED → intentar refresh
+    ===================================================== */
+
+    if (!original || original._retry) {
+      return Promise.reject(error);
+    }
+
+    if (isNoRefreshRoute(original.url || "")) {
+      return Promise.reject(error);
+    }
 
     original._retry = true;
 
-    // Si ya se está refrescando, espera
     if (refreshing) {
-      await new Promise((resolve, reject) => queue.push({ resolve, reject }));
-      return api(original);
+      return new Promise((resolve, reject) => {
+        queue.push({
+          resolve: () => resolve(api(original)),
+          reject,
+        });
+      });
     }
 
     refreshing = true;
+
     try {
       await api.post("/auth/refresh-token");
+
       runQueue(null);
+
       return api(original);
-    } catch (e) {
-      runQueue(e);
+    } catch (refreshError) {
+      runQueue(refreshError);
       clearClientSession();
       hardRedirectLogin();
-      return Promise.reject(e);
+      return Promise.reject(refreshError);
     } finally {
       refreshing = false;
     }

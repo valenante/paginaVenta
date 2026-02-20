@@ -1,10 +1,11 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
-import { useConfig } from "../context/ConfigContext.jsx";
-import api from "../utils/api";
-import AlertaMensaje from "../components/AlertaMensaje/AlertaMensaje.jsx";
-import ModalConfirmacion from "../components/Modal/ModalConfirmacion.jsx";
-import CartaPromocionesPanel from "../components/Promociones/CartaPromocionesPanel.jsx";
-import "../styles/CartaConfigPage.css";
+import { useConfig } from "../../context/ConfigContext.jsx";
+import api from "../../utils/api.js";
+import AlertaMensaje from "../../components/AlertaMensaje/AlertaMensaje.jsx";
+import ModalConfirmacion from "../../components/Modal/ModalConfirmacion.jsx";
+import CartaOrdenSection from "./CartaOrdenSection.jsx";
+import CartaPromocionesPanel from "../../components/Promociones/CartaPromocionesPanel.jsx";
+import "../../styles/CartaConfigPage.css";
 
 const HOME_SECTIONS = ["carrousel", "secciones"];
 
@@ -186,9 +187,8 @@ export default function CartaConfigPage() {
     (section, index) => {
       openModalConfirm({
         titulo: "Eliminar imagen",
-        mensaje: `¿Seguro que deseas eliminar esta imagen de "${
-          section === "carrousel" ? "Carrusel" : "Secciones"
-        }"? Esta acción no se puede deshacer.`,
+        mensaje: `¿Seguro que deseas eliminar esta imagen de "${section === "carrousel" ? "Carrusel" : "Secciones"
+          }"? Esta acción no se puede deshacer.`,
         onConfirm: () => {
           setForm((prev) => {
             const updated = { ...prev };
@@ -410,9 +410,8 @@ export default function CartaConfigPage() {
               </div>
 
               <div
-                className={`imagenes-grid card-border-dashed ${
-                  dragOverSection === section ? "drag-over" : ""
-                }`}
+                className={`imagenes-grid card-border-dashed ${dragOverSection === section ? "drag-over" : ""
+                  }`}
                 onDragOver={(e) => {
                   e.preventDefault();
                   uploadTargetRef.current = section;
@@ -523,112 +522,12 @@ export default function CartaConfigPage() {
           })}
         </section>
 
-        {/* === CONFIGURACIÓN CARTA === */}
-        <section className="config-section">
-          <div className="config-section-header">
-            <h3 className="section-title">🍽 Opciones de la carta</h3>
-            <p className="section-description">
-              Define qué información se muestra en cada producto y cómo se ordena
-              la carta.
-            </p>
-          </div>
-
-          <label className="checkbox-row">
-            <input
-              type="checkbox"
-              name="carta.mostrarFotos"
-              checked={!!form.carta?.mostrarFotos}
-              onChange={handleChange}
-            />
-            <span>Mostrar fotos</span>
-          </label>
-
-          <label className="checkbox-row">
-            <input
-              type="checkbox"
-              name="carta.mostrarAlergenos"
-              checked={!!form.carta?.mostrarAlergenos}
-              onChange={handleChange}
-            />
-            <span>Mostrar alérgenos</span>
-          </label>
-
-          <label className="checkbox-row">
-            <input
-              type="checkbox"
-              name="carta.mostrarValoraciones"
-              checked={!!form.carta?.mostrarValoraciones}
-              onChange={handleChange}
-            />
-            <span>Mostrar valoraciones</span>
-          </label>
-
-          <div className="config-field">
-            <label>Tamaño de las imágenes de producto</label>
-            <select
-              name="carta.tamanoImagen"
-              value={form.carta?.tamanoImagen || "mediano"}
-              onChange={handleChange}
-            >
-              <option value="pequeno">Pequeño</option>
-              <option value="mediano">Mediano (por defecto)</option>
-              <option value="grande">Grande</option>
-            </select>
-            <small className="theme-help">
-              Afecta al tamaño de la miniatura en cada tarjeta de producto.
-            </small>
-          </div>
-
-          <div className="config-field">
-            <label>Orden de la carta</label>
-            <select
-              name="carta.modoOrden"
-              value={form.carta?.modoOrden || "por_categoria"}
-              onChange={handleChange}
-            >
-              <option value="por_categoria">Por categorías (por defecto)</option>
-              <option value="alfabetico">Alfabético (A-Z)</option>
-              <option value="precio_asc">Precio: de menor a mayor</option>
-              <option value="precio_desc">Precio: de mayor a menor</option>
-              <option value="personalizado">
-                Personalizado (según orden del producto)
-              </option>
-            </select>
-          </div>
-
-          <div className="config-field-row">
-            <div className="config-field">
-              <label>Columnas en escritorio</label>
-              <select
-                name="carta.columnasDesktop"
-                value={form.carta?.columnasDesktop ?? "auto"}
-                onChange={handleChange}
-              >
-                <option value="auto">Automático (recomendado)</option>
-                <option value="2">2 columnas</option>
-                <option value="4">4 columnas</option>
-              </select>
-              <small className="theme-help">
-                En pantallas grandes podrás elegir 2 o 4. “Automático” mantiene el comportamiento actual.
-              </small>
-            </div>
-
-            <div className="config-field">
-              <label>Columnas en móvil</label>
-              <select
-                name="carta.columnasMovil"
-                value={form.carta?.columnasMovil ?? "1"}
-                onChange={handleChange}
-              >
-                <option value="1">1 columna</option>
-                <option value="2">2 columnas</option>
-              </select>
-              <small className="theme-help">
-                En móvil solo 1 o 2 para que no se rompa el diseño.
-              </small>
-            </div>
-          </div>
-        </section>
+        <CartaOrdenSection
+          form={form}
+          setForm={setForm}
+          handleChange={handleChange}
+          showAlert={showAlert}
+        />
 
         {/* === TEMA VISUAL DE LA CARTA === */}
         <section className="config-section">

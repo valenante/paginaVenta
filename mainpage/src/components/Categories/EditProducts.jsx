@@ -99,6 +99,7 @@ const EditProduct = ({
 
       seccion: safeStr(product?.seccion),
       estacion: safeStr(product?.estacion),
+      estado: safeStr(product?.estado || "habilitado"),
 
       precios: normalizePrecios(product?.precios),
 
@@ -534,6 +535,34 @@ const EditProduct = ({
 
                   <p className="help-text--crear">
                     Organiza productos en TPV y permite filtrar la carta por tipo.
+                  </p>
+                </label>
+
+                {/* === VISIBILIDAD EN CARTA === */}
+                <label className="label--crear">
+                  Visible en carta:
+                  <div className="estado-toggle--crear">
+                    <input
+                      type="checkbox"
+                      checked={formData.estado === "habilitado"}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          estado: e.target.checked ? "habilitado" : "deshabilitado",
+                        }))
+                      }
+                    />
+                    <span>
+                      {formData.estado === "habilitado" ? "Habilitado" : "Deshabilitado"}
+                    </span>
+                  </div>
+
+                  <p className="help-text--crear">
+                    Si lo deshabilitas, <strong>no se mostrará en la carta digital</strong> para clientes,
+                    pero <strong>seguirá apareciendo en el panel interno</strong> para tomar nota.
+                    <br />
+                    <em>Ejemplo:</em> si hoy no tienes “Croquetas”, la deshabilitas para que no la pidan
+                    por QR, pero el camarero aún podrá añadirla desde el TPV si decides venderlas en sala.
                   </p>
                 </label>
 

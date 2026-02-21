@@ -8,6 +8,14 @@ const api = axios.create({
   withCredentials: true,
 });
 
+const hasLocalUser = () => {
+  try {
+    return !!sessionStorage.getItem("user");
+  } catch {
+    return false;
+  }
+};
+
 /* =====================================================
    🏷️ Inferir tenant desde hostname (subdominio)
 ===================================================== */
@@ -173,9 +181,12 @@ api.interceptors.response.use(
        🟡 SI NO ES TOKEN_EXPIRED → NO TOCAR SESIÓN
     ===================================================== */
 
-    const SHOULD_REFRESH_ERRORS = ["TOKEN_EXPIRED", "NO_AUTH"];
+    const shouldRefresh =
+      code === "TOKEN_EXPIRED" ||
+      (code === "NO_AUTH" && hasLocalUser());
 
-    if (!SHOULD_REFRESH_ERRORS.includes(code)) {
+    if (!shouldRefresh) {
+      // NO_AUTH sin user => usuario anónimo en landing => no tocar nada
       return Promise.reject(error);
     }
 

@@ -1,4 +1,5 @@
-import { useState } from "react";
+// src/pages/superadmin/tenants/components/TenantTable.jsx
+import { useMemo, useState } from "react";
 import {
   FiTrash2,
   FiEye,
@@ -21,6 +22,40 @@ import Portal from "../../../../components/ui/Portal";
 
 import "./TenantTable.css";
 
+function readEnvMode() {
+  const v = String(sessionStorage.getItem("alef_env") || "prod").toLowerCase();
+  return v === "sandbox" ? "sandbox" : "prod";
+}
+
+function readSandboxTenantId() {
+  return String(sessionStorage.getItem("sandbox_tenantId") || "").trim();
+}
+
+function EnvPill({ mode, tenant }) {
+  const isSandbox = mode === "sandbox";
+  const style = {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: 8,
+    padding: "4px 10px",
+    borderRadius: 999,
+    fontSize: 12,
+    fontWeight: 700,
+    letterSpacing: 0.2,
+    border: "1px solid rgba(255,255,255,0.12)",
+    background: isSandbox ? "rgba(255, 193, 7, 0.12)" : "rgba(46, 204, 113, 0.10)",
+    color: isSandbox ? "rgba(255, 193, 7, 0.95)" : "rgba(46, 204, 113, 0.95)",
+    whiteSpace: "nowrap",
+  };
+
+  return (
+    <span style={style} title={isSandbox ? "Modo sandbox activo" : "Modo producción activo"}>
+      {isSandbox ? "🟡 SANDBOX" : "🟢 PROD"}
+      {isSandbox && tenant ? <span style={{ opacity: 0.9 }}>({tenant})</span> : null}
+    </span>
+  );
+}
+
 export default function TenantTable({ tenants, onRefresh }) {
   const [selected, setSelected] = useState(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
@@ -33,7 +68,6 @@ export default function TenantTable({ tenants, onRefresh }) {
   const [planTarget, setPlanTarget] = useState(null);
 
   const [alerta, setAlerta] = useState(null); // { tipo, mensaje }
-
   const showAlert = (tipo, mensaje) => setAlerta({ tipo, mensaje });
 
   const normalizeAxiosError = (err) => {
@@ -44,6 +78,45 @@ export default function TenantTable({ tenants, onRefresh }) {
       "Error inesperado";
     return msg;
   };
+
+  // =========================
+  // ENV MODE (panel)
+  // =========================
+  const panelEnvMode = useMemo(() => readEnvMode(), []); // snapshot inicial
+  const sandboxTenantId = useMemo(() => readSandboxTenantId(), []); // snapshot inicial
+
+  const getEffectiveEnvModeForTenant = (tenantSlugRaw) => {
+    const tenantSlug = String(tenantSlugRaw || "").trim();
+    const env = readEnvMode(); // lee “live”
+    const sbTenant = readSandboxTenantId(); // lee “live”
+
+    // ✅ Regla: impersona sandbox SOLO si hay sandbox real “activo” y coincide con el tenant
+    // (si no coincide, impersona PROD aunque el panel esté en sandbox)
+    if (env === "sandbox" && sbTenant && sbTenant === tenantSlug) return "sandbox";
+    return "prod";
+  };
+
+  const envLabel = useMemo(() => {
+    const env = panelEnvMode;
+    if (env === "sandbox") return { mode: "sandbox", tenant: sandboxTenantId || "—" };
+    return { mode: "prod", tenant: "" };
+  }, [panelEnvMode, sandboxTenantId]);
+
+  const impersonacionPreview = useMemo(() => {
+    if (!impersonarTarget) return null;
+    const slug = (impersonarTarget.slug || impersonarTarget.tenantId || "").trim();
+    const env = getEffectiveEnvModeForTenant(slug);
+
+    const rawEnv = readEnvMode();
+    const sb = readSandboxTenantId();
+    const mismatchWarn =
+      rawEnv === "sandbox" && sb && slug && sb !== slug
+        ? `⚠️ Estás en modo sandbox, pero el sandbox activo es "${sb}". Para "${slug}" entrarás en PROD.`
+        : null;
+
+    return { env, slug, mismatchWarn };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [impersonarTarget]);
 
   /* =========================
      Actions
@@ -71,9 +144,13 @@ export default function TenantTable({ tenants, onRefresh }) {
     const tenant = impersonarTarget;
     if (!tenant) return;
 
-    const tenantSlug = tenant.slug || tenant.tenantId;
+    const tenantSlug = String(tenant.slug || tenant.tenantId || "").trim();
     const reasonText = (reasonTextRaw || "").trim();
 
+    if (!tenantSlug) {
+      showAlert("error", "Tenant inválido (falta slug/tenantId).");
+      return;
+    }
     if (!reasonCategory) {
       showAlert("warn", "Selecciona una categoría.");
       return;
@@ -86,30 +163,45 @@ export default function TenantTable({ tenants, onRefresh }) {
     if (loadingImpersonar) return;
     setLoadingImpersonar(true);
 
+    const envMode = getEffectiveEnvModeForTenant(tenantSlug);
+
     // ✅ abrir ventana ANTES del await (evita bloqueador de popups)
     const w = window.open("about:blank", "_blank");
+    if (!w) {
+      setLoadingImpersonar(false);
+      showAlert(
+        "warn",
+        "El navegador bloqueó la nueva pestaña. Permite pop-ups para continuar con la impersonación."
+      );
+      return;
+    }
 
     try {
       const { data } = await api.post(`/admin/superadmin/impersonar/${tenantSlug}`, {
         reasonCategory,
         reasonText,
+        envMode, // ✅ CLAVE
       });
 
       if (data?.redirectUrl) {
-        // Usa la pestaña que ya abriste (mejor UX y sin popup blocker)
         w.location.href = data.redirectUrl;
 
-        showAlert("info", "Impersonación creada. Abriendo tenant…");
-        setImpersonarTarget(null);
+        showAlert(
+          "info",
+          envMode === "sandbox"
+            ? `🟡 Impersonación creada en SANDBOX (${tenantSlug}). Abriendo tenant…`
+            : `🟢 Impersonación creada en PROD (${tenantSlug}). Abriendo tenant…`
+        );
 
-        return; // ⬅️ ESTO ES CLAVE
+        setImpersonarTarget(null);
+        return;
       }
 
       // ⛔ Solo llega aquí si NO hubo redirectUrl
-      if (w) w.close();
+      w.close();
       showAlert("error", "No se recibió redirectUrl del servidor.");
     } catch (err) {
-      if (w) w.close();
+      w.close();
       showAlert("error", normalizeAxiosError(err));
     } finally {
       setLoadingImpersonar(false);
@@ -164,9 +256,12 @@ export default function TenantTable({ tenants, onRefresh }) {
         />
       )}
 
-      <h3>Tenants registrados</h3>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 14 }}>
+        <h3 style={{ margin: 0 }}>Tenants registrados</h3>
+        <EnvPill mode={envLabel.mode} tenant={envLabel.tenant} />
+      </div>
 
-      <div className="table-wrapper">
+      <div className="table-wrapper" style={{ marginTop: 10 }}>
         <table className="tenants-table">
           <thead>
             <tr>
@@ -186,9 +281,17 @@ export default function TenantTable({ tenants, onRefresh }) {
               const tipo = t.tipoNegocio || "restaurante";
               const slug = t.slug || t.tenantId;
 
+              // pill por fila (solo marca sandbox si coincide exactamente con el sandbox activo)
+              const rowEnv = getEffectiveEnvModeForTenant(slug);
+              const showRowSandbox =
+                rowEnv === "sandbox" && readEnvMode() === "sandbox" && readSandboxTenantId() === String(slug || "").trim();
+
               return (
                 <tr key={t._id}>
-                  <td>{t.nombre}</td>
+                  <td style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                    <span>{t.nombre}</span>
+                    {showRowSandbox ? <EnvPill mode="sandbox" tenant="" /> : null}
+                  </td>
 
                   <td className={`tipo tipo-${tipo}`}>
                     {tipo === "shop" ? <FiShoppingBag /> : <FiCoffee />}
@@ -219,7 +322,7 @@ export default function TenantTable({ tenants, onRefresh }) {
                     <button
                       onClick={() => abrirImpersonacion(t)}
                       disabled={loadingImpersonar || !slug}
-                      title="Entrar como admin"
+                      title={`Entrar como admin (${getEffectiveEnvModeForTenant(slug).toUpperCase()})`}
                     >
                       <FiLogIn />
                     </button>
@@ -291,12 +394,28 @@ export default function TenantTable({ tenants, onRefresh }) {
         <Portal>
           <ModalConfirmacion
             titulo="Impersonar tenant"
-            mensaje={`Vas a entrar como admin de "${impersonarTarget.nombre}". Indica el motivo (mín. 20 caracteres).`}
+            mensaje={
+              (() => {
+                const preview = impersonacionPreview;
+                const name = impersonarTarget.nombre;
+                const slug = (impersonarTarget.slug || impersonarTarget.tenantId || "").trim();
+                const env = preview?.env || "prod";
+                const envText = env === "sandbox" ? "🟡 SANDBOX" : "🟢 PROD";
+
+                return `Vas a entrar como admin de "${name}" (${slug}). Modo: ${envText}. Indica el motivo (mín. 20 caracteres).`;
+              })()
+            }
             placeholder="Motivo (mínimo 20 caracteres)"
             onClose={() => setImpersonarTarget(null)}
             onConfirm={confirmarImpersonacion}
           >
             <div style={{ display: "grid", gap: 10 }}>
+              {!!impersonacionPreview?.mismatchWarn && (
+                <div style={{ padding: "8px 10px", borderRadius: 10, background: "rgba(255,193,7,0.12)" }}>
+                  <strong>Atención:</strong> {impersonacionPreview.mismatchWarn}
+                </div>
+              )}
+
               <label style={{ fontWeight: 600 }}>
                 Categoría
                 <select

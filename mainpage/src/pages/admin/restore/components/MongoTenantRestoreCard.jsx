@@ -29,7 +29,47 @@ function toneForDbStatus(status) {
 
 function isTerminalAgentStatus(status) {
   const st = String(status || "").toLowerCase();
-  return st === "completed" || st === "failed";
+  return ["completed", "failed", "done", "success", "finished", "error"].includes(st);
+}
+
+const ENV_STORAGE_KEY = "alef_env";          // "prod" | "sandbox"
+const SB_TENANT_KEY = "sandbox_tenantId";    // slug
+
+function readEnvMode() {
+  try {
+    const v = String(sessionStorage.getItem(ENV_STORAGE_KEY) || "prod").toLowerCase();
+    return v === "sandbox" ? "sandbox" : "prod";
+  } catch {
+    return "prod";
+  }
+}
+
+function readSandboxTenantId() {
+  try {
+    return String(sessionStorage.getItem(SB_TENANT_KEY) || "").trim();
+  } catch {
+    return "";
+  }
+}
+
+function activateSandbox(tenantSlug) {
+  const slug = String(tenantSlug || "").trim();
+  if (!slug) return false;
+  sessionStorage.setItem(ENV_STORAGE_KEY, "sandbox");
+  sessionStorage.setItem(SB_TENANT_KEY, slug);
+  return true;
+}
+
+function deactivateSandbox() {
+  sessionStorage.setItem(ENV_STORAGE_KEY, "prod");
+  sessionStorage.removeItem(SB_TENANT_KEY);
+}
+
+function extractSlugFromDbName(dbName) {
+  // "tpv_zabor-feten" o "tpv_zabor-feten_sandbox"
+  const s = String(dbName || "").trim();
+  if (!s) return "";
+  return s.replace(/^tpv_/, "").replace(/_sandbox$/, "");
 }
 
 export default function MongoTenantRestoreCard() {
@@ -51,6 +91,12 @@ export default function MongoTenantRestoreCard() {
   const [jobsError, setJobsError] = useState("");
 
   const tenantTrim = useMemo(() => tenant.trim(), [tenant]);
+
+  const envInfo = useMemo(() => {
+    const mode = readEnvMode();
+    const sb = readSandboxTenantId();
+    return { mode, tenant: sb };
+  }, []);
 
   const expectedConfirm = useMemo(() => {
     if (!tenantTrim) return target === "prod" ? "MONGO_RESTORE_PROD:<tenant>:I_UNDERSTAND" : "MONGO_RESTORE:<tenant>:sandbox";
@@ -110,9 +156,20 @@ export default function MongoTenantRestoreCard() {
 
       // si termina, mensaje humano
       if (isTerminalAgentStatus(data?.status)) {
-        if (String(data?.status).toLowerCase() === "completed") {
+        const st = String(data?.status || "").toLowerCase();
+
+        const success =
+          ["completed", "done", "success", "finished", "ok"].includes(st) ||
+          data?.exitCode === 0;
+
+        if (success) {
           const warns = data?.warnings?.length || 0;
-          setOk(warns > 0 ? `✅ Restore completado con advertencias (${warns}).` : "✅ Restore completado.");
+          setOk(
+            warns > 0
+              ? `✅ Restore completado con advertencias (${warns}).`
+              : "✅ Restore completado."
+          );
+
           if (target === "sandbox" && tenantTrim) {
             sessionStorage.setItem("alef_env", "sandbox");
             sessionStorage.setItem("sandbox_tenantId", tenantTrim);
@@ -211,7 +268,12 @@ export default function MongoTenantRestoreCard() {
     <section className="restore-card">
       <div className="restore-card-header">
         <h3>🧬 MongoDB — Restore por Tenant</h3>
-
+        <p className="muted" style={{ margin: "6px 0 0" }}>
+          Modo actual:{" "}
+          {envInfo.mode === "sandbox"
+            ? <>🟡 <strong>SANDBOX</strong> {envInfo.tenant ? `(${envInfo.tenant})` : ""}</>
+            : <>🟢 <strong>PROD</strong></>}
+        </p>
         <div className="restore-right-actions">
           <button
             className="rb-btn rb-btn-ghost"
@@ -225,8 +287,30 @@ export default function MongoTenantRestoreCard() {
           <button
             className="rb-btn rb-btn-ghost"
             onClick={() => {
-              sessionStorage.setItem("alef_env", "prod");
-              sessionStorage.removeItem("sandbox_tenantId");
+              setError("");
+              setOk("");
+
+              if (!tenantTrim) {
+                setError("Introduce un tenant slug para activar SANDBOX.");
+                return;
+              }
+
+              const confirmMsg = `Activar modo SANDBOX para "${tenantTrim}"?\n\nEsto hará que el panel opere contra el DB _sandbox para ese tenant.`;
+              if (!window.confirm(confirmMsg)) return;
+
+              activateSandbox(tenantTrim);
+              window.location.reload();
+            }}
+            disabled={!tenantTrim}
+            title={!tenantTrim ? "Escribe un tenant slug arriba" : "Activar SANDBOX para este tenant"}
+          >
+            🟡 SANDBOX
+          </button>
+
+          <button
+            className="rb-btn rb-btn-ghost"
+            onClick={() => {
+              deactivateSandbox();
               window.location.reload();
             }}
             title="Salir del modo sandbox"
@@ -370,10 +454,41 @@ export default function MongoTenantRestoreCard() {
                       </td>
                       <td>{j.warningsCount ?? 0}</td>
                       <td>{j.initiatedBy?.email || "—"}</td>
-                      <td style={{ textAlign: "right" }}>
-                        <button className="rb-btn rb-btn-ghost" onClick={() => trackJob(jid)} title="Track (consultar estado/tail del agent)">
+                      <td style={{ textAlign: "right", display: "flex", gap: 8, justifyContent: "flex-end" }}>
+                        <button
+                          className="rb-btn rb-btn-ghost"
+                          onClick={() => trackJob(jid)}
+                          title="Track (consultar estado/tail del agent)"
+                        >
                           📌 Track
                         </button>
+
+                        {(() => {
+                          const isSandboxJob =
+                            String(j.targetMode || "").toLowerCase() === "sandbox" ||
+                            String(j.targetTenant || "").endsWith("_sandbox");
+
+                          const isCompleted = String(j.status || "").toUpperCase().startsWith("COMPLETED");
+
+                          const slug = extractSlugFromDbName(j.sourceTenant || j.targetTenant);
+
+                          if (!isSandboxJob || !isCompleted || !slug) return null;
+
+                          return (
+                            <button
+                              className="rb-btn rb-btn-ghost"
+                              onClick={() => {
+                                const msg = `Activar SANDBOX para "${slug}" usando este restore?\n\nEsto cambia el modo del panel.`;
+                                if (!window.confirm(msg)) return;
+                                activateSandbox(slug);
+                                window.location.reload();
+                              }}
+                              title={`Activar SANDBOX (${slug})`}
+                            >
+                              🟡 Usar sandbox
+                            </button>
+                          );
+                        })()}
                       </td>
                     </tr>
                   );

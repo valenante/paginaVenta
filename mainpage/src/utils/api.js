@@ -16,6 +16,22 @@ const hasLocalUser = () => {
   }
 };
 
+const getEnvMode = () => {
+  try {
+    return sessionStorage.getItem("alef_env") || "prod"; // "sandbox" | "prod"
+  } catch {
+    return "prod";
+  }
+};
+
+const getSandboxTenantId = () => {
+  try {
+    return sessionStorage.getItem("sandbox_tenantId") || "";
+  } catch {
+    return "";
+  }
+};
+
 /* =====================================================
    🏷️ Inferir tenant desde hostname (subdominio)
 ===================================================== */
@@ -155,7 +171,32 @@ api.interceptors.request.use((config) => {
     user = raw ? JSON.parse(raw) : null;
   } catch { }
 
+    const envMode = getEnvMode();                 // "prod" | "sandbox"
+  const sandboxTenantId = getSandboxTenantId(); // slug
+
+  // ✅ Header env (solo si sandbox)
+  if (envMode === "sandbox") {
+    config.headers = config.headers || {};
+    config.headers["x-alef-env"] = "sandbox";
+  } else {
+    if (config.headers) delete config.headers["x-alef-env"];
+  }
+
   if (user?.role === "superadmin") {
+    // 🔥 En modo sandbox, el superadmin SI necesita un tenant para operar
+    if (envMode === "sandbox") {
+      if (!sandboxTenantId) {
+        // Sin tenant seleccionado → no mandamos x-tenant-id y el backend te devolverá TENANT_REQUIRED
+        delete config.headers["x-tenant-id"];
+        delete config.headers["X-Tenant-ID"];
+        return config;
+      }
+
+      config.headers["x-tenant-id"] = sandboxTenantId;
+      return config;
+    }
+
+    // prod normal: superadmin opera global (sin tenant)
     delete config.headers["x-tenant-id"];
     delete config.headers["X-Tenant-ID"];
     return config;

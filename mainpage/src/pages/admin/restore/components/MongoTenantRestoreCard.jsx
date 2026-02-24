@@ -113,6 +113,11 @@ export default function MongoTenantRestoreCard() {
         if (String(data?.status).toLowerCase() === "completed") {
           const warns = data?.warnings?.length || 0;
           setOk(warns > 0 ? `✅ Restore completado con advertencias (${warns}).` : "✅ Restore completado.");
+          if (target === "sandbox" && tenantTrim) {
+            sessionStorage.setItem("alef_env", "sandbox");
+            sessionStorage.setItem("sandbox_tenantId", tenantTrim);
+            window.location.reload();
+          }
         } else {
           setError(data?.error?.message || "❌ Restore falló.");
         }
@@ -215,6 +220,18 @@ export default function MongoTenantRestoreCard() {
             title={!job?.jobId ? "Primero inicia un restore o elige uno del historial" : "Consultar estado al agent"}
           >
             🔄 Estado
+          </button>
+
+          <button
+            className="rb-btn rb-btn-ghost"
+            onClick={() => {
+              sessionStorage.setItem("alef_env", "prod");
+              sessionStorage.removeItem("sandbox_tenantId");
+              window.location.reload();
+            }}
+            title="Salir del modo sandbox"
+          >
+            🟢 PROD
           </button>
 
           <button className="rb-btn rb-btn-ghost" onClick={fetchJobs} disabled={jobsLoading}>

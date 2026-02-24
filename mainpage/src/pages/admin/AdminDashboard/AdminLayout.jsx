@@ -11,6 +11,7 @@ import {
   FiActivity,
   FiRefreshCcw,
   FiDatabase,
+  FiDownload, // ✅ NUEVO
 } from "react-icons/fi";
 import api from "../../../utils/api";
 
@@ -21,7 +22,6 @@ export default function AdminLayout() {
     try {
       await api.post("/auth/logout");
     } catch (e) {
-      // aunque falle, limpiamos sesión local
       console.warn("Logout falló:", e?.response?.data || e?.message);
     } finally {
       sessionStorage.removeItem("user");
@@ -54,7 +54,7 @@ export default function AdminLayout() {
             <FiActivity /> Estado del sistema
           </NavLink>
 
-          {/* ✅ NUEVO: Rollback API */}
+          {/* ✅ Rollback API */}
           <NavLink to="/superadmin/rollback">
             <FiRefreshCcw /> Rollback API
           </NavLink>
@@ -65,6 +65,10 @@ export default function AdminLayout() {
 
           <NavLink to="/superadmin/rgpd">
             <FiFileText /> RGPD & Datos
+          </NavLink>
+
+          <NavLink to="/superadmin/exports">
+            <FiDownload /> Exports / Reports
           </NavLink>
 
           <NavLink to="/superadmin/migrations">
@@ -82,7 +86,6 @@ export default function AdminLayout() {
           <NavLink to="/superadmin/settings">
             <FiSettings /> Ajustes
           </NavLink>
-
         </nav>
 
         <button className="logout-btn" onClick={logout}>

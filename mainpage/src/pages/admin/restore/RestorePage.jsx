@@ -2,9 +2,35 @@ import { useEffect, useMemo, useState } from "react";
 import api from "../../../utils/api.js";
 import "./RestorePage.css";
 import MongoTenantRestoreCard from "./components/MongoTenantRestoreCard";
-import ModalConfirmacion from "../../../components/Modal/ModalConfirmacion.jsx";
 
 const API_BASE = "/admin/system";
+
+const RESTORE_ID_KEY = "alef_restoreId";
+
+function readStoredRestoreId() {
+  try {
+    const v = sessionStorage.getItem(RESTORE_ID_KEY);
+    return v && String(v).trim() ? String(v).trim() : "";
+  } catch {
+    return "";
+  }
+}
+
+function storeRestoreId(id) {
+  try {
+    if (id) sessionStorage.setItem(RESTORE_ID_KEY, String(id));
+  } catch { }
+}
+
+function clearStoredRestoreId() {
+  try {
+    sessionStorage.removeItem(RESTORE_ID_KEY);
+  } catch { }
+}
+
+function getApiError(e, fallback = "Error") {
+  return e?.response?.data?.message || e?.message || fallback;
+}
 
 function StatusDot({ state }) {
   return <span className={`status-dot ${state}`} />;
@@ -222,7 +248,7 @@ El sistema está preparado para operación real SaaS.
       const { data } = await api.get(`${API_BASE}/backup/status`);
       setBackupStatus(data?.ok ? data : null);
     } catch (e) {
-      setError(e?.response?.data?.message || e?.message || "Error status");
+      setError(getApiError(e, "Error status"));
     } finally {
       setStatusLoading(false);
       setLastRefresh(Date.now());
@@ -274,6 +300,12 @@ El sistema está preparado para operación real SaaS.
 
   useEffect(() => {
     fetchStatus();
+
+    const rid = readStoredRestoreId();
+    if (rid) {
+      setRestoreId(rid);
+      fetchDiff(rid);
+    }
   }, []);
 
   useEffect(() => {
@@ -321,12 +353,13 @@ El sistema está preparado para operación real SaaS.
 
       const { data } = await api.post(`${API_BASE}/backup/restore/stage`, payload);
 
-      const rid = data?.restoreId;
-      setRestoreId(rid || "");
+      const rid = data?.restoreId || "";
+      setRestoreId(rid);
+      storeRestoreId(rid);
       setStageOpen(false);
 
       setOkMsg(`✅ Stage completado. restoreId=${rid}`);
-      await fetchDiff(rid);
+      if (rid) await fetchDiff(rid);
     } catch (e) {
       setError(e?.response?.data?.message || e?.message || "Stage falló");
     } finally {
@@ -369,15 +402,28 @@ El sistema está preparado para operación real SaaS.
       const { data } = await api.post(`${API_BASE}/backup/restore/apply`, payload);
 
       setApplyOpen(false);
-      setOkMsg(`✅ Restore aplicado correctamente. Backup local: ${data?.backupDir || "—"}`);
 
-      // refrescamos estado general
-      await Promise.all([
-        fetchStatus(),
-        fetchSnapshots()
-      ]);
-      // y re-diff por si quieres ver que quedó igual
-      await fetchDiff(restoreId);
+      const backupPath = data?.backupFile || data?.backupDir || "—";
+      const rolledBack = !!data?.rolledBack;
+
+      setOkMsg(
+        rolledBack
+          ? `⚠️ Apply falló pero se hizo rollback automático. Backup: ${backupPath}`
+          : `✅ Restore aplicado correctamente. Backup: ${backupPath}`
+      );
+
+      // Si todo OK y NO hubo rollback, limpiamos staging
+      if (!rolledBack) {
+        clearStoredRestoreId();
+        setRestoreId("");
+      }
+
+      await Promise.all([fetchStatus(), fetchSnapshots()]);
+
+      // Si hubo rollback, mantenemos restoreId para que puedas inspeccionar y reintentar
+      if (rolledBack) {
+        await fetchDiff(restoreId);
+      }
     } catch (e) {
       setError(e?.response?.data?.message || e?.message || "Apply falló");
     } finally {
@@ -648,6 +694,22 @@ El sistema está preparado para operación real SaaS.
               title={!restoreId ? "Primero ejecuta Stage" : "Actualizar diff"}
             >
               🔄 Refrescar diff
+            </button>
+
+            <button
+              className="rb-btn rb-btn-ghost"
+              disabled={!restoreId || diffLoading || applying}
+              onClick={() => {
+                clearStoredRestoreId();
+                setRestoreId("");
+                setDiffs([]);
+                setExpanded(new Set());
+                setOkMsg("🧹 Staging limpiado.");
+                setError("");
+              }}
+              title="Borra el restoreId guardado y limpia la vista"
+            >
+              🧹 Limpiar staging
             </button>
 
             <button

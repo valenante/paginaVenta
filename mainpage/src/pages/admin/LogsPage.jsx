@@ -113,14 +113,27 @@ export default function LogsPage() {
   // ❌ Borrar todos los logs
   // ============================
   const handleDeleteAll = async () => {
-    if (!confirm("¿Seguro que quieres eliminar TODOS los logs?")) return;
+    const reason = prompt("Motivo (mínimo 10 caracteres):");
+    if (!reason || reason.trim().length < 10) {
+      alert("Motivo requerido (mín. 10 caracteres).");
+      return;
+    }
+
+    const confirmText = prompt('Escribe EXACTAMENTE: DELETE_ALL_LOGS');
+    if (confirmText !== "DELETE_ALL_LOGS") {
+      alert("Confirmación incorrecta.");
+      return;
+    }
 
     try {
-      await api.delete("/admin/superadmin/logs");
+      await api.delete("/admin/superadmin/logs", {
+        data: { reason: reason.trim(), confirm: confirmText },
+      });
+
       closeModal();
       setPage(1);
       await fetchLogs();
-      alert("Logs eliminados.");
+      alert("Logs eliminados (se conservó el audit del borrado).");
     } catch (err) {
       console.error("❌ Error eliminando logs:", err);
       alert("No se pudieron eliminar los logs.");
@@ -132,111 +145,111 @@ export default function LogsPage() {
   // ============================
   const modal = selectedId
     ? createPortal(
-        <div className="logs-modal-logsAdmin" onClick={closeModal}>
-          <div
-            className="logs-modal-content-logsAdmin"
-            onClick={(e) => e.stopPropagation()}
-            role="dialog"
-            aria-modal="true"
-            aria-label="Detalle del log"
-          >
-            <header className="logs-modal-header-logsAdmin">
-              <div>
-                <h2 className="logs-modal-title-logsAdmin">Detalle del Log</h2>
-                <p className="logs-modal-subtitle-logsAdmin">
-                  ID: <span className="logs-mono-logsAdmin">{selectedId}</span>
-                </p>
-              </div>
+      <div className="logs-modal-logsAdmin" onClick={closeModal}>
+        <div
+          className="logs-modal-content-logsAdmin"
+          onClick={(e) => e.stopPropagation()}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Detalle del log"
+        >
+          <header className="logs-modal-header-logsAdmin">
+            <div>
+              <h2 className="logs-modal-title-logsAdmin">Detalle del Log</h2>
+              <p className="logs-modal-subtitle-logsAdmin">
+                ID: <span className="logs-mono-logsAdmin">{selectedId}</span>
+              </p>
+            </div>
 
-              <button
-                className="logs-modal-x-logsAdmin"
-                onClick={closeModal}
-                aria-label="Cerrar"
-                type="button"
-              >
-                ✕
-              </button>
-            </header>
+            <button
+              className="logs-modal-x-logsAdmin"
+              onClick={closeModal}
+              aria-label="Cerrar"
+              type="button"
+            >
+              ✕
+            </button>
+          </header>
 
-            {detailLoading ? (
-              <div className="logs-modal-loading-logsAdmin">
-                <div className="logs-skeleton-logsAdmin" />
-                <div className="logs-skeleton-logsAdmin" />
-                <div className="logs-skeleton-logsAdmin" />
-              </div>
-            ) : selected ? (
-              <div className="logs-modal-body-logsAdmin">
-                <section className="logs-modal-grid-logsAdmin">
-                  <div className="logs-kv-logsAdmin">
-                    <span>Nivel</span>
-                    <strong className={`nivel-chip-logsAdmin nivel-${(selected.nivel || "").toLowerCase()}`}>
-                      {selected.nivel || "—"}
-                    </strong>
-                  </div>
-
-                  <div className="logs-kv-logsAdmin">
-                    <span>Acción</span>
-                    <strong className="logs-mono-logsAdmin">{selected.accion || "—"}</strong>
-                  </div>
-
-                  <div className="logs-kv-logsAdmin">
-                    <span>Tenant</span>
-                    <strong>{selected.tenant || "—"}</strong>
-                  </div>
-
-                  <div className="logs-kv-logsAdmin">
-                    <span>Fecha</span>
-                    <strong>
-                      {selected.createdAt ? new Date(selected.createdAt).toLocaleString() : "—"}
-                    </strong>
-                  </div>
-
-                  <div className="logs-kv-logsAdmin logs-kv-span-logsAdmin">
-                    <span>Mensaje</span>
-                    <strong>{selected.mensaje || "—"}</strong>
-                  </div>
-                </section>
-
-                <div className="logs-json-sections-logsAdmin">
-                  <h3>Actor</h3>
-                  <pre className="logs-pre-logsAdmin">
-                    {JSON.stringify(selected.actor || {}, null, 2)}
-                  </pre>
-
-                  <h3>Contexto (ctx)</h3>
-                  <pre className="logs-pre-logsAdmin">
-                    {JSON.stringify(selected.ctx || {}, null, 2)}
-                  </pre>
-
-                  <h3>Recurso</h3>
-                  <pre className="logs-pre-logsAdmin">
-                    {JSON.stringify(selected.resource || null, null, 2)}
-                  </pre>
-
-                  <h3>Diferencias (diff)</h3>
-                  <pre className="logs-pre-logsAdmin">
-                    {JSON.stringify(selected.diff || null, null, 2)}
-                  </pre>
-
-                  <h3>Datos adicionales</h3>
-                  <pre className="logs-pre-logsAdmin">
-                    {JSON.stringify(selected.datos || {}, null, 2)}
-                  </pre>
+          {detailLoading ? (
+            <div className="logs-modal-loading-logsAdmin">
+              <div className="logs-skeleton-logsAdmin" />
+              <div className="logs-skeleton-logsAdmin" />
+              <div className="logs-skeleton-logsAdmin" />
+            </div>
+          ) : selected ? (
+            <div className="logs-modal-body-logsAdmin">
+              <section className="logs-modal-grid-logsAdmin">
+                <div className="logs-kv-logsAdmin">
+                  <span>Nivel</span>
+                  <strong className={`nivel-chip-logsAdmin nivel-${(selected.nivel || "").toLowerCase()}`}>
+                    {selected.nivel || "—"}
+                  </strong>
                 </div>
 
-                <footer className="logs-modal-footer-logsAdmin">
-                  <button className="logs-modal-close-logsAdmin" onClick={closeModal}>
-                    Cerrar
-                  </button>
-                </footer>
+                <div className="logs-kv-logsAdmin">
+                  <span>Acción</span>
+                  <strong className="logs-mono-logsAdmin">{selected.accion || "—"}</strong>
+                </div>
+
+                <div className="logs-kv-logsAdmin">
+                  <span>Tenant</span>
+                  <strong>{selected.tenant || "—"}</strong>
+                </div>
+
+                <div className="logs-kv-logsAdmin">
+                  <span>Fecha</span>
+                  <strong>
+                    {selected.createdAt ? new Date(selected.createdAt).toLocaleString() : "—"}
+                  </strong>
+                </div>
+
+                <div className="logs-kv-logsAdmin logs-kv-span-logsAdmin">
+                  <span>Mensaje</span>
+                  <strong>{selected.mensaje || "—"}</strong>
+                </div>
+              </section>
+
+              <div className="logs-json-sections-logsAdmin">
+                <h3>Actor</h3>
+                <pre className="logs-pre-logsAdmin">
+                  {JSON.stringify(selected.actor || {}, null, 2)}
+                </pre>
+
+                <h3>Contexto (ctx)</h3>
+                <pre className="logs-pre-logsAdmin">
+                  {JSON.stringify(selected.ctx || {}, null, 2)}
+                </pre>
+
+                <h3>Recurso</h3>
+                <pre className="logs-pre-logsAdmin">
+                  {JSON.stringify(selected.resource || null, null, 2)}
+                </pre>
+
+                <h3>Diferencias (diff)</h3>
+                <pre className="logs-pre-logsAdmin">
+                  {JSON.stringify(selected.diff || null, null, 2)}
+                </pre>
+
+                <h3>Datos adicionales</h3>
+                <pre className="logs-pre-logsAdmin">
+                  {JSON.stringify(selected.datos || {}, null, 2)}
+                </pre>
               </div>
-            ) : (
-              <p className="logs-loading-logsAdmin">No se pudo cargar el detalle.</p>
-            )}
-          </div>
-        </div>,
-        document.body
-      )
+
+              <footer className="logs-modal-footer-logsAdmin">
+                <button className="logs-modal-close-logsAdmin" onClick={closeModal}>
+                  Cerrar
+                </button>
+              </footer>
+            </div>
+          ) : (
+            <p className="logs-loading-logsAdmin">No se pudo cargar el detalle.</p>
+          )}
+        </div>
+      </div>,
+      document.body
+    )
     : null;
 
   // ============================

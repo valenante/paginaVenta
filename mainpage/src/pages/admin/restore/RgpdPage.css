@@ -80,7 +80,7 @@
 }
 
 .rgpd-tenant {
-  width: 100%;
+  width: auto;
   text-align: left;
   border: 1px solid rgba(255,255,255,0.08);
   background: rgba(0,0,0,0.18);
@@ -176,7 +176,7 @@
 }
 
 .rgpd-history-top {
-  width: 100%;
+  width: auto;
   display: flex;
   justify-content: space-between;
   gap: 12px;

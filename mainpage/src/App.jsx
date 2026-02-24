@@ -65,7 +65,9 @@ import SetPassword from "./components/ForgotPassword/SetPassword";
 import TenantTable from "./pages/admin/AdminDashboard/components/TenantTable.jsx";
 import CamareroPanel from "./pages/panel/CamareroPanel";
 import CocineroPanel from "./pages/panel/CocineroPanel";
-
+import PrintCenterPage from "./pages/PrintCenterPage.jsx";
+import SuperadminExportsPage from "./pages/admin/exports/SuperadminExportsPage.jsx";
+import ExportsPage from "./pages/ExportsPage.jsx";
 import VerifactuGlobalModal from "./context/VerifactuGlobalModal/VerifactuGlobalModal.jsx";
 import { FeaturesPlanProvider } from "./context/FeaturesPlanContext.jsx";
 
@@ -286,6 +288,12 @@ function AppRoutes() {
         </UserLayout>
       } />
 
+      <Route path="/configuracion/impresion/centro" element={
+        <UserLayout>
+          <PrintCenterPage />
+        </UserLayout>
+      } />
+
       <Route path="/configuracion/impresion-shop" element={
         <UserLayout>
           <ConfigImpresionShopPage />
@@ -345,6 +353,15 @@ function AppRoutes() {
         }
       />
 
+      <Route
+        path="/configuracion/exports"
+        element={
+          <UserLayout>
+            <ExportsPage />
+          </UserLayout>
+        }
+      />
+
       {/* 👨‍🍽️ PANEL CAMARERO */}
       <Route
         path="/camarero"
@@ -398,6 +415,7 @@ function AppRoutes() {
         <Route path="rollback" element={<ApiRollbackPage />} />
         <Route path="restore" element={<RestorePage />} />
         <Route path="rgpd" element={<RgpdPage />} />
+        <Route path="exports" element={<SuperadminExportsPage />} />
         <Route path="migrations" element={<MigrationsPage />} />
         <Route path="migrations/:slug" element={<MigrationsTenantPage />} />
         <Route path="tenants" element={<TenantsPage />} />
@@ -421,23 +439,23 @@ export default function App() {
   return (
     <>
       <SocketProvider>
-          <FeaturesPlanProvider>
-            <CategoriasProvider>
-              <ShopCategoriasProvider>
-                <ProductosProvider>
-                  {loadingApp && <LoadingScreen />}
+        <FeaturesPlanProvider>
+          <CategoriasProvider>
+            <ShopCategoriasProvider>
+              <ProductosProvider>
+                {loadingApp && <LoadingScreen />}
 
-                  {!loadingApp && (
-                    <>
-                      <VerifactuGlobalModal />
-                      <CookieBanner />
-                      <AppRoutes />
-                    </>
-                  )}
-                </ProductosProvider>
-              </ShopCategoriasProvider>
-            </CategoriasProvider>
-          </FeaturesPlanProvider>
+                {!loadingApp && (
+                  <>
+                    <VerifactuGlobalModal />
+                    <CookieBanner />
+                    <AppRoutes />
+                  </>
+                )}
+              </ProductosProvider>
+            </ShopCategoriasProvider>
+          </CategoriasProvider>
+        </FeaturesPlanProvider>
       </SocketProvider>
     </>
   );

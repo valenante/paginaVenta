@@ -1,0 +1,439 @@
+/*****************************************************
+ * Print Center – Alef (v1.1)
+ * - Desktop: tabla + columna acciones sticky (siempre visible)
+ * - Móvil: cards sin scroll horizontal (acciones siempre visibles)
+ *****************************************************/
+
+.pc-card {
+  padding: var(--space-xl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+/* =========================
+   Header
+========================= */
+.pc-header {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-md);
+  align-items: flex-start;
+}
+
+.pc-header h1 {
+  margin: 0;
+  font-size: clamp(1.35rem, 2.2vw, var(--font-size-2xl));
+  letter-spacing: -0.02em;
+  color: var(--color-primario);
+}
+
+.pc-header .text-suave {
+  margin: 0;
+  max-width: 860px;
+  color: var(--color-texto-suave);
+  line-height: 1.45;
+}
+
+.pc-header__right {
+  display: flex;
+  gap: var(--space-sm);
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.pc-agent {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-size: var(--font-size-sm);
+  color: var(--color-texto);
+}
+
+/* =========================
+   Controles
+========================= */
+.pc-controls {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: var(--space-md);
+  align-items: end;
+}
+
+.pc-control {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.pc-control label {
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: var(--color-texto);
+}
+
+/* Selects / inputs */
+.pc-control select {
+  width: 100%;
+  font-family: var(--font-base);
+  font-size: var(--font-size-sm);
+  line-height: 1.2;
+  padding: 0.7rem 0.85rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-borde-suave);
+  background: var(--color-superficie, #ffffff);
+  color: var(--color-texto);
+  outline: none;
+  transition: border-color 140ms ease, box-shadow 140ms ease;
+  appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, var(--color-texto-suave) 50%),
+    linear-gradient(135deg, var(--color-texto-suave) 50%, transparent 50%);
+  background-position: calc(100% - 18px) 50%, calc(100% - 12px) 50%;
+  background-size: 6px 6px, 6px 6px;
+  background-repeat: no-repeat;
+  padding-right: 2.4rem;
+}
+
+.pc-control select:focus {
+  border-color: var(--color-secundario, #4465e7);
+  box-shadow: 0 0 0 3px rgba(68, 101, 231, 0.18);
+}
+
+.pc-control--inline {
+  display: flex;
+  gap: var(--space-sm);
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.pc-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-size: var(--font-size-sm);
+  color: var(--color-texto);
+  user-select: none;
+}
+
+.pc-switch input {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+/* =========================
+   Hint / Avisos
+========================= */
+.pc-hint {
+  padding: 0.8rem 0.95rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-borde-suave);
+  background: rgba(255, 255, 255, 0.65);
+  box-shadow: var(--shadow-suave);
+  color: var(--color-texto);
+  font-size: var(--font-size-sm);
+}
+
+.pc-hint--warn {
+  border-color: rgba(245, 158, 11, 0.35);
+  background: rgba(245, 158, 11, 0.12);
+}
+
+/* =========================
+   Tabla (desktop)
+========================= */
+.pc-tableWrap {
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-borde-suave);
+  overflow: auto;
+  background: var(--color-superficie, #fff);
+  box-shadow: var(--shadow-suave);
+}
+
+.pc-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 980px;
+}
+
+.pc-table th,
+.pc-table td {
+  padding: 0.75rem 0.8rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+  vertical-align: top;
+}
+
+.pc-table th {
+  text-align: left;
+  font-size: var(--font-size-sm);
+  color: var(--color-texto);
+  opacity: 0.9;
+  background: rgba(0, 0, 0, 0.02);
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.pc-empty {
+  text-align: center;
+  padding: 1.2rem;
+  color: var(--color-texto-suave);
+}
+
+.pc-row--failed {
+  background: rgba(220, 38, 38, 0.06);
+}
+
+/* ✅ Columna acciones SIEMPRE visible (sticky a la derecha) */
+.pc-colActions {
+  text-align: right;
+  width: 360px;
+  min-width: 360px;
+  position: sticky;
+  right: 0;
+  z-index: 2;
+  background: var(--color-superficie, #fff);
+  box-shadow: -10px 0 16px rgba(0, 0, 0, 0.06);
+}
+
+/* Header sticky a la derecha también */
+.pc-table thead th.pc-colActions {
+  z-index: 3;
+  background: rgba(0, 0, 0, 0.02);
+}
+
+/* Si la fila es failed, que el sticky mantenga el mismo fondo */
+.pc-row--failed td.pc-colActions {
+  background: rgba(220, 38, 38, 0.06);
+}
+
+/* =========================
+   Badges
+========================= */
+.pc-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.35rem 0.6rem;
+  border-radius: 999px;
+  border: 1px solid var(--color-borde-suave);
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.pc-badge--ok {
+  background: rgba(22, 163, 74, 0.12);
+  border-color: rgba(22, 163, 74, 0.25);
+  color: var(--color-success, #16a34a);
+}
+
+.pc-badge--bad {
+  background: rgba(220, 38, 38, 0.12);
+  border-color: rgba(220, 38, 38, 0.25);
+  color: var(--color-danger, #dc2626);
+}
+
+.pc-badge--warn {
+  background: rgba(245, 158, 11, 0.12);
+  border-color: rgba(245, 158, 11, 0.25);
+  color: var(--color-warning, #f59e0b);
+}
+
+.pc-badge--neutral {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+/* =========================
+   Actions (desktop)
+========================= */
+.pc-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.pc-printerSelect {
+  max-width: 240px;
+  min-width: 190px;
+  font-family: var(--font-base);
+  font-size: var(--font-size-sm);
+  padding: 0.6rem 0.8rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-borde-suave);
+  background: var(--color-superficie, #fff);
+  color: var(--color-texto);
+  outline: none;
+  transition: border-color 140ms ease, box-shadow 140ms ease;
+}
+
+.pc-printerSelect:focus {
+  border-color: var(--color-secundario, #4465e7);
+  box-shadow: 0 0 0 3px rgba(68, 101, 231, 0.18);
+}
+
+.pc-submeta {
+  margin-top: 0.45rem;
+  font-size: var(--font-size-xs, 0.8rem);
+  color: var(--color-texto-suave);
+}
+
+.pc-mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+.pc-err {
+  max-width: 360px;
+  white-space: normal;
+  color: var(--color-texto);
+  opacity: 0.92;
+}
+
+/* ======================================================
+   MOBILE: Cards (sin scroll horizontal, botones visibles)
+====================================================== */
+.pc-jobList {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-md);
+}
+
+.pc-emptyCard {
+  padding: 1rem;
+  border: 1px solid var(--color-borde-suave);
+  border-radius: var(--radius-lg);
+  background: var(--color-superficie, #fff);
+  color: var(--color-texto-suave);
+  text-align: center;
+}
+
+.pc-jobCard {
+  border: 1px solid var(--color-borde-suave);
+  border-radius: var(--radius-lg);
+  background: var(--color-superficie, #fff);
+  box-shadow: var(--shadow-suave);
+  overflow: hidden;
+}
+
+.pc-jobCard--failed {
+  border-color: rgba(220, 38, 38, 0.25);
+  background: rgba(220, 38, 38, 0.04);
+}
+
+.pc-jobHead {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  align-items: flex-start;
+  padding: 0.95rem 0.95rem 0.75rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.pc-jobKind {
+  font-weight: 800;
+  color: var(--color-texto);
+}
+
+.pc-jobMetaRow {
+  margin-top: 0.25rem;
+  font-size: var(--font-size-xs, 0.82rem);
+  color: var(--color-texto-suave);
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.pc-dot {
+  opacity: 0.55;
+}
+
+.pc-jobBody {
+  padding: 0.85rem 0.95rem;
+  display: grid;
+  gap: 0.65rem;
+}
+
+.pc-kv {
+  display: grid;
+  grid-template-columns: 110px 1fr;
+  gap: 0.75rem;
+  align-items: baseline;
+}
+
+.pc-kv--full {
+  grid-template-columns: 110px 1fr;
+}
+
+.pc-k {
+  font-size: var(--font-size-xs, 0.82rem);
+  color: var(--color-texto-suave);
+  font-weight: 700;
+}
+
+.pc-v {
+  color: var(--color-texto);
+}
+
+.pc-jobActions {
+  padding: 0.85rem 0.95rem 0.95rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+  display: grid;
+  gap: 0.75rem;
+}
+
+.pc-jobActions .pc-printerSelect {
+  width: 100%;
+  max-width: none;
+  min-width: unset;
+}
+
+.pc-jobBtns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-sm);
+}
+
+.pc-jobBtns .btn {
+  width: 100%;
+}
+
+/* =========================
+   Responsive ajustes generales
+========================= */
+@media (max-width: 1024px) {
+  .pc-card {
+    padding: var(--space-lg);
+  }
+
+  .pc-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .pc-header__right {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 768px) {
+  .pc-card {
+    padding: var(--space-md);
+    gap: var(--space-md);
+  }
+
+  .pc-controls {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pc-control select,
+  .pc-printerSelect {
+    transition: none;
+  }
+}

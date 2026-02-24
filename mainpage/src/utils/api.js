@@ -105,11 +105,42 @@ const isAuthRoute = (url = "") =>
 const isNoRefreshRoute = (url = "") =>
   NO_REFRESH_ROUTES.some((r) => url.includes(r));
 
+const CSRF_COOKIE_DEV = "alef_csrf";
+const CSRF_COOKIE_PROD = "__Secure-alef_csrf";
+
+const getCookie = (name) => {
+  try {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(";").shift();
+    return null;
+  } catch {
+    return null;
+  }
+};
+
+const SAFE_METHODS = new Set(["get", "head", "options"]);
+
+const attachCsrf = (config) => {
+  const method = String(config.method || "get").toLowerCase();
+  if (SAFE_METHODS.has(method)) return;
+
+  const token =
+    getCookie(CSRF_COOKIE_PROD) ||
+    getCookie(CSRF_COOKIE_DEV);
+
+  if (token) {
+    config.headers = config.headers || {};
+    config.headers["x-csrf-token"] = decodeURIComponent(token);
+  }
+};
+
 /* =====================================================
    📤 REQUEST INTERCEPTOR
 ===================================================== */
 
 api.interceptors.request.use((config) => {
+  attachCsrf(config);
   const url = config.url || "";
 
   if (isAuthRoute(url)) {
@@ -162,6 +193,20 @@ api.interceptors.response.use(
     const status = error.response?.status;
     const code = error.response?.data?.error;
     const original = error.config;
+
+    // 🔥 Si el backend pide CSRF, bootstrap y reintenta 1 vez
+    if (
+      status === 403 &&
+      (code === "CSRF_MISSING" || code === "CSRF_HEADER_MISSING" || code === "CSRF_INVALID") &&
+      original &&
+      !original._csrfRetry
+    ) {
+      original._csrfRetry = true;
+      try {
+        await api.get("/auth/me/me"); // emite cookie CSRF si hay sesión
+      } catch { }
+      return api(original);
+    }
 
     if (status !== 401) {
       return Promise.reject(error);

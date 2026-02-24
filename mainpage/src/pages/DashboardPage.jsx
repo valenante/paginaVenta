@@ -133,6 +133,12 @@ export default function DashboardPage() {
           <p>Visualiza facturas encadenadas, XML firmados y envíos AEAT.</p>
         </Link>
 
+        <Link to="/configuracion/exports" className="dashboard-tile card">
+          <div className="dashboard-tile-icon">📤</div>
+          <h2>Exports / Reports</h2>
+          <p>Genera CSV y reportes en segundo plano. Historial auditable y descarga segura.</p>
+        </Link>
+
         {/* 3) Usuario (personal, al final) */}
         <Link to="/perfil" className="dashboard-tile card">
           <div className="dashboard-tile-icon">👤</div>

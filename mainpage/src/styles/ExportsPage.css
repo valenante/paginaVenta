@@ -1,0 +1,572 @@
+/*****************************************************
+ * ExportsPage – Alef (v1.0 · listo para venta)
+ * - Responsive perfecto (desktop/tablet/móvil)
+ * - Grid auto-fit (no se rompe al agregar/quitar filtros/campos)
+ * - Tabla responsive (thead desaparece y se vuelve “cards”)
+ * - Estados con chips + dot + tonos
+ *****************************************************/
+
+/* =========================
+   Page
+========================= */
+.exports-page {
+  padding: var(--space-xl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  color: var(--color-texto);
+}
+
+/* =========================
+   Header
+========================= */
+.exports-header h2 {
+  margin: 0;
+  font-size: clamp(1.35rem, 2.2vw, var(--font-size-2xl));
+  letter-spacing: -0.02em;
+  color: var(--color-primario);
+}
+
+.exports-header p {
+  margin: 6px 0 0;
+  max-width: 820px;
+  color: var(--color-texto-suave);
+  line-height: 1.45;
+}
+
+/* =========================
+   Alert wrapper
+========================= */
+.exports-alert {
+  padding: 0;
+}
+
+/* =========================
+   Tabs
+========================= */
+.exports-tabs {
+  display: flex;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.exports-tab {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0.7rem 0.9rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-borde-suave);
+  background: var(--color-superficie, #fff);
+  color: var(--color-texto);
+  font-weight: 800;
+  cursor: pointer;
+  transition: border-color 140ms ease, box-shadow 140ms ease, transform 90ms ease,
+    background 140ms ease, opacity 140ms ease;
+}
+
+.exports-tab:hover {
+  transform: translateY(-1px);
+  border-color: rgba(0, 0, 0, 0.18);
+  box-shadow: var(--shadow-suave);
+}
+
+.exports-tab.is-active {
+  border-color: rgba(68, 101, 231, 0.55);
+  box-shadow: 0 0 0 3px rgba(68, 101, 231, 0.14);
+}
+
+.exports-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--color-warning, #f59e0b);
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.18);
+}
+
+/* =========================
+   Card (contenedor)
+========================= */
+.exports-card {
+  border: 1px solid var(--color-borde-suave);
+  border-radius: var(--radius-lg);
+  background: var(--color-superficie, #fff);
+  box-shadow: var(--shadow-suave);
+  padding: var(--space-lg);
+}
+
+.exports-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-sm);
+}
+
+.exports-card-head h3 {
+  margin: 0;
+  font-size: clamp(1.05rem, 1.4vw, 1.2rem);
+  font-weight: 900;
+  color: var(--color-texto);
+}
+
+/* =========================
+   Muted
+========================= */
+.exports-muted {
+  margin: 0;
+  color: var(--color-texto-suave);
+  line-height: 1.35;
+}
+
+/* =========================
+   Form
+========================= */
+.exports-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  margin-top: var(--space-sm);
+}
+
+.exports-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--space-md);
+  align-items: start;
+}
+
+.exports-row-tight {
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: var(--space-sm);
+}
+
+/* labels */
+.exports-label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  font-size: var(--font-size-sm);
+  font-weight: 800;
+  color: var(--color-texto);
+}
+
+.exports-label.small {
+  font-size: var(--font-size-xs);
+  font-weight: 900;
+}
+
+/* inputs/selects */
+.exports-input {
+  width: auto;
+  font-family: var(--font-base);
+  font-size: var(--font-size-sm);
+  line-height: 1.2;
+  padding: 0.7rem 0.85rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-borde-suave);
+  background: var(--color-superficie, #ffffff);
+  color: var(--color-texto);
+  outline: none;
+  transition: border-color 140ms ease, box-shadow 140ms ease,
+    transform 80ms ease, background 140ms ease;
+}
+
+.exports-input:focus {
+  border-color: var(--color-secundario, #4465e7);
+  box-shadow: 0 0 0 3px rgba(68, 101, 231, 0.18);
+}
+
+.exports-input:disabled {
+  opacity: 0.75;
+  cursor: not-allowed;
+  background: var(--color-gris-claro, #f5f5f5);
+}
+
+/* select caret bonito */
+select.exports-input {
+  cursor: pointer;
+  appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, var(--color-texto-suave) 50%),
+    linear-gradient(135deg, var(--color-texto-suave) 50%, transparent 50%);
+  background-position: calc(100% - 18px) 50%, calc(100% - 12px) 50%;
+  background-size: 6px 6px, 6px 6px;
+  background-repeat: no-repeat;
+  padding-right: 2.4rem;
+}
+
+/* date: icon en modo oscuro del SO */
+.exports-input[type="date"] {
+  color-scheme: light;
+}
+
+/* =========================
+   Checks
+========================= */
+.exports-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.65rem 0.85rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-borde-suave);
+  background: rgba(0, 0, 0, 0.02);
+  cursor: pointer;
+  font-weight: 800;
+  color: var(--color-texto);
+  transition: border-color 140ms ease, box-shadow 140ms ease, transform 90ms ease,
+    background 140ms ease, opacity 140ms ease;
+}
+
+.exports-check:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-suave);
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.exports-check input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--color-secundario, #4465e7);
+}
+
+.exports-check.is-disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.exports-check.is-disabled:hover {
+  transform: none;
+  box-shadow: none;
+  background: rgba(0, 0, 0, 0.02);
+}
+
+/* =========================
+   Actions
+========================= */
+.exports-actions {
+  display: flex;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+/* =========================
+   Botones (se acopla a tu .btn si existe)
+========================= */
+.exports-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+
+  padding: 0.7rem 0.95rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-borde-suave);
+  background: var(--color-superficie, #fff);
+  color: var(--color-texto);
+  font-weight: 900;
+  cursor: pointer;
+  transition: border-color 140ms ease, box-shadow 140ms ease, transform 90ms ease,
+    background 140ms ease, opacity 140ms ease;
+}
+
+.exports-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-suave);
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.exports-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.exports-btn.primary {
+  border-color: rgba(22, 163, 74, 0.35);
+  background: rgba(22, 163, 74, 0.08);
+}
+
+.exports-btn.primary:hover {
+  background: rgba(22, 163, 74, 0.12);
+}
+
+.exports-btn.danger {
+  border-color: rgba(220, 38, 38, 0.35);
+  background: rgba(220, 38, 38, 0.08);
+}
+
+.exports-btn.danger:hover {
+  background: rgba(220, 38, 38, 0.12);
+}
+
+/* =========================
+   Filters (historial)
+========================= */
+.exports-filters {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--space-md);
+  align-items: end;
+  margin-top: var(--space-sm);
+  margin-bottom: var(--space-md);
+}
+
+/* =========================
+   Tabla Historial (grid)
+========================= */
+.exports-table {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.exports-thead {
+  display: grid;
+  grid-template-columns: 140px 1fr 190px 1fr 220px;
+  gap: var(--space-sm);
+  padding: 0.75rem 0.9rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-borde-suave);
+  background: rgba(0, 0, 0, 0.03);
+  font-weight: 900;
+  color: var(--color-texto);
+}
+
+.exports-row-item {
+  display: grid;
+  grid-template-columns: 140px 1fr 190px 1fr 220px;
+  gap: var(--space-sm);
+  padding: 0.85rem 0.9rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-borde-suave);
+  background: var(--color-superficie, #fff);
+  box-shadow: var(--shadow-suave);
+  transition: transform 90ms ease, box-shadow 140ms ease, border-color 140ms ease;
+}
+
+.exports-row-item:hover {
+  transform: translateY(-1px);
+  border-color: rgba(0, 0, 0, 0.16);
+  box-shadow: var(--shadow-md, 0 10px 22px rgba(0, 0, 0, 0.08));
+}
+
+.exports-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+.exports-strong {
+  font-weight: 900;
+  color: var(--color-texto);
+  word-break: break-word;
+}
+
+.exports-sub {
+  font-size: var(--font-size-xs);
+  color: var(--color-texto-suave);
+  word-break: break-word;
+}
+
+.exports-actions-cell {
+  display: flex;
+  gap: var(--space-sm);
+  align-items: center;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+}
+
+/* =========================
+   Badges (estado)
+========================= */
+.exports-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.35rem 0.6rem;
+  border-radius: 999px;
+  border: 1px solid var(--color-borde-suave);
+  background: rgba(0, 0, 0, 0.03);
+  font-weight: 900;
+  font-size: var(--font-size-xs);
+  text-transform: uppercase;
+  width: fit-content;
+}
+
+.exports-badge::before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--color-gris-medio, #cccccc);
+}
+
+.exports-badge.ok {
+  border-color: rgba(22, 163, 74, 0.25);
+  background: rgba(22, 163, 74, 0.08);
+}
+
+.exports-badge.ok::before {
+  background: var(--color-success, #16a34a);
+}
+
+.exports-badge.warn {
+  border-color: rgba(245, 158, 11, 0.25);
+  background: rgba(245, 158, 11, 0.10);
+}
+
+.exports-badge.warn::before {
+  background: var(--color-warning, #f59e0b);
+}
+
+.exports-badge.danger {
+  border-color: rgba(220, 38, 38, 0.25);
+  background: rgba(220, 38, 38, 0.08);
+}
+
+.exports-badge.danger::before {
+  background: var(--color-danger, #dc2626);
+}
+
+.exports-badge.neutral {
+  opacity: 0.92;
+}
+
+/* Error hint (FAILED) — versión discreta */
+.exports-error {
+  grid-column: 1 / -1;
+  margin-top: 0.35rem;
+
+  padding: 0.45rem 0.65rem;
+  /* ↓ menos alto */
+  border-radius: 10px;
+
+  border: 1px solid rgba(220, 38, 38, 0.14);
+  /* ↓ menos borde */
+  background: rgba(220, 38, 38, 0.04);
+  /* ↓ menos rojo */
+  color: rgba(153, 27, 27, 0.92);
+
+  font-size: var(--font-size-xs);
+  /* ↓ más pequeño */
+  line-height: 1.25;
+}
+
+/* El “Error:” como chip discreto */
+.exports-error b {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.12rem 0.45rem;
+  border-radius: 999px;
+  background: rgba(220, 38, 38, 0.10);
+  border: 1px solid rgba(220, 38, 38, 0.16);
+  font-size: 0.72rem;
+  /* ↓ aún más pequeño */
+  letter-spacing: 0.02em;
+  margin-right: 0.35rem;
+}
+
+/* Si el texto del error es largo, que no rompa la UI */
+.exports-error {
+  word-break: break-word;
+}
+
+/* =========================
+   Modal body
+========================= */
+.exports-modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+/* =========================
+   Pagination
+========================= */
+.exports-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-top: var(--space-md);
+}
+
+/* =========================
+   Responsive
+========================= */
+@media (max-width: 1024px) {
+  .exports-page {
+    padding: var(--space-lg);
+  }
+
+  .exports-thead,
+  .exports-row-item {
+    grid-template-columns: 140px 1fr 170px 1fr 200px;
+  }
+}
+
+@media (max-width: 860px) {
+  .exports-thead {
+    display: none;
+  }
+
+  .exports-row-item {
+    grid-template-columns: 1fr;
+  }
+
+  .exports-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .exports-actions .exports-btn {
+    width: 100%;
+  }
+
+  .exports-actions-cell .exports-btn {
+    width: 100%;
+  }
+
+  .exports-pagination {
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 768px) {
+  .exports-page {
+    padding: var(--space-md);
+    gap: var(--space-md);
+  }
+
+  .exports-tabs {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .exports-tab {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+/* =========================
+   Reduce motion (opcional)
+========================= */
+@media (prefers-reduced-motion: reduce) {
+
+  .exports-tab,
+  .exports-row-item,
+  .exports-input,
+  .exports-btn,
+  .exports-check {
+    transition: none !important;
+  }
+}

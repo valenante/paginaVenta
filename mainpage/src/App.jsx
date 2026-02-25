@@ -120,20 +120,20 @@ function LandingPage() {
     }
   }, [location]);
 
-  return (
-    <div className="main-grid">
-      <TopBar />
-      <Introduccion />
-      <Hero />
-      <Funcionamiento />
-      <Features />
-      <Gallery />
-      <Packs />
-      <About />
-      <Contact />
-      <Footer />
-    </div>
-  );
+return (
+  <div className="main-grid">
+    <TopBar />
+    <Introduccion />
+    <Hero />
+    <Funcionamiento />
+    <Features />
+    {/* <Gallery /> */}
+    <Packs />
+    {/* <About /> */}
+    <Contact />
+    <Footer />
+  </div>
+);
 }
 
 /* ==========================================

@@ -1,49 +1,49 @@
 import React from "react";
 import "./Funcionamiento.css";
-import setupImg from "../../assets/imagenes/main.png";
 
 export default function Funcionamiento() {
   return (
     <section className="Fn" aria-labelledby="fn-title">
       <div className="Fn-inner">
-
         {/* TÍTULO CENTRAL */}
         <header className="Fn-header">
           <span className="Fn-badge">Así funciona Alef de principio a fin</span>
           <h2 id="fn-title">Tu sistema Alef funcionando en minutos</h2>
           <p>
-            Desde la activación del entorno hasta tu primera venta.
-            Restaurantes y tiendas comparten la misma base: configuración
-            automática, hardware listo y soporte incluido.
+            De la activación del entorno a tu primer servicio real.
+            Alef está pensado para operar desde el día 1: TPV, cocina/bar,
+            impresión, carta digital y panel de gestión, todo en tiempo real y con
+            soporte incluido.
           </p>
         </header>
 
-        {/* PASOS CON ICONOS */}
+        {/* PASOS */}
         <div className="Fn-steps">
           <div className="Fn-step">
             <div className="Fn-step-icon">📦</div>
             <h3>Elige tu plan</h3>
             <p>
-              Selecciona el plan según tu negocio: restaurante, tienda o ambos.
-              Sin límites de dispositivos ni usuarios.
+              Seleccionas el plan según tu negocio (restaurante o tienda) y
+              Alef te activa el entorno para empezar sin complicaciones.
             </p>
           </div>
 
           <div className="Fn-step">
-            <div className="Fn-step-icon">🎨</div>
-            <h3>Configura tu entorno</h3>
+            <div className="Fn-step-icon">⚙️</div>
+            <h3>Configura tu operativa</h3>
             <p>
-              Personaliza diseño, funciones, impuestos, stock, proveedores,
-              estaciones y flujos de trabajo.
+              Ajustas lo importante: mesas, secciones/estaciones, roles, impuestos,
+              horarios y el comportamiento del TPV. Todo editable desde el panel.
             </p>
           </div>
 
           <div className="Fn-step">
-            <div className="Fn-step-icon">🖥️</div>
-            <h3>Conecta tus dispositivos</h3>
+            <div className="Fn-step-icon">🖨️</div>
+            <h3>Conecta dispositivos e impresión</h3>
             <p>
-              Usa ordenadores, tablets, móviles, impresoras y escáneres.
-              Todo funciona desde el navegador, sin instalaciones.
+              Funciona en PC, tablet o móvil desde el navegador. Puedes asignar
+              impresoras por estación, hacer pruebas y usar tickets con secciones y
+              mensajes personalizados.
             </p>
           </div>
 
@@ -51,12 +51,12 @@ export default function Funcionamiento() {
             <div className="Fn-step-icon">🚀</div>
             <h3>Empieza a trabajar</h3>
             <p>
-              Vende, controla stock, gestiona proveedores y consulta estadísticas
-              desde el primer día.
+              Tomas comandas, cocina/bar marca listo, caja y cierres diarios. Si lo
+              activas, tus clientes usan carta QR (idiomas + reservas + “pedir cuenta”
+              y valoraciones).
             </p>
           </div>
         </div>
-
       </div>
     </section>
   );

@@ -40,7 +40,7 @@ const Packs = () => {
         <div className="fila-superior">
           <div className="packs-header">
             <span className="packs-kicker">Planes Alef</span>
-            <h2>Elige el plan que encaja con tu busqueda</h2>
+            <h2>Elige el plan que encaja con tu búsqueda</h2>
             <p>
               Todos los planes incluyen soporte, actualizaciones y acceso al
               panel de administración. Puedes empezar con uno y subir cuando tu

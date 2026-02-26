@@ -1,77 +1,32 @@
 // src/App.jsx
-import React, { useEffect } from "react";
-import {
-  Routes,
-  Route,
-  useLocation,
-} from "react-router-dom";
+import React, { Suspense, lazy, useEffect, useState } from "react";
+import { Routes, Route, useLocation } from "react-router-dom";
 
-// 🌐 Landing
+/* =============================
+   LANDING (EAGER: carga rápida)
+   ============================= */
 import TopBar from "./components/TopBar/TopBar";
 import Introduccion from "./components/Introduccion/Introduccion";
 import Hero from "./components/Hero/Hero";
+import Funcionamiento from "./components/Funcionamiento/Funcionamiento";
 import Features from "./components/Features/Features";
-import Gallery from "./components/Gallery/Gallery";
 import Packs from "./components/Packs/Packs";
-import About from "./components/About/About";
 import Contact from "./components/Contact/Contact";
+import Footer from "./components/Footer/Footer";
+
+/* =============================
+   UI GLOBAL (EAGER)
+   ============================= */
 import LoadingScreen from "./components/LoadingScreen/LoadingScreen";
 import TenantErrorScreen from "./components/TenantErrorScreen/TenantErrorScreen";
 import CookieBanner from "./components/CookieBanner/CookieBanner";
-import AvisoLegal from "./pages/legal/AvisoLegal";
-import Privacidad from "./pages/legal/Privacidad";
-import Cookies from "./pages/legal/Cookies";
-import Footer from "./components/Footer/Footer";
-
-// 🔐 Auth
-import Login from "./pages/Login";
-import Registro from "./pages/Registro";
-import RegistroSuccess from "./pages/RegistroSuccess.jsx";
-import ForgotPassword from "./components/ForgotPassword/ForgotPassword";
-import ResetPassword from "./components/ForgotPassword/ResetPassword";
-
-// 🛠 TPV / Usuario
-import LoginImpersonar from "./pages/LoginImpersonar";
-import DashboardPage from "./pages/DashboardPage";
-import PerfilPage from "./pages/PerfilPage";
-import RestauranteConfigPage from "./pages/RestauranteConfigPage";
-import CartaConfigPage from "./pages/CartaConfig/CartaConfigPage";
-import ReservasConfigPage from "./pages/ReservasConfigPage";
-import MiCuentaPage from "./pages/MiCuentaPage";
-import FacturasPage from "./pages/FacturasPage";
-// 🛡 SuperAdmin
-import AdminLayout from "./pages/admin/AdminDashboard/AdminLayout";
-import AdminDashboard from "./pages/admin/AdminDashboard/AdminDashboard";
-import BillingPage from "./pages/admin/BillingPage";
-import LogsPage from "./pages/admin/LogsPage";
-import TicketsPage from "./pages/admin/TicketsPage";
-import SettingsPage from "./pages/admin/SettingsPage";
-import PlanesAdmin from "./pages/admin/PlanesAdmin/PlanesAdmin.jsx";
-import PanelPro from "./pages/PanelPro";
-import AdminMonitorPage from "./pages/admin/AdminMonitor/AdminMonitorPage.jsx";
-import ApiRollbackPage from "./pages/admin/AdminDashboard/rollback/ApiRollbackPage";
-import RestorePage from "./pages/admin/restore/RestorePage";
-import RgpdPage from "./pages/admin/restore/RgpdPage.jsx";
-import MigrationsPage from "./pages/admin/AdminDashboard/migrations/MigrationsPage.jsx";
-import SoporteDetalle from "./pages/SoporteDetalle.jsx";
-import SoporteLista from "./pages/SoporteLista.jsx";
-import SoporteNuevo from "./pages/SoporteNuevo.jsx";
-import AyudaPage from "./pages/Ayuda/AyudaPage.jsx";
-import MigrationsTenantPage from "./pages/admin/AdminDashboard/migrations/MigrationsTenantPage.jsx";
-import SuperadminAltaTenant from "./pages/admin/SuperadminAltaTenant/SuperadminAltaTenant.jsx";
-import TenantsPage from "./pages/admin/tenants/TenantsPage";
-import SetPassword from "./components/ForgotPassword/SetPassword";
-
-import TenantTable from "./pages/admin/AdminDashboard/components/TenantTable.jsx";
-import CamareroPanel from "./pages/panel/CamareroPanel";
-import CocineroPanel from "./pages/panel/CocineroPanel";
-import PrintCenterPage from "./pages/PrintCenterPage.jsx";
-import SuperadminExportsPage from "./pages/admin/exports/SuperadminExportsPage.jsx";
-import ExportsPage from "./pages/ExportsPage.jsx";
+import WhatsAppFloating from "./components/WhatsAppFloating/WhatsAppFloating";
 import VerifactuGlobalModal from "./context/VerifactuGlobalModal/VerifactuGlobalModal.jsx";
-import { FeaturesPlanProvider } from "./context/FeaturesPlanContext.jsx";
 
-// 🧠 Contextos para decidir qué ver en la home
+/* =============================
+   CONTEXT / PROVIDERS (EAGER)
+   ============================= */
+import { FeaturesPlanProvider } from "./context/FeaturesPlanContext.jsx";
 import { useAuth } from "./context/AuthContext.jsx";
 import { useTenant } from "./context/TenantContext.jsx";
 import { useFeaturesPlan } from "./context/FeaturesPlanContext.jsx";
@@ -79,25 +34,121 @@ import { ProductosProvider } from "./context/ProductosContext.jsx";
 import { SocketProvider } from "./utils/socket.jsx";
 import { VentasProvider } from "./context/VentasContext";
 import UserLayout from "./layouts/UserLayout";
-
-
-// 📊 Página de estadísticas (la que ya tienes hecha)
-import EstadisticasPage from "./pages/EstadisticasPage.jsx";
-// Pagina de Caja Diaria
-import CajaDiaria from "./components/CajaDiariaUltraPro/CajaDiariaUltraPro";
-import ProveedoresPage from "./pages/ProveedoresPage";
-import ProveedorDetalleLayout from "./pages/proveedores/ProveedorDetalleLayout.jsx";
-import ProveedorResumenTab from "./pages/proveedores/tabs/ProveedorResumenTab.jsx";
-import ProveedorProductosTab from "./pages/proveedores/tabs/ProveedorProductosTab.jsx";
-import ProveedorPedidosTab from "./pages/proveedores/tabs/ProveedorPedidosTab.jsx";
-import ProveedorFacturasTab from "./pages/proveedores/tabs/ProveedorFacturasTab.jsx";
-import "./index.css";
 import { CategoriasProvider } from "./context/CategoriasContext";
 import { ShopCategoriasProvider } from "./context/ShopCategoriasContext";
-import Funcionamiento from "./components/Funcionamiento/Funcionamiento";
-import ConfigImpresionPage from "./pages/ConfigImpresionPage";
-import ConfigImpresionShopPage from "./pages/ConfigImpresionShopPage";
-import ProveedorPedidoDetallePage from "./pages/proveedores/pedidos/ProveedorPedidoDetallePage.jsx";
+
+import "./index.css";
+
+/* =============================
+   LAZY PAGES (CODE SPLITTING)
+   ============================= */
+// 🔐 Auth
+const Login = lazy(() => import("./pages/Login"));
+const Registro = lazy(() => import("./pages/Registro"));
+const RegistroSuccess = lazy(() => import("./pages/RegistroSuccess.jsx"));
+const ForgotPassword = lazy(() =>
+  import("./components/ForgotPassword/ForgotPassword")
+);
+const ResetPassword = lazy(() =>
+  import("./components/ForgotPassword/ResetPassword")
+);
+const SetPassword = lazy(() => import("./components/ForgotPassword/SetPassword"));
+
+// 📄 Legal
+const AvisoLegal = lazy(() => import("./pages/legal/AvisoLegal"));
+const Privacidad = lazy(() => import("./pages/legal/Privacidad"));
+const Cookies = lazy(() => import("./pages/legal/Cookies"));
+
+// 🛠 TPV / Usuario
+const LoginImpersonar = lazy(() => import("./pages/LoginImpersonar"));
+const DashboardPage = lazy(() => import("./pages/DashboardPage"));
+const PerfilPage = lazy(() => import("./pages/PerfilPage"));
+const RestauranteConfigPage = lazy(() => import("./pages/RestauranteConfigPage"));
+const CartaConfigPage = lazy(() => import("./pages/CartaConfig/CartaConfigPage"));
+const ReservasConfigPage = lazy(() => import("./pages/ReservasConfigPage"));
+const MiCuentaPage = lazy(() => import("./pages/MiCuentaPage"));
+const FacturasPage = lazy(() => import("./pages/FacturasPage"));
+
+const ProveedoresPage = lazy(() => import("./pages/ProveedoresPage"));
+const ProveedorDetalleLayout = lazy(() =>
+  import("./pages/proveedores/ProveedorDetalleLayout.jsx")
+);
+const ProveedorResumenTab = lazy(() =>
+  import("./pages/proveedores/tabs/ProveedorResumenTab.jsx")
+);
+const ProveedorProductosTab = lazy(() =>
+  import("./pages/proveedores/tabs/ProveedorProductosTab.jsx")
+);
+const ProveedorPedidosTab = lazy(() =>
+  import("./pages/proveedores/tabs/ProveedorPedidosTab.jsx")
+);
+const ProveedorFacturasTab = lazy(() =>
+  import("./pages/proveedores/tabs/ProveedorFacturasTab.jsx")
+);
+const ProveedorPedidoDetallePage = lazy(() =>
+  import("./pages/proveedores/pedidos/ProveedorPedidoDetallePage.jsx")
+);
+
+const SoporteDetalle = lazy(() => import("./pages/SoporteDetalle.jsx"));
+const SoporteLista = lazy(() => import("./pages/SoporteLista.jsx"));
+const SoporteNuevo = lazy(() => import("./pages/SoporteNuevo.jsx"));
+const AyudaPage = lazy(() => import("./pages/Ayuda/AyudaPage.jsx"));
+
+const PrintCenterPage = lazy(() => import("./pages/PrintCenterPage.jsx"));
+const ExportsPage = lazy(() => import("./pages/ExportsPage.jsx"));
+
+const EstadisticasPage = lazy(() => import("./pages/EstadisticasPage.jsx"));
+const CajaDiaria = lazy(() =>
+  import("./components/CajaDiariaUltraPro/CajaDiariaUltraPro")
+);
+
+const PanelPro = lazy(() => import("./pages/PanelPro"));
+
+const ConfigImpresionPage = lazy(() => import("./pages/ConfigImpresionPage"));
+const ConfigImpresionShopPage = lazy(() =>
+  import("./pages/ConfigImpresionShopPage")
+);
+
+// Paneles
+const CamareroPanel = lazy(() => import("./pages/panel/CamareroPanel"));
+const CocineroPanel = lazy(() => import("./pages/panel/CocineroPanel"));
+
+// 🛡 SuperAdmin
+const AdminLayout = lazy(() =>
+  import("./pages/admin/AdminDashboard/AdminLayout")
+);
+const AdminDashboard = lazy(() =>
+  import("./pages/admin/AdminDashboard/AdminDashboard")
+);
+const BillingPage = lazy(() => import("./pages/admin/BillingPage"));
+const LogsPage = lazy(() => import("./pages/admin/LogsPage"));
+const TicketsPage = lazy(() => import("./pages/admin/TicketsPage"));
+const SettingsPage = lazy(() => import("./pages/admin/SettingsPage"));
+const PlanesAdmin = lazy(() =>
+  import("./pages/admin/PlanesAdmin/PlanesAdmin.jsx")
+);
+const AdminMonitorPage = lazy(() =>
+  import("./pages/admin/AdminMonitor/AdminMonitorPage.jsx")
+);
+const ApiRollbackPage = lazy(() =>
+  import("./pages/admin/AdminDashboard/rollback/ApiRollbackPage")
+);
+const RestorePage = lazy(() => import("./pages/admin/restore/RestorePage"));
+const RgpdPage = lazy(() => import("./pages/admin/restore/RgpdPage.jsx"));
+const SuperadminExportsPage = lazy(() =>
+  import("./pages/admin/exports/SuperadminExportsPage.jsx")
+);
+const MigrationsPage = lazy(() =>
+  import("./pages/admin/AdminDashboard/migrations/MigrationsPage.jsx")
+);
+const MigrationsTenantPage = lazy(() =>
+  import("./pages/admin/AdminDashboard/migrations/MigrationsTenantPage.jsx")
+);
+const TenantsPage = lazy(() => import("./pages/admin/tenants/TenantsPage"));
+const SuperadminAltaTenant = lazy(() =>
+  import("./pages/admin/SuperadminAltaTenant/SuperadminAltaTenant.jsx")
+);
+
 /* =============================
    LANDING PÚBLICA (marketing)
    ============================= */
@@ -105,10 +156,7 @@ function LandingPage() {
   const location = useLocation();
 
   useEffect(() => {
-    // 1) Por hash (#packs)
     const porHash = location.hash === "#packs";
-
-    // 2) Por query (?seleccionarPlan=1)
     const params = new URLSearchParams(location.search);
     const seleccionarPlan = params.get("seleccionarPlan");
 
@@ -120,36 +168,31 @@ function LandingPage() {
     }
   }, [location]);
 
-return (
-  <div className="main-grid">
-    <TopBar />
-    <Introduccion />
-    <Hero />
-    <Funcionamiento />
-    <Features />
-    {/* <Gallery /> */}
-    <Packs />
-    {/* <About /> */}
-    <Contact />
-    <Footer />
-  </div>
-);
+  return (
+    <div className="main-grid">
+      <TopBar />
+      <Introduccion />
+      <Hero />
+      <Funcionamiento />
+      <Features />
+      <Packs />
+      <Contact />
+      <Footer />
+    </div>
+  );
 }
 
 /* ==========================================
-   HOME ENTRY – decide landing vs estadísticas
+   HOME ENTRY – decide landing vs PanelPro
    ========================================== */
 function HomeEntry() {
   const { user } = useAuth();
-  const { tenantId, tenantError } = useTenant();
+  const { tenantId } = useTenant();
   const { hasFeature, loading } = useFeaturesPlan();
 
   if (loading) return <LoadingScreen />;
 
-  const isPro =
-    !!user &&
-    !!tenantId &&
-    hasFeature("estadisticas_avanzadas", false);
+  const isPro = !!user && !!tenantId && hasFeature("estadisticas_avanzadas", false);
 
   if (isPro) {
     return (
@@ -162,12 +205,12 @@ function HomeEntry() {
   return <LandingPage />;
 }
 
-
 /* =============================
    RUTAS DE LA APLICACIÓN
    ============================= */
 function AppRoutes() {
-  const { tenantId, tenantError } = useTenant();
+  const { tenantError, tenantId } = useTenant();
+
   if (tenantError) {
     return (
       <TenantErrorScreen
@@ -177,84 +220,104 @@ function AppRoutes() {
       />
     );
   }
+
   return (
     <Routes>
-      {/* 🏠 HOME:
-          - si está logueado + plan pro -> estadísticas
-          - si no -> landing
-      */}
+      {/* HOME */}
       <Route path="/" element={<HomeEntry />} />
       <Route path="/:tenantId" element={<HomeEntry />} />
 
-      {/* 🔐 AUTENTICACIÓN */}
+      {/* AUTENTICACIÓN */}
       <Route path="/login" element={<Login />} />
       <Route path="/registro" element={<Registro />} />
       <Route path="/registro/success" element={<RegistroSuccess />} />
       <Route path="/registro/cancel" element={<RegistroSuccess />} />
       <Route path="/pago/exito" element={<RegistroSuccess />} />
       <Route path="/pago/cancelado" element={<RegistroSuccess />} />
+
+      {/* LEGALES */}
       <Route path="/aviso-legal" element={<AvisoLegal />} />
       <Route path="/privacidad" element={<Privacidad />} />
       <Route path="/cookies" element={<Cookies />} />
 
+      {/* PASSWORD */}
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/set-password" element={<SetPassword />} />
-      <Route path="/set-password/:tenantId/:token" element={<SetPassword />} />      <Route
-        path="/reset-password/:tenantId/:token"
-        element={<ResetPassword />}
-      />
+      <Route path="/set-password/:tenantId/:token" element={<SetPassword />} />
+      <Route path="/reset-password/:tenantId/:token" element={<ResetPassword />} />
 
-      {/* 🛠 LOGIN IMPERSONAR */}
+      {/* LOGIN IMPERSONAR */}
       <Route path="/tpv/login/:tenantId" element={<LoginImpersonar />} />
 
-      {/* 🧑‍🍳 TPV / ÁREA RESTAURANTE */}
-      <Route path="/tpv/:tenantId/dashboard" element={
-        <UserLayout>
-          <DashboardPage />
-        </UserLayout>
-      } />
+      {/* TPV / ÁREA RESTAURANTE */}
+      <Route
+        path="/tpv/:tenantId/dashboard"
+        element={
+          <UserLayout>
+            <DashboardPage />
+          </UserLayout>
+        }
+      />
+      <Route
+        path="/dashboard"
+        element={
+          <UserLayout>
+            <DashboardPage />
+          </UserLayout>
+        }
+      />
+      <Route
+        path="/mi-cuenta"
+        element={
+          <UserLayout>
+            <MiCuentaPage />
+          </UserLayout>
+        }
+      />
+      <Route
+        path="/facturas"
+        element={
+          <UserLayout>
+            <FacturasPage />
+          </UserLayout>
+        }
+      />
+      <Route
+        path="/perfil"
+        element={
+          <UserLayout>
+            <PerfilPage />
+          </UserLayout>
+        }
+      />
 
-      <Route path="/dashboard" element={
-        <UserLayout>
-          <DashboardPage />
-        </UserLayout>
-      } />
+      {/* CONFIG */}
+      <Route
+        path="/configuracion/restaurante"
+        element={
+          <UserLayout>
+            <RestauranteConfigPage />
+          </UserLayout>
+        }
+      />
 
-      <Route path="/mi-cuenta" element={
-        <UserLayout>
-          <MiCuentaPage />
-        </UserLayout>
-      } />
+      <Route
+        path="/configuracion/proveedores"
+        element={
+          <UserLayout>
+            <ProveedoresPage />
+          </UserLayout>
+        }
+      />
 
-      <Route path="/facturas" element={
-        <UserLayout>
-          <FacturasPage />
-        </UserLayout>
-      } />
-
-      <Route path="/perfil" element={
-        <UserLayout>
-          <PerfilPage />
-        </UserLayout>
-      } />
-
-      <Route path="/configuracion/restaurante" element={
-        <UserLayout>
-          <RestauranteConfigPage />
-        </UserLayout>
-      } />
-
-      <Route path="/configuracion/proveedores" element={
-        <UserLayout>
-          <ProveedoresPage />
-        </UserLayout>
-      } />
-
-      <Route path="/configuracion/proveedores/:proveedorId" element={
-        <UserLayout>
-          <ProveedorDetalleLayout />
-        </UserLayout>
-      }>
+      <Route
+        path="/configuracion/proveedores/:proveedorId"
+        element={
+          <UserLayout>
+            <ProveedorDetalleLayout />
+          </UserLayout>
+        }
+      >
         <Route index element={<ProveedorResumenTab />} />
         <Route path="productos" element={<ProveedorProductosTab />} />
         <Route path="pedidos" element={<ProveedorPedidosTab />} />
@@ -269,37 +332,53 @@ function AppRoutes() {
           </UserLayout>
         }
       />
-      <Route path="/configuracion/carta" element={
-        <UserLayout>
-          <CartaConfigPage />
-        </UserLayout>
-      } />
 
-      <Route path="/configuracion/reservas" element={
-        <UserLayout>
-          <ReservasConfigPage />
-        </UserLayout>
-      } />
+      <Route
+        path="/configuracion/carta"
+        element={
+          <UserLayout>
+            <CartaConfigPage />
+          </UserLayout>
+        }
+      />
 
+      <Route
+        path="/configuracion/reservas"
+        element={
+          <UserLayout>
+            <ReservasConfigPage />
+          </UserLayout>
+        }
+      />
 
-      <Route path="/configuracion/impresion" element={
-        <UserLayout>
-          <ConfigImpresionPage />
-        </UserLayout>
-      } />
+      <Route
+        path="/configuracion/impresion"
+        element={
+          <UserLayout>
+            <ConfigImpresionPage />
+          </UserLayout>
+        }
+      />
 
-      <Route path="/configuracion/impresion/centro" element={
-        <UserLayout>
-          <PrintCenterPage />
-        </UserLayout>
-      } />
+      <Route
+        path="/configuracion/impresion/centro"
+        element={
+          <UserLayout>
+            <PrintCenterPage />
+          </UserLayout>
+        }
+      />
 
-      <Route path="/configuracion/impresion-shop" element={
-        <UserLayout>
-          <ConfigImpresionShopPage />
-        </UserLayout>
-      } />
+      <Route
+        path="/configuracion/impresion-shop"
+        element={
+          <UserLayout>
+            <ConfigImpresionShopPage />
+          </UserLayout>
+        }
+      />
 
+      {/* SOPORTE */}
       <Route element={<UserLayout />}>
         <Route path="soporte" element={<SoporteLista />} />
         <Route path="soporte/nuevo" element={<SoporteNuevo />} />
@@ -315,7 +394,7 @@ function AppRoutes() {
         }
       />
 
-      {/* 🔍 (OPCIONAL) Ruta directa a estadísticas si quieres */}
+      {/* ESTADÍSTICAS / CAJA */}
       <Route
         path="/estadisticas"
         element={
@@ -333,6 +412,7 @@ function AppRoutes() {
         }
       />
 
+      {/* PANEL PRO */}
       <Route
         path="/:tenantId/pro"
         element={
@@ -341,7 +421,6 @@ function AppRoutes() {
           </UserLayout>
         }
       />
-
       <Route
         path="/pro"
         element={
@@ -362,7 +441,7 @@ function AppRoutes() {
         }
       />
 
-      {/* 👨‍🍽️ PANEL CAMARERO */}
+      {/* PANEL EMPLEADOS */}
       <Route
         path="/camarero"
         element={
@@ -371,8 +450,6 @@ function AppRoutes() {
           </UserLayout>
         }
       />
-
-      {/* 👨‍🍽️ PANEL CAMARERO */}
       <Route
         path="/:tenantId/camarero"
         element={
@@ -382,7 +459,6 @@ function AppRoutes() {
         }
       />
 
-      {/* 👨‍🍽️ PANEL COCINER */}
       <Route
         path="/cocinero"
         element={
@@ -391,8 +467,6 @@ function AppRoutes() {
           </UserLayout>
         }
       />
-
-      {/* 👨‍🍽️ PANEL COCINERO */}
       <Route
         path="/:tenantId/cocinero"
         element={
@@ -402,10 +476,12 @@ function AppRoutes() {
         }
       />
 
-      {/* 🛡 SUPERADMIN */}
+      {/* SUPERADMIN */}
       <Route path="/superadmin" element={<AdminLayout />}>
         <Route index element={<AdminDashboard />} />
-        <Route path="tenants" element={<TenantTable />} />
+        <Route path="tenants" element={<TenantsPage />} />
+        <Route path="tenants/nuevo" element={<SuperadminAltaTenant />} />
+
         <Route path="planes" element={<PlanesAdmin />} />
         <Route path="billing" element={<BillingPage />} />
         <Route path="logs" element={<LogsPage />} />
@@ -418,8 +494,6 @@ function AppRoutes() {
         <Route path="exports" element={<SuperadminExportsPage />} />
         <Route path="migrations" element={<MigrationsPage />} />
         <Route path="migrations/:slug" element={<MigrationsTenantPage />} />
-        <Route path="tenants" element={<TenantsPage />} />
-        <Route path="tenants/nuevo" element={<SuperadminAltaTenant />} />
       </Route>
     </Routes>
   );
@@ -429,35 +503,36 @@ function AppRoutes() {
    APP ROOT
    ============================= */
 export default function App() {
-  const [loadingApp, setLoadingApp] = React.useState(true);
+  const [loadingApp, setLoadingApp] = useState(true);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const timer = setTimeout(() => setLoadingApp(false), 700);
     return () => clearTimeout(timer);
   }, []);
 
   return (
-    <>
-      <SocketProvider>
-        <FeaturesPlanProvider>
-          <CategoriasProvider>
-            <ShopCategoriasProvider>
-              <ProductosProvider>
-                {loadingApp && <LoadingScreen />}
+    <SocketProvider>
+      <FeaturesPlanProvider>
+        <CategoriasProvider>
+          <ShopCategoriasProvider>
+            <ProductosProvider>
+              {loadingApp && <LoadingScreen />}
 
-                {!loadingApp && (
-                  <>
-                    <VerifactuGlobalModal />
-                    <CookieBanner />
+              {!loadingApp && (
+                <>
+                  <VerifactuGlobalModal />
+                  <CookieBanner />
+                  <WhatsAppFloating />
+
+                  <Suspense fallback={<LoadingScreen />}>
                     <AppRoutes />
-                  </>
-                )}
-              </ProductosProvider>
-            </ShopCategoriasProvider>
-          </CategoriasProvider>
-        </FeaturesPlanProvider>
-      </SocketProvider>
-    </>
+                  </Suspense>
+                </>
+              )}
+            </ProductosProvider>
+          </ShopCategoriasProvider>
+        </CategoriasProvider>
+      </FeaturesPlanProvider>
+    </SocketProvider>
   );
 }
-

@@ -52,6 +52,7 @@ export default function TopBar() {
   const cerrarMenu = useCallback(() => setMenuAbierto(false), []);
   const toggleMenu = useCallback(() => setMenuAbierto((v) => !v), []);
 
+
   // =========================
   // URLs por tipo de negocio
   // =========================
@@ -84,6 +85,39 @@ export default function TopBar() {
     return () => window.removeEventListener("resize", manejarResize);
   }, [menuAbierto]);
 
+  const handleLogoClick = useCallback(() => {
+    // 1) Si estoy en landing pública (no logueado): ir a #inicio
+    if (!user) {
+      cerrarMenu();
+
+      // si estás en rutas tipo /aviso-legal, /privacidad, etc
+      // primero vuelve a "/" y luego scrollea
+      if (location.pathname !== "/") {
+        navigate("/", { replace: false });
+
+        // espera al render para que exista el elemento
+        setTimeout(() => {
+          document.getElementById("inicio")?.scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+          });
+        }, 50);
+
+        return;
+      }
+
+      // si ya estás en "/"
+      document.getElementById("inicio")?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+      return;
+    }
+
+    // 2) Si hay sesión: comportamiento actual (panel)
+    irAlPanelPro(panelProURL);
+  }, [user, cerrarMenu, location.pathname, navigate, irAlPanelPro, panelProURL]);
+
   return (
     <header className="TopBar">
       <div className="TopBar-container">
@@ -91,8 +125,8 @@ export default function TopBar() {
         <button
           type="button"
           className="TopBar-logo"
-          onClick={() => irAlPanelPro(panelProURL)}
-          aria-label="Ir al Panel"
+          onClick={handleLogoClick}
+          aria-label={user ? "Ir al Panel" : "Volver al inicio"}
         >
           <img src={logoAlef} alt="Alef" className="TopBar-logo-img" />
           <span className="TopBar-logo-text">
@@ -128,9 +162,9 @@ export default function TopBar() {
                 Ventajas
               </a>
               {/* <a href="#packs" onClick={cerrarMenu}>Packs</a> */}
-              <a href="#capturas" onClick={cerrarMenu}>
+              {/* <a href="#capturas" onClick={cerrarMenu}>
                 Capturas
-              </a>
+              </a>*/}
               <a href="#contacto" onClick={cerrarMenu}>
                 Contacto
               </a>

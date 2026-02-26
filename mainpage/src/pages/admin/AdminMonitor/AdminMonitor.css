@@ -164,7 +164,6 @@
 .monitor-table table {
   border-collapse: collapse;
   width: 100%;
-  min-width: 900px;
 
   background: rgba(255,255,255,0.06);
   backdrop-filter: blur(10px);

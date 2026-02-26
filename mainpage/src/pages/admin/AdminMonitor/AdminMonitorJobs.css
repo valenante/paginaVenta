@@ -1,0 +1,298 @@
+/* =========================================================
+   ADMIN MONITOR JOBS — INFRA (systemd)
+   Archivo dedicado: AdminMonitorJobs.css
+   ========================================================= */
+
+.jobs-monitor {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  color: #e5e7eb;
+}
+
+/* ===== HEADER ===== */
+
+.jobs-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.jobs-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 900;
+  letter-spacing: 0.2px;
+}
+
+.jobs-stats {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.jobs-stats small {
+  opacity: 0.88;
+  font-size: 12px;
+  color: #cbd5e1;
+}
+
+/* ===== BUTTON ===== */
+
+.jobs-btn-refresh {
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: none;
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.14);
+  color: #f1f5f9;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.jobs-btn-refresh:hover {
+  background: rgba(255, 255, 255, 0.26);
+  transform: translateY(-2px);
+}
+
+/* ===== META ===== */
+
+.jobs-meta {
+  font-size: 12px;
+  color: #cbd5e1;
+  opacity: 0.85;
+}
+
+.jobs-meta strong {
+  color: #e2e8f0;
+}
+
+/* ===== LOADING / EMPTY ===== */
+
+.jobs-loading {
+  margin-top: 10px;
+  opacity: 0.85;
+}
+
+.jobs-empty {
+  text-align: center;
+  padding: 16px;
+}
+
+/* ===== ERROR CARD ===== */
+
+.jobs-error-card {
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(14px);
+  padding: 16px 18px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow:
+    0 12px 32px rgba(0, 0, 0, 0.35),
+    0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+
+.jobs-error-card h4 {
+  margin: 0 0 6px;
+  font-size: 14px;
+  color: #cbd5f5;
+}
+
+.jobs-error-card p {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 6px;
+  font-weight: 800;
+}
+
+.jobs-error-card small {
+  font-size: 12px;
+  color: #fca5a5;
+}
+
+/* ===== TABLE WRAPPER ===== */
+
+.jobs-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-top: 10px;
+}
+
+/* ===== TABLE ===== */
+
+.jobs-table {
+  border-collapse: collapse;
+  width: 100%;
+  min-width: 980px;
+
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.jobs-table th {
+  background: rgba(0, 0, 0, 0.35);
+  padding: 12px;
+  text-align: left;
+  font-size: 13px;
+  color: #cbd5e1;
+  white-space: nowrap;
+}
+
+.jobs-table td {
+  padding: 10px 12px;
+  font-size: 13px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  color: #e2e8f0;
+  vertical-align: middle;
+}
+
+.jobs-table tr:hover {
+  background: rgba(255, 255, 255, 0.10);
+}
+
+/* ===== CELLS ===== */
+
+.jobs-state {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.jobs-jobcell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.jobs-jobcell strong {
+  font-weight: 900;
+}
+
+.jobs-jobcell small {
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+/* ===== STATUS DOT OVERRIDE ===== */
+
+.status-dot.degraded {
+  background: #fb923c;
+  box-shadow: 0 0 6px rgba(251, 146, 60, 0.75);
+}
+
+/* ===== MSG ===== */
+
+.jobs-msg {
+  max-width: 360px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #fca5a5;
+}
+
+/* ===== FOOTER NOTE ===== */
+
+.jobs-footnote {
+  opacity: 0.8;
+  font-size: 12px;
+  color: #cbd5e1;
+}
+
+/* =========================================================
+   MOBILE: Jobs table → cards (SIN H-SCROLL)
+   ========================================================= */
+
+@media (max-width: 760px) {
+  .jobs-table-wrapper {
+    overflow-x: visible;
+  }
+
+  .jobs-table {
+    min-width: 0;
+    border-radius: 0;
+    background: transparent;
+    border: none;
+  }
+
+  .jobs-table thead {
+    display: none;
+  }
+
+  .jobs-table,
+  .jobs-table tbody,
+  .jobs-table tr,
+  .jobs-table td {
+    display: block;
+    width: 100%;
+  }
+
+  .jobs-table tr {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    overflow: hidden;
+    margin: 12px 0;
+    box-shadow:
+      0 10px 26px rgba(0, 0, 0, 0.28),
+      0 0 0 1px rgba(255, 255, 255, 0.04);
+  }
+
+  .jobs-table td {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    font-size: 13px;
+  }
+
+  .jobs-table td:last-child {
+    border-bottom: none;
+  }
+
+  .jobs-table td::before {
+    content: "";
+    flex: 0 0 42%;
+    font-weight: 900;
+    font-size: 12px;
+    color: #94a3b8;
+    letter-spacing: 0.2px;
+    text-transform: uppercase;
+  }
+
+  /* Labels por columna */
+  .jobs-table td:nth-child(1)::before { content: "Estado"; }
+  .jobs-table td:nth-child(2)::before { content: "Job"; }
+  .jobs-table td:nth-child(3)::before { content: "Política"; }
+  .jobs-table td:nth-child(4)::before { content: "Último OK"; }
+  .jobs-table td:nth-child(5)::before { content: "Edad OK"; }
+  .jobs-table td:nth-child(6)::before { content: "Último FAIL"; }
+  .jobs-table td:nth-child(7)::before { content: "Code"; }
+  .jobs-table td:nth-child(8)::before { content: "Result"; }
+  .jobs-table td:nth-child(9)::before { content: "Msg"; }
+
+  /* alineación derecha del value */
+  .jobs-table td > * {
+    text-align: right;
+  }
+
+  .jobs-jobcell {
+    align-items: flex-end;
+    text-align: right;
+  }
+
+  .jobs-msg {
+    max-width: none;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: unset;
+  }
+}

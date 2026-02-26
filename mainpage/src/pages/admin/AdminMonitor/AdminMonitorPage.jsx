@@ -1,6 +1,7 @@
 // src/pages/admin/monitor/AdminMonitorPage.jsx  (ajusta ruta si tu proyecto la tiene distinta)
 import { useEffect, useMemo, useState } from "react";
 import api from "../../../utils/api";
+import AdminMonitorJobs from "./AdminMonitorJobs";
 import "./AdminMonitor.css";
 
 function StatusDot({ state }) {
@@ -289,6 +290,8 @@ export default function AdminMonitorPage() {
           </>
         )}
       </div>
+
+      <AdminMonitorJobs q={q} onlyBad={onlyDown} />
 
       {/* ✅ HTTP POR TENANT */}
       <section className="monitor-table">

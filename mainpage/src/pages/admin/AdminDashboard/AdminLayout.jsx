@@ -1,3 +1,4 @@
+// src/layouts/admin/AdminLayout.jsx  (ajusta ruta si difiere)
 import React from "react";
 import { Outlet, NavLink, useNavigate } from "react-router-dom";
 import "../../../styles/AdminLayout.css";
@@ -11,7 +12,7 @@ import {
   FiActivity,
   FiRefreshCcw,
   FiDatabase,
-  FiDownload, // ✅ NUEVO
+  FiDownload,
 } from "react-icons/fi";
 import api from "../../../utils/api";
 
@@ -33,11 +34,11 @@ export default function AdminLayout() {
     <div className="admin-layout">
       {/* 📌 SIDEBAR */}
       <aside className="admin-sidebar">
-        <h2 className="logo">
+        <h2 className="logo" title="Alef Admin">
           Alef<span>Admin</span>
         </h2>
 
-        <nav className="menu">
+        <nav className="menu" aria-label="Navegación SuperAdmin">
           <NavLink end to="/superadmin">
             <FiHome /> Dashboard
           </NavLink>
@@ -54,7 +55,6 @@ export default function AdminLayout() {
             <FiActivity /> Estado del sistema
           </NavLink>
 
-          {/* ✅ Rollback API */}
           <NavLink to="/superadmin/rollback">
             <FiRefreshCcw /> Rollback API
           </NavLink>
@@ -86,9 +86,22 @@ export default function AdminLayout() {
           <NavLink to="/superadmin/settings">
             <FiSettings /> Ajustes
           </NavLink>
+
+          {/* ✅ Logout como item del menú (en desktop lo ocultamos, en móvil es clave) */}
+          <NavLink
+            to="#"
+            className="menu-logout"
+            onClick={(e) => {
+              e.preventDefault();
+              logout();
+            }}
+          >
+            <FiLogOut /> Salir
+          </NavLink>
         </nav>
 
-        <button className="logout-btn" onClick={logout}>
+        {/* ✅ Desktop: botón separado (en móvil se oculta) */}
+        <button className="logout-btn" onClick={logout} type="button">
           <FiLogOut /> Cerrar sesión
         </button>
       </aside>

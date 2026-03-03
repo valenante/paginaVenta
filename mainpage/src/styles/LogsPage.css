@@ -1,259 +1,365 @@
-/* =========================================================
-   LOGS — PANEL PREMIUM ALEF (sufijo -logsAdmin)
+/* src/styles/LogsPage.css
+   =========================================================
+   LOGS — Estilo hermano (TenantTable/Billing/Planes)
+   - Vidrio oscuro + blur
+   - Sombras profundas
+   - Tabla desktop
+   - Card-list móvil (sin overflow horizontal)
    ========================================================= */
 
-.logs-page-logsAdmin {
+.logs {
   display: flex;
   flex-direction: column;
   gap: 18px;
-  color: #e5e7eb;
   max-width: 1200px;
   margin: 0 auto;
+  padding: 2.2rem 1.4rem;
+  color: rgba(226, 232, 240, 0.92);
 }
 
-.logs-header-logsAdmin {
+/* =========================
+   Header
+========================= */
+.logs__header {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
   gap: 12px;
+  flex-wrap: wrap;
 }
 
-.logs-title-logsAdmin {
-  font-size: 28px;
-  font-weight: 900;
+.logs__title {
   margin: 0;
-  letter-spacing: -0.02em;
-}
-
-.logs-subtitle-logsAdmin {
-  margin: 6px 0 0;
-  color: #94a3b8;
-  font-size: 14px;
-}
-
-/* ===== FILTROS ===== */
-
-.logs-filtros-logsAdmin {
-  display: grid;
-  grid-template-columns: 160px 1fr 220px;
-  gap: 12px;
-  align-items: center;
-
-  background: rgba(255,255,255,0.05);
-  backdrop-filter: blur(14px);
-  padding: 14px 16px;
-  border-radius: 14px;
-  border: 1px solid rgba(255,255,255,0.08);
-  box-shadow:
-    0 10px 30px rgba(0,0,0,0.25),
-    0 0 0 1px rgba(255,255,255,0.05);
-}
-
-@media (max-width: 900px) {
-  .logs-filtros-logsAdmin {
-    grid-template-columns: 1fr;
-  }
-}
-
-.logs-input-logsAdmin,
-.logs-select-logsAdmin {
-  padding: 10px 12px;
-  border-radius: 12px;
-  background: rgba(255,255,255,0.10);
-  border: 1px solid rgba(255,255,255,0.18);
+  font-size: 1.75rem;
+  font-weight: 900;
   color: #fff;
-  outline: none;
-  transition: background 0.2s ease, border-color 0.2s ease, transform 0.12s ease;
+  letter-spacing: -0.02em;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
 }
 
-.logs-input-logsAdmin:focus,
-.logs-select-logsAdmin:focus {
-  background: rgba(255,255,255,0.14);
-  border-color: rgba(106,13,173,0.9);
-  box-shadow: 0 0 0 3px rgba(106,13,173,0.25);
+.logs__subtitle {
+  margin: 6px 0 0;
+  color: rgba(148, 163, 184, 0.92);
+  font-size: 0.95rem;
 }
 
-.logs-delete-btn-logsAdmin {
+.logs__dangerBtn {
   padding: 10px 14px;
-  background: rgba(239,68,68,0.16);
+  background: rgba(239, 68, 68, 0.16);
   border-radius: 12px;
   color: #fee2e2;
-  border: 1px solid rgba(239,68,68,0.25);
+  border: 1px solid rgba(239, 68, 68, 0.25);
   cursor: pointer;
-  font-weight: 700;
-  transition: transform 0.15s ease, background 0.2s ease;
+  font-weight: 900;
+  transition: transform 120ms ease, background 120ms ease;
   white-space: nowrap;
 }
 
-.logs-delete-btn-logsAdmin:hover {
-  background: rgba(239,68,68,0.28);
+.logs__dangerBtn:hover {
+  background: rgba(239, 68, 68, 0.28);
   transform: translateY(-1px);
 }
 
-/* ===== TABLA ===== */
-
-.logs-table-wrapper-logsAdmin {
-  width: 100%;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  border-radius: 16px;
+.logs__dangerBtn:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.35);
+  outline-offset: 2px;
 }
 
-.logs-table-logsAdmin {
+/* =========================
+   Filters
+========================= */
+.logs-filters {
+  display: grid;
+  grid-template-columns: 160px 1fr 240px;
+  gap: 12px;
+  align-items: center;
+
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.25),
+    0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+
+.logs-field {
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.10);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: #fff;
+  outline: none;
+  transition: background 120ms ease, border-color 120ms ease, box-shadow 120ms ease;
+}
+
+.logs-field::placeholder {
+  color: rgba(226, 232, 240, 0.55);
+}
+
+.logs-field:focus {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(106, 13, 173, 0.9);
+  box-shadow: 0 0 0 3px rgba(106, 13, 173, 0.25);
+}
+
+/* =========================
+   States
+========================= */
+.logs-state {
+  margin: 0;
+  padding: 10px 4px;
+}
+
+.logs-state--muted {
+  color: rgba(148, 163, 184, 0.95);
+}
+
+/* =========================
+   Table (desktop)
+========================= */
+.logs-tableWrap {
+  width: 100%;
+}
+
+.logs-table {
   width: 100%;
   border-collapse: separate;
   border-spacing: 0;
-  background: rgba(255,255,255,0.06);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255,255,255,0.08);
-  min-width: 760px;
+  border-radius: 18px;
+  overflow: hidden;
+
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow:
+    0 18px 40px rgba(0, 0, 0, 0.55),
+    0 0 0 1px rgba(255, 255, 255, 0.06);
 }
 
-.logs-table-logsAdmin thead th {
-  position: sticky;
-  top: 0;
-  z-index: 1;
-  background: rgba(2,6,23,0.75);
-  backdrop-filter: blur(10px);
+.logs-table__thead {
+  background: rgba(255, 255, 255, 0.04);
 }
 
-.logs-table-logsAdmin th {
-  padding: 12px 12px;
+.logs-table th,
+.logs-table td {
+  padding: 0.85rem 1rem;
+  font-size: var(--font-size-sm);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.logs-table th {
   text-align: left;
-  font-size: 13px;
-  color: #cbd5e1;
-  font-weight: 700;
-  border-bottom: 1px solid rgba(255,255,255,0.08);
+  font-weight: 900;
+  text-transform: uppercase;
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.08em;
+  color: rgba(226, 232, 240, 0.65);
+  background: rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.22);
 }
 
-.logs-table-logsAdmin td {
-  padding: 12px 12px;
-  font-size: 14px;
-  color: #e2e8f0;
-  border-bottom: 1px solid rgba(255,255,255,0.05);
-}
-
-.logs-row-logsAdmin {
+.logs-table__row {
   cursor: pointer;
-  transition: background 0.15s ease;
+  transition: background 120ms ease;
 }
 
-.logs-row-logsAdmin:nth-child(odd) {
-  background: rgba(255,255,255,0.02);
+.logs-table__row:hover td {
+  background: rgba(255, 255, 255, 0.06);
 }
 
-.logs-row-logsAdmin:hover {
-  background: rgba(255,255,255,0.10);
-}
-
-.logs-mensaje-logsAdmin {
-  max-width: 440px;
+.logs-message {
+  max-width: 520px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.logs-mono-logsAdmin {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-  font-size: 12.5px;
+.logs-mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+    "Courier New", monospace;
+  font-size: 0.92em;
   color: #dbeafe;
 }
 
-/* ===== Niveles (chip) ===== */
-
-.logs-nivel-logsAdmin {
-  font-weight: 800;
-  padding: 6px 10px;
-  border-radius: 999px;
-  text-transform: uppercase;
-  font-size: 12px;
+/* =========================
+   Level pill
+========================= */
+.logs-level {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  border: 1px solid rgba(255,255,255,0.10);
+  justify-content: center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-weight: 900;
+  letter-spacing: 0.2px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  font-size: 12px;
+  text-transform: uppercase;
 }
 
-.nivel-info {
-  background: rgba(96,165,250,0.18);
+.logs-level--info {
+  background: rgba(96, 165, 250, 0.18);
   color: #93c5fd;
 }
-.nivel-warn {
-  background: rgba(251,191,36,0.18);
+
+.logs-level--warn {
+  background: rgba(251, 191, 36, 0.18);
   color: #fbbf24;
 }
-.nivel-error {
-  background: rgba(239,68,68,0.18);
+
+.logs-level--error {
+  background: rgba(239, 68, 68, 0.18);
   color: #ef4444;
 }
 
-/* ===== PAGINACIÓN ===== */
-
-.logs-pagination-logsAdmin {
+/* =========================
+   Pagination
+========================= */
+.logs-pagination {
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 14px;
-  margin-top: 8px;
+  margin-top: 6px;
+  flex-wrap: wrap;
 }
 
-.logs-pagination-logsAdmin button {
+.logs-pagination__btn {
   padding: 9px 16px;
   border-radius: 12px;
-  border: 1px solid rgba(255,255,255,0.12);
-  background: rgba(255,255,255,0.10);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.10);
   color: #fff;
   cursor: pointer;
-  font-weight: 700;
-  transition: background 0.2s ease, transform 0.12s ease;
+  font-weight: 900;
+  transition: background 120ms ease, transform 120ms ease;
 }
 
-.logs-pagination-logsAdmin button:disabled {
+.logs-pagination__btn:disabled {
   opacity: 0.35;
   cursor: not-allowed;
+  transform: none;
 }
 
-.logs-pagination-logsAdmin button:hover:not(:disabled) {
-  background: rgba(255,255,255,0.18);
+.logs-pagination__btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.18);
   transform: translateY(-1px);
 }
 
-/* ===== LOADING / EMPTY ===== */
-
-.logs-loading-logsAdmin,
-.logs-empty-logsAdmin {
-  color: #94a3b8;
-  padding: 14px 4px;
+.logs-pagination__meta {
+  color: rgba(226, 232, 240, 0.8);
 }
 
 /* =========================================================
-   MODAL DETALLES LOG (PORTAL)
+   MODAL (keep your existing portal markup classes)
+   NOTE: you can keep your current modal CSS or migrate later
+   ========================================================= */
+
+/* =========================
+   Responsive: NO overflow
+   -> table becomes card list
+========================= */
+@media (max-width: 900px) {
+  .logs {
+    padding: 1.6rem 1rem;
+  }
+
+  .logs__title {
+    font-size: 1.35rem;
+  }
+
+  .logs-filters {
+    grid-template-columns: 1fr;
+  }
+
+  /* table -> cards */
+  .logs-table,
+  .logs-table__thead,
+  .logs-table__tbody,
+  .logs-table tr,
+  .logs-table td {
+    display: block;
+    width: 100%;
+  }
+
+  .logs-table__thead {
+    display: none;
+  }
+
+  .logs-table tr {
+    padding: 10px 10px 12px;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+  }
+
+  .logs-table tr:last-child {
+    border-bottom: 0;
+  }
+
+  .logs-table td {
+    padding: 10px 10px;
+    border-bottom: 0;
+    white-space: normal;
+  }
+
+  .logs-table td::before {
+    content: attr(data-label);
+    display: block;
+    font-size: 0.78rem;
+    font-weight: 900;
+    letter-spacing: 0.2px;
+    margin-bottom: 4px;
+    color: rgba(148, 163, 184, 0.9);
+    text-transform: uppercase;
+  }
+
+  .logs-message {
+    max-width: none;
+    overflow: visible;
+    text-overflow: clip;
+    white-space: normal;
+  }
+}
+
+@media (max-width: 520px) {
+  .logs__dangerBtn {
+    width: 100%;
+  }
+}
+
+/* =========================================================
+   MODAL DETALLES LOG — (clases legacy -logsAdmin)
    ========================================================= */
 
 .logs-modal-logsAdmin {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.70);
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.72);
   backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 9999; /* 👈 importante */
   padding: 18px;
 }
 
 .logs-modal-content-logsAdmin {
   width: 100%;
   max-width: 860px;
-
-  background: rgba(15,23,42,0.82);
-  backdrop-filter: blur(18px);
+  background: rgba(15, 23, 42, 0.82);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 20px;
-  border: 1px solid rgba(255,255,255,0.12);
-
   box-shadow:
-    0 28px 60px rgba(0,0,0,0.60),
-    0 0 0 1px rgba(255,255,255,0.06);
-
+    0 28px 60px rgba(0, 0, 0, 0.6),
+    0 0 0 1px rgba(255, 255, 255, 0.06);
   color: #fff;
   overflow: hidden;
 }
@@ -264,7 +370,7 @@
   align-items: flex-start;
   gap: 12px;
   padding: 18px 18px 12px;
-  border-bottom: 1px solid rgba(255,255,255,0.08);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .logs-modal-title-logsAdmin {
@@ -276,22 +382,22 @@
 .logs-modal-subtitle-logsAdmin {
   margin: 6px 0 0;
   font-size: 13px;
-  color: #94a3b8;
+  color: rgba(148, 163, 184, 0.95);
 }
 
 .logs-modal-x-logsAdmin {
-  border: 1px solid rgba(255,255,255,0.14);
-  background: rgba(255,255,255,0.10);
-  color: #fff;
-  border-radius: 12px;
   width: 40px;
   height: 40px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.10);
+  color: #fff;
   cursor: pointer;
   font-weight: 900;
 }
 
 .logs-modal-x-logsAdmin:hover {
-  background: rgba(255,255,255,0.16);
+  background: rgba(255, 255, 255, 0.16);
 }
 
 .logs-modal-body-logsAdmin {
@@ -316,13 +422,13 @@
 .logs-kv-logsAdmin {
   padding: 12px;
   border-radius: 14px;
-  background: rgba(0,0,0,0.20);
-  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(0, 0, 0, 0.20);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .logs-kv-logsAdmin span {
   display: block;
-  color: #94a3b8;
+  color: rgba(148, 163, 184, 0.95);
   font-size: 12px;
   margin-bottom: 6px;
 }
@@ -330,7 +436,7 @@
 .logs-kv-logsAdmin strong {
   font-size: 14px;
   font-weight: 800;
-  color: #e5e7eb;
+  color: rgba(226, 232, 240, 0.96);
 }
 
 .logs-kv-span-logsAdmin {
@@ -343,31 +449,24 @@
   }
 }
 
-.nivel-chip-logsAdmin {
-  display: inline-flex;
-  padding: 6px 10px;
-  border-radius: 999px;
-  border: 1px solid rgba(255,255,255,0.12);
-}
-
 .logs-json-sections-logsAdmin h3 {
   margin: 14px 0 8px;
-  font-size: 13px;
-  color: #cbd5e1;
-  font-weight: 800;
-  letter-spacing: 0.02em;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
+  color: rgba(226, 232, 240, 0.72);
 }
 
 .logs-pre-logsAdmin {
-  background: rgba(0,0,0,0.35);
+  background: rgba(0, 0, 0, 0.35);
   padding: 12px;
   border-radius: 12px;
-  border: 1px solid rgba(255,255,255,0.08);
-  overflow-y: auto;
+  border: 1px solid rgba(255, 255, 255, 0.08);
   white-space: pre-wrap;
+  overflow: auto;
   font-size: 12.5px;
-  color: #e5e7eb;
+  color: rgba(226, 232, 240, 0.92);
 }
 
 .logs-modal-footer-logsAdmin {
@@ -379,18 +478,17 @@
 .logs-modal-close-logsAdmin {
   padding: 10px 16px;
   border-radius: 999px;
-  border: 1px solid rgba(255,255,255,0.14);
-  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.12);
   color: #fff;
-  font-weight: 800;
+  font-weight: 900;
   cursor: pointer;
 }
 
 .logs-modal-close-logsAdmin:hover {
-  background: rgba(255,255,255,0.18);
+  background: rgba(255, 255, 255, 0.18);
 }
 
-/* skeleton loading */
 .logs-modal-loading-logsAdmin {
   padding: 18px;
   display: grid;
@@ -400,5 +498,5 @@
 .logs-skeleton-logsAdmin {
   height: 14px;
   border-radius: 10px;
-  background: rgba(255,255,255,0.10);
+  background: rgba(255, 255, 255, 0.10);
 }

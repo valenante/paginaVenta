@@ -1,8 +1,14 @@
-import React, { useState } from "react";
+// src/components/Usuarios/UsuariosPage.jsx ✅ PERFECTO (UX Errors PRO)
+// - OK/avisos: AlertaMensaje
+// - Errores backend: ErrorToast (normalizeApiError vía hook useUsuarios)
+// Requiere: useUsuarios() actualizado para devolver { ok, error } (error normalizado)
+
+import React, { useCallback, useState } from "react";
 import { useUsuarios } from "./useUsuarios";
 import { useAuth } from "../../context/AuthContext";
-import UpsellEstadisticasUsuarios from "../Usuarios/UpsellEstadisticasUsuarios";
 import { useTenant } from "../../context/TenantContext";
+
+import UpsellEstadisticasUsuarios from "../Usuarios/UpsellEstadisticasUsuarios";
 import UsuarioCreateForm from "./UsuarioCreateForm.jsx";
 import UsuariosTable from "./UsuariosTable.jsx";
 import UsuarioEditModal from "./UsuarioEditModal.jsx";
@@ -10,6 +16,7 @@ import UsuarioStatsModal from "./UsuariosStatsModal.jsx";
 import ModalConfirmacion from "../Modal/ModalConfirmacion";
 
 import AlertaMensaje from "../AlertaMensaje/AlertaMensaje";
+import ErrorToast from "../common/ErrorToast.jsx";
 
 import "./UsuariosPage.css";
 
@@ -18,50 +25,97 @@ export default function UsuariosPage() {
     usuarios,
     permisosDisponibles,
     rolesConfig,
+    loading,
+    cargarUsuarios,
     crearUsuario,
     eliminarUsuario,
     editarUsuario,
-    actualizarPermisosUsuario,
+    actualizarPermisosUsuario, // (si lo activas luego)
   } = useUsuarios();
 
+  // OK / avisos
   const [alerta, setAlerta] = useState(null);
 
-  // Estado modales
+  // KO (contrato)
+  const [errorToast, setErrorToast] = useState(null);
+
+  // Modales
   const [usuarioEdit, setUsuarioEdit] = useState(null);
   const [usuarioStats, setUsuarioStats] = useState(null);
-  const [usuarioPermisos, setUsuarioPermisos] = useState(null);
+  const [usuarioPermisos, setUsuarioPermisos] = useState(null); // (por si lo reactivas)
   const [deletingId, setDeletingId] = useState(null);
   const [usuarioAEliminar, setUsuarioAEliminar] = useState(null);
-  const { user } = useAuth();
 
+  const { user } = useAuth();
   const { tenant } = useTenant();
+
   const tipoNegocio = tenant?.tipoNegocio || "restaurante";
 
   const isPlanEsencial =
     tipoNegocio === "restaurante" &&
     (user?.plan === "esencial" || user?.plan === "tpv-esencial");
 
-  const onCrear = async (payload) => {
-    const r = await crearUsuario(payload);
-    if (r.ok) setAlerta({ tipo: "exito", mensaje: "Usuario creado!" });
-    else setAlerta({ tipo: "error", mensaje: r.error });
+  const showOk = (mensaje) => setAlerta({ tipo: "exito", mensaje });
+  const showWarn = (mensaje) => setAlerta({ tipo: "warn", mensaje });
+
+  const showErr = (errNormalized, fallback = "No se pudo completar la operación.") => {
+    // errNormalized ya viene de normalizeApiError en el hook
+    if (!errNormalized) {
+      setErrorToast({
+        status: null,
+        code: "UNKNOWN",
+        message: fallback,
+        requestId: "—",
+        action: "CONTACT_SUPPORT",
+        retryAfter: null,
+        fields: null,
+        kind: "unknown",
+        canRetry: false,
+      });
+      return;
+    }
+    setErrorToast({
+      ...errNormalized,
+      message: errNormalized.message || fallback,
+    });
   };
 
-  const onEliminar = (usuario) => {
+  const onRetry = useCallback(() => {
+    cargarUsuarios?.();
+  }, [cargarUsuarios]);
+
+  const onCrear = async (payload) => {
+    setErrorToast(null);
+    const r = await crearUsuario(payload);
+
+    if (r.ok) showOk("Usuario creado.");
+    else showErr(r.error, "No se pudo crear el usuario.");
+  };
+
+  const onEliminarClick = (usuario) => {
     setUsuarioAEliminar(usuario);
   };
 
   const onEditar = async (id, payload) => {
+    setErrorToast(null);
     const r = await editarUsuario(id, payload);
-    if (r.ok)
-      setAlerta({ tipo: "exito", mensaje: "Usuario actualizado!" });
-    else
-      setAlerta({ tipo: "error", mensaje: r.error });
+
+    if (r.ok) showOk("Usuario actualizado.");
+    else showErr(r.error, "No se pudo actualizar el usuario.");
   };
 
   return (
     <div className="usuarios-root usuarios-layout">
+      {/* ERROR TOAST (KO) */}
+      {errorToast && (
+        <ErrorToast
+          error={errorToast}
+          onRetry={errorToast.canRetry ? onRetry : undefined}
+          onClose={() => setErrorToast(null)}
+        />
+      )}
 
+      {/* ALERTA OK / avisos */}
       {alerta && (
         <AlertaMensaje
           tipo={alerta.tipo}
@@ -127,7 +181,6 @@ export default function UsuariosPage() {
       </section>
 
       <div className="usuarios-grid">
-
         <div className="usuarios-col usuarios-col-create">
           <UsuarioCreateForm onCrear={onCrear} />
 
@@ -142,16 +195,20 @@ export default function UsuariosPage() {
           <UsuariosTable
             usuarios={usuarios}
             onEditar={setUsuarioEdit}
-            onEliminar={onEliminar}
+            onEliminar={onEliminarClick}
             onStats={setUsuarioStats}
             onPermisos={setUsuarioPermisos}
             isPlanEsencial={isPlanEsencial}
             deletingId={deletingId}
           />
+
+          {loading && (
+            <div style={{ marginTop: 10, opacity: 0.8 }}>
+              Cargando…
+            </div>
+          )}
         </div>
-
       </div>
-
 
       {/* Modal editar */}
       {usuarioEdit && (
@@ -171,7 +228,9 @@ export default function UsuariosPage() {
           onClose={() => setUsuarioStats(null)}
         />
       )}
-      {/*{usuarioPermisos && (
+
+      {/* Permisos (si lo reactivas)
+      {usuarioPermisos && (
         <UsuarioPermisosModal
           usuario={usuarioPermisos}
           permisosDisponibles={permisosDisponibles}
@@ -179,20 +238,23 @@ export default function UsuariosPage() {
           onSave={actualizarPermisosUsuario}
           onClose={() => setUsuarioPermisos(null)}
         />
-      )} */}
+      )}
+      */}
+
+      {/* Confirmación eliminar */}
       {usuarioAEliminar && (
         <ModalConfirmacion
           titulo="Desactivar usuario"
           mensaje={`¿Seguro que quieres desactivar a "${usuarioAEliminar.name}"? Perderá acceso al TPV inmediatamente. Podrás reactivarlo más adelante.`}
           onClose={() => setUsuarioAEliminar(null)}
           onConfirm={async () => {
+            setErrorToast(null);
             setDeletingId(usuarioAEliminar._id);
-            const ok = await eliminarUsuario(usuarioAEliminar._id);
 
-            setAlerta({
-              tipo: ok ? "exito" : "error",
-              mensaje: ok ? "Usuario desactivado" : "Error al desactivar",
-            });
+            const r = await eliminarUsuario(usuarioAEliminar._id);
+
+            if (r.ok) showOk("Usuario desactivado.");
+            else showErr(r.error, "Error al desactivar el usuario.");
 
             setDeletingId(null);
             setUsuarioAEliminar(null);

@@ -1,9 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
 import api from "../utils/api";
 import AlertaMensaje from "../components/AlertaMensaje/AlertaMensaje.jsx";
 import ModalConfirmacion from "../components/Modal/ModalConfirmacion.jsx";
 import ModalNuevaReserva from "../components/Reservas/ModalNuevaReserva.jsx";
 import ReservasAjustesPage from "../components/Reservas/ReservasAjustesPage.jsx";
+import ErrorToast from "../components/common/ErrorToast.jsx";
+import { normalizeApiError } from "../utils/normalizeApiError.js";
 import { useFeature } from "../Hooks/useFeature";
 import "../styles/ReservasConfigPage.css";
 
@@ -11,7 +13,10 @@ export default function ReservasConfigPage() {
   const [reservas, setReservas] = useState([]);
   const [fecha, setFecha] = useState("");
   const [estado, setEstado] = useState("");
+
   const [alerta, setAlerta] = useState(null);
+  const [error, setError] = useState(null);
+
   const [modal, setModal] = useState(null);
   const [showConfig, setShowConfig] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -19,9 +24,15 @@ export default function ReservasConfigPage() {
   // ✅ Usa el hook centralizado: plan + config
   const reservasHabilitadas = useFeature("reservas.habilitadas", true);
 
-  const cargarReservas = async () => {
+  const showAlert = useCallback((tipo, mensaje) => {
+    setAlerta({ tipo, mensaje });
+  }, []);
+
+  const cargarReservas = useCallback(async () => {
     try {
       setLoading(true);
+      setError(null);
+
       const params = {};
       if (fecha) params.fecha = fecha;
       if (estado) params.estado = estado;
@@ -29,51 +40,68 @@ export default function ReservasConfigPage() {
       const { data } = await api.get("/reservas/fecha", { params });
       setReservas(data);
     } catch (err) {
-      console.error("❌ Error al obtener reservas:", err);
-      setAlerta({ tipo: "error", mensaje: "Error al cargar reservas." });
+      const normalized = normalizeApiError(err);
+      setError({
+        ...normalized,
+        retryFn: cargarReservas,
+      });
     } finally {
       setLoading(false);
     }
-  };
+  }, [fecha, estado]);
 
   useEffect(() => {
     if (!reservasHabilitadas) return; // 👈 no golpeamos backend si la feature está off
     cargarReservas();
-  }, [fecha, estado, reservasHabilitadas]);
+  }, [fecha, estado, reservasHabilitadas, cargarReservas]);
 
-  const confirmarReserva = async (id) => {
-    try {
-      await api.put(`/reservas/${id}/confirmar`);
-      setAlerta({ tipo: "exito", mensaje: "Reserva confirmada." });
-      cargarReservas();
-    } catch (err) {
-      console.error(err);
-      setAlerta({ tipo: "error", mensaje: "Error al confirmar la reserva." });
-    }
-  };
+  const confirmarReserva = useCallback(
+    async (id) => {
+      try {
+        setError(null);
+        await api.put(`/reservas/${id}/confirmar`);
+        showAlert("exito", "Reserva confirmada.");
+        cargarReservas();
+      } catch (err) {
+        const normalized = normalizeApiError(err);
+        setError({
+          ...normalized,
+          retryFn: () => confirmarReserva(id),
+        });
+      }
+    },
+    [cargarReservas, showAlert]
+  );
 
-  const cancelarReserva = (id) => {
-    setModal({
-      titulo: "Cancelar reserva",
-      mensaje: "Escribe el motivo de la cancelación:",
-      placeholder: "Motivo de la cancelación",
-      onConfirm: async (razon) => {
-        try {
-          await api.put(`/reservas/${id}/cancelar`, { razon });
-          setModal(null);
-          setAlerta({ tipo: "info", mensaje: "Reserva cancelada correctamente." });
-          cargarReservas();
-        } catch (err) {
-          console.error(err);
-          setModal(null);
-          setAlerta({ tipo: "error", mensaje: "Error al cancelar la reserva." });
-        }
-      },
-      onClose: () => setModal(null),
-    });
-  };
+  const abrirCancelarReserva = useCallback(
+    (id) => {
+      setModal({
+        titulo: "Cancelar reserva",
+        mensaje: "Escribe el motivo de la cancelación:",
+        placeholder: "Motivo de la cancelación",
+        onConfirm: async (razon) => {
+          try {
+            setError(null);
+            await api.put(`/reservas/${id}/cancelar`, { razon });
+            setModal(null);
+            showAlert("info", "Reserva cancelada correctamente.");
+            cargarReservas();
+          } catch (err) {
+            setModal(null);
+            const normalized = normalizeApiError(err);
+            setError({
+              ...normalized,
+              retryFn: () => abrirCancelarReserva(id), // reabre modal (simple)
+            });
+          }
+        },
+        onClose: () => setModal(null),
+      });
+    },
+    [cargarReservas, showAlert]
+  );
 
-   // 🔒 Si la feature está deshabilitada (por plan o por config) → cartel
+  // 🔒 Feature deshabilitada → cartel
   if (!reservasHabilitadas) {
     return (
       <section className="reservas-page section section--wide">
@@ -91,11 +119,18 @@ export default function ReservasConfigPage() {
             Módulo de reservas inactivo
           </span>
         </div>
+
+        {error && (
+          <ErrorToast
+            error={error}
+            onRetry={error.canRetry ? error.retryFn : undefined}
+            onClose={() => setError(null)}
+          />
+        )}
       </section>
     );
   }
 
-  // 🔓 Feature activa → UI normal
   return (
     <section className="reservas-page section section--wide">
       <div className="card reservas-card">
@@ -158,7 +193,7 @@ export default function ReservasConfigPage() {
         {/* === BOTÓN NUEVA RESERVA === */}
         <section className="nueva-reserva-bar">
           <button
-            className="btn btn-primario  btn-nueva-reserva"
+            className="btn btn-primario btn-nueva-reserva"
             onClick={() => setModal({ tipo: "nueva" })}
           >
             ➕ Nueva reserva
@@ -210,23 +245,22 @@ export default function ReservasConfigPage() {
                         {r.estado === "pendiente" ? (
                           <div className="acciones-buttons">
                             <button
-                              className="btn btn-primario  btn-compact btn-confirmar"
+                              className="btn btn-primario btn-compact btn-confirmar"
                               onClick={() => confirmarReserva(r._id)}
                             >
                               ✅ Confirmar
                             </button>
                             <button
                               className="btn btn-secundario btn-compact btn-cancelar"
-                              onClick={() => cancelarReserva(r._id)}
+                              onClick={() => abrirCancelarReserva(r._id)}
                             >
                               ❌ Rechazar
                             </button>
                           </div>
-                        ) : r.estado === "confirmada" ||
-                          r.estado === "auto-confirmada" ? (
+                        ) : r.estado === "confirmada" || r.estado === "auto-confirmada" ? (
                           <button
                             className="btn btn-secundario btn-compact btn-cancelar"
-                            onClick={() => cancelarReserva(r._id)}
+                            onClick={() => abrirCancelarReserva(r._id)}
                           >
                             🛑 Cancelar
                           </button>
@@ -264,7 +298,7 @@ export default function ReservasConfigPage() {
         </div>
       )}
 
-      {/* ALERTAS Y OTROS MODALES */}
+      {/* ALERTAS */}
       {alerta && (
         <AlertaMensaje
           tipo={alerta.tipo}
@@ -273,8 +307,21 @@ export default function ReservasConfigPage() {
         />
       )}
 
+      {/* ERRORES UX PRO */}
+      {error && (
+        <ErrorToast
+          error={error}
+          onRetry={error.canRetry ? error.retryFn : undefined}
+          onClose={() => setError(null)}
+        />
+      )}
+
+      {/* MODALES */}
       {modal && modal.tipo === "nueva" && (
-        <ModalNuevaReserva onClose={() => setModal(null)} onCreated={cargarReservas} />
+        <ModalNuevaReserva
+          onClose={() => setModal(null)}
+          onCreated={cargarReservas}
+        />
       )}
 
       {modal && modal.titulo && (

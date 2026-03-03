@@ -1,315 +1,495 @@
-/* =========================================================
-   TICKETS — PANEL PREMIUM ALEF (sufijo -ticketsAdmin)
+/* src/styles/TicketsPage.css
+   =========================================================
+   TICKETS — Estilo hermano (TenantTable/Billing/Planes/Logs)
+   - Vidrio oscuro + blur
+   - Sombras profundas
+   - Tabla desktop
+   - Card-list móvil (SIN overflow horizontal)
    ========================================================= */
 
-.tickets-page-ticketsAdmin {
+.tickets {
   display: flex;
   flex-direction: column;
-  gap: 22px;
-  color: #e5e7eb;
+  gap: 18px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2.2rem 1.4rem;
+  color: rgba(226, 232, 240, 0.92);
 }
 
-.tickets-title-ticketsAdmin {
-  font-size: 26px;
-  font-weight: 800;
-  margin-bottom: 4px;
-}
-
-/* ===== FILTROS ===== */
-
-.ticket-filtros-ticketsAdmin {
+/* =========================
+   Header
+========================= */
+.tickets__header {
   display: flex;
-  gap: 14px;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
   flex-wrap: wrap;
-
-  background: rgba(255,255,255,0.05);
-  backdrop-filter: blur(14px);
-  padding: 16px 18px;
-  border-radius: 14px;
-  border: 1px solid rgba(255,255,255,0.08);
-
-  box-shadow:
-    0 10px 30px rgba(0,0,0,0.25),
-    0 0 0 1px rgba(255,255,255,0.05);
 }
 
-.ticket-input-ticketsAdmin,
-.ticket-select-ticketsAdmin {
-  padding: 9px 12px;
-  border-radius: 10px;
-  background: rgba(255,255,255,0.12);
-  border: 1px solid rgba(255,255,255,0.18);
+.tickets__title {
+  margin: 0;
+  font-size: 1.75rem;
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: -0.02em;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+}
+
+.tickets__subtitle {
+  margin: 6px 0 0;
+  color: rgba(148, 163, 184, 0.92);
+  font-size: 0.95rem;
+}
+
+/* =========================
+   Filters
+========================= */
+.tickets-filters {
+  display: grid;
+  grid-template-columns: 160px 160px 200px 1fr auto;
+  gap: 12px;
+  align-items: center;
+
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.25),
+    0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+
+.tickets-field {
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.10);
+  border: 1px solid rgba(255, 255, 255, 0.18);
   color: #fff;
   outline: none;
-  min-width: 160px;
-  transition: background 0.2s ease, border-color 0.2s ease;
+  transition: background 120ms ease, border-color 120ms ease, box-shadow 120ms ease;
 }
 
-.ticket-input-ticketsAdmin:focus,
-.ticket-select-ticketsAdmin:focus {
-  background: rgba(255,255,255,0.16);
-  border-color: #6a0dad;
-  box-shadow: 0 0 0 1px rgba(106,13,173,0.45);
+.tickets-field::placeholder {
+  color: rgba(226, 232, 240, 0.55);
 }
 
-.ticket-refresh-btn-ticketsAdmin {
+.tickets-field:focus {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(106, 13, 173, 0.9);
+  box-shadow: 0 0 0 3px rgba(106, 13, 173, 0.25);
+}
+
+.tickets-refreshBtn {
   padding: 10px 14px;
-  border-radius: 10px;
-  border: none;
-  font-weight: 600;
-  background: rgba(255,255,255,0.14);
-  color: #f1f5f9;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.10);
+  color: #fff;
   cursor: pointer;
-  transition: background 0.2s ease, transform 0.15s ease;
+  font-weight: 900;
+  transition: background 120ms ease, transform 120ms ease;
+  white-space: nowrap;
 }
 
-.ticket-refresh-btn-ticketsAdmin:hover {
-  background: rgba(255,255,255,0.26);
-  transform: translateY(-2px);
-}
-
-/* ===== TABLA ===== */
-
-.tickets-table-ticketsAdmin {
-  border-collapse: collapse;
-  width: 100%;
-  background: rgba(255,255,255,0.06);
-  backdrop-filter: blur(10px);
-  border-radius: 16px;
-  overflow: hidden;
-  border: 1px solid rgba(255,255,255,0.08);
-}
-
-.tickets-table-ticketsAdmin th {
-  background: rgba(0,0,0,0.35);
-  padding: 12px;
-  text-align: left;
-  font-size: 14px;
-  color: #cbd5e1;
-}
-
-.tickets-table-ticketsAdmin td {
-  padding: 10px 12px;
-  font-size: 14px;
-  border-bottom: 1px solid rgba(255,255,255,0.05);
-  color: #e2e8f0;
-}
-
-.tickets-row-ticketsAdmin {
-  cursor: pointer;
-  transition: background 0.15s ease, transform 0.1s ease;
-}
-
-.tickets-row-ticketsAdmin:hover {
-  background: rgba(255,255,255,0.10);
+.tickets-refreshBtn:hover {
+  background: rgba(255, 255, 255, 0.18);
   transform: translateY(-1px);
 }
 
-/* ===== TAGS ===== */
-
-.ticket-prio-tag-ticketsAdmin,
-.ticket-estado-tag-ticketsAdmin {
-  padding: 4px 10px;
-  border-radius: 999px;
-  font-size: 12px;
-  text-transform: uppercase;
-  font-weight: 700;
-  display: inline-block;
+/* =========================
+   States
+========================= */
+.tickets-state {
+  margin: 0;
+  padding: 10px 4px;
 }
 
-/* Prioridad */
+.tickets-state--muted {
+  color: rgba(148, 163, 184, 0.95);
+}
+
+/* =========================
+   Table (desktop)
+========================= */
+.tickets-tableWrap {
+  width: 100%;
+}
+
+.tickets-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 18px;
+  overflow: hidden;
+
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow:
+    0 18px 40px rgba(0, 0, 0, 0.55),
+    0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+
+.tickets-table__thead {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.tickets-table th,
+.tickets-table td {
+  padding: 0.85rem 1rem;
+  font-size: var(--font-size-sm);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.tickets-table th {
+  text-align: left;
+  font-weight: 900;
+  text-transform: uppercase;
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.08em;
+  color: rgba(226, 232, 240, 0.65);
+  background: rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.22);
+}
+
+.tickets-table__row {
+  cursor: pointer;
+  transition: background 120ms ease, transform 120ms ease;
+}
+
+.tickets-table__row:hover td {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.tickets-table__row:hover {
+  transform: translateY(-1px);
+}
+
+.tickets-subject {
+  max-width: 520px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* =========================
+   Pills
+========================= */
+.tickets-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-weight: 900;
+  letter-spacing: 0.2px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  font-size: 12px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
 .prio-baja {
-  background: rgba(96,165,250,0.25);
+  background: rgba(96, 165, 250, 0.18);
   color: #93c5fd;
 }
 .prio-media {
-  background: rgba(251,146,60,0.25);
+  background: rgba(251, 146, 60, 0.18);
   color: #fb923c;
 }
 .prio-alta {
-  background: rgba(239,68,68,0.25);
+  background: rgba(239, 68, 68, 0.18);
   color: #fca5a5;
 }
 .prio-urgente {
-  background: rgba(220,38,38,0.35);
+  background: rgba(220, 38, 38, 0.26);
   color: #fecaca;
 }
 
+.estado-abierto {
+  background: rgba(46, 204, 113, 0.10);
+  color: rgba(46, 204, 113, 0.95);
+}
 .estado-en_progreso {
-  background: rgba(251,191,36,0.25);
+  background: rgba(251, 191, 36, 0.18);
   color: #facc15;
 }
 .estado-resuelto {
-  background: rgba(59,130,246,0.25);
+  background: rgba(59, 130, 246, 0.18);
   color: #93c5fd;
 }
 .estado-cerrado {
-  background: rgba(107,114,128,0.25);
-  color: #d1d5db;
+  background: rgba(148, 163, 184, 0.14);
+  color: rgba(226, 232, 240, 0.85);
 }
 
-/* ===== MODAL ===== */
-
-.ticket-modal-ticketsAdmin {
+/* =========================================================
+   MODAL
+   ========================================================= */
+.tickets-modal {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.65);
-  backdrop-filter: blur(6px);
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.70);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 99;
+  padding: 18px;
 }
 
-.ticket-modal-content-ticketsAdmin {
+.tickets-modal__content {
   width: 100%;
-  max-width: 650px;
-  background: rgba(15,23,42,0.75);
-  padding: 26px 30px;
+  max-width: 760px;
+  background: rgba(15, 23, 42, 0.82);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 20px;
-  backdrop-filter: blur(18px);
-  color: white;
-
-  border: 1px solid rgba(255,255,255,0.1);
-
   box-shadow:
-    0 28px 60px rgba(0,0,0,0.55),
-    0 0 0 1px rgba(255,255,255,0.05);
+    0 28px 60px rgba(0, 0, 0, 0.60),
+    0 0 0 1px rgba(255, 255, 255, 0.06);
+  color: #fff;
+  overflow: hidden;
 }
 
-.ticket-modal-title-ticketsAdmin {
-  margin: 0 0 12px;
-  font-size: 22px;
-  font-weight: 800;
-  color: white;
+.tickets-modal__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 18px 18px 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.ticket-divider-ticketsAdmin {
+.tickets-modal__title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 900;
+}
+
+.tickets-modal__meta {
+  margin: 6px 0 0;
+  font-size: 13px;
+  color: rgba(148, 163, 184, 0.95);
+}
+
+.tickets-modal__close {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.10);
+  color: #fff;
+  cursor: pointer;
+  font-weight: 900;
+}
+
+.tickets-modal__close:hover {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.tickets-divider {
   border: none;
   height: 1px;
-  background: rgba(255,255,255,0.12);
-  margin: 16px 0;
+  background: rgba(255, 255, 255, 0.10);
+  margin: 0;
 }
 
-/* ===== DATA ROW ===== */
-
-.ticket-data-row-ticketsAdmin {
-  display: flex;
-  align-items: center;
+.tickets-controls {
+  padding: 14px 18px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
-  margin-bottom: 12px;
 }
 
-.ticket-select-modal-ticketsAdmin {
-  padding: 8px 12px;
-  border-radius: 10px;
-  background: rgba(255,255,255,0.12);
-  border: 1px solid rgba(255,255,255,0.18);
-  color: #fff;
+.tickets-control label {
+  display: block;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(226, 232, 240, 0.72);
+  margin-bottom: 6px;
 }
 
-/* ===== CHAT ===== */
-
-.ticket-chat-title-ticketsAdmin {
-  margin-bottom: 8px;
+.tickets-field--modal {
+  width: 100%;
 }
 
-.ticket-chat-ticketsAdmin {
-  max-height: 240px;
-  overflow-y: auto;
-  padding-right: 6px;
+.tickets-chat__title {
+  margin: 14px 18px 8px;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(226, 232, 240, 0.72);
+}
+
+.tickets-chat {
+  padding: 0 18px 12px;
+  max-height: 260px;
+  overflow: auto;
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
-.ticket-msg-ticketsAdmin {
+.tickets-msg {
   padding: 10px 14px;
-  border-radius: 12px;
-  background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.14);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.14);
 }
 
-.ticket-msg-ticketsAdmin p {
+.tickets-msg p {
   margin: 0 0 4px;
 }
 
-.ticket-msg-ticketsAdmin span {
+.tickets-msg span {
   font-size: 12px;
-  color: #cbd5e1;
+  color: rgba(203, 213, 225, 0.92);
 }
 
-/* Auto color por autor */
 .msg-admin {
-  border-left: 3px solid #6a0dad;
+  border-left: 3px solid rgba(106, 13, 173, 0.95);
 }
 .msg-user {
-  border-left: 3px solid #3b82f6;
+  border-left: 3px solid rgba(59, 130, 246, 0.95);
+}
+.msg-superadmin {
+  border-left: 3px solid rgba(139, 92, 246, 0.95);
 }
 
-/* ===== ENVIAR MENSAJE ===== */
-
-.ticket-msg-form-ticketsAdmin {
-  margin-top: 14px;
+.tickets-send {
+  padding: 0 18px 18px;
   display: flex;
   gap: 10px;
 }
 
-.ticket-msg-input-ticketsAdmin {
+.tickets-field--send {
   flex: 1;
-  padding: 10px 12px;
-  border-radius: 12px;
-  border: 1px solid rgba(255,255,255,0.18);
-  background: rgba(255,255,255,0.08);
-  color: #fff;
 }
 
-.ticket-msg-send-btn-ticketsAdmin {
+.tickets-send__btn {
   padding: 10px 16px;
   border-radius: 12px;
-  border: none;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: linear-gradient(135deg, rgba(106, 13, 173, 0.85), rgba(139, 92, 246, 0.75));
+  color: #fff;
+  font-weight: 900;
   cursor: pointer;
-
-  background: linear-gradient(135deg, #6a0dad, #8a1bd7);
-  color: #fff;
-  font-weight: 600;
-
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  transition: transform 120ms ease, box-shadow 120ms ease;
+  white-space: nowrap;
 }
 
-.ticket-msg-send-btn-ticketsAdmin:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 18px rgba(106,13,173,0.5);
+.tickets-send__btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 22px rgba(106, 13, 173, 0.35);
 }
 
-/* ===== ELIMINAR TICKET ===== */
-
-.ticket-delete-btn-ticketsAdmin {
-  margin-top: 18px;
+.tickets-dangerBtn {
+  margin: 0 18px 18px;
   padding: 10px 16px;
   border-radius: 12px;
-  background: rgba(239,68,68,0.22);
+  background: rgba(239, 68, 68, 0.18);
   color: #fecaca;
-  border: none;
-  font-weight: 600;
+  border: 1px solid rgba(239, 68, 68, 0.28);
+  font-weight: 900;
   cursor: pointer;
-
-  transition: background 0.2s ease, transform 0.15s ease;
+  transition: background 120ms ease, transform 120ms ease;
 }
 
-.ticket-delete-btn-ticketsAdmin:hover {
-  background: #ef4444;
-  color: #fff;
-  transform: translateY(-2px);
+.tickets-dangerBtn:hover {
+  background: rgba(239, 68, 68, 0.30);
+  transform: translateY(-1px);
 }
 
-/* === TABLA RESPONSIVE === */
-.tickets-table-wrapper-ticketsAdmin {
-  width: 100%;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-}
+/* =========================
+   Responsive: NO overflow
+   -> table becomes card list
+========================= */
+@media (max-width: 900px) {
+  .tickets {
+    padding: 1.6rem 1rem;
+  }
 
-.tickets-table-ticketsAdmin {
-  min-width: 700px; /* evita romper diseño en móvil */
+  .tickets__title {
+    font-size: 1.35rem;
+  }
+
+  .tickets-filters {
+    grid-template-columns: 1fr;
+  }
+
+  /* table -> cards */
+  .tickets-table,
+  .tickets-table__thead,
+  .tickets-table__tbody,
+  .tickets-table tr,
+  .tickets-table td {
+    display: block;
+    width: 100%;
+  }
+
+  .tickets-table__thead {
+    display: none;
+  }
+
+  .tickets-table tr {
+    padding: 10px 10px 12px;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+  }
+
+  .tickets-table tr:last-child {
+    border-bottom: 0;
+  }
+
+  .tickets-table td {
+    padding: 10px 10px;
+    border-bottom: 0;
+    white-space: normal;
+  }
+
+  .tickets-table td::before {
+    content: attr(data-label);
+    display: block;
+    font-size: 0.78rem;
+    font-weight: 900;
+    letter-spacing: 0.2px;
+    margin-bottom: 4px;
+    color: rgba(148, 163, 184, 0.9);
+    text-transform: uppercase;
+  }
+
+  .tickets-subject {
+    max-width: none;
+    overflow: visible;
+    text-overflow: clip;
+    white-space: normal;
+  }
+
+  .tickets-controls {
+    grid-template-columns: 1fr;
+  }
+
+  .tickets-send {
+    flex-direction: column;
+  }
+
+  .tickets-send__btn {
+    width: 100%;
+    min-height: 44px;
+  }
+
+  .tickets-dangerBtn {
+    width: calc(100% - 36px);
+  }
 }

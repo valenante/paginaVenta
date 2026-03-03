@@ -1,6 +1,48 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import api from "../../utils/api";
 import "../../styles/BillingPage.css";
+
+function moneyEUR(centsOrNumber) {
+  const n = Number(centsOrNumber || 0);
+  // si viene en euros ya, no pasa nada (se usa como number)
+  return `€ ${n.toFixed(2)}`;
+}
+
+function fmtDateTime(tsMsOrSec) {
+  if (!tsMsOrSec) return "—";
+  const n = Number(tsMsOrSec);
+  const ms = n < 10_000_000_000 ? n * 1000 : n; // heurística: sec -> ms
+  try {
+    return new Date(ms).toLocaleString();
+  } catch {
+    return "—";
+  }
+}
+
+function fmtDate(d) {
+  if (!d) return "—";
+  try {
+    return new Date(d).toLocaleDateString();
+  } catch {
+    return "—";
+  }
+}
+
+function StatusPill({ status }) {
+  const s = String(status || "unknown").toLowerCase();
+  const tone =
+    s === "succeeded" || s === "paid"
+      ? "ok"
+      : s === "failed" || s === "canceled"
+      ? "bad"
+      : "neutral";
+
+  return (
+    <span className={`billing-status billing-status--${tone}`} title={status}>
+      {status || "—"}
+    </span>
+  );
+}
 
 export default function BillingPage() {
   const [loading, setLoading] = useState(true);
@@ -8,101 +50,155 @@ export default function BillingPage() {
   const [error, setError] = useState("");
 
   useEffect(() => {
+    let mounted = true;
+
     const fetchBilling = async () => {
       try {
         const res = await api.get("/admin/superadminBilling");
+        if (!mounted) return;
         setData(res.data);
       } catch (err) {
         console.error("❌ Error billing:", err);
+        if (!mounted) return;
         setError("No se pudo cargar la información de facturación.");
       } finally {
+        if (!mounted) return;
         setLoading(false);
       }
     };
 
     fetchBilling();
+    return () => {
+      mounted = false;
+    };
   }, []);
 
-  if (loading) return <p className="billing-loading">Cargando datos...</p>;
-  if (error) return <p className="billing-error">{error}</p>;
+  const view = useMemo(() => {
+    const safe = data || {};
+    const pagos = Array.isArray(safe.pagos) ? safe.pagos : [];
+    const suscripciones = Array.isArray(safe.suscripciones) ? safe.suscripciones : [];
 
-  const { mrr, totalTenants, pagos, suscripciones } = data;
+    return {
+      mrr: Number(safe.mrr || 0),
+      totalTenants: Number(safe.totalTenants || 0),
+      pagos,
+      suscripciones,
+    };
+  }, [data]);
+
+  if (loading) return <p className="billing-state billing-state--loading">Cargando datos…</p>;
+  if (error) return <p className="billing-state billing-state--error">{error}</p>;
+  if (!data) return <p className="billing-state billing-state--error">No hay datos.</p>;
 
   return (
-    <div className="billing-page">
-      <h1>📄 Facturación</h1>
+    <section className="billing">
+      <header className="billing__header">
+        <h1 className="billing__title">📄 Facturación</h1>
+        <p className="billing__subtitle">
+          Vista rápida de ingresos recurrentes, pagos recientes y suscripciones activas.
+        </p>
+      </header>
 
-      {/* ====== RESUMEN SUPERIOR ====== */}
-      <div className="billing-cards">
-        <div className="billing-card">
-          <h3>MRR (Mensual)</h3>
-          <p className="billing-number">€ {mrr.toFixed(2)}</p>
-        </div>
+      {/* KPI */}
+      <div className="billing-kpis">
+        <article className="billing-kpi">
+          <div className="billing-kpi__label">MRR (Mensual)</div>
+          <div className="billing-kpi__value">{moneyEUR(view.mrr)}</div>
+          <div className="billing-kpi__hint">Ingresos recurrentes estimados</div>
+        </article>
 
-        <div className="billing-card">
-          <h3>Total Restaurantes</h3>
-          <p className="billing-number">{totalTenants}</p>
-        </div>
+        <article className="billing-kpi">
+          <div className="billing-kpi__label">Total tenants</div>
+          <div className="billing-kpi__value">{view.totalTenants}</div>
+          <div className="billing-kpi__hint">Restaurantes / tiendas</div>
+        </article>
 
-        <div className="billing-card">
-          <h3>Suscripciones activas</h3>
-          <p className="billing-number">{suscripciones.length}</p>
-        </div>
+        <article className="billing-kpi">
+          <div className="billing-kpi__label">Suscripciones activas</div>
+          <div className="billing-kpi__value">{view.suscripciones.length}</div>
+          <div className="billing-kpi__hint">En curso (Stripe + manuales)</div>
+        </article>
       </div>
 
-      {/* ====== ÚLTIMOS PAGOS ====== */}
-      <h2 className="billing-section-title">💳 Últimos pagos Stripe</h2>
-      <div className="billing-table-responsive">
+      {/* Pagos */}
+      <section className="billing-block">
+        <header className="billing-block__header">
+          <h2 className="billing-block__title">💳 Últimos pagos Stripe</h2>
+        </header>
 
-        <table className="billing-table">
-          <thead>
-            <tr>
-              <th>Monto</th>
-              <th>Estado</th>
-              <th>Cliente</th>
-              <th>Fecha</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {pagos.map((pago) => (
-              <tr key={pago.id}>
-                <td>€ {(pago.amount / 100).toFixed(2)}</td>
-                <td>{pago.status}</td>
-                <td>{pago.customer || "—"}</td>
-                <td>{new Date(pago.created * 1000).toLocaleString()}</td>
+        <div className="billing-tableWrap">
+          <table className="billing-table">
+            <thead className="billing-table__thead">
+              <tr>
+                <th>Monto</th>
+                <th>Estado</th>
+                <th>Cliente</th>
+                <th>Fecha</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
 
-      {/* ====== SUSCRIPCIONES ====== */}
-      <h2 className="billing-section-title">📦 Suscripciones</h2>
+            <tbody className="billing-table__tbody">
+              {view.pagos.length === 0 ? (
+                <tr>
+                  <td className="billing-table__empty" colSpan={4}>
+                    No hay pagos recientes.
+                  </td>
+                </tr>
+              ) : (
+                view.pagos.map((pago) => (
+                  <tr key={pago.id}>
+                    <td data-label="Monto">{moneyEUR((pago.amount || 0) / 100)}</td>
+                    <td data-label="Estado">
+                      <StatusPill status={pago.status} />
+                    </td>
+                    <td data-label="Cliente">{pago.customer || "—"}</td>
+                    <td data-label="Fecha">{fmtDateTime(pago.created)}</td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </section>
 
-      <div className="billing-table-responsive">
-        <table className="billing-table">
-          <thead>
-            <tr>
-              <th>Tenant</th>
-              <th>Precio mensual</th>
-              <th>Inicio</th>
-              <th>Renovación</th>
-            </tr>
-          </thead>
+      {/* Suscripciones */}
+      <section className="billing-block">
+        <header className="billing-block__header">
+          <h2 className="billing-block__title">📦 Suscripciones</h2>
+        </header>
 
-          <tbody>
-            {suscripciones.map((s) => (
-              <tr key={s._id}>
-                <td>{s.tenantId}</td>
-                <td>€ {s.precioMensual}</td>
-                <td>{new Date(s.fechaInicio).toLocaleDateString()}</td>
-                <td>{new Date(s.fechaRenovacion).toLocaleDateString()}</td>
+        <div className="billing-tableWrap">
+          <table className="billing-table">
+            <thead className="billing-table__thead">
+              <tr>
+                <th>Tenant</th>
+                <th>Precio mensual</th>
+                <th>Inicio</th>
+                <th>Renovación</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
+            </thead>
+
+            <tbody className="billing-table__tbody">
+              {view.suscripciones.length === 0 ? (
+                <tr>
+                  <td className="billing-table__empty" colSpan={4}>
+                    No hay suscripciones.
+                  </td>
+                </tr>
+              ) : (
+                view.suscripciones.map((s) => (
+                  <tr key={s._id}>
+                    <td data-label="Tenant">{s.tenantId}</td>
+                    <td data-label="Precio mensual">{moneyEUR(Number(s.precioMensual || 0))}</td>
+                    <td data-label="Inicio">{fmtDate(s.fechaInicio)}</td>
+                    <td data-label="Renovación">{fmtDate(s.fechaRenovacion)}</td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </section>
   );
 }

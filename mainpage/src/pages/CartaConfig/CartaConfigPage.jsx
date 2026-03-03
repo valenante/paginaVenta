@@ -6,7 +6,8 @@ import ModalConfirmacion from "../../components/Modal/ModalConfirmacion.jsx";
 import CartaOrdenSection from "./CartaOrdenSection.jsx";
 import CartaPromocionesPanel from "../../components/Promociones/CartaPromocionesPanel.jsx";
 import "../../styles/CartaConfigPage.css";
-
+import ErrorToast from "../../components/common/ErrorToast.jsx";
+import { normalizeApiError } from "../../utils/normalizeApiError.js";
 const HOME_SECTIONS = ["carrousel", "secciones"];
 
 export default function CartaConfigPage() {
@@ -15,7 +16,8 @@ export default function CartaConfigPage() {
   const [form, setForm] = useState(config || {});
   const [saving, setSaving] = useState(false);
   const [alerta, setAlerta] = useState(null);
-
+  const [error, setError] = useState(null);
+  const [diasAperturaRaw, setDiasAperturaRaw] = useState("");
   /**
    * modal:
    * - modo: "confirm" | "prompt"
@@ -135,6 +137,9 @@ export default function CartaConfigPage() {
     async (section, file) => {
       if (!file) return;
 
+      setAlerta(null);
+      setError(null);
+
       const formData = new FormData();
       formData.append("imagen", file);
       formData.append("seccion", section);
@@ -152,8 +157,11 @@ export default function CartaConfigPage() {
 
         showAlert("exito", "Imagen subida correctamente");
       } catch (err) {
-        console.error("❌ Error al subir imagen:", err);
-        showAlert("error", "Error al subir imagen.");
+        const normalized = normalizeApiError(err);
+        setError({
+          ...normalized,
+          retryFn: () => handleFileUpload(section, file),
+        });
       } finally {
         setDragOverSection(null);
         if (fileInputRef.current) fileInputRef.current.value = "";
@@ -269,17 +277,35 @@ export default function CartaConfigPage() {
   // Save
   // ----------------------------
   const handleSave = useCallback(async () => {
+    setAlerta(null);
+    setError(null);
+
     try {
       setSaving(true);
-      const { data } = await api.put("/configuracion", form);
+      const dias = diasAperturaRaw
+        .split(",")
+        .map((d) => d.trim())
+        .filter(Boolean);
 
+      const payload = {
+        ...form,
+        informacionRestaurante: {
+          ...form.informacionRestaurante,
+          diasApertura: dias,
+        },
+      };
+
+      const { data } = await api.put("/configuracion", payload);
       const cfg = data.config ?? data;
       setConfig(cfg);
 
       showAlert("exito", "Configuración actualizada correctamente");
     } catch (err) {
-      console.error("❌ Error al guardar configuración:", err);
-      showAlert("error", "Error al guardar los cambios.");
+      const normalized = normalizeApiError(err);
+      setError({
+        ...normalized,
+        retryFn: handleSave,
+      });
     } finally {
       setSaving(false);
     }
@@ -357,8 +383,22 @@ export default function CartaConfigPage() {
             <label>Días de apertura (separados por coma)</label>
             <input
               type="text"
-              value={diasAperturaValue}
-              onChange={handleDiasAperturaChange}
+              value={diasAperturaRaw}
+              onChange={(e) => setDiasAperturaRaw(e.target.value)}
+              onBlur={() => {
+                const dias = diasAperturaRaw
+                  .split(",")
+                  .map((d) => d.trim())
+                  .filter(Boolean);
+
+                setForm((prev) => ({
+                  ...prev,
+                  informacionRestaurante: {
+                    ...prev.informacionRestaurante,
+                    diasApertura: dias,
+                  },
+                }));
+              }}
               placeholder="Ej: lunes, martes, miércoles"
             />
           </div>
@@ -756,6 +796,14 @@ export default function CartaConfigPage() {
           tipo={alerta.tipo}
           mensaje={alerta.mensaje}
           onClose={() => setAlerta(null)}
+        />
+      )}
+
+      {error && (
+        <ErrorToast
+          error={error}
+          onRetry={error.canRetry ? error.retryFn : undefined}
+          onClose={() => setError(null)}
         />
       )}
 

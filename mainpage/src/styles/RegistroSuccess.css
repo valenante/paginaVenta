@@ -25,7 +25,7 @@
   border-radius: 20px;
   padding: 3rem 2.5rem;
   width: 100%;
-  max-width: 500px;
+  max-width: 520px;
   text-align: center;
   box-shadow: 0 12px 40px rgba(0,0,0,0.25);
   animation: fadeInUp 0.6s ease;
@@ -65,15 +65,22 @@
   font-size: 1rem;
   color: #2e2e2e;
   margin: 0.4rem 0;
+  line-height: 1.45;
 }
 
 .success-text strong {
   color: var(--color-primario);
 }
 
-/* ========== Botón ========== */
+.success-text.subtle {
+  margin-top: 1rem;
+  opacity: 0.75;
+  font-size: 0.95rem;
+}
+
+/* ========== Botones ========== */
 .success-btn {
-  margin-top: 1.5rem;
+  margin-top: 1.2rem;
   padding: 0.75rem 1.4rem;
   font-size: 1rem;
   font-weight: 600;
@@ -83,13 +90,34 @@
   border-radius: 12px;
   cursor: pointer;
   box-shadow: 0 6px 16px rgba(0,0,0,0.15);
-  transition: 0.2s;
+  transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none; /* para <a> */
+  width: 100%;
 }
 
 .success-btn:hover {
-  background: var(--color-primario);
   transform: translateY(-2px);
   box-shadow: 0 8px 20px rgba(0,0,0,0.22);
+}
+
+.success-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.success-btn.secondary {
+  background: rgba(11, 16, 32, 0.08);
+  color: #0b1020;
+  box-shadow: none;
+}
+
+.success-btn.secondary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.12);
 }
 
 /* ========== Spinner ========== */
@@ -105,4 +133,94 @@
 
 @keyframes spin {
   to { transform: rotate(360deg); }
+}
+
+/* ========== Steps (progreso) ========== */
+.success-steps {
+  margin-top: 1.2rem;
+  text-align: left;
+  background: rgba(11, 16, 32, 0.04);
+  border: 1px solid rgba(11, 16, 32, 0.08);
+  border-radius: 14px;
+  padding: 0.9rem 1rem;
+}
+
+.success-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  padding: 0.35rem 0;
+}
+
+.success-step-icon {
+  width: 18px;
+  height: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  color: rgba(11, 16, 32, 0.55);
+  flex: 0 0 18px;
+  margin-top: 2px;
+}
+
+.success-step-text {
+  color: rgba(11, 16, 32, 0.78);
+  font-size: 0.98rem;
+  line-height: 1.35;
+}
+
+.success-step.done .success-step-icon {
+  color: var(--color-primario);
+}
+
+.success-step.done .success-step-text {
+  color: rgba(11, 16, 32, 0.95);
+  font-weight: 600;
+}
+
+/* ========== Warnings ========== */
+.success-warnings {
+  margin-top: 1rem;
+  text-align: left;
+  background: rgba(255, 145, 73, 0.12);
+  border: 1px solid rgba(255, 145, 73, 0.35);
+  border-radius: 14px;
+  padding: 0.9rem 1rem;
+}
+
+.success-warnings-title {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.05rem;
+  color: #0b1020;
+}
+
+.success-warnings-list {
+  margin: 0;
+  padding-left: 1.1rem;
+  color: rgba(11, 16, 32, 0.9);
+}
+
+.success-warnings-list li {
+  margin: 0.25rem 0;
+}
+
+/* ========== Responsive ========== */
+@media (max-width: 520px) {
+  .success-container {
+    padding: 1rem;
+  }
+
+  .success-card {
+    padding: 2.2rem 1.5rem;
+    border-radius: 18px;
+  }
+
+  .success-title {
+    font-size: 1.6rem;
+  }
+
+  .success-logo {
+    width: 96px;
+  }
 }

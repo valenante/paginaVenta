@@ -1,12 +1,17 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+// src/pages/FacturasPage.jsx  ✅ PERFECTO (UX Errors PRO + AlertaMensaje OK + ErrorToast KO)
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import api from "../utils/api";
 import Papa from "papaparse";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import * as logger from "../utils/logger";
+
 import AlertaMensaje from "../components/AlertaMensaje/AlertaMensaje.jsx";
+import ErrorToast from "../components/common/ErrorToast.jsx";
 import FacturasHelpModal from "../components/Facturas/FacturasHelpModal.jsx";
 import ModalConfirmacion from "../components/Modal/ModalConfirmacion.jsx";
+
+import { normalizeApiError } from "../utils/normalizeApiError.js";
 import "../styles/FacturasPage.css";
 
 const LIMIT_DEFAULT = 20;
@@ -25,18 +30,19 @@ export default function FacturasPage() {
   const [busqueda, setBusqueda] = useState("");
   const [fechaInicio, setFechaInicio] = useState("");
   const [fechaFin, setFechaFin] = useState("");
-  const [estado, setEstado] = useState(""); // opcional
+  const [estado, setEstado] = useState("");
   const [includeAnulaciones, setIncludeAnulaciones] = useState(false);
 
   // UI
   const [loadingList, setLoadingList] = useState(false);
   const [exportLoading, setExportLoading] = useState(false);
-  const [mensajeAlerta, setMensajeAlerta] = useState(null);
+  const [mensajeAlerta, setMensajeAlerta] = useState(null); // OK / aviso
+  const [errorToast, setErrorToast] = useState(null);       // KO (contrato)
   const [mostrarAyuda, setMostrarAyuda] = useState(false);
 
   // rectificación
   const [mostrarModal, setMostrarModal] = useState(false);
-  const [facturaSeleccionada, setFacturaSeleccionada] = useState(null); // objeto factura
+  const [facturaSeleccionada, setFacturaSeleccionada] = useState(null);
   const [tipo, setTipo] = useState("");
   const [subtipo, setSubtipo] = useState("");
   const [clienteNombre, setClienteNombre] = useState("");
@@ -47,7 +53,7 @@ export default function FacturasPage() {
 
   // anulación
   const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
-  const [facturaAAnular, setFacturaAAnular] = useState(null); // objeto factura
+  const [facturaAAnular, setFacturaAAnular] = useState(null);
   const [anulandoId, setAnulandoId] = useState(null);
 
   // debounce búsqueda
@@ -57,7 +63,7 @@ export default function FacturasPage() {
     return () => clearTimeout(t);
   }, [busqueda]);
 
-  // reset página al cambiar filtros (pro)
+  // reset página al cambiar filtros
   useEffect(() => {
     setPagina(1);
   }, [filtroAnio, debouncedBusqueda, fechaInicio, fechaFin, estado, includeAnulaciones]);
@@ -81,7 +87,6 @@ export default function FacturasPage() {
   }, [pagina, debouncedBusqueda, fechaInicio, fechaFin, filtroAnio, estado, includeAnulaciones]);
 
   const exportQueryString = useMemo(() => {
-    // igual que queryString pero SIN page/limit
     const p = new URLSearchParams();
     if (debouncedBusqueda.trim()) p.set("q", debouncedBusqueda.trim());
     if (fechaInicio) p.set("from", fechaInicio);
@@ -93,15 +98,35 @@ export default function FacturasPage() {
   }, [debouncedBusqueda, fechaInicio, fechaFin, filtroAnio, estado, includeAnulaciones]);
 
   // ============================
+  // Helpers UI
+  // ============================
+  const showOk = useCallback((mensaje) => {
+    setMensajeAlerta({ tipo: "exito", mensaje });
+  }, []);
+
+  const showWarn = useCallback((mensaje) => {
+    setMensajeAlerta({ tipo: "error", mensaje });
+  }, []);
+
+  const showErr = useCallback((err, fallbackMessage = "No se pudo completar la operación.") => {
+    const normalized = normalizeApiError(err);
+    // Si no viene message por cualquier motivo, usamos fallback
+    setErrorToast({
+      ...normalized,
+      message: normalized?.message || fallbackMessage,
+    });
+  }, []);
+
+  // ============================
   // Cargar facturas (server-side)
   // ============================
   const abortRef = useRef(null);
 
-  const cargarFacturas = async () => {
+  const cargarFacturas = useCallback(async () => {
     try {
       setLoadingList(true);
+      setErrorToast(null);
 
-      // cancelar request anterior si existe
       if (abortRef.current) abortRef.current.abort();
       const controller = new AbortController();
       abortRef.current = controller;
@@ -110,30 +135,24 @@ export default function FacturasPage() {
         signal: controller.signal,
       });
 
-      setFacturas(data.facturas || []);
-      setTotalPaginas(data.totalPaginas || 1);
-      setTotalFacturas(data.totalFacturas || 0);
-    } catch (error) {
-      // si es abort, ignorar
-      if (error?.name === "CanceledError" || error?.name === "AbortError") return;
-
-      logger.error("Error al cargar facturas:", error);
-      setMensajeAlerta({
-        tipo: "error",
-        mensaje: "No se pudieron cargar las facturas.",
-      });
+      setFacturas(data?.facturas || []);
+      setTotalPaginas(data?.totalPaginas || 1);
+      setTotalFacturas(data?.totalFacturas || 0);
+    } catch (err) {
+      if (err?.name === "CanceledError" || err?.name === "AbortError") return;
+      logger.error("facturas.list.error", err);
+      showErr(err, "No se pudieron cargar las facturas.");
     } finally {
       setLoadingList(false);
     }
-  };
+  }, [queryString, showErr]);
 
   useEffect(() => {
     cargarFacturas();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [queryString]);
+  }, [cargarFacturas]);
 
   // ============================
-  // Helpers
+  // Rectificación
   // ============================
   const resetRectificacionForm = () => {
     setTipo("");
@@ -146,59 +165,35 @@ export default function FacturasPage() {
 
   const abrirModalRectificacion = (factura) => {
     setFacturaSeleccionada(factura);
-    // precargar datos (pro)
     setClienteNombre(factura?.clienteNombre || "");
     setClienteNIF(factura?.clienteNIF || "");
-    setImporteTotal(
-      typeof factura?.importeTotal === "number" ? String(factura.importeTotal) : ""
-    );
+    setImporteTotal(typeof factura?.importeTotal === "number" ? String(factura.importeTotal) : "");
     setMotivo("");
     setTipo("");
     setSubtipo("");
     setMostrarModal(true);
   };
 
-  const esXMLRaw = (s) => {
-    const t = String(s || "").trim();
-    return t.startsWith("<") || t.startsWith("<?xml");
-  };
-
-  const decodeMaybeBase64 = (s) => {
-    const t = String(s || "");
-    if (!t) return "";
-    if (esXMLRaw(t)) return t; // ya es XML
-    // intento base64
-    try {
-      return atob(t);
-    } catch {
-      // si no es base64, lo devolvemos igual
-      return t;
-    }
-  };
-
-  // ============================
-  // Rectificación
-  // ============================
   const confirmarRectificacion = async () => {
     if (!facturaSeleccionada?._id) return;
 
-    // validación mínima
     const imp = Number(importeTotal);
-    if (!tipo) {
-      return setMensajeAlerta({ tipo: "error", mensaje: "Selecciona un tipo (R1–R5)." });
-    }
+
+    // validación mínima: esto es UI (AlertaMensaje)
+    if (!tipo) return showWarn("Selecciona un tipo (R1–R5).");
     if (["R1", "R2"].includes(tipo) && !subtipo) {
-      return setMensajeAlerta({ tipo: "error", mensaje: "Selecciona subtipo (S/I) para R1 o R2." });
+      return showWarn("Selecciona subtipo (S/I) para R1 o R2.");
     }
     if (!Number.isFinite(imp) || imp === 0) {
-      return setMensajeAlerta({ tipo: "error", mensaje: "Importe inválido (debe ser distinto de 0)." });
+      return showWarn("Importe inválido (debe ser distinto de 0).");
     }
     if (motivo && motivo.length > 500) {
-      return setMensajeAlerta({ tipo: "error", mensaje: "Motivo demasiado largo (máx 500)." });
+      return showWarn("Motivo demasiado largo (máx 500).");
     }
 
     try {
       setRectificando(true);
+      setErrorToast(null);
 
       const { data } = await api.post(`/facturas/rectificar/${facturaSeleccionada._id}`, {
         tipoFactura: tipo,
@@ -209,26 +204,22 @@ export default function FacturasPage() {
         motivo,
       });
 
-      setMensajeAlerta({
-        tipo: "exito",
-        mensaje: `Factura rectificativa emitida correctamente: Nº ${data?.facturaRectificativa?.numeroFactura}`,
-      });
+      const num = data?.facturaRectificativa?.numeroFactura;
+      showOk(`Factura rectificativa emitida correctamente${num ? `: Nº ${num}` : ""}.`);
 
       setMostrarModal(false);
       resetRectificacionForm();
       await cargarFacturas();
-    } catch (error) {
-      setMensajeAlerta({
-        tipo: "error",
-        mensaje: error.response?.data?.error ?? "Hubo un problema al rectificar la factura.",
-      });
+    } catch (err) {
+      logger.error("facturas.rectificar.error", err);
+      showErr(err, "Hubo un problema al rectificar la factura.");
     } finally {
       setRectificando(false);
     }
   };
 
   // ============================
-  // Anular factura
+  // Anulación
   // ============================
   const solicitarAnulacion = (factura) => {
     setFacturaAAnular(factura);
@@ -240,35 +231,29 @@ export default function FacturasPage() {
 
     try {
       setAnulandoId(facturaAAnular._id);
+      setErrorToast(null);
 
-      const { data } = await api.post(`/facturas/anular/${facturaAAnular._id}`, {
-        motivo: "",
-      });
+      const { data } = await api.post(`/facturas/anular/${facturaAAnular._id}`, { motivo: "" });
 
-      setMensajeAlerta({
-        tipo: "exito",
-        mensaje: data?.already
-          ? `La factura ya estaba anulada: Nº ${data.numeroFactura}`
-          : `Factura anulada correctamente: Nº ${data.numeroFactura}`,
-      });
+      showOk(
+        data?.already
+          ? `La factura ya estaba anulada: Nº ${data?.numeroFactura || ""}`
+          : `Factura anulada correctamente: Nº ${data?.numeroFactura || ""}`
+      );
 
       setMostrarConfirmacion(false);
       setFacturaAAnular(null);
       await cargarFacturas();
-    } catch (error) {
-      setMensajeAlerta({
-        tipo: "error",
-        mensaje: error.response?.data?.error ?? "No se pudo anular la factura.",
-      });
+    } catch (err) {
+      logger.error("facturas.anular.error", err);
+      showErr(err, "No se pudo anular la factura.");
     } finally {
       setAnulandoId(null);
     }
   };
 
   // ============================
-  // Exportaciones (PRO)
-  // - CSV: descarga desde backend (auditoría + filtros reales)
-  // - PDF: genera PDF desde el CSV exportado (hasta 10k)
+  // Exportaciones
   // ============================
   const downloadBlob = (blob, filename) => {
     const url = URL.createObjectURL(blob);
@@ -282,21 +267,17 @@ export default function FacturasPage() {
   const exportarCSV = async () => {
     try {
       setExportLoading(true);
+      setErrorToast(null);
 
       const { data } = await api.get(`/facturas/exportar-csv?${exportQueryString}`, {
         responseType: "blob",
       });
 
-      downloadBlob(
-        new Blob([data], { type: "text/csv;charset=utf-8;" }),
-        `facturas_${Date.now()}.csv`
-      );
-    } catch (error) {
-      logger.error("Error exportar CSV:", error);
-      setMensajeAlerta({
-        tipo: "error",
-        mensaje: error.response?.data?.error ?? "No se pudo exportar el CSV.",
-      });
+      downloadBlob(new Blob([data], { type: "text/csv;charset=utf-8;" }), `facturas_${Date.now()}.csv`);
+      showOk("CSV exportado correctamente.");
+    } catch (err) {
+      logger.error("facturas.export.csv.error", err);
+      showErr(err, "No se pudo exportar el CSV.");
     } finally {
       setExportLoading(false);
     }
@@ -305,24 +286,21 @@ export default function FacturasPage() {
   const exportarPDF = async () => {
     try {
       setExportLoading(true);
+      setErrorToast(null);
 
-      // 1) Pido el CSV (ya viene filtrado y con límite MAX_EXPORT)
       const { data: csvBlob } = await api.get(`/facturas/exportar-csv?${exportQueryString}`, {
         responseType: "blob",
       });
 
       const csvText = await csvBlob.text();
-
-      // 2) Parseo CSV a rows (Papa)
       const parsed = Papa.parse(csvText, { header: true, skipEmptyLines: true });
       const rows = Array.isArray(parsed?.data) ? parsed.data : [];
 
       if (!rows.length) {
-        setMensajeAlerta({ tipo: "error", mensaje: "No hay facturas para exportar a PDF." });
+        showWarn("No hay facturas para exportar a PDF.");
         return;
       }
 
-      // 3) Genero PDF
       const doc = new jsPDF({ orientation: "landscape" });
       doc.setFontSize(14);
       doc.text("Facturas Encadenadas", 14, 15);
@@ -345,12 +323,10 @@ export default function FacturasPage() {
       });
 
       doc.save(`facturas_${Date.now()}.pdf`);
-    } catch (error) {
-      logger.error("Error exportar PDF:", error);
-      setMensajeAlerta({
-        tipo: "error",
-        mensaje: "No se pudo exportar el PDF (revisa filtros o tamaño).",
-      });
+      showOk("PDF exportado correctamente.");
+    } catch (err) {
+      logger.error("facturas.export.pdf.error", err);
+      showErr(err, "No se pudo exportar el PDF (revisa filtros o tamaño).");
     } finally {
       setExportLoading(false);
     }
@@ -359,13 +335,24 @@ export default function FacturasPage() {
   // ============================
   // Ver XML / AEAT
   // ============================
-  const verXML = (xmlStored) => {
-    if (!xmlStored) {
-      return setMensajeAlerta({
-        tipo: "error",
-        mensaje: "Esta factura no contiene XML firmado.",
-      });
+  const esXMLRaw = (s) => {
+    const t = String(s || "").trim();
+    return t.startsWith("<") || t.startsWith("<?xml");
+  };
+
+  const decodeMaybeBase64 = (s) => {
+    const t = String(s || "");
+    if (!t) return "";
+    if (esXMLRaw(t)) return t;
+    try {
+      return atob(t);
+    } catch {
+      return t;
     }
+  };
+
+  const verXML = (xmlStored) => {
+    if (!xmlStored) return showWarn("Esta factura no contiene XML firmado.");
 
     try {
       const xml = decodeMaybeBase64(xmlStored);
@@ -374,31 +361,21 @@ export default function FacturasPage() {
       window.open(url, "_blank");
       setTimeout(() => URL.revokeObjectURL(url), 5000);
     } catch {
-      setMensajeAlerta({ tipo: "error", mensaje: "No se pudo abrir el XML." });
+      showWarn("No se pudo abrir el XML.");
     }
   };
 
   const verRespuestaAEAT = (respuesta) => {
-    if (!respuesta) {
-      return setMensajeAlerta({
-        tipo: "error",
-        mensaje: "Esta factura no tiene respuesta de la AEAT.",
-      });
-    }
+    if (!respuesta) return showWarn("Esta factura no tiene respuesta de la AEAT.");
 
     try {
-      const pretty =
-        typeof respuesta === "string" ? respuesta : JSON.stringify(respuesta, null, 2);
-
+      const pretty = typeof respuesta === "string" ? respuesta : JSON.stringify(respuesta, null, 2);
       const blob = new Blob([pretty], { type: "text/plain;charset=utf-8" });
       const url = URL.createObjectURL(blob);
       window.open(url, "_blank");
       setTimeout(() => URL.revokeObjectURL(url), 5000);
     } catch {
-      setMensajeAlerta({
-        tipo: "error",
-        mensaje: "No se pudo mostrar la respuesta de la AEAT.",
-      });
+      showWarn("No se pudo mostrar la respuesta de la AEAT.");
     }
   };
 
@@ -411,11 +388,28 @@ export default function FacturasPage() {
     setIncludeAnulaciones(false);
   };
 
+  // retry handler global (para el toast)
+  const onRetry = useCallback(() => {
+    // Elegimos el retry “más útil”: si está cargando lista => recargar.
+    // Si estabas exportando/rectificando/anulando, lo normal es reintentar manualmente,
+    // pero este retry vuelve a intentar cargar el listado (lo más seguro).
+    cargarFacturas();
+  }, [cargarFacturas]);
+
   // ============================
   // Render
   // ============================
   return (
     <main className="facturaspage section section--wide">
+      {/* ERROR TOAST (KO) */}
+      {errorToast && (
+        <ErrorToast
+          error={errorToast}
+          onRetry={errorToast.canRetry ? onRetry : undefined}
+          onClose={() => setErrorToast(null)}
+        />
+      )}
+
       {/* HEADER */}
       <header className="facturaspage-header">
         <div className="facturaspage-header-row">
@@ -424,9 +418,7 @@ export default function FacturasPage() {
             <p>Consulta, exporta y gestiona tu historial fiscal.</p>
 
             <div className="facturaspage-meta">
-              <span>
-                {loadingList ? "Cargando…" : `Total: ${totalFacturas}`}
-              </span>
+              <span>{loadingList ? "Cargando…" : `Total: ${totalFacturas}`}</span>
             </div>
           </div>
 
@@ -447,9 +439,7 @@ export default function FacturasPage() {
       <section className="facturaspage-card">
         <div className="facturaspage-card-header">
           <h2>Filtros</h2>
-          <p className="facturaspage-card-subtitle">
-            Filtra por fechas, año, estado, cliente o hash.
-          </p>
+          <p className="facturaspage-card-subtitle">Filtra por fechas, año, estado, cliente o hash.</p>
         </div>
 
         <div className="facturaspage-filtros-grid">
@@ -465,20 +455,12 @@ export default function FacturasPage() {
 
           <div className="config-field">
             <label>Desde</label>
-            <input
-              type="date"
-              value={fechaInicio}
-              onChange={(e) => setFechaInicio(e.target.value)}
-            />
+            <input type="date" value={fechaInicio} onChange={(e) => setFechaInicio(e.target.value)} />
           </div>
 
           <div className="config-field">
             <label>Hasta</label>
-            <input
-              type="date"
-              value={fechaFin}
-              onChange={(e) => setFechaFin(e.target.value)}
-            />
+            <input type="date" value={fechaFin} onChange={(e) => setFechaFin(e.target.value)} />
           </div>
 
           <div className="config-field">
@@ -521,7 +503,7 @@ export default function FacturasPage() {
           </div>
 
           <div className="config-field config-field--inline">
-            <button className="btn" type="button" onClick={limpiarFiltros}>
+            <button className="btn" type="button" onClick={limpiarFiltros} disabled={loadingList || exportLoading}>
               Limpiar filtros
             </button>
           </div>
@@ -533,7 +515,7 @@ export default function FacturasPage() {
         <button className="btn btn-secundario" onClick={exportarCSV} disabled={exportLoading}>
           {exportLoading ? "📤 Exportando…" : "📤 Exportar CSV"}
         </button>
-        <button className="btn btn-primario " onClick={exportarPDF} disabled={exportLoading}>
+        <button className="btn btn-primario" onClick={exportarPDF} disabled={exportLoading}>
           {exportLoading ? "📄 Generando…" : "📄 Exportar PDF"}
         </button>
       </section>
@@ -603,13 +585,9 @@ export default function FacturasPage() {
                       </button>
 
                       {f.respuestaAEAT ? (
-                        <button onClick={() => verRespuestaAEAT(f.respuestaAEAT)}>
-                          🏛 AEAT
-                        </button>
+                        <button onClick={() => verRespuestaAEAT(f.respuestaAEAT)}>🏛 AEAT</button>
                       ) : (
-                        <button disabled title="Sin respuesta AEAT">
-                          🏛 AEAT
-                        </button>
+                        <button disabled title="Sin respuesta AEAT">🏛 AEAT</button>
                       )}
                     </div>
                   </td>
@@ -650,8 +628,7 @@ export default function FacturasPage() {
 
             <div className="factura-card-body">
               <div>
-                <strong>Fecha:</strong>{" "}
-                {new Date(f.fechaExpedicion).toLocaleDateString("es-ES")}
+                <strong>Fecha:</strong> {new Date(f.fechaExpedicion).toLocaleDateString("es-ES")}
               </div>
               <div>
                 <strong>Cliente:</strong> {f.clienteNombre || "Consumidor final"}
@@ -735,11 +712,7 @@ export default function FacturasPage() {
 
             <div className="config-field">
               <label>Importe</label>
-              <input
-                type="number"
-                value={importeTotal}
-                onChange={(e) => setImporteTotal(e.target.value)}
-              />
+              <input type="number" value={importeTotal} onChange={(e) => setImporteTotal(e.target.value)} />
             </div>
 
             <div className="config-field">
@@ -760,7 +733,7 @@ export default function FacturasPage() {
               </button>
 
               <button
-                className="btn btn-primario "
+                className="btn btn-primario"
                 onClick={confirmarRectificacion}
                 disabled={
                   rectificando ||
@@ -777,7 +750,7 @@ export default function FacturasPage() {
         </div>
       )}
 
-      {/* ALERTA */}
+      {/* ALERTA OK / VALIDACIONES */}
       {mensajeAlerta && (
         <AlertaMensaje
           tipo={mensajeAlerta.tipo}

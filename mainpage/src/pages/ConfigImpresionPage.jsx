@@ -5,6 +5,8 @@ import api from "../utils/api";
 import { useConfig } from "../context/ConfigContext.jsx";
 import "../styles/ConfigImpresionPage.css";
 import AlertaMensaje from "../components/AlertaMensaje/AlertaMensaje";
+import { normalizeApiError } from "../utils/normalizeApiError.js";
+import ErrorToast from "../components/common/ErrorToast.jsx";
 
 export default function ConfigImpresionPage() {
   const navigate = useNavigate();
@@ -19,8 +21,8 @@ export default function ConfigImpresionPage() {
   const [impresoras, setImpresoras] = useState([]);
   const [estado, setEstado] = useState("unknown");
   const [loading, setLoading] = useState(false);
-  const [alerta, setAlerta] = useState(null);
-
+  const [success, setSuccess] = useState(null);
+  const [error, setError] = useState(null);
   useEffect(() => {
     setImpCocina(config?.impresion?.impresoras?.cocina || "");
     setImpBarra(config?.impresion?.impresoras?.barra || "");
@@ -34,28 +36,29 @@ export default function ConfigImpresionPage() {
   );
 
   const listarImpresoras = async () => {
+    setSuccess(null);
+    setError(null);
+
     try {
       setLoading(true);
-      setAlerta({ tipo: "info", mensaje: "🔎 Buscando impresoras..." });
 
       const { data } = await api.get("/impresoras/listar");
+
       const lista = Array.isArray(data?.impresoras) ? data.impresoras : [];
 
       setImpresoras(lista);
       setEstado(data?.estado || "unknown");
 
-      setAlerta({
-        tipo: "success",
-        mensaje: `✅ Se detectaron ${lista.length} impresoras`,
-      });
-    } catch (e) {
-      setEstado(e?.response?.data?.estado || "unknown");
-      setAlerta({
-        tipo: "error",
-        mensaje:
-          e?.response?.data?.message ||
-          e?.response?.data?.error ||
-          "❌ No se pudo obtener la lista de impresoras",
+      setSuccess(`Se detectaron ${lista.length} impresoras`);
+    } catch (err) {
+      const normalized = normalizeApiError(err);
+
+      setEstado(estadoFromError(normalized));
+      setImpresoras([]); // opcional: limpiar lista si está offline
+
+      setError({
+        ...normalized,
+        retryFn: listarImpresoras,
       });
     } finally {
       setLoading(false);
@@ -63,32 +66,25 @@ export default function ConfigImpresionPage() {
   };
 
   const guardar = async () => {
+    setSuccess(null);
+    setError(null);
+
     try {
       setLoading(true);
-      setAlerta({ tipo: "info", mensaje: "💾 Guardando configuración..." });
 
       const { data } = await api.post("/impresoras/configurar", {
-        impresoras: {
-          cocina: impCocina,
-          barra: impBarra,
-          caja: impCaja,
-          tickets: impTickets,
-        },
+        impresoras: { cocina: impCocina, barra: impBarra, caja: impCaja, tickets: impTickets },
       });
 
-      // ✅ refresca context si viene config
-      if (data?.config && typeof setConfig === "function") {
-        setConfig(data.config);
-      }
+      if (data?.config && typeof setConfig === "function") setConfig(data.config);
 
-      setAlerta({ tipo: "success", mensaje: "✅ Configuración guardada" });
-    } catch (e) {
-      setAlerta({
-        tipo: "error",
-        mensaje:
-          e?.response?.data?.message ||
-          e?.response?.data?.error ||
-          "❌ Error al guardar",
+      setSuccess("Configuración guardada correctamente");
+    } catch (err) {
+      const normalized = normalizeApiError(err);
+
+      setError({
+        ...normalized,
+        retryFn: guardar,
       });
     } finally {
       setLoading(false);
@@ -96,28 +92,24 @@ export default function ConfigImpresionPage() {
   };
 
   const testPrint = async (estacion) => {
+    setSuccess(null);
+    setError(null);
+
     try {
       setLoading(true);
-      setAlerta({
-        tipo: "info",
-        mensaje: `🧾 Enviando prueba (${estacion})...`,
-      });
 
       const { data } = await api.post("/impresoras/test", { estacion });
 
       setEstado(data?.estado || estado);
-      setAlerta({
-        tipo: "success",
-        mensaje: data?.message || `✅ Prueba enviada (${estacion})`,
-      });
-    } catch (e) {
-      setEstado(e?.response?.data?.estado || "unknown");
-      setAlerta({
-        tipo: "error",
-        mensaje:
-          e?.response?.data?.message ||
-          e?.response?.data?.error ||
-          `❌ Error al enviar prueba (${estacion})`,
+      setSuccess(data?.message || `Prueba enviada (${estacion})`);
+    } catch (err) {
+      const normalized = normalizeApiError(err);
+
+      setEstado(estadoFromError(normalized));
+
+      setError({
+        ...normalized,
+        retryFn: () => testPrint(estacion),
       });
     } finally {
       setLoading(false);
@@ -138,22 +130,40 @@ export default function ConfigImpresionPage() {
     );
   };
 
+  const estadoFromError = (e) => {
+    const f = e?.fields?.estado;
+    if (f === "online" || f === "offline" || f === "unknown") return f;
+
+    if (e?.code === "PRINT_AGENT_OFFLINE") return "offline";
+    if (e?.code === "PRINT_AGENT_UNAUTHORIZED") return "offline";
+
+    return "unknown";
+  };
+
   const estadoLabel =
     estado === "online"
       ? "🟢 Online"
       : estado === "offline"
-      ? "🔴 Offline"
-      : "🟡 Unknown";
+        ? "🔴 Offline"
+        : "🟡 Unknown";
 
   return (
     <main className="section section--wide">
-      {alerta && (
+      {success && (
         <AlertaMensaje
-          tipo={alerta.tipo}
-          mensaje={alerta.mensaje}
-          onClose={() => setAlerta(null)}
+          tipo="success"
+          mensaje={success}
+          onClose={() => setSuccess(null)}
           autoCerrar
           duracion={3200}
+        />
+      )}
+
+      {error && (
+        <ErrorToast
+          error={error}
+          onRetry={error.canRetry ? error.retryFn : undefined}
+          onClose={() => setError(null)}
         />
       )}
 

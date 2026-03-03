@@ -149,6 +149,40 @@ export default function TenantModal({ tenant, onClose }) {
     }
   };
 
+  // ✅ NUEVO: Rollback agente (previous -> current)
+  const rollbackAgente = async () => {
+    if (!tenant?._id) return;
+
+    try {
+      setLoading(true);
+      setAlerta({ tipo: "info", mensaje: "↩️ Iniciando rollback del agente..." });
+
+      const { data } = await api.post(`/admin/tenant/${tenant._id}/rollback-agente`);
+
+      setAlerta({
+        tipo: "success",
+        mensaje: data?.message
+          ? `${data.message}${data?.rollbackId ? ` [${data.rollbackId}]` : ""}`
+          : "Rollback iniciado",
+      });
+
+      // opcional: refrescar estado/versión tras unos segundos
+      setTimeout(() => {
+        verificarConexion();
+      }, 1200);
+    } catch (err) {
+      const msg =
+        err?.response?.data?.error ||
+        err?.response?.data?.detalle ||
+        err.message ||
+        "Error desconocido";
+
+      setAlerta({ tipo: "error", mensaje: msg });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const testPrint = async (impresora) => {
     if (!tenant?._id) return;
 
@@ -157,7 +191,10 @@ export default function TenantModal({ tenant, onClose }) {
       setAlerta({ tipo: "info", mensaje: "Enviando prueba de impresión..." });
 
       const payload = impresora ? { impresora } : {};
-      const { data } = await api.post(`/impresoras/admin/${tenant._id}/test`, payload);
+      const { data } = await api.post(
+        `/impresoras/admin/${tenant._id}/test`,
+        payload
+      );
 
       setAlerta({
         tipo: "success",
@@ -223,7 +260,6 @@ export default function TenantModal({ tenant, onClose }) {
           mensaje: `Comando copiado al portapapeles:\n\n${comando}\n\nPégalo en tu terminal.`,
         });
       } else {
-        // Fallback seguro
         setAlerta({
           tipo: "info",
           mensaje: `Ejecuta este comando en tu terminal:\n\n${comando}`,
@@ -271,32 +307,43 @@ export default function TenantModal({ tenant, onClose }) {
       <h2>Detalles del Restaurante</h2>
 
       <div className="impresora-section">
-        <button
-          className="btn-acceso-tpv"
-          onClick={accederTPV}
-        >
+        <button className="btn-acceso-tpv" onClick={accederTPV} disabled={loading}>
           🖥️ Acceder al TPV (Tailscale SSH)
         </button>
 
         <label>IP Tailscale</label>
-        <input value={ipTailscale} onChange={(e) => setIpTailscale(e.target.value)} />
+        <input
+          value={ipTailscale}
+          onChange={(e) => setIpTailscale(e.target.value)}
+          disabled={loading}
+        />
 
         <label>Clave secreta</label>
-        <input value={printSecret} onChange={(e) => setPrintSecret(e.target.value)} />
+        <input
+          value={printSecret}
+          onChange={(e) => setPrintSecret(e.target.value)}
+          disabled={loading}
+        />
 
         <label>Impresora predeterminada</label>
-        <select value={printerName} onChange={(e) => setPrinterName(e.target.value)}>
+        <select
+          value={printerName}
+          onChange={(e) => setPrinterName(e.target.value)}
+          disabled={loading}
+        >
           <option value="">-- Selecciona una impresora --</option>
           {impresoras.map((imp) => (
-            <option key={imp} value={imp}>{imp}</option>
+            <option key={imp} value={imp}>
+              {imp}
+            </option>
           ))}
         </select>
 
         <div className="hint">
           <small>
-            Cocina: <strong>{defaultOrHint(impCocina)}</strong> ·
-            Barra: <strong>{defaultOrHint(impBarra)}</strong> ·
-            Caja: <strong>{defaultOrHint(impCaja)}</strong>
+            Cocina: <strong>{defaultOrHint(impCocina)}</strong> · Barra:{" "}
+            <strong>{defaultOrHint(impBarra)}</strong> · Caja:{" "}
+            <strong>{defaultOrHint(impCaja)}</strong>
           </small>
         </div>
 
@@ -305,45 +352,72 @@ export default function TenantModal({ tenant, onClose }) {
         <h4>Impresoras por estación</h4>
 
         <label>Cocina</label>
-        <select value={impCocina} onChange={(e) => setImpCocina(e.target.value)}>
+        <select value={impCocina} onChange={(e) => setImpCocina(e.target.value)} disabled={loading}>
           {renderPrinterOptions()}
         </select>
 
         <label>Barra</label>
-        <select value={impBarra} onChange={(e) => setImpBarra(e.target.value)}>
+        <select value={impBarra} onChange={(e) => setImpBarra(e.target.value)} disabled={loading}>
           {renderPrinterOptions()}
         </select>
 
         <label>Caja</label>
-        <select value={impCaja} onChange={(e) => setImpCaja(e.target.value)}>
+        <select value={impCaja} onChange={(e) => setImpCaja(e.target.value)} disabled={loading}>
           {renderPrinterOptions()}
         </select>
 
         <div className="impresora-buttons">
-          <button onClick={listarImpresoras}>🔍 Listar impresoras</button>
-          <button onClick={guardarConfig}>💾 Guardar configuración</button>
-          <button onClick={verificarConexion}>🔄 Verificar conexión</button>
+          <button onClick={listarImpresoras} disabled={loading}>
+            🔍 Listar impresoras
+          </button>
+          <button onClick={guardarConfig} disabled={loading}>
+            💾 Guardar configuración
+          </button>
+          <button onClick={verificarConexion} disabled={loading}>
+            🔄 Verificar conexión
+          </button>
         </div>
 
         <div className="agente-update-box">
           <h4>🔧 Actualización del agente</h4>
-          <select value={refUpdate} onChange={(e) => setRefUpdate(e.target.value)}>
+          <select value={refUpdate} onChange={(e) => setRefUpdate(e.target.value)} disabled={loading}>
             <option value="origin/master">Última estable (origin/master)</option>
           </select>
-          <button
-            className="btn-update-agente"
-            onClick={actualizarAgente}
-            disabled={estado !== "online"}
-          >
-            🔄 Actualizar agente
-          </button>
+
+          <div className="agente-actions">
+            <button
+              className="btn-update-agente"
+              onClick={actualizarAgente}
+              disabled={estado !== "online" || loading}
+            >
+              🔄 Actualizar agente
+            </button>
+
+            {/* ✅ BOTÓN ROLLBACK */}
+            <button
+              className="btn-rollback-agente"
+              onClick={rollbackAgente}
+              disabled={estado !== "online" || loading}
+              title="Vuelve a la versión anterior (previous)"
+            >
+              ↩️ Rollback agente
+            </button>
+          </div>
         </div>
 
         <div className="impresora-buttons">
-          <button onClick={() => testPrint(printerName)}>🧾 Prueba</button>
-          <button onClick={() => testPrint(impCocina || printerName)}>Cocina</button>
-          <button onClick={() => testPrint(impBarra || printerName)}>Barra</button>
-          <button onClick={() => testPrint(impCaja || printerName)}>Caja</button>
+          <button onClick={() => testPrint(printerName)} disabled={loading}>
+            🧾 Prueba
+          </button>
+          <button onClick={() => testPrint(impCocina || printerName)} disabled={loading}>
+            Cocina
+          </button>
+          <button onClick={() => testPrint(impBarra || printerName)} disabled={loading}>
+            Barra
+          </button>
+          <button onClick={() => testPrint(impCaja || printerName)} disabled={loading}>
+            Caja
+          </button>
         </div>
 
         <p className={`estado ${estado}`}>
@@ -352,9 +426,7 @@ export default function TenantModal({ tenant, onClose }) {
 
         <p>
           <strong>Versión:</strong>{" "}
-          {versionAgente
-            ? `${versionAgente.pkgVersion} · ${versionAgente.commit}`
-            : "—"}
+          {versionAgente ? `${versionAgente.pkgVersion} · ${versionAgente.commit}` : "—"}
         </p>
       </div>
 
@@ -366,7 +438,7 @@ export default function TenantModal({ tenant, onClose }) {
         />
       )}
 
-      <button className="close-btn" onClick={onClose}>
+      <button className="close-btn" onClick={onClose} disabled={loading}>
         Cerrar
       </button>
     </Modal>

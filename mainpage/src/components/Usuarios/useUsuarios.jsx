@@ -1,6 +1,8 @@
+// src/components/Usuarios/useUsuarios.js
 import { useEffect, useState } from "react";
 import api from "../../utils/api";
 import * as logger from "../../utils/logger";
+import { normalizeApiError } from "../../utils/normalizeApiError.js";
 
 export function useUsuarios() {
   const [usuarios, setUsuarios] = useState([]);
@@ -8,28 +10,29 @@ export function useUsuarios() {
   const [rolesConfig, setRolesConfig] = useState({});
   const [loading, setLoading] = useState(false);
 
-  // ===========================================
-  // 🔄 CARGAR USUARIOS
-  // ===========================================
   const cargarUsuarios = async () => {
     try {
       const { data } = await api.get("/auth/usuarios");
-      setUsuarios(data);
+      setUsuarios(Array.isArray(data?.usuarios) ? data.usuarios : []);
+      return { ok: true };
     } catch (e) {
-      logger.error("Error al cargar usuarios:", e);
+      logger.error("usuarios.load.error", e);
+      setUsuarios([]);
+      return { ok: false, error: normalizeApiError(e) };
     }
   };
 
-  // ===========================================
-  // 🔄 CARGAR PERMISOS Y ROLES
-  // ===========================================
   const cargarPermisos = async () => {
     try {
       const { data } = await api.get("/admin/permisos");
-      setPermisosDisponibles(data.permisosDisponibles || []);
-      setRolesConfig(data.roles || {});
+      setPermisosDisponibles(Array.isArray(data?.permisosDisponibles) ? data.permisosDisponibles : []);
+      setRolesConfig(data?.roles || {});
+      return { ok: true };
     } catch (e) {
-      logger.error("Error al cargar permisos:", e);
+      logger.error("usuarios.permisos.load.error", e);
+      setPermisosDisponibles([]);
+      setRolesConfig({});
+      return { ok: false, error: normalizeApiError(e) };
     }
   };
 
@@ -38,83 +41,61 @@ export function useUsuarios() {
     cargarPermisos();
   }, []);
 
-  // ===========================================
-  // ➕ CREAR USUARIO
-  // ===========================================
   const crearUsuario = async (payload) => {
     try {
       await api.post("/auth/usuarios", payload);
       await cargarUsuarios();
       return { ok: true };
     } catch (e) {
-      return {
-        ok: false,
-        error: e?.response?.data?.error || "Error inesperado",
-      };
+      return { ok: false, error: normalizeApiError(e) };
     }
   };
 
-  // ===========================================
-  // 🗑 ELIMINAR USUARIO
-  // ===========================================
   const eliminarUsuario = async (id) => {
     try {
       await api.delete(`/auth/usuarios/${id}`);
       await cargarUsuarios();
-      return true;
+      return { ok: true };
     } catch (e) {
-      logger.error(e);
-      return false;
+      logger.error("usuarios.delete.error", e);
+      return { ok: false, error: normalizeApiError(e) };
     }
   };
 
-  // ===========================================
-  // ✏️ EDITAR USUARIO (nombre, email, estación...)
-  // ===========================================
   const editarUsuario = async (id, payload) => {
     try {
       await api.put(`/auth/usuarios/${id}`, payload);
       await cargarUsuarios();
       return { ok: true };
     } catch (e) {
-      return { ok: false, error: "Error al actualizar usuario" };
+      return { ok: false, error: normalizeApiError(e) };
     }
   };
 
-  // ===========================================
-  // 🔐 ACTUALIZAR PERMISOS PERSONALIZADOS
-  // ===========================================
   const actualizarPermisosUsuario = async (id, payload) => {
     try {
       await api.put(`/admin/permisos/usuarios/${id}`, payload);
-
-      // Recargar usuarios y roles para reflejar cambios
       await cargarUsuarios();
       await cargarPermisos();
-
       return { ok: true };
     } catch (e) {
-      logger.error("Error al actualizar permisos:", e);
-      return {
-        ok: false,
-        error:
-          e?.response?.data?.error || "Error actualizando permisos del usuario",
-      };
+      logger.error("usuarios.permisos.update.error", e);
+      return { ok: false, error: normalizeApiError(e) };
     }
   };
 
-  // ===========================================
-  // 🔁 EXPORTAR HOOK
-  // ===========================================
   return {
     usuarios,
     permisosDisponibles,
     rolesConfig,
     loading,
 
+    cargarUsuarios,
+    cargarPermisos,
+
     crearUsuario,
     eliminarUsuario,
     editarUsuario,
-    actualizarPermisosUsuario, // 👈 YA DISPONIBLE
+    actualizarPermisosUsuario,
   };
 }

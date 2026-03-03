@@ -179,7 +179,7 @@
 /* ===== INPUTS ===== */
 
 .settings-input-settingsAdmin {
-  width: 100%;
+  width: auto;
   padding: 10px 12px;
   border-radius: 12px;
   background: rgba(255,255,255,0.12);

@@ -82,11 +82,6 @@
   border-color: transparent;
 }
 
-/* Botón “Añadir tramo” (si usas btn-secundario ya queda, pero le doy un margen) */
-.config-card .btn.btn-secundario {
-  margin-top: var(--space-sm);
-}
-
 /* Small text (si no existe en tu sistema) */
 .text-suave {
   color: var(--color-texto-suave);

@@ -1,7 +1,9 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
 import api from "../utils/api.js";
 import AlertaMensaje from "../components/AlertaMensaje/AlertaMensaje.jsx";
 import ModalConfirmacion from "../components/Modal/ModalConfirmacion.jsx";
+import ErrorToast from "../components/common/ErrorToast.jsx";
+import { normalizeApiError } from "../utils/normalizeApiError.js";
 import "../styles/ExportsPage.css";
 
 function Badge({ tone = "neutral", children }) {
@@ -53,6 +55,11 @@ export default function ExportsPage() {
   // historial
   const [loading, setLoading] = useState(true);
   const [items, setItems] = useState([]);
+
+  // ✅ UX PRO errors
+  const [error, setError] = useState(null);
+
+  // ✅ alertas “positivas” (ok/info)
   const [alert, setAlert] = useState(null);
 
   const [statusFilter, setStatusFilter] = useState("");
@@ -68,30 +75,51 @@ export default function ExportsPage() {
 
   const closeModal = () => setModal(null);
 
-  const fetchJobs = async (opts = {}) => {
-    const nextPage = opts.page ?? page;
-    setLoading(true);
-    try {
-      const { data } = await api.get("/admin/exports", {
-        params: {
-          page: nextPage,
-          limit,
-          status: statusFilter || undefined,
-          type: typeFilter || undefined,
-        },
-      });
-      setItems(data?.items || []);
-      setTotal(Number(data?.total || 0));
-      setPage(Number(data?.page || nextPage));
-    } catch (e) {
-      setAlert({
-        type: "error",
-        text: e?.response?.data?.message || e?.response?.data?.error || "No se pudo cargar el historial",
-      });
-    } finally {
-      setLoading(false);
-    }
+  const toneForStatus = (s) => {
+    if (s === "DONE") return "ok";
+    if (s === "FAILED") return "danger";
+    if (s === "RUNNING") return "warn";
+    if (s === "PENDING") return "neutral";
+    return "neutral";
   };
+
+  const pages = Math.max(1, Math.ceil(total / limit));
+
+  /* =====================================================
+     Fetch historial (con retryFn)
+  ===================================================== */
+
+  const fetchJobs = useCallback(
+    async (opts = {}) => {
+      const nextPage = opts.page ?? page;
+      setLoading(true);
+      setError(null);
+
+      try {
+        const { data } = await api.get("/admin/exports", {
+          params: {
+            page: nextPage,
+            limit,
+            status: statusFilter || undefined,
+            type: typeFilter || undefined,
+          },
+        });
+
+        setItems(data?.items || []);
+        setTotal(Number(data?.total || 0));
+        setPage(Number(data?.page || nextPage));
+      } catch (err) {
+        const normalized = normalizeApiError(err);
+        setError({
+          ...normalized,
+          retryFn: () => fetchJobs({ page: nextPage }),
+        });
+      } finally {
+        setLoading(false);
+      }
+    },
+    [page, limit, statusFilter, typeFilter]
+  );
 
   useEffect(() => {
     fetchJobs({ page: 1 });
@@ -112,15 +140,18 @@ export default function ExportsPage() {
     }, 3000);
     return () => clearInterval(id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hasRunning, page]);
+  }, [hasRunning, page, fetchJobs]);
 
-  const openConfirmGenerate = () => {
-    setModal("confirmGenerate");
-  };
+  /* =====================================================
+     Crear job (con retryFn)
+  ===================================================== */
 
-  const createJob = async () => {
+  const openConfirmGenerate = () => setModal("confirmGenerate");
+
+  const createJob = useCallback(async () => {
     setCreating(true);
     setAlert(null);
+    setError(null);
 
     try {
       const params = {
@@ -133,10 +164,10 @@ export default function ExportsPage() {
       const { data } = await api.post("/admin/exports", {
         type,
         params,
-        // idempotencyKey: opcional. Tu backend ya genera uno estable si no mandas.
       });
 
       const job = data?.job || null;
+
       setAlert({
         type: "ok",
         text: data?.reused
@@ -147,55 +178,76 @@ export default function ExportsPage() {
       closeModal();
       setTab("history");
       await fetchJobs({ page: 1 });
-    } catch (e) {
-      setAlert({
-        type: "error",
-        text: e?.response?.data?.message || e?.response?.data?.error || "No se pudo crear el export",
+    } catch (err) {
+      const normalized = normalizeApiError(err);
+      setError({
+        ...normalized,
+        retryFn: createJob,
       });
     } finally {
       setCreating(false);
     }
-  };
+  }, [type, from, to, includeAnulaciones, onlyAnulaciones, fetchJobs]);
 
-  const downloadJob = async (job) => {
+  /* =====================================================
+     Descargar (con retryFn)
+  ===================================================== */
+
+  const downloadJob = useCallback(async (job) => {
+    setAlert(null);
+    setError(null);
+
     try {
-      setAlert(null);
       const { data } = await api.get(`/admin/exports/${job._id}/download`);
       const url = data?.url;
-      if (!url) throw new Error("NO_URL");
+
+      if (!url) {
+        // forzamos un error normalizado “client-side”
+        throw Object.assign(new Error("NO_URL"), {
+          response: { status: 500, data: { ok: false, code: "NO_URL", message: "No se recibió URL de descarga.", action: "RETRY" } },
+          _server: { status: 500, code: "NO_URL", message: "No se recibió URL de descarga.", action: "RETRY", requestId: "—" },
+        });
+      }
+
       window.location.assign(url);
-    } catch (e) {
-      setAlert({
-        type: "error",
-        text: e?.response?.data?.error || e?.response?.data?.message || e?.message || "No se pudo descargar",
+    } catch (err) {
+      const normalized = normalizeApiError(err);
+      setError({
+        ...normalized,
+        retryFn: () => downloadJob(job),
       });
     }
-  };
+  }, []);
 
-  const toneForStatus = (s) => {
-    if (s === "DONE") return "ok";
-    if (s === "FAILED") return "danger";
-    if (s === "RUNNING") return "warn";
-    if (s === "PENDING") return "neutral";
-    return "neutral";
-  };
-
-  const pages = Math.max(1, Math.ceil(total / limit));
+  /* =====================================================
+     UI
+  ===================================================== */
 
   return (
-    <div className="exports-page">
+    <main className="exports-page section section--wide">
       <header className="exports-header">
         <h2>Exports / Reports</h2>
         <p>Genera y descarga exports (sin bloquear la app). Historial auditable.</p>
       </header>
 
+      {/* ✅ Alertas positivas */}
       {alert && (
         <div className="exports-alert">
           <AlertaMensaje
             tipo={alert.type === "ok" ? "success" : "error"}
             mensaje={alert.text}
+            onClose={() => setAlert(null)}
           />
         </div>
+      )}
+
+      {/* ✅ Errores UX PRO */}
+      {error && (
+        <ErrorToast
+          error={error}
+          onRetry={error.canRetry ? error.retryFn : undefined}
+          onClose={() => setError(null)}
+        />
       )}
 
       <div className="exports-tabs">
@@ -316,7 +368,11 @@ export default function ExportsPage() {
         <section className="exports-card">
           <div className="exports-card-head">
             <h3>Historial</h3>
-            <button className="exports-btn" onClick={() => fetchJobs({ page })} disabled={loading}>
+            <button
+              className="exports-btn"
+              onClick={() => fetchJobs({ page })}
+              disabled={loading}
+            >
               {loading ? "Cargando…" : "Recargar"}
             </button>
           </div>
@@ -371,9 +427,7 @@ export default function ExportsPage() {
               {items.map((j) => (
                 <div className="exports-row-item" key={j._id}>
                   <div className="exports-cell">
-                    <Badge tone={toneForStatus(j.status)}>
-                      {j.status}
-                    </Badge>
+                    <Badge tone={toneForStatus(j.status)}>{j.status}</Badge>
                     <div className="exports-sub">
                       {j.status === "RUNNING" ? `${j.progress || 0}%` : j.message || "—"}
                     </div>
@@ -381,9 +435,7 @@ export default function ExportsPage() {
 
                   <div className="exports-cell">
                     <div className="exports-strong">{j.type}</div>
-                    <div className="exports-sub">
-                      {j.createdBy?.email || "—"}
-                    </div>
+                    <div className="exports-sub">{j.createdBy?.email || "—"}</div>
                   </div>
 
                   <div className="exports-cell">
@@ -413,11 +465,17 @@ export default function ExportsPage() {
                       <button
                         className="exports-btn danger"
                         onClick={() => {
-                          // Si aún no implementaste /retry en backend,
-                          // cambia esto por “Generar de nuevo” (create export).
-                          setAlert({
-                            type: "error",
-                            text: "Implementa POST /api/admin/exports/:id/retry para reintentar (te lo preparo si quieres).",
+                          // Si más adelante implementas /retry en backend:
+                          // llama a retry endpoint y usa setError con retryFn
+                          setError({
+                            status: 400,
+                            code: "EXPORT_RETRY_NOT_IMPLEMENTED",
+                            message:
+                              "Aún no está implementado el reintento de exports. Puedo prepararte el endpoint /admin/exports/:id/retry con idempotencia.",
+                            requestId: "—",
+                            action: "CONTACT_SUPPORT",
+                            canRetry: false,
+                            kind: "client",
                           });
                         }}
                       >
@@ -428,7 +486,9 @@ export default function ExportsPage() {
 
                   {j.status === "FAILED" && (j.error?.message || j.error?.code) ? (
                     <div className="exports-error">
-                      <b>Error:</b> {j.error?.code ? `${j.error.code} — ` : ""}{j.error?.message || "—"}
+                      <b>Error:</b>{" "}
+                      {j.error?.code ? `${j.error.code} — ` : ""}
+                      {j.error?.message || "—"}
                     </div>
                   ) : null}
                 </div>
@@ -470,10 +530,13 @@ export default function ExportsPage() {
           <div className="exports-modal-body">
             <div className="exports-muted"><b>Tipo:</b> {type}</div>
             <div className="exports-muted"><b>Rango:</b> {from || "—"} → {to || "—"}</div>
-            <div className="exports-muted"><b>Anulaciones:</b> {onlyAnulaciones ? "Solo anulaciones" : includeAnulaciones ? "Incluidas" : "No incluidas"}</div>
+            <div className="exports-muted">
+              <b>Anulaciones:</b>{" "}
+              {onlyAnulaciones ? "Solo anulaciones" : includeAnulaciones ? "Incluidas" : "No incluidas"}
+            </div>
           </div>
         </ModalConfirmacion>
       )}
-    </div>
+    </main>
   );
 }

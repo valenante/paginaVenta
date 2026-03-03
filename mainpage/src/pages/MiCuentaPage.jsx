@@ -1,4 +1,9 @@
-import React, { useEffect, useMemo, useState } from "react";
+// src/pages/MiCuentaPage.jsx ✅ PERFECTO (UX Errors PRO)
+// - OK / avisos: AlertaMensaje
+// - Errores reales backend: ErrorToast + normalizeApiError
+// - Sin err.response.data.* en catch
+// - Retry útil (refresca estado)
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useConfig } from "../context/ConfigContext";
 import api from "../utils/api";
@@ -6,6 +11,8 @@ import "../styles/MiCuentaPage.css";
 
 import ModalConfirmacion from "../components/Modal/ModalConfirmacion";
 import AlertaMensaje from "../components/AlertaMensaje/AlertaMensaje";
+import ErrorToast from "../components/common/ErrorToast.jsx";
+import { normalizeApiError } from "../utils/normalizeApiError.js";
 
 const PLAN_LABELS = {
   "tpv-premium": "TPV Premium",
@@ -35,7 +42,11 @@ export default function MiCuentaPage() {
   const { user, loading: authLoading } = useAuth();
   const { config, loading: configLoading } = useConfig();
 
+  // OK / avisos
   const [alerta, setAlerta] = useState(null);
+
+  // KO (contrato)
+  const [errorToast, setErrorToast] = useState(null);
 
   // Firma (.p12)
   const [archivo, setArchivo] = useState(null);
@@ -62,6 +73,22 @@ export default function MiCuentaPage() {
   const [sifLoading, setSifLoading] = useState(false);
 
   // ============================
+  // Helpers UI
+  // ============================
+  const showOk = useCallback((mensaje) => {
+    setAlerta({ tipo: "exito", mensaje });
+  }, []);
+
+  const showWarn = useCallback((mensaje) => {
+    setAlerta({ tipo: "warn", mensaje });
+  }, []);
+
+  const showErr = useCallback((err, fallback = "No se pudo completar la operación.") => {
+    const n = normalizeApiError(err);
+    setErrorToast({ ...n, message: n?.message || fallback });
+  }, []);
+
+  // ============================
   // Suscripción / plan
   // ============================
   const sus = config?.suscripcion || {};
@@ -83,10 +110,9 @@ export default function MiCuentaPage() {
   };
 
   // ============================
-  // Helpers validación
+  // Validación mínima SIF
   // ============================
   const sifCompleto = useMemo(() => {
-    // Requeridos mínimos para producción
     const requiredKeys = SIF_FIELDS.filter((f) => f.required).map((f) => f.key);
     return requiredKeys.every((k) => String(sifForm?.[k] || "").trim().length > 0);
   }, [sifForm]);
@@ -104,64 +130,64 @@ export default function MiCuentaPage() {
   }, [certStatusLoading, certSubido, certValido, sifCompleto, verifactuEnabled]);
 
   // ============================
-  // Fetch: VeriFactu state
+  // Fetch: VF state
   // ============================
-  useEffect(() => {
-    const fetchVF = async () => {
-      try {
-        const { data } = await api.get("/admin/verifactu/verifactu");
-        setVerifactuEnabled(!!data.enabled);
-      } catch {
-        // silencioso
-      }
-    };
-    fetchVF();
+  const fetchVF = useCallback(async () => {
+    try {
+      const { data } = await api.get("/admin/verifactu/verifactu");
+      setVerifactuEnabled(!!data?.enabled);
+    } catch (err) {
+      // no bloqueamos UI, pero si quieres ver fallo en soporte:
+      // showErr(err, "No se pudo obtener el estado de VeriFactu.");
+    }
   }, []);
 
   // ============================
   // Fetch: SIF config
   // ============================
-  useEffect(() => {
-    const fetchSifConfig = async () => {
-      try {
-        const { data } = await api.get("/admin/verifactu/sifconfig");
-        setSifForm({
-          cif: data?.productor?.nif || "",
-          razonSocial: data?.productor?.nombreRazon || "",
-          direccion: data?.direccion || "",
-          municipio: data?.municipio || "",
-          provincia: data?.provincia || "",
-          codigoPostal: data?.codigoPostal || "",
-          pais: data?.pais || "ES",
-        });
-      } catch {
-        // silencioso
-      }
-    };
-    fetchSifConfig();
+  const fetchSifConfig = useCallback(async () => {
+    try {
+      const { data } = await api.get("/admin/verifactu/sifconfig");
+      setSifForm({
+        cif: data?.productor?.nif || "",
+        razonSocial: data?.productor?.nombreRazon || "",
+        direccion: data?.direccion || "",
+        municipio: data?.municipio || "",
+        provincia: data?.provincia || "",
+        codigoPostal: data?.codigoPostal || "",
+        pais: data?.pais || "ES",
+      });
+    } catch (err) {
+      // silencioso para no “ensuciar” la cuenta
+    }
   }, []);
 
   // ============================
   // Fetch: Cert status
   // ============================
-  const fetchCertStatus = async () => {
+  const fetchCertStatus = useCallback(async () => {
     try {
       setCertStatusLoading(true);
       const { data } = await api.get("/admin/firma/status");
-      // Esperado: { uploaded, valid, expiresAt, uploadedAt }
       setCertStatus(data || null);
-    } catch {
-      // Si no existe el endpoint aún, no rompe la página
+    } catch (err) {
+      // si no existe endpoint o hay error, no rompe la página
       setCertStatus(null);
     } finally {
       setCertStatusLoading(false);
     }
-  };
+  }, []);
+
+  const refreshAll = useCallback(async () => {
+    // Retry “inteligente” del toast: refresca todo lo que se ve en esta página
+    await Promise.allSettled([fetchVF(), fetchSifConfig(), fetchCertStatus()]);
+  }, [fetchVF, fetchSifConfig, fetchCertStatus]);
 
   useEffect(() => {
+    fetchVF();
+    fetchSifConfig();
     fetchCertStatus();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [fetchVF, fetchSifConfig, fetchCertStatus]);
 
   // ============================
   // Acciones
@@ -169,48 +195,31 @@ export default function MiCuentaPage() {
   const toggleVerifactu = async () => {
     const next = !verifactuEnabled;
 
-    // ✅ Gate profesional: si vas a ACTIVAR, exige requisitos mínimos
+    // Gate profesional (UI) antes de pegar al backend
     if (next) {
       if (!certSubido) {
-        setAlerta({
-          tipo: "warn",
-          mensaje: "Para activar VeriFactu debes subir un certificado (.p12) válido.",
-        });
+        showWarn("Para activar VeriFactu debes subir un certificado (.p12) válido.");
         return;
       }
       if (!sifCompleto) {
-        setAlerta({
-          tipo: "warn",
-          mensaje: "Para activar VeriFactu debes completar los datos fiscales (CIF, razón social y dirección).",
-        });
+        showWarn("Para activar VeriFactu debes completar los datos fiscales (CIF, razón social y dirección).");
         return;
       }
       if (certValido === false) {
-        setAlerta({
-          tipo: "warn",
-          mensaje: "El certificado subido parece inválido. Sube un certificado válido antes de activar VeriFactu.",
-        });
+        showWarn("El certificado subido parece inválido. Sube un certificado válido antes de activar VeriFactu.");
         return;
       }
     }
 
     setToggleLoading(true);
+    setErrorToast(null);
+
     try {
       const { data } = await api.post("/admin/verifactu/toggle", { enabled: next });
-      setVerifactuEnabled(!!data.enabled);
-
-      setAlerta({
-        tipo: "exito",
-        mensaje: `VeriFactu ${next ? "activado" : "desactivado"} correctamente.`,
-      });
+      setVerifactuEnabled(!!data?.enabled);
+      showOk(`VeriFactu ${next ? "activado" : "desactivado"} correctamente.`);
     } catch (err) {
-      setAlerta({
-        tipo: "error",
-        mensaje:
-          err?.response?.data?.message ||
-          err?.response?.data?.error ||
-          "No se pudo cambiar el estado de VeriFactu.",
-      });
+      showErr(err, "No se pudo cambiar el estado de VeriFactu.");
     } finally {
       setToggleLoading(false);
     }
@@ -219,12 +228,10 @@ export default function MiCuentaPage() {
   const handleSaveSif = async () => {
     try {
       setSifLoading(true);
+      setErrorToast(null);
 
       const payload = {
-        productor: {
-          nif: sifForm.cif,
-          nombreRazon: sifForm.razonSocial,
-        },
+        productor: { nif: sifForm.cif, nombreRazon: sifForm.razonSocial },
         direccion: sifForm.direccion,
         municipio: sifForm.municipio,
         provincia: sifForm.provincia,
@@ -233,19 +240,11 @@ export default function MiCuentaPage() {
       };
 
       const { data } = await api.post("/admin/verifactu/init-sif", payload);
-
-      setAlerta({
-        tipo: "exito",
-        mensaje: data?.message || "Datos fiscales guardados correctamente.",
-      });
+      showOk(data?.message || "Datos fiscales guardados correctamente.");
+      // opcional: refresh
+      await fetchSifConfig();
     } catch (err) {
-      setAlerta({
-        tipo: "error",
-        mensaje:
-          err?.response?.data?.message ||
-          err?.response?.data?.error ||
-          "Error al guardar datos fiscales.",
-      });
+      showErr(err, "Error al guardar datos fiscales.");
     } finally {
       setSifLoading(false);
     }
@@ -255,7 +254,7 @@ export default function MiCuentaPage() {
     e.preventDefault();
 
     if (!archivo || !passwordCert) {
-      setAlerta({ tipo: "warn", mensaje: "Selecciona un certificado y escribe la contraseña." });
+      showWarn("Selecciona un certificado y escribe la contraseña.");
       return;
     }
 
@@ -265,30 +264,28 @@ export default function MiCuentaPage() {
 
     try {
       setCertLoading(true);
-      const { data } = await api.post("/admin/firma/subir-certificado", formData);
+      setErrorToast(null);
 
-      setAlerta({
-        tipo: "exito",
-        mensaje: data?.message || "Certificado subido correctamente.",
-      });
+      const { data } = await api.post("/admin/firma/subir-certificado", formData);
+      showOk(data?.message || "Certificado subido correctamente.");
 
       setArchivo(null);
       setPasswordCert("");
 
-      // ✅ refresca estado visual
       await fetchCertStatus();
     } catch (err) {
-      setAlerta({
-        tipo: "error",
-        mensaje: err?.response?.data?.message || err?.response?.data?.error || "Error al subir el certificado.",
-      });
+      showErr(err, "Error al subir el certificado.");
     } finally {
       setCertLoading(false);
     }
   };
 
+  // ⚠️ En Vite no existe process.env.REACT_APP_API_URL. Usamos VITE_API_URL.
+  // Si el endpoint devuelve PDF, lo ideal es backend con URL absoluta o un endpoint público.
   const descargarDeclaracion = () => {
-    window.open(`${process.env.REACT_APP_API_URL}/firma/declaracion-responsable`, "_blank");
+    const base = String(import.meta.env.VITE_API_URL || "").replace(/\/$/, "");
+    // Si tu API base ya incluye /api, ajusta esta ruta a la real
+    window.open(`${base}/firma/declaracion-responsable`, "_blank");
   };
 
   // ============================
@@ -315,6 +312,16 @@ export default function MiCuentaPage() {
   // ============================
   return (
     <main className="micuenta-page section section--narrow">
+      {/* ERROR TOAST (KO) */}
+      {errorToast && (
+        <ErrorToast
+          error={errorToast}
+          onRetry={errorToast.canRetry ? refreshAll : undefined}
+          onClose={() => setErrorToast(null)}
+        />
+      )}
+
+      {/* ALERTA OK / avisos */}
       {alerta && (
         <AlertaMensaje
           tipo={alerta.tipo}
@@ -335,9 +342,9 @@ export default function MiCuentaPage() {
           <button
             className="btn-soft"
             type="button"
-            onClick={() => {
-              fetchCertStatus();
-              setAlerta({ tipo: "info", mensaje: "Estado actualizado." });
+            onClick={async () => {
+              await refreshAll();
+              showOk("Estado actualizado.");
             }}
             disabled={certStatusLoading}
           >
@@ -346,7 +353,7 @@ export default function MiCuentaPage() {
         </div>
       </header>
 
-      {/* ========= Resumen de estado (producción) ========= */}
+      {/* ========= Resumen de estado ========= */}
       <section className="micuenta-status">
         <div className="status-item">
           <span className="status-label">Certificado</span>
@@ -387,13 +394,15 @@ export default function MiCuentaPage() {
           </div>
 
           <button
-            className="btn btn-primario "
+            className="btn btn-primario"
             onClick={async () => {
               try {
+                setErrorToast(null);
                 const { data } = await api.post("/pago/portal-billing");
                 if (data?.url) window.location.href = data.url;
-              } catch {
-                setAlerta({ tipo: "error", mensaje: "No se pudo abrir la página de facturación." });
+                else showWarn("No se recibió URL del portal de facturación.");
+              } catch (err) {
+                showErr(err, "No se pudo abrir la página de facturación.");
               }
             }}
           >
@@ -438,7 +447,7 @@ export default function MiCuentaPage() {
             </div>
 
             <button
-              className={`btn btn-primario  ${verifactuEnabled ? "btn-danger" : ""}`}
+              className={`btn btn-primario ${verifactuEnabled ? "btn-danger" : ""}`}
               disabled={toggleLoading}
               onClick={() => setMostrarConfirmacionVF(true)}
             >
@@ -460,16 +469,13 @@ export default function MiCuentaPage() {
             </span>
           </div>
 
-          {/* Estado detallado */}
           {!certStatusLoading && (
             <div className={`status-box ${certSubido ? (certValido ? "ok" : "warn") : "danger"}`}>
               {certSubido ? (
                 <>
                   <strong>Certificado cargado.</strong>{" "}
                   {certCaduca ? <>Caduca el <b>{certCaduca}</b>.</> : "Caducidad: —"}
-                  {certStatus?.uploadedAt && (
-                    <div className="status-sub">Subido: {toDateES(certStatus.uploadedAt)}</div>
-                  )}
+                  {certStatus?.uploadedAt && <div className="status-sub">Subido: {toDateES(certStatus.uploadedAt)}</div>}
                 </>
               ) : (
                 <>
@@ -483,12 +489,12 @@ export default function MiCuentaPage() {
           <form onSubmit={handleUploadCert} className="micuenta-form">
             <div className="field">
               <label>Certificado (.p12)</label>
-              <input
-                type="file"
-                accept=".p12"
-                onChange={(e) => setArchivo(e.target.files?.[0] || null)}
-              />
-              {archivo?.name && <div className="field-help">Seleccionado: <b>{archivo.name}</b></div>}
+              <input type="file" accept=".p12" onChange={(e) => setArchivo(e.target.files?.[0] || null)} />
+              {archivo?.name && (
+                <div className="field-help">
+                  Seleccionado: <b>{archivo.name}</b>
+                </div>
+              )}
             </div>
 
             <div className="field">
@@ -506,9 +512,7 @@ export default function MiCuentaPage() {
             </button>
           </form>
 
-          <p className="hint">
-            El certificado se usa para firmar facturas y comunicaciones legales del sistema.
-          </p>
+          <p className="hint">El certificado se usa para firmar facturas y comunicaciones legales del sistema.</p>
         </section>
 
         {/* ===================== Datos fiscales ===================== */}
@@ -520,9 +524,7 @@ export default function MiCuentaPage() {
             </span>
           </div>
 
-          <p className="hint">
-            Estos datos se usan para la emisión de facturas y para VeriFactu.
-          </p>
+          <p className="hint">Estos datos se usan para la emisión de facturas y para VeriFactu.</p>
 
           <div className="sif-grid">
             {SIF_FIELDS.map((f) => (
@@ -534,16 +536,14 @@ export default function MiCuentaPage() {
                   type="text"
                   value={sifForm[f.key] || ""}
                   placeholder={f.placeholder || ""}
-                  onChange={(e) =>
-                    setSifForm((prev) => ({ ...prev, [f.key]: e.target.value }))
-                  }
+                  onChange={(e) => setSifForm((prev) => ({ ...prev, [f.key]: e.target.value }))}
                 />
               </div>
             ))}
           </div>
 
           <div className="actions-row">
-            <button className="btn btn-primario " type="button" onClick={handleSaveSif} disabled={sifLoading}>
+            <button className="btn btn-primario" type="button" onClick={handleSaveSif} disabled={sifLoading}>
               {sifLoading ? "Guardando…" : "Guardar datos fiscales"}
             </button>
           </div>
@@ -574,9 +574,7 @@ export default function MiCuentaPage() {
             await toggleVerifactu();
           }}
         >
-          <p className="hint">
-            Esta acción debe realizarse únicamente por un administrador del restaurante.
-          </p>
+          <p className="hint">Esta acción debe realizarse únicamente por un administrador del restaurante.</p>
         </ModalConfirmacion>
       )}
     </main>

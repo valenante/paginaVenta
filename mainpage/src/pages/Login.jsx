@@ -1,8 +1,11 @@
 // src/pages/Login.jsx
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/Login.css";
 import { useAuth } from "../context/AuthContext";
+
+import ErrorToast from "../components/common/ErrorToast";
+import { normalizeApiError } from "../utils/normalizeApiError"; // ✅
 
 export default function Login() {
   const navigate = useNavigate();
@@ -10,7 +13,13 @@ export default function Login() {
 
   const [form, setForm] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+
+  // ✅ error PRO (objeto)
+  const [uiError, setUiError] = useState(null);
+
+  // ✅ cooldown para 429
+  const [cooldown, setCooldown] = useState(0);
+
   const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e) => {
@@ -43,22 +52,40 @@ export default function Login() {
     }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  // ✅ cuenta atrás para rate limit
+  useEffect(() => {
+    if (cooldown <= 0) return;
+    const t = setInterval(() => setCooldown((s) => Math.max(0, s - 1)), 1000);
+    return () => clearInterval(t);
+  }, [cooldown]);
+
+  // ✅ función real que permite reintentar
+  const doLogin = async () => {
+    if (loading) return;
+    if (cooldown > 0) return;
+
     setLoading(true);
-    setError("");
+    setUiError(null);
 
     try {
       const user = await login(form);
 
       // SUPERADMIN
       if (user.role === "superadmin") {
-        return navigate("/superadmin");
+        navigate("/superadmin");
+        return;
       }
 
       const tenantSlug = user.tenantId;
       if (!tenantSlug) {
-        setError("No se encontró el restaurante asignado.");
+        setUiError({
+          code: "TENANT_REQUIRED",
+          message: "No se encontró el restaurante asignado.",
+          requestId: "—",
+          action: "CONTACT_SUPPORT",
+          kind: "client",
+          canRetry: false,
+        });
         return;
       }
 
@@ -67,17 +94,25 @@ export default function Login() {
 
       if (targetUrl.startsWith("/")) navigate(targetUrl);
       else window.location.href = targetUrl;
-
     } catch (err) {
-      const backendMsg = err.response?.data?.error;
-      setError(
-        backendMsg ||
-          "Error al iniciar sesión. Revisa tus credenciales e intenta nuevamente."
-      );
+      const normalized = normalizeApiError(err);
+      setUiError(normalized);
+
+      // si es rate limit y viene retryAfter => activa cooldown
+      if (normalized?.kind === "rate_limit" && normalized?.retryAfter) {
+        setCooldown(Number(normalized.retryAfter) || 0);
+      }
     } finally {
       setLoading(false);
     }
   };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    doLogin();
+  };
+
+  const canRetry = !!uiError?.canRetry && cooldown === 0 && !loading;
 
   return (
     <main className="login-page">
@@ -138,19 +173,45 @@ export default function Login() {
               </div>
             </div>
 
-            {error && <p className="login-error">{error}</p>}
+            {/* ✅ Error UX PRO */}
+            {uiError && (
+              <ErrorToast
+                error={{ ...uiError, retryAfter: cooldown > 0 ? cooldown : uiError.retryAfter }}
+                onRetry={canRetry ? doLogin : null}
+                onClose={() => setUiError(null)}
+                autoHideMs={0}
+                showSupport={uiError?.action === "CONTACT_SUPPORT"}
+              />
+            )}
 
-            <button type="submit" className="btn btn-primario " disabled={loading}>
-              {loading ? "Iniciando sesión..." : "Entrar"}
+            <button
+              type="submit"
+              className="btn btn-primario"
+              disabled={loading || cooldown > 0}
+              title={cooldown > 0 ? `Espera ${cooldown}s` : ""}
+            >
+              {loading
+                ? "Iniciando sesión..."
+                : cooldown > 0
+                  ? `Espera ${cooldown}s`
+                  : "Entrar"}
             </button>
 
-            <button type="button" className="login-forgot" onClick={() => navigate("/forgot-password")}>
+            <button
+              type="button"
+              className="login-forgot"
+              onClick={() => navigate("/forgot-password")}
+              disabled={loading}
+            >
               ¿Olvidaste tu contraseña?
             </button>
           </form>
 
           <p className="login-footer">
-            ¿No tienes cuenta? <a href="/registro" className="login-link">Regístrate aquí</a>
+            ¿No tienes cuenta?{" "}
+            <a href="/registro" className="login-link">
+              Regístrate aquí
+            </a>
           </p>
         </section>
       </div>

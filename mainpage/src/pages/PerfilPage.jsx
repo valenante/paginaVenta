@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
 import api from "../utils/api";
 import AlertaMensaje from "../components/AlertaMensaje/AlertaMensaje";
+import { normalizeApiError } from "../utils/normalizeApiError.js";
+import ErrorToast from "../components/common/ErrorToast";
 import "../styles/PerfilPage.css";
 
 export default function PerfilPage() {
@@ -12,14 +14,14 @@ export default function PerfilPage() {
   const [avatar, setAvatar] = useState(null);
   const [alerta, setAlerta] = useState(null);
   const [loading, setLoading] = useState(false);
-
+  const [errorState, setErrorState] = useState(null);
   useEffect(() => {
     document.title = "Mi perfil | Alef";
   }, []);
 
-  const handleActualizar = async (e) => {
-    e.preventDefault();
+  const doUpdate = async () => {
     setAlerta(null);
+    setErrorState(null);
 
     if (nuevaPassword && nuevaPassword !== confirmPassword) {
       setAlerta({ tipo: "error", mensaje: "Las contraseñas no coinciden." });
@@ -40,13 +42,28 @@ export default function PerfilPage() {
 
       if (data?.user) setUser(data.user);
 
-      setAlerta({ tipo: "exito", mensaje: "Perfil actualizado correctamente." });
+      setAlerta({
+        tipo: "exito",
+        mensaje: "Perfil actualizado correctamente.",
+      });
+
     } catch (err) {
-      console.error(err);
-      setAlerta({ tipo: "error", mensaje: "Error al actualizar perfil." });
+      const e = normalizeApiError(err);
+
+      if (e.action === "REAUTH") {
+        await logout();
+        return;
+      }
+
+      setErrorState(e);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleActualizar = async (e) => {
+    e.preventDefault();
+    await doUpdate();
   };
 
   if (!user) {
@@ -190,6 +207,13 @@ export default function PerfilPage() {
           </div>
         </form>
       </section>
+      {errorState && (
+        <ErrorToast
+          error={errorState}
+          onRetry={errorState.canRetry ? doUpdate : null}
+          onClose={() => setErrorState(null)}
+        />
+      )}
     </main>
   );
 }

@@ -196,72 +196,6 @@
   flex-wrap: wrap;
 }
 
-/* Botones principales */
-.btn btn-primario ,
-.btn-secundario,
-.btn {
-  border-radius: 14px;
-  padding: 0.62rem 1.05rem;
-  font-weight: 900;
-  cursor: pointer;
-  border: 1px solid transparent;
-  transition: transform .12s ease, box-shadow .15s ease, background .15s ease, border-color .15s ease;
-  user-select: none;
-}
-
-.btn btn-primario  {
-  background: var(--color-primario);
-  color: #fff;
-  box-shadow: 0 14px 28px rgba(106, 13, 173, 0.18);
-}
-
-.btn btn-primario :hover {
-  transform: translateY(-1px);
-  box-shadow: 0 18px 34px rgba(106, 13, 173, 0.22);
-}
-
-.btn-secundario {
-  background: rgba(255, 103, 0, 0.12);
-  color: var(--color-secundario);
-  border-color: rgba(255, 103, 0, 0.35);
-}
-
-.btn-secundario:hover {
-  transform: translateY(-1px);
-  background: rgba(255, 103, 0, 0.16);
-}
-
-.btn {
-  background: #fff;
-  color: #111827;
-  border-color: #e5e7eb;
-}
-
-.btn:hover {
-  transform: translateY(-1px);
-  background: #f9fafb;
-}
-
-.btn:disabled,
-.btn btn-primario :disabled,
-.btn-secundario:disabled {
-  opacity: 0.55;
-  cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
-}
-
-/* focus accesible */
-.btn:focus,
-.btn btn-primario :focus,
-.btn-secundario:focus,
-.facturaspage-help-btn:focus,
-.facturaspage-table-actions button:focus,
-.factura-card-actions button:focus {
-  outline: none;
-  box-shadow: 0 0 0 4px rgba(96, 181, 255, 0.18);
-}
-
 /* =====================================================
    TABLA – PREMIUM DATA GRID
    ===================================================== */
@@ -637,12 +571,6 @@
   .facturaspage-table td,
   .facturaspage-table th {
     padding: 14px;
-  }
-
-  .btn btn-primario ,
-  .btn-secundario,
-  .btn {
-    min-height: 46px;
   }
 }
 

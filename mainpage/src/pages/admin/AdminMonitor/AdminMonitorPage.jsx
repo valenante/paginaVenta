@@ -1,5 +1,5 @@
 // src/pages/admin/monitor/AdminMonitorPage.jsx  (ajusta ruta si tu proyecto la tiene distinta)
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import api from "../../../utils/api";
 import AdminMonitorJobs from "./AdminMonitorJobs";
 import "./AdminMonitor.css";
@@ -41,6 +41,15 @@ function httpTenantState({ errorRate, p95Ms, total }) {
   return "ok";
 }
 
+function useDebounced(value, ms = 400) {
+  const [debounced, setDebounced] = useState(value);
+  useEffect(() => {
+    const t = setTimeout(() => setDebounced(value), ms);
+    return () => clearTimeout(t);
+  }, [value, ms]);
+  return debounced;
+}
+
 export default function AdminMonitorPage() {
   const [overview, setOverview] = useState(null);
   const [rows, setRows] = useState([]); // impresión
@@ -53,7 +62,11 @@ export default function AdminMonitorPage() {
   const [onlyDown, setOnlyDown] = useState(false);
   const [q, setQ] = useState("");
 
-  const fetchAll = async () => {
+  const qDebounced = useDebounced(q, 400);
+  const reqSeq = useRef(0);
+
+  const fetchAll = async ({ onlyDown, q }) => {
+    const mySeq = ++reqSeq.current;
     setLoading(true);
 
     try {
@@ -65,6 +78,8 @@ export default function AdminMonitorPage() {
           params: { q, minReq: 30, limit: 200, onlyBad: onlyDown },
         }),
       ]);
+
+      if (mySeq !== reqSeq.current) return; // respuesta vieja → ignorar
 
       setOverview(ov.data);
       setRows(ten.data?.items || []);
@@ -79,14 +94,17 @@ export default function AdminMonitorPage() {
       const emailT = await api.get("/admin/superadminMonitor/services", {
         params: { service: "email", q },
       });
+
+      if (mySeq !== reqSeq.current) return; // respuesta vieja → ignorar
       setEmailTenants(emailT.data?.items || []);
     } catch (e) {
       console.warn("Email monitor falló:", e);
-      setEmailTenants([]); // fallback limpio
+      setEmailTenants([]);
     } finally {
-      setLoading(false);
+      if (mySeq === reqSeq.current) setLoading(false);
     }
   };
+
   const fetchVps = async () => {
     try {
       const { data } = await api.get("/admin/superadminMonitor/vps");
@@ -104,17 +122,19 @@ export default function AdminMonitorPage() {
   }
 
   useEffect(() => {
-    fetchAll();
+    const params = { onlyDown, q: qDebounced };
+
+    fetchAll(params);
     fetchVps();
 
     const id = setInterval(() => {
-      fetchAll();
+      fetchAll(params);
       fetchVps();
     }, 30000);
 
     return () => clearInterval(id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [onlyDown]);
+  }, [onlyDown, qDebounced]);
 
   function vpsState(vps) {
     // Si tu backend ya devuelve state ("ok|degraded|down"), úsalo
@@ -194,8 +214,13 @@ export default function AdminMonitorPage() {
             />
             Solo caídos
           </label>
-
-          <button className="btn-refresh" onClick={() => { fetchAll(); fetchVps(); }}>
+          <button
+            className="btn-refresh"
+            onClick={() => {
+              fetchAll({ onlyDown, q: qDebounced });
+              fetchVps();
+            }}
+          >
             🔄 Actualizar
           </button>
         </div>

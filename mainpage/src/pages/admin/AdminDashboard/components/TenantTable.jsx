@@ -247,7 +247,7 @@ export default function TenantTable({ tenants, onRefresh }) {
      Render
   ========================= */
   return (
-    <section className="tenant-table-section">
+    <section className="tenant-table">
       {alerta && (
         <AlertaMensaje
           tipo={alerta.tipo}
@@ -256,14 +256,16 @@ export default function TenantTable({ tenants, onRefresh }) {
         />
       )}
 
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 14 }}>
-        <h3 style={{ margin: 0 }}>Tenants registrados</h3>
+      {/* Header */}
+      <header className="tenant-table__header">
+        <h3 className="tenant-table__title">Tenants registrados</h3>
         <EnvPill mode={envLabel.mode} tenant={envLabel.tenant} />
-      </div>
+      </header>
 
-      <div className="table-wrapper" style={{ marginTop: 10 }}>
-        <table className="tenants-table">
-          <thead>
+      {/* Table */}
+      <div className="tenant-table__tableWrap">
+        <table className="tenant-table__table">
+          <thead className="tenant-table__thead">
             <tr>
               <th>Nombre</th>
               <th>Tipo</th>
@@ -272,75 +274,123 @@ export default function TenantTable({ tenants, onRefresh }) {
               <th>VeriFactu</th>
               <th>Estado</th>
               <th>Creación</th>
-              <th>Acciones</th>
+              <th className="tenant-table__thActions">Acciones</th>
             </tr>
           </thead>
 
-          <tbody>
+          <tbody className="tenant-table__tbody">
             {tenants.map((t) => {
               const tipo = t.tipoNegocio || "restaurante";
               const slug = t.slug || t.tenantId;
 
-              // pill por fila (solo marca sandbox si coincide exactamente con el sandbox activo)
               const rowEnv = getEffectiveEnvModeForTenant(slug);
               const showRowSandbox =
-                rowEnv === "sandbox" && readEnvMode() === "sandbox" && readSandboxTenantId() === String(slug || "").trim();
+                rowEnv === "sandbox" &&
+                readEnvMode() === "sandbox" &&
+                readSandboxTenantId() === String(slug || "").trim();
 
               return (
-                <tr key={t._id}>
-                  <td style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                    <span>{t.nombre}</span>
-                    {showRowSandbox ? <EnvPill mode="sandbox" tenant="" /> : null}
+                <tr className="tenant-table__row" key={t._id}>
+                  <td className="tenant-table__cell" data-label="Nombre">
+                    <div className="tenant-table__name">
+                      <span className="tenant-table__nameText">{t.nombre}</span>
+                      {showRowSandbox ? (
+                        <span className="tenant-table__rowPill">
+                          <EnvPill mode="sandbox" tenant="" />
+                        </span>
+                      ) : null}
+                    </div>
                   </td>
 
-                  <td className={`tipo tipo-${tipo}`}>
-                    {tipo === "shop" ? <FiShoppingBag /> : <FiCoffee />}
-                    {tipo}
-                  </td>
-
-                  <td>{t.email}</td>
-                  <td>{t.plan}</td>
-                  <td>{t.verifactuEnabled ? "✅" : "❌"}</td>
-
-                  <td>
-                    <span className={`estado-tag estado-${t.estado}`}>
-                      {t.estado}
+                  <td
+                    className="tenant-table__cell"
+                    data-label="Tipo"
+                  >
+                    <span className={`tenant-type tenant-type--${tipo}`}>
+                      {tipo === "shop" ? <FiShoppingBag /> : <FiCoffee />}
+                      <span className="tenant-type__text">{tipo}</span>
                     </span>
                   </td>
 
-                  <td>{new Date(t.createdAt).toLocaleDateString()}</td>
+                  <td className="tenant-table__cell" data-label="Email">
+                    {t.email}
+                  </td>
 
-                  <td className="actions">
-                    <button onClick={() => setSelected(t)} title="Ver detalles">
-                      <FiEye />
-                    </button>
+                  <td className="tenant-table__cell" data-label="Plan">
+                    {t.plan}
+                  </td>
 
-                    <button onClick={() => setPlanTarget(t)} title="Editar plan">
-                      <FiEdit2 />
-                    </button>
-
-                    <button
-                      onClick={() => abrirImpersonacion(t)}
-                      disabled={loadingImpersonar || !slug}
-                      title={`Entrar como admin (${getEffectiveEnvModeForTenant(slug).toUpperCase()})`}
+                  <td className="tenant-table__cell" data-label="VeriFactu">
+                    <span
+                      className={`tenant-vf ${t.verifactuEnabled ? "is-on" : "is-off"
+                        }`}
+                      title={t.verifactuEnabled ? "VeriFactu activado" : "VeriFactu desactivado"}
                     >
-                      <FiLogIn />
-                    </button>
+                      {t.verifactuEnabled ? "✅" : "❌"}
+                    </span>
+                  </td>
 
-                    <button
-                      onClick={() => setEstadoTarget(t)}
-                      title="Cambiar estado"
-                    >
-                      {t.estado === "suspendido" ? "🔓" : "🔒"}
-                    </button>
+                  <td className="tenant-table__cell" data-label="Estado">
+                    <span className={`estado-tag estado-${t.estado}`}>{t.estado}</span>
+                  </td>
 
-                    <button
-                      className="delete"
-                      onClick={() => setDeleteTarget(t)}
-                      title="Eliminar"
-                    >
-                      <FiTrash2 />
-                    </button>
+                  <td className="tenant-table__cell" data-label="Creación">
+                    {new Date(t.createdAt).toLocaleDateString()}
+                  </td>
+
+                  <td className="tenant-table__cell tenant-table__cell--actions" data-label="Acciones">
+                    <div className="tenant-actions">
+                      <button
+                        type="button"
+                        className="tenant-actions__btn"
+                        onClick={() => setSelected(t)}
+                        aria-label="Ver detalles"
+                        title="Ver detalles"
+                      >
+                        <FiEye />
+                      </button>
+
+                      <button
+                        type="button"
+                        className="tenant-actions__btn"
+                        onClick={() => setPlanTarget(t)}
+                        aria-label="Editar plan"
+                        title="Editar plan"
+                      >
+                        <FiEdit2 />
+                      </button>
+
+                      <button
+                        type="button"
+                        className="tenant-actions__btn"
+                        onClick={() => abrirImpersonacion(t)}
+                        disabled={loadingImpersonar || !slug}
+                        aria-label={`Entrar como admin (${getEffectiveEnvModeForTenant(slug).toUpperCase()})`}
+                        title={`Entrar como admin (${getEffectiveEnvModeForTenant(slug).toUpperCase()})`}
+                      >
+                        <FiLogIn />
+                      </button>
+
+                      <button
+                        type="button"
+                        className="tenant-actions__btn"
+                        onClick={() => setEstadoTarget(t)}
+                        aria-label="Cambiar estado"
+                        title="Cambiar estado"
+                      >
+                        {t.estado === "suspendido" ? "🔓" : "🔒"}
+                      </button>
+
+                      <button
+                        type="button"
+                        className="tenant-actions__btn tenant-actions__btn--danger"
+                        onClick={() => setDeleteTarget(t)}
+                        aria-label="Eliminar tenant"
+                        title="Eliminar"
+                      >
+                        <FiTrash2 />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               );
@@ -349,10 +399,7 @@ export default function TenantTable({ tenants, onRefresh }) {
         </table>
       </div>
 
-      {/* =========================
-          Modales
-      ========================= */}
-
+      {/* Modales */}
       {selected && selected.tipoNegocio !== "shop" && (
         <TenantModal tenant={selected} onClose={() => setSelected(null)} />
       )}
@@ -389,40 +436,35 @@ export default function TenantTable({ tenants, onRefresh }) {
         </Portal>
       )}
 
-      {/* ✅ Modal de impersonación (reutilizando ModalConfirmacion) */}
       {impersonarTarget && (
         <Portal>
           <ModalConfirmacion
             titulo="Impersonar tenant"
-            mensaje={
-              (() => {
-                const preview = impersonacionPreview;
-                const name = impersonarTarget.nombre;
-                const slug = (impersonarTarget.slug || impersonarTarget.tenantId || "").trim();
-                const env = preview?.env || "prod";
-                const envText = env === "sandbox" ? "🟡 SANDBOX" : "🟢 PROD";
-
-                return `Vas a entrar como admin de "${name}" (${slug}). Modo: ${envText}. Indica el motivo (mín. 20 caracteres).`;
-              })()
-            }
+            mensaje={(() => {
+              const preview = impersonacionPreview;
+              const name = impersonarTarget.nombre;
+              const slug = (impersonarTarget.slug || impersonarTarget.tenantId || "").trim();
+              const env = preview?.env || "prod";
+              const envText = env === "sandbox" ? "🟡 SANDBOX" : "🟢 PROD";
+              return `Vas a entrar como admin de "${name}" (${slug}). Modo: ${envText}. Indica el motivo (mín. 20 caracteres).`;
+            })()}
             placeholder="Motivo (mínimo 20 caracteres)"
             onClose={() => setImpersonarTarget(null)}
             onConfirm={confirmarImpersonacion}
           >
-            <div style={{ display: "grid", gap: 10 }}>
+            <div className="tenant-impersonate">
               {!!impersonacionPreview?.mismatchWarn && (
-                <div style={{ padding: "8px 10px", borderRadius: 10, background: "rgba(255,193,7,0.12)" }}>
+                <div className="tenant-impersonate__warn">
                   <strong>Atención:</strong> {impersonacionPreview.mismatchWarn}
                 </div>
               )}
 
-              <label style={{ fontWeight: 600 }}>
+              <label className="tenant-impersonate__label">
                 Categoría
                 <select
                   className="modal-input--modalconfirmacion"
                   value={reasonCategory}
                   onChange={(e) => setReasonCategory(e.target.value)}
-                  style={{ marginTop: 6 }}
                 >
                   <option value="soporte">Soporte</option>
                   <option value="incidencia">Incidencia</option>
@@ -433,9 +475,7 @@ export default function TenantTable({ tenants, onRefresh }) {
               </label>
 
               {loadingImpersonar && (
-                <p style={{ margin: 0, opacity: 0.8 }}>
-                  Creando sesión de impersonación…
-                </p>
+                <p className="tenant-impersonate__loading">Creando sesión de impersonación…</p>
               )}
             </div>
           </ModalConfirmacion>

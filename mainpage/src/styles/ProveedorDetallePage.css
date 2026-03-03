@@ -2,11 +2,6 @@
  * Proveedor Detalle – Alef (UI PRO)
  * Sigue la línea visual de Proveedores (rest-config)
  *****************************************************/
-
-.provDet-page {
-  margin: var(--space-2xl) auto var(--space-3xl);
-}
-
 /* =========================
    Header
 ========================= */

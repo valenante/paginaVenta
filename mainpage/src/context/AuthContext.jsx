@@ -21,7 +21,7 @@ export function AuthProvider({ children }) {
   const { setTenantId, clearTenant } = useTenant();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-
+  const [bootError, setBootError] = useState(null);
   const applyUser = useCallback((u) => {
     setUser(u);
     saveUserClient(u);
@@ -38,13 +38,15 @@ export function AuthProvider({ children }) {
 
   const bootstrap = useCallback(async () => {
     try {
+      setBootError(null); // ✅ limpia error anterior
       const res = await api.get("/auth/me/me");
       const u = res.data.user;
       applyUser(u);
-    } catch {
+    } catch (e) { // ✅ aquí capturas el error
       setUser(null);
       clearUserClient();
       clearTenant();
+      setBootError(e); // ✅ ahora sí existe
     } finally {
       setLoading(false);
     }
@@ -55,20 +57,23 @@ export function AuthProvider({ children }) {
   }, [bootstrap]);
 
   const login = useCallback(async ({ email, password }) => {
-    // 1) crea cookies
-    const loginRes = await api.post("/auth/login", { email, password });
+    try {
+      const loginRes = await api.post("/auth/login", { email, password });
 
-    // 2) usa respuesta si viene user; si no, pide /me
-    const maybeUser = loginRes.data?.user;
-    if (maybeUser) {
-      applyUser(maybeUser);
-      return maybeUser;
+      const maybeUser = loginRes.data?.user;
+      if (maybeUser) {
+        applyUser(maybeUser);
+        return maybeUser;
+      }
+
+      const meRes = await api.get("/auth/me/me");
+      const u = meRes.data.user;
+      applyUser(u);
+      return u;
+    } catch (e) {
+      // ✅ IMPORTANTÍSIMO: no conviertas el error a string, re-lánzalo
+      throw e;
     }
-
-    const meRes = await api.get("/auth/me/me");
-    const u = meRes.data.user;
-    applyUser(u);
-    return u;
   }, [applyUser]);
 
   const logout = useCallback(async () => {
@@ -83,7 +88,7 @@ export function AuthProvider({ children }) {
   }, [clearTenant]);
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout, setUser: applyUser, bootstrap }}>
+    <AuthContext.Provider value={{ user, loading, bootError, login, logout, setUser: applyUser, bootstrap }}>
       {children}
     </AuthContext.Provider>
   );

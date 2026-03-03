@@ -99,15 +99,23 @@ export default function TicketsPage() {
   // UI
   // ============================
   return (
-    <div className="tickets-page-ticketsAdmin">
-      <h1 className="tickets-title-ticketsAdmin">🎫 Tickets de soporte</h1>
+    <section className="tickets">
+      <header className="tickets__header">
+        <div>
+          <h1 className="tickets__title">🎫 Tickets de soporte</h1>
+          <p className="tickets__subtitle">
+            Filtra, prioriza y responde rápido: soporte que se siente premium.
+          </p>
+        </div>
+      </header>
 
       {/* FILTROS */}
-      <div className="ticket-filtros-ticketsAdmin">
+      <div className="tickets-filters" role="region" aria-label="Filtros de tickets">
         <select
-          className="ticket-select-ticketsAdmin"
+          className="tickets-field"
           value={estado}
           onChange={(e) => setEstado(e.target.value)}
+          aria-label="Filtrar por estado"
         >
           <option value="">Estado</option>
           <option value="abierto">Abierto</option>
@@ -117,9 +125,10 @@ export default function TicketsPage() {
         </select>
 
         <select
-          className="ticket-select-ticketsAdmin"
+          className="tickets-field"
           value={prioridad}
           onChange={(e) => setPrioridad(e.target.value)}
+          aria-label="Filtrar por prioridad"
         >
           <option value="">Prioridad</option>
           <option value="baja">Baja</option>
@@ -129,62 +138,87 @@ export default function TicketsPage() {
         </select>
 
         <input
-          className="ticket-input-ticketsAdmin"
+          className="tickets-field"
           type="text"
-          placeholder="Tenant..."
+          placeholder="Tenant…"
           value={tenant}
           onChange={(e) => setTenant(e.target.value)}
+          aria-label="Filtrar por tenant"
         />
 
         <input
-          className="ticket-input-ticketsAdmin"
+          className="tickets-field"
           type="text"
-          placeholder="Buscar asunto..."
+          placeholder="Buscar asunto…"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
+          aria-label="Buscar por asunto"
         />
 
-        <button className="ticket-refresh-btn-ticketsAdmin" onClick={fetchTickets}>
+        <button
+          className="tickets-refreshBtn"
+          onClick={fetchTickets}
+          type="button"
+          title="Actualizar"
+        >
           🔄 Actualizar
         </button>
       </div>
 
-      {/* TABLA */}
+      {/* LISTA */}
       {loading ? (
-        <p className="tickets-loading-ticketsAdmin">Cargando tickets...</p>
+        <p className="tickets-state tickets-state--muted">Cargando tickets…</p>
       ) : tickets.length === 0 ? (
-        <p className="tickets-empty-ticketsAdmin">No hay tickets.</p>
+        <p className="tickets-state tickets-state--muted">No hay tickets.</p>
       ) : (
-        <div className="tickets-table-wrapper-ticketsAdmin">
-          <table className="tickets-table-ticketsAdmin">          <thead>
-            <tr>
-              <th>Tenant</th>
-              <th>Asunto</th>
-              <th>Prioridad</th>
-              <th>Estado</th>
-              <th>Creado</th>
-            </tr>
-          </thead>
+        <div className="tickets-tableWrap">
+          <table className="tickets-table">
+            <thead className="tickets-table__thead">
+              <tr>
+                <th>Tenant</th>
+                <th>Asunto</th>
+                <th>Prioridad</th>
+                <th>Estado</th>
+                <th>Creado</th>
+              </tr>
+            </thead>
 
-            <tbody>
+            <tbody className="tickets-table__tbody">
               {tickets.map((t) => (
                 <tr
                   key={t._id}
-                  className="tickets-row-ticketsAdmin"
+                  className="tickets-table__row"
                   onClick={() => setSelected(t)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") setSelected(t);
+                  }}
+                  tabIndex={0}
+                  role="button"
+                  title="Abrir ticket"
                 >
-                  <td>{t.tenant}</td>
-                  <td>{t.asunto}</td>
-
-                  <td className={`ticket-prio-tag-ticketsAdmin prio-${t.prioridad}`}>
-                    {t.prioridad}
+                  <td className="tickets-table__cell" data-label="Tenant">
+                    {t.tenant}
                   </td>
 
-                  <td className={`ticket-estado-tag-ticketsAdmin estado-${t.estado}`}>
-                    {t.estado}
+                  <td className="tickets-table__cell tickets-subject" data-label="Asunto">
+                    {t.asunto}
                   </td>
 
-                  <td>{new Date(t.createdAt).toLocaleString()}</td>
+                  <td className="tickets-table__cell" data-label="Prioridad">
+                    <span className={`tickets-pill tickets-pill--prio prio-${t.prioridad}`}>
+                      {t.prioridad}
+                    </span>
+                  </td>
+
+                  <td className="tickets-table__cell" data-label="Estado">
+                    <span className={`tickets-pill tickets-pill--estado estado-${t.estado}`}>
+                      {t.estado}
+                    </span>
+                  </td>
+
+                  <td className="tickets-table__cell" data-label="Creado">
+                    {new Date(t.createdAt).toLocaleString()}
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -195,86 +229,94 @@ export default function TicketsPage() {
       {/* MODAL */}
       {selected && (
         <Portal>
-          <div className="ticket-modal-ticketsAdmin" onClick={() => setSelected(null)}>
-            <div
-              className="ticket-modal-content-ticketsAdmin"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <h2 className="ticket-modal-title-ticketsAdmin">{selected.asunto}</h2>
-              <p><strong>Tenant:</strong> {selected.tenant}</p>
+          <div className="tickets-modal" onClick={() => setSelected(null)}>
+            <div className="tickets-modal__content" onClick={(e) => e.stopPropagation()}>
+              <header className="tickets-modal__header">
+                <div>
+                  <h2 className="tickets-modal__title">{selected.asunto}</h2>
+                  <p className="tickets-modal__meta">
+                    <strong>Tenant:</strong> {selected.tenant}
+                  </p>
+                </div>
 
-              <hr className="ticket-divider-ticketsAdmin" />
-
-              {/* ESTADO */}
-              <div className="ticket-data-row-ticketsAdmin">
-                <label>Estado:</label>
-                <select
-                  className="ticket-select-modal-ticketsAdmin"
-                  value={selected.estado}
-                  onChange={(e) => updateTicket({ estado: e.target.value })}
+                <button
+                  className="tickets-modal__close"
+                  type="button"
+                  aria-label="Cerrar"
+                  onClick={() => setSelected(null)}
                 >
-                  <option value="abierto">Abierto</option>
-                  <option value="en_progreso">En progreso</option>
-                  <option value="resuelto">Resuelto</option>
-                  <option value="cerrado">Cerrado</option>
-                </select>
+                  ✕
+                </button>
+              </header>
+
+              <hr className="tickets-divider" />
+
+              {/* Estado / Prioridad */}
+              <div className="tickets-controls">
+                <div className="tickets-control">
+                  <label>Estado</label>
+                  <select
+                    className="tickets-field tickets-field--modal"
+                    value={selected.estado}
+                    onChange={(e) => updateTicket({ estado: e.target.value })}
+                  >
+                    <option value="abierto">Abierto</option>
+                    <option value="en_progreso">En progreso</option>
+                    <option value="resuelto">Resuelto</option>
+                    <option value="cerrado">Cerrado</option>
+                  </select>
+                </div>
+
+                <div className="tickets-control">
+                  <label>Prioridad</label>
+                  <select
+                    className="tickets-field tickets-field--modal"
+                    value={selected.prioridad}
+                    onChange={(e) => updateTicket({ prioridad: e.target.value })}
+                  >
+                    <option value="baja">Baja</option>
+                    <option value="media">Media</option>
+                    <option value="alta">Alta</option>
+                    <option value="urgente">Urgente</option>
+                  </select>
+                </div>
               </div>
 
-              {/* PRIORIDAD */}
-              <div className="ticket-data-row-ticketsAdmin">
-                <label>Prioridad:</label>
-                <select
-                  className="ticket-select-modal-ticketsAdmin"
-                  value={selected.prioridad}
-                  onChange={(e) => updateTicket({ prioridad: e.target.value })}
-                >
-                  <option value="baja">Baja</option>
-                  <option value="media">Media</option>
-                  <option value="alta">Alta</option>
-                  <option value="urgente">Urgente</option>
-                </select>
-              </div>
+              <hr className="tickets-divider" />
 
-              <hr className="ticket-divider-ticketsAdmin" />
+              {/* Chat */}
+              <h3 className="tickets-chat__title">Mensajes</h3>
 
-              {/* CHAT */}
-              <h3 className="ticket-chat-title-ticketsAdmin">Mensajes</h3>
-              <div className="ticket-chat-ticketsAdmin">
-                {selected.mensajes.map((m, idx) => (
-                  <div key={idx} className={`ticket-msg-ticketsAdmin msg-${m.autor}`}>
+              <div className="tickets-chat">
+                {(selected.mensajes || []).map((m, idx) => (
+                  <div key={idx} className={`tickets-msg msg-${m.autor}`}>
                     <p>{m.mensaje}</p>
                     <span>{new Date(m.fecha).toLocaleString()}</span>
                   </div>
                 ))}
               </div>
 
-              <div className="ticket-msg-form-ticketsAdmin">
+              <div className="tickets-send">
                 <input
-                  className="ticket-msg-input-ticketsAdmin"
+                  className="tickets-field tickets-field--send"
                   type="text"
-                  placeholder="Escribe un mensaje..."
+                  placeholder="Escribe un mensaje…"
                   value={nuevoMensaje}
                   onChange={(e) => setNuevoMensaje(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && enviarMensaje()}
                 />
-                <button
-                  className="ticket-msg-send-btn-ticketsAdmin"
-                  onClick={enviarMensaje}
-                >
+                <button className="tickets-send__btn" onClick={enviarMensaje} type="button">
                   Enviar
                 </button>
               </div>
 
-              <button
-                className="ticket-delete-btn-ticketsAdmin"
-                onClick={eliminarTicket}
-              >
+              <button className="tickets-dangerBtn" onClick={eliminarTicket} type="button">
                 🗑 Eliminar ticket
               </button>
             </div>
           </div>
         </Portal>
       )}
-    </div>
+    </section>
   );
 }

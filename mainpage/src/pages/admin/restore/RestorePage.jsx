@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import api from "../../../utils/api.js";
 import "./RestorePage.css";
 import MongoTenantRestoreCard from "./components/MongoTenantRestoreCard";
@@ -78,6 +78,9 @@ function Modal({ open, title, onClose, children }) {
 export default function RestorePage() {
   const [statusLoading, setStatusLoading] = useState(true);
   const [snapshotsLoading, setSnapshotsLoading] = useState(true);
+  const statusReqSeq = useRef(0);
+  const snapsReqSeq = useRef(0);
+  const diffReqSeq = useRef(0);
   const [lastRefresh, setLastRefresh] = useState(null);
   const [snapshots, setSnapshots] = useState([]);
   const [backupStatus, setBackupStatus] = useState(null);
@@ -243,19 +246,32 @@ El sistema está preparado para operación real SaaS.
   };
 
   const fetchStatus = async () => {
+    const mySeq = ++statusReqSeq.current;
+
     setStatusLoading(true);
     try {
       const { data } = await api.get(`${API_BASE}/backup/status`);
+
+      if (mySeq !== statusReqSeq.current) return; // respuesta vieja
+
       setBackupStatus(data?.ok ? data : null);
+      setError(""); // limpia errores viejos si ahora fue OK
     } catch (e) {
+      if (mySeq !== statusReqSeq.current) return;
+
+      setBackupStatus(null);
       setError(getApiError(e, "Error status"));
     } finally {
-      setStatusLoading(false);
-      setLastRefresh(Date.now());
+      if (mySeq === statusReqSeq.current) {
+        setStatusLoading(false);
+        setLastRefresh(Date.now());
+      }
     }
   };
 
   const fetchSnapshots = async () => {
+    const mySeq = ++snapsReqSeq.current;
+
     setSnapshotsLoading(true);
     try {
       const { data } = await api.get(`${API_BASE}/backup/snapshots`, {
@@ -266,24 +282,41 @@ El sistema está preparado para operación real SaaS.
         },
       });
 
+      if (mySeq !== snapsReqSeq.current) return; // respuesta vieja
+
       setSnapshots(data?.snapshots || []);
       setTotalSnapshots(data?.total || 0);
+      setError(""); // limpia error viejo si ahora fue OK
     } catch (e) {
+      if (mySeq !== snapsReqSeq.current) return;
+
+      setSnapshots([]);
+      setTotalSnapshots(0);
       setError(e?.response?.data?.message || e?.message || "Error snapshots");
     } finally {
-      setSnapshotsLoading(false);
+      if (mySeq === snapsReqSeq.current) {
+        setSnapshotsLoading(false);
+      }
     }
   };
 
   const fetchDiff = async (rid) => {
     if (!rid) return;
+
+    const mySeq = ++diffReqSeq.current;
+
     setDiffLoading(true);
     setError("");
+
     try {
       const { data } = await api.get(`${API_BASE}/backup/restore/diff`, {
         params: { restoreId: rid },
       });
+
+      if (mySeq !== diffReqSeq.current) return; // respuesta vieja
+
       setDiffs(data?.diffs || []);
+
       // por defecto abrimos los que tienen cambios
       const next = new Set();
       (data?.diffs || []).forEach((d, idx) => {
@@ -291,15 +324,21 @@ El sistema está preparado para operación real SaaS.
       });
       setExpanded(next);
     } catch (e) {
+      if (mySeq !== diffReqSeq.current) return;
+
       setDiffs([]);
+      setExpanded(new Set());
       setError(e?.response?.data?.message || e?.message || "No se pudo generar diff");
     } finally {
-      setDiffLoading(false);
+      if (mySeq === diffReqSeq.current) {
+        setDiffLoading(false);
+      }
     }
   };
 
   useEffect(() => {
     fetchStatus();
+    fetchSnapshots();
 
     const rid = readStoredRestoreId();
     if (rid) {

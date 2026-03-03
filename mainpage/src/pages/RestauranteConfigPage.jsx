@@ -11,6 +11,8 @@ import { useTenant } from "../context/TenantContext";
 import PlanFeaturesPanel from "../components/Config/PlanFeaturesPanel.jsx";
 import SeccionesPanel from "../components/Config/SeccionesPanel.jsx";
 import IdentidadNegocioPanel from "../components/Config/IdentidadNegocioPanel.jsx";
+import ErrorToast from "../components/common/ErrorToast.jsx";
+import { normalizeApiError } from "../utils/normalizeApiError.js";
 import OperativaSlaCapacidadPanel from "../components/Config/OperativaSlaCapacidadPanel.jsx";
 import { DEFAULT_TEMA_TPV, normalizarTemaTpv } from "../utils/tema";
 import { DEFAULT_TEMA_SHOP, normalizarTemaShop } from "../utils/temaShop";
@@ -108,6 +110,7 @@ export default function RestauranteConfigPage() {
   const handleSave = async () => {
     try {
       setSaving(true);
+
       const { data } = await api.put(configEndpoint, {
         branding: form.branding,
         informacionRestaurante: form.informacionRestaurante,
@@ -118,46 +121,77 @@ export default function RestauranteConfigPage() {
         slaMesas: form.slaMesas,
         capacidadEstaciones: form.capacidadEstaciones,
       });
+
       setConfig(data.config);
+
       setAlerta({
         tipo: "success",
         mensaje: "Configuración guardada correctamente ✅",
       });
-    } catch {
+
+    } catch (err) {
+
+      const error = normalizeApiError(err);
+
       setAlerta({
         tipo: "error",
-        mensaje: "Error al guardar configuración.",
+        code: error.code,
+        message: error.message,
+        requestId: error.requestId,
+        action: error.action,
+        retryAfter: error.retryAfter,
+        canRetry: error.canRetry,
+        kind: error.kind,
       });
+
     } finally {
       setSaving(false);
     }
   };
 
-
   /** === Subida de imÃ¡genes === */
   const handleFileUpload = async (file) => {
     if (!file) return;
 
-    const formData = new FormData();
-    formData.append("logo", file);
+    try {
+      const formData = new FormData();
+      formData.append("logo", file);
 
-    const uploadEndpoint = esTienda
-      ? "/shop/configuracion/logo"
-      : "/configuracion/logo";
+      const uploadEndpoint = esTienda
+        ? "/shop/configuracion/logo"
+        : "/configuracion/logo";
 
-    const { data } = await api.post(uploadEndpoint, formData, {
-      headers: { "Content-Type": "multipart/form-data" },
-    });
+      const { data } = await api.post(uploadEndpoint, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
 
-    setForm((prev) => ({
-      ...prev,
-      branding: {
-        ...prev.branding,
-        logoUrl: data.logoUrl,
-      },
-    }));
+      setForm((prev) => ({
+        ...prev,
+        branding: {
+          ...prev.branding,
+          logoUrl: data.logoUrl,
+        },
+      }));
 
-    setConfig(data.config);
+      setConfig(data.config);
+
+      setAlerta({
+        tipo: "success",
+        mensaje: "Logo actualizado correctamente ✅",
+      });
+
+    } catch (err) {
+
+      const error = normalizeApiError(err);
+
+      setAlerta({
+        tipo: "error",
+        mensaje: error.message,
+        requestId: error.requestId,
+        action: error.action,
+      });
+
+    }
   };
 
   // ===========================
@@ -173,14 +207,21 @@ export default function RestauranteConfigPage() {
 
   return (
     <main className="rest-config-page section section--wide">
-      {alerta && (
-        <AlertaMensaje
-          tipo={alerta.tipo}
-          mensaje={alerta.mensaje}
+      {alerta?.tipo === "error" && (
+        <ErrorToast
+          error={alerta}
+          onRetry={handleSave}
           onClose={() => setAlerta(null)}
         />
       )}
 
+      {alerta?.tipo === "success" && (
+        <AlertaMensaje
+          tipo="success"
+          mensaje={alerta.mensaje}
+          onClose={() => setAlerta(null)}
+        />
+      )}
       {/* Header global */}
       <header className="rest-config-header">
         <div>

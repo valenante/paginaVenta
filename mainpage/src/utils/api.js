@@ -32,6 +32,56 @@ const getSandboxTenantId = () => {
   }
 };
 
+function looksLikeCode(s) {
+  return /^[A-Z0-9_]{3,}$/.test(String(s || ""));
+}
+
+function extractServerError(error) {
+  const res = error?.response;
+  const data = res?.data;
+
+  const requestId =
+    res?.headers?.["x-request-id"] ||
+    data?.requestId ||
+    "—";
+
+  // nuevo contrato
+  if (data && (data.ok === false || data.code || data.message || data.action)) {
+    return {
+      status: res?.status || null,
+      code: data.code ? String(data.code) : null,
+      message: data.message ? String(data.message) : "Error inesperado",
+      requestId: String(requestId),
+      action: data.action ? String(data.action) : null,
+      retryAfter: data.retryAfter != null ? Number(data.retryAfter) : null,
+      fields: data.fields || null,
+    };
+  }
+
+  // legacy
+  const legacyErrStr = typeof data?.error === "string" ? data.error : null;
+
+  const code =
+    (data?.code ? String(data.code) : null) ||
+    (legacyErrStr && looksLikeCode(legacyErrStr) ? legacyErrStr : null);
+
+  const message =
+    (typeof data?.error === "object" && data?.error?.message ? String(data.error.message) : null) ||
+    (legacyErrStr && !looksLikeCode(legacyErrStr) ? legacyErrStr : null) ||
+    (data?.message ? String(data.message) : null) ||
+    (error?.message ? String(error.message) : "Error inesperado");
+
+  return {
+    status: res?.status || null,
+    code,
+    message,
+    requestId: String(requestId),
+    action: null,
+    retryAfter: null,
+    fields: null,
+  };
+}
+
 /* =====================================================
    🏷️ Inferir tenant desde hostname (subdominio)
 ===================================================== */
@@ -78,13 +128,6 @@ const NO_REFRESH_ROUTES = [
   "/auth/login",
   "/auth/refresh-token",
   "/auth/logout",
-];
-
-const HARD_INVALID_ERRORS = [
-  "TOKEN_INVALID",
-  "SESSION_REVOKED",
-  "SESSION_STALE",
-  "USER_NOT_FOUND",
 ];
 
 /* =====================================================
@@ -160,8 +203,11 @@ api.interceptors.request.use((config) => {
   const url = config.url || "";
 
   if (isAuthRoute(url)) {
-    delete config.headers["x-tenant-id"];
-    delete config.headers["X-Tenant-ID"];
+    if (config.headers) {
+      delete config.headers["x-tenant-id"];
+      delete config.headers["X-Tenant-ID"];
+      delete config.headers["x-alef-env"];
+    }
     return config;
   }
 
@@ -171,14 +217,23 @@ api.interceptors.request.use((config) => {
     user = raw ? JSON.parse(raw) : null;
   } catch { }
 
-    const envMode = getEnvMode();                 // "prod" | "sandbox"
+  const envMode = getEnvMode();                 // "prod" | "sandbox"
   const sandboxTenantId = getSandboxTenantId(); // slug
+  const canUseSandbox =
+    !!user && (user.role === "superadmin" || user.impersonado === true);
 
-  // ✅ Header env (solo si sandbox)
-  if (envMode === "sandbox") {
+  // ✅ Header env (SOLO soporte) + autocuración
+  if (envMode === "sandbox" && canUseSandbox) {
     config.headers = config.headers || {};
     config.headers["x-alef-env"] = "sandbox";
   } else {
+    // si un usuario normal tiene sandbox pegado, lo apagamos
+    try {
+      if (envMode === "sandbox" && user && !canUseSandbox) {
+        sessionStorage.setItem("alef_env", "prod");
+        sessionStorage.removeItem("sandbox_tenantId");
+      }
+    } catch { }
     if (config.headers) delete config.headers["x-alef-env"];
   }
 
@@ -231,11 +286,13 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
-    const status = error.response?.status;
-    const code = error.response?.data?.error;
     const original = error.config;
 
-    // 🔥 Si el backend pide CSRF, bootstrap y reintenta 1 vez
+    const server = extractServerError(error);
+    const status = server.status;
+    const code = server.code;
+
+    // 🔥 CSRF: si backend devuelve nuevo contrato o legacy, lo detectamos igual
     if (
       status === 403 &&
       (code === "CSRF_MISSING" || code === "CSRF_HEADER_MISSING" || code === "CSRF_INVALID") &&
@@ -245,11 +302,14 @@ api.interceptors.response.use(
       original._csrfRetry = true;
       try {
         await api.get("/auth/me/me"); // emite cookie CSRF si hay sesión
-      } catch { }
+      } catch {}
       return api(original);
     }
 
+    // ✅ Si no es 401, dejamos pasar el error (pero ya normalizable en UI)
     if (status !== 401) {
+      // Adjunta server normalizado para que la UI lo use directo
+      error._server = server;
       return Promise.reject(error);
     }
 
@@ -257,14 +317,27 @@ api.interceptors.response.use(
        🔴 ERRORES FATALES → cerrar sesión
     ===================================================== */
 
-    if (HARD_INVALID_ERRORS.includes(code)) {
+    // Ojo: con el contrato nuevo, quizá uses NO_AUTH / TOKEN_INVALID / etc.
+    const HARD_INVALID_ERRORS = [
+      "TOKEN_INVALID",
+      "SESSION_REVOKED",
+      "SESSION_STALE",
+      "USER_NOT_FOUND",
+      "SESSION_INVALIDATED_TV",
+      "SESSION_INVALIDATED_PWD",
+      "REFRESH_INVALID",
+      "REFRESH_EXPIRED",
+    ];
+
+    if (code && HARD_INVALID_ERRORS.includes(code)) {
       clearClientSession();
       hardRedirectLogin();
+      error._server = server;
       return Promise.reject(error);
     }
 
     /* =====================================================
-       🟡 SI NO ES TOKEN_EXPIRED → NO TOCAR SESIÓN
+       🟡 SI NO ES EXPIRED → NO TOCAR SESIÓN
     ===================================================== */
 
     const shouldRefresh =
@@ -272,7 +345,7 @@ api.interceptors.response.use(
       (code === "NO_AUTH" && hasLocalUser());
 
     if (!shouldRefresh) {
-      // NO_AUTH sin user => usuario anónimo en landing => no tocar nada
+      error._server = server;
       return Promise.reject(error);
     }
 
@@ -281,10 +354,12 @@ api.interceptors.response.use(
     ===================================================== */
 
     if (!original || original._retry) {
+      error._server = server;
       return Promise.reject(error);
     }
 
     if (isNoRefreshRoute(original.url || "")) {
+      error._server = server;
       return Promise.reject(error);
     }
 
@@ -303,9 +378,7 @@ api.interceptors.response.use(
 
     try {
       await api.post("/auth/refresh-token");
-
       runQueue(null);
-
       return api(original);
     } catch (refreshError) {
       runQueue(refreshError);

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import api from "../../../../utils/api";
 import "./ApiRollbackPage.css";
 
@@ -20,6 +20,9 @@ function humanNow(ts) {
 export default function ApiRollbackPage() {
   const [loading, setLoading] = useState(true);
   const [status, setStatus] = useState(null);
+
+  const [lastRefreshedAt, setLastRefreshedAt] = useState(null);
+  const reqSeq = useRef(0);
 
   const [target, setTarget] = useState("blue"); // blue|green|legacy|lkg
   const [reason, setReason] = useState("");
@@ -48,8 +51,8 @@ export default function ApiRollbackPage() {
 
   // ✅ Confirmación específica cuando el target es LKG
   const expectedConfirm = useMemo(() => {
-    if (target === "lkg") return "LKG";
-    return targetUpper;
+    if (target === "lkg") return "ROLLBACK:LKG";
+    return `ROLLBACK:${targetUpper}`;
   }, [target, targetUpper]);
 
   // ✅ “notSame” especial:
@@ -57,8 +60,7 @@ export default function ApiRollbackPage() {
   // - si no hay lkg definido, no dejamos enviar
   const canSubmit = useMemo(() => {
     const rOk = reason.trim().length >= 10;
-    const cOk = confirmText.trim().toUpperCase() === expectedConfirm;
-
+    const cOk = confirmText.trim().toUpperCase() === String(expectedConfirm).toUpperCase();
     if (submitting) return false;
 
     if (target === "lkg") {
@@ -87,33 +89,42 @@ export default function ApiRollbackPage() {
   }, [lkg]);
 
   const fetchStatus = async () => {
+    const mySeq = ++reqSeq.current;
+
     setErr("");
     setOkMsg("");
     setLoading(true);
+
     try {
       const { data } = await api.get(`${API_BASE}/api/status`);
-      setStatus(data);
+      if (mySeq !== reqSeq.current) return;
 
-      // normaliza target si ya no es válido:
+      setStatus(data);
+      setLastRefreshedAt(data?.ts ? Number(data.ts) : Date.now());
+
+      // normaliza arrays
       const nextActive = data?.api?.active || "unknown";
       const nextLkg = data?.api?.lkg || null;
-      const nextAvail = data?.api?.available || ["blue", "green", "legacy"];
+      const nextAvail = Array.isArray(data?.api?.available)
+        ? data.api.available
+        : ["blue", "green", "legacy"];
+
       const nextAvailList = nextLkg ? ["lkg", ...nextAvail] : nextAvail;
 
       if (!nextAvailList.includes(target)) {
-        // preferimos LKG si existe, sino primer slot
-        setTarget(nextLkg ? "lkg" : nextAvail[0]);
+        setTarget(nextLkg ? "lkg" : nextAvail[0] || "blue");
       }
 
-      // evita quedarte en “rollback a lo mismo” si target=lkg y active==lkg
-      if (target === "lkg" && nextLkg && nextActive === nextLkg) {
-        // no tocamos target; solo lo indicamos en UI con el texto “ya estás en LKG”
-      }
+      // si target=lkg y ya estás en lkg, lo indicamos en UI (no forzamos cambio)
+      // (no hay que hacer nada aquí)
+      void nextActive;
     } catch (e) {
+      if (mySeq !== reqSeq.current) return;
+
       setStatus(null);
       setErr(e?.response?.data?.message || e?.message || "No se pudo obtener el estado");
     } finally {
-      setLoading(false);
+      if (mySeq === reqSeq.current) setLoading(false);
     }
   };
 
@@ -131,7 +142,11 @@ export default function ApiRollbackPage() {
 
     setSubmitting(true);
     try {
-      const payload = { target, reason: reason.trim() };
+      const payload = {
+        target,
+        reason: reason.trim(),
+        confirm: confirmText.trim().toUpperCase(),
+      };
       const { data } = await api.post(`${API_BASE}/api/rollback`, payload);
 
       const switchedTo = data?.result?.switchedTo || (target === "lkg" ? (lkg || "lkg") : target);
@@ -210,8 +225,7 @@ export default function ApiRollbackPage() {
               )}
             </p>
 
-            <p className="rb-muted">Último refresh: {humanNow(Date.now())}</p>
-
+            <p className="rb-muted">Último refresh: {humanNow(lastRefreshedAt)}</p>
             {status?.api?.link && (
               <p className="rb-muted">
                 Symlink: <code className="rb-code">{status.api.link}</code>
@@ -222,11 +236,23 @@ export default function ApiRollbackPage() {
           <div className="rb-col">
             <h3>Slots disponibles</h3>
             <div className="rb-slots">
-              {availableRaw.map((s) => (
-                <span key={s} className={`rb-slot ${s === active ? "active" : ""}`}>
-                  {String(s).toUpperCase()}
-                </span>
-              ))}
+              {available.map((s) => {
+                const isActive =
+                  s === "lkg" ? !!lkg && active === lkg : s === active;
+
+                const label =
+                  s === "lkg"
+                    ? lkg
+                      ? `LKG → ${String(lkg).toUpperCase()}`
+                      : "LKG"
+                    : String(s).toUpperCase();
+
+                return (
+                  <span key={s} className={`rb-slot ${isActive ? "active" : ""}`}>
+                    {label}
+                  </span>
+                );
+              })}
             </div>
 
             <p className="rb-muted" style={{ marginTop: 10 }}>
@@ -310,8 +336,7 @@ export default function ApiRollbackPage() {
             <input
               value={confirmText}
               onChange={(e) => setConfirmText(e.target.value)}
-              placeholder={`Escribe ${expectedConfirm}`}
-              disabled={submitting}
+              placeholder={expectedConfirm} disabled={submitting}
             />
             <small className="rb-help">
               Evita rollbacks accidentales.

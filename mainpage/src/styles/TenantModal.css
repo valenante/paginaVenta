@@ -320,3 +320,49 @@
   transform: translateY(0);
 }
 
+/* =========================================================
+   BOTÓN ROLLBACK AGENTE (AISLADO)
+   ========================================================= */
+
+.btn-rollback-agente {
+  margin-top: 0.1rem;
+  padding: 0.6rem 0.9rem;
+
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(148, 163, 184, 0.35);
+
+  background: linear-gradient(135deg, #38bdf8, #6366f1);
+  color: #fff;
+
+  font-weight: 800;
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.04em;
+
+  cursor: pointer;
+  transition: 0.15s ease;
+
+  box-shadow:
+    0 14px 26px rgba(0, 0, 0, 0.55),
+    0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+.btn-rollback-agente:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+}
+
+.btn-rollback-agente:active {
+  transform: translateY(0);
+}
+
+.btn-rollback-agente:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  filter: grayscale(0.6);
+}
+
+.agente-update-box .agente-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.6rem;
+}

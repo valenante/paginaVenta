@@ -1,65 +1,94 @@
-// src/pages/ProveedorDetallePage.jsx
-import React, { useEffect, useMemo, useState } from "react";
+// src/pages/ProveedorDetallePage.jsx ✅ PERFECTO (UX Errors PRO)
+// - OK/avisos: AlertaMensaje
+// - Errores backend: ErrorToast (normalizeApiError)
+// - Sin alert() ni setError string legacy
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import api from "../utils/api";
 import { useTenant } from "../context/TenantContext";
 
 import ProveedorModal from "../components/Proveedores/ProveedorModal.jsx";
 import ModalConfirmacion from "../components/Modal/ModalConfirmacion.jsx";
+import AlertaMensaje from "../components/AlertaMensaje/AlertaMensaje.jsx";
+import ErrorToast from "../components/common/ErrorToast.jsx";
+import { normalizeApiError } from "../utils/normalizeApiError.js";
 
-import "../styles/ProveedorDetallePage.css"; // (opcional) si quieres luego lo maquetamos
+import "../styles/ProveedorDetallePage.css";
 
 export default function ProveedorDetallePage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { tenantId } = useTenant();
 
+  // ⚠️ Si tu api.js ya mete x-tenant-id automáticamente, puedes borrar esto.
   const headersTenant = useMemo(() => {
     return tenantId ? { headers: { "x-tenant-id": tenantId } } : {};
   }, [tenantId]);
 
   const [proveedor, setProveedor] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+
+  // OK / avisos
+  const [alerta, setAlerta] = useState(null);
+
+  // KO contrato
+  const [errorToast, setErrorToast] = useState(null);
 
   const [modalEdit, setModalEdit] = useState(false);
   const [modalDelete, setModalDelete] = useState(false);
 
-  const fetchProveedor = async () => {
+  const showOk = useCallback((mensaje) => {
+    setAlerta({ tipo: "exito", mensaje });
+  }, []);
+
+  const showWarn = useCallback((mensaje) => {
+    setAlerta({ tipo: "warn", mensaje });
+  }, []);
+
+  const showErr = useCallback((err, fallback = "No se pudo completar la operación.") => {
+    const n = normalizeApiError(err);
+    setErrorToast({ ...n, message: n?.message || fallback });
+  }, []);
+
+  const fetchProveedor = useCallback(async () => {
     try {
       setLoading(true);
-      setError("");
+      setErrorToast(null);
 
       const { data } = await api.get(`/admin/proveedores/${id}`, headersTenant);
 
-      // backend suele devolver { ok: true, proveedor }
+      // backend suele devolver { ok:true, proveedor } o algo similar
       const p = data?.proveedor || data?.item || data || null;
 
       setProveedor(p);
-    } catch (e) {
+    } catch (err) {
       setProveedor(null);
-      setError("No se pudo cargar el proveedor.");
+      showErr(err, "No se pudo cargar el proveedor.");
     } finally {
       setLoading(false);
     }
-  };
+  }, [id, headersTenant, showErr]);
 
   useEffect(() => {
     fetchProveedor();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id, tenantId]);
+  }, [fetchProveedor]);
 
   const handleDelete = async () => {
     try {
+      setErrorToast(null);
       await api.delete(`/admin/proveedores/${id}`, headersTenant);
-      // como tu backend “elimina” desactivando, volvemos a la lista
+
+      showOk("Proveedor eliminado (desactivado).");
+      // volver a lista
       navigate("/configuracion/proveedores");
-    } catch {
-      alert("Error eliminando proveedor.");
+    } catch (err) {
+      showErr(err, "No se pudo eliminar el proveedor.");
+    } finally {
+      setModalDelete(false);
     }
   };
 
-  const nombre = proveedor?.nombreRestaurante|| proveedor?.razonSocial || "Proveedor";
+  const nombre = proveedor?.nombreRestaurante || proveedor?.razonSocial || "Proveedor";
   const contacto = proveedor?.contacto || {};
   const direccion = proveedor?.direccion || {};
   const condiciones = proveedor?.condicionesPago || {};
@@ -76,8 +105,32 @@ export default function ProveedorDetallePage() {
     return parts.length ? parts.join(", ") : "—";
   };
 
+  const onRetry = useCallback(() => {
+    fetchProveedor();
+  }, [fetchProveedor]);
+
   return (
     <main className="provDet-page section section--wide">
+      {/* ERROR TOAST */}
+      {errorToast && (
+        <ErrorToast
+          error={errorToast}
+          onRetry={errorToast.canRetry ? onRetry : undefined}
+          onClose={() => setErrorToast(null)}
+        />
+      )}
+
+      {/* ALERTA OK / avisos */}
+      {alerta && (
+        <AlertaMensaje
+          tipo={alerta.tipo}
+          mensaje={alerta.mensaje}
+          onClose={() => setAlerta(null)}
+          autoCerrar
+          duracion={3400}
+        />
+      )}
+
       {/* Header */}
       <header className="provDet-header card">
         <div className="provDet-headLeft">
@@ -95,8 +148,7 @@ export default function ProveedorDetallePage() {
 
           <div className="provDet-metaRow">
             <span className="provDet-pill">
-              Estado:{" "}
-              <b>{proveedor?.activo === false ? "Inactivo" : "Activo"}</b>
+              Estado: <b>{proveedor?.activo === false ? "Inactivo" : "Activo"}</b>
             </span>
             <span className="provDet-pill">
               Tipo: <b>{proveedor?.tipo || "—"}</b>
@@ -134,8 +186,6 @@ export default function ProveedorDetallePage() {
         </div>
       </header>
 
-      {error && <div className="provDet-alert provDet-alert--error">❌ {error}</div>}
-
       {/* Body */}
       <section className="provDet-grid">
         {loading ? (
@@ -144,8 +194,11 @@ export default function ProveedorDetallePage() {
           </div>
         ) : !proveedor ? (
           <div className="card provDet-card">
-            <div className="provDet-empty">
-              No se encontró el proveedor.
+            <div className="provDet-empty">No se encontró el proveedor.</div>
+            <div style={{ marginTop: 12 }}>
+              <button className="btn btn-secundario" onClick={fetchProveedor}>
+                Reintentar
+              </button>
             </div>
           </div>
         ) : (
@@ -156,7 +209,7 @@ export default function ProveedorDetallePage() {
 
               <div className="provDet-row">
                 <span className="provDet-k">Nombre comercial</span>
-                <span className="provDet-v">{proveedor?.nombreRestaurante|| "—"}</span>
+                <span className="provDet-v">{proveedor?.nombreRestaurante || "—"}</span>
               </div>
 
               <div className="provDet-row">
@@ -245,6 +298,7 @@ export default function ProveedorDetallePage() {
           onClose={() => setModalEdit(false)}
           onSaved={() => {
             setModalEdit(false);
+            showOk("Proveedor actualizado.");
             fetchProveedor();
           }}
         />

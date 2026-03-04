@@ -17,7 +17,7 @@ export default function Registro() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const [periodo, setPeriodo] = useState("mensual");
-
+  const [precheckoutId, setPrecheckoutId] = useState(null);
   // ======== QUERY ========
   const params = new URLSearchParams(window.location.search);
   const planSlug = (params.get("plan") || "").toLowerCase();
@@ -248,6 +248,14 @@ export default function Registro() {
       servicios={servicios}
       setServicios={setServicios}
       isShop={isShop}
+      precheckoutId={precheckoutId}
+      setPrecheckoutId={setPrecheckoutId}
+      tenant={tenant}
+      admin={admin}
+      config={config}
+      precio={precio}
+      plan={planSeleccionado}
+      periodo={periodo}
     />,
     <Paso4ResumenPago
       tenant={tenant}
@@ -260,7 +268,8 @@ export default function Registro() {
       setLoading={setLoading}
       error={error}
       setError={setError}
-      // success no lo uses aquí (Stripe te saca de la página)
+      precheckoutId={precheckoutId}
+      setPrecheckoutId={setPrecheckoutId}
       precioBasePlan={precioBasePlan}
       plan={planSeleccionado}
       periodo={periodo}

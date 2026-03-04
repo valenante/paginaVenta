@@ -4,6 +4,7 @@ import api from "../../utils/api.js";
 import AlertaMensaje from "../../components/AlertaMensaje/AlertaMensaje.jsx";
 import ModalConfirmacion from "../../components/Modal/ModalConfirmacion.jsx";
 import CartaOrdenSection from "./CartaOrdenSection.jsx";
+import { useAuth } from "../../context/AuthContext.jsx";
 import CartaPromocionesPanel from "../../components/Promociones/CartaPromocionesPanel.jsx";
 import "../../styles/CartaConfigPage.css";
 import ErrorToast from "../../components/common/ErrorToast.jsx";
@@ -11,8 +12,7 @@ import { normalizeApiError } from "../../utils/normalizeApiError.js";
 const HOME_SECTIONS = ["carrousel", "secciones"];
 
 export default function CartaConfigPage() {
-  const { config, setConfig } = useConfig();
-
+  const { config, setConfig, refreshConfig } = useConfig();
   const [form, setForm] = useState(config || {});
   const [saving, setSaving] = useState(false);
   const [alerta, setAlerta] = useState(null);
@@ -31,12 +31,20 @@ export default function CartaConfigPage() {
 
   const fileInputRef = useRef(null);
   const uploadTargetRef = useRef("carrousel");
+  const { user } = useAuth();
 
-  // Sync cuando llega config
+  const canEditConfig =
+    user?.role === "admin_restaurante" || user?.role === "admin_shop";
+
+  // Sync cuando llega configfrefre
   useEffect(() => {
-    if (config) setForm(config);
-  }, [config]);
+    if (!config) return;
 
+    setForm(config);
+
+    const arr = config?.informacionRestaurante?.diasApertura;
+    setDiasAperturaRaw(Array.isArray(arr) ? arr.join(", ") : "");
+  }, [config]);
   // ----------------------------
   // Helpers UI
   // ----------------------------
@@ -276,40 +284,76 @@ export default function CartaConfigPage() {
   // ----------------------------
   // Save
   // ----------------------------
-  const handleSave = useCallback(async () => {
+  const handleSave = useCallback(async (reason = "Cambios carta / home") => {
     setAlerta(null);
     setError(null);
 
     try {
       setSaving(true);
+
       const dias = diasAperturaRaw
         .split(",")
         .map((d) => d.trim())
         .filter(Boolean);
 
       const payload = {
-        ...form,
         informacionRestaurante: {
           ...form.informacionRestaurante,
           diasApertura: dias,
         },
+        imagenesHome: form.imagenesHome,
+        textosHome: form.textosHome,
+        temaCarta: form.temaCarta,
+        carta: form.carta,
       };
 
-      const { data } = await api.put("/configuracion", payload);
-      const cfg = data.config ?? data;
-      setConfig(cfg);
+      // ✅ Guardrails: draft
+      const { data: draft } = await api.post("/admin/config/versions", {
+        patch: payload, // root-level patch (tu backend lo permite)
+        scope: "carta_config",
+        reason,
+      });
 
-      showAlert("exito", "Configuración actualizada correctamente");
+      const versionId = draft?.version?.id || draft?.versionId || draft?.id;
+      if (!versionId) throw new Error("No se recibió versionId del draft");
+
+      // ✅ apply
+      await api.post(`/admin/config/versions/${versionId}/apply`, { reason });
+
+      // ✅ refresh real
+      await refreshConfig();
+
+      showAlert("exito", "Configuración actualizada correctamente ✅");
     } catch (err) {
       const normalized = normalizeApiError(err);
       setError({
         ...normalized,
-        retryFn: handleSave,
+        retryFn: () => handleSave(reason),
       });
     } finally {
       setSaving(false);
     }
-  }, [form, setConfig, showAlert]);
+  }, [form, diasAperturaRaw, refreshConfig, showAlert]);
+
+  const handleRollback = useCallback(async (reason = "Rollback carta/config") => {
+    setAlerta(null);
+    setError(null);
+
+    try {
+      setSaving(true);
+      await api.post("/admin/config/rollback", { reason });
+      await refreshConfig();
+      showAlert("exito", "Rollback aplicado ✅");
+    } catch (err) {
+      const normalized = normalizeApiError(err);
+      setError({
+        ...normalized,
+        retryFn: () => handleRollback(reason),
+      });
+    } finally {
+      setSaving(false);
+    }
+  }, [refreshConfig, showAlert]);
 
   // ----------------------------
   // UX: cerrar menú dragOver al resize (por si acaso)
@@ -782,11 +826,44 @@ export default function CartaConfigPage() {
       <div className="carta-config-actions">
         <button
           type="button"
-          onClick={handleSave}
-          disabled={saving}
+          disabled={saving || !canEditConfig}
           className="btn btn-primario"
+          title={!canEditConfig ? "No tienes permisos para editar configuración" : ""}
+          onClick={() =>
+            openModalPrompt({
+              titulo: "Aplicar cambios",
+              mensaje: "Escribe un motivo (se guardará en el historial).",
+              placeholder: "Motivo (recomendado)",
+              onConfirm: async (valor) => {
+                const reason = (valor || "").trim() || "Cambios carta / home";
+                await handleSave(reason);
+                closeModal();
+              },
+            })
+          }
         >
           {saving ? "Guardando..." : "Guardar todos los cambios"}
+        </button>
+
+        <button
+          type="button"
+          disabled={saving || !canEditConfig}
+          className="btn btn-secundario"
+          title={!canEditConfig ? "No tienes permisos para editar configuración" : ""}
+          onClick={() =>
+            openModalPrompt({
+              titulo: "Confirmar rollback",
+              mensaje: "Escribe un motivo (se guardará en el historial).",
+              placeholder: "Motivo (recomendado)",
+              onConfirm: async (valor) => {
+                const reason = (valor || "").trim() || "Rollback carta/config";
+                await handleRollback(reason);
+                closeModal();
+              },
+            })
+          }
+        >
+          Revertir último cambio
         </button>
       </div>
 

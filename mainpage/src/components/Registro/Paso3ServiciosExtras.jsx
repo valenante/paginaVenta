@@ -7,6 +7,15 @@ export default function Paso3ServiciosExtras({
   servicios,
   setServicios,
   isShop = false,
+
+  precheckoutId,
+  setPrecheckoutId,
+  tenant,
+  admin,
+  config,
+  precio,
+  plan,
+  periodo,
 }) {
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState("");
@@ -34,9 +43,33 @@ export default function Paso3ServiciosExtras({
     });
   };
 
+  async function ensurePrecheckoutId() {
+    if (precheckoutId) return precheckoutId;
+
+    // OJO: aquí usas el mismo endpoint que Paso4
+    const slugCompleto = `${plan.slug}_${periodo}`;
+
+    const { data: pre } = await api.post("/pago/precheckout", {
+      tenant,
+      config,
+      servicios,
+      precio,
+      admin,
+      plan: slugCompleto,
+      colores: config.colores,
+      tipoNegocio: isShop ? "shop" : "restaurante",
+    });
+
+    if (!pre?.precheckoutId) throw new Error("PRECHECKOUT_FAIL");
+
+    setPrecheckoutId(pre.precheckoutId);
+    return pre.precheckoutId;
+  }
+
   const handleFileChange = async (e) => {
     const { name, files } = e.target;
     const list = Array.from(files || []);
+    const pid = await ensurePrecheckoutId();
     if (!list.length) return;
 
     setUploading(true);
@@ -45,12 +78,13 @@ export default function Paso3ServiciosExtras({
     try {
       // 1) pedir presigned URLs (backend lo haremos luego)
       const payload = {
+        precheckoutId: pid,
         files: list.map((f) => ({
           name: f.name,
           type: f.type || "application/octet-stream",
           size: f.size,
         })),
-        purpose: name, // "cartaAdjuntos" | "mesasAdjuntos"
+        purpose: name,
       };
 
       const { data } = await api.post("/uploads/presign", payload);

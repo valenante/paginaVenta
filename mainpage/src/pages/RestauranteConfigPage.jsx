@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import { useConfig } from "../context/ConfigContext.jsx";
 import { useAuth } from "../context/AuthContext.jsx";
@@ -13,33 +13,34 @@ import SeccionesPanel from "../components/Config/SeccionesPanel.jsx";
 import IdentidadNegocioPanel from "../components/Config/IdentidadNegocioPanel.jsx";
 import ErrorToast from "../components/common/ErrorToast.jsx";
 import { normalizeApiError } from "../utils/normalizeApiError.js";
-import OperativaSlaCapacidadPanel from "../components/Config/OperativaSlaCapacidadPanel.jsx";
 import { DEFAULT_TEMA_TPV, normalizarTemaTpv } from "../utils/tema";
 import { DEFAULT_TEMA_SHOP, normalizarTemaShop } from "../utils/temaShop";
 import TemaTpvPanel from "../components/Tema/TemaTpvPanel.jsx";
 import TemaShopPanel from "../components/Tema/TemaShopPanel.jsx";
 
 export default function RestauranteConfigPage() {
-  const { config, setConfig } = useConfig();
+  const { config, setConfig, refreshConfig } = useConfig();
   const { user } = useAuth();
   const location = useLocation();
   const { tenant } = useTenant();
-  const tipoNegocio = tenant?.tipoNegocio || "restaurante";
 
+  const tipoNegocio = tenant?.tipoNegocio || "restaurante";
   const esRestaurante = tipoNegocio === "restaurante";
   const esTienda = tipoNegocio === "shop";
-  const isPlanEsencial =
-    user?.plan === "esencial" || user?.plan === "tpv-esencial";
+
+  const canEditConfig =
+    user?.role === "admin_restaurante" || user?.role === "admin_shop";
+
+  const isPlanEsencial = user?.plan === "esencial" || user?.plan === "tpv-esencial";
+
   const [form, setForm] = useState({
     branding: {},
-    informacionRestaurante: {
-      direccion: "",
-      telefono: "",
-    },
+    informacionRestaurante: { direccion: "", telefono: "" },
     colores: {},
     estilo: {},
     temaTpv: { ...DEFAULT_TEMA_TPV },
     temaShop: { ...DEFAULT_TEMA_SHOP },
+
     slaMesas: {
       activo: true,
       porcentajeAvisoRiesgo: 80,
@@ -52,7 +53,6 @@ export default function RestauranteConfigPage() {
       ],
     },
 
-    // ✅ NUEVO
     capacidadEstaciones: {
       intervaloRevisionSegundos: 10,
       pesosSeccion: { 0: 1.0, 1: 0.6, 2: 0.3 },
@@ -61,40 +61,56 @@ export default function RestauranteConfigPage() {
   });
 
   const [saving, setSaving] = useState(false);
-
   const [alerta, setAlerta] = useState(null);
 
   const [verifactuEnabled, setVerifactuEnabled] = useState(false);
   const [verifactuLoaded, setVerifactuLoaded] = useState(false);
 
-  // Cargar config en el formulario
+  // Modal confirmación (con motivo)
+  const [confirm, setConfirm] = useState(null);
+  // confirm: { mode: "save"|"rollback", reason: string }
+
+  const initialRef = useRef(null);
+
+  // Cargar config en el formulario (y snapshot base para detectar cambios)
   useEffect(() => {
     if (!config) return;
 
-    setForm((prev) => ({
-      ...prev,
+    const nextForm = {
       branding: config.branding || {},
       informacionRestaurante: config.informacionRestaurante || {},
       colores: config.colores || {},
       estilo: config.estilo || {},
       temaTpv: normalizarTemaTpv(config.temaTpv),
       temaShop: normalizarTemaShop(config.temaShop),
-      slaMesas: config.slaMesas || prev.slaMesas,
-      capacidadEstaciones: config.capacidadEstaciones || prev.capacidadEstaciones,
-    }));
+      slaMesas: config.slaMesas || form.slaMesas,
+      capacidadEstaciones: config.capacidadEstaciones || form.capacidadEstaciones,
+    };
+
+    setForm((prev) => ({ ...prev, ...nextForm }));
+
+    // Snapshot inicial (se re-setea cuando llega config nueva desde servidor)
+    initialRef.current = JSON.stringify({ ...form, ...nextForm });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [config]);
 
-  // Estado de VeriFactu
+  const hasChanges = useMemo(() => {
+    if (!initialRef.current) return false;
+    try {
+      return JSON.stringify(form) !== initialRef.current;
+    } catch {
+      return true;
+    }
+  }, [form]);
+
+  // Estado de VeriFactu (solo badge)
   useEffect(() => {
     const checkVerifactu = async () => {
       try {
         const { data } = await api.get("/admin/verifactu/verifactu");
         setVerifactuEnabled(!!data.enabled);
       } catch (err) {
-        console.error(
-          "[RestauranteConfig] Error obteniendo estado VeriFactu:",
-          err.message
-        );
+        console.error("[RestauranteConfig] Error obteniendo estado VeriFactu:", err?.message);
       } finally {
         setVerifactuLoaded(true);
       }
@@ -102,16 +118,12 @@ export default function RestauranteConfigPage() {
     checkVerifactu();
   }, []);
 
-  const configEndpoint = esTienda
-    ? "/shop/configuracion"
-    : "/configuracion";
-
-  /** === Guardar configuración general === */
-  const handleSave = async () => {
+  // ===== Guardrails SAVE (draft -> apply) =====
+  const handleSave = async (reason = "Aplicar configuración general") => {
     try {
       setSaving(true);
 
-      const { data } = await api.put(configEndpoint, {
+      const patch = {
         branding: form.branding,
         informacionRestaurante: form.informacionRestaurante,
         colores: form.colores,
@@ -120,19 +132,28 @@ export default function RestauranteConfigPage() {
         temaShop: form.temaShop,
         slaMesas: form.slaMesas,
         capacidadEstaciones: form.capacidadEstaciones,
+      };
+
+      const { data: draft } = await api.post("/admin/config/versions", {
+        patch,
+        scope: "restaurante_config_general",
+        reason: reason || "Cambio configuración general",
       });
 
-      setConfig(data.config);
+      const versionId = draft?.version?.id || draft?.versionId || draft?.id;
+      if (!versionId) {
+        throw new Error("No se recibió versionId del draft");
+      }
 
-      setAlerta({
-        tipo: "success",
-        mensaje: "Configuración guardada correctamente ✅",
+      await api.post(`/admin/config/versions/${versionId}/apply`, {
+        reason: reason || "Aplicar configuración general",
       });
 
+      await refreshConfig();
+
+      setAlerta({ tipo: "success", mensaje: "Configuración aplicada correctamente ✅" });
     } catch (err) {
-
       const error = normalizeApiError(err);
-
       setAlerta({
         tipo: "error",
         code: error.code,
@@ -143,13 +164,38 @@ export default function RestauranteConfigPage() {
         canRetry: error.canRetry,
         kind: error.kind,
       });
-
     } finally {
       setSaving(false);
     }
   };
 
-  /** === Subida de imÃ¡genes === */
+  // ===== Guardrails ROLLBACK =====
+  const handleRollback = async (reason = "Rollback desde panel de configuración") => {
+    try {
+      setSaving(true);
+
+      await api.post("/admin/config/rollback", { reason });
+      await refreshConfig();
+
+      setAlerta({ tipo: "success", mensaje: "Rollback aplicado ✅" });
+    } catch (err) {
+      const error = normalizeApiError(err);
+      setAlerta({
+        tipo: "error",
+        code: error.code,
+        message: error.message,
+        requestId: error.requestId,
+        action: error.action,
+        retryAfter: error.retryAfter,
+        canRetry: error.canRetry,
+        kind: error.kind,
+      });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  // ===== Upload logo (esto puede quedarse como está; no pasa por guardrails) =====
   const handleFileUpload = async (file) => {
     if (!file) return;
 
@@ -157,9 +203,7 @@ export default function RestauranteConfigPage() {
       const formData = new FormData();
       formData.append("logo", file);
 
-      const uploadEndpoint = esTienda
-        ? "/shop/configuracion/logo"
-        : "/configuracion/logo";
+      const uploadEndpoint = esTienda ? "/shop/configuracion/logo" : "/configuracion/logo";
 
       const { data } = await api.post(uploadEndpoint, formData, {
         headers: { "Content-Type": "multipart/form-data" },
@@ -167,36 +211,32 @@ export default function RestauranteConfigPage() {
 
       setForm((prev) => ({
         ...prev,
-        branding: {
-          ...prev.branding,
-          logoUrl: data.logoUrl,
-        },
+        branding: { ...prev.branding, logoUrl: data.logoUrl },
       }));
 
-      setConfig(data.config);
+      // si tu backend devuelve config, refresca el contexto
+      if (data?.config) setConfig(data.config);
 
-      setAlerta({
-        tipo: "success",
-        mensaje: "Logo actualizado correctamente ✅",
-      });
-
+      setAlerta({ tipo: "success", mensaje: "Logo actualizado correctamente ✅" });
     } catch (err) {
-
       const error = normalizeApiError(err);
-
       setAlerta({
         tipo: "error",
-        mensaje: error.message,
+        code: error.code,
+        message: error.message,
         requestId: error.requestId,
         action: error.action,
+        retryAfter: error.retryAfter,
+        canRetry: error.canRetry,
+        kind: error.kind,
       });
-
     }
   };
 
-  // ===========================
-  //   RENDER
-  // ===========================
+  // ===== Modal openers =====
+  const openSaveConfirm = () => setConfirm({ mode: "save", reason: "" });
+  const openRollbackConfirm = () => setConfirm({ mode: "rollback", reason: "" });
+
   const verifactuBadge =
     verifactuLoaded &&
     (verifactuEnabled ? (
@@ -205,12 +245,19 @@ export default function RestauranteConfigPage() {
       <span className="badge badge-aviso">VeriFactu pendiente</span>
     ));
 
+  // ===== Helpers UI =====
+  const saveDisabledReason = !canEditConfig
+    ? "No tienes permisos para editar configuración"
+    : !hasChanges
+      ? "No hay cambios para guardar"
+      : "";
+
   return (
     <main className="rest-config-page section section--wide">
       {alerta?.tipo === "error" && (
         <ErrorToast
           error={alerta}
-          onRetry={handleSave}
+          onRetry={alerta?.canRetry ? () => openSaveConfirm() : null}
           onClose={() => setAlerta(null)}
         />
       )}
@@ -222,12 +269,39 @@ export default function RestauranteConfigPage() {
           onClose={() => setAlerta(null)}
         />
       )}
+
+      {/* Modal de confirmación con motivo */}
+      {confirm && (
+        <ModalConfirmacion
+          // Ajusta estos props a tu ModalConfirmacion real si difieren
+          titulo={confirm.mode === "save" ? "Aplicar cambios" : "Confirmar rollback"}
+          mensaje="Escribe un motivo (se guardará en el historial)."
+          modo="prompt"
+          placeholder="Motivo (obligatorio para cambios críticos)"
+          valor={confirm.reason}
+          onChange={(v) => setConfirm((p) => ({ ...p, reason: v }))}
+          confirmarTexto={confirm.mode === "save" ? "APLICAR" : "REVERTIR"}
+          cancelarTexto="CANCELAR"
+          onConfirm={() => {
+            const r =
+              (confirm.reason || "").trim() ||
+              (confirm.mode === "save" ? "Aplicar configuración general" : "Rollback desde panel");
+
+            const mode = confirm.mode;
+            setConfirm(null);
+
+            if (mode === "save") handleSave(r);
+            else handleRollback(r);
+          }}
+          onCancel={() => setConfirm(null)}
+          onClose={() => setConfirm(null)}
+        />
+      )}
+
       {/* Header global */}
       <header className="rest-config-header">
         <div>
-          <h1>
-            ⚙️ Configuración {esTienda ? "de la shop" : "del restaurante"}
-          </h1>
+          <h1>⚙️ Configuración {esTienda ? "de la shop" : "del restaurante"}</h1>
           <p className="text-suave">
             Define la identidad visual y las funcionalidades de tu entorno Alef.
           </p>
@@ -238,7 +312,6 @@ export default function RestauranteConfigPage() {
       <div className="rest-config-layout">
         {/* COLUMNA PRINCIPAL */}
         <div className="rest-config-main">
-
           <IdentidadNegocioPanel
             form={form}
             setForm={setForm}
@@ -253,10 +326,7 @@ export default function RestauranteConfigPage() {
               setTemaTpv={(updater) =>
                 setForm((prev) => ({
                   ...prev,
-                  temaTpv:
-                    typeof updater === "function"
-                      ? updater(prev.temaTpv)
-                      : updater,
+                  temaTpv: typeof updater === "function" ? updater(prev.temaTpv) : updater,
                 }))
               }
             />
@@ -268,92 +338,21 @@ export default function RestauranteConfigPage() {
               setTemaShop={(updater) =>
                 setForm((prev) => ({
                   ...prev,
-                  temaShop:
-                    typeof updater === "function"
-                      ? updater(prev.temaShop)
-                      : updater,
+                  temaShop: typeof updater === "function" ? updater(prev.temaShop) : updater,
                 }))
               }
             />
           )}
 
-          {/* === ESTILO GENERAL === */}
-          {/* <section className="config-card card">
-                <header className="config-card-header">
-                  <h2>🎨 Estilo general</h2>
-                  <p className="config-card-subtitle">
-                  Ajustes de fuente y tema del backoffice (no afectan a TPV ni a la
-                  carta de los clientes).
-                  </p>
-                </header>
-
-                <div className="config-field">
-                  <label>Fuente principal</label>
-                  <input
-                  type="text"
-                  value={form.estilo.fuente || ""}
-                  onChange={(e) =>
-                    setForm((prev) => ({
-                    ...prev,
-                    estilo: { ...prev.estilo, fuente: e.target.value },
-                    }))
-                  }
-                  />
-                </div>
-
-                <div className="config-field">
-                  <label>Tema</label>
-                  <select
-                  value={form.estilo.tema || "claro"}
-                  onChange={(e) =>
-                    setForm((prev) => ({
-                    ...prev,
-                    estilo: { ...prev.estilo, tema: e.target.value },
-                    }))
-                  }
-                  >
-                  <option value="claro">Claro</option>
-                  <option value="oscuro">Oscuro</option>
-                  <option value="auto">Automático</option>
-                  </select>
-                </div>
-                </section> */}
-
           <PlanFeaturesPanel onAlert={setAlerta} />
 
           {esRestaurante && (
-            <SeccionesPanel
-              isPlanEsencial={isPlanEsencial}
-              onAlert={setAlerta}
-            />
+            <SeccionesPanel isPlanEsencial={isPlanEsencial} onAlert={setAlerta} />
           )}
 
           {esRestaurante && (
-            <EstacionesPanel
-              isPlanEsencial={isPlanEsencial}
-              onAlert={setAlerta}
-            />
+            <EstacionesPanel isPlanEsencial={isPlanEsencial} onAlert={setAlerta} />
           )}
-
-          {/* === CAPACIDAD Y SLA DE MESAS === 
-          
-          {esRestaurante && !isPlanEsencial && (
-            <OperativaSlaCapacidadPanel
-              form={form}
-              setForm={setForm}
-              onAlert={setAlerta}
-            />
-          )}
-
-          {esRestaurante && !isPlanEsencial && (
-            <EstacionesCapacidadPanel
-              estaciones={estaciones}
-              setEstaciones={setEstaciones}
-              onAlert={setAlerta}
-            />
-          )}
-          
-          */}
         </div>
       </div>
 
@@ -361,11 +360,22 @@ export default function RestauranteConfigPage() {
       <div className="rest-config-actions">
         <button
           type="button"
-          className="btn btn-primario "
-          onClick={handleSave}
-          disabled={saving}
+          className="btn btn-primario"
+          onClick={openSaveConfirm}
+          disabled={saving || !canEditConfig || !hasChanges}
+          title={saveDisabledReason}
         >
-          {saving ? "Guardando..." : "Guardar configuración general"}
+          {saving ? "Guardando..." : "Guardar configuración"}
+        </button>
+
+        <button
+          type="button"
+          className="btn btn-secundario"
+          onClick={openRollbackConfirm}
+          disabled={saving || !canEditConfig}
+          title={!canEditConfig ? "No tienes permisos para editar configuración" : ""}
+        >
+          Revertir último cambio
         </button>
       </div>
     </main>

@@ -45,8 +45,9 @@ export default function EstacionesPanel({
   const cargar = async () => {
     try {
       setLoading(true);
-      const { data } = await api.get("/estaciones?includeInactive=0");
-      setEstaciones(Array.isArray(data) ? data : []);
+      const res = await api.get("/estaciones?includeInactive=0");
+      const items = res?.data?.data?.items;
+      setEstaciones(Array.isArray(items) ? items : []);
     } catch {
       onAlert?.({ tipo: "error", mensaje: "Error al cargar estaciones." });
     } finally {
@@ -75,9 +76,15 @@ export default function EstacionesPanel({
         orden: Number(nueva.orden) || 0,
       };
 
-      const { data } = await api.post("/estaciones", payload);
+      const res = await api.post("/estaciones", payload);
+      const created = res?.data?.data?.item;
+
+      if (!created?._id) {
+        return onAlert?.({ tipo: "error", mensaje: "La API no devolvió la estación creada." });
+      }
+
       setEstaciones((prev) =>
-        [data, ...prev].sort((a, b) => (a.orden ?? 0) - (b.orden ?? 0))
+        [created, ...prev].sort((a, b) => (a.orden ?? 0) - (b.orden ?? 0))
       );
 
       setNueva({
@@ -119,10 +126,14 @@ export default function EstacionesPanel({
         orden: Number(editando.orden) || 0,
       };
 
-      const { data } = await api.put(`/estaciones/${editando._id}`, payload);
-      setEstaciones((prev) =>
-        prev.map((e) => (e._id === data._id ? data : e))
-      );
+      const res = await api.put(`/estaciones/${editando._id}`, payload);
+      const updated = res?.data?.data?.item;
+
+      if (!updated?._id) {
+        return onAlert?.({ tipo: "error", mensaje: "La API no devolvió la estación actualizada." });
+      }
+
+      setEstaciones((prev) => prev.map((x) => (x._id === updated._id ? updated : x)));
       setEditando(null);
 
       onAlert?.({ tipo: "success", mensaje: "Estación actualizada." });

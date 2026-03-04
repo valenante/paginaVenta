@@ -412,8 +412,12 @@
 }
 
 /*****************************************************
- * Barra de acciones fija – Carta
+ * Barra de acciones fija – Carta (compacta, PRO, sin fondo)
  *****************************************************/
+
+.carta-config-page {
+  padding-bottom: 90px; /* ✅ para que la barra fija no tape contenido */
+}
 
 .carta-config-actions {
   position: fixed;
@@ -422,20 +426,38 @@
   right: 0;
   z-index: 100;
 
+  /* ✅ sin fondo */
+  background: transparent;
+  border: none;
+
   padding: var(--space-sm) var(--space-lg);
 
   display: flex;
-  justify-content: flex-end;
+  justify-content: flex-end; /* ✅ a la derecha */
   gap: var(--space-sm);
 }
 
+/* ✅ botones compactos (no gigantes) */
 .carta-config-actions .btn {
-  min-width: 260px;
+  flex: 0 0 auto;
+  width: auto;
+  min-width: 180px;
+  max-width: 240px;
+  padding: 0.55rem 0.9rem;
+  border-radius: 999px;
+  font-size: 0.95rem;
 }
 
 /*****************************************************
  * Responsive
  *****************************************************/
+
+@media (min-width: 1200px) {
+  .carta-config-actions .btn {
+    min-width: 190px;
+    max-width: 260px;
+  }
+}
 
 @media (max-width: 900px) {
   .config-field-row {
@@ -454,5 +476,21 @@
 
   .carta-config-actions .btn {
     width: 100%;
+  }
+
+    .carta-config-page {
+    padding-bottom: 140px;
+  }
+
+  .carta-config-actions {
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: center;
+  }
+
+  .carta-config-actions .btn {
+    width: 100%;
+    max-width: none;
+    min-width: 0;
   }
 }

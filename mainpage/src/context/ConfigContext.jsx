@@ -117,12 +117,42 @@ export const ConfigProvider = ({ children }) => {
       : defaultValue;
   };
 
+  const refreshConfig = async () => {
+    if (!tenantId || !tenant) {
+      setConfig(null);
+      setPlanFeatures([]);
+      setLoading(false);
+      return null;
+    }
+
+    const endpoint =
+      tipoNegocio === "shop"
+        ? "/shop/configuracion"
+        : "/configuracion";
+
+    const { data } = await api.get(endpoint);
+
+    const cfg =
+      data?.config && typeof data.config === "object"
+        ? data.config
+        : data;
+
+    setConfig(cfg);
+
+    // features si vienen
+    const feats = Array.isArray(cfg?.planFeatures) ? cfg.planFeatures : [];
+    setPlanFeatures(feats);
+
+    return cfg;
+  };
+
   return (
     <ConfigContext.Provider
       value={{
         config,
         loading,
         setConfig,
+        refreshConfig,
         hasFeature,
         planFeatures,
         tipoNegocio, // 👈 útil para el frontend

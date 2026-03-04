@@ -15,6 +15,10 @@ export default function Paso4ResumenPago({
   setLoading,
   error,
   setError,
+
+  precheckoutId,
+  setPrecheckoutId,
+
   precioBasePlan,
   plan,
   periodo,
@@ -32,24 +36,26 @@ export default function Paso4ResumenPago({
 
       const slugCompleto = `${plan.slug}_${periodo}`;
 
-      const { data: pre } = await api.post("/pago/precheckout", {
-        tenant,
-        config,
-        servicios,
-        precio,
-        admin,
-        plan: slugCompleto,
-        colores: config.colores,
-        tipoNegocio: isShop ? "shop" : "restaurante",
-      });
+      let pid = precheckoutId;
 
-      if (!pre?.precheckoutId) {
-        throw new Error("PRECHECKOUT_FAIL");
+      if (!pid) {
+        const { data: pre } = await api.post("/pago/precheckout", {
+          tenant,
+          config,
+          servicios,
+          precio,
+          admin,
+          plan: slugCompleto,
+          colores: config.colores,
+          tipoNegocio: isShop ? "shop" : "restaurante",
+        });
+
+        if (!pre?.precheckoutId) throw new Error("PRECHECKOUT_FAIL");
+        pid = pre.precheckoutId;
+        setPrecheckoutId(pid);
       }
 
-      const { data: sesion } = await api.post("/pago/crear-sesion", {
-        precheckoutId: pre.precheckoutId,
-      });
+      const { data: sesion } = await api.post("/pago/crear-sesion", { precheckoutId: pid });
 
       if (!sesion?.url) {
         throw new Error("SESSION_FAIL");

@@ -205,6 +205,32 @@ function HomeEntry() {
   return <LandingPage />;
 }
 
+function WhatsAppFloatingGate() {
+  const { user } = useAuth();
+  const location = useLocation();
+
+  // Rutas donde NO queremos WhatsApp (app interna)
+  const isInternalRoute =
+    location.pathname.startsWith("/dashboard") ||
+    location.pathname.startsWith("/tpv") ||
+    location.pathname.startsWith("/configuracion") ||
+    location.pathname.startsWith("/perfil") ||
+    location.pathname.startsWith("/mi-cuenta") ||
+    location.pathname.startsWith("/facturas") ||
+    location.pathname.startsWith("/estadisticas") ||
+    location.pathname.startsWith("/caja-diaria") ||
+    location.pathname.startsWith("/pro") ||
+    location.pathname.startsWith("/superadmin") ||
+    location.pathname.startsWith("/camarero") ||
+    location.pathname.startsWith("/cocinero") ||
+    /\/\w+\/(camarero|cocinero|pro)$/.test(location.pathname);
+
+  // Si hay sesión o estás en zona interna, no mostrar
+  if (user || isInternalRoute) return null;
+
+  return <WhatsAppFloating />;
+}
+
 /* =============================
    RUTAS DE LA APLICACIÓN
    ============================= */
@@ -522,8 +548,7 @@ export default function App() {
                 <>
                   <VerifactuGlobalModal />
                   <CookieBanner />
-                  <WhatsAppFloating />
-
+                  <WhatsAppFloatingGate />
                   <Suspense fallback={<LoadingScreen />}>
                     <AppRoutes />
                   </Suspense>

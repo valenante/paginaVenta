@@ -11,7 +11,7 @@ import ErrorToast from "../components/common/ErrorToast.jsx";
 export default function ConfigImpresionPage() {
   const navigate = useNavigate();
 
-  const { config, setConfig } = useConfig(); // ✅ si existe setConfig en tu context
+  const { config, refreshConfig } = useConfig();
 
   const [impCocina, setImpCocina] = useState("");
   const [impBarra, setImpBarra] = useState("");
@@ -65,27 +65,42 @@ export default function ConfigImpresionPage() {
     }
   };
 
-  const guardar = async () => {
+  const guardar = async (reason = "Cambios impresión") => {
     setSuccess(null);
     setError(null);
 
     try {
       setLoading(true);
 
-      const { data } = await api.post("/impresoras/configurar", {
-        impresoras: { cocina: impCocina, barra: impBarra, caja: impCaja, tickets: impTickets },
+      // ✅ patch mínimo y seguro (solo impresión.impresoras)
+      const patch = {
+        "impresion.impresoras": {
+          cocina: impCocina,
+          barra: impBarra,
+          caja: impCaja,
+          tickets: impTickets,
+        },
+      };
+
+      // 1) Draft
+      const { data: draft } = await api.post("/admin/config/versions", {
+        patch,
+        scope: "impresion_config",
+        reason,
       });
 
-      if (data?.config && typeof setConfig === "function") setConfig(data.config);
+      const versionId = draft?.version?.id || draft?.versionId || draft?.id;
+      if (!versionId) throw new Error("No se recibió versionId del draft");
 
-      setSuccess("Configuración guardada correctamente");
+      // 2) Apply (aquí entra tu CONFIG_PREFLIGHT si impresión falla)
+      await api.post(`/admin/config/versions/${versionId}/apply`, { reason });
+
+      // 3) Refresh config para actualizar selects (y contexto global)
+      await refreshConfig();
+      setSuccess("Configuración guardada correctamente ✅");
     } catch (err) {
       const normalized = normalizeApiError(err);
-
-      setError({
-        ...normalized,
-        retryFn: guardar,
-      });
+      setError({ ...normalized, retryFn: () => guardar(reason) });
     } finally {
       setLoading(false);
     }
@@ -195,10 +210,29 @@ export default function ConfigImpresionPage() {
 
           <button
             className="btn btn--primario"
-            onClick={guardar}
+            onClick={() => guardar("Cambios impresión")}
             disabled={loading}
           >
             💾 Guardar
+          </button>
+
+          <button
+            className="btn"
+            onClick={() =>
+              api
+                .post("/admin/config/rollback", { reason: "Rollback impresión" })
+                .then(async () => {
+                  await refreshConfig();
+                  await listarImpresoras();
+                  setSuccess("Rollback aplicado ✅");
+                })
+                .catch((err) =>
+                  setError({ ...normalizeApiError(err), retryFn: () => guardar("Cambios impresión") })
+                )
+            }
+            disabled={loading}
+          >
+            ↩️ Rollback
           </button>
         </div>
 

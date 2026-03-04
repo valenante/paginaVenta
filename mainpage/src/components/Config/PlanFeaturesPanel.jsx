@@ -53,44 +53,31 @@ export default function PlanFeaturesPanel({ onAlert }) {
 
     const handleFeatureUpdate = async (configKey, value) => {
         try {
-            const { data } = await api.put("/admin/features-plan/update", {
-                key: configKey,
-                value,
+            // PATCH “por ruta”: EXACTO como espera tu guardrails
+            const patch = { [configKey]: value };
+
+            // 1) draft
+            const { data: draft } = await api.post("/admin/config/versions", {
+                patch,
+                scope: "features_plan",
+                reason: `Toggle feature: ${configKey} → ${value ? "ON" : "OFF"}`,
             });
 
-            // el endpoint te devuelve config actualizada
-            setConfig(data);
+            const versionId = draft?.version?.id || draft?.versionId || draft?.id;
+            if (!versionId) throw new Error("No se recibió versionId del draft");
 
-            // sincronizar flujo pedidos si toca esos flags
-            if (
-                configKey === "flujoPedidos.permitePedidosComida" ||
-                configKey === "flujoPedidos.permitePedidosBebida"
-            ) {
-                const current = configRef.current;
+            // 2) apply
+            await api.post(`/admin/config/versions/${versionId}/apply`, {
+                reason: `Toggle feature: ${configKey}`,
+            });
 
-                const nuevoFlujo = {
-                    permitePedidosComida:
-                        configKey === "flujoPedidos.permitePedidosComida"
-                            ? value
-                            : !!current?.flujoPedidos?.permitePedidosComida,
-                    permitePedidosBebida:
-                        configKey === "flujoPedidos.permitePedidosBebida"
-                            ? value
-                            : !!current?.flujoPedidos?.permitePedidosBebida,
-                };
+            // refresca config real
+            await api.get("/configuracion").then(({ data }) => setConfig(data?.config ?? data));
 
-                try {
-                    const resFlujo = await api.put("/admin/config/flujo-pedidos", nuevoFlujo);
-                    setConfig((prev) => ({ ...prev, flujoPedidos: resFlujo.data.flujoPedidos }));
-                } catch (err) {
-                    console.error("Error sincronizando flujo pedidos:", err);
-                }
-            }
-
-            onAlert?.({ tipo: "success", mensaje: "Cambios guardados correctamente ✅" });
+            onAlert?.({ tipo: "success", mensaje: "Cambio aplicado y auditado ✅" });
         } catch (err) {
             console.error("[PlanFeaturesPanel] Error update:", err);
-            onAlert?.({ tipo: "error", mensaje: "Error al actualizar la configuración del plan." });
+            onAlert?.({ tipo: "error", mensaje: "No se pudo aplicar el cambio (guardrails)." });
         }
     };
 

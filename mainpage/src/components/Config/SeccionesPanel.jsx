@@ -45,9 +45,9 @@ export default function SeccionesPanel({
   const cargar = async () => {
     try {
       setLoading(true);
-      // includeInactive=0 por defecto (si tu backend no lo usa, lo ignora)
-      const { data } = await api.get("/secciones?includeInactive=0");
-      setSecciones(Array.isArray(data) ? data : []);
+      const res = await api.get("/secciones?includeInactive=0");
+      const items = res?.data?.data?.items;
+      setSecciones(Array.isArray(items) ? items : []);
     } catch {
       onAlert?.({ tipo: "error", mensaje: "Error al cargar secciones." });
     } finally {
@@ -65,9 +65,7 @@ export default function SeccionesPanel({
   // ============================
   const crear = async () => {
     const nombre = (nueva.nombre || "").trim();
-    if (!nombre) {
-      return onAlert?.({ tipo: "error", mensaje: "El nombre es obligatorio." });
-    }
+    if (!nombre) return onAlert?.({ tipo: "error", mensaje: "El nombre es obligatorio." });
 
     try {
       const payload = {
@@ -78,35 +76,23 @@ export default function SeccionesPanel({
         orden: Number(nueva.orden) || 0,
       };
 
-      const { data } = await api.post("/secciones", payload);
+      const res = await api.post("/secciones", payload);
+      const created = res?.data?.data?.item;
+
+      if (!created?._id) {
+        return onAlert?.({ tipo: "error", mensaje: "La API no devolvió la sección creada." });
+      }
 
       setSecciones((prev) =>
-        [data, ...prev].sort((a, b) => (a.orden ?? 0) - (b.orden ?? 0))
+        [created, ...prev].sort((a, b) => (a.orden ?? 0) - (b.orden ?? 0))
       );
 
-      setNueva({
-        nombre: "",
-        slug: "",
-        destino: "cocina",
-        activa: true,
-        orden: 0,
-      });
-
+      setNueva({ nombre: "", slug: "", destino: "cocina", activa: true, orden: 0 });
       onAlert?.({ tipo: "success", mensaje: "Sección creada correctamente." });
     } catch (err) {
       const e = normalizeErr(err);
-      const slugDup =
-        e.code === "SLUG_DUPLICADO" ||
-        /slug/i.test(e.msg) ||
-        /slug/i.test(e.code);
-
-      if (slugDup) {
-        return onAlert?.({
-          tipo: "error",
-          mensaje: "Ese slug ya existe en ese destino.",
-        });
-      }
-
+      const slugDup = e.code === "SLUG_DUPLICADO" || /slug/i.test(e.msg) || /slug/i.test(e.code);
+      if (slugDup) return onAlert?.({ tipo: "error", mensaje: "Ese slug ya existe en ese destino." });
       onAlert?.({ tipo: "error", mensaje: "Error al crear sección." });
     }
   };
@@ -127,9 +113,7 @@ export default function SeccionesPanel({
     if (!editando) return;
 
     const nombre = (editando.nombre || "").trim();
-    if (!nombre) {
-      return onAlert?.({ tipo: "error", mensaje: "El nombre es obligatorio." });
-    }
+    if (!nombre) return onAlert?.({ tipo: "error", mensaje: "El nombre es obligatorio." });
 
     try {
       const payload = {
@@ -140,28 +124,19 @@ export default function SeccionesPanel({
         orden: Number(editando.orden) || 0,
       };
 
-      const { data } = await api.put(`/secciones/${editando._id}`, payload);
+      const res = await api.put(`/secciones/${editando._id}`, payload);
+      const updated = res?.data?.data?.item;
+      if (!updated?._id) {
+        return onAlert?.({ tipo: "error", mensaje: "La API no devolvió la sección actualizada." });
+      }
 
-      setSecciones((prev) =>
-        prev.map((s) => (s._id === data._id ? data : s))
-      );
+      setSecciones((prev) => prev.map((s) => (s._id === updated._id ? updated : s)));
       setEditando(null);
-
       onAlert?.({ tipo: "success", mensaje: "Sección actualizada." });
     } catch (err) {
       const e = normalizeErr(err);
-      const slugDup =
-        e.code === "SLUG_DUPLICADO" ||
-        /slug/i.test(e.msg) ||
-        /slug/i.test(e.code);
-
-      if (slugDup) {
-        return onAlert?.({
-          tipo: "error",
-          mensaje: "Ese slug ya existe en ese destino.",
-        });
-      }
-
+      const slugDup = e.code === "SLUG_DUPLICADO" || /slug/i.test(e.msg) || /slug/i.test(e.code);
+      if (slugDup) return onAlert?.({ tipo: "error", mensaje: "Ese slug ya existe en ese destino." });
       onAlert?.({ tipo: "error", mensaje: "Error al actualizar sección." });
     }
   };
@@ -181,7 +156,7 @@ export default function SeccionesPanel({
 
   // ============================
   // UI
-  // ============================
+  // ============================a
   return (
     <section className="config-card card secciones-panel">
       <header className="config-card-header">

@@ -28,13 +28,20 @@ export const useEstadisticasCategoria = (products, selectedDate) => {
             : "/ventas";
 
         // ✅ YA SON VENTAS PLANAS
-        const { data: ventasTodas } = await api.get(endpoint);
-
+        const { data } = await api.get(endpoint);
+        // soporta {items}, {ventas}, o array directo
+        const ventasTodas = Array.isArray(data)
+          ? data
+          : Array.isArray(data?.items)
+            ? data.items
+            : Array.isArray(data?.ventas)
+              ? data.ventas
+              : [];
         // 2️⃣ Filtrar ventas SOLO de los productos de esta categoría
         const idsProductos = products.map((p) => String(p._id));
 
         const ventasCategoria = ventasTodas.filter((v) =>
-          idsProductos.includes(String(v.producto?._id))
+          idsProductos.includes(String(v.producto?._id || v.producto))
         );
 
         // 3️⃣ Agrupar ventas por producto
@@ -53,10 +60,10 @@ export const useEstadisticasCategoria = (products, selectedDate) => {
 
           const ventasFiltradas = selectedDate
             ? ventas.filter(
-                (v) =>
-                  new Date(v.fecha).toDateString() ===
-                  selectedDate.toDateString()
-              )
+              (v) =>
+                new Date(v.fecha).toDateString() ===
+                selectedDate.toDateString()
+            )
             : ventas;
 
           const totalCantidad = ventasFiltradas.reduce(

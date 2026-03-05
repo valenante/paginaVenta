@@ -84,7 +84,8 @@ export default function ValoracionesPanel() {
 
     try {
       const { data } = await api.get("/valoraciones/mas-valorados");
-      setResumen(data || []);
+      const items = Array.isArray(data?.items) ? data.items : [];
+      setResumen(items);
       setPage(1); // reset de página al recargar
     } catch (err) {
       console.error("❌ Error cargando resumen de valoraciones:", err);
@@ -113,7 +114,8 @@ export default function ValoracionesPanel() {
       const { data } = await api.get(
         `/valoraciones/producto/${producto.productoId}`
       );
-      setValoracionesDetalle(data || []);
+      const arr = Array.isArray(data?.valoraciones) ? data.valoraciones : [];
+      setValoracionesDetalle(arr);
     } catch (err) {
       console.error("❌ Error cargando detalle de valoraciones:", err);
     } finally {

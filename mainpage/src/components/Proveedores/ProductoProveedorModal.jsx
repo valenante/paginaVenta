@@ -15,6 +15,16 @@ const DEFAULT = {
   factorConversion: 1,
 };
 
+const UNIDAD_OPTIONS = [
+  { value: "kg", label: "Kilogramo (kg)" },
+  { value: "g", label: "Gramo (g)" },
+  { value: "litro", label: "Litro (l)" },
+  { value: "ml", label: "Mililitro (ml)" },
+  { value: "unidad", label: "Unidad (ud)" },
+  { value: "caja", label: "Caja" },
+  { value: "pack", label: "Pack" },
+];
+
 export default function ProductoProveedorModal({
   mode = "create",
   producto,
@@ -101,7 +111,7 @@ export default function ProductoProveedorModal({
     e.preventDefault();
     const msg = validate();
     if (msg) return setError(msg);
-
+    if (!form.unidad) return "Debes seleccionar una unidad.";
     try {
       setSaving(true);
       setError("");
@@ -133,6 +143,7 @@ export default function ProductoProveedorModal({
       }
 
       onSaved?.();
+      onClose?.(); 
     } catch {
       setError("No se pudo guardar el producto.");
     } finally {
@@ -209,12 +220,19 @@ export default function ProductoProveedorModal({
               )}
 
               <div className="ppModal-field">
-                <label>Unidad</label>
-                <input
-                  placeholder="kg, l, ud…"
+                <label>Unidad *</label>
+                <select
                   value={form.unidad}
                   onChange={(e) => set("unidad", e.target.value)}
-                />
+                  required
+                >
+                  <option value="">Selecciona unidad…</option>
+                  {UNIDAD_OPTIONS.map((o) => (
+                    <option key={o.value} value={o.value}>
+                      {o.label}
+                    </option>
+                  ))}
+                </select>
               </div>
 
               <div className="ppModal-field">
@@ -227,18 +245,18 @@ export default function ProductoProveedorModal({
               </div>
 
               <div className="ppModal-field">
-  <label>Factor de conversión *</label>
-  <input
-    type="number"
-    min="0"
-    step="any"
-    value={form.factorConversion}
-    onChange={(e) => set("factorConversion", e.target.value)}
-  />
-  <small className="ppModal-help">
-    Ej: si una caja contiene 50 unidades, escribe <b>50</b>
-  </small>
-</div>
+                <label>Factor de conversión *</label>
+                <input
+                  type="number"
+                  min="0"
+                  step="any"
+                  value={form.factorConversion}
+                  onChange={(e) => set("factorConversion", e.target.value)}
+                />
+                <small className="ppModal-help">
+                  Ej: si una caja contiene 50 unidades, escribe <b>50</b>
+                </small>
+              </div>
 
               <div className="ppModal-field">
                 <label>Precio *</label>

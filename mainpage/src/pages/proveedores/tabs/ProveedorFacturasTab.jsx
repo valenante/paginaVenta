@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useOutletContext, useParams } from "react-router-dom";
 import api from "../../../utils/api";
-import ModalConfirmacion from "../../../components/Modal/ModalConfirmacion.jsx";
 import FacturaProveedorModal from "../../../components/Proveedores/FacturaProveedorModal.jsx";
+import { toImgSrc } from "../../../utils/media";
 import PagarFacturaProveedorModal from "../../../components/Proveedores/PagarFacturaProveedorModal.jsx";
 
 export default function ProveedorFacturasTab() {
@@ -104,7 +104,7 @@ export default function ProveedorFacturasTab() {
                       <div className="prov-rowActions">
                         {f.documentoUrl && (
                           <a
-                            href={f.documentoUrl}
+                            href={toImgSrc(f.documentoUrl)}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="btn btn-ghost"

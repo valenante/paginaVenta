@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import api from "../../utils/api";
 import { useTenant } from "../../context/TenantContext";
 import Portal from "../ui/Portal";
-
+import "./PagarFacturaProveedorModal.css";
 export default function PagarFacturaProveedorModal({ factura, onClose, onSaved }) {
   const { proveedorId } = useParams();
   const { tenantId } = useTenant();

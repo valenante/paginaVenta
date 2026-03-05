@@ -66,7 +66,16 @@ export default function ReservasAjustesPage() {
   const [savingEspecial, setSavingEspecial] = useState(false);
 
   const fechaISO = useMemo(() => toISODate(fechaSeleccionada), [fechaSeleccionada]);
+  const normalizeDias = (input) => {
+    const src = input && typeof input === "object" && !Array.isArray(input) ? input : {};
 
+    // soporte si algún día te llega envuelto (pero NO lo guardamos así)
+    const dias = src.dias && typeof src.dias === "object" ? src.dias : src;
+
+    const out = {};
+    for (const d of DIAS_SEMANA) out[d] = typeof dias[d] === "boolean" ? dias[d] : DEFAULT_DIAS_HABILITADOS[d];
+    return out;
+  };
   // =========================
   // Loaders
   // =========================
@@ -75,11 +84,13 @@ export default function ReservasAjustesPage() {
     try {
       const [resFranjas, resDisp] = await Promise.all([
         api.get(`/reservasConfiguracion`, { params: { fecha: fechaISO } }),
-        api.get("/disponibilidad"),
+        api.get("/reservas/disponibilidad"),
       ]);
 
       setFranjas(sanitizeFranjas(resFranjas?.data?.franjas));
-      setDiasHabilitados(resDisp?.data || DEFAULT_DIAS_HABILITADOS);
+
+      // ✅ SIEMPRE guardamos objeto plano
+      setDiasHabilitados(normalizeDias(resDisp?.data));
     } catch (err) {
       console.error("❌ Error al cargar configuración general:", err);
       setAlerta({ tipo: "error", mensaje: "Error al cargar la configuración general." });
@@ -181,10 +192,12 @@ export default function ReservasAjustesPage() {
         franjas: payloadFranjas,
       });
 
-      await api.put("/reservas/disponibilidad", diasHabilitados);
+      // ✅ payload oficial (plano, boolean)
+      const diasPayload = normalizeDias(diasHabilitados);
+
+      await api.put("/reservas/disponibilidad", diasPayload);
 
       setAlerta({ tipo: "exito", mensaje: "Configuración general guardada." });
-      // opcional: reload para asegurar consistencia
       cargarGeneral();
     } catch (err) {
       console.error("❌ Error guardando configuración general:", err);
@@ -193,7 +206,6 @@ export default function ReservasAjustesPage() {
       setSavingGeneral(false);
     }
   };
-
   const guardarEspecial = async () => {
     try {
       setSavingEspecial(true);

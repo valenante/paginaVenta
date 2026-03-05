@@ -1,18 +1,18 @@
 /*****************************************************
- * ReservasAjustesPage – Alef (Listo para vender)
- * Mobile-first · sin scroll horizontal · consistente
+ * ReservasAjustesPage – Alef (1 columna, por filas)
+ * mismo estilo, más ordenado
  *****************************************************/
 
 /* ===== Root container ===== */
 .reservas-ajustes-page {
   width: 100%;
-  max-width: 1200px;
+  max-width: 980px; /* más “panel” vertical */
   margin: var(--space-2xl) auto;
   padding: 0 var(--space-md) var(--space-3xl);
   display: flex;
   flex-direction: column;
   gap: var(--space-xl);
-  overflow-x: hidden; /* ✅ evita scroll horizontal accidental */
+  overflow-x: hidden;
 }
 
 /* ===== Header ===== */
@@ -52,11 +52,11 @@
 
 .pill-value {
   font-size: var(--font-size-sm);
-  font-weight: 700;
+  font-weight: 800;
   color: var(--color-texto);
 }
 
-/* ===== Grid general (mobile: 1 columna) ===== */
+/* ===== GRID GENERAL (siempre 1 columna) ===== */
 .reservas-ajustes-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -73,8 +73,6 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-lg);
-
-  /* ✅ clave para que los hijos no rompan el grid en móvil */
   min-width: 0;
 }
 
@@ -95,23 +93,32 @@
   margin: 0;
 }
 
-/* ===== Layout interno (mobile: 1 columna) ===== */
+/* ======================================================
+   ✅ NUEVO: Layout interno en 1 columna por filas
+====================================================== */
+
 .reservas-main-layout {
-  display: grid;
-  grid-template-columns: 1fr;
+  display: flex;
+  flex-direction: column;
   gap: var(--space-lg);
   min-width: 0;
 }
 
-/* ===== Panel franjas ===== */
-.reservas-franjas-panel {
+/* Cada “panel” pasa a ser un bloque apilado */
+.reservas-franjas-panel,
+.reservas-dias-panel {
   display: flex;
   flex-direction: column;
   gap: var(--space-md);
   min-width: 0;
+  padding: var(--space-md);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-borde-suave);
+  background: #fff;
+  box-shadow: var(--shadow-sm);
 }
 
-/* Campo fecha */
+/* ===== Campo fecha ===== */
 .config-field {
   display: flex;
   flex-direction: column;
@@ -120,7 +127,7 @@
 
 .config-field label {
   font-size: var(--font-size-xs);
-  font-weight: 700;
+  font-weight: 800;
   color: var(--color-texto-suave);
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -147,7 +154,7 @@
   width: 100%;
 }
 
-/* Lista de franjas */
+/* ===== Lista de franjas ===== */
 .reservas-franjas-list {
   display: flex;
   flex-direction: column;
@@ -175,7 +182,7 @@
   box-shadow: var(--shadow-md);
 }
 
-/* Horas: MOBILE → apilado */
+/* ✅ Horas: SIEMPRE en 1 columna (ordenado) */
 .franja-horas {
   display: grid;
   grid-template-columns: 1fr;
@@ -185,7 +192,7 @@
 }
 
 .franja-separador {
-  display: none; /* ✅ en móvil no aporta, estorba */
+  display: none;
 }
 
 /* Campo dentro de franja */
@@ -198,7 +205,7 @@
 
 .franja-field label {
   font-size: var(--font-size-xs);
-  font-weight: 700;
+  font-weight: 800;
   color: var(--color-texto-suave);
 }
 
@@ -212,7 +219,7 @@
   background: #ffffff;
 }
 
-/* Extra: MOBILE → max + delete alineados */
+/* Extra: max + delete (una fila) */
 .franja-extra {
   display: grid;
   grid-template-columns: 1fr auto;
@@ -231,7 +238,7 @@
   transition: background 0.15s ease, transform 0.15s ease;
   font-size: var(--font-size-sm);
   line-height: 1;
-  height: 40px; /* ✅ consistente con inputs */
+  height: 40px;
 }
 
 .btn-icon.btn-delete-franja:hover {
@@ -248,18 +255,10 @@
 /* Botón añadir */
 .btn-add-franja,
 .btn-add-franja-especial {
-  align-self: flex-start;
-  margin-top: var(--space-xs);
+  width: 100%;
 }
 
 /* ===== Panel días habilitados ===== */
-.reservas-dias-panel {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-sm);
-  min-width: 0;
-}
-
 .dias-grid {
   display: flex;
   flex-wrap: wrap;
@@ -328,15 +327,12 @@
   align-self: flex-start;
 }
 
-/* ===== Acciones (botones guardar) ===== */
+/* ===== Acciones ===== */
 .config-actions {
   display: flex;
-  justify-content: flex-end;
   gap: var(--space-sm);
-  margin-top: var(--space-sm);
 }
 
-/* ✅ En móvil: botón ocupa todo el ancho (más usable) */
 .btn-guardar-config,
 .btn-guardar-especial {
   width: 100%;
@@ -348,10 +344,9 @@
 }
 
 /* =====================================================
-   BREAKPOINTS
-   ===================================================== */
+   BREAKPOINTS (sigue 1 columna, solo ajusta padding)
+===================================================== */
 
-/* >= 768px (tablet) */
 @media (min-width: 768px) {
   .reservas-ajustes-page {
     padding: 0 var(--space-lg) var(--space-3xl);
@@ -367,7 +362,7 @@
 
   .reservas-ajustes-fecha-pill {
     width: auto;
-    min-width: 260px;
+    min-width: 280px;
   }
 
   .config-section.card {
@@ -375,46 +370,21 @@
     gap: var(--space-xl);
   }
 
-  /* Franjas: en tablet ya podés poner horas en 2 columnas */
-  .franja-horas {
-    grid-template-columns: 1fr 1fr;
-    gap: var(--space-md);
+  .reservas-franjas-panel,
+  .reservas-dias-panel {
+    padding: var(--space-lg);
   }
 
-  .franja-separador {
-    display: none;
+  .btn-add-franja,
+  .btn-add-franja-especial {
+    width: auto;
+    align-self: flex-start;
+    min-width: 240px;
   }
 
-  /* Acciones */
   .btn-guardar-config,
   .btn-guardar-especial {
     width: auto;
-    min-width: 220px;
-  }
-}
-
-/* >= 960px (desktop) */
-@media (min-width: 960px) {
-  .reservas-ajustes-grid {
-    grid-template-columns: 2fr 1.2fr;
-    gap: var(--space-2xl);
-  }
-
-  .reservas-main-layout {
-    grid-template-columns: 1.7fr 1.3fr;
-    gap: var(--space-xl);
-  }
-
-  /* Franjas: desktop con separador visual opcional */
-  .franja-horas {
-    grid-template-columns: 1fr auto 1fr;
-    align-items: end;
-  }
-
-  .franja-separador {
-    display: inline-block;
-    font-size: var(--font-size-xl);
-    color: var(--color-texto-suave);
-    padding-bottom: 0.35rem;
+    min-width: 260px;
   }
 }

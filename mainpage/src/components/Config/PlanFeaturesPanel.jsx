@@ -53,8 +53,42 @@ export default function PlanFeaturesPanel({ onAlert }) {
 
     const handleFeatureUpdate = async (configKey, value) => {
         try {
-            // PATCH “por ruta”: EXACTO como espera tu guardrails
-            const patch = { [configKey]: value };
+            setLoading?.(true); // si tienes estado loading; si no, quítalo
+
+            // ✅ UX PRO: si activas impresión cocina, exige configuración mínima
+            if (configKey === "impresion.imprimirPedidosCocina" && value === true) {
+                const cfg = configRef.current || config || {};
+                const servidor = String(cfg?.impresion?.servidor || "").trim();
+                const impresoraCocina = String(cfg?.impresion?.impresoras?.cocina || "").trim();
+
+                if (!servidor) {
+                    onAlert?.({
+                        tipo: "error",
+                        mensaje: "Antes de activar Cocina, configura el servidor de impresión.",
+                    });
+                    return;
+                }
+
+                if (!impresoraCocina) {
+                    onAlert?.({
+                        tipo: "error",
+                        mensaje: "Antes de activar Cocina, selecciona la impresora de cocina.",
+                    });
+                    return;
+                }
+            }
+
+            // ✅ Patch por ruta (guardrails). Si quieres, cuando activas cocina, manda también el mínimo requerido
+            let patch = { [configKey]: value };
+
+            if (configKey === "impresion.imprimirPedidosCocina" && value === true) {
+                const cfg = configRef.current || config || {};
+                patch = {
+                    "impresion.imprimirPedidosCocina": true,
+                    "impresion.servidor": String(cfg?.impresion?.servidor || "").trim(),
+                    "impresion.impresoras.cocina": String(cfg?.impresion?.impresoras?.cocina || "").trim(),
+                };
+            }
 
             // 1) draft
             const { data: draft } = await api.post("/admin/config/versions", {
@@ -72,12 +106,33 @@ export default function PlanFeaturesPanel({ onAlert }) {
             });
 
             // refresca config real
-            await api.get("/configuracion").then(({ data }) => setConfig(data?.config ?? data));
+            const fresh = await api.get("/configuracion");
+            setConfig(fresh?.data?.config ?? fresh?.data);
 
             onAlert?.({ tipo: "success", mensaje: "Cambio aplicado y auditado ✅" });
         } catch (err) {
-            console.error("[PlanFeaturesPanel] Error update:", err);
-            onAlert?.({ tipo: "error", mensaje: "No se pudo aplicar el cambio (guardrails)." });
+            const payload = err?.response?.data;
+            const msg =
+                payload?.message ||
+                payload?.error ||
+                err?.message ||
+                "No se pudo aplicar el cambio.";
+
+            // ✅ si guardrails trae fields, los mostramos (sin tecnicismos)
+            const fields = payload?.fields;
+            const firstFieldMsg =
+                fields && typeof fields === "object"
+                    ? Object.values(fields)[0]
+                    : null;
+
+            console.error("[PlanFeaturesPanel] Error update:", payload || err);
+
+            onAlert?.({
+                tipo: "error",
+                mensaje: firstFieldMsg ? `${msg} (${firstFieldMsg})` : msg,
+            });
+        } finally {
+            setLoading?.(false); // si tienes estado loading; si no, quítalo
         }
     };
 

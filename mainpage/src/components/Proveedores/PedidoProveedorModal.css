@@ -1,250 +1,370 @@
 /*****************************************************
- * Pedido Proveedor Modal – Alef UI
+ * Pedido Proveedor Modal – Alef UI (hermano de ppModal)
  *****************************************************/
 
 /* =========================
-   Modal wrapper
+   Backdrop
 ========================= */
 
-.ppPed {
-  max-width: 820px;
-}
-
-/* =========================
-   Body (scroll control)
-========================= */
-
-.ppPed-body {
-  max-height: min(75vh, 720px);
-  overflow-y: auto;
-  padding-bottom: var(--space-xl);
-}
-
-/* =========================
-   Sections
-========================= */
-
-.ppPed-section {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-md);
-}
-
-.ppPed-subtitle {
-  margin: 0;
-  font-size: var(--font-size-sm);
-  font-weight: 700;
-  color: var(--color-texto);
-}
-
-/* =========================
-   Estados
-========================= */
-
-.ppPed-loading,
-.ppPed-empty {
-  padding: 0.75rem;
-  font-size: var(--font-size-sm);
-  color: var(--color-texto-suave);
-  background: var(--color-fondo-suave);
-  border-radius: var(--radius-md);
-}
-
-/* =========================
-   Lineas container
-========================= */
-
-.ppPed-lineas {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-sm);
-  max-height: 360px;
-  overflow-y: auto;
-  padding-right: 4px; /* evita salto por scrollbar */
-}
-
-/* =========================
-   Linea
-========================= */
-
-.ppPed-line {
-  display: grid;
-  grid-template-columns:
-    minmax(0, 1.5fr)
-    90px
-    minmax(0, 1fr)
-    36px;
-  gap: var(--space-sm);
-  align-items: center;
-  padding: 0.5rem;
-  background: var(--color-fondo-card);
-  border: 1px solid var(--color-borde-suave);
-  border-radius: var(--radius-md);
-}
-
-/* =========================
-   Campos linea
-========================= */
-
-.ppPed-lineField select,
-.ppPed-lineField input {
-  font-family: var(--font-base);
-  font-size: var(--font-size-sm);
-  padding: 0.45rem 0.6rem;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--color-borde-suave);
-  background: var(--color-fondo-claro);
-}
-
-.ppPed-lineField select:focus,
-.ppPed-lineField input:focus {
-  outline: none;
-  border-color: var(--color-primario);
-  box-shadow: 0 0 0 2px
-    color-mix(in srgb, var(--color-primario) 20%, transparent);
-}
-
-/* =========================
-   Info linea
-========================= */
-
-.ppPed-lineInfo {
-  font-size: var(--font-size-xs);
-  color: var(--color-texto-suave);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* =========================
-   Remove
-========================= */
-
-.ppPed-lineRemove {
-  padding: 0;
-  width: 32px;
-  height: 32px;
-  border-radius: var(--radius-sm);
+.pedProvModal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(3px);
+  z-index: 1000;
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: var(--space-lg);
 }
 
 /* =========================
-   Add button
+   Modal
 ========================= */
 
-.ppPed-add {
-  align-self: flex-start;
+.pedProvModal {
+  width: 100%;
+  max-width: 760px; /* un pelín más ancho que producto */
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 /* =========================
-   Grid extra data
+   Header
 ========================= */
 
-.ppPed-grid {
+.pedProvModal-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-lg) var(--space-xl);
+  border-bottom: 1px solid var(--color-borde-suave);
+  background: var(--color-fondo-claro);
+}
+
+.pedProvModal-headText {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.pedProvModal-title {
+  margin: 0;
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  color: var(--color-primario);
+}
+
+.pedProvModal-subtitle {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-texto-suave);
+  opacity: 0.9;
+  line-height: 1.25rem;
+}
+
+.pedProvModal-close {
+  border: none;
+  background: transparent;
+  font-size: 1.25rem;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  flex: 0 0 auto;
+}
+
+.pedProvModal-close:hover {
+  opacity: 1;
+  transform: scale(1.05);
+}
+
+/* =========================
+   Body
+========================= */
+
+.pedProvModal-body {
+  padding: var(--space-lg) var(--space-xl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+/* =========================
+   Grid campos
+========================= */
+
+.pedProvModal-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: var(--space-md);
 }
 
-.ppPed-field--full {
+.pedProvModal-field--full {
   grid-column: 1 / -1;
 }
 
-.ppPed-field label {
+.pedProvModal-field label {
   display: block;
-  margin-bottom: 0.25rem;
   font-size: var(--font-size-xs);
   font-weight: 600;
+  margin-bottom: 0.25rem;
   color: var(--color-texto-suave);
 }
 
-.ppPed-field input,
-.ppPed-field textarea {
+.pedProvModal-field input,
+.pedProvModal-field select,
+.pedProvModal-field textarea {
   font-family: var(--font-base);
   font-size: var(--font-size-sm);
+  max-height: vh;
   padding: 0.55rem 0.7rem;
   border-radius: var(--radius-sm);
   border: 1px solid var(--color-borde-suave);
   background: var(--color-fondo-card);
 }
 
-.ppPed-field input:focus,
-.ppPed-field textarea:focus {
+.pedProvModal-field textarea {
+  resize: vertical;
+}
+
+.pedProvModal-field input:focus,
+.pedProvModal-field select:focus,
+.pedProvModal-field textarea:focus {
   outline: none;
   border-color: var(--color-primario);
-  box-shadow: 0 0 0 3px
-    color-mix(in srgb, var(--color-primario) 20%, transparent);
+  box-shadow: 0 0 0 3px color-mix(
+    in srgb,
+    var(--color-primario) 20%,
+    transparent
+  );
 }
 
 /* =========================
-   Resumen
+   Errores por campo
 ========================= */
 
-.ppPed-resumen {
-  margin-top: var(--space-sm);
-  padding: 0.75rem 1rem;
-  background: var(--color-fondo-suave);
-  border-radius: var(--radius-md);
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-sm);
+.field-error {
+  display: block;
+  margin-top: 0.35rem;
+  font-size: var(--font-size-xs);
+  color: #c0392b;
+}
+
+/* =========================
+   Secciones / títulos
+========================= */
+
+.pedProvModal-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.pedProvModal-h3 {
+  margin: 0;
   font-size: var(--font-size-sm);
-}
-
-.ppPed-total {
-  color: var(--color-primario);
   font-weight: 700;
+  color: var(--color-texto);
 }
 
+.pedProvModal-linesHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+}
+
+.pedProvModal-inlineError {
+  padding: 0.6rem 0.9rem;
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  background: rgba(192, 57, 43, 0.12);
+  border: 1px solid rgba(192, 57, 43, 0.25);
+  color: #c0392b;
+}
+
+/* =========================
+   Loading / empty
+========================= */
+
+.pedProvModal-loading,
+.pedProvModal-empty {
+  padding: 0.6rem 0.2rem;
+  font-size: var(--font-size-sm);
+  color: var(--color-texto-suave);
+}
+
+/* =========================
+   Líneas (cards)
+========================= */
+
+.pedProvModal-lines {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.pedProvModal-line {
+  padding: var(--space-md);
+  border: 1px solid var(--color-borde-suave);
+  border-radius: var(--radius-md);
+  background: var(--color-fondo-card);
+}
+
+.pedProvModal-lineGrid {
+  display: grid;
+  grid-template-columns: 1fr 180px;
+  gap: var(--space-md);
+  align-items: start;
+}
+
+.pedProvModal-lineTotals {
+  grid-column: 1 / -1;
+  border: 1px solid var(--color-borde-suave);
+  border-radius: var(--radius-md);
+  padding: 0.6rem 0.8rem;
+  background: var(--color-fondo-claro);
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.pedProvModal-lineTotals .row {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-md);
+  font-size: var(--font-size-sm);
+  color: var(--color-texto);
+}
+
+.pedProvModal-lineTotals .row .k {
+  color: var(--color-texto-suave);
+  font-weight: 600;
+}
+
+.pedProvModal-lineTotals .row .v.strong {
+  font-weight: 800;
+  color: var(--color-primario);
+}
+
+.pedProvModal-lineActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-sm);
+  grid-column: 1 / -1;
+}
+
+/* =========================
+   Totales (panel)
+========================= */
+
+.pedProvModal-totals {
+  border: 1px solid var(--color-borde-suave);
+  border-radius: var(--radius-md);
+  padding: 0.8rem 0.9rem;
+  background: var(--color-fondo-claro);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.pedProvModal-totals .trow {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-md);
+  font-size: var(--font-size-sm);
+  color: var(--color-texto);
+}
+
+.pedProvModal-totals .trow.total {
+  padding-top: 0.35rem;
+  border-top: 1px dashed var(--color-borde-suave);
+  font-weight: 800;
+  color: var(--color-primario);
+}
+
+/* =========================
+   Footer
+========================= */
+
+.pedProvModal-foot {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-sm);
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--color-borde-suave);
+}
+
+/* ====== Más aire alrededor en móvil ====== */
+.pedProvModal-backdrop{
+  /* antes: padding: var(--space-lg); */
+  padding: clamp(14px, 5vw, 28px);
+  align-items: flex-start;                 /* para que no “pegue” arriba/abajo */
+  padding-top: clamp(18px, 6vw, 34px);     /* más aire arriba */
+  padding-bottom: clamp(18px, 6vw, 34px);  /* más aire abajo */
+  overflow-y: auto;                        /* si el modal es alto, el backdrop scrollea */
+}
+
+/* El modal no puede ocupar toda la pantalla */
+.pedProvModal{
+  /* antes: max-width: 760px; */
+  max-width: 720px;
+  border-radius: var(--radius-md);
+  /* límite real de alto, dejando aire por arriba/abajo */
+  max-height: calc(100vh - 64px);
+  overflow: hidden; /* header fijo visualmente + body scrolleable */
+}
+
+/* El scroll dentro del modal, no pegado al borde */
+.pedProvModal-body{
+  overflow: auto;
+  max-height: calc(100vh - 64px - 72px); /* 64px aire + ~72px header aprox */
+}
+
+/* ====== Ajustes específicos mobile ====== */
+@media (max-width: 820px){
+  .pedProvModal{
+    /* antes: max-width: 95vw; */
+    width: 100%;
+    max-width: 520px;                      /* más “tarjeta”, menos full-screen */
+    max-height: calc(100vh - 88px);
+  }
+
+  .pedProvModal-head{
+    padding: var(--space-md) var(--space-lg);
+  }
+
+  .pedProvModal-body{
+    padding: var(--space-md) var(--space-lg);
+    max-height: calc(100vh - 88px - 64px);
+  }
+}
 /* =========================
    Responsive
 ========================= */
 
-@media (max-width: 768px) {
-  .ppPed {
+@media (max-width: 820px) {
+  .pedProvModal {
     max-width: 95vw;
   }
 
-  .ppPed-line {
-    grid-template-columns: 1fr 80px 1fr 32px;
-  }
-}
-
-@media (max-width: 520px) {
-  .ppPed-line {
-    grid-template-columns: 1fr 1fr;
-    grid-template-areas:
-      "producto producto"
-      "cantidad info"
-      "remove remove";
-    gap: var(--space-xs);
-  }
-
-  .ppPed-lineField--producto {
-    grid-area: producto;
-  }
-
-  .ppPed-lineField--cantidad {
-    grid-area: cantidad;
-  }
-
-  .ppPed-lineInfo {
-    grid-area: info;
-  }
-
-  .ppPed-lineRemove {
-    grid-area: remove;
-    justify-self: flex-end;
-  }
-
-  .ppPed-grid {
+  .pedProvModal-grid {
     grid-template-columns: 1fr;
   }
 
-  .ppPed-resumen {
+  .pedProvModal-lineGrid {
     grid-template-columns: 1fr;
-    text-align: right;
+  }
+
+  .pedProvModal-lineActions {
+    justify-content: stretch;
+  }
+
+  .pedProvModal-lineActions .btn {
+    width: 100%;
   }
 }

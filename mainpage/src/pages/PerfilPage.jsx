@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
 import api from "../utils/api";
 import AlertaMensaje from "../components/AlertaMensaje/AlertaMensaje";
+import { toImgSrc } from "../utils/media";
 import { normalizeApiError } from "../utils/normalizeApiError.js";
 import ErrorToast from "../components/common/ErrorToast";
 import "../styles/PerfilPage.css";
@@ -89,8 +90,7 @@ export default function PerfilPage() {
         <header className="perfil-header">
           <div className="perfil-header-left">
             <img
-              src={user.avatarUrl || "/default-avatar.png"}
-              alt="Avatar"
+              src={toImgSrc(user.avatarUrl, { fallback: "/default-avatar.png" })} alt="Avatar"
               className="perfil-avatar"
             />
             <div className="perfil-header-info">

@@ -6,6 +6,7 @@ import ModalConfirmacion from "../../components/Modal/ModalConfirmacion.jsx";
 import CartaOrdenSection from "./CartaOrdenSection.jsx";
 import { useAuth } from "../../context/AuthContext.jsx";
 import CartaPromocionesPanel from "../../components/Promociones/CartaPromocionesPanel.jsx";
+import { toImgSrc } from "../../utils/media";
 import "../../styles/CartaConfigPage.css";
 import ErrorToast from "../../components/common/ErrorToast.jsx";
 import { normalizeApiError } from "../../utils/normalizeApiError.js";
@@ -280,15 +281,6 @@ export default function CartaConfigPage() {
     },
     [form.textosHome, openModalConfirm, showAlert]
   );
-
-  const toImgSrc = (u) => {
-    const s = String(u || "");
-    if (!s) return "";
-    if (s.startsWith("http://") || s.startsWith("https://")) return s; // compat
-    if (s.startsWith("/uploads/")) return `${window.location.origin}${s}`;
-    return s;
-  };
-
   // ----------------------------
   // Save
   // ----------------------------
@@ -485,8 +477,7 @@ export default function CartaConfigPage() {
           <div className="config-section-header">
             <h3 className="section-title">🖼 Imágenes del home</h3>
             <p className="section-description">
-              y de los bloques de
-              secciones que se muesGestiona las imágenes del carrusel principal tran en la página de inicio.
+              Gestiona las imágenes del carrusel principal y de los bloques de secciones que se muestran en la página de inicio.
             </p>
           </div>
 

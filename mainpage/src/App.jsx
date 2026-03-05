@@ -21,7 +21,6 @@ import LoadingScreen from "./components/LoadingScreen/LoadingScreen";
 import TenantErrorScreen from "./components/TenantErrorScreen/TenantErrorScreen";
 import CookieBanner from "./components/CookieBanner/CookieBanner";
 import WhatsAppFloating from "./components/WhatsAppFloating/WhatsAppFloating";
-import VerifactuGlobalModal from "./context/VerifactuGlobalModal/VerifactuGlobalModal.jsx";
 
 /* =============================
    CONTEXT / PROVIDERS (EAGER)
@@ -546,7 +545,6 @@ export default function App() {
 
               {!loadingApp && (
                 <>
-                  <VerifactuGlobalModal />
                   <CookieBanner />
                   <WhatsAppFloatingGate />
                   <Suspense fallback={<LoadingScreen />}>

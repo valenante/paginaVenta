@@ -20,6 +20,16 @@ const PLAN_LABELS = {
   esencial: "Esencial",
 };
 
+const VERIFACTU_FECHAS = {
+  sociedades: "01/01/2027",
+  resto: "01/07/2027",
+};
+
+const VERIFACTU_AVISO =
+  `Opcional durante el periodo de adaptación. ` +
+  `Obligatorio desde ${VERIFACTU_FECHAS.sociedades} (Impuesto sobre Sociedades) ` +
+  `o ${VERIFACTU_FECHAS.resto} (resto), según tu forma jurídica.`;
+
 const SIF_FIELDS = [
   { key: "cif", label: "CIF/NIF", required: true, placeholder: "B12345678" },
   { key: "razonSocial", label: "Razón social", required: true, placeholder: "Restaurante Ejemplo SL" },
@@ -198,15 +208,15 @@ export default function MiCuentaPage() {
     // Gate profesional (UI) antes de pegar al backend
     if (next) {
       if (!certSubido) {
-        showWarn("Para activar VeriFactu debes subir un certificado (.p12) válido.");
+        showWarn("Para activar el envío a AEAT (VERI*FACTU) debes subir un certificado (.p12) válido.");
         return;
       }
       if (!sifCompleto) {
-        showWarn("Para activar VeriFactu debes completar los datos fiscales (CIF, razón social y dirección).");
+        showWarn("Para activar el envío a AEAT (VERI*FACTU) debes completar los datos fiscales (CIF, razón social y dirección).");
         return;
       }
       if (certValido === false) {
-        showWarn("El certificado subido parece inválido. Sube un certificado válido antes de activar VeriFactu.");
+        showWarn("El certificado subido parece inválido. Sube un certificado válido antes de activar el envío a AEAT (VERI*FACTU).");
         return;
       }
     }
@@ -217,7 +227,7 @@ export default function MiCuentaPage() {
     try {
       const { data } = await api.post("/admin/verifactu/toggle", { enabled: next });
       setVerifactuEnabled(!!data?.enabled);
-      showOk(`VeriFactu ${next ? "activado" : "desactivado"} correctamente.`);
+      showOk(`Envío a AEAT (VERI*FACTU) ${next ? "activado" : "desactivado"} correctamente.`);
     } catch (err) {
       showErr(err, "No se pudo cambiar el estado de VeriFactu.");
     } finally {
@@ -368,7 +378,7 @@ export default function MiCuentaPage() {
         </div>
 
         <div className="status-item">
-          <span className="status-label">VeriFactu</span>
+          <span className="status-label">Envío a AEAT</span>
           <span className={`pill pill--${readiness.verifactu}`}>{verifactuEnabled ? "Activo" : "Inactivo"}</span>
         </div>
       </section>
@@ -435,10 +445,11 @@ export default function MiCuentaPage() {
 
           <div className="legal-row">
             <div>
-              <h4>VeriFactu</h4>
+              <h4>Envío a AEAT (VERI*FACTU)</h4>
               <p className="hint">
-                Envío automático de facturas a la Agencia Tributaria (implicaciones legales).
+                Envío automático de registros/facturas a la Agencia Tributaria (implicaciones legales).
               </p>
+              <p className="hint">{VERIFACTU_AVISO}</p>
               <div className="inline-state">
                 <span className={`pill pill--${verifactuEnabled ? "ok" : "danger"}`}>
                   {verifactuEnabled ? "ACTIVO" : "INACTIVO"}
@@ -451,12 +462,12 @@ export default function MiCuentaPage() {
               disabled={toggleLoading}
               onClick={() => setMostrarConfirmacionVF(true)}
             >
-              {toggleLoading ? "Procesando…" : verifactuEnabled ? "Desactivar" : "Activar"}
+              {toggleLoading ? "Procesando…" : verifactuEnabled ? "Desactivar envío" : "Activar envío"}
             </button>
           </div>
 
           <div className="hint">
-            Para activar VeriFactu se requiere certificado válido y datos fiscales completos.
+            Para activar el envío a AEAT (VERI*FACTU) se requiere certificado válido y datos fiscales completos.
           </div>
         </section>
 
@@ -562,11 +573,11 @@ export default function MiCuentaPage() {
       {/* ===================== Modal confirmación VeriFactu ===================== */}
       {mostrarConfirmacionVF && (
         <ModalConfirmacion
-          titulo={verifactuEnabled ? "Desactivar VeriFactu" : "Activar VeriFactu"}
+          titulo={verifactuEnabled ? "Desactivar envío a AEAT (VERI*FACTU)" : "Activar envío a AEAT (VERI*FACTU)"}
           mensaje={
             verifactuEnabled
-              ? "Desactivar VeriFactu implica que las facturas dejarán de enviarse a la Agencia Tributaria. ¿Deseas continuar?"
-              : "Activar VeriFactu enviará automáticamente las facturas a la Agencia Tributaria conforme a la ley. Esta acción tiene implicaciones legales."
+              ? "Desactivar el envío a AEAT (VERI*FACTU) detiene la remisión automática. Durante el periodo de adaptación puedes activarlo o desactivarlo cuando lo necesites. ¿Deseas continuar?"
+              : `Activar el envío a AEAT (VERI*FACTU) es opcional hasta 2027, pero te permite dejarlo listo con antelación. ${VERIFACTU_AVISO} Esta acción tiene implicaciones legales. ¿Deseas continuar?`
           }
           onClose={() => setMostrarConfirmacionVF(false)}
           onConfirm={async () => {

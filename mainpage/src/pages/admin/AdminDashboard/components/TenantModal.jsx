@@ -38,8 +38,8 @@ export default function TenantModal({ tenant, onClose }) {
   // =========================
   // Update
   // =========================
-  const [refUpdate, setRefUpdate] = useState("origin/master");
-
+  const [releases, setReleases] = useState([]);
+  const [selectedReleaseId, setSelectedReleaseId] = useState("");
   // =========================
   // Sync tenant
   // =========================
@@ -87,6 +87,22 @@ export default function TenantModal({ tenant, onClose }) {
     }
   };
 
+  useEffect(() => {
+    if (!tenant?._id) return;
+
+    (async () => {
+      try {
+        const { data } = await api.get("/admin/tenant/print-agent/releases");
+        const list = Array.isArray(data?.releases) ? data.releases : [];
+        setReleases(list);
+        setSelectedReleaseId(list[0]?.releaseId || "");
+      } catch (e) {
+        setReleases([]);
+        setSelectedReleaseId("");
+      }
+    })();
+  }, [tenant?._id]);
+
   const guardarConfig = async () => {
     if (!tenant?._id) return;
 
@@ -121,33 +137,37 @@ export default function TenantModal({ tenant, onClose }) {
   };
 
   const actualizarAgente = async () => {
-    if (!tenant?._id) return;
+  if (!tenant?._id) return;
 
-    try {
-      setLoading(true);
-      setAlerta({ tipo: "info", mensaje: "Actualizando agente..." });
+  try {
+    setLoading(true);
+    setAlerta({ tipo: "info", mensaje: "Actualizando agente..." });
 
-      const { data } = await api.post(
-        `/admin/tenant/${tenant._id}/actualizar-agente`,
-        { version: refUpdate }
-      );
+    const rel = releases.find((r) => r.releaseId === selectedReleaseId);
 
-      setAlerta({
-        tipo: "success",
-        mensaje: data?.message || "Actualización iniciada",
-      });
-    } catch (err) {
-      const msg =
-        err?.response?.data?.error ||
-        err?.response?.data?.detalle ||
-        err.message ||
-        "Error desconocido";
-
-      setAlerta({ tipo: "error", mensaje: msg });
-    } finally {
-      setLoading(false);
+    if (!rel?.url || !rel?.sha256) {
+      setAlerta({ tipo: "error", mensaje: "No hay una release válida seleccionada" });
+      return;
     }
-  };
+
+    const { data } = await api.post(`/admin/tenant/${tenant._id}/actualizar-agente`, {
+      url: rel.url,
+      sha256: rel.sha256,
+      releaseId: rel.releaseId,
+    });
+
+    setAlerta({ tipo: "success", mensaje: data?.message || "Actualización iniciada" });
+  } catch (err) {
+    const msg =
+      err?.response?.data?.error ||
+      err?.response?.data?.detalle ||
+      err.message ||
+      "Error desconocido";
+    setAlerta({ tipo: "error", mensaje: msg });
+  } finally {
+    setLoading(false);
+  }
+};
 
   // ✅ NUEVO: Rollback agente (previous -> current)
   const rollbackAgente = async () => {
@@ -380,8 +400,18 @@ export default function TenantModal({ tenant, onClose }) {
 
         <div className="agente-update-box">
           <h4>🔧 Actualización del agente</h4>
-          <select value={refUpdate} onChange={(e) => setRefUpdate(e.target.value)} disabled={loading}>
-            <option value="origin/master">Última estable (origin/master)</option>
+          <label>Release</label>
+          <select
+            value={selectedReleaseId}
+            onChange={(e) => setSelectedReleaseId(e.target.value)}
+            disabled={loading}
+          >
+            <option value="">-- No hay releases disponibles --</option>
+            {releases.map((r) => (
+              <option key={r.releaseId} value={r.releaseId}>
+                {r.releaseId} · {r.pkgVersion || "—"} · {r.commit || "—"}
+              </option>
+            ))}
           </select>
 
           <div className="agente-actions">

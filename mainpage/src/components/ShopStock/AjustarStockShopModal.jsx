@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import api from "../../utils/api";
 import "./AjustarStockShopModal.css";
+import { useToast } from "../../context/ToastContext";
 
 const AjustarStockShopModal = ({ producto, onClose, onSave }) => {
+  const { showToast } = useToast();
   const stockActual = producto?.inventario?.stock ?? 0;
   const unidad = producto?.inventario?.unidadMedida || "ud";
 
@@ -16,7 +18,7 @@ const AjustarStockShopModal = ({ producto, onClose, onSave }) => {
     try {
       setLoading(true);
       const n = Number(cantidad);
-      if (!Number.isFinite(n) || n < 0) return alert("Stock inválido");
+      if (!Number.isFinite(n) || n < 0) { showToast("Stock inválido", "aviso"); return; }
 
       await api.post("/shop/stock/ajustar", {
         productoId: producto._id,
@@ -28,7 +30,7 @@ const AjustarStockShopModal = ({ producto, onClose, onSave }) => {
       onClose();
     } catch (err) {
       console.error(err);
-      alert("Error ajustando stock");
+      showToast("Error ajustando stock", "error");
     } finally {
       setLoading(false);
     }

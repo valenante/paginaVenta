@@ -1,9 +1,11 @@
 import { useState } from "react";
 import api from "../../../utils/api";
 import "./featureModal.css";
+import { useToast } from "../../../context/ToastContext";
 
 // src/components/.../NuevoFeatureModal.jsx
 export default function NuevoFeatureModal({ onClose, onSave }) {
+  const { showToast } = useToast();
   const [form, setForm] = useState({
     nombre: "",
     clave: "",
@@ -24,7 +26,7 @@ export default function NuevoFeatureModal({ onClose, onSave }) {
       onSave();
       onClose();
     } catch (err) {
-      alert(err.response?.data?.error || "Error creando feature.");
+      showToast(err.response?.data?.error || "Error creando feature.", "error");
     } finally {
       setLoading(false);
     }

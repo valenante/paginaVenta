@@ -9,26 +9,6 @@ import CajaIngresosChart from "./CajaIngresosChart";
 import DiasPeriodo from "./DiaDetalleModal/DiasPeriodo";
 import "./CajaDiariaUltraPro.css";
 
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-} from "chart.js";
-
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend
-);
 
 const toISODateKey = (value) => {
   if (!value) return "";

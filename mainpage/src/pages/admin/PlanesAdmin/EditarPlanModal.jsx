@@ -2,8 +2,10 @@
 import { useState } from "react";
 import api from "../../../utils/api";
 import './EditarPlanModal.css';
+import { useToast } from "../../../context/ToastContext";
 
 export default function EditarPlanModal({ plan, onClose, onSave, features = [] }) {
+  const { showToast } = useToast();
   const [form, setForm] = useState({
     nombre: plan.nombre || "",
     precioMensual: plan.precioMensual || "",
@@ -41,7 +43,7 @@ export default function EditarPlanModal({ plan, onClose, onSave, features = [] }
       onClose();
     } catch (err) {
       console.error("Error actualizando plan:", err);
-      alert(err.response?.data?.error || "Error actualizando plan.");
+      showToast(err.response?.data?.error || "Error actualizando plan.", "error");
     } finally {
       setLoading(false);
     }

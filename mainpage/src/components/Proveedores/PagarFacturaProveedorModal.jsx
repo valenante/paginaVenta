@@ -4,9 +4,11 @@ import api from "../../utils/api";
 import { useTenant } from "../../context/TenantContext";
 import Portal from "../ui/Portal";
 import "./PagarFacturaProveedorModal.css";
+import { useToast } from "../../context/ToastContext";
 export default function PagarFacturaProveedorModal({ factura, onClose, onSaved }) {
   const { proveedorId } = useParams();
   const { tenantId } = useTenant();
+  const { showToast } = useToast();
 
   const headersTenant = useMemo(
     () => (tenantId ? { headers: { "x-tenant-id": tenantId } } : {}),
@@ -28,7 +30,7 @@ export default function PagarFacturaProveedorModal({ factura, onClose, onSaved }
       );
       onSaved?.();
     } catch {
-      alert("Error pagando factura.");
+      showToast("Error pagando factura.", "error");
     } finally {
       setSaving(false);
     }

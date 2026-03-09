@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import api from "../../utils/api";
 import "./ShopStockModals.css"; // MISMO CSS
+import { useToast } from "../../context/ToastContext";
 
 export default function CrearProductoShopModal({ onClose, onSave }) {
+  const { showToast } = useToast();
   const [form, setForm] = useState({
     nombre: "",
     categoria: "",
@@ -44,7 +46,7 @@ export default function CrearProductoShopModal({ onClose, onSave }) {
       onClose();
     } catch (err) {
       console.error(err);
-      alert("Error creando producto");
+      showToast("Error creando producto", "error");
     } finally {
       setLoading(false);
     }

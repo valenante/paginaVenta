@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useOutletContext, useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
 import api from "../../../utils/api";
+import { useToast } from "../../../context/ToastContext";
 import ModalConfirmacion from "../../../components/Modal/ModalConfirmacion.jsx";
 import PedidoProveedorModal from "../../../components/Proveedores/PedidoProveedorModal.jsx";
 import "./ProveedorPedidosTab.css";
@@ -9,6 +10,7 @@ import "./ProveedorPedidosTab.css";
 export default function ProveedorPedidosTab() {
     const { proveedorId } = useParams();
     const { headersTenant } = useOutletContext();
+    const { showToast } = useToast();
 
     const [items, setItems] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -48,7 +50,7 @@ export default function ProveedorPedidosTab() {
             setModalDelete(null);
             fetchPedidos();
         } catch {
-            alert("Error cancelando pedido.");
+            showToast("Error cancelando pedido.", "error");
         }
     };
 

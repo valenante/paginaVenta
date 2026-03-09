@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import api from "../../utils/api";
 import "../../styles/LogsPage.css";
+import { useToast } from "../../context/ToastContext";
 
 /* ============================
    🧠 Hook: debounce simple
@@ -36,6 +37,7 @@ const formatDate = (d) => {
 };
 
 export default function LogsPage() {
+  const { showToast } = useToast();
   const [logs, setLogs] = useState([]);
   const [nivel, setNivel] = useState(""); // INFO, WARN, ERROR
   const [search, setSearch] = useState("");
@@ -183,13 +185,13 @@ export default function LogsPage() {
   const handleDeleteAll = useCallback(async () => {
     const reason = prompt("Motivo (mínimo 10 caracteres):");
     if (!reason || reason.trim().length < 10) {
-      alert("Motivo requerido (mín. 10 caracteres).");
+      showToast("Motivo requerido (mín. 10 caracteres).", "aviso");
       return;
     }
 
     const confirmText = prompt('Escribe EXACTAMENTE: DELETE_ALL_LOGS');
     if (confirmText !== "DELETE_ALL_LOGS") {
-      alert("Confirmación incorrecta.");
+      showToast("Confirmación incorrecta.", "aviso");
       return;
     }
 
@@ -202,10 +204,10 @@ export default function LogsPage() {
       setPage(1);
       // recarga lista
       fetchLogs();
-      alert("Logs eliminados (se conservó el audit del borrado).");
+      showToast("Logs eliminados (se conservó el audit del borrado).", "exito");
     } catch (err) {
       console.error("❌ Error eliminando logs:", err);
-      alert("No se pudieron eliminar los logs.");
+      showToast("No se pudieron eliminar los logs.", "error");
     }
   }, [closeModal, fetchLogs]);
 

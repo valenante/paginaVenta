@@ -5,6 +5,7 @@ import AlertaMensaje from "../components/AlertaMensaje/AlertaMensaje";
 import { toImgSrc } from "../utils/media";
 import { normalizeApiError } from "../utils/normalizeApiError.js";
 import ErrorToast from "../components/common/ErrorToast";
+import LoadingScreen from "../components/LoadingScreen/LoadingScreen";
 import "../styles/PerfilPage.css";
 
 export default function PerfilPage() {
@@ -67,13 +68,7 @@ export default function PerfilPage() {
     await doUpdate();
   };
 
-  if (!user) {
-    return (
-      <main className="perfil-page section section--wide perfil-loading">
-        <p className="text-suave">Cargando datos del usuario...</p>
-      </main>
-    );
-  }
+  if (!user) return <LoadingScreen />;
 
   return (
     <main className="perfil-page section section--wide">

@@ -23,7 +23,7 @@ export const useEstadisticasCategoria = (products, selectedDate) => {
       try {
         // ✅ Endpoint correcto según negocio
         const endpoint =
-          tipoNegocio === "shop" || tipoNegocio === "shop"
+          tipoNegocio === "shop"
             ? "/shop/estadisticas/ventas"
             : "/ventas";
 

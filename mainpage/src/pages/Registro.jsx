@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../utils/api";
 import "../styles/Registro.css";
+import { useToast } from "../context/ToastContext";
 
 import Paso1DatosRestaurante from "../components/Registro/Paso1DatosRestaurante.jsx";
 import Paso2ConfiguracionBasica from "../components/Registro/Paso2ConfiguracionBasica.jsx";
@@ -11,6 +12,7 @@ import PanelPrecio from "../components/Registro/PanelPrecio.jsx";
 
 export default function Registro() {
   const navigate = useNavigate();
+  const { showToast } = useToast();
 
   const [paso, setPaso] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -123,7 +125,7 @@ export default function Registro() {
         );
 
         if (!encontrado) {
-          alert("El plan seleccionado no existe.");
+          showToast("El plan seleccionado no existe.", "error");
           navigate("/");
           return;
         }

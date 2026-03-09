@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import api from "../../../utils/api";
 import "./planesAdmin.css";
+import { useToast } from "../../../context/ToastContext";
 
 import ModalConfirmacion from "../../../components/Modal/ModalConfirmacion";
 
@@ -15,6 +16,7 @@ import EditarFeatureModal from "./EditarFeatureModal";
 import Portal from "../../../components/ui/Portal";
 
 export default function PlanesAdmin() {
+  const { showToast } = useToast();
   const [tab, setTab] = useState("planes");
 
   const [planes, setPlanes] = useState([]);
@@ -36,7 +38,7 @@ export default function PlanesAdmin() {
       const { data } = await api.get("/admin/superadminPlans");
       setPlanes(data);
     } catch (err) {
-      alert("❌ Error cargando planes");
+      showToast("Error cargando planes", "error");
     }
   };
 
@@ -48,7 +50,7 @@ export default function PlanesAdmin() {
       const { data } = await api.get("/admin/superadmin/features");
       setFeatures(data);
     } catch (err) {
-      alert("❌ Error cargando features");
+      showToast("Error cargando features", "error");
     }
   };
 
@@ -88,7 +90,7 @@ export default function PlanesAdmin() {
         cargarFeatures();
       }
     } catch {
-      alert("❌ Error eliminando");
+      showToast("Error eliminando", "error");
     }
 
     setModalConfirm(null);
@@ -102,7 +104,7 @@ export default function PlanesAdmin() {
       await api.patch(`/admin/superadmin/features/${id}/toggle`);
       cargarFeatures();
     } catch {
-      alert("No se pudo cambiar estado");
+      showToast("No se pudo cambiar estado", "error");
     }
   };
 

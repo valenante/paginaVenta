@@ -6,17 +6,20 @@ import "./index.css";
 import { AuthProvider } from "./context/AuthContext";
 import { TenantProvider } from "./context/TenantContext";
 import { ConfigProvider } from "./context/ConfigContext";
+import { ToastProvider } from "./context/ToastContext";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <BrowserRouter>
-      <TenantProvider>
-        <AuthProvider>
-          <ConfigProvider>
-            <App />
-          </ConfigProvider>
-        </AuthProvider>
-      </TenantProvider>
+      <ToastProvider>
+        <TenantProvider>
+          <AuthProvider>
+            <ConfigProvider>
+              <App />
+            </ConfigProvider>
+          </AuthProvider>
+        </TenantProvider>
+      </ToastProvider>
     </BrowserRouter>
   </React.StrictMode>
 );

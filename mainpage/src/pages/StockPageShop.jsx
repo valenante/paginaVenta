@@ -1,6 +1,7 @@
 // src/pages/StockShopPage.jsx
 import React, { useEffect, useState } from "react";
 import api from "../utils/api";
+import { useToast } from "../context/ToastContext";
 import AjustarStockShopModal from "../components/ShopStock/AjustarStockShopModal";
 import CrearProductoShopModal from "../components/ShopStock/CrearItemStockShopModal";
 import ModalConfirmacion from "../components/Modal/ModalConfirmacion.jsx";
@@ -9,6 +10,7 @@ import "../styles/StockPage.css";
 const ITEMS_PER_PAGE = 12;
 
 const StockShopPage = () => {
+    const { showToast } = useToast();
     const [loading, setLoading] = useState(true);
     const [productos, setProductos] = useState([]);
     const [error, setError] = useState("");
@@ -73,7 +75,7 @@ const StockShopPage = () => {
             fetchStock();
             setModal(null);
         } catch (err) {
-            alert("Error eliminando producto.");
+            showToast("Error eliminando producto.", "error");
         }
     };
 

@@ -2,6 +2,7 @@
 import React, { useState, useContext, useEffect, useMemo } from "react";
 import { ProductosContext } from "../../context/ProductosContext";
 import { useAuth } from "../../context/AuthContext";
+import { useToast } from "../../context/ToastContext";
 import { useImageUpload } from "../../Hooks/useImageUpload";
 import AlefSelect from "../AlefSelect/AlefSelect";
 import AlertaMensaje from "../AlertaMensaje/AlertaMensaje";
@@ -13,6 +14,7 @@ const CrearProducto = ({ onClose, onCreated }) => {
   // 🔹 ProductosContext — opcional
   const productosCtx = useContext(ProductosContext);
   const { user } = useAuth();
+  const { showToast } = useToast();
   const cargarProductos = productosCtx?.cargarProductos;
 
   const {
@@ -196,11 +198,11 @@ const CrearProducto = ({ onClose, onCreated }) => {
 
     if (formData.tipo !== "bebida") {
       if (!formData.seccion) {
-        alert("Debes seleccionar una sección.");
+        showToast("Debes seleccionar una sección.", "aviso");
         return;
       }
       if (!isPlanEsencial && !formData.estacion) {
-        alert("Debes seleccionar una estación.");
+        showToast("Debes seleccionar una estación.", "aviso");
         return;
       }
     }

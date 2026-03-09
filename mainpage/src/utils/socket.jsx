@@ -14,7 +14,10 @@ export const SocketProvider = ({ children }) => {
     console.log("🔌 Conectando socket a:", url);
 
     const socketInstance = io(url, {
-      transports: ["websocket"],
+      // WebSocket primero; polling como fallback para proxies/redes corporativas
+      // que bloquean el Upgrade: websocket. Socket.IO intenta WS y si falla
+      // degrada automáticamente a HTTP long-polling sin necesidad de código extra.
+      transports: ["websocket", "polling"],
       reconnectionAttempts: 5,
       reconnectionDelay: 1000,
     });

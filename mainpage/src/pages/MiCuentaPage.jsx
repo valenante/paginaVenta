@@ -7,6 +7,7 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useConfig } from "../context/ConfigContext";
 import api from "../utils/api";
+import LoadingScreen from "../components/LoadingScreen/LoadingScreen";
 import "../styles/MiCuentaPage.css";
 
 import ModalConfirmacion from "../components/Modal/ModalConfirmacion";
@@ -301,13 +302,7 @@ export default function MiCuentaPage() {
   // ============================
   // Estados de carga
   // ============================
-  if (authLoading || configLoading) {
-    return (
-      <main className="micuenta-page section section--wide">
-        <p>Cargando…</p>
-      </main>
-    );
-  }
+  if (authLoading || configLoading) return <LoadingScreen />;
 
   if (!user || !config) {
     return (

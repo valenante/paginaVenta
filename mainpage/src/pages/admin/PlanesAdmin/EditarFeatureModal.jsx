@@ -1,8 +1,10 @@
 import { useState } from "react";
 import api from "../../../utils/api";
 import "./EditarFeatureModal.css";
+import { useToast } from "../../../context/ToastContext";
 
 export default function EditarFeatureModal({ feature, onClose, onSave }) {
+  const { showToast } = useToast();
   const [form, setForm] = useState({
     nombre: feature.nombre,
     clave: feature.clave,                // ⬅️ Ya existía aquí
@@ -28,7 +30,7 @@ export default function EditarFeatureModal({ feature, onClose, onSave }) {
       onSave();
       onClose();
     } catch (err) {
-      alert(err.response?.data?.error || "Error actualizando feature.");
+      showToast(err.response?.data?.error || "Error actualizando feature.", "error");
     } finally {
       setLoading(false);
     }

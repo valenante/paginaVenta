@@ -2,6 +2,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import api from "../utils/api";
 import { useAuth } from "../context/AuthContext";
+import { useToast } from "../context/ToastContext";
 
 import AjustarStockModal from "../components/Stock/AjustarStockModal";
 import CrearIngredienteModal from "../components/Stock/CrearIngredienteModal";
@@ -15,6 +16,7 @@ const ITEMS_PER_PAGE = 12;
 
 const StockPage = () => {
   const { user } = useAuth();
+  const { showToast } = useToast();
   const isPlanEsencial =
     user?.plan === "esencial" || user?.plan === "tpv-esencial";
 
@@ -101,9 +103,10 @@ const StockPage = () => {
       fetchStock();
       setModal(null);
     } catch (err) {
-      alert(
+      showToast(
         err?.response?.data?.message ||
-        "Error eliminando el ingrediente."
+        "Error eliminando el ingrediente.",
+        "error"
       );
     }
   };

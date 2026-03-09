@@ -1,5 +1,5 @@
 // src/App.jsx
-import React, { Suspense, lazy, useEffect, useState } from "react";
+import React, { Suspense, lazy, useEffect } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
 
 /* =============================
@@ -18,6 +18,7 @@ import Footer from "./components/Footer/Footer";
    UI GLOBAL (EAGER)
    ============================= */
 import LoadingScreen from "./components/LoadingScreen/LoadingScreen";
+import ErrorBoundary from "./components/ErrorBoundary/ErrorBoundary";
 import TenantErrorScreen from "./components/TenantErrorScreen/TenantErrorScreen";
 import CookieBanner from "./components/CookieBanner/CookieBanner";
 import WhatsAppFloating from "./components/WhatsAppFloating/WhatsAppFloating";
@@ -205,7 +206,7 @@ function HomeEntry() {
 }
 
 function WhatsAppFloatingGate() {
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const location = useLocation();
 
   // Rutas donde NO queremos WhatsApp (app interna)
@@ -224,8 +225,8 @@ function WhatsAppFloatingGate() {
     location.pathname.startsWith("/cocinero") ||
     /\/\w+\/(camarero|cocinero|pro)$/.test(location.pathname);
 
-  // Si hay sesión o estás en zona interna, no mostrar
-  if (user || isInternalRoute) return null;
+  // Esperar a que auth resuelva para evitar flash del botón durante bootstrap
+  if (authLoading || user || isInternalRoute) return null;
 
   return <WhatsAppFloating />;
 }
@@ -442,7 +443,9 @@ function AppRoutes() {
         path="/:tenantId/pro"
         element={
           <UserLayout>
-            <PanelPro />
+            <VentasProvider tenantId={tenantId}>
+              <PanelPro />
+            </VentasProvider>
           </UserLayout>
         }
       />
@@ -528,30 +531,19 @@ function AppRoutes() {
    APP ROOT
    ============================= */
 export default function App() {
-  const [loadingApp, setLoadingApp] = useState(true);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setLoadingApp(false), 700);
-    return () => clearTimeout(timer);
-  }, []);
-
   return (
     <SocketProvider>
       <FeaturesPlanProvider>
         <CategoriasProvider>
           <ShopCategoriasProvider>
             <ProductosProvider>
-              {loadingApp && <LoadingScreen />}
-
-              {!loadingApp && (
-                <>
-                  <CookieBanner />
-                  <WhatsAppFloatingGate />
-                  <Suspense fallback={<LoadingScreen />}>
-                    <AppRoutes />
-                  </Suspense>
-                </>
-              )}
+              <CookieBanner />
+              <WhatsAppFloatingGate />
+              <ErrorBoundary>
+                <Suspense fallback={<LoadingScreen />}>
+                  <AppRoutes />
+                </Suspense>
+              </ErrorBoundary>
             </ProductosProvider>
           </ShopCategoriasProvider>
         </CategoriasProvider>

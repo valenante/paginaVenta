@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../utils/api'; // ajustá la ruta según tu estructura
 import './Admin.css';
+import { useToast } from '../../context/ToastContext';
 
 const Admin = () => {
+  const { showToast } = useToast();
   const [archivo, setArchivo] = useState(null);
   const [password, setPassword] = useState('');
   const [mensaje, setMensaje] = useState('');
@@ -41,7 +43,7 @@ const Admin = () => {
 
   const handleUpload = async (e) => {
     e.preventDefault();
-    if (!archivo || !password) return alert('Completa ambos campos');
+    if (!archivo || !password) { showToast('Completa ambos campos', 'aviso'); return; }
 
     const formData = new FormData();
     formData.append('archivo', archivo);

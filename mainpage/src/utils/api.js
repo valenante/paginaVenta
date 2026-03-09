@@ -138,6 +138,9 @@ const clearClientSession = () => {
   sessionStorage.removeItem("user");
   sessionStorage.removeItem("tenantId");
   sessionStorage.removeItem("impersonado");
+  // Reset refresh queue so a subsequent login doesn't replay stale requests
+  refreshing = false;
+  queue = [];
 };
 
 const hardRedirectLogin = () => {

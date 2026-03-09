@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Link, NavLink, Outlet, useNavigate, useParams } from "react-router-dom";
 import api from "../../utils/api";
 import { useTenant } from "../../context/TenantContext";
+import { useToast } from "../../context/ToastContext";
 
 import ProveedorModal from "../../components/Proveedores/ProveedorModal.jsx";
 import ModalConfirmacion from "../../components/Modal/ModalConfirmacion.jsx";
@@ -13,6 +14,7 @@ export default function ProveedorDetalleLayout() {
   const { proveedorId } = useParams();
   const navigate = useNavigate();
   const { tenantId } = useTenant();
+  const { showToast } = useToast();
 
   const headersTenant = useMemo(
     () => (tenantId ? { headers: { "x-tenant-id": tenantId } } : {}),
@@ -59,7 +61,7 @@ export default function ProveedorDetalleLayout() {
       await api.delete(`/admin/proveedores/${proveedorId}`, headersTenant);
       navigate("/configuracion/proveedores");
     } catch {
-      alert("Error eliminando proveedor.");
+      showToast("Error eliminando proveedor.", "error");
     }
   };
 

@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import api from "../../../utils/api";
 import { useTenant } from "../../../context/TenantContext";
+import { useToast } from "../../../context/ToastContext";
 import ModalConfirmacion from "../../../components/Modal/ModalConfirmacion.jsx";
 import RecibirPedidoProveedorModal from "../../../components/Proveedores/RecibirPedidoProveedorModal.jsx";
 import "./ProveedorPedidoDetallePage.css";
@@ -10,6 +11,7 @@ export default function ProveedorPedidoDetallePage() {
     const { proveedorId, pedidoId } = useParams();
     const navigate = useNavigate();
     const { tenantId } = useTenant();
+    const { showToast } = useToast();
 
     const headersTenant = useMemo(
         () => (tenantId ? { headers: { "x-tenant-id": tenantId } } : {}),
@@ -52,7 +54,7 @@ export default function ProveedorPedidoDetallePage() {
             );
             navigate(`/configuracion/proveedores/${proveedorId}/pedidos`);
         } catch {
-            alert("Error cancelando pedido.");
+            showToast("Error cancelando pedido.", "error");
         }
     };
 

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import api from "../../utils/api";
 import "../../styles/SettingsPage.css";
+import { useToast } from "../../context/ToastContext";
 
 const emptySecrets = {
   smtpPass: "",
@@ -76,6 +77,7 @@ function stableStringify(obj) {
 }
 
 export default function SettingsPage() {
+  const { showToast } = useToast();
   const [tab, setTab] = useState("general");
   const [config, setConfig] = useState(null);
   const [status, setStatus] = useState(null);
@@ -172,10 +174,10 @@ export default function SettingsPage() {
       const base = buildPayload(config, emptySecrets);
       basePayloadRef.current = stableStringify(base);
 
-      alert("✔ Cambios guardados");
+      showToast("Cambios guardados", "exito");
     } catch (err) {
       console.error("Error guardando ajustes:", err);
-      alert("❌ No se pudieron guardar los cambios");
+      showToast("No se pudieron guardar los cambios", "error");
     } finally {
       setSaving(false);
     }
@@ -185,10 +187,10 @@ export default function SettingsPage() {
     setTesting(svc);
     try {
       await api.post(`/admin/superadmin/system/test/${svc}`);
-      alert(`✔ ${svc.toUpperCase()} funcionando`);
+      showToast(`${svc.toUpperCase()} funcionando`, "exito");
       await cargarStatus();
     } catch (err) {
-      alert(`❌ ${svc.toUpperCase()} falló: ` + (err.response?.data?.error || err.message));
+      showToast(`${svc.toUpperCase()} falló: ` + (err.response?.data?.error || err.message), "error");
     } finally {
       setTesting("");
     }
@@ -348,9 +350,9 @@ export default function SettingsPage() {
                 if (!email) return;
                 try {
                   await api.post("/admin/superadmin/system/smtp/test-send", { to: email });
-                  alert("✔ Correo enviado correctamente.");
+                  showToast("Correo enviado correctamente.", "exito");
                 } catch (err) {
-                  alert("❌ Error enviando correo: " + (err.response?.data?.error || err.message));
+                  showToast("Error enviando correo: " + (err.response?.data?.error || err.message), "error");
                 }
               }}
             >

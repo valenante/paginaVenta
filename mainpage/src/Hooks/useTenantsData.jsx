@@ -10,24 +10,34 @@ import * as logger from "../utils/logger";
  *  - tenants: lista completa
  *  - filtered: lista filtrada por búsqueda y plan
  *  - loading: estado de carga
- *  - search / setSearch: texto de búsqueda
+ *  - search / setSearch: texto del input (inmediato, para binding del input)
  *  - planFilter / setPlanFilter: filtro por plan ("all" | slug)
  *  - fetchTenants: función para recargar desde el backend
+ *
+ * La búsqueda usa debounce interno (250ms) para no filtrar en cada keystroke.
+ * Con 500+ tenants cargados en cliente el filtrado en cada tecla era perceptible.
  */
 export default function useTenantsData() {
   const [tenants, setTenants] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const [search, setSearch] = useState("");
+  // inputSearch: valor inmediato que se muestra en el input
+  // debouncedSearch: valor retrasado 250ms que dispara el filtro
+  const [inputSearch, setInputSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [planFilter, setPlanFilter] = useState("all");
+
+  // Debounce: solo actualiza debouncedSearch 250ms después de que el usuario
+  // deje de escribir. Evita filtrar en cada pulsación de tecla.
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedSearch(inputSearch), 250);
+    return () => clearTimeout(timer);
+  }, [inputSearch]);
 
   const fetchTenants = async () => {
     setLoading(true);
     try {
-      // Ajusta la ruta si tu API usa otra (p.ej. "/admin/tenants")
       const { data } = await api.get("/admin/superadmin/tenants");
-
-      // Soportar tanto { tenants: [...] } como [ ... ]
       const list = Array.isArray(data) ? data : data.tenants || [];
       setTenants(list);
     } catch (error) {
@@ -37,45 +47,41 @@ export default function useTenantsData() {
     }
   };
 
-  // Cargar al montar
   useEffect(() => {
     fetchTenants();
   }, []);
 
-  // Filtro por plan + búsqueda
   const filtered = useMemo(() => {
     let result = [...tenants];
 
-    // 1) filtro por plan
     if (planFilter && planFilter !== "all") {
       result = result.filter((t) => {
-        // soporta tenant.plan como string o como objeto poblado
         const slug = typeof t.plan === "string" ? t.plan : t.plan?.slug;
         return slug === planFilter;
       });
     }
 
-    // 2) filtro por búsqueda
-    if (search.trim()) {
-      const q = search.toLowerCase();
-      result = result.filter((t) => {
-        return (
+    if (debouncedSearch.trim()) {
+      const q = debouncedSearch.toLowerCase();
+      result = result.filter(
+        (t) =>
           t.nombre?.toLowerCase().includes(q) ||
           t.slug?.toLowerCase().includes(q) ||
           t.email?.toLowerCase().includes(q)
-        );
-      });
+      );
     }
 
     return result;
-  }, [tenants, search, planFilter]);
+  }, [tenants, debouncedSearch, planFilter]);
 
   return {
     tenants,
     filtered,
     loading,
-    search,
-    setSearch,
+    // Mantener 'search' y 'setSearch' como nombres externos para no romper
+    // los componentes que ya consumen este hook
+    search: inputSearch,
+    setSearch: setInputSearch,
     planFilter,
     setPlanFilter,
     fetchTenants,

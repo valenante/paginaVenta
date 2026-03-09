@@ -3,6 +3,7 @@ import { useConfig } from "../context/ConfigContext.jsx";
 import { useTenant } from "../context/TenantContext";
 import { useAuth } from "../context/AuthContext.jsx";
 import { Link } from "react-router-dom";
+import LoadingScreen from "../components/LoadingScreen/LoadingScreen";
 import "../styles/DashboardPage.css";
 
 export default function DashboardPage() {
@@ -27,13 +28,7 @@ export default function DashboardPage() {
     document.title = `${config?.branding?.nombreRestaurante || fallback} | Dashboard`;
   }, [config, tipoNegocio]);
 
-  if (loading) {
-    return (
-      <main className="section section--wide">
-        <p className="text-suave">Cargando configuración...</p>
-      </main>
-    );
-  }
+  if (loading) return <LoadingScreen />;
 
   const nombreNegocio =
     config?.branding?.nombreRestaurante ||

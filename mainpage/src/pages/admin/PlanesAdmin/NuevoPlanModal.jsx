@@ -2,8 +2,10 @@
 import { useState, useEffect } from "react";
 import api from "../../../utils/api";
 import './NuevoPlanModal.css';
+import { useToast } from "../../../context/ToastContext";
 
 export default function NuevoPlanModal({ onClose, onSave }) {
+  const { showToast } = useToast();
   const [form, setForm] = useState({
     nombre: "",
     slug: "",
@@ -49,7 +51,7 @@ export default function NuevoPlanModal({ onClose, onSave }) {
       onSave();
       onClose();
     } catch (err) {
-      alert("Error creando plan.");
+      showToast("Error creando plan.", "error");
     }
   };
 

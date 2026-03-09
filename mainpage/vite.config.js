@@ -16,7 +16,13 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks(id) {
-          if (id.includes("/node_modules/react") || id.includes("/node_modules/react-dom")) {
+          if (!id.includes("/node_modules/")) return;
+
+          if (
+            id.includes("/node_modules/react/") ||
+            id.endsWith("/node_modules/react/index.js") ||
+            id.includes("/node_modules/react-dom/")
+          ) {
             return "vendor-react";
           }
 
@@ -28,28 +34,7 @@ export default defineConfig({
             return "vendor-axios";
           }
 
-          if (
-            id.includes("/node_modules/socket.io-client") ||
-            id.includes("/node_modules/engine.io-client")
-          ) {
-            return "vendor-socket";
-          }
-
-          if (
-            id.includes("/node_modules/jspdf") ||
-            id.includes("/node_modules/pdfmake") ||
-            id.includes("/node_modules/html2canvas")
-          ) {
-            return "vendor-pdf";
-          }
-
-          if (id.includes("/node_modules/@hello-pangea")) {
-            return "vendor-dnd";
-          }
-
-          if (id.includes("/node_modules/")) {
-            return "vendor-misc";
-          }
+          return "vendor";
         },
       },
     },

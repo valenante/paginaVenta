@@ -12,7 +12,12 @@ import StatsPorHora from "./components/StatsPorHora";
 import StatsListaProductos from "./components/StatsListaProductos";
 import UpsellEstadisticasPro from "./components/UpsellEstadisticasPro";
 
-import "./EstadisticasFinal.css"; // reutiliza tu CSS actual y añade clases nuevas
+import "./EstadisticasFinal.css";
+
+const formatearFechaTexto = (date) => {
+  if (!date) return "";
+  return date.toLocaleDateString();
+};
 
 const EstadisticasPage = ({ categories }) => {
   const { products, fetchProducts } = useCategorias();
@@ -21,7 +26,9 @@ const EstadisticasPage = ({ categories }) => {
   const [selectedCategory, setSelectedCategory] = useState(
     categories?.[0] || null
   );
-  const [selectedDate, setSelectedDate] = useState(null);
+
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
 
   const isPro = hasFeature("features.estadisticasAmpliadas", false);
 
@@ -32,10 +39,7 @@ const EstadisticasPage = ({ categories }) => {
   }, [selectedCategory, fetchProducts]);
 
   const productosCategoria = useMemo(
-    () =>
-      (products || []).filter(
-        (p) => p.categoria === selectedCategory
-      ),
+    () => (products || []).filter((p) => p.categoria === selectedCategory),
     [products, selectedCategory]
   );
 
@@ -47,11 +51,16 @@ const EstadisticasPage = ({ categories }) => {
     estadisticasPorHora,
     topProductos,
     horaPunta,
-  } = useEstadisticasCategoria(productosCategoria, selectedDate);
+  } = useEstadisticasCategoria(productosCategoria, { startDate, endDate });
 
-  const fechaTexto = selectedDate
-    ? selectedDate.toLocaleDateString()
-    : "todas las fechas";
+  const fechaTexto =
+    startDate && endDate
+      ? `del ${formatearFechaTexto(startDate)} al ${formatearFechaTexto(endDate)}`
+      : startDate
+        ? `desde el ${formatearFechaTexto(startDate)}`
+        : endDate
+          ? `hasta el ${formatearFechaTexto(endDate)}`
+          : "todas las fechas";
 
   const totalIngresosCategoria = resumenCategoria?.totalIngresos || 0;
   const productoEstrella =
@@ -73,8 +82,10 @@ const EstadisticasPage = ({ categories }) => {
         categories={categories}
         selectedCategory={selectedCategory}
         onChangeCategory={setSelectedCategory}
-        selectedDate={selectedDate}
-        onChangeDate={setSelectedDate}
+        startDate={startDate}
+        endDate={endDate}
+        onChangeStartDate={setStartDate}
+        onChangeEndDate={setEndDate}
       />
 
       {selectedCategory && (

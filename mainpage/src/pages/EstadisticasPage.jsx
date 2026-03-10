@@ -1,4 +1,4 @@
-// src/pages/Estadisticas/EstadisticasPage.jsx
+// src/pages/EstadisticasPage.jsx
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useCategorias } from "../context/CategoriasContext";
 import { useFeaturesPlan } from "../context/FeaturesPlanContext";
@@ -28,7 +28,8 @@ export default function EstadisticasPage({ type = "plato" }) {
 
   const [tipo, setTipo] = useState(type);
   const [selectedCategory, setSelectedCategory] = useState(null);
-  const [selectedDate, setSelectedDate] = useState(null);
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
 
   const isPro = hasFeature("estadisticas_avanzadas");
 
@@ -46,35 +47,33 @@ export default function EstadisticasPage({ type = "plato" }) {
   }, [categorias]);
 
   /* =====================================================
-   * 2) Cargar categorías al cambiar tipo
+   * 2) Cargar categorías al cambiar tipo — resetear todo
    * ===================================================== */
   useEffect(() => {
     if (!tipo) return;
-
     fetchCategories(tipo);
     setSelectedCategory(null);
-    setSelectedDate(null);
+    setStartDate(null);
+    setEndDate(null);
     userChangedCategoryRef.current = false;
   }, [tipo, fetchCategories]);
 
   /* =====================================================
-   * 3) Autoselect de categoría (solo si procede)
+   * 3) Autoselect de categoría (solo si el usuario no ha tocado)
    * ===================================================== */
   useEffect(() => {
     if (selectedCategory) return;
     if (userChangedCategoryRef.current) return;
     if (categoriasNormalizadas.length === 0) return;
-
     setSelectedCategory(categoriasNormalizadas[0]);
   }, [categoriasNormalizadas, selectedCategory]);
 
   /* =====================================================
-   * 4) Validar categoría seleccionada
+   * 4) Validar categoría seleccionada (si el tipo cambia)
    * ===================================================== */
   useEffect(() => {
     if (!selectedCategory) return;
     if (categoriasNormalizadas.includes(selectedCategory)) return;
-
     setSelectedCategory(categoriasNormalizadas[0] || null);
     userChangedCategoryRef.current = false;
   }, [categoriasNormalizadas, selectedCategory]);
@@ -84,7 +83,6 @@ export default function EstadisticasPage({ type = "plato" }) {
    * ===================================================== */
   useEffect(() => {
     if (!tipo || !selectedCategory) return;
-
     fetchProducts({ tipo, categoria: selectedCategory });
   }, [tipo, selectedCategory, fetchProducts]);
 
@@ -98,10 +96,8 @@ export default function EstadisticasPage({ type = "plato" }) {
   }, [tipo, selectedCategory, productsByKey]);
 
   /* =====================================================
-   * 7) Estadísticas
+   * 7) Estadísticas — se pasa el rango como objeto { startDate, endDate }
    * ===================================================== */
-  const stats = useEstadisticasCategoria(productosCategoria, selectedDate);
-
   const {
     loading: loadingStats,
     productosConStats,
@@ -110,54 +106,53 @@ export default function EstadisticasPage({ type = "plato" }) {
     estadisticasPorHora,
     topProductos,
     horaPunta,
-  } = stats || {};
+  } = useEstadisticasCategoria(productosCategoria, { startDate, endDate });
 
-  const fechaTexto = selectedDate
-    ? selectedDate.toLocaleDateString()
-    : "todas las fechas";
+  /* =====================================================
+   * 8) Texto descriptivo del rango de fechas activo
+   * ===================================================== */
+  const fechaTexto = useMemo(() => {
+    const fmt = (d) => d.toLocaleDateString();
+    if (startDate && endDate) return `del ${fmt(startDate)} al ${fmt(endDate)}`;
+    if (startDate) return `desde el ${fmt(startDate)}`;
+    if (endDate) return `hasta el ${fmt(endDate)}`;
+    return "todas las fechas";
+  }, [startDate, endDate]);
 
   const totalIngresosCategoria = resumenCategoria?.totalIngresos || 0;
   const productoEstrella = topProductos?.[0] ?? null;
 
   /* =====================================================
-   * 8) Estados UI PROFESIONALES
+   * 9) Estados de UI
    * ===================================================== */
-
-  // ⏳ loading real
   if (loading.categories) {
     return (
       <div className="estadisticas-final--estadisticas">
-        <p className="mensaje-carga--estadisticas">
-          Cargando categorías…
-        </p>
+        <p className="mensaje-carga--estadisticas">Cargando categorías…</p>
       </div>
     );
   }
 
-  // ❌ error real
   if (error.categories) {
     return (
       <div className="estadisticas-final--estadisticas">
-        <p className="mensaje-error--estadisticas">
-          Error al cargar las categorías
-        </p>
+        <p className="mensaje-error--estadisticas">Error al cargar las categorías</p>
       </div>
     );
   }
 
-  // 📭 empty state real (PRO)
   if (categoriasNormalizadas.length === 0) {
     return (
       <div className="estadisticas-final--estadisticas">
         <p className="mensaje-vacio--estadisticas">
-          Todavía no hay estadisticas para mostrar.
+          Todavía no hay estadísticas para mostrar.
         </p>
       </div>
     );
   }
 
   /* =====================================================
-   * 9) Handlers
+   * 10) Handlers
    * ===================================================== */
   const handleChangeTipo = (t) => setTipo(t);
 
@@ -166,10 +161,8 @@ export default function EstadisticasPage({ type = "plato" }) {
     setSelectedCategory(cat);
   };
 
-  const handleChangeDate = (d) => setSelectedDate(d);
-
   /* =====================================================
-   * 10) Render
+   * 11) Render
    * ===================================================== */
   return (
     <div className="estadisticas-root">
@@ -180,8 +173,10 @@ export default function EstadisticasPage({ type = "plato" }) {
           categories={categoriasNormalizadas}
           selectedCategory={selectedCategory}
           onChangeCategory={handleChangeCategory}
-          selectedDate={selectedDate}
-          onChangeDate={handleChangeDate}
+          startDate={startDate}
+          endDate={endDate}
+          onChangeStartDate={setStartDate}
+          onChangeEndDate={setEndDate}
         />
 
         {selectedCategory && (
@@ -193,7 +188,6 @@ export default function EstadisticasPage({ type = "plato" }) {
               horaPunta={horaPunta}
               productoEstrella={productoEstrella}
               isPro={isPro}
-              tipo={tipo}
             />
 
             {isPro ? (

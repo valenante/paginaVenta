@@ -7,7 +7,7 @@ import { useEstadisticasCategoria } from "../Hooks/useEstadisticasCategoria";
 import StatsFilterBar from "../components/Estadisticas/StatsFilterBar";
 import StatsResumenCategoria from "../components/Estadisticas/StatsResumenCategoria";
 import StatsTopProductos from "../components/Estadisticas/StatsTopProductos";
-import StatsPorMesa from "../components/Estadisticas/StatsPorMesa";
+import StatsPorMeses from "../components/Estadisticas/StatsPorMeses";
 import StatsPorHora from "../components/Estadisticas/StatsPorHora";
 import StatsListaProductos from "../components/Estadisticas/StatsListaProductos";
 import UpsellEstadisticasPro from "../components/Estadisticas/UpsellEstadisticasPro";
@@ -102,7 +102,7 @@ export default function EstadisticasPage({ type = "plato" }) {
     loading: loadingStats,
     productosConStats,
     resumenCategoria,
-    estadisticasPorMesa,
+    estadisticasPorMes,
     estadisticasPorHora,
     topProductos,
     horaPunta,
@@ -193,7 +193,7 @@ export default function EstadisticasPage({ type = "plato" }) {
             {isPro ? (
               <div className="stats-pro-section">
                 <div className="stats-pro-grid">
-                  <StatsPorMesa data={estadisticasPorMesa} />
+                  <StatsPorMeses data={estadisticasPorMes} />
                   <StatsPorHora data={estadisticasPorHora} />
                 </div>
 

@@ -128,49 +128,6 @@
   margin-top: var(--space-md);
 }
 
-/* Mejor look para inputs dentro de .config-field (asumiendo que existe global) */
-.config-field label {
-  font-weight: 800;
-  font-size: var(--font-size-sm);
-  color: #111827;
-  margin-bottom: 6px;
-  display: inline-block;
-}
-
-.config-field input,
-.config-field select,
-.config-field textarea {
-  border: 1px solid #e5e7eb;
-  background: #fff;
-  border-radius: 14px;
-  padding: 0.6rem 0.8rem;
-  outline: none;
-  transition: box-shadow .15s ease, border-color .15s ease, transform .12s ease;
-  font-size: var(--font-size-sm);
-  color: #111827;
-}
-
-.config-field textarea {
-  min-height: 88px;
-  resize: vertical;
-}
-
-.config-field input::placeholder {
-  color: #9ca3af;
-}
-
-.config-field input:focus,
-.config-field select:focus,
-.config-field textarea:focus {
-  border-color: rgba(96, 181, 255, 0.65); /* Alef blue-ish */
-  box-shadow: 0 0 0 4px rgba(96, 181, 255, 0.18);
-}
-
-.config-field--inline {
-  display: flex;
-  align-items: flex-end;
-}
-
 .checkbox-line {
   display: inline-flex;
   align-items: center;

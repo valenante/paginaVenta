@@ -118,21 +118,6 @@
   box-shadow: var(--shadow-sm);
 }
 
-/* ===== Campo fecha ===== */
-.config-field {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-xxs);
-}
-
-.config-field label {
-  font-size: var(--font-size-xs);
-  font-weight: 800;
-  color: var(--color-texto-suave);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-}
-
 /* Input date (react-datepicker) */
 .input-date {
   width: 100%;

@@ -83,7 +83,7 @@ export default function ReservasAjustesPage() {
     setLoading(true);
     try {
       const [resFranjas, resDisp] = await Promise.all([
-        api.get(`/reservasConfiguracion`, { params: { fecha: fechaISO } }),
+        api.get(`/reservas/configuracion`, { params: { fecha: fechaISO } }),
         api.get("/reservas/disponibilidad"),
       ]);
 

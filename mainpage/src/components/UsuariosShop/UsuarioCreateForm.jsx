@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import AlefSelect from "../AlefSelect/AlefSelect";
+import { useRoles } from "../../hooks/useRoles";
 import "./UsuarioCreateForm.css"; // reutilizamos el mismo CSS
 
 export default function UsuarioCreateFormShop({ onCrear }) {
+  const { roles: rolesDisponibles } = useRoles("shop");
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -22,7 +24,8 @@ export default function UsuarioCreateFormShop({ onCrear }) {
     if (!form.name.trim()) e.name = "Nombre requerido";
     if (!/\S+@\S+\.\S+/.test(form.email)) e.email = "Email inválido";
 
-    if (!["admin", "vendedor", "empleado"].includes(form.role)) {
+    const rolesValidos = rolesDisponibles.map((r) => r.value);
+    if (!rolesValidos.includes(form.role)) {
       e.role = "Rol inválido";
     }
 
@@ -97,10 +100,7 @@ export default function UsuarioCreateFormShop({ onCrear }) {
             placeholder="Selecciona rol"
             value={form.role}
             onChange={(v) => setForm({ ...form, role: v })}
-            options={[
-              { value: "admin", label: "Admin" },
-              { value: "vendedor", label: "Vendedor" },
-            ]}
+            options={rolesDisponibles}
           />
           {errors.role && <p className="error">{errors.role}</p>}
         </div>

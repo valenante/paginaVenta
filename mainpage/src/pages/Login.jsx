@@ -1,68 +1,58 @@
-// src/pages/Login.jsx
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/Login.css";
 import { useAuth } from "../context/AuthContext";
 
 import ErrorToast from "../components/common/ErrorToast";
-import { normalizeApiError } from "../utils/normalizeApiError"; // ✅
+import { normalizeApiError } from "../utils/normalizeApiError";
+
+const ADMIN_PANEL_ROLES = new Set([
+  "admin",
+  "admin_restaurante",
+  "admin_shop",
+  "vendedor",
+]);
 
 export default function Login() {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login, isAdminPanelRole } = useAuth();
 
   const [form, setForm] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
-
-  // ✅ error PRO (objeto)
   const [uiError, setUiError] = useState(null);
-
-  // ✅ cooldown para 429
   const [cooldown, setCooldown] = useState(0);
-
   const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
+  const resolveTenantSlug = (user) => user?.tenantSlug || user?.tenantId || null;
+
   const redirectByRole = ({ user, tenantSlug, isLocalhost }) => {
-    const baseLocal = `http://localhost:5173/${tenantSlug}`;
-    const baseProd = `https://${tenantSlug}-panel.${import.meta.env.VITE_MAIN_DOMAIN}`;
+    if (user?.role === "superadmin") return "/superadmin";
+
+    const baseLocal = tenantSlug
+      ? `http://localhost:5173/${tenantSlug}`
+      : "http://localhost:5173";
+    const baseProd = tenantSlug
+      ? `https://${tenantSlug}-panel.${import.meta.env.VITE_MAIN_DOMAIN}`
+      : `https://panel.${import.meta.env.VITE_MAIN_DOMAIN}`;
+
     const base = isLocalhost ? baseLocal : baseProd;
+    const targetSection = ADMIN_PANEL_ROLES.has(user?.role) ? "pro" : "staff";
 
-    switch (user.role) {
-      case "superadmin":
-        return "/superadmin";
-
-      case "admin":
-      case "admin_restaurante":
-      case "admin_shop":
-      case "vendedor":
-        return `${base}/pro`;
-
-      case "camarero":
-        return `${base}/camarero`;
-
-      case "cocinero":
-        return `${base}/cocinero`;
-
-      default:
-        return `${base}/pro`;
-    }
+    return `${base}/${targetSection}`;
   };
 
-  // ✅ cuenta atrás para rate limit
   useEffect(() => {
     if (cooldown <= 0) return;
     const t = setInterval(() => setCooldown((s) => Math.max(0, s - 1)), 1000);
     return () => clearInterval(t);
   }, [cooldown]);
 
-  // ✅ función real que permite reintentar
   const doLogin = async () => {
-    if (loading) return;
-    if (cooldown > 0) return;
+    if (loading || cooldown > 0) return;
 
     setLoading(true);
     setUiError(null);
@@ -70,13 +60,12 @@ export default function Login() {
     try {
       const user = await login(form);
 
-      // SUPERADMIN
-      if (user.role === "superadmin") {
-        navigate("/superadmin");
+      if (user?.role === "superadmin") {
+        navigate("/superadmin", { replace: true });
         return;
       }
 
-      const tenantSlug = user.tenantId;
+      const tenantSlug = resolveTenantSlug(user);
       if (!tenantSlug) {
         setUiError({
           code: "TENANT_REQUIRED",
@@ -92,13 +81,17 @@ export default function Login() {
       const isLocalhost = window.location.hostname === "localhost";
       const targetUrl = redirectByRole({ user, tenantSlug, isLocalhost });
 
-      if (targetUrl.startsWith("/")) navigate(targetUrl);
-      else window.location.href = targetUrl;
+      if (isLocalhost) {
+        const pathname = isAdminPanelRole(user) ? `/${tenantSlug}/pro` : `/${tenantSlug}/staff`;
+        navigate(pathname, { replace: true });
+        return;
+      }
+
+      window.location.href = targetUrl;
     } catch (err) {
       const normalized = normalizeApiError(err);
       setUiError(normalized);
 
-      // si es rate limit y viene retryAfter => activa cooldown
       if (normalized?.kind === "rate_limit" && normalized?.retryAfter) {
         setCooldown(Number(normalized.retryAfter) || 0);
       }
@@ -173,7 +166,6 @@ export default function Login() {
               </div>
             </div>
 
-            {/* ✅ Error UX PRO */}
             {uiError && (
               <ErrorToast
                 error={{ ...uiError, retryAfter: cooldown > 0 ? cooldown : uiError.retryAfter }}

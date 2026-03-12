@@ -1813,4 +1813,375 @@ La idea es que definas aquí cómo quieres que se vea y se cobre el producto, y 
         ]
     },
 
+    facturacion: {
+        titulo: "Facturación • VeriFactu",
+        articulos: [
+            {
+                id: "facturacion-verifactu",
+                titulo: "Facturación encadenada y VeriFactu",
+                descripcion:
+                    "Cómo funciona el sistema de facturas encadenadas, el cumplimiento fiscal y la integración con la AEAT.",
+                contenido: [
+                    `Alef incluye un sistema de **facturación encadenada** compatible con **VeriFactu** y la normativa fiscal española.
+
+---
+
+## 🔹 1) Facturas encadenadas
+
+Cada factura se genera con un **hash** que se encadena con la factura anterior, garantizando:
+
+- Integridad de la cadena fiscal.
+- Imposibilidad de alterar o eliminar facturas anteriores.
+- Cumplimiento con la Ley Antifraude.
+
+---
+
+## 🔹 2) Tipos de factura
+
+- **Consumidor final**: facturas sin datos de cliente (NIF vacío). Son la mayoría en hostelería.
+- **Nominativa**: facturas con nombre y NIF del cliente. Necesarias cuando el cliente solicita factura.
+
+Puedes filtrar por tipo en la página de Facturas.
+
+---
+
+## 🔹 3) Rectificación
+
+Si necesitas corregir una factura:
+
+- Selecciona la factura original.
+- Elige el tipo de rectificación (R1–R5).
+- Indica importe, motivo y datos del cliente.
+- Se genera una nueva factura rectificativa encadenada.
+
+---
+
+## 🔹 4) Anulación
+
+Para anular una factura:
+
+- Se genera un registro de anulación encadenado.
+- La factura original queda marcada como anulada.
+- Esta acción no se puede deshacer.
+
+---
+
+## 🔹 5) XML firmado y AEAT
+
+Cada factura genera un **XML firmado** que puedes consultar.
+Si tienes integración con la AEAT, puedes ver la respuesta (CORRECTO, INCORRECTO, ACEPTADO_CON_ERRORES).
+
+---
+
+## 🔹 6) Exportación
+
+Puedes exportar tus facturas en:
+
+- **CSV**: para contabilidad o análisis.
+- **PDF**: tabla con todas las facturas filtradas.
+
+Usa los filtros (año, fechas, estado, búsqueda, tipo de factura) para acotar los datos.`
+                ]
+            },
+            {
+                id: "facturacion-configuracion-fiscal",
+                titulo: "Configuración fiscal",
+                descripcion:
+                    "Cómo configurar los datos fiscales necesarios para emitir facturas válidas.",
+                contenido: [
+                    `Antes de emitir facturas con VeriFactu, asegúrate de tener configurados los datos fiscales.
+
+---
+
+## 🔹 Datos necesarios
+
+Desde **Configuración → Restaurante**, rellena:
+
+- **CIF/NIF** del negocio.
+- **Razón social**.
+- **Dirección fiscal completa** (calle, municipio, provincia, código postal).
+
+---
+
+## 🔹 Certificado digital
+
+Si usas envío directo a la AEAT:
+
+- Sube tu certificado digital (.pfx/.p12).
+- Introduce la contraseña del certificado.
+
+---
+
+## 🔹 Activación
+
+Una vez configurados los datos fiscales, el sistema genera facturas automáticamente al cerrar mesas o procesar cobros.`
+                ]
+            }
+        ]
+    },
+
+    estadisticas: {
+        titulo: "Estadísticas • Análisis",
+        articulos: [
+            {
+                id: "estadisticas-categoria",
+                titulo: "Estadísticas por categoría y producto",
+                descripcion:
+                    "Analiza ventas, productos estrella, ticket medio e ingresos por mes y hora.",
+                contenido: [
+                    `La sección de **Estadísticas** te permite analizar el rendimiento de tu carta.
+
+---
+
+## 🔹 1) Filtros
+
+- **Tipo**: plato o bebida.
+- **Categoría**: selecciona una categoría para ver sus estadísticas.
+- **Rango de fechas**: filtra por periodo.
+
+---
+
+## 🔹 2) Resumen de categoría
+
+Al seleccionar una categoría verás:
+
+- Total de ingresos.
+- Total de unidades vendidas.
+- Precio medio por unidad.
+- Hora punta (franja horaria con más ingresos).
+- Producto estrella (el más vendido).
+
+---
+
+## 🔹 3) Estadísticas por mes
+
+La tabla de **estadísticas por mes** muestra para cada mes:
+
+- Número de tickets.
+- Unidades vendidas.
+- Ingresos totales.
+- Ticket medio.
+
+Los meses se ordenan de mayor a menor ingreso.
+
+---
+
+## 🔹 4) Estadísticas por hora
+
+El gráfico muestra la distribución de ingresos a lo largo del día, ayudándote a identificar horas punta.
+
+---
+
+## 🔹 5) Top productos
+
+Los 5 productos con más ingresos de la categoría seleccionada, con su porcentaje sobre el total.
+
+---
+
+## 🔹 6) Lista completa
+
+Todos los productos de la categoría con sus estadísticas detalladas: cantidad vendida, ingresos y precio medio.`
+                ]
+            }
+        ]
+    },
+
+    caja: {
+        titulo: "Caja Diaria",
+        articulos: [
+            {
+                id: "caja-diaria-uso",
+                titulo: "Cómo usar la Caja Diaria",
+                descripcion:
+                    "Controla ingresos, gastos y movimientos del día con gráficos y resumen detallado.",
+                contenido: [
+                    `La **Caja Diaria** centraliza el control económico de cada jornada.
+
+---
+
+## 🔹 1) Resumen del día
+
+Al acceder verás un resumen con:
+
+- Total de ingresos (efectivo + tarjeta).
+- Número de tickets.
+- Ticket medio.
+- Desglose por método de pago.
+
+---
+
+## 🔹 2) Gráficos
+
+- **Heatmap**: distribución de ingresos por día/hora.
+- **Gráfico de barras**: comparativa diaria.
+
+---
+
+## 🔹 3) Filtros de fecha
+
+Selecciona un rango de fechas para analizar periodos concretos.
+
+---
+
+## 🔹 4) Exportar PDF
+
+Pulsa **Descargar PDF** para generar un informe profesional con:
+
+- KPIs principales.
+- Gráficos incluidos.
+- Desglose día a día.
+- Variaciones respecto al día anterior.
+
+---
+
+## 🔹 5) Cierre de caja
+
+Al cerrar caja se genera un resumen con:
+
+- Ventas totales por método de pago.
+- Eliminaciones y anulaciones.
+- Diferencia (descuadre).
+- PDF descargable con el cierre.`
+                ]
+            }
+        ]
+    },
+
+    proveedores: {
+        titulo: "Proveedores",
+        articulos: [
+            {
+                id: "proveedores-gestion",
+                titulo: "Gestión de proveedores",
+                descripcion:
+                    "Crea proveedores, gestiona sus productos, pedidos y facturas desde un único lugar.",
+                contenido: [
+                    `El módulo de **Proveedores** permite gestionar toda la relación con tus suministradores.
+
+---
+
+## 🔹 1) Crear un proveedor
+
+Desde **Configuración → Proveedores**, crea un proveedor con:
+
+- Nombre comercial y razón social.
+- Contacto (teléfono, email).
+- Dirección.
+- Condiciones de pago.
+- Plazo de entrega habitual.
+- Notas internas.
+
+---
+
+## 🔹 2) Productos del proveedor
+
+Cada proveedor tiene un catálogo de productos con:
+
+- Nombre del producto.
+- Precio base e IVA.
+- Unidad (kg, litro, unidad, caja…).
+- Formato y factor de conversión.
+- Asociación con ingredientes o productos de la carta.
+
+---
+
+## 🔹 3) Pedidos a proveedor
+
+Para hacer un pedido:
+
+1. Entra en el proveedor.
+2. Pestaña **Pedidos** → **Nuevo pedido**.
+3. Añade líneas con productos y cantidades.
+4. Indica fecha esperada y notas.
+5. Guarda el pedido.
+
+Puedes **descargar el pedido en PDF** para enviárselo al proveedor.
+
+---
+
+## 🔹 4) Recibir un pedido
+
+Cuando llega la mercancía:
+
+1. Abre el pedido.
+2. Pulsa **Recibir**.
+3. Indica las cantidades realmente recibidas.
+4. El stock se actualiza automáticamente.
+
+---
+
+## 🔹 5) Facturas de proveedor
+
+Registra las facturas de tus proveedores:
+
+- Número de factura y fechas.
+- Importe.
+- Sube el documento (PDF/imagen).
+- Marca como pagada cuando corresponda.`
+                ]
+            }
+        ]
+    },
+
+    soporte: {
+        titulo: "Soporte • Exports",
+        articulos: [
+            {
+                id: "soporte-tickets",
+                titulo: "Cómo crear tickets de soporte",
+                descripcion:
+                    "Envía consultas al equipo de Alef y haz seguimiento de tus incidencias.",
+                contenido: [
+                    `Si necesitas ayuda técnica o tienes una incidencia, usa el sistema de **Soporte**.
+
+---
+
+## 🔹 Crear un ticket
+
+Desde el menú superior, pulsa **Soporte** → **Nuevo ticket**:
+
+- Describe el problema con detalle.
+- Adjunta capturas si es necesario.
+- Envía el ticket.
+
+---
+
+## 🔹 Seguimiento
+
+Puedes ver el estado de tus tickets (abierto, en curso, resuelto) y añadir comentarios adicionales.`
+                ],
+            },
+            {
+                id: "exports-reportes",
+                titulo: "Exportaciones y reportes",
+                descripcion:
+                    "Exporta datos de tu negocio en CSV para contabilidad o análisis.",
+                contenido: [
+                    `Desde **Configuración → Exports** puedes generar exportaciones de datos.
+
+---
+
+## 🔹 Qué puedes exportar
+
+- Historial de ventas.
+- Facturas.
+- Datos de productos.
+- Movimientos de caja.
+
+---
+
+## 🔹 Formato
+
+Las exportaciones se generan en **CSV**, compatible con Excel y herramientas de contabilidad.
+
+---
+
+## 🔹 Historial
+
+El sistema guarda un registro de todas las exportaciones realizadas con fecha y usuario.`
+                ]
+            }
+        ]
+    },
+
 };

@@ -1,317 +1,252 @@
 /*****************************************************
- * Configuración Carta – Layout general (PRO)
+ * Carta Config Page – Alef
+ * Hermana visual de RestauranteConfigPage
  *****************************************************/
 
 .carta-config-page {
-  margin: var(--space-2xl) auto;
-  padding-bottom: 96px; /* espacio para barra fija */
+  width: auto;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--space-lg);
+  padding-right: var(--space-lg);
+  padding-bottom: 90px;
 }
 
-.carta-config-card {
-  padding: var(--space-xl);
-}
+/* ===== Header global ===== */
 
 .carta-config-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-lg);
   margin-bottom: var(--space-xl);
 }
 
-.config-title {
+.carta-config-header h1 {
   margin: 0 0 var(--space-xs);
   font-size: var(--font-size-2xl);
   color: var(--color-primario);
 }
 
-.config-subtitle {
+.carta-config-header p {
   margin: 0;
-  font-size: var(--font-size-sm);
-  color: var(--color-texto-suave);
+  max-width: 760px;
 }
 
-/*****************************************************
- * Secciones y campos
- *****************************************************/
-
-.config-section {
-  margin-bottom: var(--space-xl);
-}
-
-.config-section-header {
-  margin-bottom: var(--space-md);
-}
-
-.section-title {
-  margin: 0 0 var(--space-xs);
-  font-size: var(--font-size-lg);
-}
-
-.section-description {
-  margin: 0;
-  font-size: var(--font-size-sm);
-  color: var(--color-texto-suave);
-}
-
-.config-field {
+.carta-config-header-status {
   display: flex;
-  flex-direction: column;
-  gap: var(--space-xs);
-  margin-bottom: var(--space-md);
+  align-items: center;
+  gap: var(--space-sm);
 }
 
-.config-field-row {
+/* ===== Layout ===== */
+
+.carta-config-layout {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--space-md);
-  margin-bottom: var(--space-md);
+  gap: var(--space-xl);
+  align-items: flex-start;
 }
 
-.config-field label {
-  font-size: var(--font-size-sm);
-  font-weight: 600;
-}
-
-/* Inputs consistentes (focus visible) */
-.config-field input,
-.config-field select,
-.config-field textarea {
-  padding: 0.6rem 0.8rem;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--color-borde-suave);
-  font-size: var(--font-size-sm);
-  font-family: var(--font-base);
-  background: #ffffff;
-  color: var(--color-texto, #111827);
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
-}
-
-.config-field input:focus,
-.config-field select:focus,
-.config-field textarea:focus {
-  outline: none;
-  border-color: rgba(106, 13, 173, 0.45);
-  box-shadow: 0 0 0 4px rgba(106, 13, 173, 0.14);
-}
-
-/*****************************************************
- * Imágenes del home
- *****************************************************/
-
-.imagenes-bloque {
-  margin-bottom: var(--space-lg);
-}
-
-.section-subheader {
+.carta-config-main {
   display: flex;
   flex-direction: column;
-  gap: var(--space-xs);
-  margin-bottom: var(--space-sm);
+  gap: var(--space-lg);
 }
 
-.subsection-title {
-  margin: 0;
+.embedded-section-reset {
+  margin-top: var(--space-sm);
+}
+
+/* ===== Grid info general ===== */
+
+.carta-config-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--space-md);
+}
+
+.carta-config-grid-full {
+  grid-column: 1 / -1;
+}
+
+/* ===== Imágenes home ===== */
+
+.home-media-sections {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.home-media-block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.home-media-block__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-md);
+}
+
+.home-media-block__header h3 {
+  margin: 0 0 0.2rem;
   font-size: var(--font-size-md);
 }
 
-.section-subtitle {
-  font-size: var(--font-size-xs);
+.home-media-block__header p {
+  margin: 0;
+  font-size: var(--font-size-sm);
   color: var(--color-texto-suave);
 }
 
 .imagenes-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: var(--space-md);
+  min-height: 130px;
   padding: var(--space-md);
-
-  border-radius: var(--radius-md);
-  border: 1px dashed var(--color-borde-suave);
-  background: #f9fafb;
-
+  border-radius: var(--radius-lg);
+  background: var(--color-superficie, #ffffff);
   cursor: pointer;
-  transition: border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+  transition: border-color 140ms ease, background 140ms ease;
 }
 
 .card-border-dashed {
-  border-style: dashed;
+  border: 2px dashed var(--color-borde-suave);
 }
 
 .imagenes-grid.drag-over {
-  border-color: var(--color-primario);
-  background: var(--color-primario-suave);
-  box-shadow: var(--shadow-suave);
-}
-
-/* Accesibilidad: foco cuando el grid tiene tabIndex */
-.imagenes-grid:focus {
-  outline: none;
-}
-.imagenes-grid:focus-visible {
-  border-color: rgba(106, 13, 173, 0.55);
-  box-shadow: 0 0 0 4px rgba(106, 13, 173, 0.14);
+  border-color: var(--color-secundario, #4465e7);
+  background: rgba(68, 101, 231, 0.06);
 }
 
 .imagen-item {
   position: relative;
-  border-radius: var(--radius-md);
+  min-height: 160px;
+  border-radius: var(--radius-lg);
   overflow: hidden;
   border: 1px solid var(--color-borde-suave);
-  background: #ffffff;
+  background: var(--color-gris-claro, #f5f5f5);
+  box-shadow: var(--shadow-suave);
 }
 
 .imagen-item img {
-  display: block;
   width: 100%;
-  height: 120px;
+  height: 100%;
+  min-height: 160px;
   object-fit: cover;
+  display: block;
 }
 
-/* Botón eliminar (icono basura) */
 .config-btn-delete {
   position: absolute;
-  top: 6px;
-  right: 6px;
-
+  top: 0.55rem;
+  right: 0.55rem;
+  width: 36px;
+  height: 36px;
   border: none;
-  border-radius: var(--radius-pill);
-  padding: 0.28rem 0.45rem;
-  font-size: var(--font-size-xs);
-  line-height: 1;
-
-  cursor: pointer;
-  background: rgba(15, 23, 42, 0.86);
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.68);
   color: #fff;
-
-  opacity: 0.95;
-  transition: opacity 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
-}
-
-.config-btn-delete:hover {
-  opacity: 1;
-  transform: translateY(-1px);
-  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.18);
-}
-
-.config-btn-delete:focus-visible {
-  outline: none;
-  box-shadow: 0 0 0 4px rgba(106, 13, 173, 0.18), 0 10px 22px rgba(15, 23, 42, 0.18);
-}
-
-/* Botón añadir (reutilizable) */
-.config-btn-add {
-  min-height: 120px;
-
-  border-radius: var(--radius-md);
-  border: 1px dashed var(--color-borde-suave);
-  background: transparent;
-
   cursor: pointer;
-
-  font-size: var(--font-size-sm);
-  font-weight: 600;
-  color: var(--color-texto-suave);
-
-  display: flex;
+  font-size: 1rem;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
+}
 
-  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease,
-    box-shadow 0.15s ease, transform 0.15s ease;
+.config-btn-add {
+  min-height: 160px;
+  border: 2px dashed var(--color-borde-suave);
+  border-radius: var(--radius-lg);
+  background: var(--color-blanco, #ffffff);
+  color: var(--color-texto);
+  font-weight: 600;
+  cursor: pointer;
+  padding: var(--space-md);
+  transition: border-color 140ms ease, background 140ms ease;
 }
 
 .config-btn-add:hover {
-  background: rgba(15, 23, 42, 0.04);
-  border-color: rgba(106, 13, 173, 0.30);
-  color: var(--color-primario-oscuro, #4b0a78);
-  transform: translateY(-1px);
+  border-color: var(--color-secundario, #4465e7);
+  background: rgba(68, 101, 231, 0.05);
 }
 
-.config-btn-add:focus-visible {
-  outline: none;
-  box-shadow: 0 0 0 4px rgba(106, 13, 173, 0.14);
-}
+/* ===== Textos home ===== */
 
-/*****************************************************
- * Textos del home
- *****************************************************/
+.home-texts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: var(--space-md);
+}
 
 .textos-section {
-  margin-bottom: var(--space-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  padding: var(--space-md);
+  border: 1px solid var(--color-borde-suave);
+  border-radius: var(--radius-lg);
+  background: var(--color-superficie, #ffffff);
+  box-shadow: var(--shadow-suave);
 }
 
 .textos-header {
-  margin-bottom: var(--space-sm);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.textos-header h3 {
+  margin: 0;
+  font-size: var(--font-size-md);
 }
 
 .textos-lista {
   list-style: none;
   padding: 0;
   margin: 0;
-
   display: flex;
   flex-direction: column;
-  gap: var(--space-xs);
+  gap: var(--space-sm);
 }
 
 .texto-item {
   display: flex;
-  align-items: center;
   justify-content: space-between;
+  align-items: center;
   gap: var(--space-sm);
-
-  padding: var(--space-sm) var(--space-md);
-  border-radius: var(--radius-md);
+  padding: 0.8rem 0.9rem;
   border: 1px solid var(--color-borde-suave);
-  background: #ffffff;
-
-  font-size: var(--font-size-sm);
-  transition: box-shadow 0.15s ease, border-color 0.15s ease;
-}
-
-.texto-item:hover {
-  border-color: rgba(148, 163, 184, 0.7);
-  box-shadow: 0 10px 26px rgba(15, 23, 42, 0.06);
+  border-radius: var(--radius-md);
+  background: var(--color-blanco, #ffffff);
 }
 
 .texto-item span {
   flex: 1;
+  min-width: 0;
+  word-break: break-word;
 }
 
 .li-add {
-  margin-top: var(--space-xs);
+  list-style: none;
 }
 
-/* En textos, el delete NO debe ser absolute */
-.textos-lista .config-btn-delete {
-  position: static;
-  flex-shrink: 0;
-  padding: 0.35rem 0.55rem;
+.li-add .config-btn-add {
+  width: 100%;
+  min-height: auto;
+  padding: 0.9rem 1rem;
 }
 
-/*****************************************************
- * Checkboxes de opciones de carta
- *****************************************************/
-
-.checkbox-row {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-  margin-bottom: var(--space-xs);
-  font-size: var(--font-size-sm);
-}
-
-.checkbox-row input[type="checkbox"] {
-  width: 16px;
-  height: 16px;
-  accent-color: var(--color-primario);
-}
-
-/*****************************************************
- * Tema visual de la carta
- *****************************************************/
+/* ===== Theme ===== */
 
 .theme-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--space-lg);
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: var(--space-md);
   margin-bottom: var(--space-lg);
 }
 
@@ -330,94 +265,98 @@
   display: flex;
   align-items: center;
   gap: var(--space-sm);
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-borde-suave);
+  background: #f9fafb;
 }
 
 .theme-color-input {
-  width: 42px;
-  height: 32px;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--color-borde-suave);
+  border: none;
   padding: 0;
-  cursor: pointer;
+  width: 38px;
+  height: 38px;
   background: transparent;
+  cursor: pointer;
+  flex: 0 0 auto;
 }
 
 .theme-text-input {
   flex: 1;
-  padding: 0.5rem 0.7rem;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--color-borde-suave);
-  font-size: var(--font-size-xs);
-  font-family: var(--font-mono);
+  min-width: 0;
+  border: none;
+  background: transparent;
+  padding: 0;
+  font-family: var(--font-mono, monospace);
+  font-size: var(--font-size-sm);
+  outline: none;
 }
 
 .theme-help {
+  margin: 0;
   font-size: var(--font-size-xs);
   color: var(--color-texto-suave);
 }
 
-/*****************************************************
- * Vista previa de carta
- *****************************************************/
-
 .theme-preview {
-  margin-top: var(--space-md);
+  margin-top: var(--space-lg);
 }
 
 .theme-preview-inner {
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
   border: 1px solid var(--color-borde-suave);
-  padding: var(--space-md);
+  box-shadow: var(--shadow-suave);
 }
 
 .theme-preview-title {
-  margin: 0 0 var(--space-sm);
-  font-size: var(--font-size-md);
+  margin: 0 0 var(--space-md);
+  font-size: var(--font-size-lg);
 }
 
 .theme-preview-card {
   display: flex;
   align-items: center;
-  gap: var(--space-sm);
-  padding: var(--space-sm) var(--space-md);
-  border-radius: var(--radius-md);
+  justify-content: space-between;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+  padding: var(--space-md);
   border: 1px solid;
+  border-radius: var(--radius-md);
 }
 
 .theme-preview-producto {
-  flex: 1;
-  font-size: var(--font-size-sm);
+  font-weight: 600;
 }
 
 .theme-preview-precio {
   font-weight: 700;
-  font-size: var(--font-size-sm);
 }
 
 .theme-preview-btn {
   border: none;
-  border-radius: var(--radius-pill);
-  padding: 0.4rem 0.95rem;
-  font-size: var(--font-size-xs);
+  border-radius: 999px;
+  padding: 0.55rem 1rem;
+  color: #fff;
   font-weight: 700;
-  color: var(--color-texto-invertido);
-  cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+  cursor: default;
 }
 
-.theme-preview-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.14);
-  filter: brightness(0.98);
+/* ===== Promos ===== */
+
+.promo-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
 }
 
-/*****************************************************
- * Barra de acciones fija – Carta (compacta, PRO, sin fondo)
- *****************************************************/
+/* ===== Badges ===== */
 
-.carta-config-page {
-  padding-bottom: 90px; /* ✅ para que la barra fija no tape contenido */
+.contador {
+  white-space: nowrap;
 }
+
+/* ===== Barra inferior ===== */
 
 .carta-config-actions {
   position: fixed;
@@ -426,18 +365,22 @@
   right: 0;
   z-index: 100;
 
-  /* ✅ sin fondo */
   background: transparent;
   border: none;
+  backdrop-filter: none;
 
   padding: var(--space-sm) var(--space-lg);
 
   display: flex;
-  justify-content: flex-end; /* ✅ a la derecha */
+  justify-content: flex-end;
   gap: var(--space-sm);
 }
 
-/* ✅ botones compactos (no gigantes) */
+.carta-config-actions::before {
+  content: "";
+  flex: 1;
+}
+
 .carta-config-actions .btn {
   flex: 0 0 auto;
   width: auto;
@@ -448,44 +391,49 @@
   font-size: 0.95rem;
 }
 
-/*****************************************************
- * Responsive
- *****************************************************/
+/* ===== Responsive ===== */
 
-@media (min-width: 1200px) {
+@media (max-width: 1200px) {
+  .config-card {
+    padding: var(--space-md) var(--space-lg);
+  }
+
   .carta-config-actions .btn {
     min-width: 190px;
     max-width: 260px;
   }
 }
 
-@media (max-width: 900px) {
-  .config-field-row {
-    grid-template-columns: 1fr;
-  }
-
-  .theme-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
 @media (max-width: 768px) {
-  .carta-config-actions {
-    justify-content: center;
+  .carta-config-header {
+    flex-direction: column;
+    align-items: stretch;
   }
 
-  .carta-config-actions .btn {
-    width: 100%;
-  }
-
-    .carta-config-page {
+  .carta-config-page {
     padding-bottom: 140px;
   }
 
+  .home-media-block__header,
+  .textos-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .theme-preview-card {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
   .carta-config-actions {
+    justify-content: center;
     flex-direction: column;
     align-items: stretch;
-    justify-content: center;
+    gap: var(--space-sm);
+  }
+
+  .carta-config-actions::before {
+    display: none;
   }
 
   .carta-config-actions .btn {

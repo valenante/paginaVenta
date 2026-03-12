@@ -147,10 +147,10 @@ export const useEstadisticasCategoria = (products, filters = {}) => {
   }, [productosConStats]);
 
   /* =====================================================
-   * estadisticasPorMesa, estadisticasPorHora, horaPunta
+   * estadisticasPorMes, estadisticasPorHora, horaPunta
    * ===================================================== */
-  const { estadisticasPorMesa, estadisticasPorHora, horaPunta } = useMemo(() => {
-    const mesaMap = {};
+  const { estadisticasPorMes, estadisticasPorHora, horaPunta } = useMemo(() => {
+    const mesMap = {};
     const horaMap = {};
 
     const todasLasVentas = Object.values(ventasPorProducto)
@@ -163,21 +163,24 @@ export const useEstadisticasCategoria = (products, filters = {}) => {
     for (const venta of todasLasVentas) {
       const cantidad = venta.cantidad || 0;
       const total = venta.total || 0;
-      const mesaKey = venta.mesaNumero ?? "Sin mesa";
 
-      if (!mesaMap[mesaKey]) {
-        mesaMap[mesaKey] = {
-          mesa: mesaKey,
+      // Agrupar por mes (YYYY-MM)
+      const d = new Date(venta.fecha);
+      const mesKey = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+
+      if (!mesMap[mesKey]) {
+        mesMap[mesKey] = {
+          mes: mesKey,
           totalCantidad: 0,
           totalIngresos: 0,
           numTickets: 0,
         };
       }
-      mesaMap[mesaKey].totalCantidad += cantidad;
-      mesaMap[mesaKey].totalIngresos += total;
-      mesaMap[mesaKey].numTickets += 1;
+      mesMap[mesKey].totalCantidad += cantidad;
+      mesMap[mesKey].totalIngresos += total;
+      mesMap[mesKey].numTickets += 1;
 
-      const hora = new Date(venta.fecha).getHours();
+      const hora = d.getHours();
       if (!horaMap[hora]) {
         horaMap[hora] = { hour: hora, totalCantidad: 0, totalIngresos: 0 };
       }
@@ -191,7 +194,7 @@ export const useEstadisticasCategoria = (products, filters = {}) => {
     }
 
     return {
-      estadisticasPorMesa: Object.values(mesaMap).sort(
+      estadisticasPorMes: Object.values(mesMap).sort(
         (a, b) => b.totalIngresos - a.totalIngresos
       ),
       estadisticasPorHora: Array.from({ length: 24 }, (_, hour) => ({
@@ -218,7 +221,7 @@ export const useEstadisticasCategoria = (products, filters = {}) => {
     loading,
     productosConStats,
     resumenCategoria,
-    estadisticasPorMesa,
+    estadisticasPorMes,
     estadisticasPorHora,
     topProductos,
     horaPunta,

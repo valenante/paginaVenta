@@ -7,7 +7,7 @@ import { useEstadisticasCategoria } from "../../Hooks/useEstadisticasCategoria";
 import StatsFilterBar from "./components/StatsFilterBar";
 import StatsResumenCategoria from "./components/StatsResumenCategoria";
 import StatsTopProductos from "./components/StatsTopProductos";
-import StatsPorMesa from "./components/StatsPorMesa";
+import StatsPorMeses from "./components/StatsPorMeses";
 import StatsPorHora from "./components/StatsPorHora";
 import StatsListaProductos from "./components/StatsListaProductos";
 import UpsellEstadisticasPro from "./components/UpsellEstadisticasPro";
@@ -47,7 +47,7 @@ const EstadisticasPage = ({ categories }) => {
     loading,
     productosConStats,
     resumenCategoria,
-    estadisticasPorMesa,
+    estadisticasPorMes,
     estadisticasPorHora,
     topProductos,
     horaPunta,
@@ -102,7 +102,7 @@ const EstadisticasPage = ({ categories }) => {
               />
 
               <div className="stats-pro-grid">
-                <StatsPorMesa data={estadisticasPorMesa} />
+                <StatsPorMeses data={estadisticasPorMes} />
                 <StatsPorHora data={estadisticasPorHora} />
               </div>
 

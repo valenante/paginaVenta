@@ -131,174 +131,46 @@ export default function ReservasConfigPage() {
     );
   }
 
+  if (!reservasHabilitadas) {
+    return (
+      <main className="reservas-config-page section section--wide">
+        {error && (
+          <ErrorToast
+            error={error}
+            onRetry={error.canRetry ? error.retryFn : undefined}
+            onClose={() => setError(null)}
+          />
+        )}
+
+        <section className="card config-card reservas-config-blocked">
+          <header className="print-config-header">
+            <div>
+              <h1>📅 Reservas desactivadas</h1>
+              <p className="text-suave">
+                El módulo de reservas está desactivado para este restaurante.
+                Puedes seguir usando el TPV y la carta digital, pero no podrás
+                gestionar reservas desde Alef.
+              </p>
+            </div>
+
+            <div className="carta-config-header-status">
+              <span className="badge badge-aviso">Módulo inactivo</span>
+            </div>
+          </header>
+
+          <div className="reservas-config-empty-note">
+            <p className="text-suave">
+              Si quieres activar las reservas online, revisa tu plan y la
+              configuración del restaurante o contacta con soporte.
+            </p>
+          </div>
+        </section>
+      </main>
+    );
+  }
+
   return (
-    <section className="reservas-page section section--wide">
-      <div className="card reservas-card">
-        {/* === HEADER === */}
-        <header className="reservas-header">
-          <div className="reservas-header-text">
-            <h2 className="reservas-title">📅 Gestión de reservas</h2>
-            <p className="reservas-subtitle text-suave">
-              Consulta, filtra y gestiona las reservas de tu restaurante desde un único lugar.
-            </p>
-          </div>
-
-          <button
-            className="btn btn-secundario btn-icon-left btn-configuracion"
-            onClick={() => setShowConfig(true)}
-          >
-            <span>⚙️</span>
-            <span>Configuración</span>
-          </button>
-        </header>
-
-        {/* === FILTROS === */}
-        <section className="reservas-filtros">
-          <div className="filtro-group">
-            <label className="filtro-label">Fecha</label>
-            <input
-              type="date"
-              value={fecha}
-              onChange={(e) => setFecha(e.target.value)}
-              className="filtro-control"
-            />
-          </div>
-
-          <div className="filtro-group">
-            <label className="filtro-label">Estado</label>
-            <select
-              value={estado}
-              onChange={(e) => setEstado(e.target.value)}
-              className="filtro-control"
-            >
-              <option value="">Todos los estados</option>
-              <option value="pendiente">Pendientes</option>
-              <option value="confirmada">Confirmadas</option>
-              <option value="auto-confirmada">Auto-confirmadas</option>
-              <option value="rechazada">Rechazadas</option>
-            </select>
-          </div>
-
-          <div className="filtro-actions">
-            <button
-              onClick={cargarReservas}
-              disabled={loading}
-              className="btn btn-secundario"
-            >
-              {loading ? "Cargando..." : "🔄 Refrescar"}
-            </button>
-          </div>
-        </section>
-
-        {/* === BOTÓN NUEVA RESERVA === */}
-        <section className="nueva-reserva-bar">
-          <button
-            className="btn btn-primario btn-nueva-reserva"
-            onClick={() => setModal({ tipo: "nueva" })}
-          >
-            ➕ Nueva reserva
-          </button>
-        </section>
-
-        {/* === TABLA === */}
-        <section className="tabla-reservas-wrapper">
-          {reservas.length === 0 ? (
-            <p className="sin-reservas text-suave">
-              No hay reservas para mostrar con los filtros seleccionados.
-            </p>
-          ) : (
-            <div className="tabla-reservas-scroll">
-              <table className="tabla-reservas">
-                <thead>
-                  <tr>
-                    <th>Cliente</th>
-                    <th>Personas</th>
-                    <th>Fecha y hora</th>
-                    <th>Teléfono</th>
-                    <th>Email</th>
-                    <th>Estado</th>
-                    <th className="col-acciones">Acciones</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {reservas.map((r) => (
-                    <tr key={r._id}>
-                      <td>{r.nombre}</td>
-                      <td>{r.personas}</td>
-                      <td>
-                        {new Date(r.hora).toLocaleString("es-ES", {
-                          day: "2-digit",
-                          month: "2-digit",
-                          year: "numeric",
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })}
-                      </td>
-                      <td>{r.telefono}</td>
-                      <td>{r.email}</td>
-                      <td>
-                        <span className={`estado-reserva badge estado-${r.estado}`}>
-                          {r.estado}
-                        </span>
-                      </td>
-                      <td className="acciones">
-                        {r.estado === "pendiente" ? (
-                          <div className="acciones-buttons">
-                            <button
-                              className="btn btn-primario btn-compact btn-confirmar"
-                              onClick={() => confirmarReserva(r._id)}
-                            >
-                              ✅ Confirmar
-                            </button>
-                            <button
-                              className="btn btn-secundario btn-compact btn-cancelar"
-                              onClick={() => abrirCancelarReserva(r._id)}
-                            >
-                              ❌ Rechazar
-                            </button>
-                          </div>
-                        ) : r.estado === "confirmada" || r.estado === "auto-confirmada" ? (
-                          <button
-                            className="btn btn-secundario btn-compact btn-cancelar"
-                            onClick={() => abrirCancelarReserva(r._id)}
-                          >
-                            🛑 Cancelar
-                          </button>
-                        ) : (
-                          <span className="no-acciones text-suave">—</span>
-                        )}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </section>
-      </div>
-
-      {/* === MODAL CONFIGURACIÓN === */}
-      {showConfig && (
-        <div className="modal-overlay modal-config-overlay">
-          <div className="card modal-config-contenido">
-            <div className="modal-config-header">
-              <h3>⚙️ Ajustes de reservas</h3>
-              <button
-                className="btn-icon-only cerrar-modal"
-                onClick={() => setShowConfig(false)}
-                aria-label="Cerrar configuración"
-              >
-                ✖
-              </button>
-            </div>
-            <div className="modal-config-body">
-              <ReservasAjustesPage />
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ALERTAS */}
+    <main className="reservas-config-page section section--wide">
       {alerta && (
         <AlertaMensaje
           tipo={alerta.tipo}
@@ -307,7 +179,6 @@ export default function ReservasConfigPage() {
         />
       )}
 
-      {/* ERRORES UX PRO */}
       {error && (
         <ErrorToast
           error={error}
@@ -316,7 +187,6 @@ export default function ReservasConfigPage() {
         />
       )}
 
-      {/* MODALES */}
       {modal && modal.tipo === "nueva" && (
         <ModalNuevaReserva
           onClose={() => setModal(null)}
@@ -333,6 +203,239 @@ export default function ReservasConfigPage() {
           onClose={modal.onClose}
         />
       )}
-    </section>
+
+      <header className="carta-config-header">
+        <div>
+          <h1>📅 Gestión de reservas</h1>
+          <p className="text-suave">
+            Consulta, filtra y administra las reservas del restaurante desde una
+            vista Alef clara, ordenada y preparada para escritorio, tablet y móvil.
+          </p>
+        </div>
+
+        <div className="carta-config-header-status">
+          <span className="badge badge-exito">Reservas activas</span>
+        </div>
+      </header>
+
+      <div className="reservas-config-layout">
+        <div className="reservas-config-main">
+          {/* RESUMEN + ACCIONES */}
+          <section className="card config-card">
+            <div className="config-card-header">
+              <div>
+                <h2>Resumen y herramientas</h2>
+                <p className="config-card-subtitle">
+                  Revisa el estado general del módulo y accede rápidamente a la
+                  configuración o a la creación manual de reservas.
+                </p>
+              </div>
+            </div>
+
+            <div className="reservas-config-toolbar">
+              <button
+                className="btn btn-secundario"
+                onClick={() => setShowConfig(true)}
+              >
+                ⚙️ Configuración
+              </button>
+
+              <button
+                className="btn btn-secundario"
+                onClick={cargarReservas}
+                disabled={loading}
+              >
+                {loading ? "Cargando..." : "🔄 Refrescar"}
+              </button>
+
+              <button
+                className="btn btn-primario"
+                onClick={() => setModal({ tipo: "nueva" })}
+              >
+                ➕ Nueva reserva
+              </button>
+            </div>
+
+            <div className="reservas-config-stats">
+              <article className="reservas-config-stat">
+                <span className="reservas-config-stat__label">Reservas visibles</span>
+                <strong>{reservas.length}</strong>
+              </article>
+
+              <article className="reservas-config-stat">
+                <span className="reservas-config-stat__label">Filtro por fecha</span>
+                <strong>{fecha || "Todas"}</strong>
+              </article>
+
+              <article className="reservas-config-stat">
+                <span className="reservas-config-stat__label">Filtro por estado</span>
+                <strong>{estado || "Todos"}</strong>
+              </article>
+            </div>
+          </section>
+
+          {/* FILTROS */}
+          <section className="card config-card">
+            <div className="config-card-header">
+              <div>
+                <h2>Filtros</h2>
+                <p className="config-card-subtitle">
+                  Acota la búsqueda por fecha y estado para localizar reservas más
+                  rápido.
+                </p>
+              </div>
+            </div>
+
+            <div className="reservas-config-filtros">
+              <div className="config-field">
+                <label>Fecha</label>
+                <input
+                  type="date"
+                  value={fecha}
+                  onChange={(e) => setFecha(e.target.value)}
+                />
+              </div>
+
+              <div className="config-field">
+                <label>Estado</label>
+                <select
+                  value={estado}
+                  onChange={(e) => setEstado(e.target.value)}
+                >
+                  <option value="">Todos los estados</option>
+                  <option value="pendiente">Pendientes</option>
+                  <option value="confirmada">Confirmadas</option>
+                  <option value="auto-confirmada">Auto-confirmadas</option>
+                  <option value="rechazada">Rechazadas</option>
+                </select>
+              </div>
+            </div>
+          </section>
+
+          {/* TABLA */}
+          <section className="card config-card">
+            <div className="config-card-header">
+              <div>
+                <h2>Listado de reservas</h2>
+                <p className="config-card-subtitle">
+                  Visualiza el detalle de cada reserva y ejecuta acciones según su
+                  estado actual.
+                </p>
+              </div>
+            </div>
+
+            <div className="reservas-table-wrapper">
+              {reservas.length === 0 ? (
+                <div className="reservas-empty-state">
+                  <p className="text-suave">
+                    No hay reservas para mostrar con los filtros seleccionados.
+                  </p>
+                </div>
+              ) : (
+                <div className="reservas-table-scroll">
+                  <table className="reservas-table">
+                    <thead>
+                      <tr>
+                        <th>Cliente</th>
+                        <th>Personas</th>
+                        <th>Reserva para</th>
+                        <th>Teléfono</th>
+                        <th>Email</th>
+                        <th>Creada el</th>
+                        <th>Estado</th>
+                        <th className="col-acciones">Acciones</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {reservas.map((r) => (
+                        <tr key={r._id}>
+                          <td>{r.nombre}</td>
+                          <td>{r.personas}</td>
+                          <td>
+                            {new Date(r.hora).toLocaleString("es-ES", {
+                              day: "2-digit",
+                              month: "2-digit",
+                              year: "numeric",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })}
+                          </td>
+                          <td>{r.telefono}</td>
+                          <td>{r.email}</td>
+                          <td>
+                            {r.creadaEn || r.createdAt
+                              ? new Date(r.creadaEn || r.createdAt).toLocaleString("es-ES", {
+                                day: "2-digit",
+                                month: "2-digit",
+                                year: "numeric",
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              })
+                              : "—"}
+                          </td>
+                          <td>
+                            <span className={`estado-reserva badge estado-${r.estado}`}>
+                              {r.estado}
+                            </span>
+                          </td>
+                          <td className="acciones">
+                            {r.estado === "pendiente" ? (
+                              <div className="acciones-buttons">
+                                <button
+                                  className="btn btn-primario btn-compact"
+                                  onClick={() => confirmarReserva(r._id)}
+                                >
+                                  ✅ Confirmar
+                                </button>
+                                <button
+                                  className="btn btn-secundario btn-compact"
+                                  onClick={() => abrirCancelarReserva(r._id)}
+                                >
+                                  ❌ Rechazar
+                                </button>
+                              </div>
+                            ) : r.estado === "confirmada" || r.estado === "auto-confirmada" ? (
+                              <button
+                                className="btn btn-secundario btn-compact"
+                                onClick={() => abrirCancelarReserva(r._id)}
+                              >
+                                🛑 Cancelar
+                              </button>
+                            ) : (
+                              <span className="text-suave">—</span>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          </section>
+        </div>
+      </div>
+
+      {showConfig && (
+        <div className="modal-overlay modal-config-overlay">
+          <div className="card modal-config-contenido reservas-config-modal">
+            <div className="modal-config-header">
+              <h3>⚙️ Ajustes de reservas</h3>
+              <button
+                className="btn-icon-only cerrar-modal"
+                onClick={() => setShowConfig(false)}
+                aria-label="Cerrar configuración"
+              >
+                ✖
+              </button>
+            </div>
+
+            <div className="modal-config-body">
+              <ReservasAjustesPage />
+            </div>
+          </div>
+        </div>
+      )}
+    </main>
   );
 }

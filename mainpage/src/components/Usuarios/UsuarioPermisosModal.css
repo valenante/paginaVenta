@@ -141,13 +141,42 @@
 .permModal-labels {
   display: flex;
   align-items: center;
-  gap: 8px;
+  flex-wrap: wrap;
+  gap: 6px;
 }
 
 .permModal-labels .name {
   color: #fff;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   font-weight: 500;
+}
+
+.permModal-labels .clave {
+  color: #94a3b8;
+  font-size: 0.72rem;
+  font-family: "SF Mono", "Fira Code", monospace;
+}
+
+/* Effective count */
+.permModal-effective {
+  font-size: 0.82rem;
+  color: #94a3b8;
+  margin-top: 0.25rem;
+}
+
+/* Legend */
+.permModal-legend {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  padding: 0.6rem 0.8rem;
+  margin-bottom: 1.2rem;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  font-size: 0.78rem;
+  color: #94a3b8;
 }
 
 /* Tags */
@@ -206,7 +235,23 @@
   box-shadow: 0 6px 18px rgba(255,103,0,0.35);
 }
 
-.permModal-btn.save:hover {
+.permModal-btn.save:hover:not(:disabled) {
   transform: translateY(-2px);
   background: linear-gradient(135deg, #7e22d6, #ff7a22);
+}
+
+.permModal-btn.save:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.permModal-btn.reset {
+  background: rgba(245, 158, 11, 0.15);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.permModal-btn.reset:hover {
+  background: rgba(245, 158, 11, 0.25);
 }

@@ -1,5 +1,5 @@
 /* =========================================================
-   STATS POR MESA — ALEF (TABLE DESKTOP + CARDS MOBILE)
+   STATS POR MES — ALEF (TABLE DESKTOP + CARDS MOBILE)
    ========================================================= */
 
 .statsmesa-container {
@@ -138,7 +138,6 @@
     gap: 0.5rem;
   }
 
-  /* ✅ no wrapper scroll */
   .statsmesa-table-wrapper {
     overflow: visible;
   }
@@ -194,7 +193,7 @@
     flex: 0 0 auto;
   }
 
-  /* Mesa arriba como “título” dentro de la card */
+  /* Mes arriba como "título" dentro de la card */
   .statsmesa-table td.mesa-name {
     padding-top: 0.15rem;
     padding-bottom: 0.75rem;
@@ -203,7 +202,7 @@
   }
 
   .statsmesa-table td.mesa-name::before {
-    content: "Mesa";
+    content: "Mes";
   }
 
   .statsmesa-table td.mesa-name {

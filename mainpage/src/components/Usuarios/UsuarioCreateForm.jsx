@@ -1,6 +1,7 @@
 // src/components/Usuarios/UsuarioCreateForm.jsx
 import React, { useState } from "react";
 import AlefSelect from "../AlefSelect/AlefSelect";
+import { useRoles } from "../../hooks/useRoles";
 import "./UsuarioCreateForm.css";
 
 const ESTACIONES = [
@@ -10,6 +11,7 @@ const ESTACIONES = [
 ];
 
 export default function UsuarioCreateForm({ onCrear }) {
+  const { roles: rolesDisponibles } = useRoles("tpv");
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -26,8 +28,8 @@ export default function UsuarioCreateForm({ onCrear }) {
 
     if (!form.name.trim()) e.name = "Nombre requerido";
     if (!/\S+@\S+\.\S+/.test(form.email)) e.email = "Email inválido";
-    if (!["admin", "cocinero", "camarero"].includes(form.role))
-      e.role = "Rol inválido";
+    const rolesValidos = rolesDisponibles.map((r) => r.value);
+    if (!rolesValidos.includes(form.role)) e.role = "Rol inválido";
     if (form.role === "cocinero" && !form.estacion)
       e.estacion = "Selecciona estación";
     if (form.password.length < 8) e.password = "Min 8 caracteres";
@@ -37,13 +39,13 @@ export default function UsuarioCreateForm({ onCrear }) {
     return e;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const e2 = validate();
     setErrors(e2);
 
     if (Object.keys(e2).length === 0) {
-      onCrear({
+      const result = await onCrear({
         name: form.name,
         email: form.email,
         role: form.role,
@@ -51,14 +53,16 @@ export default function UsuarioCreateForm({ onCrear }) {
         password: form.password,
       });
 
-      setForm({
-        name: "",
-        email: "",
-        role: "",
-        estacion: "",
-        password: "",
-        confirmPassword: "",
-      });
+      if (result?.ok !== false) {
+        setForm({
+          name: "",
+          email: "",
+          role: "",
+          estacion: "",
+          password: "",
+          confirmPassword: "",
+        });
+      }
     }
   };
 
@@ -94,11 +98,7 @@ export default function UsuarioCreateForm({ onCrear }) {
             placeholder="Selecciona rol"
             value={form.role}
             onChange={(v) => setForm({ ...form, role: v })}
-            options={[
-              { value: "admin", label: "Admin" },
-              { value: "cocinero", label: "Cocinero" },
-              { value: "camarero", label: "Camarero" },
-            ]}
+            options={rolesDisponibles}
           />
           {errors.role && <p className="error">{errors.role}</p>}
         </div>

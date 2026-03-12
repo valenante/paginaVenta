@@ -1,15 +1,27 @@
-// src/pages/Estadisticas/components/StatsPorMesa.jsx
+// src/components/Estadisticas/StatsPorMeses.jsx
 import React from "react";
-import "./StatsPorMesa.css";
+import "./StatsPorMeses.css";
 
 const money = (n) => (Number(n || 0)).toFixed(2);
 
-const StatsPorMesa = ({ data }) => {
+const MESES_LABEL = [
+  "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+  "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre",
+];
+
+const formatMesLabel = (mesKey) => {
+  if (!mesKey) return mesKey;
+  const [yyyy, mm] = String(mesKey).split("-");
+  const idx = Number(mm) - 1;
+  return `${MESES_LABEL[idx] || mm} ${yyyy}`;
+};
+
+const StatsPorMeses = ({ data }) => {
   if (!data || data.length === 0) {
     return (
       <section className="statsmesa-container">
         <header className="statsmesa-header">
-          <h3>Estadísticas por mesa</h3>
+          <h3>Estadísticas por mes</h3>
         </header>
         <p className="statsmesa-empty">No hay ventas para este filtro.</p>
       </section>
@@ -20,18 +32,18 @@ const StatsPorMesa = ({ data }) => {
     <section className="statsmesa-container">
       <header className="statsmesa-header">
         <div className="statsmesa-title">
-          <h3>Estadísticas por mesa</h3>
-          <p className="statsmesa-desc">Mesas ordenadas por ingresos generados.</p>
+          <h3>Estadísticas por mes</h3>
+          <p className="statsmesa-desc">Meses ordenados por ingresos generados.</p>
         </div>
 
-        <span className="statsmesa-badge">{data.length} mesas</span>
+        <span className="statsmesa-badge">{data.length} meses</span>
       </header>
 
       <div className="statsmesa-table-wrapper">
         <table className="statsmesa-table">
           <thead>
             <tr>
-              <th>Mesa</th>
+              <th>Mes</th>
               <th>Tickets</th>
               <th>Unidades</th>
               <th>Ingresos</th>
@@ -40,26 +52,26 @@ const StatsPorMesa = ({ data }) => {
           </thead>
 
           <tbody>
-            {data.map((mesa) => {
+            {data.map((row) => {
               const ticketMedio =
-                mesa.numTickets > 0 ? mesa.totalIngresos / mesa.numTickets : 0;
+                row.numTickets > 0 ? row.totalIngresos / row.numTickets : 0;
 
               return (
-                <tr key={mesa.mesa}>
-                  <td data-label="Mesa" className="mesa-name">
-                    Mesa {mesa.mesa}
+                <tr key={row.mes}>
+                  <td data-label="Mes" className="mesa-name">
+                    {formatMesLabel(row.mes)}
                   </td>
 
                   <td data-label="Tickets" className="stats-num">
-                    {mesa.numTickets}
+                    {row.numTickets}
                   </td>
 
                   <td data-label="Unidades" className="stats-num">
-                    {mesa.totalCantidad}
+                    {row.totalCantidad}
                   </td>
 
                   <td data-label="Ingresos" className="stats-money">
-                    {money(mesa.totalIngresos)} €
+                    {money(row.totalIngresos)} €
                   </td>
 
                   <td data-label="Ticket medio" className="stats-money">
@@ -75,4 +87,4 @@ const StatsPorMesa = ({ data }) => {
   );
 };
 
-export default StatsPorMesa;
+export default StatsPorMeses;

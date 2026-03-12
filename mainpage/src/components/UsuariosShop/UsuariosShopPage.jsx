@@ -117,14 +117,12 @@ export default function UsuariosShopPage() {
       {usuarioEdit && (
         <UsuarioEditModal
           usuario={usuarioEdit}
-          permisosDisponibles={permisosDisponibles}
-          rolesConfig={rolesConfig}
           onSave={onEditar}
           onClose={() => setUsuarioEdit(null)}
         />
       )}
 
-      {/*{usuarioPermisos && (
+      {usuarioPermisos && (
         <UsuarioPermisosModal
           usuario={usuarioPermisos}
           permisosDisponibles={permisosDisponibles}
@@ -132,7 +130,7 @@ export default function UsuariosShopPage() {
           onSave={actualizarPermisosUsuario}
           onClose={() => setUsuarioPermisos(null)}
         />
-      )} */}
+      )}
 
       {/* ESTADÍSTICAS */}
       {usuarioStats && (

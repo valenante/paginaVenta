@@ -1,14 +1,8 @@
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
+import { useRoles } from "../../hooks/useRoles";
 import "./UsuarioEditModal.css";
 
-const FALLBACK_ROLES = [
-  { value: "admin", label: "Admin" },
-  { value: "cocinero", label: "Cocinero" },
-  { value: "camarero", label: "Camarero" },
-];
-
-// si mañana agregas estaciones en config
-const FALLBACK_ESTACIONES = [
+const ESTACIONES = [
   { value: "frito", label: "Frito" },
   { value: "plancha", label: "Plancha" },
   { value: "frio", label: "Frío" },
@@ -16,22 +10,11 @@ const FALLBACK_ESTACIONES = [
 
 export default function UsuarioEditModal({
   usuario,
-  permisosDisponibles, // (lo dejamos preparado)
-  rolesConfig,         // (si viene con roles/estaciones, lo usamos)
   onSave,
   onClose,
 }) {
-  const roles = useMemo(() => {
-    const rcRoles = rolesConfig?.roles;
-    if (Array.isArray(rcRoles) && rcRoles.length) return rcRoles;
-    return FALLBACK_ROLES;
-  }, [rolesConfig]);
-
-  const estaciones = useMemo(() => {
-    const rcEst = rolesConfig?.estaciones;
-    if (Array.isArray(rcEst) && rcEst.length) return rcEst;
-    return FALLBACK_ESTACIONES;
-  }, [rolesConfig]);
+  const { roles } = useRoles("tpv");
+  const estaciones = ESTACIONES;
 
   const [form, setForm] = useState({
     name: usuario?.name || "",

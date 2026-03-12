@@ -1,0 +1,193 @@
+/* =========================================================
+   STAFF WELCOME — Estilo Premium Alef
+   ---------------------------------------------------------
+   - Hero de bienvenida elegante
+   - Cards glassmorphism
+   - CTA destacado
+   ========================================================= */
+
+:root {
+  --staff-welcome-bg: radial-gradient(circle at top right, #141423, #0a0a13 70%);
+  --staff-welcome-glass: rgba(255, 255, 255, 0.05);
+  --staff-welcome-border: rgba(255, 255, 255, 0.08);
+  --staff-welcome-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+  --staff-welcome-radius: 18px;
+  --staff-welcome-pill: 999px;
+
+  --staff-welcome-text: #f8fafc;
+  --staff-welcome-soft: #cbd5e1;
+  --staff-welcome-muted: rgba(226, 232, 240, 0.72);
+
+  --staff-welcome-accent-1: #6a0dad;
+  --staff-welcome-accent-2: #ff6700;
+}
+
+/* ===== ROOT ===== */
+.staff-welcome {
+  position: relative;
+  overflow: hidden;
+  padding: 2rem;
+  border-radius: var(--staff-welcome-radius);
+  background: var(--staff-welcome-bg);
+  border: 1px solid var(--staff-welcome-border);
+  box-shadow: var(--staff-welcome-shadow);
+  color: var(--staff-welcome-text);
+  animation: staffWelcomeFadeIn 0.25s ease-out;
+}
+
+.staff-welcome::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto auto 0;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    rgba(106, 13, 173, 0.5),
+    rgba(255, 103, 0, 0.45)
+  );
+  pointer-events: none;
+}
+
+@keyframes staffWelcomeFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===== TITLES ===== */
+.staff-welcome h1 {
+  margin: 0 0 0.75rem;
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1.1;
+  color: #ffffff;
+}
+
+.staff-welcome .subtitle {
+  max-width: 720px;
+  margin: 0 0 1.6rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--staff-welcome-soft);
+}
+
+/* ===== CARDS ===== */
+.welcome-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.6rem;
+}
+
+.welcome-cards .card {
+  background: var(--staff-welcome-glass);
+  backdrop-filter: blur(14px);
+  border: 1px solid var(--staff-welcome-border);
+  border-radius: var(--staff-welcome-radius);
+  box-shadow: var(--staff-welcome-shadow);
+  padding: 1rem 1.1rem;
+  color: var(--staff-welcome-text);
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.4;
+  transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+.welcome-cards .card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.07);
+}
+
+/* ===== CTA ===== */
+.staff-welcome .btn.btn-primario {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 46px;
+  padding: 0.72rem 1.35rem;
+  border: none;
+  border-radius: var(--staff-welcome-pill);
+  background: linear-gradient(90deg, #6a0dad, #ff6700);
+  color: #ffffff;
+  font-size: 0.94rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow:
+    0 4px 14px rgba(255, 103, 0, 0.28),
+    0 0 0 1px rgba(255, 255, 255, 0.06);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+}
+
+.staff-welcome .btn.btn-primario:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(255, 103, 0, 0.38);
+  filter: brightness(1.05);
+}
+
+.staff-welcome .btn.btn-primario:active {
+  transform: translateY(0);
+}
+
+.staff-welcome .btn.btn-primario:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 3px rgba(168, 85, 247, 0.28),
+    0 8px 24px rgba(255, 103, 0, 0.38);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .staff-welcome {
+    padding: 1.2rem;
+  }
+
+  .staff-welcome h1 {
+    font-size: 1.45rem;
+  }
+
+  .staff-welcome .subtitle {
+    font-size: 0.94rem;
+    margin-bottom: 1.2rem;
+  }
+
+  .welcome-cards {
+    grid-template-columns: 1fr;
+    gap: 0.85rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .welcome-cards .card {
+    padding: 0.95rem 1rem;
+    font-size: 0.92rem;
+  }
+
+  .staff-welcome .btn.btn-primario {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .staff-welcome {
+    padding: 1rem;
+    border-radius: 16px;
+  }
+
+  .staff-welcome h1 {
+    font-size: 1.2rem;
+  }
+
+  .staff-welcome .subtitle {
+    font-size: 0.9rem;
+  }
+
+  .welcome-cards .card {
+    font-size: 0.88rem;
+  }
+}

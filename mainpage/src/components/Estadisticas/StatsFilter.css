@@ -2,14 +2,6 @@
    STATS FILTER BAR — Estilo Profesional Alef
    ========================================================= */
 
-.stats-filter-bar {
-  display: flex;
-  flex-direction: column;
-  gap: 1.8rem;
-  margin-bottom: 2rem;
-  padding: 1.8rem 2rem;
-}
-
 /* ===== TITULOS ===== */
 .stats-filter-title {
   font-size: 1.45rem;

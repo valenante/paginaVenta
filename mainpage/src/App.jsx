@@ -1,6 +1,5 @@
-// src/App.jsx
 import React, { Suspense, lazy, useEffect } from "react";
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Routes, Route, useLocation, useParams, Navigate } from "react-router-dom";
 
 /* =============================
    LANDING (EAGER: carga rápida)
@@ -29,7 +28,6 @@ import WhatsAppFloating from "./components/WhatsAppFloating/WhatsAppFloating";
 import { FeaturesPlanProvider } from "./context/FeaturesPlanContext.jsx";
 import { useAuth } from "./context/AuthContext.jsx";
 import { useTenant } from "./context/TenantContext.jsx";
-import { useFeaturesPlan } from "./context/FeaturesPlanContext.jsx";
 import { ProductosProvider } from "./context/ProductosContext.jsx";
 import { SocketProvider } from "./utils/socket.jsx";
 import { VentasProvider } from "./context/VentasContext";
@@ -103,15 +101,13 @@ const CajaDiaria = lazy(() =>
 );
 
 const PanelPro = lazy(() => import("./pages/PanelPro"));
-
 const ConfigImpresionPage = lazy(() => import("./pages/ConfigImpresionPage"));
 const ConfigImpresionShopPage = lazy(() =>
   import("./pages/ConfigImpresionShopPage")
 );
 
 // Paneles
-const CamareroPanel = lazy(() => import("./pages/panel/CamareroPanel"));
-const CocineroPanel = lazy(() => import("./pages/panel/CocineroPanel"));
+const StaffPanel = lazy(() => import("./pages/panel/StaffPanel"));
 
 // 🛡 SuperAdmin
 const AdminLayout = lazy(() =>
@@ -149,6 +145,13 @@ const SuperadminAltaTenant = lazy(() =>
   import("./pages/admin/SuperadminAltaTenant/SuperadminAltaTenant.jsx")
 );
 
+const ADMIN_PANEL_ROLES = new Set([
+  "admin",
+  "admin_restaurante",
+  "admin_shop",
+  "vendedor",
+]);
+
 /* =============================
    LANDING PÚBLICA (marketing)
    ============================= */
@@ -183,33 +186,37 @@ function LandingPage() {
 }
 
 /* ==========================================
-   HOME ENTRY – decide landing vs PanelPro
+   HOME ENTRY – decide landing vs panel
    ========================================== */
 function HomeEntry() {
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const { tenantId } = useTenant();
-  const { hasFeature, loading } = useFeaturesPlan();
+  const params = useParams();
 
-  if (loading) return <LoadingScreen />;
+  if (authLoading) return <LoadingScreen />;
 
-  const isPro = !!user && !!tenantId && hasFeature("estadisticas_avanzadas", false);
+  if (!user) return <LandingPage />;
 
-  if (isPro) {
-    return (
-      <UserLayout>
-        <PanelPro />
-      </UserLayout>
-    );
+  if (user.role === "superadmin") {
+    return <Navigate to="/superadmin" replace />;
   }
 
-  return <LandingPage />;
+  const resolvedTenantId = params.tenantId || tenantId || user?.tenantSlug || user?.tenantId;
+  const isAdmin = ADMIN_PANEL_ROLES.has(user.role);
+
+  const target = resolvedTenantId
+    ? `/${resolvedTenantId}/${isAdmin ? "pro" : "staff"}`
+    : isAdmin
+      ? "/pro"
+      : "/staff";
+
+  return <Navigate to={target} replace />;
 }
 
 function WhatsAppFloatingGate() {
   const { user, loading: authLoading } = useAuth();
   const location = useLocation();
 
-  // Rutas donde NO queremos WhatsApp (app interna)
   const isInternalRoute =
     location.pathname.startsWith("/dashboard") ||
     location.pathname.startsWith("/tpv") ||
@@ -220,12 +227,13 @@ function WhatsAppFloatingGate() {
     location.pathname.startsWith("/estadisticas") ||
     location.pathname.startsWith("/caja-diaria") ||
     location.pathname.startsWith("/pro") ||
+    location.pathname.startsWith("/staff") ||
+    location.pathname.startsWith("/panel") ||
     location.pathname.startsWith("/superadmin") ||
     location.pathname.startsWith("/camarero") ||
     location.pathname.startsWith("/cocinero") ||
-    /\/\w+\/(camarero|cocinero|pro)$/.test(location.pathname);
+    /\/\w+\/(camarero|cocinero|pro|staff|panel)$/.test(location.pathname);
 
-  // Esperar a que auth resuelva para evitar flash del botón durante bootstrap
   if (authLoading || user || isInternalRoute) return null;
 
   return <WhatsAppFloating />;
@@ -460,46 +468,33 @@ function AppRoutes() {
         }
       />
 
+      {/* STAFF */}
+      <Route
+        path="/staff"
+        element={
+          <UserLayout>
+            <StaffPanel />
+          </UserLayout>
+        }
+      />
+      <Route
+        path="/:tenantId/staff"
+        element={
+          <UserLayout>
+            <StaffPanel />
+          </UserLayout>
+        }
+      />
+
+      {/* Alias legacy */}
+      <Route path="/panel" element={<Navigate to="/staff" replace />} />
+      <Route path="/:tenantId/panel" element={<Navigate to="../staff" replace />} />
+
       <Route
         path="/configuracion/exports"
         element={
           <UserLayout>
             <ExportsPage />
-          </UserLayout>
-        }
-      />
-
-      {/* PANEL EMPLEADOS */}
-      <Route
-        path="/camarero"
-        element={
-          <UserLayout>
-            <CamareroPanel />
-          </UserLayout>
-        }
-      />
-      <Route
-        path="/:tenantId/camarero"
-        element={
-          <UserLayout>
-            <CamareroPanel />
-          </UserLayout>
-        }
-      />
-
-      <Route
-        path="/cocinero"
-        element={
-          <UserLayout>
-            <CocineroPanel />
-          </UserLayout>
-        }
-      />
-      <Route
-        path="/:tenantId/cocinero"
-        element={
-          <UserLayout>
-            <CocineroPanel />
           </UserLayout>
         }
       />

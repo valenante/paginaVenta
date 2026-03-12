@@ -419,35 +419,56 @@ Si un producto se vende por caja/unidad y también suelto, crea productos separa
 ---
 
 ## 🔹 1) Crear proveedor
-Guarda:
-- nombre
-- contacto
-- condiciones (opcional)
+
+Desde **Configuración → Proveedores**, crea un proveedor con:
+
+- Nombre comercial y razón social.
+- Contacto (teléfono, email).
+- Dirección y condiciones de pago.
+- Plazo de entrega habitual.
 
 ---
 
-## 🔹 2) Crear pedido al proveedor
-Seleccionas productos + cantidades previstas.
+## 🔹 2) Productos del proveedor
+
+Cada proveedor tiene un catálogo de productos con:
+
+- Nombre, precio base e IVA.
+- Unidad (kg, litro, unidad, caja…).
+- Asociación con productos de tu tienda.
 
 ---
 
-## 🔹 3) Recibir pedido
-Al recibir:
-- confirmas cantidades reales
-- registras referencia (albarán/factura)
-- el sistema genera **entradas de stock**
+## 🔹 3) Crear pedido al proveedor
+
+1. Entra en el proveedor → pestaña **Pedidos**.
+2. Pulsa **Nuevo pedido**.
+3. Añade líneas con productos y cantidades.
+4. Indica fecha esperada y notas.
+5. Puedes **descargar el pedido en PDF** para enviárselo.
 
 ---
 
-## 🔹 4) Facturas de proveedor
-Puedes:
-- subir factura
-- marcar como pagada
-- ver historial
+## 🔹 4) Recibir pedido
+
+Al recibir la mercancía:
+
+- Abre el pedido → pulsa **Recibir**.
+- Indica cantidades realmente recibidas.
+- El stock se actualiza automáticamente.
+
+---
+
+## 🔹 5) Facturas de proveedor
+
+- Sube el documento de factura (PDF/imagen).
+- Registra número, fechas e importe.
+- Marca como pagada cuando corresponda.
 
 ---
 
 ## 🔹 Consejo
+
 Siempre que puedas, recibe pedidos desde el sistema: inventario mucho más preciso.`,
         ],
         imagen: "/ayuda/shop/proveedores.png",
@@ -698,6 +719,55 @@ Ideal si quieres:
 Haz un test de impresión antes de abrir al público.`,
         ],
         imagen: "/ayuda/shop/impresion.png",
+      },
+    ],
+  },
+
+  facturacion: {
+    titulo: "Facturación • VeriFactu",
+    articulos: [
+      {
+        id: "facturacion-shop",
+        titulo: "Facturación encadenada y VeriFactu",
+        descripcion:
+          "Cómo funciona la facturación encadenada, las facturas de consumidor final y las nominativas.",
+        contenido: [
+          `Alef Shop incluye **facturación encadenada** compatible con **VeriFactu**.
+
+---
+
+## 🔹 1) Facturas encadenadas
+
+Cada factura lleva un **hash** encadenado con la anterior, garantizando integridad fiscal.
+
+---
+
+## 🔹 2) Tipos de factura
+
+- **Consumidor final**: sin datos de cliente (la mayoría de ventas).
+- **Nominativa**: con nombre y NIF del cliente (cuando lo solicita).
+
+Puedes filtrar por tipo en la página de Facturas.
+
+---
+
+## 🔹 3) Rectificación y anulación
+
+- **Rectificar**: genera una factura rectificativa encadenada (R1–R5).
+- **Anular**: genera un registro de anulación. No se puede deshacer.
+
+---
+
+## 🔹 4) Exportación
+
+Exporta facturas en **CSV** o **PDF** con los filtros que necesites (año, fechas, estado, tipo).
+
+---
+
+## 🔹 5) Configuración fiscal
+
+Desde **Configuración → Tienda**, rellena CIF/NIF, razón social y dirección fiscal.`,
+        ],
       },
     ],
   },

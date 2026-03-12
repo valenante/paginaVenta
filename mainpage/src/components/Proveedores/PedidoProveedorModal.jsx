@@ -1,5 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 import api from "../../utils/api";
 import Portal from "../ui/Portal";
 import ErrorToast from "../common/ErrorToast.jsx";
@@ -216,6 +218,70 @@ export default function PedidoProveedorModal({ onClose, onSaved, mode = "create"
     return { subtotal, totalIva, total };
   }, [form.lineas, productoMap]);
 
+  const generarPDF = () => {
+    const doc = new jsPDF({ orientation: "p", unit: "mm", format: "a4" });
+
+    const fechaEsp = form.fechaEsperada
+      ? new Date(form.fechaEsperada + "T00:00:00").toLocaleDateString("es-ES")
+      : "Sin definir";
+
+    // Header
+    doc.setFontSize(18);
+    doc.setFont(undefined, "bold");
+    doc.text("Pedido a Proveedor", 14, 20);
+
+    doc.setFontSize(10);
+    doc.setFont(undefined, "normal");
+    doc.text(`Fecha esperada: ${fechaEsp}`, 14, 30);
+    doc.text(`Estado: ${pedido?.estado || (isEdit ? "borrador" : "nuevo")}`, 14, 36);
+
+    let cursorY = 42;
+    if (form.notas) {
+      const notasLines = doc.splitTextToSize(`Notas: ${form.notas}`, 180);
+      doc.text(notasLines, 14, cursorY);
+      cursorY += notasLines.length * 5 + 4;
+    }
+
+    // Table
+    const lineas = form.lineas || [];
+    const body = lineas.map((l, i) => {
+      const c = calcLinea(l);
+      const prod = productoMap.get(String(l.productoProveedorId));
+      return [
+        i + 1,
+        prod?.nombre || "—",
+        Number(l.cantidad || 0),
+        `${Number(c.unit || 0).toFixed(2)} €`,
+        `${c.iva}%`,
+        `${Number(c.base || 0).toFixed(2)} €`,
+        `${Number(c.total || 0).toFixed(2)} €`,
+      ];
+    });
+
+    autoTable(doc, {
+      startY: cursorY + 2,
+      head: [["#", "Producto", "Cant.", "Precio ud.", "IVA", "Base", "Total"]],
+      body,
+      styles: { fontSize: 9 },
+      headStyles: { fillColor: [106, 13, 173] },
+      foot: [
+        ["", "", "", "", "Subtotal", "", `${Number(totals.subtotal || 0).toFixed(2)} €`],
+        ["", "", "", "", "IVA", "", `${Number(totals.totalIva || 0).toFixed(2)} €`],
+        ["", "", "", "", "TOTAL", "", `${Number(totals.total || 0).toFixed(2)} €`],
+      ],
+      footStyles: { fillColor: [245, 245, 245], textColor: [0, 0, 0], fontStyle: "bold" },
+    });
+
+    const pageH = doc.internal.pageSize.getHeight();
+    doc.setFontSize(8);
+    doc.setTextColor(150);
+    doc.text(`Generado: ${new Date().toLocaleString("es-ES")}`, 14, pageH - 10);
+    doc.text("Alef", doc.internal.pageSize.getWidth() - 24, pageH - 10);
+
+    const numFact = pedido?.numero || pedido?._id?.slice(-6) || Date.now();
+    doc.save(`pedido_proveedor_${numFact}.pdf`);
+  };
+
   return (
     <Portal>
       <div className="pedProvModal-backdrop" onMouseDown={onClose}>
@@ -400,19 +466,30 @@ export default function PedidoProveedorModal({ onClose, onSaved, mode = "create"
               <button
                 type="button"
                 className="btn btn-secundario"
-                onClick={onClose}
-                disabled={saving}
+                onClick={generarPDF}
+                disabled={saving || !form.lineas?.some((l) => l.productoProveedorId)}
               >
-                Cancelar
+                📄 Descargar PDF
               </button>
 
-              <button
-                type="submit"
-                className="btn btn-primario"
-                disabled={saving || loadingProductos || productos.length === 0}
-              >
-                {saving ? "Guardando…" : "Guardar"}
-              </button>
+              <div className="pedProvModal-footRight">
+                <button
+                  type="button"
+                  className="btn btn-secundario"
+                  onClick={onClose}
+                  disabled={saving}
+                >
+                  Cancelar
+                </button>
+
+                <button
+                  type="submit"
+                  className="btn btn-primario"
+                  disabled={saving || loadingProductos || productos.length === 0}
+                >
+                  {saving ? "Guardando…" : "Guardar"}
+                </button>
+              </div>
             </footer>
           </form>
         </div>

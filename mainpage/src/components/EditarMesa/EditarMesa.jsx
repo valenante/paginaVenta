@@ -10,17 +10,19 @@ export default function ModalEditarMesa({ mesa, onClose, onSave, onDelete }) {
   const numeroLimpio = useMemo(() => numero.trim(), [numero]);
 
   useEffect(() => {
-    // ESC para cerrar
     const onKeyDown = (e) => {
       if (e.key === "Escape") onClose?.();
     };
+
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [onClose]);
 
   const validar = () => {
     if (!numeroLimpio) return "El número de mesa es obligatorio.";
-    if (!/^\d+$/.test(numeroLimpio)) return "El número debe ser un valor numérico (por ejemplo: 12).";
+    if (!/^\d+$/.test(numeroLimpio)) {
+      return "El número debe ser un valor numérico (por ejemplo: 12).";
+    }
     return "";
   };
 
@@ -30,8 +32,12 @@ export default function ModalEditarMesa({ mesa, onClose, onSave, onDelete }) {
       setError(msg);
       return;
     }
+
     setError("");
-    onSave?.({ numero: Number(numeroLimpio), zona });
+    onSave?.({
+      numero: Number(numeroLimpio),
+      zona,
+    });
   };
 
   const handleDelete = () => {
@@ -39,6 +45,7 @@ export default function ModalEditarMesa({ mesa, onClose, onSave, onDelete }) {
       setConfirmDelete(true);
       return;
     }
+
     onDelete?.(mesa._id);
   };
 
@@ -50,36 +57,42 @@ export default function ModalEditarMesa({ mesa, onClose, onSave, onDelete }) {
   };
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
+    <div className="modal-overlay-editar" onClick={onClose}>
       <div
-        className="modal-contenido"
+        className="modal-contenido-editar"
         onClick={(e) => e.stopPropagation()}
         role="dialog"
         aria-modal="true"
         aria-labelledby="modal-editar-mesa-title"
       >
-        {/* Header */}
-        <div className="modal-header">
-          <div className="modal-header-text">
-            <h2 id="modal-editar-mesa-title">Editar mesa {mesa.numero}</h2>
-            <p className="modal-subtitle">
+        <div className="modal-header-editar">
+          <div className="modal-header-text-editar">
+            <h2 id="modal-editar-mesa-title" className="modal-title-editar">
+              Editar mesa {mesa.numero}
+            </h2>
+
+            <p className="modal-subtitle-editar">
               Ajusta el número y la zona. Los cambios se reflejarán en el plano y en el TPV.
             </p>
           </div>
 
-          <button className="modal-close" onClick={onClose} aria-label="Cerrar modal">
+          <button
+            className="modal-close-editar"
+            onClick={onClose}
+            aria-label="Cerrar modal"
+          >
             ✕
           </button>
         </div>
 
-        {/* Form */}
-        <div className="modal-form">
-          <label className="modal-label">
+        <div className="modal-form-editar">
+          <label className="modal-label-editar">
             Número de mesa
-            <span className="modal-help">
+            <span className="modal-help-editar">
               Debe ser único y numérico. Ej: 1, 12, 25…
             </span>
           </label>
+
           <input
             value={numero}
             onChange={(e) => {
@@ -89,60 +102,58 @@ export default function ModalEditarMesa({ mesa, onClose, onSave, onDelete }) {
             }}
             inputMode="numeric"
             placeholder="Ej: 12"
-            className={`modal-input ${error ? "is-error" : ""}`}
+            className={`modal-input-editar ${error ? "is-error-editar" : ""}`}
           />
 
-          <label className="modal-label">
+          <label className="modal-label-editar">
             Zona
-            <span className="modal-help">
+            <span className="modal-help-editar">
               Define dónde aparecerá en el editor y cómo se mostrará en el TPV.
             </span>
           </label>
+
           <select
             value={zona}
             onChange={(e) => {
               setZona(e.target.value);
               if (confirmDelete) setConfirmDelete(false);
             }}
-            className="modal-select"
+            className="modal-select-editar"
           >
             <option value="interior">Interior</option>
             <option value="exterior">Terraza</option>
             <option value="auxiliar">Auxiliar</option>
           </select>
 
-          {/* Hint contextual */}
-          <div className="modal-hint">
+          <div className="modal-hint-editar">
             <strong>Zona actual:</strong> {zonaLabel(zona)} ·{" "}
             {zona === "auxiliar"
               ? "No aparecerá en el plano principal, solo en mesas auxiliares."
               : "Aparecerá dentro del plano principal de esta zona."}
           </div>
 
-          {/* Error */}
-          {error && <div className="modal-error">{error}</div>}
+          {error && <div className="modal-error-editar">{error}</div>}
         </div>
 
-        {/* Footer buttons */}
-        <div className="modal-botones modal-botones-pro">
-          <button className="btn-guardar" onClick={handleSave}>
+        <div className="modal-botones-editar">
+          <button className="btn-guardar-editar" onClick={handleSave}>
             Guardar cambios
           </button>
 
           <button
-            className={`btn-eliminar ${confirmDelete ? "is-confirm" : ""}`}
+            className={`btn-eliminar-editar ${confirmDelete ? "is-confirm-editar" : ""}`}
             onClick={handleDelete}
             title="Eliminar mesa"
           >
             {confirmDelete ? "Confirmar eliminar" : "Eliminar"}
           </button>
 
-          <button className="btn-cerrar" onClick={onClose}>
+          <button className="btn-cerrar-editar" onClick={onClose}>
             Cerrar
           </button>
         </div>
 
-        <div className="modal-footer-note">
+        <div className="modal-footer-note-editar">
           Tip: pulsa <strong>ESC</strong> para cerrar rápido.
         </div>
       </div>

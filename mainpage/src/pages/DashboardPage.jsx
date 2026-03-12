@@ -7,7 +7,7 @@ import LoadingScreen from "../components/LoadingScreen/LoadingScreen";
 import "../styles/DashboardPage.css";
 
 export default function DashboardPage() {
-  const { user } = useAuth();
+  const { user, hasPermission, canAccessModule } = useAuth();
   const { config, loading } = useConfig();
   const { tenant } = useTenant();
   const tipoNegocio = tenant?.tipoNegocio || "restaurante";
@@ -77,64 +77,80 @@ export default function DashboardPage() {
 
       {/* Grid de accesos rápidos */}
       <section className="dashboard-grid">
-        {/* 1) Operación / Negocio (lo más importante) */}
-        <Link to="/configuracion/restaurante" className="dashboard-tile card">
-          <div className="dashboard-tile-icon">🏪</div>
-          <h2>Datos de {labelNegocio}</h2>
-          <p>Actualiza branding, contacto y configuración general del entorno Alef.</p>
-        </Link>
+        {/* 1) Operación / Negocio */}
+        {hasPermission("config.edit") && (
+          <Link to="/configuracion/restaurante" className="dashboard-tile card">
+            <div className="dashboard-tile-icon">🏪</div>
+            <h2>Datos de {labelNegocio}</h2>
+            <p>Actualiza branding, contacto y configuración general del entorno Alef.</p>
+          </Link>
+        )}
 
-        <Link to={impresionPath} className="dashboard-tile card">
-          <div className="dashboard-tile-icon">🖨️</div>
-          <h2>Impresión</h2>
-          <p>{impresionTexto}</p>
-        </Link>
+        {hasPermission("config.edit") && (
+          <Link to={impresionPath} className="dashboard-tile card">
+            <div className="dashboard-tile-icon">🖨️</div>
+            <h2>Impresión</h2>
+            <p>{impresionTexto}</p>
+          </Link>
+        )}
 
         {tipoNegocio === "restaurante" && !isPlanEsencial && (
           <>
-            <Link to="/configuracion/carta" className="dashboard-tile card">
-              <div className="dashboard-tile-icon">📋</div>
-              <h2>Carta</h2>
-              <p>Gestiona la carta digital, alérgenos, platos, bebidas y visibilidad.</p>
-            </Link>
+            {canAccessModule("productos") && (
+              <Link to="/configuracion/carta" className="dashboard-tile card">
+                <div className="dashboard-tile-icon">📋</div>
+                <h2>Carta</h2>
+                <p>Gestiona la carta digital, alérgenos, platos, bebidas y visibilidad.</p>
+              </Link>
+            )}
 
-            <Link to="/configuracion/reservas" className="dashboard-tile card">
-              <div className="dashboard-tile-icon">📅</div>
-              <h2>Reservas</h2>
-              <p>Administra días disponibles, capacidad y solicitudes de reservas.</p>
-            </Link>
+            {canAccessModule("reservas") && (
+              <Link to="/configuracion/reservas" className="dashboard-tile card">
+                <div className="dashboard-tile-icon">📅</div>
+                <h2>Reservas</h2>
+                <p>Administra días disponibles, capacidad y solicitudes de reservas.</p>
+              </Link>
+            )}
           </>
         )}
 
-        <Link to="/configuracion/proveedores" className="dashboard-tile card">
-          <div className="dashboard-tile-icon">🚚</div>
-          <h2>Proveedores</h2>
-          <p>Gestiona proveedores, contactos, condiciones y relaciones comerciales.</p>
-        </Link>
+        {canAccessModule("proveedores") && (
+          <Link to="/configuracion/proveedores" className="dashboard-tile card">
+            <div className="dashboard-tile-icon">🚚</div>
+            <h2>Proveedores</h2>
+            <p>Gestiona proveedores, contactos, condiciones y relaciones comerciales.</p>
+          </Link>
+        )}
 
-        {/* 2) Cuenta / Facturación (administrativo) */}
-        <Link to="/mi-cuenta" className="dashboard-tile card">
-          <div className="dashboard-tile-icon">💼</div>
-          <h2>Mi cuenta</h2>
-          <p>
-            Consulta tu plan, fecha de renovación, estado de tu suscripción y datos de
-            facturación.
-          </p>
-        </Link>
+        {/* 2) Cuenta / Facturación */}
+        {hasPermission("config.view") && (
+          <Link to="/mi-cuenta" className="dashboard-tile card">
+            <div className="dashboard-tile-icon">💼</div>
+            <h2>Mi cuenta</h2>
+            <p>
+              Consulta tu plan, fecha de renovación, estado de tu suscripción y datos de
+              facturación.
+            </p>
+          </Link>
+        )}
 
-        <Link to="/facturas" className="dashboard-tile card">
-          <div className="dashboard-tile-icon">🧾</div>
-          <h2>Facturas</h2>
-          <p>Visualiza facturas encadenadas, XML firmados y envíos AEAT.</p>
-        </Link>
+        {canAccessModule("facturas") && (
+          <Link to="/facturas" className="dashboard-tile card">
+            <div className="dashboard-tile-icon">🧾</div>
+            <h2>Facturas</h2>
+            <p>Visualiza facturas encadenadas, XML firmados y envíos AEAT.</p>
+          </Link>
+        )}
 
-        <Link to="/configuracion/exports" className="dashboard-tile card">
-          <div className="dashboard-tile-icon">📤</div>
-          <h2>Exports / Reports</h2>
-          <p>Genera CSV y reportes en segundo plano. Historial auditable y descarga segura.</p>
-        </Link>
+        {hasPermission("estadisticas.export") && (
+          <Link to="/configuracion/exports" className="dashboard-tile card">
+            <div className="dashboard-tile-icon">📤</div>
+            <h2>Exports / Reports</h2>
+            <p>Genera CSV y reportes en segundo plano. Historial auditable y descarga segura.</p>
+          </Link>
+        )}
 
-        {/* 3) Usuario (personal, al final) */}
+        {/* 3) Usuario (siempre visible) */}
         <Link to="/perfil" className="dashboard-tile card">
           <div className="dashboard-tile-icon">👤</div>
           <h2>Perfil</h2>

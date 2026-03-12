@@ -1,327 +1,286 @@
 /*****************************************************
- * MiCuentaPage — Producción (Alef SaaS)
+ * MiCuenta Page – Alef
+ * Hermana visual de RestauranteConfigPage
  *****************************************************/
 
-.micuenta-page.section.section--narrow {
-  max-width: 1120px;
-  margin: var(--space-2xl) auto;
-  padding: 0 var(--space-lg);
+.micuenta-config-page {
+  width: auto;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--space-lg);
+  padding-right: var(--space-lg);
 }
 
-/* Header */
-.micuenta-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  gap: var(--space-lg);
-  margin-bottom: var(--space-lg);
-}
+/* ===== Header global ===== */
 
-.micuenta-header h1 {
-  margin: 0;
-  color: var(--color-blanco);
-  font-size: var(--font-size-2xl);
-  font-weight: 800;
-}
-
-.micuenta-sub {
-  margin: 0.35rem 0 0;
-  color: var(--color-texto-suave);
-  font-size: var(--font-size-base);
-}
-
-.micuenta-header-actions {
-  display: flex;
-  gap: var(--space-sm);
-  align-items: center;
-}
-
-.btn-soft {
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  background: rgba(255, 255, 255, 0.08);
-  color: #fff;
-  padding: 0.55rem 0.9rem;
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  font-weight: 700;
-  transition: transform 0.12s ease, background 0.15s ease, border 0.15s ease;
-}
-
-.btn-soft:hover {
-  transform: translateY(-1px);
-  background: rgba(255, 255, 255, 0.12);
-  border-color: rgba(255, 255, 255, 0.35);
-}
-
-.btn-soft:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  transform: none;
-}
-
-/* Resumen estado */
-.micuenta-status {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-sm);
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: var(--radius-lg);
-  padding: var(--space-md);
-  margin-bottom: var(--space-xl);
-}
-
-.status-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 6px 10px;
-  border-radius: var(--radius-md);
-  background: rgba(0, 0, 0, 0.12);
-}
-
-.status-label {
-  color: rgba(255, 255, 255, 0.78);
-  font-weight: 700;
-  font-size: var(--font-size-sm);
-}
-
-/* Grid principal */
-.micuenta-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-xl);
-}
-
-@media (max-width: 980px) {
-  .micuenta-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .micuenta-header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-}
-
-/* Cards */
-.micuenta-card {
-  background: #ffffff;
-  border-radius: var(--radius-lg);
-  padding: var(--space-xl);
-  border: 1px solid #e7e7e7;
-  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.06);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-md);
-}
-
-.micuenta-card--legal {
-  border-left: 4px solid var(--color-primario);
-}
-
-.card-head {
+.micuenta-config-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: var(--space-md);
+  gap: var(--space-lg);
+  margin-bottom: var(--space-xl);
 }
 
-.micuenta-card h2 {
-  margin: 0;
-  font-size: var(--font-size-xl);
-  font-weight: 800;
+.micuenta-config-header h1 {
+  margin: 0 0 var(--space-xs);
+  font-size: var(--font-size-2xl);
   color: var(--color-primario);
 }
 
-/* Info rows */
-.micuenta-info {
+.micuenta-config-header p {
+  margin: 0;
+  max-width: 760px;
+}
+
+.micuenta-config-header-status {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+/* ===== Layout ===== */
+
+.micuenta-config-layout {
+  display: grid;
+  gap: var(--space-xl);
+  align-items: flex-start;
+}
+
+.micuenta-config-main {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: var(--space-lg);
 }
 
-.info-row {
-  display: flex;
-  justify-content: space-between;
+/* ===== Stats resumen ===== */
+
+.micuenta-config-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: var(--space-md);
-  padding: 0.4rem 0;
-  border-bottom: 1px solid #f0f0f0;
 }
 
-.info-row:last-child {
-  border-bottom: none;
+.micuenta-config-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  padding: var(--space-md);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-borde-suave, #e5e7eb);
+  background: var(--color-superficie, #ffffff);
+  box-shadow: var(--shadow-suave);
 }
 
-.info-label {
+.micuenta-config-stat__label {
+  font-size: var(--font-size-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
   color: var(--color-texto-suave);
   font-weight: 700;
-  font-size: var(--font-size-sm);
 }
 
-.info-value {
-  font-weight: 800;
-  color: #111827;
+.micuenta-config-stat strong {
+  font-size: var(--font-size-lg);
+  color: var(--color-texto);
 }
 
-/* Pills */
-.micuenta-page .pill {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.22rem 0.65rem;
-  border-radius: 999px;
-  font-size: 0.82rem;
-  font-weight: 900;
-  letter-spacing: 0.2px;
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  white-space: nowrap;
+/* ===== Info suscripción ===== */
+
+.micuenta-info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--space-md);
+  margin-bottom: var(--space-md);
 }
 
-.micuenta-page .pill--ok {
-  background: #e7f8ed;
-  color: #167a3f;
-  border-color: rgba(22, 122, 63, 0.18);
+.micuenta-info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: var(--space-md);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-borde-suave);
+  background: var(--color-superficie, #ffffff);
 }
 
-.micuenta-page .pill--warn,
-.micuenta-page .pill--loading {
-  background: #fff7db;
-  color: #8a6a00;
-  border-color: rgba(138, 106, 0, 0.18);
+.micuenta-info-label {
+  font-size: var(--font-size-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-texto-suave);
+  font-weight: 700;
 }
 
-.micuenta-page .pill--danger {
-  background: #ffe3e3;
-  color: #b30000;
-  border-color: rgba(179, 0, 0, 0.18);
+.micuenta-info-value {
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  color: var(--color-texto);
 }
 
-.micuenta-page .pill--info {
-  background: #eaf2ff;
-  color: #2f66d4;
-  border-color: rgba(47, 102, 212, 0.18);
+/* ===== Acciones ===== */
+
+.micuenta-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  margin-top: var(--space-md);
 }
 
-/* Legal */
+/* ===== Legal ===== */
+
+.legal-block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
 .legal-row {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   gap: var(--space-lg);
-  padding: 0.6rem 0;
-  border-bottom: 1px solid #f0f0f0;
+  padding: var(--space-md);
+  border: 1px solid var(--color-borde-suave);
+  border-radius: var(--radius-lg);
+  background: var(--color-superficie, #ffffff);
 }
 
-.legal-row:last-child {
-  border-bottom: none;
+.legal-row h3 {
+  margin: 0 0 0.35rem;
+  font-size: var(--font-size-md);
 }
 
-/* Forms */
+.inline-state {
+  margin-top: var(--space-sm);
+}
+
+/* ===== Formularios ===== */
+
 .micuenta-form {
   display: flex;
   flex-direction: column;
   gap: var(--space-md);
 }
 
-.field input {
-  width: 100%;
-  border-radius: var(--radius-md);
-  padding: 0.65rem 0.9rem;
-  border: 1px solid #d7d7d7;
-  color: var(--color-texto);
-  font-size: var(--font-size-base);
-  box-sizing: border-box;
-}
-
-.field input:focus {
-  outline: none;
-  border-color: var(--color-primario);
-  box-shadow: 0 0 0 2px rgba(106, 13, 173, 0.12);
-}
-
 .field-help {
-  margin-top: 6px;
-  font-size: var(--font-size-sm);
+  font-size: var(--font-size-xs);
   color: var(--color-texto-suave);
 }
 
-/* CIF grid */
-.sif-grid {
+/* ===== SIF ===== */
+
+.micuenta-sif-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: var(--space-md);
 }
 
-@media (max-width: 680px) {
-  .sif-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
 .req {
-  color: #b30000;
-  margin-left: 6px;
+  color: var(--color-danger, #dc2626);
 }
 
-/* Status box (cert, warnings) */
-.status-box {
-  padding: 12px 14px;
-  border-radius: var(--radius-md);
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  background: #f8fafc;
-}
+/* ===== Notes / status ===== */
 
-.status-box.ok {
-  background: #e7f8ed;
-  border-color: rgba(22, 122, 63, 0.18);
-  color: #0f5132;
-}
-
-.status-box.warn {
-  background: #fff7db;
-  border-color: rgba(138, 106, 0, 0.18);
-  color: #6b4e00;
-}
-
-.status-box.danger {
-  background: #ffe3e3;
-  border-color: rgba(179, 0, 0, 0.18);
-  color: #7a0000;
-}
-
-.status-sub {
-  margin-top: 6px;
-  font-size: var(--font-size-sm);
-  opacity: 0.9;
-}
-
-.inline-state {
-  margin-top: 8px;
-}
-
-/* hints */
-.hint {
+.micuenta-note {
   margin: 0;
   font-size: var(--font-size-sm);
   color: var(--color-texto-suave);
-  line-height: 1.45;
+  line-height: 1.5;
 }
 
-.actions-row {
-  display: flex;
-  justify-content: flex-end;
-  gap: var(--space-sm);
+.status-box {
+  margin-bottom: var(--space-md);
+  padding: var(--space-md);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-borde-suave);
+  background: var(--color-superficie, #ffffff);
+  line-height: 1.5;
 }
 
-@media (max-width: 480px) {
+.status-box.ok {
+  border-color: rgba(22, 163, 74, 0.28);
+  background: rgba(22, 163, 74, 0.08);
+}
 
-  .btn-primary,
-  .btn-secondary {
-    width: 100%;
-    text-align: center;
+.status-box.warn {
+  border-color: rgba(245, 158, 11, 0.28);
+  background: rgba(245, 158, 11, 0.08);
+}
+
+.status-box.danger {
+  border-color: rgba(220, 38, 38, 0.28);
+  background: rgba(220, 38, 38, 0.08);
+}
+
+.status-box.info {
+  border-color: rgba(14, 165, 233, 0.28);
+  background: rgba(14, 165, 233, 0.08);
+}
+
+.status-sub {
+  margin-top: 0.3rem;
+  color: var(--color-texto-suave);
+  font-size: var(--font-size-sm);
+}
+
+/* ===== Botón suave ===== */
+
+.btn-soft {
+  border: 1px solid var(--color-borde-suave);
+  background: var(--color-blanco, #ffffff);
+  color: var(--color-texto);
+  padding: 0.6rem 0.9rem;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: background 140ms ease, border-color 140ms ease;
+}
+
+.btn-soft:hover:not(:disabled) {
+  background: var(--color-gris-claro, #f8fafc);
+  border-color: var(--color-secundario, #4465e7);
+}
+
+.btn-soft:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ===== Responsive ===== */
+
+@media (max-width: 1200px) {
+  .config-card {
+    padding: var(--space-md) var(--space-lg);
+  }
+}
+
+@media (max-width: 768px) {
+  .micuenta-config-header {
+    flex-direction: column;
+    align-items: stretch;
   }
 
-  .actions-row {
-    justify-content: stretch;
+  .micuenta-config-header-status {
+    justify-content: flex-start;
+  }
+
+  .micuenta-config-stats,
+  .micuenta-info-grid,
+  .micuenta-sif-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .legal-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .micuenta-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .micuenta-actions .btn,
+  .micuenta-config-header-status .btn-soft {
+    width: 100%;
   }
 }

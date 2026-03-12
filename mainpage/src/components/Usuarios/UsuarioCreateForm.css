@@ -43,34 +43,6 @@
   flex-direction: column;
 }
 
-/* ===== INPUTS & SELECTS ===== */
-.field input,
-.field select {
-  padding: 0.75rem 0.9rem;
-  font-size: 0.95rem;
-  border-radius: var(--radius-md);
-
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  color: var(--color-texto);
-
-  outline: none;
-  transition: all 0.25s ease;
-}
-
-.field input:hover,
-.field select:hover {
-  background: rgba(255, 255, 255, 0.14);
-}
-
-.field input:focus,
-.field select:focus {
-  background: rgba(255, 255, 255, 0.16);
-  border-color: #ff6700;
-  box-shadow: 0 0 0 2px rgba(255, 103, 0, 0.35);
-}
-
-
 /* ===== MENSAJES DE ERROR ===== */
 .error {
   margin-top: 0.35rem;

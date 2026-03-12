@@ -71,137 +71,17 @@ export default function PerfilPage() {
   if (!user) return <LoadingScreen />;
 
   return (
-    <main className="perfil-page section section--wide">
-      <section className="perfil-card card">
-        {alerta && (
-          <AlertaMensaje
-            tipo={alerta.tipo}
-            mensaje={alerta.mensaje}
-            onClose={() => setAlerta(null)}
-            autoCerrar
-            duracion={3000}
-          />
-        )}
-        <header className="perfil-header">
-          <div className="perfil-header-left">
-            <img
-              src={toImgSrc(user.avatarUrl, { fallback: "/default-avatar.png" })} alt="Avatar"
-              className="perfil-avatar"
-            />
-            <div className="perfil-header-info">
-              <h1>{user.name}</h1>
-              <div className="perfil-header-meta">
-                <span className="perfil-rol badge badge-aviso">
-                  {user.role}
-                </span>
-                <span className="perfil-email">{user.email}</span>
-              </div>
-            </div>
-          </div>
-        </header>
+    <main className="perfil-config-page section section--wide">
+      {alerta && (
+        <AlertaMensaje
+          tipo={alerta.tipo}
+          mensaje={alerta.mensaje}
+          onClose={() => setAlerta(null)}
+          autoCerrar
+          duracion={3000}
+        />
+      )}
 
-        <form
-          onSubmit={handleActualizar}
-          className="perfil-form"
-          autoComplete="off"
-        >
-          {/* Campos fantasma para evitar autocompletado de login */}
-          <input
-            type="text"
-            name="fakeusernameremembered"
-            style={{ display: "none" }}
-            autoComplete="off"
-          />
-          <input
-            type="password"
-            name="fakepasswordremembered"
-            style={{ display: "none" }}
-            autoComplete="new-password"
-          />
-
-          {/* Email (solo lectura) */}
-          <label className="perfil-field">
-            <span className="perfil-label">Correo electrónico</span>
-            <input
-              type="email"
-              name="email"
-              value={user.email || ""}
-              readOnly
-              className="input-disabled"
-            />
-          </label>
-
-          {/* Nombre */}
-          <label className="perfil-field">
-            <span className="perfil-label">Nombre</span>
-            <input
-              type="text"
-              name="profileName"
-              inputMode="text"
-              autoComplete="name"
-              value={nombre}
-              onChange={(e) => setNombre(e.target.value)}
-            />
-          </label>
-
-          {/* Contraseña nueva */}
-          <label className="perfil-field">
-            <span className="perfil-label">Nueva contraseña</span>
-            <input
-              type="password"
-              name="newPassword"
-              autoComplete="new-password"
-              value={nuevaPassword}
-              onChange={(e) => setNuevaPassword(e.target.value)}
-              placeholder="Dejar vacío para mantener la actual"
-            />
-          </label>
-
-          {nuevaPassword && (
-            <label className="perfil-field">
-              <span className="perfil-label">Confirmar nueva contraseña</span>
-              <input
-                type="password"
-                name="confirmNewPassword"
-                autoComplete="new-password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-              />
-            </label>
-          )}
-
-          {/* Avatar */}
-          <label className="perfil-field">
-            <span className="perfil-label">Foto de perfil</span>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={(e) => setAvatar(e.target.files[0])}
-            />
-            <span className="perfil-help">
-              PNG o JPG. Se recomienda formato cuadrado.
-            </span>
-          </label>
-
-          <div className="perfil-actions">
-            <button
-              type="submit"
-              className="btn btn-primario "
-              disabled={loading}
-            >
-              {loading ? "Actualizando..." : "Guardar cambios"}
-            </button>
-
-            <button
-              type="button"
-              className="btn btn-secundario"
-              onClick={logout}
-            >
-              Cerrar sesión
-            </button>
-          </div>
-        </form>
-      </section>
       {errorState && (
         <ErrorToast
           error={errorState}
@@ -209,6 +89,165 @@ export default function PerfilPage() {
           onClose={() => setErrorState(null)}
         />
       )}
+
+      <header className="perfil-config-header">
+        <div>
+          <h1>👤 Mi perfil</h1>
+          <p className="text-suave">
+            Actualiza tu información personal, cambia tu contraseña y gestiona tu
+            avatar desde una vista Alef limpia y profesional.
+          </p>
+        </div>
+
+        <div className="perfil-config-header-status">
+          <span className="badge badge-aviso">{user.role}</span>
+        </div>
+      </header>
+
+      <div className="perfil-config-layout">
+        <div className="perfil-config-main">
+          {/* RESUMEN */}
+          <section className="card config-card">
+            <div className="config-card-header">
+              <div>
+                <h2>Resumen de usuario</h2>
+                <p className="config-card-subtitle">
+                  Información principal de tu cuenta dentro del sistema.
+                </p>
+              </div>
+            </div>
+
+            <div className="perfil-summary">
+              <div className="perfil-summary-left">
+                <img
+                  src={toImgSrc(user.avatarUrl, { fallback: "/default-avatar.png" })}
+                  alt="Avatar"
+                  className="perfil-avatar"
+                />
+
+                <div className="perfil-summary-info">
+                  <h3>{user.name}</h3>
+                  <p className="perfil-summary-email">{user.email}</p>
+                  <div className="perfil-summary-meta">
+                    <span className="badge badge-aviso">{user.role}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* FORMULARIO */}
+          <section className="card config-card">
+            <div className="config-card-header">
+              <div>
+                <h2>Datos de la cuenta</h2>
+                <p className="config-card-subtitle">
+                  Modifica tu nombre, contraseña y foto de perfil.
+                </p>
+              </div>
+            </div>
+
+            <form
+              onSubmit={handleActualizar}
+              className="perfil-form"
+              autoComplete="off"
+            >
+              <input
+                type="text"
+                name="fakeusernameremembered"
+                style={{ display: "none" }}
+                autoComplete="off"
+              />
+              <input
+                type="password"
+                name="fakepasswordremembered"
+                style={{ display: "none" }}
+                autoComplete="new-password"
+              />
+
+              <div className="perfil-form-grid">
+                <label className="config-field">
+                  <span>Correo electrónico</span>
+                  <input
+                    type="email"
+                    name="email"
+                    value={user.email || ""}
+                    readOnly
+                    className="input-disabled"
+                  />
+                </label>
+
+                <label className="config-field">
+                  <span>Nombre</span>
+                  <input
+                    type="text"
+                    name="profileName"
+                    inputMode="text"
+                    autoComplete="name"
+                    value={nombre}
+                    onChange={(e) => setNombre(e.target.value)}
+                  />
+                </label>
+
+                <label className="config-field">
+                  <span>Nueva contraseña</span>
+                  <input
+                    type="password"
+                    name="newPassword"
+                    autoComplete="new-password"
+                    value={nuevaPassword}
+                    onChange={(e) => setNuevaPassword(e.target.value)}
+                    placeholder="Dejar vacío para mantener la actual"
+                  />
+                </label>
+
+                {nuevaPassword && (
+                  <label className="config-field">
+                    <span>Confirmar nueva contraseña</span>
+                    <input
+                      type="password"
+                      name="confirmNewPassword"
+                      autoComplete="new-password"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                    />
+                  </label>
+                )}
+
+                <label className="config-field perfil-form-grid-full">
+                  <span>Foto de perfil</span>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => setAvatar(e.target.files[0])}
+                  />
+                  <small className="perfil-help">
+                    PNG o JPG. Se recomienda formato cuadrado.
+                  </small>
+                </label>
+              </div>
+
+              <div className="perfil-actions">
+                <button
+                  type="submit"
+                  className="btn btn-primario"
+                  disabled={loading}
+                >
+                  {loading ? "Actualizando..." : "Guardar cambios"}
+                </button>
+
+                <button
+                  type="button"
+                  className="btn btn-secundario"
+                  onClick={logout}
+                >
+                  Cerrar sesión
+                </button>
+              </div>
+            </form>
+          </section>
+        </div>
+      </div>
     </main>
   );
 }

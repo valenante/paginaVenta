@@ -67,30 +67,6 @@
   color: var(--color-blanco);
 }
 
-.field input,
-.field select {
-  background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.20);
-  padding: 0.75rem 0.9rem;
-  border-radius: var(--radius-md);
-  color: var(--color-texto);
-  outline: none;
-  font-size: 0.95rem;
-  transition: all .22s ease;
-}
-
-.field input:hover,
-.field select:hover {
-  background: rgba(255,255,255,0.13);
-}
-
-.field input:focus,
-.field select:focus {
-  border-color: #ff6700;
-  background: rgba(255,255,255,0.16);
-  box-shadow: 0 0 0 2px rgba(255,103,0,0.35);
-}
-
 /* ===== ERROR ===== */
 .error {
   color: #ff6b6b;

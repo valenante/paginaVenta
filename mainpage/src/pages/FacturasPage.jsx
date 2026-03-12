@@ -32,6 +32,7 @@ export default function FacturasPage() {
   const [fechaFin, setFechaFin] = useState("");
   const [estado, setEstado] = useState("");
   const [includeAnulaciones, setIncludeAnulaciones] = useState(false);
+  const [filtroTipoCliente, setFiltroTipoCliente] = useState(""); // "", "consumidor_final", "nominativa"
 
   // UI
   const [loadingList, setLoadingList] = useState(false);
@@ -66,7 +67,7 @@ export default function FacturasPage() {
   // reset página al cambiar filtros
   useEffect(() => {
     setPagina(1);
-  }, [filtroAnio, debouncedBusqueda, fechaInicio, fechaFin, estado, includeAnulaciones]);
+  }, [filtroAnio, debouncedBusqueda, fechaInicio, fechaFin, estado, includeAnulaciones, filtroTipoCliente]);
 
   // ============================
   // Query params (server-side)
@@ -379,6 +380,17 @@ export default function FacturasPage() {
     }
   };
 
+  // Filtro cliente-side: consumidor final vs nominativa
+  const facturasFiltradas = useMemo(() => {
+    if (!filtroTipoCliente) return facturas;
+    return facturas.filter((f) => {
+      const tieneNIF = !!f.clienteNIF && f.clienteNIF.trim() !== "";
+      if (filtroTipoCliente === "nominativa") return tieneNIF;
+      if (filtroTipoCliente === "consumidor_final") return !tieneNIF;
+      return true;
+    });
+  }, [facturas, filtroTipoCliente]);
+
   const limpiarFiltros = () => {
     setFiltroAnio("");
     setBusqueda("");
@@ -386,6 +398,7 @@ export default function FacturasPage() {
     setFechaFin("");
     setEstado("");
     setIncludeAnulaciones(false);
+    setFiltroTipoCliente("");
   };
 
   // retry handler global (para el toast)
@@ -491,6 +504,15 @@ export default function FacturasPage() {
             />
           </div>
 
+          <div className="config-field">
+            <label>Tipo de factura</label>
+            <select value={filtroTipoCliente} onChange={(e) => setFiltroTipoCliente(e.target.value)}>
+              <option value="">Todas</option>
+              <option value="consumidor_final">Consumidor final</option>
+              <option value="nominativa">Nominativa</option>
+            </select>
+          </div>
+
           <div className="config-field config-field--inline">
             <label className="checkbox-line">
               <input
@@ -542,7 +564,7 @@ export default function FacturasPage() {
             </thead>
 
             <tbody>
-              {!loadingList && facturas.length === 0 && (
+              {!loadingList && facturasFiltradas.length === 0 && (
                 <tr>
                   <td colSpan={8} style={{ padding: 18, textAlign: "center" }}>
                     No hay facturas con estos filtros.
@@ -550,7 +572,7 @@ export default function FacturasPage() {
                 </tr>
               )}
 
-              {facturas.map((f) => (
+              {facturasFiltradas.map((f) => (
                 <tr key={f._id}>
                   <td>
                     <span className={`estado-factura ${String(f.estado || "").toLowerCase()}`}>
@@ -617,7 +639,7 @@ export default function FacturasPage() {
 
       {/* LISTADO MÓVIL */}
       <section className="facturaspage-mobile">
-        {facturas.map((f) => (
+        {facturasFiltradas.map((f) => (
           <div key={f._id} className="factura-card">
             <div className="factura-card-header">
               <span className={`estado-factura ${String(f.estado || "").toLowerCase()}`}>

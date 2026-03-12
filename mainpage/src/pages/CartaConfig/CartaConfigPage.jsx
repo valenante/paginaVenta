@@ -378,450 +378,521 @@ export default function CartaConfigPage() {
   }
 
   return (
-    <div className="carta-config-page section section--wide">
-      <div className="card carta-config-card">
-        {/* ===== HEADER PRINCIPAL ===== */}
-        <header className="carta-config-header">
-          <div>
-            <h2 className="config-title">
-              🍽 Configuración de la carta y página principal
-            </h2>
-            <p className="config-subtitle">
-              Ajusta la información que verán tus clientes al entrar en la carta,
-              las imágenes destacadas del home y el estilo visual general.
-            </p>
-          </div>
-        </header>
+    <main className="carta-config-page section section--wide">
+      {alerta && (
+        <AlertaMensaje
+          tipo={alerta.tipo}
+          mensaje={alerta.mensaje}
+          onClose={() => setAlerta(null)}
+        />
+      )}
 
-        {/* === INFORMACIÓN GENERAL === */}
-        <section className="config-section">
-          <div className="config-section-header">
-            <h3 className="section-title">📍 Información del restaurante</h3>
-            <p className="section-description">
-              Estos datos aparecerán en la cabecera de la carta y en distintos
-              puntos de la experiencia del cliente.
-            </p>
-          </div>
+      {error && (
+        <ErrorToast
+          error={error}
+          onRetry={error.canRetry ? error.retryFn : undefined}
+          onClose={() => setError(null)}
+        />
+      )}
 
-          <div className="config-field">
-            <label>Teléfono</label>
-            <input
-              type="text"
-              name="informacionRestaurante.telefono"
-              value={form.informacionRestaurante?.telefono || ""}
-              onChange={handleChange}
-            />
-          </div>
+      {modal && (
+        <ModalConfirmacion
+          titulo={modal.titulo}
+          mensaje={modal.mensaje}
+          placeholder={modal.placeholder}
+          onConfirm={modal.onConfirm}
+          onClose={modal.onClose}
+        />
+      )}
 
-          <div className="config-field">
-            <label>Dirección</label>
-            <input
-              type="text"
-              name="informacionRestaurante.direccion"
-              value={form.informacionRestaurante?.direccion || ""}
-              onChange={handleChange}
-            />
-          </div>
+      <header className="carta-config-header">
+        <div>
+          <h1>🍽️ Configuración de la carta</h1>
+          <p className="text-suave">
+            Ajusta la información pública del restaurante, el contenido del home,
+            el orden de la carta y su apariencia visual con una estructura Alef
+            limpia y profesional.
+          </p>
+        </div>
 
-          <div className="config-field">
-            <label>Días de apertura (separados por coma)</label>
-            <input
-              type="text"
-              value={diasAperturaRaw}
-              onChange={(e) => setDiasAperturaRaw(e.target.value)}
-              onBlur={() => {
-                const dias = diasAperturaRaw
-                  .split(",")
-                  .map((d) => d.trim())
-                  .filter(Boolean);
+        <div className="carta-config-header-status">
+          <span className={`badge ${canEditConfig ? "badge-exito" : "badge-aviso"}`}>
+            {canEditConfig ? "Edición habilitada" : "Solo lectura"}
+          </span>
+        </div>
+      </header>
 
-                setForm((prev) => ({
-                  ...prev,
-                  informacionRestaurante: {
-                    ...prev.informacionRestaurante,
-                    diasApertura: dias,
-                  },
-                }));
-              }}
-              placeholder="Ej: lunes, martes, miércoles"
-            />
-          </div>
-
-          <div className="config-field-row">
-            <div className="config-field">
-              <label>Horario de comida</label>
-              <input
-                type="text"
-                name="informacionRestaurante.horarios.comida"
-                value={form.informacionRestaurante?.horarios?.comida || ""}
-                onChange={handleChange}
-                placeholder="Ej: 13:00 - 17:00"
-              />
+      <div className="carta-config-layout">
+        <div className="carta-config-main">
+          {/* INFORMACIÓN GENERAL */}
+          <section className="card config-card">
+            <div className="config-card-header">
+              <div>
+                <h2>📍 Información del restaurante</h2>
+                <p className="config-card-subtitle">
+                  Estos datos aparecerán en la carta y en distintos puntos visibles
+                  para el cliente.
+                </p>
+              </div>
             </div>
 
-            <div className="config-field">
-              <label>Horario de cena</label>
-              <input
-                type="text"
-                name="informacionRestaurante.horarios.cena"
-                value={form.informacionRestaurante?.horarios?.cena || ""}
-                onChange={handleChange}
-                placeholder="Ej: 20:00 - 24:00"
-              />
-            </div>
-          </div>
-        </section>
-
-        {/* === IMÁGENES HOME === */}
-        <section className="config-section">
-          <div className="config-section-header">
-            <h3 className="section-title">🖼 Imágenes del home</h3>
-            <p className="section-description">
-              Gestiona las imágenes del carrusel principal y de los bloques de secciones que se muestran en la página de inicio.
-            </p>
-          </div>
-
-          {HOME_SECTIONS.map((section) => (
-            <div key={section} className="imagenes-bloque">
-              <div className="section-subheader">
-                <h4 className="subsection-title">
-                  {section === "carrousel" ? "Carrusel" : "Secciones"}
-                </h4>
-                <span className="section-subtitle">
-                  Arrastra imágenes o haz clic para añadir
-                </span>
+            <div className="carta-config-grid">
+              <div className="config-field">
+                <label>Teléfono</label>
+                <input
+                  type="text"
+                  name="informacionRestaurante.telefono"
+                  value={form.informacionRestaurante?.telefono || ""}
+                  onChange={handleChange}
+                />
               </div>
 
-              <div
-                className={`imagenes-grid card-border-dashed ${dragOverSection === section ? "drag-over" : ""
-                  }`}
-                onDragOver={(e) => {
-                  e.preventDefault();
-                  uploadTargetRef.current = section;
-                  setDragOverSection(section);
-                }}
-                onDragLeave={() => setDragOverSection(null)}
-                onDrop={(e) => handleDrop(section, e)}
-                onClick={() => openFilePicker(section)}
-                role="button"
-                tabIndex={0}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") openFilePicker(section);
-                }}
-              >
-                {(form.imagenesHome?.[section] || []).map((url, i) => (
-                  <div key={`${url}-${i}`} className="imagen-item">
-                    <img src={toImgSrc(url)} alt={`${section}-${i}`} />                    
-                    <button
-                      type="button"
-                      className="config-btn-delete"
-                      onClick={(ev) => {
-                        ev.stopPropagation();
-                        requestRemoveImage(section, i);
-                      }}
-                      title="Eliminar imagen"
-                      aria-label="Eliminar imagen"
-                    >
-                      🗑
-                    </button>
-                  </div>
-                ))}
+              <div className="config-field">
+                <label>Dirección</label>
+                <input
+                  type="text"
+                  name="informacionRestaurante.direccion"
+                  value={form.informacionRestaurante?.direccion || ""}
+                  onChange={handleChange}
+                />
+              </div>
 
-                <button
-                  type="button"
-                  className="config-btn-add"
-                  onClick={(ev) => {
-                    ev.stopPropagation();
-                    openFilePicker(section);
+              <div className="config-field carta-config-grid-full">
+                <label>Días de apertura (separados por coma)</label>
+                <input
+                  type="text"
+                  value={diasAperturaRaw}
+                  onChange={(e) => setDiasAperturaRaw(e.target.value)}
+                  onBlur={() => {
+                    const dias = diasAperturaRaw
+                      .split(",")
+                      .map((d) => d.trim())
+                      .filter(Boolean);
+
+                    setForm((prev) => ({
+                      ...prev,
+                      informacionRestaurante: {
+                        ...prev.informacionRestaurante,
+                        diasApertura: dias,
+                      },
+                    }));
                   }}
-                >
-                  ➕ Añadir
-                </button>
+                  placeholder="Ej: lunes, martes, miércoles"
+                />
+              </div>
+
+              <div className="config-field">
+                <label>Horario de comida</label>
+                <input
+                  type="text"
+                  name="informacionRestaurante.horarios.comida"
+                  value={form.informacionRestaurante?.horarios?.comida || ""}
+                  onChange={handleChange}
+                  placeholder="Ej: 13:00 - 17:00"
+                />
+              </div>
+
+              <div className="config-field">
+                <label>Horario de cena</label>
+                <input
+                  type="text"
+                  name="informacionRestaurante.horarios.cena"
+                  value={form.informacionRestaurante?.horarios?.cena || ""}
+                  onChange={handleChange}
+                  placeholder="Ej: 20:00 - 24:00"
+                />
               </div>
             </div>
-          ))}
+          </section>
 
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            hidden
-            onChange={handleSelectFile}
-          />
-        </section>
+          {/* IMÁGENES HOME */}
+          <section className="card config-card">
+            <div className="config-card-header">
+              <div>
+                <h2>🖼️ Imágenes del home</h2>
+                <p className="config-card-subtitle">
+                  Gestiona el carrusel principal y las imágenes de secciones
+                  destacadas de la home.
+                </p>
+              </div>
+            </div>
 
-        {/* === TEXTOS HOME === */}
-        <section className="config-section">
-          <div className="config-section-header">
-            <h3 className="section-title">📝 Textos del home</h3>
-            <p className="section-description">
-              Mensajes breves que acompañan a las imágenes del carrusel y a las
-              secciones destacadas.
-            </p>
-          </div>
+            <div className="home-media-sections">
+              {HOME_SECTIONS.map((section) => (
+                <div key={section} className="home-media-block">
+                  <div className="home-media-block__header">
+                    <div>
+                      <h3>{section === "carrousel" ? "Carrusel" : "Secciones"}</h3>
+                      <p>
+                        Arrastra imágenes o haz clic para añadir contenido visual.
+                      </p>
+                    </div>
 
-          {HOME_SECTIONS.map((section) => {
-            const count = form.textosHome?.[section]?.length || 0;
-
-            return (
-              <div key={section} className="textos-section">
-                <div className="textos-header">
-                  <h4 className="subsection-title">
-                    {section === "carrousel" ? "Carrusel" : "Secciones"}{" "}
-                    <span className="badge badge-aviso contador">
-                      {count} textos
+                    <span className="badge badge-aviso">
+                      {(form.imagenesHome?.[section] || []).length} imágenes
                     </span>
-                  </h4>
-                </div>
+                  </div>
 
-                <ul className="textos-lista">
-                  {(form.textosHome?.[section] || []).map((t, i) => (
-                    <li key={`${t}-${i}`} className="texto-item card-row">
-                      <span>{t}</span>
-                      <button
-                        type="button"
-                        className="config-btn-delete"
-                        onClick={() => requestRemoveText(section, i)}
-                        title="Eliminar texto"
-                        aria-label="Eliminar texto"
-                      >
-                        🗑
-                      </button>
-                    </li>
-                  ))}
+                  <div
+                    className={`imagenes-grid card-border-dashed ${dragOverSection === section ? "drag-over" : ""
+                      }`}
+                    onDragOver={(e) => {
+                      e.preventDefault();
+                      uploadTargetRef.current = section;
+                      setDragOverSection(section);
+                    }}
+                    onDragLeave={() => setDragOverSection(null)}
+                    onDrop={(e) => handleDrop(section, e)}
+                    onClick={() => openFilePicker(section)}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") openFilePicker(section);
+                    }}
+                  >
+                    {(form.imagenesHome?.[section] || []).map((url, i) => (
+                      <div key={`${url}-${i}`} className="imagen-item">
+                        <img src={toImgSrc(url)} alt={`${section}-${i}`} />
+                        <button
+                          type="button"
+                          className="config-btn-delete"
+                          onClick={(ev) => {
+                            ev.stopPropagation();
+                            requestRemoveImage(section, i);
+                          }}
+                          title="Eliminar imagen"
+                          aria-label="Eliminar imagen"
+                        >
+                          🗑
+                        </button>
+                      </div>
+                    ))}
 
-                  <li className="li-add">
                     <button
                       type="button"
                       className="config-btn-add"
-                      onClick={() => handleAddText(section)}
+                      onClick={(ev) => {
+                        ev.stopPropagation();
+                        openFilePicker(section);
+                      }}
                     >
-                      ➕ Añadir texto
+                      ➕ Añadir
                     </button>
-                  </li>
-                </ul>
-              </div>
-            );
-          })}
-        </section>
-
-        <CartaOrdenSection
-          form={form}
-          setForm={setForm}
-          handleChange={handleChange}
-          showAlert={showAlert}
-        />
-
-        {/* === TEMA VISUAL DE LA CARTA === */}
-        <section className="config-section">
-          <div className="config-section-header">
-            <h3 className="section-title">🎨 Apariencia de la carta</h3>
-            <p className="section-description">
-              Personaliza los colores de la carta que verá el cliente. Estos
-              ajustes solo afectan a la carta online, no al TPV.
-            </p>
-          </div>
-
-          <div className="theme-grid">
-            <div className="theme-row">
-              <label>Color principal</label>
-              <div className="theme-inputs">
-                <input
-                  type="color"
-                  name="temaCarta.colorPrincipal"
-                  value={form.temaCarta?.colorPrincipal || "#9B1C1C"}
-                  onChange={handleChange}
-                  className="theme-color-input"
-                />
-                <input
-                  type="text"
-                  name="temaCarta.colorPrincipal"
-                  value={form.temaCarta?.colorPrincipal || "#9B1C1C"}
-                  onChange={handleChange}
-                  className="theme-text-input"
-                />
-              </div>
-              <small className="theme-help">Botones principales, títulos y acentos.</small>
+                  </div>
+                </div>
+              ))}
             </div>
 
-            <div className="theme-row">
-              <label>Color secundario</label>
-              <div className="theme-inputs">
-                <input
-                  type="color"
-                  name="temaCarta.colorSecundario"
-                  value={form.temaCarta?.colorSecundario || "#4C5EA8"}
-                  onChange={handleChange}
-                  className="theme-color-input"
-                />
-                <input
-                  type="text"
-                  name="temaCarta.colorSecundario"
-                  value={form.temaCarta?.colorSecundario || "#4C5EA8"}
-                  onChange={handleChange}
-                  className="theme-text-input"
-                />
-              </div>
-              <small className="theme-help">Elementos secundarios, etiquetas o detalles.</small>
-            </div>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              hidden
+              onChange={handleSelectFile}
+            />
+          </section>
 
-            <div className="theme-row">
-              <label>Fondo de la página</label>
-              <div className="theme-inputs">
-                <input
-                  type="color"
-                  name="temaCarta.fondo"
-                  value={form.temaCarta?.fondo || "#FFFFFF"}
-                  onChange={handleChange}
-                  className="theme-color-input"
-                />
-                <input
-                  type="text"
-                  name="temaCarta.fondo"
-                  value={form.temaCarta?.fondo || "#FFFFFF"}
-                  onChange={handleChange}
-                  className="theme-text-input"
-                />
+          {/* TEXTOS HOME */}
+          <section className="card config-card">
+            <div className="config-card-header">
+              <div>
+                <h2>📝 Textos del home</h2>
+                <p className="config-card-subtitle">
+                  Mensajes breves para el carrusel y las secciones destacadas.
+                </p>
               </div>
             </div>
 
-            <div className="theme-row">
-              <label>Color del texto</label>
-              <div className="theme-inputs">
-                <input
-                  type="color"
-                  name="temaCarta.texto"
-                  value={form.temaCarta?.texto || "#2D2D2D"}
-                  onChange={handleChange}
-                  className="theme-color-input"
-                />
-                <input
-                  type="text"
-                  name="temaCarta.texto"
-                  value={form.temaCarta?.texto || "#2D2D2D"}
-                  onChange={handleChange}
-                  className="theme-text-input"
-                />
+            <div className="home-texts-grid">
+              {HOME_SECTIONS.map((section) => {
+                const count = form.textosHome?.[section]?.length || 0;
+
+                return (
+                  <div key={section} className="textos-section">
+                    <div className="textos-header">
+                      <h3>
+                        {section === "carrousel" ? "Carrusel" : "Secciones"}
+                      </h3>
+                      <span className="badge badge-aviso contador">
+                        {count} textos
+                      </span>
+                    </div>
+
+                    <ul className="textos-lista">
+                      {(form.textosHome?.[section] || []).map((t, i) => (
+                        <li key={`${t}-${i}`} className="texto-item card-row">
+                          <span>{t}</span>
+                          <button
+                            type="button"
+                            className="config-btn-delete"
+                            onClick={() => requestRemoveText(section, i)}
+                            title="Eliminar texto"
+                            aria-label="Eliminar texto"
+                          >
+                            🗑
+                          </button>
+                        </li>
+                      ))}
+
+                      <li className="li-add">
+                        <button
+                          type="button"
+                          className="config-btn-add"
+                          onClick={() => handleAddText(section)}
+                        >
+                          ➕ Añadir texto
+                        </button>
+                      </li>
+                    </ul>
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+
+          {/* ORDEN / CONFIG CARTA */}
+          <section className="card config-card config-card--embedded">
+            <div className="config-card-header">
+              <div>
+                <h2>📚 Orden y estructura de la carta</h2>
+                <p className="config-card-subtitle">
+                  Define el orden de categorías, destacados, promociones y
+                  comportamiento visual del catálogo.
+                </p>
               </div>
             </div>
 
-            <div className="theme-row">
-              <label>Fondo de tarjetas / productos</label>
-              <div className="theme-inputs">
-                <input
-                  type="color"
-                  name="temaCarta.cardBg"
-                  value={form.temaCarta?.cardBg || "#F5F5F5"}
-                  onChange={handleChange}
-                  className="theme-color-input"
-                />
-                <input
-                  type="text"
-                  name="temaCarta.cardBg"
-                  value={form.temaCarta?.cardBg || "#F5F5F5"}
-                  onChange={handleChange}
-                  className="theme-text-input"
-                />
+            <div className="embedded-section-reset">
+              <CartaOrdenSection
+                form={form}
+                setForm={setForm}
+                handleChange={handleChange}
+                showAlert={showAlert}
+              />
+            </div>
+          </section>
+
+          {/* APARIENCIA */}
+          <section className="card config-card">
+            <div className="config-card-header">
+              <div>
+                <h2>🎨 Apariencia de la carta</h2>
+                <p className="config-card-subtitle">
+                  Personaliza los colores de la carta online que verán los
+                  clientes.
+                </p>
               </div>
             </div>
 
-            <div className="theme-row">
-              <label>Color de botones</label>
-              <div className="theme-inputs">
-                <input
-                  type="color"
-                  name="temaCarta.boton"
-                  value={form.temaCarta?.boton || "#9B1C1C"}
-                  onChange={handleChange}
-                  className="theme-color-input"
-                />
-                <input
-                  type="text"
-                  name="temaCarta.boton"
-                  value={form.temaCarta?.boton || "#9B1C1C"}
-                  onChange={handleChange}
-                  className="theme-text-input"
-                />
+            <div className="theme-grid">
+              <div className="theme-row">
+                <label>Color principal</label>
+                <div className="theme-inputs">
+                  <input
+                    type="color"
+                    name="temaCarta.colorPrincipal"
+                    value={form.temaCarta?.colorPrincipal || "#9B1C1C"}
+                    onChange={handleChange}
+                    className="theme-color-input"
+                  />
+                  <input
+                    type="text"
+                    name="temaCarta.colorPrincipal"
+                    value={form.temaCarta?.colorPrincipal || "#9B1C1C"}
+                    onChange={handleChange}
+                    className="theme-text-input"
+                  />
+                </div>
+                <small className="theme-help">
+                  Botones principales, títulos y acentos.
+                </small>
+              </div>
+
+              <div className="theme-row">
+                <label>Color secundario</label>
+                <div className="theme-inputs">
+                  <input
+                    type="color"
+                    name="temaCarta.colorSecundario"
+                    value={form.temaCarta?.colorSecundario || "#4C5EA8"}
+                    onChange={handleChange}
+                    className="theme-color-input"
+                  />
+                  <input
+                    type="text"
+                    name="temaCarta.colorSecundario"
+                    value={form.temaCarta?.colorSecundario || "#4C5EA8"}
+                    onChange={handleChange}
+                    className="theme-text-input"
+                  />
+                </div>
+                <small className="theme-help">
+                  Elementos secundarios, etiquetas o detalles.
+                </small>
+              </div>
+
+              <div className="theme-row">
+                <label>Fondo de la página</label>
+                <div className="theme-inputs">
+                  <input
+                    type="color"
+                    name="temaCarta.fondo"
+                    value={form.temaCarta?.fondo || "#FFFFFF"}
+                    onChange={handleChange}
+                    className="theme-color-input"
+                  />
+                  <input
+                    type="text"
+                    name="temaCarta.fondo"
+                    value={form.temaCarta?.fondo || "#FFFFFF"}
+                    onChange={handleChange}
+                    className="theme-text-input"
+                  />
+                </div>
+              </div>
+
+              <div className="theme-row">
+                <label>Color del texto</label>
+                <div className="theme-inputs">
+                  <input
+                    type="color"
+                    name="temaCarta.texto"
+                    value={form.temaCarta?.texto || "#2D2D2D"}
+                    onChange={handleChange}
+                    className="theme-color-input"
+                  />
+                  <input
+                    type="text"
+                    name="temaCarta.texto"
+                    value={form.temaCarta?.texto || "#2D2D2D"}
+                    onChange={handleChange}
+                    className="theme-text-input"
+                  />
+                </div>
+              </div>
+
+              <div className="theme-row">
+                <label>Fondo de tarjetas / productos</label>
+                <div className="theme-inputs">
+                  <input
+                    type="color"
+                    name="temaCarta.cardBg"
+                    value={form.temaCarta?.cardBg || "#F5F5F5"}
+                    onChange={handleChange}
+                    className="theme-color-input"
+                  />
+                  <input
+                    type="text"
+                    name="temaCarta.cardBg"
+                    value={form.temaCarta?.cardBg || "#F5F5F5"}
+                    onChange={handleChange}
+                    className="theme-text-input"
+                  />
+                </div>
+              </div>
+
+              <div className="theme-row">
+                <label>Color de botones</label>
+                <div className="theme-inputs">
+                  <input
+                    type="color"
+                    name="temaCarta.boton"
+                    value={form.temaCarta?.boton || "#9B1C1C"}
+                    onChange={handleChange}
+                    className="theme-color-input"
+                  />
+                  <input
+                    type="text"
+                    name="temaCarta.boton"
+                    value={form.temaCarta?.boton || "#9B1C1C"}
+                    onChange={handleChange}
+                    className="theme-text-input"
+                  />
+                </div>
+              </div>
+
+              <div className="theme-row">
+                <label>Hover de botones</label>
+                <div className="theme-inputs">
+                  <input
+                    type="color"
+                    name="temaCarta.botonHover"
+                    value={form.temaCarta?.botonHover || "#7E1616"}
+                    onChange={handleChange}
+                    className="theme-color-input"
+                  />
+                  <input
+                    type="text"
+                    name="temaCarta.botonHover"
+                    value={form.temaCarta?.botonHover || "#7E1616"}
+                    onChange={handleChange}
+                    className="theme-text-input"
+                  />
+                </div>
               </div>
             </div>
 
-            <div className="theme-row">
-              <label>Hover de botones</label>
-              <div className="theme-inputs">
-                <input
-                  type="color"
-                  name="temaCarta.botonHover"
-                  value={form.temaCarta?.botonHover || "#7E1616"}
-                  onChange={handleChange}
-                  className="theme-color-input"
-                />
-                <input
-                  type="text"
-                  name="temaCarta.botonHover"
-                  value={form.temaCarta?.botonHover || "#7E1616"}
-                  onChange={handleChange}
-                  className="theme-text-input"
-                />
-              </div>
-            </div>
-          </div>
-
-          <div className="theme-preview">
-            <div
-              className="theme-preview-inner"
-              style={{
-                backgroundColor: form.temaCarta?.fondo || "#FFFFFF",
-                color: form.temaCarta?.texto || "#2D2D2D",
-              }}
-            >
-              <h4
-                className="theme-preview-title"
-                style={{ color: form.temaCarta?.colorPrincipal || "#9B1C1C" }}
-              >
-                Vista previa de la carta
-              </h4>
-
+            <div className="theme-preview">
               <div
-                className="theme-preview-card"
+                className="theme-preview-inner"
                 style={{
-                  backgroundColor: form.temaCarta?.cardBg || "#F5F5F5",
-                  borderColor: form.temaCarta?.cardBorde || "#CCCCCC",
+                  backgroundColor: form.temaCarta?.fondo || "#FFFFFF",
+                  color: form.temaCarta?.texto || "#2D2D2D",
                 }}
               >
-                <span className="theme-preview-producto">Producto de ejemplo</span>
-                <span className="theme-preview-precio">12,00 €</span>
-                <button
-                  type="button"
-                  className="theme-preview-btn"
-                  style={{ backgroundColor: form.temaCarta?.boton || "#9B1C1C" }}
+                <h4
+                  className="theme-preview-title"
+                  style={{ color: form.temaCarta?.colorPrincipal || "#9B1C1C" }}
                 >
-                  Añadir
-                </button>
+                  Vista previa de la carta
+                </h4>
+
+                <div
+                  className="theme-preview-card"
+                  style={{
+                    backgroundColor: form.temaCarta?.cardBg || "#F5F5F5",
+                    borderColor: form.temaCarta?.cardBorde || "#CCCCCC",
+                  }}
+                >
+                  <span className="theme-preview-producto">Producto de ejemplo</span>
+                  <span className="theme-preview-precio">12,00 €</span>
+                  <button
+                    type="button"
+                    className="theme-preview-btn"
+                    style={{ backgroundColor: form.temaCarta?.boton || "#9B1C1C" }}
+                  >
+                    Añadir
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-        </section>
+          </section>
 
-        {/* === PROMOS === */}
-        <section className="config-section">
-          <div className="config-section-header">
-            <h3 className="section-title">⭐ Promociones y destacados</h3>
-            <p className="section-description">
-              Gestiona los productos destacados y las promociones activas en la carta.
-            </p>
-          </div>
+          {/* PROMOCIONES */}
+          <section className="card config-card">
+            <div className="config-card-header">
+              <div>
+                <h2>⭐ Promociones y destacados</h2>
+                <p className="config-card-subtitle">
+                  Gestiona productos destacados y promociones activas que se
+                  muestran en la carta.
+                </p>
+              </div>
+            </div>
 
-          <button
-            type="button"
-            className="btn btn-secundario"
-            onClick={() => setPromoPanelAbierto(true)}
-          >
-            Gestionar promociones
-          </button>
-        </section>
+            <div className="promo-actions">
+              <button
+                type="button"
+                className="btn btn-secundario"
+                onClick={() => setPromoPanelAbierto(true)}
+              >
+                Gestionar promociones
+              </button>
+            </div>
+          </section>
+        </div>
       </div>
 
-      {/* Barra de acciones */}
       <div className="carta-config-actions">
         <button
           type="button"
@@ -866,39 +937,10 @@ export default function CartaConfigPage() {
         </button>
       </div>
 
-      {/* Alerta */}
-      {alerta && (
-        <AlertaMensaje
-          tipo={alerta.tipo}
-          mensaje={alerta.mensaje}
-          onClose={() => setAlerta(null)}
-        />
-      )}
-
-      {error && (
-        <ErrorToast
-          error={error}
-          onRetry={error.canRetry ? error.retryFn : undefined}
-          onClose={() => setError(null)}
-        />
-      )}
-
-      {/* Panel promociones */}
       <CartaPromocionesPanel
         abierto={promoPanelAbierto}
         onClose={() => setPromoPanelAbierto(false)}
       />
-
-      {/* Modal confirm/prompt */}
-      {modal && (
-        <ModalConfirmacion
-          titulo={modal.titulo}
-          mensaje={modal.mensaje}
-          placeholder={modal.placeholder}
-          onConfirm={modal.onConfirm}
-          onClose={modal.onClose}
-        />
-      )}
-    </div>
+    </main>
   );
 }

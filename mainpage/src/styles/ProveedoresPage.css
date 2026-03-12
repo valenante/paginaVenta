@@ -1,204 +1,297 @@
 /*****************************************************
- * Proveedores Page – Alef UI
+ * Proveedores Page – Alef
+ * Hermana visual de RestauranteConfigPage
  *****************************************************/
 
-/* =========================
-   Seguridad anti overflow
-========================= */
-
-.prov-page {
-  overflow-x: hidden;
+.proveedores-config-page {
+  width: auto;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--space-lg);
+  padding-right: var(--space-lg);
 }
 
-/* =========================
-   Header
-========================= */
+/* ===== Header global ===== */
 
-.prov-header {
+.proveedores-config-header {
   display: flex;
   justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-lg);
+  margin-bottom: var(--space-xl);
+}
+
+.proveedores-config-header h1 {
+  margin: 0 0 var(--space-xs);
+  font-size: var(--font-size-2xl);
+  color: var(--color-primario);
+}
+
+.proveedores-config-header p {
+  margin: 0;
+  max-width: 760px;
+}
+
+.proveedores-config-header-status {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+/* ===== Layout ===== */
+
+.proveedores-config-layout {
+  display: grid;
   gap: var(--space-xl);
   align-items: flex-start;
 }
 
-/* =========================
-   Meta
-========================= */
+.proveedores-config-main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
 
-.prov-metaRow {
+/* ===== Toolbar ===== */
+
+.proveedores-config-toolbar {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-sm);
+  margin-bottom: var(--space-lg);
 }
 
-/* =========================
-   Actions
-========================= */
+/* ===== Stats ===== */
 
-.prov-actions {
+.proveedores-config-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--space-md);
+}
+
+.proveedores-config-stat {
   display: flex;
-  gap: var(--space-sm);
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: var(--space-md);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-borde-suave, #e5e7eb);
+  background: var(--color-superficie, #ffffff);
+  box-shadow: var(--shadow-suave);
 }
 
-/* =========================
-   Search
-========================= */
-
-.prov-search {
-  margin-top: var(--space-md);
-  display: flex;
-  gap: var(--space-sm);
-  flex-wrap: wrap;
-  align-items: center;
-}
-
-.prov-search input {
-  flex: 1;
-  min-width: 220px;
-  padding: 0.55rem 0.7rem;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--color-borde-suave);
-}
-
-.prov-pageSize {
-  display: flex;
-  align-items: center;
-  gap: var(--space-xs);
-}
-
-.prov-pageSize label {
+.proveedores-config-stat__label {
   font-size: var(--font-size-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-texto-suave);
+  font-weight: 700;
+}
+
+.proveedores-config-stat strong {
+  font-size: var(--font-size-lg);
+  color: var(--color-texto);
+}
+
+/* ===== Filtros ===== */
+
+.proveedores-config-filtros {
+  display: grid;
+  grid-template-columns: minmax(320px, 1fr) 180px;
+  gap: var(--space-md);
+  align-items: end;
+}
+
+.proveedores-config-filtros__search {
+  min-width: 0;
+}
+
+.proveedores-config-filtros__size {
+  min-width: 0;
+}
+
+/* ===== Loading / empty ===== */
+
+.proveedores-loading {
+  padding: var(--space-lg) 0;
   color: var(--color-texto-suave);
 }
 
-/* =========================
-   Card
-========================= */
-
-.prov-card {
-  margin-top: var(--space-xl);
-  overflow: hidden;
+.proveedores-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-sm);
+  padding: var(--space-lg) 0;
 }
 
-/* =========================
-   Estados
-========================= */
-
-.prov-loading,
-.prov-empty {
-  padding: 2rem 1rem;
-  text-align: center;
-  color: var(--color-texto-suave);
-}
-
-.prov-empty__title {
+.proveedores-empty__title {
   font-size: var(--font-size-lg);
   font-weight: 700;
+  color: var(--color-texto);
 }
 
-.prov-empty__text {
-  margin-bottom: var(--space-md);
+.proveedores-empty__text {
+  color: var(--color-texto-suave);
+  max-width: 560px;
 }
 
-/* =========================
-   Table wrapper
-========================= */
+/* ===== Tabla ===== */
 
-.prov-tableWrap {
-  width: 100%;
+.proveedores-table-scroll {
   overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
+  width: 100%;
 }
 
-/* =========================
-   Table
-========================= */
-
-.prov-table {
+.proveedores-table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 900px;
+  min-width: 920px;
+}
+
+.proveedores-table thead th {
+  text-align: left;
+  font-size: var(--font-size-sm);
+  padding: 0.9rem 0.8rem;
+  border-bottom: 1px solid var(--color-borde-suave);
+  color: var(--color-texto);
+  background: var(--color-gris-claro, #f8fafc);
+  white-space: nowrap;
+}
+
+.proveedores-table tbody td {
+  padding: 0.9rem 0.8rem;
+  border-bottom: 1px solid var(--color-borde-suave);
+  vertical-align: middle;
   font-size: var(--font-size-sm);
 }
 
-.prov-table th,
-.prov-table td {
-  padding: 0.65rem 0.75rem;
-  border-bottom: 1px solid var(--color-borde-suave);
-  vertical-align: top;
+.proveedores-table tbody tr:hover {
+  background: rgba(0, 0, 0, 0.02);
 }
 
-.prov-table th {
-  font-size: var(--font-size-xs);
-  font-weight: 700;
-  text-transform: uppercase;
-  color: var(--color-texto-suave);
-  background: var(--color-fondo-claro);
-}
-
-.prov-name {
-  font-weight: 700;
-}
-
-.prov-sub {
-  font-size: var(--font-size-xs);
-  color: var(--color-texto-suave);
-}
-
-/* =========================
-   Row actions
-========================= */
-
-.prov-rowActions {
+.proveedores-name-cell {
   display: flex;
-  gap: var(--space-xs);
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.proveedores-name {
+  font-weight: 700;
+  color: var(--color-texto);
+}
+
+.proveedores-sub {
+  color: var(--color-texto-suave);
+  font-size: var(--font-size-sm);
+  line-height: 1.4;
+}
+
+.col-acciones,
+.acciones {
+  min-width: 230px;
+}
+
+.proveedores-row-actions {
+  display: flex;
   justify-content: flex-end;
   flex-wrap: wrap;
-}
-
-/* =========================
-   Pager
-========================= */
-
-.prov-pager {
-  margin-top: var(--space-md);
-  display: flex;
-  justify-content: center;
   gap: var(--space-xs);
+}
+
+.btn-compact {
+  padding: 0.45rem 0.7rem;
+  font-size: 0.85rem;
+}
+
+/* ===== Paginador ===== */
+
+.proveedores-pager {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-sm);
   flex-wrap: wrap;
+  margin-top: var(--space-lg);
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--color-borde-suave);
 }
 
-.prov-pagerInfo {
-  font-size: var(--font-size-sm);
-  color: var(--color-texto-suave);
+.proveedores-pager-info {
+  color: var(--color-texto);
 }
 
-/* =========================
-   Responsive
-========================= */
+.btn-ghost {
+  border: 1px solid var(--color-borde-suave);
+  background: var(--color-blanco, #ffffff);
+  color: var(--color-texto);
+  padding: 0.55rem 0.85rem;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: background 140ms ease, border-color 140ms ease;
+}
+
+.btn-ghost:hover:not(:disabled) {
+  background: var(--color-gris-claro, #f8fafc);
+  border-color: var(--color-secundario, #4465e7);
+}
+
+.btn-ghost:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* ===== Responsive ===== */
+
+@media (max-width: 1200px) {
+  .config-card {
+    padding: var(--space-md) var(--space-lg);
+  }
+}
 
 @media (max-width: 768px) {
-  .prov-header {
+  .proveedores-config-header {
     flex-direction: column;
+    align-items: stretch;
   }
 
-  .prov-actions {
+  .proveedores-config-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .proveedores-config-toolbar .btn {
     width: 100%;
   }
 
-  .prov-actions .btn {
-    flex: 1;
-  }
-}
-
-@media (max-width: 640px) {
-  .section {
-    padding-left: var(--space-md);
-    padding-right: var(--space-md);
+  .proveedores-config-stats {
+    grid-template-columns: 1fr;
   }
 
-  .prov-table {
-    min-width: 640px;
+  .proveedores-config-filtros {
+    grid-template-columns: 1fr;
+  }
+
+  .proveedores-row-actions {
+    justify-content: flex-start;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .proveedores-row-actions .btn {
+    width: 100%;
+  }
+
+  .proveedores-pager {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .proveedores-pager .btn-ghost {
+    width: 100%;
+  }
+
+  .proveedores-pager-info {
+    text-align: center;
   }
 }

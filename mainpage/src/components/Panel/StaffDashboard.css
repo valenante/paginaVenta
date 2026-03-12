@@ -1,0 +1,146 @@
+/* =========================================================
+   STAFF DASHBOARD — Estilo Premium Alef
+   ---------------------------------------------------------
+   - Contenedor limpio y oscuro
+   - Header glass con blur
+   - Etiqueta de rol elegante
+   ========================================================= */
+
+:root {
+  --staff-dashboard-bg: radial-gradient(circle at top right, #141423, #0a0a13 70%);
+  --staff-dashboard-glass: rgba(255, 255, 255, 0.05);
+  --staff-dashboard-border: rgba(255, 255, 255, 0.08);
+  --staff-dashboard-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+  --staff-dashboard-radius: 18px;
+  --staff-dashboard-pill: 999px;
+
+  --staff-dashboard-text: #f8fafc;
+  --staff-dashboard-soft: #cbd5e1;
+  --staff-dashboard-muted: rgba(226, 232, 240, 0.72);
+
+  --staff-dashboard-accent-1: #6a0dad;
+  --staff-dashboard-accent-2: #ff6700;
+}
+
+/* ===== ROOT ===== */
+.staff-dashboard {
+  min-height: 100%;
+  padding: 1.4rem;
+  color: var(--staff-dashboard-text);
+  animation: staffDashboardFadeIn 0.24s ease-out;
+}
+
+@keyframes staffDashboardFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===== HEADER ===== */
+.staff-dashboard-header {
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 1.25rem;
+  padding: 1.25rem 1.35rem;
+  border-radius: var(--staff-dashboard-radius);
+  background: var(--staff-dashboard-bg);
+  border: 1px solid var(--staff-dashboard-border);
+  box-shadow: var(--staff-dashboard-shadow);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.staff-dashboard-header::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto auto 0;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    rgba(106, 13, 173, 0.5),
+    rgba(255, 103, 0, 0.45)
+  );
+  pointer-events: none;
+}
+
+.staff-dashboard-header h2 {
+  margin: 0;
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1.15;
+}
+
+/* ===== ROLE BADGE ===== */
+.staff-dashboard-header .role {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.48rem 0.9rem;
+  border-radius: var(--staff-dashboard-pill);
+  background: linear-gradient(
+    90deg,
+    rgba(106, 13, 173, 0.22),
+    rgba(255, 103, 0, 0.18)
+  );
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--staff-dashboard-soft);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+  backdrop-filter: blur(12px);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .staff-dashboard {
+    padding: 1rem;
+  }
+
+  .staff-dashboard-header {
+    padding: 1rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .staff-dashboard-header h2 {
+    font-size: 1.2rem;
+  }
+
+  .staff-dashboard-header .role {
+    align-self: flex-start;
+    font-size: 0.78rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .staff-dashboard {
+    padding: 0.85rem;
+  }
+
+  .staff-dashboard-header {
+    padding: 0.9rem;
+    border-radius: 16px;
+  }
+
+  .staff-dashboard-header h2 {
+    font-size: 1.08rem;
+  }
+
+  .staff-dashboard-header .role {
+    padding: 0.42rem 0.78rem;
+    font-size: 0.74rem;
+  }
+}

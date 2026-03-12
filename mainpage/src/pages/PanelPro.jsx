@@ -11,6 +11,7 @@ import MapaEditor from "./MapaEditor";
 import ProductsMenu from "./ProductsMenu";
 import StockPage from "./StockPage";
 import ValoracionesPanel from "./ValoracionesPanel";
+import RolesPermisosPanel from "../components/RolesPermisos/RolesPermisosPanel";
 
 // ✅ Tienda
 import VentasPageShop from "./VentasPageShop";
@@ -18,35 +19,35 @@ import ProductosPageShop from "./ProductosPageShop";
 import StockPageShop from "./StockPageShop";
 import UsuariosShopPage from "../components/UsuariosShop/UsuariosShopPage";
 
-// ✅ Tenant
+// ✅ Tenant + Auth
 import { useTenant } from "../context/TenantContext";
+import { useAuth } from "../context/AuthContext.jsx";
 
 const PANEL_BY_TIPO = {
   restaurante: [
-    // 🔥 ORDEN NUEVO POR IMPORTANCIA OPERATIVA
-
-    { key: "mapa", label: "🗺️ Mapa del restaurante", render: () => <MapaEditor /> },
-    { key: "productos", label: "🧾 Carta y productos", render: () => <ProductsMenu /> },
-    { key: "usuarios", label: "👥 Usuarios", render: () => <UsuariosPage /> },
-    { key: "caja", label: "💶 Caja diaria", render: () => <CajaDiaria /> },
-    { key: "stock", label: "📦 Stock", render: () => <StockPage /> },
-    { key: "valoraciones", label: "⭐ Valoraciones", render: () => <ValoracionesPanel /> },
-    { key: "estadisticas", label: "📊 Estadísticas", render: () => <EstadisticasPage type="plato" /> },
+    { key: "mapa", label: "🗺️ Mapa del restaurante", permiso: "mapa.edit", render: () => <MapaEditor /> },
+    { key: "productos", label: "🧾 Carta y productos", permiso: "productos.edit", render: () => <ProductsMenu /> },
+    { key: "usuarios", label: "👥 Usuarios", permiso: "usuarios.view", render: () => <UsuariosPage /> },
+    { key: "roles", label: "🔐 Roles y Permisos", permiso: "roles.manage", render: () => <RolesPermisosPanel /> },
+    { key: "caja", label: "💶 Caja diaria", permiso: "caja.view", render: () => <CajaDiaria /> },
+    { key: "stock", label: "📦 Stock", permiso: "stock.edit", render: () => <StockPage /> },
+    { key: "valoraciones", label: "⭐ Valoraciones", permiso: "valoraciones.view", render: () => <ValoracionesPanel /> },
+    { key: "estadisticas", label: "📊 Estadísticas", permiso: "estadisticas.view", render: () => <EstadisticasPage type="plato" /> },
   ],
 
   shop: [
-    // 🔥 ORDEN NUEVO ADAPTADO A TIENDA
-
-    { key: "productos", label: "🏷️ Productos", render: () => <ProductosPageShop /> },
-    { key: "usuarios", label: "👥 Usuarios", render: () => <UsuariosShopPage /> },
-    { key: "caja", label: "💶 Caja", render: () => <CajaDiaria /> },
-    { key: "stock", label: "📦 Stock", render: () => <StockPageShop /> },
-    { key: "ventas", label: "📈 Ventas", render: () => <VentasPageShop /> },
+    { key: "productos", label: "🏷️ Productos", permiso: "productos.edit", render: () => <ProductosPageShop /> },
+    { key: "usuarios", label: "👥 Usuarios", permiso: "usuarios.view", render: () => <UsuariosShopPage /> },
+    { key: "roles", label: "🔐 Roles y Permisos", permiso: "roles.manage", render: () => <RolesPermisosPanel /> },
+    { key: "caja", label: "💶 Caja", permiso: "caja.view", render: () => <CajaDiaria /> },
+    { key: "stock", label: "📦 Stock", permiso: "stock.edit", render: () => <StockPageShop /> },
+    { key: "ventas", label: "📈 Ventas", permiso: "ventas.view", render: () => <VentasPageShop /> },
   ],
 };
 
 export default function PanelPro() {
   const { tenant, loadingTenant, tenantError } = useTenant();
+  const { tienePermiso } = useAuth();
 
   const tipoNegocio = (
     tenant?.tipoNegocio ||
@@ -55,8 +56,9 @@ export default function PanelPro() {
   ).toLowerCase();
 
   const tabs = useMemo(() => {
-    return PANEL_BY_TIPO[tipoNegocio] || PANEL_BY_TIPO.shop;
-  }, [tipoNegocio]);
+    const all = PANEL_BY_TIPO[tipoNegocio] || PANEL_BY_TIPO.shop;
+    return all.filter((t) => !t.permiso || tienePermiso(t.permiso));
+  }, [tipoNegocio, tienePermiso]);
 
   const [active, setActive] = useState(tabs[0]?.key || tabs[0]?.key);
 

@@ -15,6 +15,7 @@ import UsuarioEditModal from "./UsuarioEditModal.jsx";
 import UsuarioStatsModal from "./UsuariosStatsModal.jsx";
 import ModalConfirmacion from "../Modal/ModalConfirmacion";
 
+import UsuarioPermisosModal from "./UsuarioPermisosModal.jsx";
 import AlertaMensaje from "../AlertaMensaje/AlertaMensaje";
 import ErrorToast from "../common/ErrorToast.jsx";
 
@@ -90,6 +91,8 @@ export default function UsuariosPage() {
 
     if (r.ok) showOk("Usuario creado.");
     else showErr(r.error, "No se pudo crear el usuario.");
+
+    return r;
   };
 
   const onEliminarClick = (usuario) => {
@@ -214,8 +217,6 @@ export default function UsuariosPage() {
       {usuarioEdit && (
         <UsuarioEditModal
           usuario={usuarioEdit}
-          permisosDisponibles={permisosDisponibles}
-          rolesConfig={rolesConfig}
           onSave={onEditar}
           onClose={() => setUsuarioEdit(null)}
         />
@@ -229,7 +230,6 @@ export default function UsuariosPage() {
         />
       )}
 
-      {/* Permisos (si lo reactivas)
       {usuarioPermisos && (
         <UsuarioPermisosModal
           usuario={usuarioPermisos}
@@ -239,7 +239,6 @@ export default function UsuariosPage() {
           onClose={() => setUsuarioPermisos(null)}
         />
       )}
-      */}
 
       {/* Confirmación eliminar */}
       {usuarioAEliminar && (

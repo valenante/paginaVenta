@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import api from "../../utils/api";
+import { useConfig } from "../../context/ConfigContext";
 import "./RolesPermisosPanel.css";
 
 const PROTECTED_ROLES = ["admin_restaurante", "admin_shop"];
@@ -36,6 +37,15 @@ export default function RolesPermisosPanel() {
 
   // Eliminar rol
   const [deleting, setDeleting] = useState(null);
+
+  // Staff config
+  const { config, refreshConfig } = useConfig();
+  const [mostrarEstadisticas, setMostrarEstadisticas] = useState(true);
+  const [savingStaff, setSavingStaff] = useState(false);
+
+  useEffect(() => {
+    setMostrarEstadisticas(config?.staff?.mostrarEstadisticas !== false);
+  }, [config?.staff?.mostrarEstadisticas]);
 
   useEffect(() => {
     let alive = true;
@@ -231,7 +241,7 @@ export default function RolesPermisosPanel() {
   // Detectar scope del tenant (basado en roles existentes)
   const detectedScope = useMemo(() => {
     const scopes = roleNames.map((r) => roles[r]?.scope).filter(Boolean);
-    if (scopes.includes("shop")) return "shop";
+    if (scopes.includes("tpv")) return "tpv";
     return "tpv";
   }, [roleNames, roles]);
 
@@ -271,6 +281,30 @@ export default function RolesPermisosPanel() {
       );
     } finally {
       setCreating(false);
+    }
+  };
+
+  const toggleMostrarEstadisticas = async () => {
+    const nuevoValor = !mostrarEstadisticas;
+    setMostrarEstadisticas(nuevoValor);
+    setSavingStaff(true);
+    try {
+      await api.put("/configuracion", { staff: { mostrarEstadisticas: nuevoValor } });
+      refreshConfig();
+      showToast(
+        nuevoValor
+          ? "Estadísticas visibles para el staff"
+          : "Estadísticas ocultas para el staff",
+        "success"
+      );
+    } catch (err) {
+      setMostrarEstadisticas(!nuevoValor);
+      showToast(
+        err?.response?.data?.message || "Error al guardar configuración",
+        "error"
+      );
+    } finally {
+      setSavingStaff(false);
     }
   };
 
@@ -568,6 +602,38 @@ export default function RolesPermisosPanel() {
           no podrán acceder a ninguna funcionalidad.
         </div>
       )}
+
+      {/* Opciones de staff */}
+      <section className="rpp-staff-config-card">
+        <div className="rpp-section-head">
+          <div>
+            <h3>Opciones de staff</h3>
+            <p>
+              Controla qué información pueden ver los usuarios no administradores
+              en su panel de inicio.
+            </p>
+          </div>
+        </div>
+
+        <div className="rpp-permiso-row">
+          <div className="rpp-permiso-info">
+            <span className="rpp-permiso-clave">Mostrar estadísticas personales</span>
+            <span className="rpp-permiso-desc">
+              Permite que el staff vea su rendimiento (pedidos, importe, productos vendidos)
+              en el dashboard de bienvenida.
+            </span>
+          </div>
+          <label className="rpp-toggle">
+            <input
+              type="checkbox"
+              checked={mostrarEstadisticas}
+              onChange={toggleMostrarEstadisticas}
+              disabled={savingStaff}
+            />
+            <span className="rpp-toggle-slider" />
+          </label>
+        </div>
+      </section>
 
       {/* Módulos */}
       <section className="rpp-modulos-grid">

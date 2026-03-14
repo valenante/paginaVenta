@@ -139,13 +139,16 @@ const CrearProducto = ({ onClose, onCreated }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [{ data: seccionesDB }, { data: estacionesDB }] =
+        const [seccionesRes, estacionesRes] =
           await Promise.all([
             api.get("/secciones"),
             api.get("/estaciones", {
               params: { includeInactive: 0 },
             }),
           ]);
+
+        const seccionesDB = seccionesRes?.data?.data?.items ?? seccionesRes?.data ?? [];
+        const estacionesDB = estacionesRes?.data?.data?.items ?? estacionesRes?.data ?? [];
 
         setSecciones(Array.isArray(seccionesDB) ? seccionesDB : []);
         setEstaciones(Array.isArray(estacionesDB) ? estacionesDB : []);

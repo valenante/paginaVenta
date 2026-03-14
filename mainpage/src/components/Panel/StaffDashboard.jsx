@@ -1,10 +1,15 @@
 import { useAuth } from "../../context/AuthContext";
+import { useConfig } from "../../context/ConfigContext";
 import { Navigate } from "react-router-dom";
+import ResumenDia from "./ResumenDia.jsx";
 import StaffStats from "./StaffStats.jsx";
 import "./StaffDashboard.css";
 
+const ADMIN_ROLES = ["superadmin", "admin_restaurante", "admin_shop"];
+
 export default function StaffDashboard() {
   const { user, loading } = useAuth();
+  const { config } = useConfig();
 
   if (loading) return null;
 
@@ -13,6 +18,8 @@ export default function StaffDashboard() {
   }
 
   const roleLabel = user?.roleLabel || user?.role || "staff";
+  const isAdmin = ADMIN_ROLES.includes(user?.role);
+  const mostrarStats = isAdmin || config?.staff?.mostrarEstadisticas !== false;
 
   return (
     <div className="staff-dashboard">
@@ -21,7 +28,9 @@ export default function StaffDashboard() {
         <span className="role">{roleLabel}</span>
       </header>
 
-      <StaffStats />
+      <ResumenDia />
+
+      {mostrarStats && <StaffStats />}
     </div>
   );
 }

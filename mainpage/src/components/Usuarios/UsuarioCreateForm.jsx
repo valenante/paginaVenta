@@ -30,8 +30,6 @@ export default function UsuarioCreateForm({ onCrear }) {
     if (!/\S+@\S+\.\S+/.test(form.email)) e.email = "Email inválido";
     const rolesValidos = rolesDisponibles.map((r) => r.value);
     if (!rolesValidos.includes(form.role)) e.role = "Rol inválido";
-    if (form.role === "cocinero" && !form.estacion)
-      e.estacion = "Selecciona estación";
     if (form.password.length < 8) e.password = "Min 8 caracteres";
     if (form.password !== form.confirmPassword)
       e.confirmPassword = "No coinciden";
@@ -49,7 +47,7 @@ export default function UsuarioCreateForm({ onCrear }) {
         name: form.name,
         email: form.email,
         role: form.role,
-        estacion: form.role === "cocinero" ? form.estacion : "",
+        estacion: form.estacion || "",
         password: form.password,
       });
 
@@ -103,19 +101,17 @@ export default function UsuarioCreateForm({ onCrear }) {
           {errors.role && <p className="error">{errors.role}</p>}
         </div>
 
-        {/* Estación (solo si es cocinero) */}
-        {form.role === "cocinero" && (
-          <div className="field">
-            <AlefSelect
-              label="Estación"
-              placeholder="Selecciona estación"
-              value={form.estacion}
-              onChange={(v) => setForm({ ...form, estacion: v })}
-              options={ESTACIONES}
-            />
-            {errors.estacion && <p className="error">{errors.estacion}</p>}
-          </div>
-        )}
+        {/* Estación */}
+        <div className="field">
+          <AlefSelect
+            label="Estación"
+            placeholder="Sin estación"
+            value={form.estacion}
+            onChange={(v) => setForm({ ...form, estacion: v })}
+            options={ESTACIONES}
+          />
+          {errors.estacion && <p className="error">{errors.estacion}</p>}
+        </div>
 
         {/* Contraseña */}
         <div className="field">

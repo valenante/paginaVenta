@@ -146,8 +146,9 @@ const EditProduct = ({
       .get("/estaciones", {
         params: { destino, includeInactive: 0 },
       })
-      .then(({ data }) => {
-        setEstaciones(Array.isArray(data) ? data : []);
+      .then((res) => {
+        const items = res?.data?.data?.items ?? res?.data ?? [];
+        setEstaciones(Array.isArray(items) ? items : []);
       })
       .catch((err) =>
         console.error("❌ Error cargando estaciones:", err)
@@ -157,8 +158,9 @@ const EditProduct = ({
   useEffect(() => {
     const fetchSecciones = async () => {
       try {
-        const { data } = await api.get("/secciones");
-        setSecciones(Array.isArray(data) ? data : []);
+        const res = await api.get("/secciones");
+        const items = res?.data?.data?.items ?? res?.data ?? [];
+        setSecciones(Array.isArray(items) ? items : []);
       } catch (err) {
         console.error("Error cargando secciones:", err);
       }

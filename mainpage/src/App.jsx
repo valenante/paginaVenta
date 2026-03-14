@@ -106,8 +106,7 @@ const ConfigImpresionShopPage = lazy(() =>
   import("./pages/ConfigImpresionShopPage")
 );
 
-// Paneles
-const StaffPanel = lazy(() => import("./pages/panel/StaffPanel"));
+// StaffPanel eliminado — unificado en PanelPro
 
 // 🛡 SuperAdmin
 const AdminLayout = lazy(() =>
@@ -145,12 +144,7 @@ const SuperadminAltaTenant = lazy(() =>
   import("./pages/admin/SuperadminAltaTenant/SuperadminAltaTenant.jsx")
 );
 
-const ADMIN_PANEL_ROLES = new Set([
-  "admin",
-  "admin_restaurante",
-  "admin_shop",
-  "vendedor",
-]);
+/* ADMIN_PANEL_ROLES eliminado — el acceso al panel se controla por permisos granulares */
 
 /* =============================
    LANDING PÚBLICA (marketing)
@@ -202,13 +196,10 @@ function HomeEntry() {
   }
 
   const resolvedTenantId = params.tenantId || tenantId || user?.tenantSlug || user?.tenantId;
-  const isAdmin = ADMIN_PANEL_ROLES.has(user.role);
 
   const target = resolvedTenantId
-    ? `/${resolvedTenantId}/${isAdmin ? "pro" : "staff"}`
-    : isAdmin
-      ? "/pro"
-      : "/staff";
+    ? `/${resolvedTenantId}/pro`
+    : "/pro";
 
   return <Navigate to={target} replace />;
 }
@@ -468,27 +459,11 @@ function AppRoutes() {
         }
       />
 
-      {/* STAFF */}
-      <Route
-        path="/staff"
-        element={
-          <UserLayout>
-            <StaffPanel />
-          </UserLayout>
-        }
-      />
-      <Route
-        path="/:tenantId/staff"
-        element={
-          <UserLayout>
-            <StaffPanel />
-          </UserLayout>
-        }
-      />
-
-      {/* Alias legacy */}
-      <Route path="/panel" element={<Navigate to="/staff" replace />} />
-      <Route path="/:tenantId/panel" element={<Navigate to="../staff" replace />} />
+      {/* Legacy: staff y panel redirigen a pro */}
+      <Route path="/staff" element={<Navigate to="/pro" replace />} />
+      <Route path="/:tenantId/staff" element={<Navigate to="../pro" replace />} />
+      <Route path="/panel" element={<Navigate to="/pro" replace />} />
+      <Route path="/:tenantId/panel" element={<Navigate to="../pro" replace />} />
 
       <Route
         path="/configuracion/exports"

@@ -33,9 +33,6 @@ export default function UsuarioEditModal({
     const allowedRoles = roles.map((r) => r.value);
     if (!allowedRoles.includes(form.role)) e.role = "Rol inválido";
 
-    if (form.role === "cocinero" && !form.estacion) {
-      e.estacion = "Selecciona estación";
-    }
 
     return e;
   };
@@ -51,10 +48,9 @@ export default function UsuarioEditModal({
     try {
       setSaving(true);
 
-      // si cambia de rol y ya no es cocinero, limpiamos estación
       const payload = {
         ...form,
-        estacion: form.role === "cocinero" ? form.estacion : "",
+        estacion: form.estacion || "",
       };
 
       await onSave(usuario._id, payload);
@@ -142,8 +138,6 @@ export default function UsuarioEditModal({
                 setForm((p) => ({
                   ...p,
                   role: e.target.value,
-                  // si cambia a rol no cocinero, limpiamos estación
-                  estacion: e.target.value === "cocinero" ? p.estacion : "",
                 }))
               }
             >
@@ -158,27 +152,22 @@ export default function UsuarioEditModal({
           </div>
 
           {/* Estación */}
-          {form.role === "cocinero" && (
-            <div className="userEditModal-field">
-              <label>Estación</label>
-              <select
-                value={form.estacion}
-                onChange={(e) =>
-                  setForm((p) => ({ ...p, estacion: e.target.value }))
-                }
-              >
-                <option value="">--</option>
-                {estaciones.map((est) => (
-                  <option key={est.value} value={est.value}>
-                    {est.label}
-                  </option>
-                ))}
-              </select>
-              {errors.estacion && (
-                <p className="userEditModal-error">{errors.estacion}</p>
-              )}
-            </div>
-          )}
+          <div className="userEditModal-field">
+            <label>Estación</label>
+            <select
+              value={form.estacion}
+              onChange={(e) =>
+                setForm((p) => ({ ...p, estacion: e.target.value }))
+              }
+            >
+              <option value="">Sin estación</option>
+              {estaciones.map((est) => (
+                <option key={est.value} value={est.value}>
+                  {est.label}
+                </option>
+              ))}
+            </select>
+          </div>
 
           {/* Error servidor */}
           {serverError && (

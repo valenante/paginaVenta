@@ -52,6 +52,7 @@
 .rpp-info-card,
 .rpp-warning-card,
 .rpp-modulo-card,
+.rpp-staff-config-card,
 .rpp-header {
   background: var(--rpp-glass-bg);
   backdrop-filter: blur(14px);
@@ -544,6 +545,13 @@
   font-family: inherit;
 }
 
+/* ===== STAFF CONFIG ===== */
+
+.rpp-staff-config-card {
+  padding: 1.35rem 1.4rem;
+  margin-bottom: 1.2rem;
+}
+
 /* ===== MÓDULOS ===== */
 
 .rpp-modulos-grid {
@@ -791,7 +799,8 @@
   .rpp-toolbar,
   .rpp-info-card,
   .rpp-warning-card,
-  .rpp-modulo-card {
+  .rpp-modulo-card,
+  .rpp-staff-config-card {
     padding: 1rem;
   }
 

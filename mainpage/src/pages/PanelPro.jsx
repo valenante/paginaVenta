@@ -19,30 +19,40 @@ import ProductosPageShop from "./ProductosPageShop";
 import StockPageShop from "./StockPageShop";
 import UsuariosShopPage from "../components/UsuariosShop/UsuariosShopPage";
 
+// ✅ Staff (integrado como tab operativo)
+import StaffPanel from "./panel/StaffPanel";
+
 // ✅ Tenant + Auth
 import { useTenant } from "../context/TenantContext";
 import { useAuth } from "../context/AuthContext.jsx";
 
 const PANEL_BY_TIPO = {
   restaurante: [
-    { key: "mapa", label: "🗺️ Mapa del restaurante", permiso: "mapa.edit", render: () => <MapaEditor /> },
-    { key: "productos", label: "🧾 Carta y productos", permiso: "productos.edit", render: () => <ProductsMenu /> },
-    { key: "usuarios", label: "👥 Usuarios", permiso: "usuarios.view", render: () => <UsuariosPage /> },
+    { key: "mapa", label: "🗺️ Mapa del restaurante", permiso: "mapa.manage", render: () => <MapaEditor /> },
+    { key: "productos", label: "🧾 Carta y productos", permiso: "productos.manage", render: () => <ProductsMenu /> },
+    { key: "usuarios", label: "👥 Usuarios", permiso: "usuarios.manage", render: () => <UsuariosPage /> },
     { key: "roles", label: "🔐 Roles y Permisos", permiso: "roles.manage", render: () => <RolesPermisosPanel /> },
-    { key: "caja", label: "💶 Caja diaria", permiso: "caja.view", render: () => <CajaDiaria /> },
-    { key: "stock", label: "📦 Stock", permiso: "stock.edit", render: () => <StockPage /> },
-    { key: "valoraciones", label: "⭐ Valoraciones", permiso: "valoraciones.view", render: () => <ValoracionesPanel /> },
-    { key: "estadisticas", label: "📊 Estadísticas", permiso: "estadisticas.view", render: () => <EstadisticasPage type="plato" /> },
+    { key: "caja", label: "💶 Caja diaria", permiso: "caja.manage", render: () => <CajaDiaria /> },
+    { key: "stock", label: "📦 Stock", permiso: "stock.manage", render: () => <StockPage /> },
+    { key: "valoraciones", label: "⭐ Valoraciones", permiso: "valoraciones.manage", render: () => <ValoracionesPanel /> },
+    { key: "estadisticas", label: "📊 Estadísticas", permiso: "estadisticas.manage", render: () => <EstadisticasPage type="plato" /> },
   ],
 
   shop: [
-    { key: "productos", label: "🏷️ Productos", permiso: "productos.edit", render: () => <ProductosPageShop /> },
-    { key: "usuarios", label: "👥 Usuarios", permiso: "usuarios.view", render: () => <UsuariosShopPage /> },
+    { key: "productos", label: "🏷️ Productos", permiso: "productos.manage", render: () => <ProductosPageShop /> },
+    { key: "usuarios", label: "👥 Usuarios", permiso: "usuarios.manage", render: () => <UsuariosShopPage /> },
     { key: "roles", label: "🔐 Roles y Permisos", permiso: "roles.manage", render: () => <RolesPermisosPanel /> },
-    { key: "caja", label: "💶 Caja", permiso: "caja.view", render: () => <CajaDiaria /> },
-    { key: "stock", label: "📦 Stock", permiso: "stock.edit", render: () => <StockPageShop /> },
-    { key: "ventas", label: "📈 Ventas", permiso: "ventas.view", render: () => <VentasPageShop /> },
+    { key: "caja", label: "💶 Caja", permiso: "caja.manage", render: () => <CajaDiaria /> },
+    { key: "stock", label: "📦 Stock", permiso: "stock.manage", render: () => <StockPageShop /> },
+    { key: "ventas", label: "📈 Ventas", permiso: "ventas.manage", render: () => <VentasPageShop /> },
   ],
+};
+
+const STAFF_TAB = {
+  key: "staff",
+  label: "📊 Panel operativo",
+  permiso: null,
+  render: () => <StaffPanel />,
 };
 
 export default function PanelPro() {
@@ -56,11 +66,12 @@ export default function PanelPro() {
   ).toLowerCase();
 
   const tabs = useMemo(() => {
-    const all = PANEL_BY_TIPO[tipoNegocio] || PANEL_BY_TIPO.shop;
-    return all.filter((t) => !t.permiso || tienePermiso(t.permiso));
+    const gestion = (PANEL_BY_TIPO[tipoNegocio] || PANEL_BY_TIPO.shop)
+      .filter((t) => !t.permiso || tienePermiso(t.permiso));
+    return [STAFF_TAB, ...gestion];
   }, [tipoNegocio, tienePermiso]);
 
-  const [active, setActive] = useState(tabs[0]?.key || tabs[0]?.key);
+  const [active, setActive] = useState("staff");
 
   useEffect(() => {
     if (!tabs.some((t) => t.key === active)) {

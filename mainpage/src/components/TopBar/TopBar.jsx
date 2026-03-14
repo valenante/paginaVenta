@@ -5,12 +5,7 @@ import { useTenant } from "../../context/TenantContext";
 import logoAlef from "../../assets/imagenes/alef.png";
 import "./TopBar.css";
 
-const ADMIN_PANEL_ROLES = new Set([
-  "admin",
-  "admin_restaurante",
-  "admin_shop",
-  "vendedor",
-]);
+/* ADMIN_PANEL_ROLES eliminado — acceso al panel controlado por permisos granulares */
 
 export default function TopBar() {
   const [menuAbierto, setMenuAbierto] = useState(false);
@@ -20,12 +15,12 @@ export default function TopBar() {
     logout,
     canAccessModule,
     isSuperadmin,
-    isAdminPanelRole,
   } = useAuth();
 
   const { tenant, tenantId } = useTenant();
   const navigate = useNavigate();
   const location = useLocation();
+
 
   const isActive = (path) => location.pathname.startsWith(path);
 
@@ -33,6 +28,10 @@ export default function TopBar() {
     user?.plan === "esencial" || user?.plan === "tpv-esencial";
 
   const isDev = import.meta.env.DEV;
+
+  const isOwner =
+    user?.role === "admin_restaurante" ||
+    user?.role === "admin_shop";
 
   const tenantSlug = useMemo(() => {
     return tenant?.slug || tenantId || user?.tenantSlug || user?.tenantId || "demo";
@@ -56,20 +55,13 @@ export default function TopBar() {
     if (nuevaVentana) nuevaVentana.focus();
   }, []);
 
-  const esAdminPanel = useMemo(() => {
-    if (!user) return false;
-    if (typeof isAdminPanelRole === "function") return isAdminPanelRole(user);
-    return ADMIN_PANEL_ROLES.has(user.role);
-  }, [user, isAdminPanelRole]);
-
-  const puedeEntrarPanelPro = !isSuperadmin && esAdminPanel;
-  const puedeEntrarPanelStaff = !isSuperadmin && !!user && !esAdminPanel;
+  const puedeEntrarPanel = !isSuperadmin && !!user;
 
   const rutaPanelPrincipal = useMemo(() => {
     if (isSuperadmin) return "/superadmin";
     if (!user) return "/";
-    return esAdminPanel ? "/pro" : "/staff";
-  }, [isSuperadmin, user, esAdminPanel]);
+    return "/pro";
+  }, [isSuperadmin, user]);
 
   const cerrarMenu = useCallback(() => setMenuAbierto(false), []);
   const toggleMenu = useCallback(() => setMenuAbierto((v) => !v), []);
@@ -233,18 +225,17 @@ export default function TopBar() {
               )}
 
               {/* PANEL PRINCIPAL */}
-              {!isSuperadmin && (puedeEntrarPanelPro || puedeEntrarPanelStaff) && (
+              {puedeEntrarPanel && (
                 <button
                   type="button"
                   onClick={() => {
                     cerrarMenu();
                     navigate(rutaPanelPrincipal);
                   }}
-                  className={`TopBar-btn login ${
-                    isActive("/pro") || isActive("/staff") || isActive("/panel")
+                  className={`TopBar-btn login ${isActive("/pro") || isActive("/staff") || isActive("/panel")
                       ? "active"
                       : ""
-                  }`}
+                    }`}
                 >
                   Panel de Gestión
                 </button>
@@ -258,17 +249,17 @@ export default function TopBar() {
                 canAccessModule("stock") ||
                 canAccessModule("stats")
               ) && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    cerrarMenu();
-                    navigate("/dashboard");
-                  }}
-                  className={`TopBar-btn login ${isActive("/dashboard") ? "active" : ""}`}
-                >
-                  Dashboard
-                </button>
-              )}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      cerrarMenu();
+                      navigate("/dashboard");
+                    }}
+                    className={`TopBar-btn login ${isActive("/dashboard") ? "active" : ""}`}
+                  >
+                    Dashboard
+                  </button>
+                )}
 
               {/* ENLACES EXTERNOS */}
               {!isSuperadmin && (
@@ -306,7 +297,7 @@ export default function TopBar() {
               )}
 
               {/* AYUDA / SOPORTE */}
-              {!isSuperadmin && canAccessModule("config") && (
+              {!isSuperadmin && isOwner && (
                 <>
                   <Link
                     to="/ayuda"

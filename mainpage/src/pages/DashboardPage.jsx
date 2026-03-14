@@ -23,6 +23,10 @@ export default function DashboardPage() {
       ? "Configura impresoras de tickets y facturas para el mostrador."
       : "Asigna impresoras a cocina, barra y caja y realiza pruebas.";
 
+  const isOwner =
+    user?.role === "admin_restaurante" ||
+    user?.role === "admin_shop";
+
   useEffect(() => {
     const fallback = tipoNegocio === "shop" ? "Tienda" : "Restaurante";
     document.title = `${config?.branding?.nombreRestaurante || fallback} | Dashboard`;
@@ -123,7 +127,7 @@ export default function DashboardPage() {
         )}
 
         {/* 2) Cuenta / Facturación */}
-        {hasPermission("config.view") && (
+        {isOwner && (
           <Link to="/mi-cuenta" className="dashboard-tile card">
             <div className="dashboard-tile-icon">💼</div>
             <h2>Mi cuenta</h2>
@@ -142,7 +146,7 @@ export default function DashboardPage() {
           </Link>
         )}
 
-        {hasPermission("estadisticas.export") && (
+        {hasPermission("estadisticas.manage") && (
           <Link to="/configuracion/exports" className="dashboard-tile card">
             <div className="dashboard-tile-icon">📤</div>
             <h2>Exports / Reports</h2>

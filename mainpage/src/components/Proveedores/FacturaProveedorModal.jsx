@@ -89,7 +89,7 @@ export default function FacturaProveedorModal({ onClose, onSaved }) {
     <Portal>
       <div className="ppModal-backdrop" onMouseDown={onClose}>
         <div
-          className="ppModal ppFactura card"
+          className="ppModal ppFactura facturaProvModal card"
           onMouseDown={(e) => e.stopPropagation()}
         >
           {/* =========================

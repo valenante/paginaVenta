@@ -253,7 +253,7 @@ export default function RestauranteConfigPage() {
       : "";
 
   return (
-    <main className="rest-config-page section section--wide">
+    <main className="rest-config-page cfg-page cfg-page--fixed-bar section section--wide">
       {alerta?.tipo === "error" && (
         <ErrorToast
           error={alerta}
@@ -299,7 +299,7 @@ export default function RestauranteConfigPage() {
       )}
 
       {/* Header global */}
-      <header className="rest-config-header">
+      <header className="rest-config-header cfg-header">
         <div>
           <h1>⚙️ Configuración {esTienda ? "de la shop" : "del restaurante"}</h1>
           <p className="text-suave">
@@ -309,9 +309,9 @@ export default function RestauranteConfigPage() {
         <div className="rest-config-header-status">{verifactuBadge}</div>
       </header>
 
-      <div className="rest-config-layout">
+      <div className="rest-config-layout cfg-layout">
         {/* COLUMNA PRINCIPAL */}
-        <div className="rest-config-main">
+        <div className="rest-config-main cfg-main">
           <IdentidadNegocioPanel
             form={form}
             setForm={setForm}
@@ -357,7 +357,7 @@ export default function RestauranteConfigPage() {
       </div>
 
       {/* BARRA DE ACCIONES INFERIOR */}
-      <div className="rest-config-actions">
+      <div className="rest-config-actions cfg-actions-bar">
         <button
           type="button"
           className="btn btn-primario"

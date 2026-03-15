@@ -1,8 +1,6 @@
 /* =========================================================
-   BILLING — Panel SuperAdmin (estilo hermano TenantTable)
-   - Vidrio oscuro + sombras profundas
-   - Tabla pro en desktop
-   - Card-list en móvil (sin overflow horizontal)
+   BILLING — Específico (Panel SuperAdmin)
+   Base: dashboard-common.css
    ========================================================= */
 
 .billing {
@@ -12,12 +10,8 @@
   color: var(--color-texto-invertido);
 }
 
-/* =========================
-   Header
-========================= */
-.billing__header {
-  margin-bottom: 1.2rem;
-}
+/* ===== Header ===== */
+.billing__header { margin-bottom: 1.2rem; }
 
 .billing__title {
   margin: 0;
@@ -31,12 +25,10 @@
 .billing__subtitle {
   margin: 0.55rem 0 0;
   font-size: var(--font-size-sm);
-  color: rgba(226, 232, 240, 0.72);
+  color: var(--dash-text-muted);
 }
 
-/* =========================
-   States
-========================= */
+/* ===== States ===== */
 .billing-state {
   text-align: center;
   padding: 2rem 1.2rem;
@@ -51,9 +43,7 @@
   border-radius: var(--radius-lg);
 }
 
-/* =========================
-   KPI cards
-========================= */
+/* ===== KPI cards ===== */
 .billing-kpis {
   display: grid;
   grid-template-columns: repeat(12, 1fr);
@@ -68,9 +58,7 @@
   border: 1px solid rgba(148, 163, 184, 0.22);
   border-radius: var(--radius-lg);
   padding: 1.25rem 1.2rem;
-  box-shadow:
-    0 20px 34px rgba(0, 0, 0, 0.55),
-    0 0 0 1px rgba(255, 255, 255, 0.06);
+  box-shadow: var(--dash-shadow-deep);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   transition: transform 140ms ease, box-shadow 140ms ease, border-color 140ms ease;
@@ -105,12 +93,8 @@
   color: rgba(148, 163, 184, 0.85);
 }
 
-/* =========================
-   Blocks (sections)
-========================= */
-.billing-block {
-  margin-top: 1.7rem;
-}
+/* ===== Blocks ===== */
+.billing-block { margin-top: 1.7rem; }
 
 .billing-block__header {
   display: flex;
@@ -128,12 +112,8 @@
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.35);
 }
 
-/* =========================
-   Table (desktop)
-========================= */
-.billing-tableWrap {
-  width: 100%;
-}
+/* ===== Table ===== */
+.billing-tableWrap { width: 100%; }
 
 .billing-table {
   width: 100%;
@@ -142,16 +122,12 @@
   border-radius: var(--radius-lg);
   overflow: hidden;
   background: rgba(15, 23, 42, 0.6);
-  box-shadow:
-    0 18px 40px rgba(0, 0, 0, 0.55),
-    0 0 0 1px rgba(255, 255, 255, 0.06);
+  box-shadow: var(--dash-shadow-deep);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
 }
 
-.billing-table__thead {
-  background: rgba(255, 255, 255, 0.04);
-}
+.billing-table__thead { background: rgba(255, 255, 255, 0.04); }
 
 .billing-table th,
 .billing-table td {
@@ -173,25 +149,21 @@
   border-bottom: 1px solid rgba(148, 163, 184, 0.22);
 }
 
-.billing-table tr:hover td {
-  background: rgba(255, 255, 255, 0.06);
-}
+.billing-table tr:hover td { background: rgba(255, 255, 255, 0.06); }
 
 .billing-table__empty {
   padding: 1rem;
   text-align: center;
-  color: rgba(226, 232, 240, 0.72);
+  color: var(--dash-text-muted);
 }
 
-/* =========================
-   Status pill
-========================= */
+/* ===== Status pill ===== */
 .billing-status {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   padding: 4px 10px;
-  border-radius: 999px;
+  border-radius: var(--dash-radius-pill);
   font-size: 12px;
   font-weight: 900;
   letter-spacing: 0.2px;
@@ -199,71 +171,34 @@
   white-space: nowrap;
 }
 
-.billing-status--ok {
-  background: rgba(46, 204, 113, 0.10);
-  color: rgba(46, 204, 113, 0.95);
-}
+.billing-status--ok      { background: rgba(46, 204, 113, 0.10); color: rgba(46, 204, 113, 0.95); }
+.billing-status--bad     { background: rgba(239, 68, 68, 0.12); color: rgba(239, 68, 68, 0.95); }
+.billing-status--neutral { background: rgba(148, 163, 184, 0.12); color: rgba(226, 232, 240, 0.86); }
 
-.billing-status--bad {
-  background: rgba(239, 68, 68, 0.12);
-  color: rgba(239, 68, 68, 0.95);
-}
-
-.billing-status--neutral {
-  background: rgba(148, 163, 184, 0.12);
-  color: rgba(226, 232, 240, 0.86);
-}
-
-/* =========================
-   Responsive: NO overflow
-   -> Table becomes card list
-========================= */
+/* ===== Responsive ===== */
 @media (max-width: 900px) {
-  .billing {
-    padding: 1.6rem 1rem;
-  }
+  .billing { padding: 1.6rem 1rem; }
 
-  .billing-kpis {
-    grid-template-columns: 1fr;
-  }
+  .billing-kpis { grid-template-columns: 1fr; }
+  .billing-kpi { grid-column: auto; }
 
-  .billing-kpi {
-    grid-column: auto;
-  }
-
-  /* Card-list mode */
   .billing-table,
   .billing-table__thead,
   .billing-table__tbody,
   .billing-table tr,
-  .billing-table td {
-    display: block;
-    width: 100%;
-  }
+  .billing-table td { display: block; width: 100%; }
 
-  .billing-table__thead {
-    display: none;
-  }
-
-  .billing-table {
-    border-radius: 16px;
-    overflow: hidden;
-  }
+  .billing-table__thead { display: none; }
+  .billing-table { border-radius: 16px; overflow: hidden; }
 
   .billing-table tr {
     padding: 10px 10px 12px;
     border-bottom: 1px solid rgba(148, 163, 184, 0.12);
   }
 
-  .billing-table tr:last-child {
-    border-bottom: 0;
-  }
+  .billing-table tr:last-child { border-bottom: 0; }
 
-  .billing-table td {
-    padding: 10px 10px;
-    border-bottom: 0;
-    white-space: normal;
-  }
+  .billing-table td { padding: 10px; border-bottom: 0; white-space: normal; }
 
   .billing-table td::before {
     content: attr(data-label);
@@ -278,11 +213,6 @@
 }
 
 @media (max-width: 520px) {
-  .billing__title {
-    font-size: 1.5rem;
-  }
-
-  .billing-block__title {
-    font-size: 1.15rem;
-  }
+  .billing__title { font-size: 1.5rem; }
+  .billing-block__title { font-size: 1.15rem; }
 }

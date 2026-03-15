@@ -1,46 +1,9 @@
 /*****************************************************
  * Configuración de impresión – Alef
- * Hermana visual de RestauranteConfigPage
+ * Base: config-common.css
  *****************************************************/
 
-.print-config-page {
-  width: auto;
-  margin-left: auto;
-  margin-right: auto;
-  padding-left: var(--space-lg);
-  padding-right: var(--space-lg);
-  padding-bottom: 90px; /* para que la barra fija no tape contenido */
-}
-
-/* ===== Header global ===== */
-
-.print-config-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: var(--space-lg);
-  margin-bottom: var(--space-xl);
-}
-
-.print-config-header h1 {
-  margin: 0 0 var(--space-xs);
-  font-size: var(--font-size-2xl);
-  color: var(--color-primario);
-}
-
-.print-config-header p {
-  margin: 0;
-  max-width: 720px;
-}
-
-.print-config-header-status {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-}
-
-/* ===== Badge / estado ===== */
-
+/* ===== Badge / estado conexión ===== */
 .print-config-status {
   display: inline-flex;
   align-items: center;
@@ -63,87 +26,16 @@
   flex-shrink: 0;
 }
 
-.print-config-status--online {
-  color: var(--color-success, #16a34a);
-}
+.print-config-status--online { color: var(--color-success, #16a34a); }
+.print-config-status--online .print-config-status__dot { background: var(--color-success, #16a34a); }
 
-.print-config-status--online .print-config-status__dot {
-  background: var(--color-success, #16a34a);
-}
+.print-config-status--offline { color: var(--color-danger, #dc2626); }
+.print-config-status--offline .print-config-status__dot { background: var(--color-danger, #dc2626); }
 
-.print-config-status--offline {
-  color: var(--color-danger, #dc2626);
-}
-
-.print-config-status--offline .print-config-status__dot {
-  background: var(--color-danger, #dc2626);
-}
-
-.print-config-status--unknown {
-  color: var(--color-warning, #f59e0b);
-}
-
-.print-config-status--unknown .print-config-status__dot {
-  background: var(--color-warning, #f59e0b);
-}
-
-/* ===== Layout ===== */
-
-.print-config-layout {
-  display: grid;
-  gap: var(--space-xl);
-  align-items: flex-start;
-}
-
-.print-config-main {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-lg);
-}
-
-/* ===== Toolbar superior ===== */
-
-.print-config-toolbar {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-sm);
-  margin-bottom: var(--space-lg);
-}
-
-/* ===== Stats ===== */
-
-.print-config-stats {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: var(--space-md);
-}
-
-.print-config-stat {
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-  padding: var(--space-md);
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--color-borde-suave, #e5e7eb);
-  background: var(--color-superficie, #ffffff);
-  box-shadow: var(--shadow-suave);
-}
-
-.print-config-stat__label {
-  font-size: var(--font-size-xs);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--color-texto-suave);
-  font-weight: 700;
-}
-
-.print-config-stat strong {
-  font-size: var(--font-size-lg);
-  color: var(--color-texto);
-}
+.print-config-status--unknown { color: var(--color-warning, #f59e0b); }
+.print-config-status--unknown .print-config-status__dot { background: var(--color-warning, #f59e0b); }
 
 /* ===== Grid de selects ===== */
-
 .print-config-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -157,107 +49,23 @@
 }
 
 /* ===== Botones de prueba ===== */
-
 .print-config-tests {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-sm);
 }
 
-/* ===== Barra inferior fija ===== */
-
-.print-config-actions {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 100;
-
-  background: transparent;
-  border: none;
-  backdrop-filter: none;
-
-  padding: var(--space-sm) var(--space-lg);
-
-  display: flex;
-  justify-content: flex-end;
-  gap: var(--space-sm);
-}
-
-.print-config-actions::before {
-  content: "";
-  flex: 1;
-}
-
-.print-config-actions .btn {
-  flex: 0 0 auto;
-  width: auto;
-  min-width: 180px;
-  max-width: 240px;
-  padding: 0.55rem 0.9rem;
-  border-radius: 999px;
-  font-size: 0.95rem;
-}
-
 /* ===== Responsive ===== */
-
-@media (max-width: 1200px) {
-  .config-card {
-    padding: var(--space-md) var(--space-lg);
-  }
-
-  .print-config-actions .btn {
-    min-width: 190px;
-    max-width: 260px;
-  }
-}
-
 @media (max-width: 768px) {
-  .print-config-header {
+  .print-config-tests {
     flex-direction: column;
     align-items: stretch;
   }
 
-  .print-config-page {
-    padding-bottom: 140px;
-  }
-
-  .print-config-actions {
-    justify-content: center;
-    flex-direction: column;
-    align-items: stretch;
-    gap: var(--space-sm);
-  }
-
-  .print-config-actions::before {
-    display: none;
-  }
-
-  .print-config-actions .btn {
-    width: 100%;
-    max-width: none;
-    min-width: 0;
-  }
-
-  .print-config-tests,
-  .print-config-toolbar {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .print-config-tests .btn,
-  .print-config-toolbar .btn {
-    width: 100%;
-  }
-
-  .print-config-stats {
-    grid-template-columns: 1fr;
-  }
+  .print-config-tests .btn { width: 100%; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .config-field input,
-  .config-field select {
-    transition: none;
-  }
+  .config-field select { transition: none; }
 }

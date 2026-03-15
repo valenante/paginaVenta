@@ -369,7 +369,7 @@ export default function CartaConfigPage() {
   // ----------------------------
   if (!config) {
     return (
-      <div className="carta-config-page section section--wide">
+      <div className="carta-config-page cfg-page cfg-page--fixed-bar section section--wide">
         <div className="card carta-config-card">
           <h3>Cargando configuración...</h3>
         </div>
@@ -378,7 +378,7 @@ export default function CartaConfigPage() {
   }
 
   return (
-    <main className="carta-config-page section section--wide">
+    <main className="carta-config-page cfg-page cfg-page--fixed-bar section section--wide">
       {alerta && (
         <AlertaMensaje
           tipo={alerta.tipo}
@@ -405,7 +405,7 @@ export default function CartaConfigPage() {
         />
       )}
 
-      <header className="carta-config-header">
+      <header className="carta-config-header cfg-header">
         <div>
           <h1>🍽️ Configuración de la carta</h1>
           <p className="text-suave">
@@ -893,7 +893,7 @@ export default function CartaConfigPage() {
         </div>
       </div>
 
-      <div className="carta-config-actions">
+      <div className="carta-config-actions cfg-actions-bar">
         <button
           type="button"
           disabled={saving || !canEditConfig}

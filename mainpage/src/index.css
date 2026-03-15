@@ -58,6 +58,10 @@
   --space-2xl: 3rem;
 }
 
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
 html, body {
   margin: 0;
   padding: 0;
@@ -367,4 +371,34 @@ html, body {
 .reveal.visible {
   opacity: 1;
   transform: translateY(0);
+}
+
+/*****************************************************
+ * Mobile responsive — layout base
+ *****************************************************/
+
+@media (max-width: 768px) {
+  .section {
+    padding: var(--space-xl) var(--space-md);
+  }
+
+  .config-card {
+    padding: var(--space-md);
+    overflow: hidden;
+  }
+
+  .config-card-header {
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+}
+
+@media (max-width: 480px) {
+  .section {
+    padding: var(--space-lg) var(--space-sm);
+  }
+
+  .config-card {
+    padding: var(--space-sm) var(--space-md);
+  }
 }

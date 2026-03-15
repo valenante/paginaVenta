@@ -36,6 +36,8 @@ import { CategoriasProvider } from "./context/CategoriasContext";
 import { ShopCategoriasProvider } from "./context/ShopCategoriasContext";
 
 import "./index.css";
+import "./styles/dashboard-common.css";
+import "./styles/config-common.css";
 
 /* =============================
    LAZY PAGES (CODE SPLITTING)

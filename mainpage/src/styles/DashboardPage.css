@@ -1,6 +1,7 @@
-/*****************************************************
- * Dashboard – Alef
- *****************************************************/
+/* =========================================================
+   Dashboard — Alef (Panel usuario)
+   Base: dashboard-common.css
+   ========================================================= */
 
 .dashboard-page {
   margin: var(--space-2xl) auto;
@@ -14,34 +15,29 @@
   align-items: center;
   gap: var(--space-xl);
   margin-bottom: var(--space-xl);
-
-  /* 👉 más “aire” interno en el header */
   padding: var(--space-lg) var(--space-xl);
 }
 
-/* Logo + info restaurante */
 .dashboard-header-left {
   display: flex;
   align-items: center;
-  gap: var(--space-lg); /* antes var(--space-md) */
+  gap: var(--space-lg);
 }
 
-/* Logo sin aplastar, manteniendo proporción */
 .dashboard-logo {
   width: 80px;
   height: 80px;
-  border-radius: 999px;
-  object-fit: contain;        /* antes cover */
+  border-radius: var(--dash-radius-pill);
+  object-fit: contain;
   background: #ffffff;
   border: 1px solid var(--color-borde-suave);
-  padding: 0.35rem;           /* marco blanco alrededor del logo */
+  padding: 0.35rem;
 }
 
-/* Bloque de texto del restaurante */
 .dashboard-info {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;               /* separación vertical entre líneas */
+  gap: 0.25rem;
 }
 
 .dashboard-info h1 {
@@ -53,19 +49,15 @@
 .dashboard-text {
   margin: 0;
   font-size: var(--font-size-sm);
-  line-height: 1.4;           /* más legible */
+  line-height: 1.4;
   color: var(--color-texto-suave);
 }
 
-.dashboard-text-strong {
-  font-weight: 600;
-}
+.dashboard-text-strong { font-weight: 600; }
 
 /* Lado derecho */
 
-.dashboard-header-right {
-  text-align: right;
-}
+.dashboard-header-right { text-align: right; }
 
 .dashboard-welcome-label {
   margin: 0 0 0.1rem;
@@ -81,9 +73,7 @@
   font-weight: 600;
 }
 
-.dashboard-welcome-user span {
-  color: var(--color-primario-oscuro);
-}
+.dashboard-welcome-user span { color: var(--color-primario-oscuro); }
 
 .dashboard-welcome-sub {
   margin: 0.15rem 0 0;
@@ -106,8 +96,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-xs);
-  transition: transform 0.12s ease, box-shadow 0.12s ease,
-    border-color 0.12s ease;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease;
 }
 
 .dashboard-tile:hover {
@@ -119,7 +108,7 @@
 .dashboard-tile-icon {
   width: 36px;
   height: 36px;
-  border-radius: 999px;
+  border-radius: var(--dash-radius-pill);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -148,7 +137,5 @@
     align-items: flex-start;
   }
 
-  .dashboard-header-right {
-    text-align: left;
-  }
+  .dashboard-header-right { text-align: left; }
 }

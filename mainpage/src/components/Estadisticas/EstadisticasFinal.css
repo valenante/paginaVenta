@@ -1,53 +1,32 @@
 /* =========================================================
-   ESTADÍSTICAS ALEF — Estilo Profesional
-   ---------------------------------------------------------
-   Fuente única de verdad para EstadisticasPage y StatsFilterBar.
-   StatsFilter.css está en desuso: no importar.
+   ESTADÍSTICAS ALEF — Específico
+   Base: dashboard-common.css
    ========================================================= */
-
-/* ===== VARIABLES LOCALES ===== */
-:root {
-  --stats-radius-sm: 0.5rem;
-  --stats-radius-md: 0.75rem;
-  --stats-radius-lg: 1.25rem;
-  --stats-radius-pill: 999px;
-  --stats-glass-bg: rgba(255, 255, 255, 0.06);
-  --stats-glass-border: rgba(255, 255, 255, 0.09);
-  --stats-text: #f5f7fa;
-  --stats-text-muted: #9ca3af;
-  --stats-accent-start: #6a0dad;
-  --stats-accent-end: #ff6700;
-}
 
 /* ===== LAYOUT GENERAL ===== */
 .estadisticas-page {
   min-height: 100vh;
   padding: 2.5rem 1.5rem 4rem;
   background: radial-gradient(circle at top right, #1a1a2f 0, #0c0c17 85%);
-  color: var(--stats-text);
+  color: var(--dash-text);
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  animation: statsPageIn 0.3s ease;
+  animation: dashFadeIn 0.3s ease;
 }
 
-@keyframes statsPageIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-/* ===== BARRA DE FILTROS — contenedor ===== */
+/* ===== BARRA DE FILTROS ===== */
 .stats-filter-bar {
-  background: var(--stats-glass-bg);
+  background: var(--dash-glass-bg);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
-  border-radius: var(--stats-radius-lg);
-  border: 1px solid var(--stats-glass-border);
+  border-radius: var(--dash-radius-lg);
+  border: 1px solid var(--dash-glass-border);
   padding: 1.25rem 1.5rem;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
 }
 
-/* ===== CONTROLES — fila con wrap ===== */
+/* ===== CONTROLES ===== */
 .stats-filter-controls {
   display: flex;
   flex-wrap: wrap;
@@ -57,7 +36,7 @@
   width: 100%;
   margin: 0 auto;
 }
-/* ===== GRUPO GENÉRICO ===== */
+
 .stats-filter-group {
   display: flex;
   flex-direction: column;
@@ -70,16 +49,16 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: var(--stats-text-muted);
+  color: var(--dash-text-muted);
 }
 
 /* Input fecha */
 .stats-filter-group input[type="date"] {
   background: rgba(2, 6, 23, 0.85);
   border: 1px solid rgba(148, 163, 184, 0.35);
-  border-radius: var(--stats-radius-md);
+  border-radius: var(--dash-radius-md);
   padding: 0.5rem 0.75rem;
-  color: var(--stats-text);
+  color: var(--dash-text);
   font-size: 0.9rem;
   min-width: 155px;
   outline: none;
@@ -89,24 +68,23 @@
 
 .stats-filter-group input[type="date"]:hover,
 .stats-filter-group input[type="date"]:focus {
-  border-color: var(--stats-accent-start);
+  border-color: var(--dash-accent-1);
   box-shadow: 0 0 0 2px rgba(106, 13, 173, 0.25);
 }
 
-/* Forzar icono de calendario visible en navegadores oscuros */
 .stats-filter-group input[type="date"]::-webkit-calendar-picker-indicator {
   filter: invert(0.8);
   cursor: pointer;
 }
 
-/* ===== TOGGLE TIPO — Platos / Bebidas ===== */
+/* ===== TOGGLE TIPO ===== */
 .stats-filter-group--tipo {
   flex-direction: row;
   gap: 0;
   align-items: center;
   background: rgba(15, 23, 42, 0.9);
   border: 1px solid rgba(148, 163, 184, 0.3);
-  border-radius: var(--stats-radius-pill);
+  border-radius: var(--dash-radius-pill);
   padding: 0.25rem;
   box-shadow:
     0 4px 14px rgba(0, 0, 0, 0.3),
@@ -119,7 +97,7 @@
   background: transparent;
   color: rgba(229, 231, 235, 0.6);
   padding: 0.45rem 1.2rem;
-  border-radius: var(--stats-radius-pill);
+  border-radius: var(--dash-radius-pill);
   font-size: 0.875rem;
   font-weight: 600;
   cursor: pointer;
@@ -130,27 +108,23 @@
 
 .stats-tipo-btn:hover:not(.stats-tipo-btn--active) {
   color: #e5e7eb;
-  background: rgba(255, 255, 255, 0.07);
+  background: var(--dash-glass-bg-hover);
 }
 
 .stats-tipo-btn--active {
-  background: linear-gradient(
-    135deg,
-    var(--stats-accent-start),
-    var(--stats-accent-end)
-  );
+  background: linear-gradient(135deg, var(--dash-accent-1), var(--dash-accent-2));
   color: #ffffff;
   box-shadow: 0 4px 16px rgba(255, 103, 0, 0.4);
   opacity: 1;
 }
 
-/* ===== BOTÓN LIMPIAR FECHAS ===== */
+/* ===== BOTÓN LIMPIAR ===== */
 .stats-clear-btn {
   border: 1px solid rgba(255, 255, 255, 0.15);
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--dash-glass-bg);
   color: rgba(229, 231, 235, 0.75);
   padding: 0.5rem 1rem;
-  border-radius: var(--stats-radius-md);
+  border-radius: var(--dash-radius-md);
   font-size: 0.85rem;
   font-weight: 500;
   cursor: pointer;
@@ -167,17 +141,15 @@
 
 /* ===== TARJETA GLASS GENÉRICA ===== */
 .stats-card-glass {
-  background: var(--stats-glass-bg);
-  border-radius: var(--stats-radius-lg);
-  border: 1px solid var(--stats-glass-border);
+  background: var(--dash-glass-bg);
+  border-radius: var(--dash-radius-lg);
+  border: 1px solid var(--dash-glass-border);
   box-shadow: 0 8px 28px rgba(0, 0, 0, 0.25);
-  animation: statsPageIn 0.35s ease;
+  animation: dashFadeIn 0.35s ease;
 }
 
 /* ===== RESUMEN CATEGORÍA ===== */
-.stats-resumen {
-  padding: 1.8rem 2rem;
-}
+.stats-resumen { padding: 1.8rem 2rem; }
 
 .stats-resumen-header {
   display: flex;
@@ -196,18 +168,18 @@
 
 .stats-subtitle {
   font-size: 0.9rem;
-  color: var(--stats-text-muted);
+  color: var(--dash-text-muted);
   margin: 0.2rem 0 0;
 }
 
 .stats-tag-pro {
-  background: linear-gradient(135deg, var(--stats-accent-start), var(--stats-accent-end));
+  background: linear-gradient(135deg, var(--dash-accent-1), var(--dash-accent-2));
   color: #fff;
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.07em;
   padding: 0.25rem 0.65rem;
-  border-radius: var(--stats-radius-pill);
+  border-radius: var(--dash-radius-pill);
   white-space: nowrap;
   flex-shrink: 0;
 }
@@ -224,13 +196,13 @@
   gap: 0.2rem;
   padding: 1rem 1.2rem;
   background: rgba(255, 255, 255, 0.04);
-  border-radius: var(--stats-radius-md);
+  border-radius: var(--dash-radius-md);
   border: 1px solid rgba(255, 255, 255, 0.07);
   transition: background 0.2s ease, transform 0.2s ease;
 }
 
 .stats-resumen-item:hover {
-  background: rgba(255, 255, 255, 0.07);
+  background: var(--dash-glass-bg-hover);
   transform: translateY(-2px);
 }
 
@@ -238,7 +210,7 @@
   font-size: 0.78rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: var(--stats-text-muted);
+  color: var(--dash-text-muted);
 }
 
 .stats-value {
@@ -250,7 +222,7 @@
 
 .stats-helper {
   font-size: 0.8rem;
-  color: var(--stats-text-muted);
+  color: var(--dash-text-muted);
 }
 
 /* ===== GRID PRO ===== */
@@ -267,9 +239,7 @@
 }
 
 /* ===== TOP PRODUCTOS ===== */
-.stats-top-productos {
-  padding: 1.6rem 2rem;
-}
+.stats-top-productos { padding: 1.6rem 2rem; }
 
 .stats-top-productos h3 {
   font-size: 1.1rem;
@@ -286,14 +256,10 @@
   font-size: 0.9rem;
 }
 
-.top-producto-item:last-child {
-  border-bottom: none;
-}
+.top-producto-item:last-child { border-bottom: none; }
 
 /* ===== LISTA PRODUCTOS ===== */
-.stats-lista-productos {
-  padding: 1.5rem;
-}
+.stats-lista-productos { padding: 1.5rem; }
 
 .stats-lista-productos table {
   width: 100%;
@@ -310,7 +276,7 @@
 }
 
 .stats-lista-productos th {
-  color: #cbd5e1;
+  color: var(--dash-text-soft);
   text-transform: uppercase;
   font-size: 0.75rem;
   letter-spacing: 0.05em;
@@ -329,8 +295,8 @@
     rgba(255, 103, 0, 0.18),
     rgba(106, 13, 173, 0.28)
   );
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  border-radius: var(--stats-radius-lg);
+  border: 1px solid var(--dash-glass-border-hover);
+  border-radius: var(--dash-radius-lg);
   color: #fff;
   text-align: center;
   box-shadow: 0 8px 24px rgba(255, 103, 0, 0.2);
@@ -348,10 +314,10 @@
 }
 
 .upsell-estadisticas-pro button {
-  background: linear-gradient(135deg, var(--stats-accent-start), var(--stats-accent-end));
+  background: linear-gradient(135deg, var(--dash-accent-1), var(--dash-accent-2));
   color: #fff;
   border: none;
-  border-radius: var(--stats-radius-pill);
+  border-radius: var(--dash-radius-pill);
   padding: 0.6rem 1.5rem;
   font-size: 0.9rem;
   font-weight: 600;
@@ -382,17 +348,10 @@
 }
 
 .mensaje-carga--estadisticas {
-  animation: blink 1.8s ease infinite;
+  animation: dashBlink 1.8s ease infinite;
 }
 
-.mensaje-error--estadisticas {
-  color: #fca5a5;
-}
-
-@keyframes blink {
-  0%, 100% { opacity: 0.35; }
-  50%       { opacity: 1; }
-}
+.mensaje-error--estadisticas { color: #fca5a5; }
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
@@ -401,9 +360,7 @@
     gap: 1.25rem;
   }
 
-  .stats-filter-bar {
-    padding: 1rem 1.1rem;
-  }
+  .stats-filter-bar { padding: 1rem 1.1rem; }
 
   .stats-filter-controls {
     flex-direction: column;
@@ -411,7 +368,6 @@
     gap: 1rem;
   }
 
-  /* El toggle tipo ocupa todo el ancho en móvil */
   .stats-filter-group--tipo {
     width: 100%;
     justify-content: center;
@@ -420,26 +376,13 @@
   .stats-tipo-btn {
     flex: 1;
     text-align: center;
-    padding: 0.5rem 0.5rem;
+    padding: 0.5rem;
   }
 
-  /* Inputs de fecha a ancho completo */
-  .stats-filter-group input[type="date"] {
-    min-width: 0;
-  }
-
-  /* Botón limpiar alineado al inicio */
-  .stats-clear-btn {
-    align-self: flex-start;
-  }
-
-  .stats-pro-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .stats-resumen-grid {
-    grid-template-columns: 1fr 1fr;
-  }
+  .stats-filter-group input[type="date"] { min-width: 0; }
+  .stats-clear-btn { align-self: flex-start; }
+  .stats-pro-grid { grid-template-columns: 1fr; }
+  .stats-resumen-grid { grid-template-columns: 1fr 1fr; }
 
   .stats-lista-productos th,
   .stats-lista-productos td {
@@ -449,7 +392,5 @@
 }
 
 @media (max-width: 420px) {
-  .stats-resumen-grid {
-    grid-template-columns: 1fr;
-  }
+  .stats-resumen-grid { grid-template-columns: 1fr; }
 }

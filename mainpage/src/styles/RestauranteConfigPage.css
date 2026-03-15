@@ -1,79 +1,18 @@
 /*****************************************************
  * Configuración del restaurante – Alef
+ * Base: config-common.css (cfg-page, cfg-header, etc.)
  *****************************************************/
 
-.rest-config-page {
-  width: auto;
-  margin-left: auto;
-  margin-right: auto;
-  padding-left: var(--space-lg);
-  padding-right: var(--space-lg);
-}
-
-/* ===== Header global ===== */
-
-.rest-config-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: var(--space-lg);
-  margin-bottom: var(--space-xl);
-}
-
-.rest-config-header h1 {
-  margin: 0 0 var(--space-xs);
-  font-size: var(--font-size-2xl);
-  color: var(--color-primario);
-}
-
-.rest-config-header p {
-  margin: 0;
-  max-width: 640px;
-}
-
-.rest-config-header-status {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-}
-
-/* ===== Layout principal (main + aside) ===== */
-
-.rest-config-layout {
-  display: grid;
-  gap: var(--space-xl);
-  align-items: flex-start;
-}
-
-.rest-config-main {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-lg);
-}
-
-.rest-config-aside {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-md);
-}
-
-/* Card lateral */
-
+/* ===== Aside lateral ===== */
 .config-side h3 {
   margin-top: 0;
   margin-bottom: var(--space-xs);
   font-size: var(--font-size-md);
 }
 
-/*****************************************************
- * Apariencia del TPV
- *****************************************************/
+/* ===== Apariencia del TPV ===== */
 
-.config-card--tema {
-  overflow: hidden;
-}
-
-/* Grid de opciones de color */
+.config-card--tema { overflow: hidden; }
 
 .tema-grid {
   display: grid;
@@ -131,7 +70,6 @@
 }
 
 /* Vista previa TPV */
-
 .tpv-preview {
   display: grid;
   grid-template-columns: 220px minmax(0, 1fr);
@@ -168,9 +106,7 @@
   gap: var(--space-sm);
 }
 
-.tpv-preview-card-title {
-  font-weight: 600;
-}
+.tpv-preview-card-title { font-weight: 600; }
 
 .tpv-preview-card-body {
   display: flex;
@@ -189,117 +125,15 @@
   cursor: default;
 }
 
-/* =========================
-   Barra de acciones inferior
-   ========================= */
+/* ===== Aside reorder (legacy) ===== */
+.rest-config-aside { order: 0; }
 
-.rest-config-page {
-  /* ✅ para que la barra fija no tape el final */
-  padding-bottom: 90px;
-  /* ajusta si tu barra es más alta */
-}
-
-.rest-config-actions {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-
-  z-index: 100;
-
-  /* ✅ sin fondo (como querías) */
-  background: transparent;
-  border: none;
-  backdrop-filter: none;
-
-  /* ✅ centramos el “contenedor” visual */
-  padding: var(--space-sm) var(--space-lg);
-
-  display: flex;
-  justify-content: flex-end;
-  /* ✅ a la derecha */
-}
-
-.rest-config-actions::before {
-  /* ✅ truco: un contenedor interno “virtual” */
-  content: "";
-  flex: 1;
-}
-
-/* ✅ wrapper visual de los botones (sin tocar JSX) */
-.rest-config-actions {
-  gap: var(--space-sm);
-}
-
-.rest-config-actions .btn {
-  /* ✅ tamaño compacto */
-  flex: 0 0 auto;
-  width: auto;
-  min-width: 180px;
-  /* compacto */
-  max-width: 240px;
-  /* evita que se hagan enormes */
-  padding: 0.55rem 0.9rem;
-  border-radius: 999px;
-  /* pill */
-  font-size: 0.95rem;
-}
-
-/*****************************************************
- * Responsive
- *****************************************************/
-
+/* ===== Responsive ===== */
 @media (max-width: 1200px) {
-  .config-card {
-    padding: var(--space-md) var(--space-lg);
-  }
-
-  .tpv-preview {
-    grid-template-columns: 180px minmax(0, 1fr);
-  }
-
-  .rest-config-actions .btn {
-    min-width: 190px;
-    max-width: 260px;
-  }
+  .tpv-preview { grid-template-columns: 180px minmax(0, 1fr); }
 }
 
 @media (max-width: 768px) {
-  .rest-config-header {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .rest-config-layout {
-    grid-template-columns: 1fr;
-  }
-
-  .rest-config-aside {
-    order: -1;
-  }
-
-  .tpv-preview {
-    grid-template-columns: 120px minmax(0, 1fr);
-  }
-
-  .rest-config-page {
-    padding-bottom: 140px;
-  }
-
-  .rest-config-actions {
-    justify-content: center;
-    flex-direction: column;
-    align-items: stretch;
-    gap: var(--space-sm);
-  }
-
-  .rest-config-actions::before {
-    display: none;
-  }
-
-  .rest-config-actions .btn {
-    width: 100%;
-    max-width: none;
-    min-width: 0;
-  }
+  .rest-config-aside { order: -1; }
+  .tpv-preview { grid-template-columns: 120px minmax(0, 1fr); }
 }

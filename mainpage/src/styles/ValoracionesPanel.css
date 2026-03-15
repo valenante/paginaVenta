@@ -1,45 +1,26 @@
 /* =========================================================
-   VALORACIONES PANEL ULTRA PRO — Estilo Premium Alef
-   ---------------------------------------------------------
-   - Glassmorphism con blur 14px
-   - KPIs alineados con Caja / Stock
-   - Tabla con efecto cristal
-   - Panel lateral para detalle de opiniones
+   VALORACIONES PANEL — Específico
+   Base: dashboard-common.css
    ========================================================= */
-
-:root {
-  --glass-bg: rgba(255, 255, 255, 0.05);
-  --glass-border: rgba(255, 255, 255, 0.08);
-  --shadow-deep: 0 12px 32px rgba(0, 0, 0, 0.35);
-  --radius-md: 12px;
-  --radius-lg: 18px;
-  --radius-pill: 999px;
-}
 
 /* ===== ROOT ===== */
 .valoraciones-root {
   padding: 2rem 2.5rem;
-  color: #f8fafc;
-  background: radial-gradient(circle at top right, #141423, #0a0a13 70%);
+  color: var(--dash-text);
+  background: var(--dash-bg);
   min-height: 100vh;
-  animation: valoracionesFadeIn 0.25s ease-out;
-}
-
-@keyframes valoracionesFadeIn {
-  from { opacity: 0; transform: translateY(6px); }
-  to   { opacity: 1; transform: translateY(0); }
+  animation: dashFadeIn 0.25s ease-out;
 }
 
 /* ===== HEADER ===== */
 .valoraciones-header {
-  background: var(--glass-bg);
+  background: var(--dash-glass-bg);
   backdrop-filter: blur(14px);
   padding: 1.8rem 2rem;
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--glass-border);
-  box-shadow: var(--shadow-deep);
+  border-radius: var(--dash-radius-lg);
+  border: 1px solid var(--dash-glass-border);
+  box-shadow: var(--dash-shadow);
   margin-bottom: 2rem;
-
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
@@ -68,7 +49,7 @@
 
 .valoraciones-header-actions input[type="search"] {
   padding: 0.55rem 1rem;
-  border-radius: var(--radius-pill);
+  border-radius: var(--dash-radius-pill);
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.12);
   color: #e5e7eb;
@@ -85,15 +66,16 @@
 
 .valoraciones-header-actions button {
   padding: 0.55rem 1.2rem;
-  border-radius: var(--radius-pill);
-  background: linear-gradient(90deg, #6a0dad, #ff6700);
+  border-radius: var(--dash-radius-pill);
+  background: linear-gradient(90deg, var(--dash-accent-1), var(--dash-accent-2));
   color: #ffffff;
   border: none;
   font-weight: 600;
   font-size: 0.9rem;
   cursor: pointer;
-  box-shadow: 0 4px 14px rgba(255, 103, 0, 0.28),
-              0 0 0 1px rgba(255, 255, 255, 0.06);
+  box-shadow:
+    0 4px 14px rgba(255, 103, 0, 0.28),
+    0 0 0 1px rgba(255, 255, 255, 0.06);
   transition: all 0.22s ease;
 }
 
@@ -103,21 +85,19 @@
   filter: brightness(1.08);
 }
 
-/* =========================================================
-   INFO BLOCK (Cómo se generan las valoraciones)
-   ========================================================= */
+/* ===== INFO BLOCK ===== */
 
 .valoraciones-info {
-  margin-top: -1rem;         /* lo pega un poco al header (opcional) */
-  margin-bottom: 1.6rem;     /* separación con los KPI */
+  margin-top: -1rem;
+  margin-bottom: 1.6rem;
 }
 
 .valoraciones-info-card {
-  background: var(--glass-bg);
+  background: var(--dash-glass-bg);
   backdrop-filter: blur(14px);
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--glass-border);
-  box-shadow: var(--shadow-deep);
+  border-radius: var(--dash-radius-lg);
+  border: 1px solid var(--dash-glass-border);
+  box-shadow: var(--dash-shadow);
   padding: 1.15rem 1.4rem;
   color: #e5e7eb;
 }
@@ -139,29 +119,7 @@
   opacity: 0.88;
 }
 
-.valoraciones-info-muted {
-  opacity: 0.75;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  .valoraciones-info {
-    margin-top: -0.7rem;
-    margin-bottom: 1.2rem;
-  }
-
-  .valoraciones-info-card {
-    padding: 1rem 1.05rem;
-  }
-
-  .valoraciones-info-card h4 {
-    font-size: 0.9rem;
-  }
-
-  .valoraciones-info-card p {
-    font-size: 0.9rem;
-  }
-}
+.valoraciones-info-muted { opacity: 0.75; }
 
 /* ===== KPI CARDS ===== */
 .valoraciones-kpi {
@@ -172,12 +130,12 @@
 }
 
 .valoraciones-kpi-card {
-  background: var(--glass-bg);
+  background: var(--dash-glass-bg);
   backdrop-filter: blur(14px);
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--glass-border);
+  border-radius: var(--dash-radius-lg);
+  border: 1px solid var(--dash-glass-border);
   padding: 1.1rem 1.3rem;
-  box-shadow: var(--shadow-deep);
+  box-shadow: var(--dash-shadow);
   display: flex;
   flex-direction: column;
   gap: 0.3rem;
@@ -222,7 +180,7 @@
   letter-spacing: 0.08em;
 }
 
-/* ===== TABLE SECTION ===== */
+/* ===== TABLE ===== */
 .valoraciones-table-section {
   background: transparent;
   margin-top: 0.5rem;
@@ -230,16 +188,15 @@
 
 .valoraciones-table-wrapper {
   margin-top: 0.8rem;
-  background: var(--glass-bg);
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--glass-border);
+  background: var(--dash-glass-bg);
+  border-radius: var(--dash-radius-lg);
+  border: 1px solid var(--dash-glass-border);
   backdrop-filter: blur(14px);
-  box-shadow: var(--shadow-deep);
+  box-shadow: var(--dash-shadow);
   padding: 1.4rem 1.2rem;
   overflow-x: auto;
 }
 
-/* ===== TABLE ===== */
 .valoraciones-table {
   width: 100%;
   border-collapse: collapse;
@@ -256,15 +213,13 @@
 }
 
 .valoraciones-table thead th {
-  padding: 0.75rem 0.75rem;
+  padding: 0.75rem;
   border-bottom: 1px solid rgba(148, 163, 184, 0.35);
   text-align: left;
 }
 
 .valoraciones-table th.center,
-.valoraciones-table td.center {
-  text-align: center;
-}
+.valoraciones-table td.center { text-align: center; }
 
 .valoraciones-table tbody tr {
   border-bottom: 1px solid rgba(148, 163, 184, 0.18);
@@ -288,15 +243,6 @@
   gap: 0.7rem;
 }
 
-.producto-thumb {
-  width: 40px;
-  height: 40px;
-  border-radius: 12px;
-  object-fit: cover;
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.65);
-}
-
 .sin-valoraciones {
   font-size: 0.8rem;
   opacity: 0.7;
@@ -305,7 +251,7 @@
 /* Botón detalle */
 .btn-detalle-valoraciones {
   padding: 0.35rem 0.9rem;
-  border-radius: var(--radius-pill);
+  border-radius: var(--dash-radius-pill);
   background: rgba(148, 163, 184, 0.15);
   border: 1px solid rgba(148, 163, 184, 0.4);
   color: #e5e7eb;
@@ -334,9 +280,7 @@
   opacity: 0.9;
 }
 
-.valoraciones-error {
-  color: #fecaca;
-}
+.valoraciones-error { color: #fecaca; }
 
 /* ===== DETALLE OVERLAY ===== */
 .valoraciones-detalle-overlay {
@@ -375,10 +319,7 @@
   margin-bottom: 1.1rem;
 }
 
-.detalle-header h3 {
-  margin: 0;
-  font-size: 1.2rem;
-}
+.detalle-header h3 { margin: 0; font-size: 1.2rem; }
 
 .detalle-header p {
   margin: 0.15rem 0 0;
@@ -390,7 +331,7 @@
   border: none;
   background: rgba(15, 23, 42, 0.8);
   color: #e5e7eb;
-  border-radius: 999px;
+  border-radius: var(--dash-radius-pill);
   width: 30px;
   height: 30px;
   font-size: 1rem;
@@ -401,9 +342,7 @@
   transition: 0.18s ease;
 }
 
-.detalle-close-btn:hover {
-  background: rgba(30, 64, 175, 0.9);
-}
+.detalle-close-btn:hover { background: rgba(30, 64, 175, 0.9); }
 
 /* Lista de opiniones */
 .detalle-lista {
@@ -427,24 +366,15 @@
   margin-bottom: 0.3rem;
 }
 
-.detalle-fecha {
-  font-size: 0.8rem;
-  opacity: 0.7;
-}
+.detalle-fecha { font-size: 0.8rem; opacity: 0.7; }
 
-.detalle-comentario {
-  font-size: 0.9rem;
-  line-height: 1.35;
-}
+.detalle-comentario { font-size: 0.9rem; line-height: 1.35; }
+.detalle-comentario.sin-comentario { font-style: italic; opacity: 0.75; }
 
-.detalle-comentario.sin-comentario {
-  font-style: italic;
-  opacity: 0.75;
-}
 /* ===== SELECT ORDEN ===== */
 .valoraciones-sort-select {
   padding: 0.55rem 1rem;
-  border-radius: var(--radius-pill);
+  border-radius: var(--dash-radius-pill);
   background: rgba(15, 23, 42, 0.9);
   border: 1px solid rgba(148, 163, 184, 0.6);
   color: #e5e7eb;
@@ -454,9 +384,7 @@
   transition: 0.2s ease;
 }
 
-.valoraciones-sort-select:hover {
-  border-color: #a855f7;
-}
+.valoraciones-sort-select:hover { border-color: #a855f7; }
 
 /* ===== PAGINACIÓN ===== */
 .valoraciones-pagination {
@@ -470,7 +398,7 @@
 
 .valoraciones-pagination button {
   padding: 0.45rem 1rem;
-  border-radius: var(--radius-pill);
+  border-radius: var(--dash-radius-pill);
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.15);
   color: #fff;
@@ -497,9 +425,7 @@
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
-  .valoraciones-root {
-    padding: 1.2rem;
-  }
+  .valoraciones-root { padding: 1.2rem; }
 
   .valoraciones-header {
     flex-direction: column;
@@ -514,19 +440,16 @@
     gap: 0.8rem;
   }
 
-  .valoraciones-header-actions input[type="search"] {
-    width: 100%;
-  }
+  .valoraciones-header-actions input[type="search"] { width: 100%; }
+  .valoraciones-table-wrapper { padding: 1rem; }
+  .valoraciones-detalle-panel { width: 100%; }
 
-  .valoraciones-table-wrapper {
-    padding: 1rem;
-  }
+  .valoraciones-info { margin-top: -0.7rem; margin-bottom: 1.2rem; }
+  .valoraciones-info-card { padding: 1rem 1.05rem; }
+  .valoraciones-info-card h4 { font-size: 0.9rem; }
+  .valoraciones-info-card p { font-size: 0.9rem; }
 
-  .valoraciones-detalle-panel {
-    width: 100%;
-  }
-
-    .valoraciones-pagination {
+  .valoraciones-pagination {
     flex-direction: column;
     gap: 0.6rem;
   }

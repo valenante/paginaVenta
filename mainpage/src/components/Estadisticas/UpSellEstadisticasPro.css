@@ -1,13 +1,13 @@
 /* =========================================================
-   ESTADÍSTICAS ALEF — UPSELL PRO
-   Clases únicas "upsellpro-*"
+   UPSELL PRO — Específico
+   Base: dashboard-common.css
    ========================================================= */
 
 /* ===== CONTENEDOR ===== */
 .upsellpro-container {
   margin-top: 2rem;
   padding: 2rem;
-  border-radius: var(--radius-xl);
+  border-radius: var(--dash-radius-lg);
   background: linear-gradient(
     135deg,
     rgba(255, 103, 0, 0.25),
@@ -16,32 +16,15 @@
   border: 1px solid rgba(255, 255, 255, 0.18);
   color: #fff;
   text-align: center;
-  box-shadow:
-    0 12px 28px rgba(0, 0, 0, 0.3),
-    0 0 0 1px rgba(255, 255, 255, 0.06);
+  box-shadow: var(--dash-shadow);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-
-  animation: upsellFadeIn 0.4s ease;
-
-  /* 🔥 Hace el bloque enorme, como tú querías */
+  animation: dashFadeIn 0.4s ease;
   min-height: 420px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-}
-
-/* Animación */
-@keyframes upsellFadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }
 
 /* ===== TÍTULO ===== */
@@ -71,12 +54,12 @@
 .upsellpro-btn {
   margin-top: 1.4rem;
   padding: 0.7rem 1.6rem;
-  background: linear-gradient(90deg, #6a0dad, #ff6700);
+  background: linear-gradient(90deg, var(--dash-accent-1), var(--dash-accent-2));
   color: #fff;
   border: none;
   font-size: 0.95rem;
   font-weight: 600;
-  border-radius: var(--radius-pill);
+  border-radius: var(--dash-radius-pill);
   cursor: pointer;
   box-shadow: 0 6px 20px rgba(255, 103, 0, 0.35);
   transition: all 0.25s ease;
@@ -90,16 +73,7 @@
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
-  .upsellpro-container {
-    padding: 1.5rem;
-    min-height: 320px; /* más pequeño en móvil */
-  }
-
-  .upsellpro-title {
-    font-size: 1.3rem;
-  }
-
-  .upsellpro-btn {
-    width: 100%;
-  }
+  .upsellpro-container { padding: 1.5rem; min-height: 320px; }
+  .upsellpro-title { font-size: 1.3rem; }
+  .upsellpro-btn { width: 100%; }
 }

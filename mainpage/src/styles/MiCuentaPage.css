@@ -1,91 +1,9 @@
 /*****************************************************
- * MiCuenta Page – Alef
- * Hermana visual de RestauranteConfigPage
+ * MiCuenta Page – Alef (polished internals)
+ * Base: config-common.css (cfg-page, cfg-header, cfg-stats…)
  *****************************************************/
 
-.micuenta-config-page {
-  width: auto;
-  margin-left: auto;
-  margin-right: auto;
-  padding-left: var(--space-lg);
-  padding-right: var(--space-lg);
-}
-
-/* ===== Header global ===== */
-
-.micuenta-config-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: var(--space-lg);
-  margin-bottom: var(--space-xl);
-}
-
-.micuenta-config-header h1 {
-  margin: 0 0 var(--space-xs);
-  font-size: var(--font-size-2xl);
-  color: var(--color-primario);
-}
-
-.micuenta-config-header p {
-  margin: 0;
-  max-width: 760px;
-}
-
-.micuenta-config-header-status {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-}
-
-/* ===== Layout ===== */
-
-.micuenta-config-layout {
-  display: grid;
-  gap: var(--space-xl);
-  align-items: flex-start;
-}
-
-.micuenta-config-main {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-lg);
-}
-
-/* ===== Stats resumen ===== */
-
-.micuenta-config-stats {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: var(--space-md);
-}
-
-.micuenta-config-stat {
-  display: flex;
-  flex-direction: column;
-  gap: 0.45rem;
-  padding: var(--space-md);
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--color-borde-suave, #e5e7eb);
-  background: var(--color-superficie, #ffffff);
-  box-shadow: var(--shadow-suave);
-}
-
-.micuenta-config-stat__label {
-  font-size: var(--font-size-xs);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--color-texto-suave);
-  font-weight: 700;
-}
-
-.micuenta-config-stat strong {
-  font-size: var(--font-size-lg);
-  color: var(--color-texto);
-}
-
-/* ===== Info suscripción ===== */
-
+/* ===== Info grid (suscripción) ===== */
 .micuenta-info-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -96,38 +14,36 @@
 .micuenta-info-item {
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
-  padding: var(--space-md);
+  gap: 0.4rem;
+  padding: var(--space-md) var(--space-lg);
   border-radius: var(--radius-lg);
   border: 1px solid var(--color-borde-suave);
   background: var(--color-superficie, #ffffff);
+  box-shadow: var(--shadow-suave);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.micuenta-info-item:hover {
+  border-color: rgba(96, 181, 255, 0.35);
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
 }
 
 .micuenta-info-label {
   font-size: var(--font-size-xs);
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.05em;
   color: var(--color-texto-suave);
   font-weight: 700;
 }
 
 .micuenta-info-value {
-  font-size: var(--font-size-lg);
-  font-weight: 700;
+  font-size: var(--font-size-xl);
+  font-weight: 800;
   color: var(--color-texto);
-}
-
-/* ===== Acciones ===== */
-
-.micuenta-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-sm);
-  margin-top: var(--space-md);
+  line-height: 1.2;
 }
 
 /* ===== Legal ===== */
-
 .legal-block {
   display: flex;
   flex-direction: column;
@@ -139,23 +55,28 @@
   justify-content: space-between;
   align-items: flex-start;
   gap: var(--space-lg);
-  padding: var(--space-md);
+  padding: var(--space-lg);
   border: 1px solid var(--color-borde-suave);
   border-radius: var(--radius-lg);
   background: var(--color-superficie, #ffffff);
+  box-shadow: var(--shadow-suave);
+  transition: border-color 0.15s ease;
+}
+
+.legal-row:hover {
+  border-color: rgba(96, 181, 255, 0.25);
 }
 
 .legal-row h3 {
   margin: 0 0 0.35rem;
   font-size: var(--font-size-md);
+  font-weight: 700;
+  color: var(--color-texto);
 }
 
-.inline-state {
-  margin-top: var(--space-sm);
-}
+.inline-state { margin-top: var(--space-sm); }
 
 /* ===== Formularios ===== */
-
 .micuenta-form {
   display: flex;
   flex-direction: column;
@@ -168,19 +89,15 @@
 }
 
 /* ===== SIF ===== */
-
 .micuenta-sif-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: var(--space-md);
 }
 
-.req {
-  color: var(--color-danger, #dc2626);
-}
+.req { color: var(--color-danger, #dc2626); }
 
-/* ===== Notes / status ===== */
-
+/* ===== Notes ===== */
 .micuenta-note {
   margin: 0;
   font-size: var(--font-size-sm);
@@ -188,33 +105,39 @@
   line-height: 1.5;
 }
 
+/* ===== Status box ===== */
 .status-box {
   margin-bottom: var(--space-md);
-  padding: var(--space-md);
+  padding: var(--space-md) var(--space-lg);
   border-radius: var(--radius-lg);
   border: 1px solid var(--color-borde-suave);
   background: var(--color-superficie, #ffffff);
   line-height: 1.5;
+  font-size: var(--font-size-sm);
 }
 
 .status-box.ok {
   border-color: rgba(22, 163, 74, 0.28);
-  background: rgba(22, 163, 74, 0.08);
+  background: rgba(22, 163, 74, 0.06);
+  border-left: 3px solid rgba(22, 163, 74, 0.7);
 }
 
 .status-box.warn {
   border-color: rgba(245, 158, 11, 0.28);
-  background: rgba(245, 158, 11, 0.08);
+  background: rgba(245, 158, 11, 0.06);
+  border-left: 3px solid rgba(245, 158, 11, 0.7);
 }
 
 .status-box.danger {
   border-color: rgba(220, 38, 38, 0.28);
-  background: rgba(220, 38, 38, 0.08);
+  background: rgba(220, 38, 38, 0.06);
+  border-left: 3px solid rgba(220, 38, 38, 0.7);
 }
 
 .status-box.info {
   border-color: rgba(14, 165, 233, 0.28);
-  background: rgba(14, 165, 233, 0.08);
+  background: rgba(14, 165, 233, 0.06);
+  border-left: 3px solid rgba(14, 165, 233, 0.7);
 }
 
 .status-sub {
@@ -223,8 +146,7 @@
   font-size: var(--font-size-sm);
 }
 
-/* ===== Botón suave ===== */
-
+/* ===== Btn soft ===== */
 .btn-soft {
   border: 1px solid var(--color-borde-suave);
   background: var(--color-blanco, #ffffff);
@@ -232,55 +154,66 @@
   padding: 0.6rem 0.9rem;
   border-radius: var(--radius-md);
   cursor: pointer;
-  transition: background 140ms ease, border-color 140ms ease;
+  font-weight: 600;
+  font-size: var(--font-size-sm);
+  transition: background 140ms ease, border-color 140ms ease, transform 120ms ease;
 }
 
 .btn-soft:hover:not(:disabled) {
   background: var(--color-gris-claro, #f8fafc);
   border-color: var(--color-secundario, #4465e7);
+  transform: translateY(-1px);
 }
 
-.btn-soft:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+.btn-soft:disabled { opacity: 0.6; cursor: not-allowed; }
+
+/* ===== Pills (inline status) ===== */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.65rem;
+  border-radius: var(--radius-pill);
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  border: 1px solid var(--color-borde-suave);
+  background: rgba(0, 0, 0, 0.03);
+}
+
+.pill--ok {
+  background: rgba(22, 163, 74, 0.1);
+  border-color: rgba(22, 163, 74, 0.25);
+  color: #15803d;
+}
+
+.pill--danger {
+  background: rgba(220, 38, 38, 0.1);
+  border-color: rgba(220, 38, 38, 0.25);
+  color: #b91c1c;
+}
+
+.pill--warn {
+  background: rgba(245, 158, 11, 0.1);
+  border-color: rgba(245, 158, 11, 0.25);
+  color: #a16207;
+}
+
+.pill--info {
+  background: rgba(14, 165, 233, 0.1);
+  border-color: rgba(14, 165, 233, 0.25);
+  color: #0369a1;
 }
 
 /* ===== Responsive ===== */
-
-@media (max-width: 1200px) {
-  .config-card {
-    padding: var(--space-md) var(--space-lg);
-  }
-}
-
 @media (max-width: 768px) {
-  .micuenta-config-header {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .micuenta-config-header-status {
-    justify-content: flex-start;
-  }
-
-  .micuenta-config-stats,
-  .micuenta-info-grid,
-  .micuenta-sif-grid {
-    grid-template-columns: 1fr;
-  }
+  .micuenta-info-grid { grid-template-columns: 1fr; }
+  .micuenta-sif-grid { grid-template-columns: 1fr; }
 
   .legal-row {
     flex-direction: column;
     align-items: stretch;
+    padding: var(--space-md);
   }
 
-  .micuenta-actions {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .micuenta-actions .btn,
-  .micuenta-config-header-status .btn-soft {
-    width: 100%;
-  }
+  .legal-row .btn { width: 100%; }
 }

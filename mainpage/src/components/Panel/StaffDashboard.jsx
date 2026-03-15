@@ -25,7 +25,7 @@ export default function StaffDashboard() {
     <div className="staff-dashboard">
       <header className="staff-dashboard-header">
         <h2>👋 Hola, {user.name}</h2>
-        <span className="role">{roleLabel}</span>
+        <span className="role dash-badge-role">{roleLabel}</span>
       </header>
 
       <ResumenDia />

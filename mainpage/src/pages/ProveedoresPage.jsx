@@ -104,7 +104,7 @@ export default function ProveedoresPage() {
   );
 
   return (
-    <main className="proveedores-config-page section section--wide">
+    <main className="proveedores-config-page cfg-page section section--wide">
       {alerta && (
         <AlertaMensaje
           tipo={alerta.tipo}
@@ -121,7 +121,7 @@ export default function ProveedoresPage() {
         />
       )}
 
-      <header className="proveedores-config-header">
+      <header className="proveedores-config-header cfg-header">
         <div>
           <h1>🏭 Proveedores</h1>
           <p className="text-suave">
@@ -137,7 +137,7 @@ export default function ProveedoresPage() {
         </div>
       </header>
 
-      <div className="proveedores-config-layout">
+      <div className="proveedores-config-layout cfg-layout">
         <div className="proveedores-config-main">
           {/* RESUMEN + ACCIONES */}
           <section className="card config-card">
@@ -151,7 +151,7 @@ export default function ProveedoresPage() {
               </div>
             </div>
 
-            <div className="proveedores-config-toolbar">
+            <div className="proveedores-config-toolbar cfg-toolbar">
               <button
                 className="btn btn-secundario"
                 type="button"
@@ -170,19 +170,19 @@ export default function ProveedoresPage() {
               </button>
             </div>
 
-            <div className="proveedores-config-stats">
-              <article className="proveedores-config-stat">
-                <span className="proveedores-config-stat__label">Total</span>
+            <div className="proveedores-config-stats cfg-stats">
+              <article className="proveedores-config-stat cfg-stat">
+                <span className="proveedores-config-stat__label cfg-stat__label">Total</span>
                 <strong>{total}</strong>
               </article>
 
-              <article className="proveedores-config-stat">
-                <span className="proveedores-config-stat__label">Página actual</span>
+              <article className="proveedores-config-stat cfg-stat">
+                <span className="proveedores-config-stat__label cfg-stat__label">Página actual</span>
                 <strong>{page}</strong>
               </article>
 
-              <article className="proveedores-config-stat">
-                <span className="proveedores-config-stat__label">Total páginas</span>
+              <article className="proveedores-config-stat cfg-stat">
+                <span className="proveedores-config-stat__label cfg-stat__label">Total páginas</span>
                 <strong>{totalPages}</strong>
               </article>
             </div>
@@ -272,7 +272,7 @@ export default function ProveedoresPage() {
                     <tbody>
                       {items.map((p) => (
                         <tr key={p._id}>
-                          <td>
+                          <td data-label="Proveedor">
                             <div className="proveedores-name-cell">
                               <div className="proveedores-name">
                                 {p.nombreRestaurante || p.razonSocial || "—"}
@@ -283,7 +283,7 @@ export default function ProveedoresPage() {
                             </div>
                           </td>
 
-                          <td>
+                          <td data-label="Contacto">
                             <div className="proveedores-sub">
                               {p?.contacto?.email || "—"}
                             </div>
@@ -292,7 +292,7 @@ export default function ProveedoresPage() {
                             </div>
                           </td>
 
-                          <td>
+                          <td data-label="Condiciones">
                             <div className="proveedores-sub">
                               Pago: <b>{p?.condicionesPago?.metodo || "—"}</b>
                             </div>
@@ -306,7 +306,7 @@ export default function ProveedoresPage() {
                             </div>
                           </td>
 
-                          <td className="acciones">
+                          <td data-label="Acciones">
                             <div className="proveedores-row-actions">
                               <Link
                                 className="btn btn-secundario btn-compact"

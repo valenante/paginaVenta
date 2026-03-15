@@ -1,128 +1,34 @@
 /*****************************************************
- * Proveedores Page – Alef
- * Hermana visual de RestauranteConfigPage
+ * Proveedores Page – Alef (mobile-safe)
+ * Base: config-common.css
  *****************************************************/
 
-.proveedores-config-page {
-  width: auto;
-  margin-left: auto;
-  margin-right: auto;
-  padding-left: var(--space-lg);
-  padding-right: var(--space-lg);
-}
-
-/* ===== Header global ===== */
-
-.proveedores-config-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: var(--space-lg);
-  margin-bottom: var(--space-xl);
-}
-
-.proveedores-config-header h1 {
-  margin: 0 0 var(--space-xs);
-  font-size: var(--font-size-2xl);
-  color: var(--color-primario);
-}
-
-.proveedores-config-header p {
-  margin: 0;
-  max-width: 760px;
-}
-
-.proveedores-config-header-status {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-}
-
-/* ===== Layout ===== */
-
-.proveedores-config-layout {
-  display: grid;
-  gap: var(--space-xl);
-  align-items: flex-start;
-}
-
-.proveedores-config-main {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-lg);
-}
-
-/* ===== Toolbar ===== */
-
-.proveedores-config-toolbar {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-sm);
-  margin-bottom: var(--space-lg);
-}
-
-/* ===== Stats ===== */
-
-.proveedores-config-stats {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: var(--space-md);
-}
-
-.proveedores-config-stat {
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-  padding: var(--space-md);
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--color-borde-suave, #e5e7eb);
-  background: var(--color-superficie, #ffffff);
-  box-shadow: var(--shadow-suave);
-}
-
-.proveedores-config-stat__label {
-  font-size: var(--font-size-xs);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--color-texto-suave);
-  font-weight: 700;
-}
-
-.proveedores-config-stat strong {
-  font-size: var(--font-size-lg);
-  color: var(--color-texto);
-}
-
-/* ===== Filtros ===== */
-
+/* ===== Filtros (específico) ===== */
 .proveedores-config-filtros {
   display: grid;
-  grid-template-columns: minmax(320px, 1fr) 180px;
+  grid-template-columns: minmax(0, 1fr) 180px;
   gap: var(--space-md);
   align-items: end;
 }
 
-.proveedores-config-filtros__search {
-  min-width: 0;
-}
-
-.proveedores-config-filtros__size {
-  min-width: 0;
-}
+.proveedores-config-filtros__search { min-width: 0; }
+.proveedores-config-filtros__size { min-width: 0; }
 
 /* ===== Loading / empty ===== */
-
 .proveedores-loading {
-  padding: var(--space-lg) 0;
+  padding: var(--space-xl) var(--space-md);
   color: var(--color-texto-suave);
+  text-align: center;
+  font-size: var(--font-size-sm);
 }
 
 .proveedores-empty {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: var(--space-sm);
-  padding: var(--space-lg) 0;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-2xl) var(--space-md);
+  text-align: center;
 }
 
 .proveedores-empty__title {
@@ -133,47 +39,57 @@
 
 .proveedores-empty__text {
   color: var(--color-texto-suave);
-  max-width: 560px;
+  max-width: 480px;
+  line-height: 1.45;
 }
 
-/* ===== Tabla ===== */
-
+/* ===== Tabla (desktop) ===== */
 .proveedores-table-scroll {
   overflow-x: auto;
   width: 100%;
+  -webkit-overflow-scrolling: touch;
 }
 
 .proveedores-table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 920px;
+  min-width: 860px;
 }
 
 .proveedores-table thead th {
   text-align: left;
-  font-size: var(--font-size-sm);
-  padding: 0.9rem 0.8rem;
-  border-bottom: 1px solid var(--color-borde-suave);
-  color: var(--color-texto);
+  font-size: var(--font-size-xs);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.85rem 0.9rem;
+  border-bottom: 2px solid var(--color-borde-suave);
+  color: var(--color-texto-suave);
   background: var(--color-gris-claro, #f8fafc);
   white-space: nowrap;
 }
 
 .proveedores-table tbody td {
-  padding: 0.9rem 0.8rem;
+  padding: 0.85rem 0.9rem;
   border-bottom: 1px solid var(--color-borde-suave);
   vertical-align: middle;
   font-size: var(--font-size-sm);
+  color: var(--color-texto);
+}
+
+.proveedores-table tbody tr {
+  transition: background 0.12s ease;
 }
 
 .proveedores-table tbody tr:hover {
-  background: rgba(0, 0, 0, 0.02);
+  background: rgba(96, 181, 255, 0.04);
 }
 
+/* Celda proveedor */
 .proveedores-name-cell {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 0.2rem;
 }
 
 .proveedores-name {
@@ -187,28 +103,23 @@
   line-height: 1.4;
 }
 
-.col-acciones,
-.acciones {
-  min-width: 230px;
+/* Columna acciones */
+.col-acciones {
+  min-width: 220px;
+  text-align: right;
 }
 
 .proveedores-row-actions {
   display: flex;
   justify-content: flex-end;
   flex-wrap: wrap;
-  gap: var(--space-xs);
-}
-
-.btn-compact {
-  padding: 0.45rem 0.7rem;
-  font-size: 0.85rem;
+  gap: 0.4rem;
 }
 
 /* ===== Paginador ===== */
-
 .proveedores-pager {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   gap: var(--space-sm);
   flex-wrap: wrap;
@@ -219,76 +130,92 @@
 
 .proveedores-pager-info {
   color: var(--color-texto);
+  font-size: var(--font-size-sm);
 }
 
-.btn-ghost {
-  border: 1px solid var(--color-borde-suave);
-  background: var(--color-blanco, #ffffff);
-  color: var(--color-texto);
-  padding: 0.55rem 0.85rem;
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  transition: background 140ms ease, border-color 140ms ease;
-}
-
-.btn-ghost:hover:not(:disabled) {
-  background: var(--color-gris-claro, #f8fafc);
-  border-color: var(--color-secundario, #4465e7);
-}
-
-.btn-ghost:disabled {
-  opacity: 0.55;
-  cursor: not-allowed;
-}
-
-/* ===== Responsive ===== */
-
-@media (max-width: 1200px) {
-  .config-card {
-    padding: var(--space-md) var(--space-lg);
-  }
-}
+/* =========================================================
+   RESPONSIVE — table-to-cards on mobile
+   ========================================================= */
 
 @media (max-width: 768px) {
-  .proveedores-config-header {
-    flex-direction: column;
-    align-items: stretch;
+  /* Filtros a 1 columna */
+  .proveedores-config-filtros {
+    grid-template-columns: 1fr;
   }
 
-  .proveedores-config-toolbar {
-    flex-direction: column;
-    align-items: stretch;
+  /* --- Table → card list --- */
+  .proveedores-table {
+    min-width: 0;
   }
 
-  .proveedores-config-toolbar .btn {
+  .proveedores-table,
+  .proveedores-table thead,
+  .proveedores-table tbody,
+  .proveedores-table tr,
+  .proveedores-table td {
+    display: block;
     width: 100%;
   }
 
-  .proveedores-config-stats {
-    grid-template-columns: 1fr;
+  .proveedores-table thead {
+    display: none;
   }
 
-  .proveedores-config-filtros {
-    grid-template-columns: 1fr;
+  .proveedores-table tbody tr {
+    padding: var(--space-md) 0;
+    border-bottom: 1px solid var(--color-borde-suave);
+  }
+
+  .proveedores-table tbody tr:last-child {
+    border-bottom: 0;
+  }
+
+  .proveedores-table tbody td {
+    padding: var(--space-xs) 0;
+    border-bottom: 0;
+    white-space: normal;
+  }
+
+  .proveedores-table tbody td::before {
+    content: attr(data-label);
+    display: block;
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    margin-bottom: 0.2rem;
+    color: var(--color-texto-suave);
+    text-transform: uppercase;
+  }
+
+  /* Acciones apiladas */
+  .col-acciones {
+    min-width: 0;
+    text-align: left;
   }
 
   .proveedores-row-actions {
     justify-content: flex-start;
     flex-direction: column;
     align-items: stretch;
+    gap: var(--space-xs);
+    margin-top: var(--space-xs);
   }
 
   .proveedores-row-actions .btn {
     width: 100%;
+    justify-content: center;
   }
 
+  /* Paginador apilado */
   .proveedores-pager {
     flex-direction: column;
     align-items: stretch;
+    gap: var(--space-xs);
   }
 
   .proveedores-pager .btn-ghost {
     width: 100%;
+    text-align: center;
   }
 
   .proveedores-pager-info {

@@ -1,10 +1,6 @@
-/* src/styles/LogsPage.css
-   =========================================================
-   LOGS — Estilo hermano (TenantTable/Billing/Planes)
-   - Vidrio oscuro + blur
-   - Sombras profundas
-   - Tabla desktop
-   - Card-list móvil (sin overflow horizontal)
+/* =========================================================
+   LOGS — Específico
+   Base: dashboard-common.css (dash-admin-page, dash-admin-table, etc.)
    ========================================================= */
 
 .logs {
@@ -17,9 +13,7 @@
   color: rgba(226, 232, 240, 0.92);
 }
 
-/* =========================
-   Header
-========================= */
+/* ===== Header ===== */
 .logs__header {
   display: flex;
   align-items: flex-end;
@@ -46,7 +40,7 @@
 .logs__dangerBtn {
   padding: 10px 14px;
   background: rgba(239, 68, 68, 0.16);
-  border-radius: 12px;
+  border-radius: var(--dash-radius-md);
   color: #fee2e2;
   border: 1px solid rgba(239, 68, 68, 0.25);
   cursor: pointer;
@@ -60,35 +54,24 @@
   transform: translateY(-1px);
 }
 
-.logs__dangerBtn:focus-visible {
-  outline: 2px solid rgba(255, 255, 255, 0.35);
-  outline-offset: 2px;
-}
-
-/* =========================
-   Filters
-========================= */
+/* ===== Filters ===== */
 .logs-filters {
   display: grid;
   grid-template-columns: 160px 1fr 240px;
   gap: 12px;
   align-items: center;
-
   background: rgba(15, 23, 42, 0.65);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
-
   padding: 14px 16px;
   border-radius: 14px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow:
-    0 10px 30px rgba(0, 0, 0, 0.25),
-    0 0 0 1px rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--dash-glass-border);
+  box-shadow: var(--dash-shadow);
 }
 
 .logs-field {
   padding: 10px 12px;
-  border-radius: 12px;
+  border-radius: var(--dash-radius-md);
   background: rgba(255, 255, 255, 0.10);
   border: 1px solid rgba(255, 255, 255, 0.18);
   color: #fff;
@@ -96,9 +79,7 @@
   transition: background 120ms ease, border-color 120ms ease, box-shadow 120ms ease;
 }
 
-.logs-field::placeholder {
-  color: rgba(226, 232, 240, 0.55);
-}
+.logs-field::placeholder { color: rgba(226, 232, 240, 0.55); }
 
 .logs-field:focus {
   background: rgba(255, 255, 255, 0.14);
@@ -106,45 +87,27 @@
   box-shadow: 0 0 0 3px rgba(106, 13, 173, 0.25);
 }
 
-/* =========================
-   States
-========================= */
-.logs-state {
-  margin: 0;
-  padding: 10px 4px;
-}
+/* ===== States ===== */
+.logs-state { margin: 0; padding: 10px 4px; }
+.logs-state--muted { color: rgba(148, 163, 184, 0.95); }
 
-.logs-state--muted {
-  color: rgba(148, 163, 184, 0.95);
-}
-
-/* =========================
-   Table (desktop)
-========================= */
-.logs-tableWrap {
-  width: 100%;
-}
+/* ===== Table ===== */
+.logs-tableWrap { width: 100%; }
 
 .logs-table {
   width: 100%;
   border-collapse: separate;
   border-spacing: 0;
-  border-radius: 18px;
+  border-radius: var(--dash-radius-lg);
   overflow: hidden;
-
   background: rgba(15, 23, 42, 0.6);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
-
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow:
-    0 18px 40px rgba(0, 0, 0, 0.55),
-    0 0 0 1px rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--dash-glass-border);
+  box-shadow: var(--dash-shadow-deep);
 }
 
-.logs-table__thead {
-  background: rgba(255, 255, 255, 0.04);
-}
+.logs-table__thead { background: rgba(255, 255, 255, 0.04); }
 
 .logs-table th,
 .logs-table td {
@@ -171,9 +134,7 @@
   transition: background 120ms ease;
 }
 
-.logs-table__row:hover td {
-  background: rgba(255, 255, 255, 0.06);
-}
+.logs-table__row:hover td { background: rgba(255, 255, 255, 0.06); }
 
 .logs-message {
   max-width: 520px;
@@ -183,21 +144,18 @@
 }
 
 .logs-mono {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
-    "Courier New", monospace;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   font-size: 0.92em;
   color: #dbeafe;
 }
 
-/* =========================
-   Level pill
-========================= */
+/* ===== Level pill ===== */
 .logs-level {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   padding: 6px 10px;
-  border-radius: 999px;
+  border-radius: var(--dash-radius-pill);
   font-weight: 900;
   letter-spacing: 0.2px;
   border: 1px solid rgba(255, 255, 255, 0.12);
@@ -205,24 +163,11 @@
   text-transform: uppercase;
 }
 
-.logs-level--info {
-  background: rgba(96, 165, 250, 0.18);
-  color: #93c5fd;
-}
+.logs-level--info  { background: rgba(96, 165, 250, 0.18); color: #93c5fd; }
+.logs-level--warn  { background: rgba(251, 191, 36, 0.18); color: #fbbf24; }
+.logs-level--error { background: rgba(239, 68, 68, 0.18); color: #ef4444; }
 
-.logs-level--warn {
-  background: rgba(251, 191, 36, 0.18);
-  color: #fbbf24;
-}
-
-.logs-level--error {
-  background: rgba(239, 68, 68, 0.18);
-  color: #ef4444;
-}
-
-/* =========================
-   Pagination
-========================= */
+/* ===== Pagination ===== */
 .logs-pagination {
   display: flex;
   justify-content: center;
@@ -234,7 +179,7 @@
 
 .logs-pagination__btn {
   padding: 9px 16px;
-  border-radius: 12px;
+  border-radius: var(--dash-radius-md);
   border: 1px solid rgba(255, 255, 255, 0.12);
   background: rgba(255, 255, 255, 0.10);
   color: #fff;
@@ -243,71 +188,37 @@
   transition: background 120ms ease, transform 120ms ease;
 }
 
-.logs-pagination__btn:disabled {
-  opacity: 0.35;
-  cursor: not-allowed;
-  transform: none;
-}
+.logs-pagination__btn:disabled { opacity: 0.35; cursor: not-allowed; transform: none; }
 
 .logs-pagination__btn:hover:not(:disabled) {
   background: rgba(255, 255, 255, 0.18);
   transform: translateY(-1px);
 }
 
-.logs-pagination__meta {
-  color: rgba(226, 232, 240, 0.8);
-}
+.logs-pagination__meta { color: rgba(226, 232, 240, 0.8); }
 
-/* =========================================================
-   MODAL (keep your existing portal markup classes)
-   NOTE: you can keep your current modal CSS or migrate later
-   ========================================================= */
-
-/* =========================
-   Responsive: NO overflow
-   -> table becomes card list
-========================= */
+/* ===== Responsive ===== */
 @media (max-width: 900px) {
-  .logs {
-    padding: 1.6rem 1rem;
-  }
+  .logs { padding: 1.6rem 1rem; }
+  .logs__title { font-size: 1.35rem; }
+  .logs-filters { grid-template-columns: 1fr; }
 
-  .logs__title {
-    font-size: 1.35rem;
-  }
-
-  .logs-filters {
-    grid-template-columns: 1fr;
-  }
-
-  /* table -> cards */
   .logs-table,
   .logs-table__thead,
   .logs-table__tbody,
   .logs-table tr,
-  .logs-table td {
-    display: block;
-    width: 100%;
-  }
+  .logs-table td { display: block; width: 100%; }
 
-  .logs-table__thead {
-    display: none;
-  }
+  .logs-table__thead { display: none; }
 
   .logs-table tr {
     padding: 10px 10px 12px;
     border-bottom: 1px solid rgba(148, 163, 184, 0.12);
   }
 
-  .logs-table tr:last-child {
-    border-bottom: 0;
-  }
+  .logs-table tr:last-child { border-bottom: 0; }
 
-  .logs-table td {
-    padding: 10px 10px;
-    border-bottom: 0;
-    white-space: normal;
-  }
+  .logs-table td { padding: 10px; border-bottom: 0; white-space: normal; }
 
   .logs-table td::before {
     content: attr(data-label);
@@ -320,24 +231,14 @@
     text-transform: uppercase;
   }
 
-  .logs-message {
-    max-width: none;
-    overflow: visible;
-    text-overflow: clip;
-    white-space: normal;
-  }
+  .logs-message { max-width: none; overflow: visible; text-overflow: clip; white-space: normal; }
 }
 
 @media (max-width: 520px) {
-  .logs__dangerBtn {
-    width: 100%;
-  }
+  .logs__dangerBtn { width: 100%; }
 }
 
-/* =========================================================
-   MODAL DETALLES LOG — (clases legacy -logsAdmin)
-   ========================================================= */
-
+/* ===== Modal ===== */
 .logs-modal-logsAdmin {
   position: fixed;
   inset: 0;
@@ -357,9 +258,7 @@
   background: rgba(15, 23, 42, 0.82);
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 20px;
-  box-shadow:
-    0 28px 60px rgba(0, 0, 0, 0.6),
-    0 0 0 1px rgba(255, 255, 255, 0.06);
+  box-shadow: var(--dash-shadow-deep);
   color: #fff;
   overflow: hidden;
 }
@@ -370,14 +269,10 @@
   align-items: flex-start;
   gap: 12px;
   padding: 18px 18px 12px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid var(--dash-glass-border);
 }
 
-.logs-modal-title-logsAdmin {
-  margin: 0;
-  font-size: 18px;
-  font-weight: 900;
-}
+.logs-modal-title-logsAdmin { margin: 0; font-size: 18px; font-weight: 900; }
 
 .logs-modal-subtitle-logsAdmin {
   margin: 6px 0 0;
@@ -388,7 +283,7 @@
 .logs-modal-x-logsAdmin {
   width: 40px;
   height: 40px;
-  border-radius: 12px;
+  border-radius: var(--dash-radius-md);
   border: 1px solid rgba(255, 255, 255, 0.14);
   background: rgba(255, 255, 255, 0.10);
   color: #fff;
@@ -396,9 +291,7 @@
   font-weight: 900;
 }
 
-.logs-modal-x-logsAdmin:hover {
-  background: rgba(255, 255, 255, 0.16);
-}
+.logs-modal-x-logsAdmin:hover { background: rgba(255, 255, 255, 0.16); }
 
 .logs-modal-body-logsAdmin {
   padding: 16px 18px 18px;
@@ -414,16 +307,14 @@
 }
 
 @media (max-width: 720px) {
-  .logs-modal-grid-logsAdmin {
-    grid-template-columns: 1fr;
-  }
+  .logs-modal-grid-logsAdmin { grid-template-columns: 1fr; }
 }
 
 .logs-kv-logsAdmin {
   padding: 12px;
   border-radius: 14px;
   background: rgba(0, 0, 0, 0.20);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--dash-glass-border);
 }
 
 .logs-kv-logsAdmin span {
@@ -439,14 +330,10 @@
   color: rgba(226, 232, 240, 0.96);
 }
 
-.logs-kv-span-logsAdmin {
-  grid-column: span 2;
-}
+.logs-kv-span-logsAdmin { grid-column: span 2; }
 
 @media (max-width: 720px) {
-  .logs-kv-span-logsAdmin {
-    grid-column: auto;
-  }
+  .logs-kv-span-logsAdmin { grid-column: auto; }
 }
 
 .logs-json-sections-logsAdmin h3 {
@@ -455,14 +342,14 @@
   font-weight: 900;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: rgba(226, 232, 240, 0.72);
+  color: var(--dash-text-muted);
 }
 
 .logs-pre-logsAdmin {
   background: rgba(0, 0, 0, 0.35);
   padding: 12px;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--dash-radius-md);
+  border: 1px solid var(--dash-glass-border);
   white-space: pre-wrap;
   overflow: auto;
   font-size: 12.5px;
@@ -477,7 +364,7 @@
 
 .logs-modal-close-logsAdmin {
   padding: 10px 16px;
-  border-radius: 999px;
+  border-radius: var(--dash-radius-pill);
   border: 1px solid rgba(255, 255, 255, 0.14);
   background: rgba(255, 255, 255, 0.12);
   color: #fff;
@@ -485,15 +372,9 @@
   cursor: pointer;
 }
 
-.logs-modal-close-logsAdmin:hover {
-  background: rgba(255, 255, 255, 0.18);
-}
+.logs-modal-close-logsAdmin:hover { background: rgba(255, 255, 255, 0.18); }
 
-.logs-modal-loading-logsAdmin {
-  padding: 18px;
-  display: grid;
-  gap: 10px;
-}
+.logs-modal-loading-logsAdmin { padding: 18px; display: grid; gap: 10px; }
 
 .logs-skeleton-logsAdmin {
   height: 14px;

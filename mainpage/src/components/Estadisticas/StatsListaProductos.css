@@ -1,36 +1,23 @@
 /* =========================================================
-   LISTA DE PRODUCTOS — Estilo Profesional Alef
-   Clases únicas "statlist-*"
+   LISTA DE PRODUCTOS — Específico
+   Base: dashboard-common.css
    ========================================================= */
 
 /* ===== CONTENEDOR ===== */
 .statlist-container {
   margin-top: 2.4rem;
   padding: 1.8rem 2rem;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: var(--radius-xl);
+  background: var(--dash-glass-bg);
+  border-radius: var(--dash-radius-lg);
   border: 1px solid rgba(255, 255, 255, 0.12);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   box-shadow: 0 8px 26px rgba(0, 0, 0, 0.28);
-  animation: statlistFade 0.35s ease;
-}
-
-@keyframes statlistFade {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  animation: dashFadeIn 0.35s ease;
 }
 
 /* ===== HEADER ===== */
-.statlist-header {
-  margin-bottom: 1.4rem;
-}
+.statlist-header { margin-bottom: 1.4rem; }
 
 .statlist-title {
   font-size: 1.3rem;
@@ -59,20 +46,18 @@
 .statlist-item {
   padding: 1.2rem 1.4rem;
   background: rgba(255, 255, 255, 0.045);
-  border-radius: var(--radius-lg);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--dash-radius-lg);
+  border: 1px solid var(--dash-glass-border);
   transition: all 0.25s ease;
 }
 
 .statlist-item:hover {
   transform: translateY(-3px);
-  background: rgba(255, 255, 255, 0.07);
+  background: var(--dash-glass-bg-hover);
 }
 
 /* ===== NOMBRE ===== */
-.statlist-item-header {
-  margin-bottom: 0.9rem;
-}
+.statlist-item-header { margin-bottom: 0.9rem; }
 
 .statlist-item-name {
   font-size: 1.05rem;
@@ -97,7 +82,7 @@
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: #cbd5e1;
+  color: var(--dash-text-soft);
   opacity: 0.75;
 }
 
@@ -107,9 +92,7 @@
   color: #ffffff;
 }
 
-.statlist-money {
-  color: #6bdcff;
-}
+.statlist-money { color: #6bdcff; }
 
 /* ===== EMPTY STATE ===== */
 .statlist-empty {
@@ -122,16 +105,7 @@
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
-  .statlist-container {
-    padding: 1.4rem 1.5rem;
-  }
-
-  .statlist-item {
-    padding: 1rem 1.2rem;
-  }
-
-  .statlist-stats-row {
-    flex-direction: column;
-    gap: 0.8rem;
-  }
+  .statlist-container { padding: 1.4rem 1.5rem; }
+  .statlist-item { padding: 1rem 1.2rem; }
+  .statlist-stats-row { flex-direction: column; gap: 0.8rem; }
 }

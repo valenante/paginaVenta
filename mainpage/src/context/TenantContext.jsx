@@ -19,6 +19,8 @@ const RESERVED_FIRST_SEGMENTS = new Set([
   "tpv", "dashboard", "mi-cuenta", "facturas", "perfil",
   "configuracion", "soporte", "ayuda", "estadisticas", "caja-diaria",
   "pro", "superadmin",
+  "staff", "panel", "camarero", "cocinero",
+  "aviso-legal", "privacidad", "cookies", "set-password", "pago",
 ]);
 
 const isPublicRoute = (pathname) => {
@@ -73,6 +75,9 @@ export const TenantProvider = ({ children }) => {
 
   // ✅ 4) Cargar tenant real desde backend cuando haya tenantId
   useEffect(() => {
+    const controller = new AbortController();
+    let cancelled = false;
+
     const run = async () => {
       if (!tenantId) {
         setTenant(null);
@@ -91,9 +96,12 @@ export const TenantProvider = ({ children }) => {
         setLoadingTenant(true);
         setTenantError(null);
 
-        const { data } = await api.get("/meTenant/me");
-        setTenant(data?.tenant || null);
+        const { data } = await api.get("/meTenant/me", {
+          signal: controller.signal,
+        });
+        if (!cancelled) setTenant(data?.tenant || null);
       } catch (e) {
+        if (cancelled || e?.name === "CanceledError" || e?.code === "ERR_CANCELED") return;
         setTenant(null);
         setTenantError(
           e?.response?.data?.error ||
@@ -102,11 +110,16 @@ export const TenantProvider = ({ children }) => {
           "Error cargando tenant"
         );
       } finally {
-        setLoadingTenant(false);
+        if (!cancelled) setLoadingTenant(false);
       }
     };
 
     run();
+
+    return () => {
+      cancelled = true;
+      controller.abort();
+    };
   }, [tenantId, location.pathname]);
 
   const clearTenant = () => {

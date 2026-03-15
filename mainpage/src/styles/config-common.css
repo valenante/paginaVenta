@@ -1,0 +1,395 @@
+/* =========================================================
+   CONFIG COMMON — Base reutilizable para páginas de
+   configuración internas del dashboard (tema claro)
+   ---------------------------------------------------------
+   Cubre: RestauranteConfig, ConfigImpresion, CartaConfig,
+   PerfilPage, MiCuentaPage, ProveedoresPage y hermanas.
+   ========================================================= */
+
+/* ===== PAGE WRAPPER ===== */
+.cfg-page {
+  width: auto;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--space-lg);
+  padding-right: var(--space-lg);
+}
+
+.cfg-page--fixed-bar {
+  padding-bottom: 90px;
+}
+
+/* ===== PAGE HEADER ===== */
+.cfg-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-lg);
+  margin-bottom: var(--space-xl);
+}
+
+.cfg-header h1 {
+  margin: 0 0 var(--space-xs);
+  font-size: var(--font-size-2xl);
+  color: var(--color-primario);
+}
+
+.cfg-header p {
+  margin: 0;
+  max-width: 760px;
+  color: var(--color-texto-suave);
+  line-height: 1.35;
+}
+
+.cfg-header-status {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+/* ===== LAYOUT (main + aside grid) ===== */
+.cfg-layout {
+  display: grid;
+  gap: var(--space-xl);
+  align-items: flex-start;
+}
+
+.cfg-main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.cfg-aside {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+/* ===== STATS GRID ===== */
+.cfg-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--space-md);
+}
+
+.cfg-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: var(--space-md);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-borde-suave, #e5e7eb);
+  background: var(--color-superficie, #ffffff);
+  box-shadow: var(--shadow-suave);
+}
+
+.cfg-stat__label {
+  font-size: var(--font-size-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-texto-suave);
+  font-weight: 700;
+}
+
+.cfg-stat strong {
+  font-size: var(--font-size-lg);
+  color: var(--color-texto);
+}
+
+/* ===== FORM GRID ===== */
+.cfg-form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--space-md);
+}
+
+.cfg-form-grid-full {
+  grid-column: 1 / -1;
+}
+
+/* ===== TOOLBAR ===== */
+.cfg-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-lg);
+}
+
+/* ===== FILTER GRID ===== */
+.cfg-filtros {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--space-md);
+  align-items: end;
+}
+
+/* ===== FIXED BOTTOM ACTION BAR ===== */
+.cfg-actions-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: transparent;
+  border: none;
+  backdrop-filter: none;
+  padding: var(--space-sm) var(--space-lg);
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-sm);
+}
+
+.cfg-actions-bar::before {
+  content: "";
+  flex: 1;
+}
+
+.cfg-actions-bar .btn {
+  flex: 0 0 auto;
+  width: auto;
+  min-width: 180px;
+  max-width: 240px;
+  padding: 0.55rem 0.9rem;
+  border-radius: 999px;
+  font-size: 0.95rem;
+}
+
+/* ===== ACTIONS ROW (inline) ===== */
+.cfg-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+
+/* ===== INFO GRID (key-value cards) ===== */
+.cfg-info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--space-md);
+}
+
+.cfg-info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: var(--space-md);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-borde-suave);
+  background: var(--color-superficie, #ffffff);
+}
+
+.cfg-info-label {
+  font-size: var(--font-size-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-texto-suave);
+  font-weight: 700;
+}
+
+.cfg-info-value {
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  color: var(--color-texto);
+}
+
+/* ===== LIGHT TABLE ===== */
+.cfg-table-scroll {
+  overflow-x: auto;
+  width: 100%;
+  -webkit-overflow-scrolling: touch;
+}
+
+.cfg-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.cfg-table thead th {
+  text-align: left;
+  font-size: var(--font-size-sm);
+  padding: 0.9rem 0.8rem;
+  border-bottom: 1px solid var(--color-borde-suave);
+  color: var(--color-texto);
+  background: var(--color-gris-claro, #f8fafc);
+  white-space: nowrap;
+  font-weight: 700;
+}
+
+.cfg-table tbody td {
+  padding: 0.9rem 0.8rem;
+  border-bottom: 1px solid var(--color-borde-suave);
+  vertical-align: middle;
+  font-size: var(--font-size-sm);
+}
+
+.cfg-table tbody tr:hover {
+  background: rgba(15, 23, 42, 0.025);
+}
+
+/* ===== PAGER ===== */
+.cfg-pager {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+  margin-top: var(--space-lg);
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--color-borde-suave);
+}
+
+/* ===== EMPTY / LOADING STATES ===== */
+.cfg-empty,
+.cfg-loading {
+  padding: var(--space-lg) 0;
+  color: var(--color-texto-suave);
+}
+
+/* ===== STATUS BOX (ok/warn/danger/info) ===== */
+.cfg-status-box {
+  margin-bottom: var(--space-md);
+  padding: var(--space-md);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-borde-suave);
+  background: var(--color-superficie, #ffffff);
+  line-height: 1.5;
+}
+
+.cfg-status-box.ok     { border-color: rgba(22, 163, 74, 0.28); background: rgba(22, 163, 74, 0.08); }
+.cfg-status-box.warn   { border-color: rgba(245, 158, 11, 0.28); background: rgba(245, 158, 11, 0.08); }
+.cfg-status-box.danger { border-color: rgba(220, 38, 38, 0.28); background: rgba(220, 38, 38, 0.08); }
+.cfg-status-box.info   { border-color: rgba(14, 165, 233, 0.28); background: rgba(14, 165, 233, 0.08); }
+
+/* ===== HELPER TEXT ===== */
+.cfg-help {
+  font-size: var(--font-size-xs);
+  color: var(--color-texto-suave);
+  line-height: 1.4;
+}
+
+.cfg-note {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-texto-suave);
+  line-height: 1.5;
+}
+
+/* ===== BTN GHOST (light) ===== */
+.cfg-btn-ghost {
+  border: 1px solid var(--color-borde-suave);
+  background: var(--color-blanco, #ffffff);
+  color: var(--color-texto);
+  padding: 0.55rem 0.85rem;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: background 140ms ease, border-color 140ms ease;
+}
+
+.cfg-btn-ghost:hover:not(:disabled) {
+  background: var(--color-gris-claro, #f8fafc);
+  border-color: var(--color-secundario, #4465e7);
+}
+
+.cfg-btn-ghost:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* ===== BTN COMPACT ===== */
+.cfg-btn-compact {
+  padding: 0.45rem 0.7rem;
+  font-size: 0.85rem;
+}
+
+/* ===== RESPONSIVE ===== */
+
+@media (max-width: 1200px) {
+  .config-card {
+    padding: var(--space-md) var(--space-lg);
+  }
+
+  .cfg-actions-bar .btn {
+    min-width: 190px;
+    max-width: 260px;
+  }
+}
+
+@media (max-width: 768px) {
+  .cfg-page {
+    padding-left: var(--space-md);
+    padding-right: var(--space-md);
+  }
+
+  .cfg-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .cfg-page--fixed-bar {
+    padding-bottom: 140px;
+  }
+
+  .cfg-stats,
+  .cfg-info-grid,
+  .cfg-form-grid,
+  .cfg-filtros {
+    grid-template-columns: 1fr;
+  }
+
+  .cfg-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .cfg-toolbar .btn {
+    width: 100%;
+  }
+
+  .cfg-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .cfg-actions .btn {
+    width: 100%;
+  }
+
+  .cfg-actions-bar {
+    justify-content: center;
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-sm);
+  }
+
+  .cfg-actions-bar::before {
+    display: none;
+  }
+
+  .cfg-actions-bar .btn {
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+  }
+
+  .cfg-pager {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .cfg-pager .cfg-btn-ghost,
+  .cfg-pager .btn-ghost {
+    width: 100%;
+  }
+
+  .cfg-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .cfg-page {
+    padding-left: var(--space-sm);
+    padding-right: var(--space-sm);
+  }
+}

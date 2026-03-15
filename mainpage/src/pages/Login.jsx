@@ -6,16 +6,9 @@ import { useAuth } from "../context/AuthContext";
 import ErrorToast from "../components/common/ErrorToast";
 import { normalizeApiError } from "../utils/normalizeApiError";
 
-const ADMIN_PANEL_ROLES = new Set([
-  "admin",
-  "admin_restaurante",
-  "admin_shop",
-  "vendedor",
-]);
-
 export default function Login() {
   const navigate = useNavigate();
-  const { login, isAdminPanelRole } = useAuth();
+  const { login } = useAuth();
 
   const [form, setForm] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
@@ -40,9 +33,8 @@ export default function Login() {
       : `https://panel.${import.meta.env.VITE_MAIN_DOMAIN}`;
 
     const base = isLocalhost ? baseLocal : baseProd;
-    const targetSection = ADMIN_PANEL_ROLES.has(user?.role) ? "pro" : "staff";
 
-    return `${base}/${targetSection}`;
+    return `${base}/pro`;
   };
 
   useEffect(() => {
@@ -82,8 +74,7 @@ export default function Login() {
       const targetUrl = redirectByRole({ user, tenantSlug, isLocalhost });
 
       if (isLocalhost) {
-        const pathname = isAdminPanelRole(user) ? `/${tenantSlug}/pro` : `/${tenantSlug}/staff`;
-        navigate(pathname, { replace: true });
+        navigate(`/${tenantSlug}/pro`, { replace: true });
         return;
       }
 

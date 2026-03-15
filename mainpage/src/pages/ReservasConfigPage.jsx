@@ -104,7 +104,7 @@ export default function ReservasConfigPage() {
   // 🔒 Feature deshabilitada → cartel
   if (!reservasHabilitadas) {
     return (
-      <section className="reservas-page section section--wide">
+      <section className="cfg-page section section--wide">
         <div className="card feature-blocked-card">
           <h2 className="feature-blocked-title">📅 Reservas desactivadas</h2>
           <p className="text-suave">
@@ -131,46 +131,10 @@ export default function ReservasConfigPage() {
     );
   }
 
-  if (!reservasHabilitadas) {
-    return (
-      <main className="reservas-config-page section section--wide">
-        {error && (
-          <ErrorToast
-            error={error}
-            onRetry={error.canRetry ? error.retryFn : undefined}
-            onClose={() => setError(null)}
-          />
-        )}
-
-        <section className="card config-card reservas-config-blocked">
-          <header className="print-config-header">
-            <div>
-              <h1>📅 Reservas desactivadas</h1>
-              <p className="text-suave">
-                El módulo de reservas está desactivado para este restaurante.
-                Puedes seguir usando el TPV y la carta digital, pero no podrás
-                gestionar reservas desde Alef.
-              </p>
-            </div>
-
-            <div className="carta-config-header-status">
-              <span className="badge badge-aviso">Módulo inactivo</span>
-            </div>
-          </header>
-
-          <div className="reservas-config-empty-note">
-            <p className="text-suave">
-              Si quieres activar las reservas online, revisa tu plan y la
-              configuración del restaurante o contacta con soporte.
-            </p>
-          </div>
-        </section>
-      </main>
-    );
-  }
+  /* bloque eliminado: código muerto (la misma condición ya se evalúa arriba) */
 
   return (
-    <main className="reservas-config-page section section--wide">
+    <main className="reservas-config-page cfg-page section section--wide">
       {alerta && (
         <AlertaMensaje
           tipo={alerta.tipo}
@@ -204,7 +168,7 @@ export default function ReservasConfigPage() {
         />
       )}
 
-      <header className="carta-config-header">
+      <header className="cfg-header">
         <div>
           <h1>📅 Gestión de reservas</h1>
           <p className="text-suave">
@@ -213,7 +177,7 @@ export default function ReservasConfigPage() {
           </p>
         </div>
 
-        <div className="carta-config-header-status">
+        <div className="cfg-header-status">
           <span className="badge badge-exito">Reservas activas</span>
         </div>
       </header>

@@ -316,7 +316,7 @@ export default function MiCuentaPage() {
   // UI
   // ============================
   return (
-    <main className="micuenta-config-page section section--wide">
+    <main className="micuenta-config-page cfg-page section section--wide">
       {errorToast && (
         <ErrorToast
           error={errorToast}
@@ -335,7 +335,7 @@ export default function MiCuentaPage() {
         />
       )}
 
-      <header className="micuenta-config-header">
+      <header className="micuenta-config-header cfg-header">
         <div>
           <h1>👤 Mi cuenta</h1>
           <p className="text-suave">
@@ -370,9 +370,9 @@ export default function MiCuentaPage() {
           </div>
         </div>
 
-        <div className="micuenta-config-stats">
-          <article className="micuenta-config-stat">
-            <span className="micuenta-config-stat__label">Certificado</span>
+        <div className="micuenta-config-stats cfg-stats">
+          <article className="micuenta-config-stat cfg-stat">
+            <span className="micuenta-config-stat__label cfg-stat__label">Certificado</span>
             <strong>
               {certStatusLoading
                 ? "Cargando…"
@@ -393,16 +393,16 @@ export default function MiCuentaPage() {
             </span>
           </article>
 
-          <article className="micuenta-config-stat">
-            <span className="micuenta-config-stat__label">Datos fiscales</span>
+          <article className="micuenta-config-stat cfg-stat">
+            <span className="micuenta-config-stat__label cfg-stat__label">Datos fiscales</span>
             <strong>{sifCompleto ? "Completos" : "Incompletos"}</strong>
             <span className={`pill pill--${readiness.fiscal}`}>
               {sifCompleto ? "Listos" : "Pendientes"}
             </span>
           </article>
 
-          <article className="micuenta-config-stat">
-            <span className="micuenta-config-stat__label">Envío a AEAT</span>
+          <article className="micuenta-config-stat cfg-stat">
+            <span className="micuenta-config-stat__label cfg-stat__label">Envío a AEAT</span>
             <strong>{verifactuEnabled ? "Activo" : "Inactivo"}</strong>
             <span className={`pill pill--${readiness.verifactu}`}>
               {verifactuEnabled ? "VERI*FACTU ON" : "VERI*FACTU OFF"}
@@ -411,8 +411,8 @@ export default function MiCuentaPage() {
         </div>
       </section>
 
-      <div className="micuenta-config-layout">
-        <div className="micuenta-config-main">
+      <div className="micuenta-config-layout cfg-layout">
+        <div className="micuenta-config-main cfg-main">
           {/* SUSCRIPCIÓN */}
           <section className="card config-card">
             <div className="config-card-header">
@@ -438,7 +438,7 @@ export default function MiCuentaPage() {
               </div>
             </div>
 
-            <div className="micuenta-actions">
+            <div className="micuenta-actions cfg-actions">
               <button
                 className="btn btn-primario"
                 onClick={async () => {
@@ -603,7 +603,7 @@ export default function MiCuentaPage() {
                 />
               </div>
 
-              <div className="micuenta-actions">
+              <div className="micuenta-actions cfg-actions">
                 <button
                   type="submit"
                   className="btn btn-secundario"
@@ -654,7 +654,7 @@ export default function MiCuentaPage() {
               ))}
             </div>
 
-            <div className="micuenta-actions">
+            <div className="micuenta-actions cfg-actions">
               <button
                 className="btn btn-primario"
                 type="button"

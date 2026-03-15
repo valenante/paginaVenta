@@ -1,36 +1,23 @@
 /* =========================================================
-   TOP PRODUCTOS — Estilo Profesional Alef
-   Clases únicas "toppro-*"
+   TOP PRODUCTOS — Específico
+   Base: dashboard-common.css
    ========================================================= */
 
 /* ===== CONTENEDOR ===== */
 .toppro-container {
   margin-top: 2rem;
   padding: 1.8rem 2rem;
-  background: rgba(255, 255, 255, 0.06);
+  background: var(--dash-glass-bg);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: var(--radius-xl);
+  border-radius: var(--dash-radius-lg);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   box-shadow: 0 8px 26px rgba(0, 0, 0, 0.28);
-  animation: topproFade 0.35s ease;
-}
-
-@keyframes topproFade {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  animation: dashFadeIn 0.35s ease;
 }
 
 /* ===== HEADER ===== */
-.toppro-header {
-  margin-bottom: 1.4rem;
-}
+.toppro-header { margin-bottom: 1.4rem; }
 
 .toppro-title {
   font-size: 1.3rem;
@@ -61,9 +48,7 @@
   border-bottom: 1px solid rgba(255, 255, 255, 0.07);
 }
 
-.toppro-item:last-child {
-  border-bottom: none;
-}
+.toppro-item:last-child { border-bottom: none; }
 
 .toppro-item-header {
   display: flex;
@@ -72,23 +57,19 @@
   margin-bottom: 0.55rem;
 }
 
-.toppro-item-name {
-  font-size: 1rem;
-  font-weight: 600;
-  color: #fff;
-}
+.toppro-item-name { font-size: 1rem; font-weight: 600; color: #fff; }
 
 .toppro-item-meta {
   font-size: 0.85rem;
   opacity: 0.8;
-  color: #cbd5e1;
+  color: var(--dash-text-soft);
 }
 
 /* ===== BARRA ===== */
 .toppro-bar {
   width: 100%;
   height: 9px;
-  border-radius: 999px;
+  border-radius: var(--dash-radius-pill);
   background: rgba(255, 255, 255, 0.08);
   overflow: hidden;
   position: relative;
@@ -96,8 +77,8 @@
 
 .toppro-bar-inner {
   height: 100%;
-  background: linear-gradient(90deg, #6a0dad, #ff6700);
-  border-radius: 999px;
+  background: linear-gradient(90deg, var(--dash-accent-1), var(--dash-accent-2));
+  border-radius: var(--dash-radius-pill);
   box-shadow: 0 3px 10px rgba(255, 103, 0, 0.25);
   transition: width 0.4s ease;
 }
@@ -113,9 +94,7 @@
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
-  .toppro-container {
-    padding: 1.4rem 1.5rem;
-  }
+  .toppro-container { padding: 1.4rem 1.5rem; }
 
   .toppro-item-header {
     flex-direction: column;

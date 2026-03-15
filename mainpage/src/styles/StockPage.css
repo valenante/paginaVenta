@@ -1,50 +1,25 @@
 /* =========================================================
-   STOCK PAGE ULTRA PRO — Estilo Premium Alef
-   ---------------------------------------------------------
-   - Glassmorphism con blur 14px
-   - Cards coherentes con KPIs de Caja Ultra Pro
-   - Gradiente morado → naranja
-   - Animación suave fade-in
+   STOCK PAGE — Específico
+   Base: dashboard-common.css (dash vars, dashFadeIn, etc.)
    ========================================================= */
-
-:root {
-  --glass-bg: rgba(255, 255, 255, 0.05);
-  --glass-border: rgba(255, 255, 255, 0.08);
-  --shadow-deep: 0 12px 32px rgba(0, 0, 0, 0.35);
-  --radius-md: 12px;
-  --radius-lg: 18px;
-  --radius-pill: 999px;
-}
 
 /* ===== ROOT ===== */
 .stock-root {
   padding: 2rem 2.5rem;
-  color: #f8fafc;
-  background: radial-gradient(circle at top right, #141423, #0a0a13 70%);
+  color: var(--dash-text);
+  background: var(--dash-bg);
   min-height: 100vh;
-  animation: fadeIn 0.25s ease-out;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(6px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  animation: dashFadeIn 0.25s ease-out;
 }
 
 /* ===== HEADER ===== */
 .stock-header {
-  background: var(--glass-bg);
+  background: var(--dash-glass-bg);
   backdrop-filter: blur(14px);
   padding: 1.8rem 2rem;
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--glass-border);
-  box-shadow: var(--shadow-deep);
+  border-radius: var(--dash-radius-lg);
+  border: 1px solid var(--dash-glass-border);
+  box-shadow: var(--dash-shadow);
   margin-bottom: 2rem;
 }
 
@@ -56,17 +31,18 @@
 
 .btn-toggle {
   padding: 0.45rem 1.2rem;
-  border-radius: 999px;
+  border-radius: var(--dash-radius-pill);
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.12);
   color: #e2e8f0;
   font-size: 0.85rem;
   cursor: pointer;
   transition: 0.2s ease;
+  white-space: nowrap;
 }
 
 .btn-toggle.active {
-  background: linear-gradient(90deg, #6a0dad, #ff6700);
+  background: linear-gradient(90deg, var(--dash-accent-1), var(--dash-accent-2));
   color: white;
   border-color: transparent;
   box-shadow: 0px 4px 12px rgba(255, 103, 0, 0.35);
@@ -76,13 +52,10 @@
   background: rgba(255, 255, 255, 0.12);
 }
 
-
 .stock-header h2 {
   margin: 0;
   font-size: 1.7rem;
   font-weight: 800;
-  -webkit-background-clip: text;
-  background-clip: text;
   color: white;
 }
 
@@ -92,28 +65,22 @@
   margin-top: .3rem;
 }
 
-/* -------------------------------------------
-   BOTÓN "NUEVO INGREDIENTE" — Estilo Premium Alef
-   ------------------------------------------- */
+/* ===== BOTÓN NUEVO ===== */
 .btn-nuevo {
   display: flex;
   align-items: center;
   gap: 0.45rem;
-
   padding: 0.55rem 1.2rem;
-  border-radius: 999px;
-
-  background: linear-gradient(90deg, #6a0dad, #ff6700);
+  border-radius: var(--dash-radius-pill);
+  background: linear-gradient(90deg, var(--dash-accent-1), var(--dash-accent-2));
   color: #ffffff;
-
   border: none;
   font-weight: 600;
   font-size: 0.92rem;
   cursor: pointer;
-
-  box-shadow: 0 4px 14px rgba(255, 103, 0, 0.28),
+  box-shadow:
+    0 4px 14px rgba(255, 103, 0, 0.28),
     0 0 0 1px rgba(255, 255, 255, 0.06);
-
   transition: all 0.22s ease;
 }
 
@@ -123,18 +90,8 @@
   filter: brightness(1.08);
 }
 
-.btn-nuevo:active {
-  transform: translateY(0px);
-  filter: brightness(0.92);
-}
-
-/* Deshabilitado por si algún día lo usas */
-.btn-nuevo:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
-}
+.btn-nuevo:active { transform: translateY(0px); filter: brightness(0.92); }
+.btn-nuevo:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
 
 .btn-eliminar-ingrediente {
   position: absolute;
@@ -157,12 +114,6 @@
   transform: scale(1.08);
 }
 
-.stock-card {
-  position: relative;
-  /* tu estilo existente */
-}
-
-
 /* ===== GRID ===== */
 .stock-grid {
   margin-top: 1.6rem;
@@ -173,12 +124,13 @@
 
 /* ===== CARD ===== */
 .stock-card {
-  background: var(--glass-bg);
+  position: relative;
+  background: var(--dash-glass-bg);
   backdrop-filter: blur(14px);
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--glass-border);
+  border-radius: var(--dash-radius-lg);
+  border: 1px solid var(--dash-glass-border);
   padding: 1.4rem 1.6rem;
-  box-shadow: var(--shadow-deep);
+  box-shadow: var(--dash-shadow);
   transition: 0.25s ease;
 }
 
@@ -187,38 +139,26 @@
   background: rgba(255, 255, 255, 0.09);
 }
 
-/* ===== CARD HEADER ===== */
 .stock-card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.stock-name {
-  font-size: 1.15rem;
-  font-weight: 600;
-}
+.stock-name { font-size: 1.15rem; font-weight: 600; }
 
 /* ===== BADGES ===== */
 .estado-badge {
   padding: 4px 12px;
-  border-radius: var(--radius-pill);
+  border-radius: var(--dash-radius-pill);
   font-size: 0.75rem;
   font-weight: 700;
   color: #fff;
 }
 
-.estado-badge.ok {
-  background: linear-gradient(90deg, #38b000, #70e000);
-}
-
-.estado-badge.bajo {
-  background: linear-gradient(90deg, #ffa600, #ffcd3c);
-}
-
-.estado-badge.critico {
-  background: linear-gradient(90deg, #d00000, #ff595e);
-}
+.estado-badge.ok      { background: linear-gradient(90deg, #38b000, #70e000); }
+.estado-badge.bajo    { background: linear-gradient(90deg, #ffa600, #ffcd3c); }
+.estado-badge.critico { background: linear-gradient(90deg, #d00000, #ff595e); }
 
 /* ===== STOCK BAR ===== */
 .stock-bar {
@@ -231,17 +171,12 @@
 
 .stock-bar-fill {
   height: 100%;
-  background: linear-gradient(90deg, #6a0dad, #ff6700);
+  background: linear-gradient(90deg, var(--dash-accent-1), var(--dash-accent-2));
   transition: width 0.35s ease-in-out;
 }
 
-.stock-card.estado-bajo .stock-bar-fill {
-  background: linear-gradient(90deg, #ffa600, #ff6700);
-}
-
-.stock-card.estado-critico .stock-bar-fill {
-  background: linear-gradient(90deg, #d00000, #ff595e);
-}
+.stock-card.estado-bajo .stock-bar-fill    { background: linear-gradient(90deg, #ffa600, #ff6700); }
+.stock-card.estado-critico .stock-bar-fill { background: linear-gradient(90deg, #d00000, #ff595e); }
 
 /* ===== DETAILS ===== */
 .stock-details {
@@ -252,23 +187,18 @@
   color: #e2e8f0;
 }
 
-.stock-details strong {
-  font-size: 1.05rem;
-  color: #fff;
-}
+.stock-details strong { font-size: 1.05rem; color: #fff; }
 
-/* ================= ACTIONS ROW ================= */
-
-.stock-card-actions{
+/* ===== ACTIONS ROW ===== */
+.stock-card-actions {
   display: flex;
   gap: 10px;
   margin-top: 0.8rem;
 }
 
-/* ambos botones comparten base */
-.stock-card-actions button{
+.stock-card-actions button {
   flex: 1;
-  border-radius: 999px;
+  border-radius: var(--dash-radius-pill);
   padding: 0.65rem 1rem;
   font-weight: 600;
   cursor: pointer;
@@ -276,29 +206,25 @@
   border: none;
 }
 
-/* botón principal */
-.stock-card-actions .btn-ajustar{
-  background: linear-gradient(90deg, #6a0dad, #ff6700);
+.stock-card-actions .btn-ajustar {
+  background: linear-gradient(90deg, var(--dash-accent-1), var(--dash-accent-2));
   color: #fff;
   box-shadow: 0 4px 18px rgba(255, 103, 0, 0.25);
 }
 
-.stock-card-actions .btn-ajustar:hover{
-  transform: translateY(-2px);
-  opacity: 0.95;
-}
+.stock-card-actions .btn-ajustar:hover { transform: translateY(-2px); opacity: 0.95; }
 
-/* botón secundario editar */
-.stock-card-actions .btn-editar{
-  background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.15);
+.stock-card-actions .btn-editar {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   color: #e5e7eb;
 }
 
-.stock-card-actions .btn-editar:hover{
-  background: rgba(255,255,255,0.16);
+.stock-card-actions .btn-editar:hover {
+  background: rgba(255, 255, 255, 0.16);
   transform: translateY(-2px);
 }
+
 /* ===== LOADING & ERROR ===== */
 .stock-loading,
 .stock-error {
@@ -311,11 +237,12 @@
   display: flex;
   align-items: center;
   gap: 1rem;
+  flex-wrap: wrap;
 }
 
 .stock-search {
   padding: 0.55rem 1rem;
-  border-radius: 999px;
+  border-radius: var(--dash-radius-pill);
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.12);
   color: #e5e7eb;
@@ -341,7 +268,7 @@
 
 .stock-pagination button {
   padding: 0.45rem 1rem;
-  border-radius: 999px;
+  border-radius: var(--dash-radius-pill);
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.15);
   color: #fff;
@@ -354,41 +281,23 @@
   cursor: not-allowed;
 }
 
-.stock-header-actions {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  flex-wrap: wrap;
-  /* ✅ importante: evita desbordes */
-}
-
 .stock-header-filtros {
   display: flex;
   align-items: center;
   gap: 0.6rem;
   flex-wrap: wrap;
-  /* ✅ si no entra, baja línea */
-}
-
-/* (Ya tienes .btn-toggle y .btn-toggle.active definidos) */
-.btn-toggle {
-  white-space: nowrap;
 }
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
-  .stock-root {
-    padding: 1.2rem;
-  }
+  .stock-root { padding: 1.2rem; }
 
-  /* Asegura que nada se desborde */
   .stock-header {
     max-width: 100%;
     overflow-x: hidden;
     padding: 1.4rem;
   }
 
-  /* Botón + input pasan a vertical */
   .stock-header-actions {
     flex-direction: column;
     width: 100%;
@@ -401,13 +310,6 @@
     justify-content: flex-start;
   }
 
-  .btn-toggle {
-    flex: 1;
-    text-align: center;
-  }
-
-  /* Ajuste de grid para cartas */
-  .stock-grid {
-    grid-template-columns: 1fr;
-  }
+  .btn-toggle { flex: 1; text-align: center; }
+  .stock-grid { grid-template-columns: 1fr; }
 }

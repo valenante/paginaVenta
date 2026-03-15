@@ -1,52 +1,17 @@
 /* =========================================================
-   STAFF STATS — Estilo Premium Alef
-   ---------------------------------------------------------
-   - Glassmorphism
-   - Fondo oscuro elegante
-   - Cards tipo KPI
-   - Lista de productos top consistente con paneles PRO
+   STAFF STATS — Específico
+   Base: dashboard-common.css (dash-kpi, dash-grid, vars…)
    ========================================================= */
-
-:root {
-  --staff-glass-bg: rgba(255, 255, 255, 0.05);
-  --staff-glass-border: rgba(255, 255, 255, 0.08);
-  --staff-shadow-deep: 0 12px 32px rgba(0, 0, 0, 0.35);
-  --staff-radius-md: 12px;
-  --staff-radius-lg: 18px;
-  --staff-radius-pill: 999px;
-
-  --staff-text: #f8fafc;
-  --staff-text-soft: #cbd5e1;
-  --staff-text-muted: rgba(226, 232, 240, 0.72);
-
-  --staff-positive: #34d399;
-  --staff-negative: #f87171;
-  --staff-neutral: #fbbf24;
-
-  --staff-accent-1: #6a0dad;
-  --staff-accent-2: #ff6700;
-}
 
 /* ===== ROOT ===== */
 .staff-stats {
   padding: 1.6rem;
-  border-radius: var(--staff-radius-lg);
-  background: radial-gradient(circle at top right, #141423, #0a0a13 70%);
+  border-radius: var(--dash-radius-lg);
+  background: var(--dash-bg);
   border: 1px solid rgba(255, 255, 255, 0.05);
-  box-shadow: var(--staff-shadow-deep);
-  color: var(--staff-text);
-  animation: staffFadeIn 0.24s ease-out;
-}
-
-@keyframes staffFadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(6px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  box-shadow: var(--dash-shadow);
+  color: var(--dash-text);
+  animation: dashFadeIn 0.24s ease-out;
 }
 
 /* ===== TITLES ===== */
@@ -66,7 +31,7 @@
 
 .stats-muted {
   margin: 0;
-  color: var(--staff-text-muted);
+  color: var(--dash-text-muted);
   font-size: 0.94rem;
   line-height: 1.45;
 }
@@ -83,14 +48,14 @@
 .stats-fecha-label {
   font-size: 0.9rem;
   font-weight: 700;
-  color: var(--staff-text-soft);
+  color: var(--dash-text-soft);
   letter-spacing: 0.02em;
 }
 
 .stats-fecha-input {
   min-width: 190px;
   padding: 0.62rem 0.95rem;
-  border-radius: var(--staff-radius-pill);
+  border-radius: var(--dash-radius-pill);
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.12);
   color: #e5e7eb;
@@ -119,11 +84,11 @@
 
 /* ===== CARD KPI ===== */
 .stat-card {
-  background: var(--staff-glass-bg);
+  background: var(--dash-glass-bg);
   backdrop-filter: blur(14px);
-  border-radius: var(--staff-radius-lg);
-  border: 1px solid var(--staff-glass-border);
-  box-shadow: var(--staff-shadow-deep);
+  border-radius: var(--dash-radius-lg);
+  border: 1px solid var(--dash-glass-border);
+  box-shadow: var(--dash-shadow);
   padding: 1.15rem 1.25rem;
   display: flex;
   flex-direction: column;
@@ -133,14 +98,14 @@
 
 .stat-card:hover {
   transform: translateY(-2px);
-  border-color: rgba(255, 255, 255, 0.14);
+  border-color: var(--dash-glass-border-hover);
 }
 
 .stat-label {
   font-size: 0.78rem;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: var(--staff-text-muted);
+  color: var(--dash-text-muted);
 }
 
 .stat-value {
@@ -153,31 +118,20 @@
 .stat-sub {
   font-size: 0.88rem;
   line-height: 1.35;
-  color: var(--staff-text-soft);
+  color: var(--dash-text-soft);
 }
 
-.stat-sub.positivo {
-  color: var(--staff-positive);
-  font-weight: 700;
-}
-
-.stat-sub.negativo {
-  color: var(--staff-negative);
-  font-weight: 700;
-}
-
-.stat-sub.neutral {
-  color: var(--staff-neutral);
-  font-weight: 700;
-}
+.stat-sub.positivo { color: var(--dash-positive); font-weight: 700; }
+.stat-sub.negativo { color: var(--dash-negative); font-weight: 700; }
+.stat-sub.neutral  { color: var(--dash-neutral);  font-weight: 700; }
 
 /* ===== TOP PRODUCTOS ===== */
 .staff-top-productos {
-  background: var(--staff-glass-bg);
+  background: var(--dash-glass-bg);
   backdrop-filter: blur(14px);
-  border-radius: var(--staff-radius-lg);
-  border: 1px solid var(--staff-glass-border);
-  box-shadow: var(--staff-shadow-deep);
+  border-radius: var(--dash-radius-lg);
+  border: 1px solid var(--dash-glass-border);
+  box-shadow: var(--dash-shadow);
   padding: 1.2rem 1.25rem;
 }
 
@@ -227,25 +181,25 @@
 
 .top-producto-item .cantidad {
   font-size: 0.84rem;
-  color: var(--staff-text-muted);
+  color: var(--dash-text-muted);
 }
 
 .top-producto-item .importe {
   flex-shrink: 0;
   font-size: 0.95rem;
   font-weight: 800;
-  color: #f8fafc;
+  color: var(--dash-text);
   padding: 0.38rem 0.72rem;
-  border-radius: var(--staff-radius-pill);
+  border-radius: var(--dash-radius-pill);
   background: linear-gradient(
     90deg,
     rgba(106, 13, 173, 0.24),
     rgba(255, 103, 0, 0.2)
   );
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--dash-glass-border);
 }
 
-/* ===== ESTADOS EXTRA ===== */
+/* ===== ACCENT LINE ===== */
 .staff-stats .card {
   position: relative;
   overflow: hidden;
@@ -267,19 +221,9 @@
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
-  .staff-stats {
-    padding: 1.15rem;
-    border-radius: 16px;
-  }
-
-  .stats-title {
-    font-size: 1.2rem;
-    margin-bottom: 1rem;
-  }
-
-  .stats-subtitle {
-    font-size: 0.98rem;
-  }
+  .staff-stats { padding: 1.15rem; border-radius: 16px; }
+  .stats-title { font-size: 1.2rem; margin-bottom: 1rem; }
+  .stats-subtitle { font-size: 0.98rem; }
 
   .stats-fecha {
     flex-direction: column;
@@ -287,26 +231,11 @@
     gap: 0.6rem;
   }
 
-  .stats-fecha-input {
-    min-width: 0;
-  }
-
-  .staff-grid.stats {
-    grid-template-columns: 1fr;
-    gap: 0.9rem;
-  }
-
-  .stat-card {
-    padding: 1rem 1rem;
-  }
-
-  .stat-value {
-    font-size: 1.45rem;
-  }
-
-  .staff-top-productos {
-    padding: 1rem;
-  }
+  .stats-fecha-input { min-width: 0; }
+  .staff-grid.stats { grid-template-columns: 1fr; gap: 0.9rem; }
+  .stat-card { padding: 1rem; }
+  .stat-value { font-size: 1.45rem; }
+  .staff-top-productos { padding: 1rem; }
 
   .top-producto-item {
     align-items: flex-start;
@@ -314,36 +243,19 @@
     gap: 0.55rem;
   }
 
-  .top-producto-item .importe {
-    align-self: flex-start;
-  }
+  .top-producto-item .importe { align-self: flex-start; }
 }
 
 @media (max-width: 480px) {
-  .staff-stats {
-    padding: 0.95rem;
-  }
-
-  .stats-title {
-    font-size: 1.08rem;
-  }
-
-  .stat-label {
-    font-size: 0.74rem;
-  }
-
-  .stat-value {
-    font-size: 1.3rem;
-  }
+  .staff-stats { padding: 0.95rem; }
+  .stats-title { font-size: 1.08rem; }
+  .stat-label { font-size: 0.74rem; }
+  .stat-value { font-size: 1.3rem; }
 
   .stat-sub,
   .stats-muted,
-  .top-producto-item .nombre {
-    font-size: 0.9rem;
-  }
+  .top-producto-item .nombre { font-size: 0.9rem; }
 
   .top-producto-item .cantidad,
-  .top-producto-item .importe {
-    font-size: 0.82rem;
-  }
+  .top-producto-item .importe { font-size: 0.82rem; }
 }

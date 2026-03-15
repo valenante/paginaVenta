@@ -1,22 +1,22 @@
 /* ============================================
-   ResumenDia — tarjetas resumen del día
-   Estilo coherente con StaffDashboard
+   ResumenDia — Específico
+   Base: dashboard-common.css
 ============================================ */
 
 .resumen-dia {
   margin-bottom: 1.25rem;
   padding: 1.1rem 1.25rem;
-  border-radius: 18px;
+  border-radius: var(--dash-radius-lg);
   background: radial-gradient(circle at top left, #141423, #0a0a13 70%);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+  border: 1px solid var(--dash-glass-border);
+  box-shadow: var(--dash-shadow);
 }
 
 .resumen-dia__titulo {
   margin: 0 0 0.85rem;
   font-size: 1rem;
   font-weight: 700;
-  color: #cbd5e1;
+  color: var(--dash-text-soft);
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
@@ -34,7 +34,7 @@
   align-items: center;
   gap: 10px;
   padding: 12px 14px;
-  border-radius: 12px;
+  border-radius: var(--dash-radius-md);
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.07);
   border-left: 4px solid transparent;
@@ -42,7 +42,7 @@
 }
 
 .resumen-tarjeta:hover {
-  background: rgba(255, 255, 255, 0.07);
+  background: var(--dash-glass-bg-hover);
 }
 
 .resumen-tarjeta--blue   { border-left-color: #5b9bd5; }
@@ -113,7 +113,7 @@
 
 .resumen-dia__top-item {
   font-size: 0.78rem;
-  color: #cbd5e1;
+  color: var(--dash-text-soft);
   background: rgba(255, 255, 255, 0.06);
   padding: 4px 10px;
   border-radius: 8px;
@@ -124,47 +124,18 @@
 /* ── Tablet ────────────────────────────── */
 
 @media (max-width: 768px) {
-  .resumen-dia {
-    padding: 0.9rem 1rem;
-    border-radius: 16px;
-  }
-
-  .resumen-dia__tarjetas {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .resumen-tarjeta__valor {
-    font-size: 1.05rem;
-  }
+  .resumen-dia { padding: 0.9rem 1rem; border-radius: 16px; }
+  .resumen-dia__tarjetas { grid-template-columns: repeat(2, 1fr); }
+  .resumen-tarjeta__valor { font-size: 1.05rem; }
 }
 
 /* ── Mobile ────────────────────────────── */
 
 @media (max-width: 480px) {
-  .resumen-dia {
-    padding: 0.75rem 0.85rem;
-    border-radius: 14px;
-    margin-bottom: 1rem;
-  }
-
-  .resumen-dia__titulo {
-    font-size: 0.88rem;
-  }
-
-  .resumen-dia__tarjetas {
-    grid-template-columns: 1fr;
-  }
-
-  .resumen-tarjeta {
-    padding: 10px 12px;
-    gap: 8px;
-  }
-
-  .resumen-tarjeta__icono {
-    font-size: 1.25rem;
-  }
-
-  .resumen-tarjeta__valor {
-    font-size: 0.95rem;
-  }
+  .resumen-dia { padding: 0.75rem 0.85rem; border-radius: 14px; margin-bottom: 1rem; }
+  .resumen-dia__titulo { font-size: 0.88rem; }
+  .resumen-dia__tarjetas { grid-template-columns: 1fr; }
+  .resumen-tarjeta { padding: 10px 12px; gap: 8px; }
+  .resumen-tarjeta__icono { font-size: 1.25rem; }
+  .resumen-tarjeta__valor { font-size: 0.95rem; }
 }

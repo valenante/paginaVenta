@@ -205,7 +205,7 @@ export default function ConfigImpresionPage() {
     : "";
 
   return (
-    <main className="print-config-page section section--wide">
+    <main className="print-config-page cfg-page cfg-page--fixed-bar section section--wide">
       {success && (
         <AlertaMensaje
           tipo="success"
@@ -224,7 +224,7 @@ export default function ConfigImpresionPage() {
         />
       )}
 
-      <header className="print-config-header">
+      <header className="print-config-header cfg-header">
         <div>
           <h1>🖨️ Configuración de impresión</h1>
           <p className="text-suave">
@@ -241,7 +241,7 @@ export default function ConfigImpresionPage() {
         </div>
       </header>
 
-      <div className="print-config-layout">
+      <div className="print-config-layout cfg-layout">
         <div className="print-config-main">
           <section className="card config-card">
             <div className="config-card-header">
@@ -276,19 +276,19 @@ export default function ConfigImpresionPage() {
               </button>
             </div>
 
-            <div className="print-config-stats">
-              <article className="print-config-stat">
-                <span className="print-config-stat__label">Estado del agente</span>
+            <div className="print-config-stats cfg-stats">
+              <article className="print-config-stat cfg-stat">
+                <span className="print-config-stat__label cfg-stat__label">Estado del agente</span>
                 <strong>{estadoLabel}</strong>
               </article>
 
-              <article className="print-config-stat">
-                <span className="print-config-stat__label">Impresoras detectadas</span>
+              <article className="print-config-stat cfg-stat">
+                <span className="print-config-stat__label cfg-stat__label">Impresoras detectadas</span>
                 <strong>{impresoras.length}</strong>
               </article>
 
-              <article className="print-config-stat">
-                <span className="print-config-stat__label">Estaciones configuradas</span>
+              <article className="print-config-stat cfg-stat">
+                <span className="print-config-stat__label cfg-stat__label">Estaciones configuradas</span>
                 <strong>
                   {Object.values(asignacionActual).filter(Boolean).length} / 4
                 </strong>
@@ -435,7 +435,7 @@ export default function ConfigImpresionPage() {
         </div>
       </div>
 
-      <div className="print-config-actions">
+      <div className="print-config-actions cfg-actions-bar">
         <button
           type="button"
           className="btn btn-primario"

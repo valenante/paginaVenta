@@ -71,7 +71,7 @@ export default function PerfilPage() {
   if (!user) return <LoadingScreen />;
 
   return (
-    <main className="perfil-config-page section section--wide">
+    <main className="perfil-config-page cfg-page section section--wide">
       {alerta && (
         <AlertaMensaje
           tipo={alerta.tipo}
@@ -90,7 +90,7 @@ export default function PerfilPage() {
         />
       )}
 
-      <header className="perfil-config-header">
+      <header className="perfil-config-header cfg-header">
         <div>
           <h1>👤 Mi perfil</h1>
           <p className="text-suave">
@@ -104,8 +104,8 @@ export default function PerfilPage() {
         </div>
       </header>
 
-      <div className="perfil-config-layout">
-        <div className="perfil-config-main">
+      <div className="perfil-config-layout cfg-layout">
+        <div className="perfil-config-main cfg-main">
           {/* RESUMEN */}
           <section className="card config-card">
             <div className="config-card-header">
@@ -227,7 +227,7 @@ export default function PerfilPage() {
                 </label>
               </div>
 
-              <div className="perfil-actions">
+              <div className="perfil-actions cfg-actions">
                 <button
                   type="submit"
                   className="btn btn-primario"

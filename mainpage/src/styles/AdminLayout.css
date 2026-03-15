@@ -1,8 +1,6 @@
-/* src/styles/AdminLayout.css
-   =========================================================
-   ADMIN LAYOUT — Premium Alef (desktop + móvil usable)
-   - Desktop: sidebar vertical + logout abajo
-   - Móvil: topbar con chips, logo mini, logout dentro del menú
+/* =========================================================
+   ADMIN LAYOUT — Premium Alef (desktop + móvil)
+   Base: dashboard-common.css
    ========================================================= */
 
 /* ===== LAYOUT GENERAL ===== */
@@ -10,7 +8,7 @@
 .admin-layout {
   display: flex;
   min-height: 100vh;
-  background: linear-gradient(135deg, #0b0e1a, #141829 60%, #1a1033 100%);
+  background: var(--dash-bg-alt);
   color: #e5e7eb;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   overflow: hidden;
@@ -24,28 +22,19 @@
   background: rgba(15, 23, 42, 0.52);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
-  border-right: 1px solid rgba(255, 255, 255, 0.08);
-
+  border-right: 1px solid var(--dash-glass-border);
   display: flex;
   flex-direction: column;
   gap: 18px;
-
   box-shadow:
     4px 0 30px rgba(0, 0, 0, 0.4),
     0 0 0 1px rgba(255, 255, 255, 0.05);
-
   animation: fadeSidebar 0.2s ease;
 }
 
 @keyframes fadeSidebar {
-  from {
-    opacity: 0;
-    transform: translateX(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
+  from { opacity: 0; transform: translateX(-10px); }
+  to   { opacity: 1; transform: translateX(0); }
 }
 
 /* ===== LOGO ===== */
@@ -58,9 +47,7 @@
   color: #fff;
 }
 
-.admin-sidebar .logo span {
-  color: #ff6700;
-}
+.admin-sidebar .logo span { color: var(--dash-accent-2); }
 
 /* ===== MENU ===== */
 
@@ -73,26 +60,19 @@
 
 .admin-sidebar nav a {
   text-decoration: none;
-  color: #cbd5e1;
+  color: var(--dash-text-soft);
   padding: 12px 14px;
-  border-radius: 12px;
-
+  border-radius: var(--dash-radius-md);
   display: flex;
   align-items: center;
   gap: 12px;
-
   font-size: 15px;
   font-weight: 600;
   opacity: 0.9;
-
   transition: background 0.2s ease, color 0.2s ease, transform 0.12s ease, opacity 0.2s ease;
 }
 
-.admin-sidebar nav a svg {
-  width: 20px;
-  height: 20px;
-  opacity: 0.9;
-}
+.admin-sidebar nav a svg { width: 20px; height: 20px; opacity: 0.9; }
 
 .admin-sidebar nav a:hover {
   background: rgba(255, 255, 255, 0.08);
@@ -109,10 +89,7 @@
   transform: translateX(3px);
 }
 
-/* ✅ Logout item (por defecto oculto en desktop) */
-.admin-sidebar nav a.menu-logout {
-  display: none;
-}
+.admin-sidebar nav a.menu-logout { display: none; }
 
 /* ===== LOGOUT BTN (desktop) ===== */
 
@@ -120,20 +97,15 @@
   margin-top: auto;
   padding: 12px 14px;
   border: none;
-  border-radius: 12px;
-
+  border-radius: var(--dash-radius-md);
   background: rgba(239, 68, 68, 0.16);
   color: #fecaca;
-
   font-size: 14px;
   font-weight: 700;
-
   display: flex;
   align-items: center;
   gap: 10px;
-
   cursor: pointer;
-
   transition: background 0.2s ease, color 0.2s ease, transform 0.1s ease;
 }
 
@@ -155,91 +127,53 @@
 }
 
 .admin-content-wrapper {
-  background: rgba(255, 255, 255, 0.06);
+  background: var(--dash-glass-bg);
   backdrop-filter: blur(12px);
-  border-radius: 18px;
+  border-radius: var(--dash-radius-lg);
   padding: 26px 28px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-
-  box-shadow:
-    0 20px 40px rgba(0, 0, 0, 0.35),
-    0 0 0 1px rgba(255, 255, 255, 0.05);
-
-  animation: fadeContent 0.22s ease;
-}
-
-@keyframes fadeContent {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  border: 1px solid var(--dash-glass-border);
+  box-shadow: var(--dash-shadow);
+  animation: dashFadeIn 0.22s ease;
 }
 
 /* ===== RESPONSIVE ===== */
 
 @media (max-width: 1024px) {
-  .admin-sidebar {
-    width: 240px;
-    padding: 20px 18px;
-  }
-
-  .admin-content {
-    padding: 24px;
-  }
+  .admin-sidebar { width: 240px; padding: 20px 18px; }
+  .admin-content { padding: 24px; }
 }
 
-/* =========================================================
-   MÓVIL/TABLET — TOPBAR COMPACTA
-   - Logo mini
-   - Menú en chips con scroll SOLO en el menú
-   - Logout se mueve al menú y se oculta el botón grande
-========================================================= */
 @media (max-width: 768px) {
-  .admin-layout {
-    flex-direction: column;
-  }
+  .admin-layout { flex-direction: column; }
 
   .admin-sidebar {
     width: 100%;
-    padding: 12px 12px;
+    padding: 12px;
     flex-direction: row;
     align-items: center;
     gap: 12px;
-
-    overflow-x: hidden; /* ✅ no scroll en el contenedor */
+    overflow-x: hidden;
     position: sticky;
     top: 0;
     z-index: 20;
-
     border-right: none;
     border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-    box-shadow:
-      0 10px 30px rgba(0, 0, 0, 0.25),
-      0 0 0 1px rgba(255, 255, 255, 0.05);
+    box-shadow: var(--dash-shadow);
   }
 
-  /* Logo mini tipo chip */
   .admin-sidebar .logo {
     font-size: 16px;
     font-weight: 900;
     white-space: nowrap;
     flex-shrink: 0;
     padding: 8px 10px;
-    border-radius: 12px;
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--dash-radius-md);
+    background: var(--dash-glass-bg);
+    border: 1px solid var(--dash-glass-border);
   }
 
-  /* ocultar "Admin" en móvil para ganar espacio */
-  .admin-sidebar .logo span {
-    display: none;
-  }
+  .admin-sidebar .logo span { display: none; }
 
-  /* Menú: único scroll horizontal */
   .menu {
     flex-direction: row;
     flex: 1;
@@ -249,41 +183,23 @@
     padding-bottom: 6px;
   }
 
-  .menu::-webkit-scrollbar {
-    height: 6px;
-  }
+  .menu::-webkit-scrollbar { height: 6px; }
+  .menu::-webkit-scrollbar-track { background: var(--dash-glass-bg); border-radius: var(--dash-radius-pill); }
+  .menu::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.35); border-radius: var(--dash-radius-pill); }
 
-  .menu::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.06);
-    border-radius: 999px;
-  }
-
-  .menu::-webkit-scrollbar-thumb {
-    background: rgba(148, 163, 184, 0.35);
-    border-radius: 999px;
-  }
-
-  /* Links estilo chip */
   .admin-sidebar nav a {
     white-space: nowrap;
     padding: 9px 10px;
-    border-radius: 999px;
+    border-radius: var(--dash-radius-pill);
     font-size: 13px;
     gap: 8px;
     opacity: 0.95;
     transform: none;
   }
 
-  .admin-sidebar nav a:hover {
-    transform: none;
-  }
+  .admin-sidebar nav a:hover { transform: none; }
+  .admin-sidebar nav a svg { width: 16px; height: 16px; }
 
-  .admin-sidebar nav a svg {
-    width: 16px;
-    height: 16px;
-  }
-
-  /* ✅ Logout como chip visible en móvil */
   .admin-sidebar nav a.menu-logout {
     display: flex;
     background: rgba(239, 68, 68, 0.16);
@@ -296,28 +212,12 @@
     color: #fff;
   }
 
-  /* ✅ Oculta el botón grande en móvil */
-  .logout-btn {
-    display: none;
-  }
-
-  .admin-content {
-    padding: 18px 14px;
-  }
-
-  .admin-content-wrapper {
-    padding: 18px 16px;
-  }
+  .logout-btn { display: none; }
+  .admin-content { padding: 18px 14px; }
+  .admin-content-wrapper { padding: 18px 16px; }
 }
 
-/* Extra pequeño: si no cabe, ocultamos logo */
 @media (max-width: 420px) {
-  .admin-sidebar .logo {
-    display: none;
-  }
-
-  .admin-sidebar nav a {
-    font-size: 12.5px;
-    padding: 8px 10px;
-  }
+  .admin-sidebar .logo { display: none; }
+  .admin-sidebar nav a { font-size: 12.5px; padding: 8px 10px; }
 }

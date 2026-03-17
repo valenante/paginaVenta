@@ -19,7 +19,9 @@ export function useRoles(scope) {
         const { data } = await api.get("/admin/permisos/roles");
         if (!alive) return;
 
-        let list = Array.isArray(data?.roles) ? data.roles : [];
+        // sendOk envuelve en { ok, data: { roles } }
+        const raw = data?.data?.roles ?? data?.roles ?? [];
+        let list = Array.isArray(raw) ? raw : [];
         if (scope) {
           list = list.filter((r) => r.scope === scope);
         }

@@ -290,8 +290,14 @@ const EditProduct = ({
         : [];
 
     const payload = {
-      ...product, // conserva campos no editados
-      ...formData,
+      _id: product?._id,
+      nombre: formData.nombre,
+      descripcion: formData.descripcion,
+      categoria: formData.categoria,
+      tipo: formData.tipo,
+      estado: formData.estado,
+      seccion: formData.seccion,
+      estacion: formData.estacion,
 
       // precios normalizados
       precios: {
@@ -306,6 +312,7 @@ const EditProduct = ({
         precioBotella: toNumOrNull(formData.precios.precioBotella),
       },
 
+      traducciones: formData.traducciones,
       adicionales,
       aliases: formData.aliases,
       alergenos: formData.alergenos,
@@ -313,12 +320,6 @@ const EditProduct = ({
       // receta tal cual (ya son ids + cantidad)
       receta: Array.isArray(formData.receta) ? formData.receta : [],
     };
-
-    // limpia helpers UI
-    delete payload.aliasesString;
-    delete payload.adicionalPrecioUI;
-    delete payload.nuevoIng;
-    delete payload.nuevaCantidad;
 
     try {
       setSaving(true);

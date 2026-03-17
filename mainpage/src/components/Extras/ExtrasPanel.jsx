@@ -72,7 +72,16 @@ export default function ExtrasPanel({ onBack }) {
       abortRef.current = ac;
 
       const res = await api.get("/extras", { signal: ac.signal });
-      const data = Array.isArray(res.data) ? res.data : [];
+      const raw = res.data;
+      const data = Array.isArray(raw)
+        ? raw
+        : Array.isArray(raw?.data?.items)
+          ? raw.data.items
+          : Array.isArray(raw?.data)
+            ? raw.data
+            : Array.isArray(raw?.items)
+              ? raw.items
+              : [];
       setExtras(data);
     } catch (err) {
       // Abort => no mostrar error
@@ -146,12 +155,13 @@ export default function ExtrasPanel({ onBack }) {
     resetCreate();
 
     try {
-      const { data } = await api.post("/extras", { nombre, precio });
+      const res = await api.post("/extras", { nombre, precio });
+      const created = res.data?.extra || res.data?.data?.extra || res.data?.data || res.data;
 
       // reemplazar el temp por el real
       setExtras((prev) => {
         const arr = Array.isArray(prev) ? prev : [];
-        return arr.map((x) => (x._id === tempId ? data : x));
+        return arr.map((x) => (x._id === tempId ? created : x));
       });
 
       setAlerta({ tipo: "exito", mensaje: "Extra creado." });
@@ -205,15 +215,16 @@ export default function ExtrasPanel({ onBack }) {
     });
 
     try {
-      const { data } = await api.put(`/extras/${editandoId}`, {
+      const res = await api.put(`/extras/${editandoId}`, {
         nombre,
         precio,
       });
+      const updated = res.data?.extra || res.data?.data?.extra || res.data?.data || res.data;
 
       // asegurar estado final con respuesta backend
       setExtras((prev) => {
         const arr = Array.isArray(prev) ? prev : [];
-        return arr.map((x) => (x._id === editandoId ? data : x));
+        return arr.map((x) => (x._id === editandoId ? updated : x));
       });
 
       cancelarEdicion();

@@ -21,12 +21,8 @@ export const ConfigProvider = ({ children }) => {
   useEffect(() => {
     const fetchConfig = async () => {
       if (!tenantId || !tenant) {
-        console.warn(
-          "⏸ [ConfigProvider] Sin tenant definido, omitiendo carga de configuración."
-        );
-        setConfig(null);
-        setPlanFeatures([]);
-        setLoading(false);
+        // No bajar loading — el tenant aún no ha cargado.
+        // Cuando TenantContext resuelva, este effect se re-ejecutará.
         return;
       }
 

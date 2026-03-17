@@ -68,15 +68,17 @@ export const useEstadisticasCategoria = (products, filters = {}) => {
         const endpoint =
           tipoNegocio === "shop" ? "/shop/estadisticas/ventas" : "/ventas";
 
-        const { data } = await api.get(endpoint);
+        const { data } = await api.get(endpoint, { params: { limit: 10000 } });
 
         const ventasTodas = Array.isArray(data)
           ? data
-          : Array.isArray(data?.items)
-            ? data.items
-            : Array.isArray(data?.ventas)
-              ? data.ventas
-              : [];
+          : Array.isArray(data?.data)
+            ? data.data
+            : Array.isArray(data?.items)
+              ? data.items
+              : Array.isArray(data?.ventas)
+                ? data.ventas
+                : [];
 
         const idsProductos = new Set(products.map((p) => String(p._id)));
 

@@ -152,10 +152,11 @@ export function VentasProvider({
         params,
       });
 
-      setVentas(Array.isArray(data?.items) ? data.items : []);
+      const items = data?.data || data?.items || [];
+      setVentas(Array.isArray(items) ? items : []);
       setServerMeta({
-        totalItems: Number(data?.totalItems || 0),
-        totalPages: Number(data?.totalPages || 1),
+        totalItems: Number(data?.meta?.total || data?.totalItems || 0),
+        totalPages: Number(data?.meta?.totalPages || data?.totalPages || 1),
         resumen: data?.resumen || DEFAULT_META.resumen,
       });
 

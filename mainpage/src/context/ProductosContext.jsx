@@ -73,9 +73,10 @@ export const ProductosProvider = ({ children }) => {
   const obtenerMesaId = useCallback(async (numeroMesa) => {
     try {
       const { data } = await api.get(`/mesas?numero=${numeroMesa}`);
+      const mesasArray = Array.isArray(data) ? data : data?.data || [];
 
-      if (data.length > 0) { // Verificar si el array tiene elementos
-        const mesa = data[0]; // Acceder al primer elemento
+      if (mesasArray.length > 0) {
+        const mesa = mesasArray[0];
         setMesaId(mesa._id);
         localStorage.setItem('mesaId', mesa._id); // Guardar el ID de la mesa en localStorage
       } else {

@@ -62,10 +62,14 @@ export default function RolesPermisosPanel() {
 
         if (!alive) return;
 
-        const cat = catalogoRes?.data?.catalogo || [];
-        const grp = catalogoRes?.data?.grupos || {};
-        const defs = catalogoRes?.data?.defaults || {};
-        const rolesData = resumenRes?.data?.roles || {};
+        // sendOk wraps as { ok, data: { catalogo, grupos, defaults } }
+        const catPayload = catalogoRes?.data?.data || catalogoRes?.data || {};
+        const resPayload = resumenRes?.data?.data || resumenRes?.data || {};
+
+        const cat = catPayload?.catalogo || [];
+        const grp = catPayload?.grupos || {};
+        const defs = catPayload?.defaults || {};
+        const rolesData = resPayload?.roles || {};
 
         setCatalogo(cat);
         setGrupos(grp);
@@ -218,11 +222,12 @@ export default function RolesPermisosPanel() {
         permisos,
       });
 
+      const payload = data?.data || data;
       setRoles((prev) => ({
         ...prev,
         [activeRole]: {
           ...prev[activeRole],
-          permisos: data?.permisos || permisos,
+          permisos: payload?.permisos || permisos,
         },
       }));
 
@@ -253,13 +258,14 @@ export default function RolesPermisosPanel() {
 
     setCreating(true);
     try {
-      const { data } = await api.post("/admin/permisos/roles", {
+      const { data: raw } = await api.post("/admin/permisos/roles", {
         nombre: newRole.nombre.trim().toLowerCase().replace(/\s+/g, "_"),
         descripcion: newRole.descripcion.trim(),
         scope: detectedScope,
         permisos: [],
       });
 
+      const data = raw?.data || raw;
       const roleName = data.role;
       setRoles((prev) => ({
         ...prev,

@@ -7,10 +7,10 @@ import api from "./api";
  */
 export async function cargarPedidosAPI() {
   try {
-    const { data } = await api.get("/pedidos/pendientes/pendientes", {
+    const { data } = await api.get("/pedidos/pendientes", {
       params: { tipo: ["plato", "tapaRacion"] },
     });
-    return data;
+    return data?.data || [];
   } catch (err) {
     console.error("❌ Error cargarPedidosAPI:", err);
     throw err;
@@ -24,8 +24,8 @@ export async function cargarPedidosAPI() {
  */
 export async function cargarMesasAPI() {
   try {
-    const { data } = await api.get("/mesas/mesas-abiertas/mesas-abiertas");
-    return data;
+    const { data } = await api.get("/mesas/abiertas");
+    return data?.data || [];
   } catch (err) {
     console.error("❌ Error cargarMesasAPI:", err);
     throw err;

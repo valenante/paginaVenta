@@ -237,15 +237,16 @@ export default function TenantModal({ tenant, onClose }) {
     try {
       setLoading(true);
 
-      const { data } = await api.get(`/admin/tenant/${tenant._id}/ping-agente`);
+      const { data: raw } = await api.get(`/admin/tenant/${tenant._id}/ping-agente`);
+      const payload = raw?.data || raw;
 
-      setEstado(data?.ok ? "online" : "offline");
-      if (data?.version) setVersionAgente(data.version);
+      setEstado(payload?.ok ? "online" : "offline");
+      setVersionAgente(payload?.version || null);
 
       setAlerta({
-        tipo: data?.ok ? "success" : "error",
-        mensaje: data?.ok
-          ? `Agente en línea (${data.ms} ms)`
+        tipo: payload?.ok ? "success" : "error",
+        mensaje: payload?.ok
+          ? `Agente en línea (${payload.ms} ms)`
           : "Agente fuera de línea",
       });
     } catch (err) {
@@ -456,7 +457,11 @@ export default function TenantModal({ tenant, onClose }) {
 
         <p>
           <strong>Versión:</strong>{" "}
-          {versionAgente ? `${versionAgente.pkgVersion} · ${versionAgente.commit}` : "—"}
+          {versionAgente?.pkgVersion
+            ? versionAgente.commit
+              ? `${versionAgente.pkgVersion} · ${versionAgente.commit}`
+              : versionAgente.pkgVersion
+            : "—"}
         </p>
       </div>
 

@@ -45,7 +45,7 @@ export default function MapaEditor() {
   const cargarMesas = async () => {
     try {
       const res = await api.get("/mesas");
-      setMesas(res.data);
+      setMesas(res.data?.data || res.data || []);
     } catch (err) {
       console.error("❌ Error al cargar mesas:", err);
     }

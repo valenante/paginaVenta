@@ -67,12 +67,12 @@ export default function ProductoProveedorModal({
       try {
         if (isRest) {
           const { data } = await api.get("/stock/ingredientes");
-          setIngredientes(data.ingredientes || []);
+          setIngredientes(data?.data || data?.ingredientes || []);
         }
 
         if (isShop) {
           const { data } = await api.get("/shop/stock/productos");
-          setProductosShop(data.productos || []);
+          setProductosShop(data?.data || data?.productos || []);
         }
       } catch {
         // silencioso

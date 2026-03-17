@@ -109,7 +109,7 @@ export function ShopCategoriasProvider({ children }) {
 
   const deleteProduct = useCallback(async (id) => {
     if (!id) throw new Error("deleteProduct: falta id");
-    const { data } = await api.delete(`/shop/productos/productos/${id}`);
+    const { data } = await api.delete(`/shop/productos/${id}`);
     return data;
   }, []);
 

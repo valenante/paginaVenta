@@ -11,7 +11,7 @@ export const ConfigProvider = ({ children }) => {
   const tipoNegocio = (
     tenant?.tipoNegocio ||
     tenant?.suscripcion?.tipoNegocio ||
-    "shop"
+    "restaurante"
   ).toLowerCase();
 
   const [config, setConfig] = useState(null);
@@ -176,7 +176,7 @@ export const useConfig = () => {
       setConfig: () => { },
       hasFeature: () => false,
       planFeatures: [],
-      tipoNegocio: "shop",
+      tipoNegocio: "restaurante",
     };
   }
 

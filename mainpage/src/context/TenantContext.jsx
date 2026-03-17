@@ -99,7 +99,10 @@ export const TenantProvider = ({ children }) => {
         const { data } = await api.get("/meTenant/me", {
           signal: controller.signal,
         });
-        if (!cancelled) setTenant(data?.tenant || null);
+        // /meTenant/me uses sendOk → { ok, data: { tenant } }
+        // Axios gives us data = { ok, data: { tenant } }, so unwrap:
+        const payload = data?.data || data;
+        if (!cancelled) setTenant(payload?.tenant || null);
       } catch (e) {
         if (cancelled || e?.name === "CanceledError" || e?.code === "ERR_CANCELED") return;
         setTenant(null);

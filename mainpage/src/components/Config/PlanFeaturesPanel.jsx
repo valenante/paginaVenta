@@ -30,11 +30,13 @@ export default function PlanFeaturesPanel({ onAlert }) {
         const fetchFeatures = async () => {
             try {
                 const { data } = await api.get("/admin/features-plan");
-                setFeatures(data.features || []);
-                if (data.config) setConfig(data.config);
+                // sendOk wraps as { ok, data: { features, config } }
+                const payload = data?.data || data;
+                setFeatures(payload.features || []);
+                if (payload.config) setConfig(payload.config);
 
                 // abrir todas las categorías por defecto
-                const cats = [...new Set((data.features || []).map((f) => f.categoria || "General"))];
+                const cats = [...new Set((payload.features || []).map((f) => f.categoria || "General"))];
                 const init = {};
                 cats.forEach((c) => (init[c] = false));
                 setOpenCats(init);

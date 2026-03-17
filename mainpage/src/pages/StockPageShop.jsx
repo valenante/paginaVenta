@@ -38,8 +38,8 @@ const StockShopPage = () => {
                 },
             });
 
-            setProductos(data.productos || []);
-            setTotalPages(data.totalPages || 1);
+            setProductos(data?.data || data?.productos || []);
+            setTotalPages(data?.meta?.totalPages || data?.totalPages || 1);
             setError("");
         } catch (err) {
             console.error(err);

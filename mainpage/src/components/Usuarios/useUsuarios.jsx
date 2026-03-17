@@ -13,7 +13,9 @@ export function useUsuarios() {
   const cargarUsuarios = async () => {
     try {
       const { data } = await api.get("/auth/usuarios");
-      setUsuarios(Array.isArray(data?.usuarios) ? data.usuarios : []);
+      // /auth/usuarios uses ok() spread → { ok, usuarios } (no data wrapper)
+      const payload = data?.data || data;
+      setUsuarios(Array.isArray(payload?.usuarios) ? payload.usuarios : []);
       return { ok: true };
     } catch (e) {
       logger.error("usuarios.load.error", e);
@@ -25,8 +27,10 @@ export function useUsuarios() {
   const cargarPermisos = async () => {
     try {
       const { data } = await api.get("/admin/permisos");
-      setPermisosDisponibles(Array.isArray(data?.permisosDisponibles) ? data.permisosDisponibles : []);
-      setRolesConfig(data?.roles || {});
+      // /admin/permisos uses sendOk() → { ok, data: { permisosDisponibles, roles, ... } }
+      const payload = data?.data || data;
+      setPermisosDisponibles(Array.isArray(payload?.permisosDisponibles) ? payload.permisosDisponibles : []);
+      setRolesConfig(payload?.roles || {});
       return { ok: true };
     } catch (e) {
       logger.error("usuarios.permisos.load.error", e);

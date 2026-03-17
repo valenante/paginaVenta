@@ -62,7 +62,7 @@ export default function PanelPro() {
   const tipoNegocio = (
     tenant?.tipoNegocio ||
     tenant?.suscripcion?.tipoNegocio ||
-    "shop"
+    "restaurante"
   ).toLowerCase();
 
   const tabs = useMemo(() => {

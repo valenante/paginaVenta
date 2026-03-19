@@ -319,6 +319,9 @@ const EditProduct = ({
 
       // receta tal cual (ya son ids + cantidad)
       receta: Array.isArray(formData.receta) ? formData.receta : [],
+
+      // imagen (si se subió una nueva)
+      img: formData.img || undefined,
     };
 
     try {

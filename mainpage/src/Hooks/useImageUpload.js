@@ -10,9 +10,10 @@ export function useImageUpload() {
         fd.append("file", file);
 
         const { data } = await api.post("/images/upload-producto", fd);
+        const imageUrl = data?.data?.imageUrl || data?.imageUrl;
 
-        if (!data?.imageUrl) throw new Error("UPLOAD_NO_URL");
-        return data.imageUrl;
+        if (!imageUrl) throw new Error("UPLOAD_NO_URL");
+        return imageUrl;
     };
 
     const onDragOver = (e) => { e.preventDefault(); setDragging(true); };

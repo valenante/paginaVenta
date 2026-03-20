@@ -7,10 +7,26 @@ import CartaOrdenSection from "./CartaOrdenSection.jsx";
 import { useAuth } from "../../context/AuthContext.jsx";
 import CartaPromocionesPanel from "../../components/Promociones/CartaPromocionesPanel.jsx";
 import { toImgSrc } from "../../utils/media";
+import "../../styles/RestauranteConfigPage.css";
 import "../../styles/CartaConfigPage.css";
 import ErrorToast from "../../components/common/ErrorToast.jsx";
 import { normalizeApiError } from "../../utils/normalizeApiError.js";
 const HOME_SECTIONS = ["carrousel", "secciones"];
+
+/* Color picker inline reutilizable (mismo estilo que TemaTpvPanel) */
+const CartaColorPick = ({ label, value, name, onChange }) => (
+  <label className="tema-pick">
+    <span className="tema-pick__swatch" style={{ backgroundColor: value }}>
+      <input
+        type="color"
+        value={value}
+        onChange={(e) => onChange({ target: { name, value: e.target.value, type: "text" } })}
+        className="tema-pick__input"
+      />
+    </span>
+    <span className="tema-pick__label">{label}</span>
+  </label>
+);
 
 export default function CartaConfigPage() {
   const { config, setConfig, refreshConfig } = useConfig();
@@ -35,7 +51,9 @@ export default function CartaConfigPage() {
   const { user } = useAuth();
 
   const canEditConfig =
-    user?.role === "admin_restaurante" || user?.role === "admin_shop";
+    user?.role === "superadmin" ||
+    user?.role === "admin_restaurante" ||
+    user?.role === "admin_shop";
 
   // Sync cuando llega configfrefre
   useEffect(() => {
@@ -96,18 +114,27 @@ export default function CartaConfigPage() {
   const handleChange = useCallback((e) => {
     const { name, value, type, checked } = e.target;
     const path = name.split(".");
+    const val = type === "checkbox" ? checked : value;
 
     setForm((prev) => {
+      // Deep-clone the path to avoid mutating prev
       const updated = { ...prev };
-      let obj = updated;
+      if (path.length === 1) {
+        updated[path[0]] = val;
+        return updated;
+      }
 
+      // Clone each nesting level
+      let obj = updated;
       for (let i = 0; i < path.length - 1; i++) {
         const key = path[i];
-        if (typeof obj[key] !== "object" || obj[key] === null) obj[key] = {};
+        obj[key] = typeof obj[key] === "object" && obj[key] !== null
+          ? { ...obj[key] }
+          : {};
         obj = obj[key];
       }
 
-      obj[path[path.length - 1]] = type === "checkbox" ? checked : value;
+      obj[path[path.length - 1]] = val;
       return updated;
     });
   }, []);
@@ -673,196 +700,114 @@ export default function CartaConfigPage() {
           </section>
 
           {/* APARIENCIA */}
-          <section className="card config-card">
-            <div className="config-card-header">
-              <div>
-                <h2>🎨 Apariencia de la carta</h2>
-                <p className="config-card-subtitle">
-                  Personaliza los colores de la carta online que verán los
-                  clientes.
-                </p>
-              </div>
+          <section className="card config-card config-card--tema">
+            <header className="config-card-header">
+              <h2>Apariencia de la carta</h2>
+              <p className="config-card-subtitle">
+                Personaliza los colores que verán los clientes en la carta
+                online. La vista previa se actualiza en tiempo real.
+              </p>
+            </header>
+
+            {/* Pickers agrupados */}
+            <div className="tema-groups">
+              <fieldset className="tema-group">
+                <legend>Base</legend>
+                <div className="tema-group__grid">
+                  <CartaColorPick label="Fondo" value={form.temaCarta?.fondo || "#FFFFFF"} name="temaCarta.fondo" onChange={handleChange} />
+                  <CartaColorPick label="Texto" value={form.temaCarta?.texto || "#2D2D2D"} name="temaCarta.texto" onChange={handleChange} />
+                  <CartaColorPick label="Tarjetas" value={form.temaCarta?.cardBg || "#F5F5F5"} name="temaCarta.cardBg" onChange={handleChange} />
+                </div>
+              </fieldset>
+
+              <fieldset className="tema-group">
+                <legend>Marca</legend>
+                <div className="tema-group__grid">
+                  <CartaColorPick label="Principal" value={form.temaCarta?.colorPrincipal || "#9B1C1C"} name="temaCarta.colorPrincipal" onChange={handleChange} />
+                  <CartaColorPick label="Secundario" value={form.temaCarta?.colorSecundario || "#4C5EA8"} name="temaCarta.colorSecundario" onChange={handleChange} />
+                  <CartaColorPick label="Botones" value={form.temaCarta?.boton || "#9B1C1C"} name="temaCarta.boton" onChange={handleChange} />
+                  <CartaColorPick label="Botones hover" value={form.temaCarta?.botonHover || "#7E1616"} name="temaCarta.botonHover" onChange={handleChange} />
+                </div>
+              </fieldset>
             </div>
 
-            <div className="theme-grid">
-              <div className="theme-row">
-                <label>Color principal</label>
-                <div className="theme-inputs">
-                  <input
-                    type="color"
-                    name="temaCarta.colorPrincipal"
-                    value={form.temaCarta?.colorPrincipal || "#9B1C1C"}
-                    onChange={handleChange}
-                    className="theme-color-input"
-                  />
-                  <input
-                    type="text"
-                    name="temaCarta.colorPrincipal"
-                    value={form.temaCarta?.colorPrincipal || "#9B1C1C"}
-                    onChange={handleChange}
-                    className="theme-text-input"
-                  />
-                </div>
-                <small className="theme-help">
-                  Botones principales, títulos y acentos.
-                </small>
-              </div>
-
-              <div className="theme-row">
-                <label>Color secundario</label>
-                <div className="theme-inputs">
-                  <input
-                    type="color"
-                    name="temaCarta.colorSecundario"
-                    value={form.temaCarta?.colorSecundario || "#4C5EA8"}
-                    onChange={handleChange}
-                    className="theme-color-input"
-                  />
-                  <input
-                    type="text"
-                    name="temaCarta.colorSecundario"
-                    value={form.temaCarta?.colorSecundario || "#4C5EA8"}
-                    onChange={handleChange}
-                    className="theme-text-input"
-                  />
-                </div>
-                <small className="theme-help">
-                  Elementos secundarios, etiquetas o detalles.
-                </small>
-              </div>
-
-              <div className="theme-row">
-                <label>Fondo de la página</label>
-                <div className="theme-inputs">
-                  <input
-                    type="color"
-                    name="temaCarta.fondo"
-                    value={form.temaCarta?.fondo || "#FFFFFF"}
-                    onChange={handleChange}
-                    className="theme-color-input"
-                  />
-                  <input
-                    type="text"
-                    name="temaCarta.fondo"
-                    value={form.temaCarta?.fondo || "#FFFFFF"}
-                    onChange={handleChange}
-                    className="theme-text-input"
-                  />
-                </div>
-              </div>
-
-              <div className="theme-row">
-                <label>Color del texto</label>
-                <div className="theme-inputs">
-                  <input
-                    type="color"
-                    name="temaCarta.texto"
-                    value={form.temaCarta?.texto || "#2D2D2D"}
-                    onChange={handleChange}
-                    className="theme-color-input"
-                  />
-                  <input
-                    type="text"
-                    name="temaCarta.texto"
-                    value={form.temaCarta?.texto || "#2D2D2D"}
-                    onChange={handleChange}
-                    className="theme-text-input"
-                  />
-                </div>
-              </div>
-
-              <div className="theme-row">
-                <label>Fondo de tarjetas / productos</label>
-                <div className="theme-inputs">
-                  <input
-                    type="color"
-                    name="temaCarta.cardBg"
-                    value={form.temaCarta?.cardBg || "#F5F5F5"}
-                    onChange={handleChange}
-                    className="theme-color-input"
-                  />
-                  <input
-                    type="text"
-                    name="temaCarta.cardBg"
-                    value={form.temaCarta?.cardBg || "#F5F5F5"}
-                    onChange={handleChange}
-                    className="theme-text-input"
-                  />
-                </div>
-              </div>
-
-              <div className="theme-row">
-                <label>Color de botones</label>
-                <div className="theme-inputs">
-                  <input
-                    type="color"
-                    name="temaCarta.boton"
-                    value={form.temaCarta?.boton || "#9B1C1C"}
-                    onChange={handleChange}
-                    className="theme-color-input"
-                  />
-                  <input
-                    type="text"
-                    name="temaCarta.boton"
-                    value={form.temaCarta?.boton || "#9B1C1C"}
-                    onChange={handleChange}
-                    className="theme-text-input"
-                  />
-                </div>
-              </div>
-
-              <div className="theme-row">
-                <label>Hover de botones</label>
-                <div className="theme-inputs">
-                  <input
-                    type="color"
-                    name="temaCarta.botonHover"
-                    value={form.temaCarta?.botonHover || "#7E1616"}
-                    onChange={handleChange}
-                    className="theme-color-input"
-                  />
-                  <input
-                    type="text"
-                    name="temaCarta.botonHover"
-                    value={form.temaCarta?.botonHover || "#7E1616"}
-                    onChange={handleChange}
-                    className="theme-text-input"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="theme-preview">
+            {/* Preview realista tipo móvil */}
+            <div className="carta-preview-wrap">
               <div
-                className="theme-preview-inner"
+                className="carta-preview"
                 style={{
                   backgroundColor: form.temaCarta?.fondo || "#FFFFFF",
                   color: form.temaCarta?.texto || "#2D2D2D",
                 }}
               >
-                <h4
-                  className="theme-preview-title"
-                  style={{ color: form.temaCarta?.colorPrincipal || "#9B1C1C" }}
-                >
-                  Vista previa de la carta
-                </h4>
-
+                {/* Navbar */}
                 <div
-                  className="theme-preview-card"
-                  style={{
-                    backgroundColor: form.temaCarta?.cardBg || "#F5F5F5",
-                    borderColor: form.temaCarta?.cardBorde || "#CCCCCC",
-                  }}
+                  className="carta-preview__nav"
+                  style={{ backgroundColor: form.temaCarta?.colorPrincipal || "#9B1C1C" }}
                 >
-                  <span className="theme-preview-producto">Producto de ejemplo</span>
-                  <span className="theme-preview-precio">12,00 €</span>
-                  <button
-                    type="button"
-                    className="theme-preview-btn"
-                    style={{ backgroundColor: form.temaCarta?.boton || "#9B1C1C" }}
+                  <span className="carta-preview__nav-logo">Mi Restaurante</span>
+                  <div className="carta-preview__nav-tabs">
+                    <span className="carta-preview__tab active">Entrantes</span>
+                    <span className="carta-preview__tab">Principales</span>
+                    <span className="carta-preview__tab">Postres</span>
+                  </div>
+                </div>
+
+                {/* Product cards */}
+                <div className="carta-preview__body">
+                  <h4
+                    className="carta-preview__section-title"
+                    style={{ color: form.temaCarta?.colorPrincipal || "#9B1C1C" }}
                   >
-                    Añadir
-                  </button>
+                    Entrantes
+                  </h4>
+
+                  {[
+                    { nombre: "Croquetas caseras", precio: "8,50 €", badge: "Popular" },
+                    { nombre: "Ensalada mixta", precio: "7,00 €", badge: null },
+                  ].map((p) => (
+                    <div
+                      key={p.nombre}
+                      className="carta-preview__card"
+                      style={{
+                        backgroundColor: form.temaCarta?.cardBg || "#F5F5F5",
+                      }}
+                    >
+                      <div className="carta-preview__card-img" />
+                      <div className="carta-preview__card-info">
+                        <div className="carta-preview__card-top">
+                          <span className="carta-preview__card-name">{p.nombre}</span>
+                          {p.badge && (
+                            <span
+                              className="carta-preview__card-badge"
+                              style={{ backgroundColor: form.temaCarta?.colorSecundario || "#4C5EA8" }}
+                            >
+                              {p.badge}
+                            </span>
+                          )}
+                        </div>
+                        <div className="carta-preview__card-bottom">
+                          <span className="carta-preview__card-price">{p.precio}</span>
+                          <button
+                            type="button"
+                            className="carta-preview__btn"
+                            style={{ backgroundColor: form.temaCarta?.boton || "#9B1C1C" }}
+                          >
+                            Añadir
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Floating cart */}
+                <div
+                  className="carta-preview__cart"
+                  style={{ backgroundColor: form.temaCarta?.boton || "#9B1C1C" }}
+                >
+                  <span>Ver carrito · 2 items</span>
+                  <span style={{ fontWeight: 800 }}>15,50 €</span>
                 </div>
               </div>
             </div>

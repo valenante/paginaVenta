@@ -29,7 +29,9 @@ export default function RestauranteConfigPage() {
   const esTienda = tipoNegocio === "shop";
 
   const canEditConfig =
-    user?.role === "admin_restaurante" || user?.role === "admin_shop";
+    user?.role === "superadmin" ||
+    user?.role === "admin_restaurante" ||
+    user?.role === "admin_shop";
 
   const isPlanEsencial = user?.plan === "esencial" || user?.plan === "tpv-esencial";
 
@@ -89,15 +91,35 @@ export default function RestauranteConfigPage() {
 
     setForm((prev) => ({ ...prev, ...nextForm }));
 
-    // Snapshot inicial (se re-setea cuando llega config nueva desde servidor)
-    initialRef.current = JSON.stringify({ ...form, ...nextForm });
+    // Snapshot: solo los campos editables (mismos que el patch de guardado)
+    initialRef.current = JSON.stringify({
+      branding: nextForm.branding,
+      informacionRestaurante: nextForm.informacionRestaurante,
+      colores: nextForm.colores,
+      estilo: nextForm.estilo,
+      temaTpv: nextForm.temaTpv,
+      temaShop: nextForm.temaShop,
+      slaMesas: nextForm.slaMesas,
+      capacidadEstaciones: nextForm.capacidadEstaciones,
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [config]);
 
   const hasChanges = useMemo(() => {
-    if (!initialRef.current) return false;
+    if (!initialRef.current) return true; // si no hay snapshot, permitir guardar
     try {
-      return JSON.stringify(form) !== initialRef.current;
+      // Compare only the keys we care about (same as nextForm/patch)
+      const compare = (obj) => JSON.stringify({
+        branding: obj.branding,
+        informacionRestaurante: obj.informacionRestaurante,
+        colores: obj.colores,
+        estilo: obj.estilo,
+        temaTpv: obj.temaTpv,
+        temaShop: obj.temaShop,
+        slaMesas: obj.slaMesas,
+        capacidadEstaciones: obj.capacidadEstaciones,
+      });
+      return compare(form) !== initialRef.current;
     } catch {
       return true;
     }
@@ -362,7 +384,7 @@ export default function RestauranteConfigPage() {
           type="button"
           className="btn btn-primario"
           onClick={openSaveConfirm}
-          disabled={saving || !canEditConfig || !hasChanges}
+          disabled={saving || !canEditConfig}
           title={saveDisabledReason}
         >
           {saving ? "Guardando..." : "Guardar configuración"}

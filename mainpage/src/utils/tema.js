@@ -15,6 +15,15 @@ export const DEFAULT_TEMA_TPV = {
   warning: "#f59e0b",
   danger: "#dc2626",
   info: "#0ea5e9",
+  solicitado: "#e65100",
+  productoListo: "#16a34a",
+
+  mesaCerradaBg: "#1a1a1a",
+  mesaCerradaBorder: "#333333",
+  mesaAbiertaBg: "#283593",
+  mesaAbiertaBorder: "#3949ab",
+  mesaMiaBg: "#1b5e20",
+  mesaMiaBorder: "#2e7d32",
 };
 
 export const normalizarTemaTpv = (raw) => {

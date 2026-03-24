@@ -1,0 +1,401 @@
+/* =========================================================
+   MODAL DE CATEGORÍA — Estilo ALEF
+========================================================= */
+
+.catmodal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.catmodal-card {
+  width: 100%;
+  max-width: 520px;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: radial-gradient(
+    circle at top left,
+    rgba(30, 64, 175, 0.25) 0,
+    rgba(15, 23, 42, 0.98) 60%
+  );
+  border: 1px solid rgba(148, 163, 184, 0.5);
+  border-radius: var(--radius-lg, 18px);
+  padding: 1.5rem 1.6rem;
+  box-shadow:
+    0 24px 48px rgba(0, 0, 0, 0.9),
+    0 0 0 1px rgba(15, 23, 42, 0.9);
+  color: #e5e7eb;
+}
+
+/* Header */
+.catmodal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.2rem;
+}
+
+.catmodal-title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.catmodal-close {
+  background: none;
+  border: none;
+  color: #9ca3af;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0.3rem;
+  border-radius: 8px;
+  transition: color 0.15s;
+}
+
+.catmodal-close:hover {
+  color: #f9fafb;
+}
+
+/* Error */
+.catmodal-error {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  border-radius: 10px;
+  padding: 0.6rem 0.9rem;
+  margin-bottom: 1rem;
+  font-size: 0.88rem;
+  color: #fca5a5;
+}
+
+/* Form */
+.catmodal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.catmodal-label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #e5e7eb;
+}
+
+.catmodal-hint {
+  font-size: 0.78rem;
+  font-weight: 400;
+  color: #9ca3af;
+}
+
+.catmodal-input,
+.catmodal-textarea {
+  width: 100%;
+  padding: 0.55rem 0.8rem;
+  border-radius: 10px;
+  border: 1px solid rgba(148, 163, 184, 0.5);
+  background: rgba(15, 23, 42, 0.9);
+  color: #f9fafb;
+  font-size: 0.92rem;
+  font-family: inherit;
+  transition: border-color 0.18s;
+  box-sizing: border-box;
+}
+
+.catmodal-input:focus,
+.catmodal-textarea:focus {
+  outline: none;
+  border-color: rgba(165, 180, 252, 0.8);
+}
+
+.catmodal-textarea {
+  resize: vertical;
+  min-height: 68px;
+}
+
+.catmodal-input--icono {
+  max-width: 120px;
+  text-align: center;
+  font-size: 1.4rem;
+}
+
+.catmodal-input--orden {
+  max-width: 100px;
+}
+
+/* Grid de iconos sugeridos */
+.catmodal-iconos-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.catmodal-icono-btn {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  font-size: 1.2rem;
+  border-radius: 10px;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  background: rgba(15, 23, 42, 0.8);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.catmodal-icono-btn:hover {
+  border-color: rgba(248, 250, 252, 0.7);
+  transform: scale(1.1);
+}
+
+.catmodal-icono-btn.is-selected {
+  border-color: #a5b4fc;
+  background: rgba(165, 180, 252, 0.2);
+  box-shadow: 0 0 0 2px rgba(165, 180, 252, 0.3);
+}
+
+/* Actions */
+.catmodal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.7rem;
+  margin-top: 0.5rem;
+}
+
+.catmodal-btn {
+  padding: 0.5rem 1.1rem;
+  border-radius: 999px;
+  border: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.catmodal-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.catmodal-btn--cancel {
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(148, 163, 184, 0.6);
+  color: #e5e7eb;
+}
+
+.catmodal-btn--cancel:hover:not(:disabled) {
+  background: rgba(55, 65, 81, 0.5);
+  border-color: rgba(248, 250, 252, 0.8);
+}
+
+.catmodal-btn--save {
+  background: linear-gradient(135deg, #a855f7, #f97316);
+  color: #0b1120;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+}
+
+.catmodal-btn--save:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.8);
+}
+
+/* ===== Advanced toggle ===== */
+.catmodal-advanced-toggle {
+  display: flex;
+  align-items: center;
+  background: none;
+  border: none;
+  color: #a5b4fc;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0.4rem 0;
+  transition: color 0.15s;
+}
+
+.catmodal-advanced-toggle:hover {
+  color: #c7d2fe;
+}
+
+/* Advanced section */
+.catmodal-advanced {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  padding: 0.8rem;
+  border-radius: 12px;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  background: rgba(15, 23, 42, 0.5);
+}
+
+/* Translation groups */
+.catmodal-trad-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.catmodal-trad-flag {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #d1d5db;
+}
+
+/* ===== Products in category ===== */
+.catmodal-products {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.catmodal-products-title {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #e5e7eb;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.catmodal-products-count {
+  background: rgba(165, 180, 252, 0.2);
+  color: #a5b4fc;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.1rem 0.45rem;
+  border-radius: 999px;
+}
+
+.catmodal-products-scroll {
+  max-height: 160px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  border-radius: 10px;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  background: rgba(15, 23, 42, 0.5);
+  padding: 0.3rem;
+}
+
+.catmodal-products-scroll::-webkit-scrollbar {
+  width: 5px;
+}
+
+.catmodal-products-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.catmodal-products-scroll::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.3);
+  border-radius: 999px;
+}
+
+.catmodal-products-empty {
+  text-align: center;
+  padding: 0.8rem;
+  font-size: 0.82rem;
+  color: #6b7280;
+}
+
+.catmodal-product-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.4rem 0.6rem;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: #e5e7eb;
+  font-size: 0.84rem;
+  cursor: pointer;
+  transition: background 0.12s;
+  text-align: left;
+  width: 100%;
+  font-family: inherit;
+}
+
+.catmodal-product-row:hover {
+  background: rgba(165, 180, 252, 0.1);
+}
+
+.catmodal-product-name {
+  font-weight: 500;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.catmodal-product-price {
+  flex-shrink: 0;
+  font-weight: 600;
+  font-size: 0.8rem;
+  color: #9ca3af;
+}
+
+/* ===== Confirm delete (shared) ===== */
+.catconfirm-card {
+  background: radial-gradient(
+    circle at top left,
+    rgba(127, 29, 29, 0.3) 0,
+    rgba(15, 23, 42, 0.98) 60%
+  );
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  border-radius: var(--radius-lg, 18px);
+  padding: 1.4rem 1.5rem;
+  max-width: 420px;
+  width: 100%;
+  color: #e5e7eb;
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.9);
+}
+
+.catconfirm-title {
+  margin: 0 0 0.6rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.catconfirm-msg {
+  margin: 0 0 1rem;
+  font-size: 0.9rem;
+  color: #d1d5db;
+  line-height: 1.45;
+}
+
+.catmodal-btn--delete {
+  background: rgba(239, 68, 68, 0.8);
+  color: #fff;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+}
+
+.catmodal-btn--delete:hover:not(:disabled) {
+  background: rgba(239, 68, 68, 1);
+  transform: translateY(-1px);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .catmodal-card {
+    padding: 1.2rem 1.1rem;
+  }
+
+  .catmodal-actions {
+    flex-direction: column;
+  }
+
+  .catmodal-btn {
+    width: 100%;
+    text-align: center;
+  }
+}

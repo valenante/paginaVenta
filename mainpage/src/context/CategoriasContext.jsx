@@ -196,6 +196,76 @@ export const CategoriasProvider = ({ children }) => {
   }, []);
 
   /* =====================================================
+     CRUD Categorías (objetos con descripcion, icono, etc.)
+  ===================================================== */
+
+  /**
+   * Cache de objetos categoría por tipo
+   * { plato: [{ _id, nombre, descripcion, icono, orden }], bebida: [...] }
+   */
+  const [categoryObjectsByTipo, setCategoryObjectsByTipo] = useState({});
+
+  const fetchCategoryObjects = useCallback(
+    async (tipo, { force = false } = {}) => {
+      if (!tipo) return [];
+
+      if (!force && Array.isArray(categoryObjectsByTipo[tipo])) {
+        return categoryObjectsByTipo[tipo];
+      }
+
+      try {
+        const res = await api.get(`/categorias`, { params: { tipo } });
+        const data = res?.data?.data ?? [];
+
+        setCategoryObjectsByTipo((prev) => ({
+          ...prev,
+          [tipo]: data,
+        }));
+
+        return data;
+      } catch (err) {
+        logger.error("[CategoriasContext] Error al obtener objetos categoría", err);
+        return [];
+      }
+    },
+    [categoryObjectsByTipo]
+  );
+
+  const createCategoryObject = useCallback(async (data) => {
+    const res = await api.post("/categorias", data, { withCredentials: true });
+    const cat = res?.data?.data;
+    if (cat) {
+      setCategoryObjectsByTipo((prev) => ({
+        ...prev,
+        [cat.tipo]: [...(prev[cat.tipo] || []), cat],
+      }));
+    }
+    return cat;
+  }, []);
+
+  const updateCategoryObject = useCallback(async (id, data) => {
+    const res = await api.put(`/categorias/${id}`, data, { withCredentials: true });
+    const cat = res?.data?.data;
+    if (cat) {
+      setCategoryObjectsByTipo((prev) => {
+        const list = (prev[cat.tipo] || []).map((c) =>
+          c._id === cat._id ? cat : c
+        );
+        return { ...prev, [cat.tipo]: list };
+      });
+    }
+    return cat;
+  }, []);
+
+  const deleteCategoryObject = useCallback(async (id, tipo) => {
+    await api.delete(`/categorias/${id}`, { withCredentials: true });
+    setCategoryObjectsByTipo((prev) => ({
+      ...prev,
+      [tipo]: (prev[tipo] || []).filter((c) => c._id !== id),
+    }));
+  }, []);
+
+  /* =====================================================
      Valor del contexto (memoizado)
   ===================================================== */
   const value = useMemo(
@@ -208,8 +278,19 @@ export const CategoriasProvider = ({ children }) => {
       fetchProducts,
       updateProduct,
       deleteProduct,
+      // Categorías como objetos
+      categoryObjectsByTipo,
+      fetchCategoryObjects,
+      createCategoryObject,
+      updateCategoryObject,
+      deleteCategoryObject,
     }),
-    [categoriesByTipo, productsByKey, loading, error, fetchCategories, fetchProducts, updateProduct, deleteProduct]
+    [
+      categoriesByTipo, productsByKey, loading, error,
+      fetchCategories, fetchProducts, updateProduct, deleteProduct,
+      categoryObjectsByTipo, fetchCategoryObjects, createCategoryObject,
+      updateCategoryObject, deleteCategoryObject,
+    ]
   );
 
   return (

@@ -141,7 +141,7 @@ export default function SuperadminAltaTenant() {
       try {
         // usa el mismo endpoint que el registro real
         const { data } = await api.get("/admin/superadminPlans/publicPlans");
-        setPlanes(data || []);
+        setPlanes(Array.isArray(data?.data) ? data.data : Array.isArray(data) ? data : []);
       } catch (e) {
         console.error(e);
       }

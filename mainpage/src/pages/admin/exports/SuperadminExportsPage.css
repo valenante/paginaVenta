@@ -1,83 +1,93 @@
-/* SuperadminExportsPage.css */
+/* SuperadminExportsPage.css — Enterprise (extends RgpdPage.css) */
 
-/* Ajuste del grid: 1fr 2fr en desktop */
-.superexports-grid {
-  grid-template-columns: 1fr 2fr;
-}
+/* Grid override: wider right panel for exports */
+.superexports-grid { grid-template-columns: 1fr 2fr; }
 
-/* Sticky card derecha (desktop) */
+/* Sticky detail panel (desktop) */
 @media (min-width: 1100px) {
   .superexports-sticky {
     position: sticky;
-    top: 18px;
+    top: 16px;
     align-self: start;
   }
 }
 
-/* Historial: cards compactas 3 columnas */
-.superexports-history {
+/* ── Form inside exports ──────────────── */
+.superexports-form { display: flex; flex-direction: column; gap: 0.8rem; margin-top: 0.5rem; }
+
+.exports-form { display: flex; flex-direction: column; gap: 0.6rem; }
+.exports-label {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  margin-top: 10px;
+  gap: 4px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: rgba(226,232,240,0.85);
 }
+.exports-input {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(148,163,184,0.15);
+  background: rgba(255,255,255,0.06);
+  color: #fff;
+  font-size: 0.82rem;
+  outline: none;
+  transition: border-color 120ms;
+}
+.exports-input:focus { border-color: rgba(99,102,241,0.5); background: rgba(255,255,255,0.08); }
+.exports-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; }
+.exports-row-tight { display: flex; gap: 1rem; flex-wrap: wrap; }
+.exports-check {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
+  color: rgba(226,232,240,0.8);
+  cursor: pointer;
+}
+.exports-check.is-disabled { opacity: 0.4; cursor: not-allowed; }
+.exports-check input { accent-color: #6366f1; }
 
+/* ── History cards ────────────────────── */
+.superexports-history { display: flex; flex-direction: column; gap: 8px; margin-top: 0.5rem; }
 .superexports-job {
   display: grid;
-  grid-template-columns: 140px 1fr 220px;
-  gap: 12px;
-
-  border: 1px solid rgba(255,255,255,0.08);
-  background: rgba(0,0,0,0.18);
-  border-radius: 14px;
-  padding: 12px 14px;
-
-  transition: transform 0.15s ease, background 0.2s ease, border-color 0.2s ease;
+  grid-template-columns: 120px 1fr auto;
+  gap: 10px;
+  align-items: center;
+  border: 1px solid rgba(148,163,184,0.06);
+  background: rgba(0,0,0,0.12);
+  border-radius: 10px;
+  padding: 10px 12px;
+  transition: background 100ms;
 }
+.superexports-job:hover { background: rgba(255,255,255,0.03); }
 
-.superexports-job:hover {
-  background: rgba(255,255,255,0.10);
-  transform: translateY(-2px);
-}
-
-.superexports-actions-cell {
-  justify-content: flex-end;
-}
-
-.superexports-job .exports-error {
+.exports-cell { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.exports-strong { font-weight: 700; font-size: 0.82rem; color: rgba(226,232,240,0.95); }
+.exports-sub { font-size: 0.7rem; color: rgba(148,163,184,0.6); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.exports-actions-cell { display: flex; align-items: center; }
+.superexports-actions-cell { justify-content: flex-end; }
+.exports-error {
   grid-column: 1 / -1;
+  font-size: 0.72rem;
+  color: #fca5a5;
+  padding-top: 4px;
+  border-top: 1px solid rgba(148,163,184,0.06);
   margin-top: 4px;
 }
+.exports-modal-body { display: flex; flex-direction: column; gap: 6px; margin-top: 0.5rem; }
+.exports-muted { text-align: center; color: rgba(148,163,184,0.5); font-size: 0.82rem; padding: 1rem; }
 
-/* Responsive */
+/* ── Responsive ───────────────────────── */
 @media (max-width: 1000px) {
-  .superexports-grid {
-    grid-template-columns: 1fr;
-  }
+  .superexports-grid { grid-template-columns: 1fr; }
 }
-
 @media (max-width: 860px) {
-  .superexports-job {
-    grid-template-columns: 1fr;
-  }
-
-  .superexports-actions-cell {
-    justify-content: flex-start;
-  }
-
-  .rgpd-actions {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .rgpd-btn {
-    width: 100%;
-  }
+  .superexports-job { grid-template-columns: 1fr; }
+  .superexports-actions-cell { justify-content: flex-start; }
+  .exports-row { grid-template-columns: 1fr; }
 }
-
-/* Reduce motion */
 @media (prefers-reduced-motion: reduce) {
-  .superexports-job {
-    transition: none !important;
-  }
+  .superexports-job { transition: none !important; }
 }

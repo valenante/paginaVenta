@@ -1,28 +1,13 @@
-/* src/pages/admin/PlanesAdmin/planesAdmin.css
-   =========================================================
-   PLANES ADMIN — Estilo hermano (TenantTable/Billing)
-   - Vidrio oscuro + blur
-   - Sombras profundas
-   - Tab pill premium
-   - Tabla desktop + card-list móvil (sin overflow)
-   ========================================================= */
-
-.planes-wrapper-glass {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-}
+/* planesAdmin.css */
 
 .planes {
   width: 100%;
   max-width: 1400px;
-  padding: 2.2rem 1.4rem;
-  color: rgba(226, 232, 240, 0.92);
+  padding: 2rem 1.4rem;
+  color: rgba(226,232,240,0.92);
 }
 
-/* =========================
-   Header
-========================= */
+/* Header */
 .planes__header {
   display: flex;
   align-items: flex-end;
@@ -31,346 +16,241 @@
   flex-wrap: wrap;
   margin-bottom: 1rem;
 }
-
 .planes__title {
   margin: 0;
-  font-size: 1.7rem;
-  font-weight: 900;
+  font-size: 1.5rem;
+  font-weight: 800;
   color: #fff;
-  letter-spacing: 0.2px;
-  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
 }
-
 .planes__subtitle {
-  margin: 0.55rem 0 0;
-  font-size: var(--font-size-sm);
-  color: rgba(226, 232, 240, 0.7);
-  max-width: 70ch;
+  margin: 0.4rem 0 0;
+  font-size: 0.85rem;
+  color: rgba(226,232,240,0.6);
+  max-width: 60ch;
 }
 
-/* =========================
-   Tabs
-========================= */
-.planes-tabs {
-  display: inline-flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
+/* Tabs */
+.planes-tabs { display: inline-flex; gap: 8px; flex-wrap: wrap; }
 .planes-tabs__btn {
-  padding: 10px 16px;
+  padding: 8px 16px;
   border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(255, 255, 255, 0.08);
-  color: rgba(241, 245, 249, 0.95);
-  font-weight: 900;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.06);
+  color: rgba(241,245,249,0.9);
+  font-weight: 700;
+  font-size: 0.82rem;
   cursor: pointer;
-  transition: transform 120ms ease, background 120ms ease, border-color 120ms ease;
+  transition: background 120ms, border-color 120ms;
 }
-
-.planes-tabs__btn:hover {
-  background: rgba(255, 255, 255, 0.14);
-  transform: translateY(-1px);
-}
-
+.planes-tabs__btn:hover { background: rgba(255,255,255,0.1); }
 .planes-tabs__btn.is-active {
-  background: linear-gradient(135deg,
-      rgba(106, 13, 173, 0.55),
-      rgba(139, 92, 246, 0.55));
-  border-color: rgba(139, 92, 246, 0.6);
-  box-shadow: 0 0 0 1px rgba(139, 92, 246, 0.35);
+  background: linear-gradient(135deg, rgba(106,13,173,0.5), rgba(139,92,246,0.5));
+  border-color: rgba(139,92,246,0.5);
 }
 
-.planes-tabs__btn:focus-visible {
-  outline: 2px solid rgba(255, 255, 255, 0.35);
-  outline-offset: 2px;
-}
-
-/* =========================
-   Blocks
-========================= */
-.planes-block {
-  margin-top: 1.1rem;
-}
-
+/* Blocks */
+.planes-block { margin-top: 1rem; }
 .planes-block__header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 10px;
   flex-wrap: wrap;
-  margin-bottom: 10px;
+  margin-bottom: 0.6rem;
 }
-
+.planes-block__header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
 .planes-block__title {
   margin: 0;
-  font-size: 1.15rem;
-  font-weight: 900;
-  color: rgba(255, 255, 255, 0.98);
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.35);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #fff;
+}
+.planes-block__count {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.08);
+  color: rgba(226,232,240,0.6);
 }
 
-/* =========================
-   Buttons
-========================= */
+/* Buttons */
 .planes-btn {
-  padding: 10px 14px;
-  border-radius: 12px;
-  font-weight: 900;
+  padding: 8px 14px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 0.82rem;
   cursor: pointer;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(255, 255, 255, 0.08);
-  color: rgba(241, 245, 249, 0.95);
-  transition: transform 120ms ease, background 120ms ease, border-color 120ms ease;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.06);
+  color: rgba(241,245,249,0.9);
+  transition: background 100ms;
 }
-
-.planes-btn:hover {
-  background: rgba(255, 255, 255, 0.14);
-  transform: translateY(-1px);
-}
-
+.planes-btn:hover { background: rgba(255,255,255,0.1); }
 .planes-btn--primary {
-  border-color: rgba(34, 197, 94, 0.35);
-  background: rgba(34, 197, 94, 0.18);
+  border-color: rgba(34,197,94,0.3);
+  background: rgba(34,197,94,0.15);
   color: #bbf7d0;
 }
+.planes-btn--primary:hover { background: rgba(34,197,94,0.25); }
 
-.planes-btn--primary:hover {
-  background: rgba(34, 197, 94, 0.3);
-}
+/* Desktop / Mobile toggle */
+.planes-desktop { display: block; }
+.planes-mobile  { display: none; }
 
-/* =========================
-   Table (desktop)
-========================= */
-.planes-tableWrap {
-  width: 100%;
-}
-
+/* Table */
 .planes-table {
   width: 100%;
   border-collapse: separate;
   border-spacing: 0;
-  border-radius: 18px;
+  border-radius: 12px;
   overflow: hidden;
-  background: rgba(15, 23, 42, 0.6);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow:
-    0 18px 40px rgba(0, 0, 0, 0.55),
-    0 0 0 1px rgba(255, 255, 255, 0.06);
+  background: rgba(15,23,42,0.55);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.05);
 }
-
-.planes-table__thead {
-  background: rgba(255, 255, 255, 0.04);
-}
-
+.planes-table__thead { background: rgba(255,255,255,0.03); }
 .planes-table th,
 .planes-table td {
-  padding: 0.85rem 1rem;
-  font-size: var(--font-size-sm);
-  border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+  padding: 0.7rem 0.9rem;
+  font-size: 0.82rem;
+  border-bottom: 1px solid rgba(148,163,184,0.08);
   vertical-align: middle;
-  white-space: nowrap;
 }
-
 .planes-table th {
   text-align: left;
-  font-weight: 900;
+  font-weight: 700;
+  font-size: 0.7rem;
   text-transform: uppercase;
-  font-size: var(--font-size-xs);
-  letter-spacing: 0.08em;
-  color: rgba(226, 232, 240, 0.65);
-  background: rgba(255, 255, 255, 0.05);
-  border-bottom: 1px solid rgba(148, 163, 184, 0.22);
+  letter-spacing: 0.4px;
+  color: rgba(226,232,240,0.6);
 }
-
-.planes-table__row:hover td {
-  background: rgba(255, 255, 255, 0.06);
-}
-
-.planes-table__thActions {
-  text-align: right;
-}
-
-.planes-table__cell--actions {
-  text-align: right;
-}
-
+.planes-table__row:hover td { background: rgba(255,255,255,0.02); }
+.planes-table__thActions { text-align: right; }
+.planes-table__cell--actions { text-align: right; }
 .planes-table__empty {
   padding: 1rem;
   text-align: center;
-  color: rgba(226, 232, 240, 0.72);
+  color: rgba(148,163,184,0.6);
 }
 
-/* =========================
-   Small UI helpers
-========================= */
-.planes-name {
-  font-weight: 900;
-  color: rgba(226, 232, 240, 0.96);
-}
-
-.planes-price {
-  font-weight: 800;
-  color: rgba(255, 255, 255, 0.95);
-}
-
+/* UI helpers */
+.planes-name { font-weight: 700; color: rgba(226,232,240,0.95); }
+.planes-price { font-weight: 700; color: #fff; }
 .planes-mono {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-  font-size: 0.92em;
-  color: rgba(226, 232, 240, 0.9);
+  font-family: monospace;
+  font-size: 0.78rem;
+  color: rgba(226,232,240,0.7);
 }
-
 .planes-pill {
-  display: inline-flex;
-  align-items: center;
-  padding: 4px 10px;
-  border-radius: 999px;
-  font-weight: 900;
-  font-size: 12px;
-  letter-spacing: 0.2px;
-  background: rgba(148, 163, 184, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  color: rgba(226, 232, 240, 0.88);
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  background: rgba(148,163,184,0.1);
+  color: rgba(226,232,240,0.7);
 }
-
-.planes-count {
-  font-weight: 900;
-  color: rgba(226, 232, 240, 0.92);
-}
-
+.planes-count { font-weight: 600; color: rgba(226,232,240,0.7); font-size: 0.82rem; }
 .planes-bool {
-  display: inline-flex;
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+.planes-bool.is-true { background: rgba(34,197,94,0.12); color: #4ade80; }
+.planes-bool.is-false { background: rgba(239,68,68,0.12); color: #f87171; }
+
+/* Actions */
+.planes-actions { display: inline-flex; gap: 6px; justify-content: flex-end; flex-wrap: wrap; }
+.planes-actions__btn {
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.06);
+  color: rgba(241,245,249,0.9);
+  font-weight: 600;
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: background 100ms;
+}
+.planes-actions__btn:hover { background: rgba(255,255,255,0.1); }
+.planes-actions__btn--danger {
+  background: rgba(239,68,68,0.12);
+  border-color: rgba(239,68,68,0.25);
+  color: #fca5a5;
+}
+.planes-actions__btn--danger:hover { background: rgba(239,68,68,0.25); }
+
+/* Mobile cards */
+.planes-card {
+  padding: 12px;
+  border-bottom: 1px solid rgba(148,163,184,0.08);
+}
+.planes-card:last-child { border-bottom: none; }
+.planes-card__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.planes-card__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
+}
+.planes-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+/* Pagination */
+.planes-pagination {
+  display: flex;
   align-items: center;
   justify-content: center;
-  padding: 4px 10px;
-  border-radius: 999px;
-  font-weight: 900;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  font-size: 12px;
+  gap: 12px;
+  padding: 0.8rem 0 0.3rem;
 }
-
-.planes-bool.is-true {
-  background: rgba(46, 204, 113, 0.1);
-  color: rgba(46, 204, 113, 0.95);
-}
-
-.planes-bool.is-false {
-  background: rgba(239, 68, 68, 0.12);
-  color: rgba(239, 68, 68, 0.95);
-}
-
-/* =========================
-   Actions
-========================= */
-.planes-actions {
-  display: inline-flex;
-  gap: 10px;
-  justify-content: flex-end;
-  flex-wrap: wrap;
-}
-
-.planes-actions__btn {
-  padding: 8px 12px;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(255, 255, 255, 0.08);
-  color: rgba(241, 245, 249, 0.95);
-  font-weight: 900;
+.planes-pagination button {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  background: rgba(15,23,42,0.5);
+  border: 1px solid rgba(148,163,184,0.15);
+  color: rgba(226,232,240,0.85);
   cursor: pointer;
-  transition: transform 120ms ease, background 120ms ease, border-color 120ms ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.planes-pagination button:hover:not(:disabled) { background: rgba(255,255,255,0.08); }
+.planes-pagination button:disabled { opacity: 0.3; cursor: not-allowed; }
+.planes-pagination__info {
+  font-size: 0.78rem;
+  color: rgba(226,232,240,0.55);
+  font-weight: 600;
+  min-width: 50px;
+  text-align: center;
 }
 
-.planes-actions__btn:hover {
-  background: rgba(255, 255, 255, 0.14);
-  transform: translateY(-1px);
-}
-
-.planes-actions__btn--danger {
-  background: rgba(239, 68, 68, 0.18);
-  border-color: rgba(239, 68, 68, 0.3);
-  color: #fecaca;
-}
-
-.planes-actions__btn--danger:hover {
-  background: rgba(239, 68, 68, 0.3);
-}
-
-/* =========================
-   Responsive (NO overflow)
-   -> Table becomes cards
-========================= */
+/* Responsive */
 @media (max-width: 900px) {
-  .planes {
-    padding: 1.6rem 1rem;
-  }
-
-  .planes__title {
-    font-size: 1.35rem;
-  }
-
-  /* table -> card list */
-  .planes-table,
-  .planes-table__thead,
-  .planes-table__tbody,
-  .planes-table tr,
-  .planes-table td {
+  .planes { padding: 1.2rem 1rem; }
+  .planes__title { font-size: 1.2rem; }
+  .planes-desktop { display: none; }
+  .planes-mobile {
     display: block;
-    width: auto;
-  }
-
-  .planes-table__thead {
-    display: none;
-  }
-
-  .planes-table tr {
-    padding: 10px 10px 12px;
-    border-bottom: 1px solid rgba(148, 163, 184, 0.12);
-  }
-
-  .planes-table tr:last-child {
-    border-bottom: 0;
-  }
-
-  .planes-table td {
-    padding: 10px 10px;
-    border-bottom: 0;
-    white-space: normal;
-  }
-
-  .planes-table td::before {
-    content: attr(data-label);
-    display: block;
-    font-size: 0.78rem;
-    font-weight: 900;
-    letter-spacing: 0.2px;
-    margin-bottom: 4px;
-    color: rgba(148, 163, 184, 0.9);
-    text-transform: uppercase;
-  }
-
-  .planes-table__cell--actions {
-    text-align: left;
-  }
-
-  .planes-actions {
-    width: auto;
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 10px;
-    justify-content: stretch;
-  }
-
-  .planes-actions__btn {
-    width: auto;
-    min-height: 44px;
     border-radius: 12px;
-  }
-}
-
-@media (max-width: 520px) {
-  .planes-actions {
-    grid-template-columns: 1fr;
+    overflow: hidden;
+    background: rgba(15,23,42,0.55);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.05);
   }
 }

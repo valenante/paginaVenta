@@ -439,6 +439,24 @@
   transform: translateY(-0.5px);
 }
 
+/* Link button (ej: "← Elegir categoría existente") */
+.link-btn--crear {
+  background: none;
+  border: none;
+  color: #a5b4fc;
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0.15rem 0;
+  text-align: left;
+  transition: color 0.15s;
+}
+
+.link-btn--crear:hover {
+  color: #c7d2fe;
+  text-decoration: underline;
+}
+
 /* ============================================================================
    RECETA — Estilo Alef PRO
    ========================================================================== */

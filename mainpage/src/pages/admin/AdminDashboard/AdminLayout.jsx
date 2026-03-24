@@ -1,6 +1,7 @@
 // src/layouts/admin/AdminLayout.jsx  (ajusta ruta si difiere)
 import React from "react";
-import { Outlet, NavLink, useNavigate } from "react-router-dom";
+import { Outlet, NavLink, Navigate, useNavigate } from "react-router-dom";
+import { useAuth } from "../../../context/AuthContext.jsx";
 import "../../../styles/AdminLayout.css";
 import {
   FiHome,
@@ -17,7 +18,11 @@ import {
 import api from "../../../utils/api";
 
 export default function AdminLayout() {
+  const { user, isSuperadmin, loading } = useAuth();
   const navigate = useNavigate();
+
+  if (loading) return <div className="admin-loading">Cargando...</div>;
+  if (!user || !isSuperadmin) return <Navigate to="/" replace />;
 
   const logout = async () => {
     try {

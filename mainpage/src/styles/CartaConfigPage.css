@@ -398,6 +398,38 @@
   }
 }
 
+/* ===== Mensaje de bienvenida ===== */
+
+.bienvenida-fields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  margin-top: var(--space-sm);
+  padding: var(--space-md);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-borde-suave);
+  background: #fafbfc;
+}
+
+.bienvenida-fields textarea {
+  width: 100%;
+  min-height: 80px;
+  resize: vertical;
+  font-family: var(--font-base);
+  font-size: var(--font-size-sm);
+  padding: 0.7rem 0.85rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-borde-suave);
+  background: #fff;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.bienvenida-fields textarea:focus {
+  outline: none;
+  border-color: var(--color-secundario, #4465e7);
+  box-shadow: 0 0 0 3px rgba(68, 101, 231, 0.14);
+}
+
 /* ===== Promos ===== */
 
 .promo-actions {

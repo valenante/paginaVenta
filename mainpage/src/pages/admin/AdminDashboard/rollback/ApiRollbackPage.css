@@ -1,317 +1,258 @@
-/* =========================================================
-   API ROLLBACK — PANEL PREMIUM ALEF (estilo AdminMonitor)
-   ========================================================= */
+/* ApiRollbackPage.css — Enterprise SaaS Rollback */
 
 .rb-page {
   display: flex;
   flex-direction: column;
-  gap: 22px;
-  color: #e5e7eb;
+  gap: 1.5rem;
+  color: rgba(226,232,240,0.92);
 }
 
-/* ===== HEADER ===== */
-
+/* ── Header ───────────────────────────── */
 .rb-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   gap: 16px;
   flex-wrap: wrap;
 }
-
 .rb-header h2 {
-  font-size: 26px;
+  font-size: 1.4rem;
   font-weight: 800;
   margin: 0;
+  color: #fff;
 }
-
 .rb-muted {
-  opacity: 0.85;
-  margin: 6px 0 0 0;
-  color: #cbd5e1;
+  margin: 4px 0 0;
+  font-size: 0.78rem;
+  color: rgba(148,163,184,0.7);
 }
 
-/* ===== BUTTONS ===== */
-
+/* ── Buttons ──────────────────────────── */
 .rb-btn {
-  padding: 10px 14px;
+  padding: 8px 14px;
   border-radius: 10px;
-  border: none;
+  border: 1px solid rgba(148,163,184,0.15);
   font-weight: 700;
+  font-size: 0.82rem;
   cursor: pointer;
-  transition: background 0.2s ease, transform 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: background 120ms, transform 100ms;
 }
-
-.rb-btn:disabled {
-  opacity: 0.55;
-  cursor: not-allowed;
-  transform: none;
-}
-
-.rb-btn:hover:not(:disabled) {
-  transform: translateY(-2px);
-}
+.rb-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+.rb-btn:hover:not(:disabled) { transform: translateY(-1px); }
 
 .rb-btn-ghost {
-  background: rgba(255,255,255,0.14);
-  color: #f1f5f9;
+  background: rgba(255,255,255,0.06);
+  color: rgba(241,245,249,0.9);
 }
-
-.rb-btn-ghost:hover:not(:disabled) {
-  background: rgba(255,255,255,0.26);
-}
+.rb-btn-ghost:hover:not(:disabled) { background: rgba(255,255,255,0.1); }
 
 .rb-btn-danger {
-  background: rgba(239,68,68,0.35);
-  color: #fecaca;
-  border: 1px solid rgba(239,68,68,0.35);
+  background: rgba(239,68,68,0.2);
+  color: #fca5a5;
+  border-color: rgba(239,68,68,0.3);
 }
+.rb-btn-danger:hover:not(:disabled) { background: rgba(239,68,68,0.3); }
 
-.rb-btn-danger:hover:not(:disabled) {
-  background: rgba(239,68,68,0.45);
-}
-
-/* ===== CARDS (Glass) ===== */
-
+/* ── Cards (Glass) ────────────────────── */
 .rb-card {
-  background: rgba(255,255,255,0.06);
+  background: rgba(15,23,42,0.6);
   backdrop-filter: blur(14px);
-  padding: 18px 20px;
-  border-radius: 16px;
-  border: 1px solid rgba(255,255,255,0.08);
-
-  box-shadow:
-    0 12px 32px rgba(0,0,0,0.35),
-    0 0 0 1px rgba(255,255,255,0.05);
+  padding: 1.2rem;
+  border-radius: 12px;
+  border: 1px solid rgba(148,163,184,0.1);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.04);
 }
-
 .rb-card h3 {
-  margin: 0 0 10px;
-  font-size: 16px;
-  font-weight: 800;
-  color: #cbd5f5;
+  margin: 0 0 0.6rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: rgba(203,213,245,0.95);
 }
+.rb-card-note { background: rgba(15,23,42,0.4); }
 
-/* En tu monitor hay “cards” como secciones sueltas.
-   Aquí hacemos una variante nota: */
-.rb-card-note {
-  background: rgba(255,255,255,0.05);
-}
-
-/* ===== GRID ROW ===== */
-
+/* ── Grid Row ─────────────────────────── */
 .rb-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 18px;
+  gap: 1.2rem;
 }
-
-@media (max-width: 900px) {
-  .rb-row {
-    grid-template-columns: 1fr;
-  }
-}
-
 .rb-col {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
-
 .rb-line {
   display: flex;
   align-items: center;
-  gap: 10px;
-  font-size: 18px;
+  gap: 8px;
+  font-size: 1rem;
   font-weight: 700;
   margin: 0;
+  color: #fff;
 }
 
-/* ===== CODE TAG ===== */
-
+/* ── Code tag ─────────────────────────── */
 .rb-code {
-  background: rgba(255,255,255,0.10);
-  border: 1px solid rgba(255,255,255,0.12);
-  padding: 3px 10px;
-  border-radius: 999px;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-  font-size: 12px;
-  color: #e2e8f0;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.1);
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-family: monospace;
+  font-size: 0.72rem;
+  color: rgba(226,232,240,0.85);
 }
 
-/* ===== BADGES ===== */
-
+/* ── Badges ───────────────────────────── */
 .rb-badge {
-  padding: 4px 10px;
-  border-radius: 999px;
-  font-size: 12px;
-  font-weight: 900;
-  text-transform: uppercase;
-  border: 1px solid rgba(255,255,255,0.12);
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 6px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.3px;
 }
+.rb-badge.neutral { background: rgba(148,163,184,0.12); color: #94a3b8; }
+.rb-badge.warn    { background: rgba(251,146,60,0.15); color: #fb923c; }
+.rb-badge.blue    { background: rgba(96,165,250,0.15); color: #93c5fd; }
+.rb-badge.green   { background: rgba(34,197,94,0.12); color: #4ade80; }
+.rb-badge.ok      { background: rgba(34,197,94,0.12); color: #4ade80; }
 
-.rb-badge.neutral {
-  background: rgba(255,255,255,0.10);
-  color: #e2e8f0;
-}
-
-.rb-badge.warn {
-  background: rgba(251,146,60,0.22);
-  color: #fb923c;
-}
-
-.rb-badge.blue {
-  background: rgba(96,165,250,0.25);
-  color: #93c5fd;
-}
-
-.rb-badge.green {
-  background: rgba(34,197,94,0.20);
-  color: #86efac;
-}
-
-/* ===== SLOTS ===== */
-
+/* ── Slots ────────────────────────────── */
 .rb-slots {
   display: flex;
-  gap: 10px;
+  gap: 8px;
   flex-wrap: wrap;
 }
-
 .rb-slot {
-  padding: 6px 12px;
-  border-radius: 999px;
-  background: rgba(255,255,255,0.10);
-  border: 1px solid rgba(255,255,255,0.12);
-  font-weight: 900;
-  font-size: 12px;
-  color: #e2e8f0;
+  padding: 5px 12px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(148,163,184,0.12);
+  font-weight: 700;
+  font-size: 0.72rem;
+  color: rgba(226,232,240,0.8);
 }
-
 .rb-slot.active {
-  background: rgba(255,255,255,0.16);
-  border-color: rgba(255,255,255,0.18);
+  background: rgba(99,102,241,0.15);
+  border-color: rgba(99,102,241,0.3);
+  color: #a5b4fc;
 }
 
-/* ===== ALERTS ===== */
-
+/* ── Alerts ───────────────────────────── */
 .rb-alert {
-  border-radius: 14px;
-  padding: 12px 14px;
-  font-weight: 800;
-  margin-top: 10px;
-
-  box-shadow:
-    0 12px 32px rgba(0,0,0,0.25),
-    0 0 0 1px rgba(255,255,255,0.05);
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-weight: 600;
+  font-size: 0.85rem;
 }
-
 .rb-alert-error {
-  background: rgba(239,68,68,0.20);
-  border: 1px solid rgba(239,68,68,0.22);
-  color: #fecaca;
+  background: rgba(239,68,68,0.1);
+  border: 1px solid rgba(239,68,68,0.2);
+  color: #fca5a5;
 }
-
 .rb-alert-ok {
-  background: rgba(34,197,94,0.16);
-  border: 1px solid rgba(34,197,94,0.20);
-  color: #86efac;
+  background: rgba(34,197,94,0.1);
+  border: 1px solid rgba(34,197,94,0.2);
+  color: #4ade80;
 }
 
-/* ===== FORM ===== */
-
+/* ── Form ─────────────────────────────── */
 .rb-form {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  margin-top: 12px;
+  gap: 1rem;
+  margin-top: 0.5rem;
 }
-
 .rb-label {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  font-size: 14px;
-  font-weight: 800;
-  color: #e2e8f0;
+  gap: 6px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: rgba(226,232,240,0.9);
 }
-
 .rb-label input,
 .rb-label textarea {
-  padding: 10px 12px;
+  padding: 9px 12px;
   border-radius: 10px;
-  background: rgba(255,255,255,0.12);
-  border: 1px solid rgba(255,255,255,0.18);
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(148,163,184,0.15);
   color: #fff;
+  font-size: 0.82rem;
   outline: none;
+  transition: border-color 120ms;
+  resize: vertical;
 }
-
 .rb-label input:focus,
 .rb-label textarea:focus {
-  background: rgba(255,255,255,0.16);
-  border-color: #6a0dad;
-  box-shadow: 0 0 0 1px rgba(106,13,173,0.45);
+  border-color: rgba(99,102,241,0.5);
+  background: rgba(255,255,255,0.08);
 }
-
 .rb-help {
-  font-size: 12px;
-  font-weight: 600;
-  color: #cbd5e1;
-  opacity: 0.95;
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: rgba(148,163,184,0.6);
 }
 
-/* ===== TARGET BUTTONS ===== */
-
+/* ── Target Buttons ───────────────────── */
 .rb-targets {
   display: flex;
-  gap: 12px;
+  gap: 8px;
   flex-wrap: wrap;
 }
-
 .rb-target {
-  padding: 10px 14px;
-  border-radius: 999px;
-  border: 1px solid rgba(255,255,255,0.18);
-  background: rgba(255,255,255,0.10);
-  color: #f1f5f9;
-  font-weight: 900;
+  padding: 8px 16px;
+  border-radius: 10px;
+  border: 1px solid rgba(148,163,184,0.15);
+  background: rgba(255,255,255,0.06);
+  color: rgba(241,245,249,0.9);
+  font-weight: 700;
+  font-size: 0.8rem;
   cursor: pointer;
-  transition: background 0.2s ease, transform 0.15s ease;
+  transition: background 120ms, border-color 120ms;
 }
-
 .rb-target:hover:not(:disabled) {
-  background: rgba(255,255,255,0.18);
-  transform: translateY(-2px);
+  background: rgba(255,255,255,0.1);
+  border-color: rgba(255,255,255,0.2);
 }
-
 .rb-target.selected {
-  background: rgba(255,255,255,0.22);
-  border-color: rgba(255,255,255,0.26);
+  background: rgba(99,102,241,0.15);
+  border-color: rgba(99,102,241,0.4);
+  color: #c4b5fd;
 }
+.rb-target:disabled { opacity: 0.35; cursor: not-allowed; }
 
-.rb-target:disabled {
-  opacity: 0.55;
-  cursor: not-allowed;
-  transform: none;
-}
-
-/* ===== ACTIONS ===== */
-
+/* ── Actions ──────────────────────────── */
 .rb-actions {
   display: flex;
-  gap: 14px;
+  gap: 10px;
   flex-wrap: wrap;
   align-items: center;
 }
 
-/* ===== LIST ===== */
-
+/* ── List ─────────────────────────────── */
 .rb-ul {
-  margin: 8px 0 0 18px;
-  color: #e2e8f0;
-  opacity: 0.9;
+  margin: 6px 0 0 16px;
+  color: rgba(226,232,240,0.8);
+  font-size: 0.82rem;
+  line-height: 1.6;
 }
+.rb-ul li { margin: 4px 0; }
 
-.rb-ul li {
-  margin: 8px 0;
+/* ── Responsive ───────────────────────── */
+@media (max-width: 900px) {
+  .rb-row { grid-template-columns: 1fr; }
+  .rb-header { flex-direction: column; }
+  .rb-header h2 { font-size: 1.2rem; }
+  .rb-targets { flex-direction: column; }
+  .rb-target { text-align: center; }
+  .rb-actions { flex-direction: column; }
+  .rb-actions .rb-btn { width: 100%; justify-content: center; }
+}
+@media (max-width: 520px) {
+  .rb-card { padding: 1rem; }
+  .rb-line { font-size: 0.9rem; flex-wrap: wrap; }
 }

@@ -1,6 +1,7 @@
 // src/components/Categories/CrearProducto.jsx
 import React, { useState, useContext, useEffect, useMemo } from "react";
 import { ProductosContext } from "../../context/ProductosContext";
+import { useCategorias } from "../../context/CategoriasContext";
 import { useAuth } from "../../context/AuthContext";
 import { useToast } from "../../context/ToastContext";
 import { useImageUpload } from "../../Hooks/useImageUpload";
@@ -13,6 +14,7 @@ import "./CrearProducto.css";
 const CrearProducto = ({ onClose, onCreated }) => {
   // 🔹 ProductosContext — opcional
   const productosCtx = useContext(ProductosContext);
+  const { categoryObjectsByTipo, fetchCategoryObjects } = useCategorias();
   const { user } = useAuth();
   const { showToast } = useToast();
   const cargarProductos = productosCtx?.cargarProductos;
@@ -27,7 +29,6 @@ const CrearProducto = ({ onClose, onCreated }) => {
 
   const [imageFile, setImageFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState("");
-  const [categorias, setCategorias] = useState([]);
   const [usarOtraCategoria, setUsarOtraCategoria] = useState(false);
   const [secciones, setSecciones] = useState([]);
   const [estaciones, setEstaciones] = useState([]);
@@ -97,28 +98,20 @@ const CrearProducto = ({ onClose, onCreated }) => {
   }, []);
 
 
-  // 🔹 Cargar categorías desde productos existentes
+  // 🔹 Cargar categorías desde el modelo Categoria (por tipo seleccionado)
   useEffect(() => {
-    const fetchCategorias = async () => {
-      try {
-        const response = await api.get("/productos");
-        const productos = response?.data?.data ?? [];
+    if (formData.tipo) {
+      fetchCategoryObjects(formData.tipo);
+    }
+  }, [formData.tipo, fetchCategoryObjects]);
 
-        const categoriasUnicas = [
-          ...new Set(
-            productos
-              .map((p) => p.categoria?.trim()?.toLowerCase())
-              .filter((cat) => !!cat)
-          ),
-        ];
-
-        setCategorias(categoriasUnicas);
-      } catch (error) {
-        logger.error("Error al cargar categorías:", error);
-      }
-    };
-    fetchCategorias();
-  }, []);
+  // Nombres de categorías para el select
+  const categorias = useMemo(() => {
+    const tipo = formData.tipo;
+    if (!tipo) return [];
+    const objects = categoryObjectsByTipo[tipo] || [];
+    return objects.map((c) => c.nombre).sort((a, b) => a.localeCompare(b, "es"));
+  }, [formData.tipo, categoryObjectsByTipo]);
 
   useEffect(() => {
     setFormData((prev) => ({
@@ -477,20 +470,34 @@ const CrearProducto = ({ onClose, onCreated }) => {
                       }}
                     />
                   ) : (
-                    <input
-                      type="text"
-                      name="categoria"
-                      placeholder="Escribe nueva categoría"
-                      value={formData.categoria}
-                      onChange={handleChange}
-                      className="input--crear"
-                      required
-                    />
+                    <>
+                      <input
+                        type="text"
+                        name="categoria"
+                        placeholder="Escribe nueva categoría"
+                        value={formData.categoria}
+                        onChange={handleChange}
+                        className="input--crear"
+                        required
+                      />
+                      {categorias.length > 0 && (
+                        <button
+                          type="button"
+                          className="link-btn--crear"
+                          onClick={() => {
+                            setUsarOtraCategoria(false);
+                            setFormData((prev) => ({ ...prev, categoria: "" }));
+                          }}
+                        >
+                          ← Elegir categoría existente
+                        </button>
+                      )}
+                    </>
                   )}
                   <p className="help-text--crear">
-                    La categoría sirve para organizar los productos al tomar nota
-                    en el TPV y permite a los clientes filtrar la carta por tipo
-                    de producto.
+                    {usarOtraCategoria
+                      ? "Escribe el nombre de la nueva categoría. Se creará automáticamente al guardar el producto."
+                      : "La categoría sirve para organizar los productos al tomar nota en el TPV y permite a los clientes filtrar la carta por tipo de producto."}
                   </p>
                 </label>
 

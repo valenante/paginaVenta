@@ -126,7 +126,11 @@ export const ConfigProvider = ({ children }) => {
         ? "/shop/configuracion"
         : "/configuracion";
 
-    const { data } = await api.get(endpoint);
+    // Cache-buster: el endpoint tiene cacheableResponse(60), necesitamos
+    // forzar lectura fresca al hacer refresh explícito (post-save, rollback)
+    const { data } = await api.get(endpoint, {
+      params: { _t: Date.now() },
+    });
 
     const cfg =
       data?.config && typeof data.config === "object"

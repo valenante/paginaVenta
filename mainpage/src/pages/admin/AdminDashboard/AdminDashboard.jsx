@@ -14,14 +14,17 @@ export default function AdminDashboard() {
   const {
     filtered,
     loading,
+    error,
     search,
     setSearch,
     planFilter,
     setPlanFilter,
     fetchTenants,
+    page,
+    setPage,
+    totalPages,
+    total,
   } = useTenantsData();
-
-  if (loading) return <p>Cargando datos...</p>;
 
   return (
     <div className="admin-dashboard">
@@ -37,12 +40,27 @@ export default function AdminDashboard() {
         className="refresh-btn"
         onClick={() => navigate("/superadmin/tenants/nuevo")}
       >
-        ➕ Nuevo negocio
+        + Nuevo negocio
       </button>
+
+      {error && (
+        <div className="admin-dashboard__error">
+          {error}
+          <button onClick={fetchTenants} className="admin-dashboard__retry">Reintentar</button>
+        </div>
+      )}
 
       <StatsCards tenants={filtered} />
       <ChartsSection tenants={filtered} />
-      <TenantTable tenants={filtered} onRefresh={fetchTenants} />
+      <TenantTable
+        tenants={filtered}
+        onRefresh={fetchTenants}
+        loading={loading}
+        page={page}
+        setPage={setPage}
+        totalPages={totalPages}
+        total={total}
+      />
     </div>
   );
 }

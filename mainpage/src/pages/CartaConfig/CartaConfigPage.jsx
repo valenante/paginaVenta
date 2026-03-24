@@ -323,6 +323,15 @@ export default function CartaConfigPage() {
         .map((d) => d.trim())
         .filter(Boolean);
 
+      const cartaPayload = { ...(form.carta || {}) };
+      // Asegurar booleanos explícitos (undefined no se serializa en JSON)
+      cartaPayload.mostrarFotos = !!cartaPayload.mostrarFotos;
+      cartaPayload.mostrarAlergenos = !!cartaPayload.mostrarAlergenos;
+      cartaPayload.mostrarValoraciones = !!cartaPayload.mostrarValoraciones;
+      cartaPayload.mostrarDestacados = !!cartaPayload.mostrarDestacados;
+      cartaPayload.mostrarPromociones = !!cartaPayload.mostrarPromociones;
+      cartaPayload.mostrarIconosCategorias = !!cartaPayload.mostrarIconosCategorias;
+
       const payload = {
         informacionRestaurante: {
           ...form.informacionRestaurante,
@@ -331,7 +340,8 @@ export default function CartaConfigPage() {
         imagenesHome: form.imagenesHome,
         textosHome: form.textosHome,
         temaCarta: form.temaCarta,
-        carta: form.carta,
+        carta: cartaPayload,
+        mensajeBienvenida: form.mensajeBienvenida,
       };
 
       // ✅ Guardrails: draft
@@ -697,6 +707,57 @@ export default function CartaConfigPage() {
                 showAlert={showAlert}
               />
             </div>
+          </section>
+
+          {/* MENSAJE DE BIENVENIDA */}
+          <section className="card config-card">
+            <div className="config-card-header">
+              <div>
+                <h2>👋 Mensaje de bienvenida</h2>
+                <p className="config-card-subtitle">
+                  Mensaje que aparece al entrar a la carta después del preMenu.
+                  Incluye el logo del restaurante automáticamente.
+                </p>
+              </div>
+            </div>
+
+            <label className="checkbox-row">
+              <input
+                type="checkbox"
+                name="mensajeBienvenida.habilitado"
+                checked={!!form.mensajeBienvenida?.habilitado}
+                onChange={handleChange}
+              />
+              <span>Mostrar mensaje de bienvenida</span>
+            </label>
+
+            {form.mensajeBienvenida?.habilitado && (
+              <div className="bienvenida-fields">
+                <div className="config-field">
+                  <label>Título</label>
+                  <input
+                    type="text"
+                    name="mensajeBienvenida.titulo"
+                    value={form.mensajeBienvenida?.titulo || ""}
+                    onChange={handleChange}
+                    placeholder="¡Bienvenido!"
+                    maxLength={120}
+                  />
+                </div>
+
+                <div className="config-field">
+                  <label>Descripción</label>
+                  <textarea
+                    name="mensajeBienvenida.descripcion"
+                    value={form.mensajeBienvenida?.descripcion || ""}
+                    onChange={handleChange}
+                    placeholder="Estamos encantados de recibirte. Explora nuestra carta y disfruta."
+                    maxLength={500}
+                    rows={3}
+                  />
+                </div>
+              </div>
+            )}
           </section>
 
           {/* APARIENCIA */}

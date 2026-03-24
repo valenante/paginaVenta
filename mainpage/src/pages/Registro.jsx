@@ -120,7 +120,8 @@ export default function Registro() {
 
       try {
         const { data } = await api.get("/admin/superadminPlans/publicPlans");
-        const encontrado = data.find(
+        const planesArr = Array.isArray(data?.data) ? data.data : Array.isArray(data) ? data : [];
+        const encontrado = planesArr.find(
           (p) => p.slug.toLowerCase() === planSlug.toLowerCase()
         );
 

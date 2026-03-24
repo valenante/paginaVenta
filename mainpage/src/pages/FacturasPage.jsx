@@ -265,6 +265,26 @@ export default function FacturasPage() {
     setTimeout(() => URL.revokeObjectURL(url), 4000);
   };
 
+  // P3-1: Descargar PDF individual de una factura
+  const [descargandoPdfId, setDescargandoPdfId] = useState(null);
+  const descargarPDFFactura = async (factura) => {
+    if (!factura?._id) return;
+    try {
+      setDescargandoPdfId(factura._id);
+      setErrorToast(null);
+      const { data } = await api.get(`/facturas/pdf/${factura._id}`, { responseType: "blob" });
+      downloadBlob(
+        new Blob([data], { type: "application/pdf" }),
+        `factura_${factura.numeroFactura || factura._id}.pdf`
+      );
+    } catch (err) {
+      logger.error("facturas.download.pdf.error", err);
+      showErr(err, "No se pudo descargar el PDF de la factura.");
+    } finally {
+      setDescargandoPdfId(null);
+    }
+  };
+
   const exportarCSV = async () => {
     try {
       setExportLoading(true);
@@ -602,6 +622,14 @@ export default function FacturasPage() {
                         </button>
                       )}
 
+                      <button
+                        onClick={() => descargarPDFFactura(f)}
+                        disabled={descargandoPdfId === f._id}
+                        title="Descargar PDF"
+                      >
+                        {descargandoPdfId === f._id ? "⏳" : "📥 PDF"}
+                      </button>
+
                       <button onClick={() => verXML(f.xmlFirmado)} disabled={!f.xmlFirmado}>
                         📄 XML
                       </button>
@@ -675,6 +703,13 @@ export default function FacturasPage() {
                   {anulandoId === f._id ? "Anulando…" : "🗑 Anular"}
                 </button>
               )}
+
+              <button
+                onClick={() => descargarPDFFactura(f)}
+                disabled={descargandoPdfId === f._id}
+              >
+                {descargandoPdfId === f._id ? "⏳" : "📥 PDF"}
+              </button>
 
               <button onClick={() => verXML(f.xmlFirmado)} disabled={!f.xmlFirmado}>
                 📄 XML

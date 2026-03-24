@@ -128,6 +128,16 @@ export default function CartaOrdenSection({ form, setForm, handleChange, showAle
         <span>Mostrar valoraciones</span>
       </label>
 
+      <label className="checkbox-row">
+        <input
+          type="checkbox"
+          name="carta.mostrarIconosCategorias"
+          checked={!!form.carta?.mostrarIconosCategorias}
+          onChange={handleChange}
+        />
+        <span>Mostrar iconos en categorías</span>
+      </label>
+
       {/* tamaño */}
       <div className="config-field">
         <label>Tamaño de las imágenes de producto</label>

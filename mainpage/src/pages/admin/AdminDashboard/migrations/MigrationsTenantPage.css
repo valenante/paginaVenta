@@ -1,12 +1,12 @@
 /* ===============================
-   MIGRATIONS TENANT PAGE
+   MIGRATIONS TENANT PAGE — Enterprise SaaS Design System
 =============================== */
 
 .mig-tenant-page {
   display: flex;
   flex-direction: column;
-  gap: 22px;
-  color: #e5e7eb;
+  gap: 20px;
+  color: rgba(226,232,240,0.92);
 }
 
 /* ===============================
@@ -22,21 +22,21 @@
 }
 
 .mig-tenant-header h2 {
-  font-size: 26px;
-  font-weight: 900;
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #fff;
   margin: 6px 0 0;
 }
 
 .mig-sub {
-  opacity: 0.85;
-  color: #cbd5e1;
-  margin-top: 6px;
-  font-size: 13px;
+  color: rgba(148,163,184,0.7);
+  margin-top: 4px;
+  font-size: 0.82rem;
 }
 
 .mig-actions {
   display: flex;
-  gap: 10px;
+  gap: 8px;
   flex-wrap: wrap;
 }
 
@@ -45,33 +45,36 @@
 =============================== */
 
 .mig-btn {
-  padding: 10px 14px;
+  padding: 8px 14px;
   border-radius: 10px;
-  border: 1px solid rgba(255,255,255,0.10);
-  font-weight: 800;
+  border: 1px solid rgba(148,163,184,0.15);
+  font-weight: 700;
+  font-size: 0.8rem;
   cursor: pointer;
-  background: rgba(255,255,255,0.10);
-  color: #f1f5f9;
-  transition: transform 0.15s ease, background 0.2s ease, opacity 0.2s ease;
+  background: rgba(255,255,255,0.06);
+  color: rgba(226,232,240,0.92);
+  transition: transform 0.15s ease, background 0.2s ease, border-color 0.2s ease;
 }
 
 .mig-btn:hover {
-  background: rgba(255,255,255,0.18);
-  transform: translateY(-2px);
+  background: rgba(255,255,255,0.1);
+  transform: translateY(-1px);
+  border-color: rgba(148,163,184,0.25);
 }
 
 .mig-btn:disabled {
-  opacity: 0.55;
+  opacity: 0.45;
   cursor: not-allowed;
   transform: none;
 }
 
 .mig-btn.ghost {
-  background: rgba(255,255,255,0.06);
+  background: transparent;
+  border-color: rgba(148,163,184,0.1);
 }
 
 .mig-btn.ghost:hover {
-  background: rgba(255,255,255,0.14);
+  background: rgba(255,255,255,0.06);
 }
 
 /* ===============================
@@ -81,25 +84,23 @@
 .mig-tenant-panels {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 16px;
+  gap: 14px;
 }
 
 .mig-panel {
-  background: rgba(255,255,255,0.06);
-  backdrop-filter: blur(14px);
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 16px;
+  background: rgba(15,23,42,0.6);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(148,163,184,0.1);
+  border-radius: 12px;
   padding: 16px 18px;
-  box-shadow:
-    0 12px 32px rgba(0,0,0,0.35),
-    0 0 0 1px rgba(255,255,255,0.05);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.04);
 }
 
 .mig-panel-title {
-  font-size: 14px;
-  font-weight: 900;
+  font-size: 0.82rem;
+  font-weight: 800;
   margin-bottom: 10px;
-  color: #f1f5f9;
+  color: #fff;
 }
 
 /* ===============================
@@ -116,11 +117,12 @@
 }
 
 .mig-list li {
-  background: rgba(0,0,0,0.30);
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 10px;
+  background: rgba(0,0,0,0.2);
+  border: 1px solid rgba(148,163,184,0.08);
+  border-radius: 8px;
   padding: 6px 10px;
-  font-size: 13px;
+  font-size: 0.8rem;
+  color: rgba(226,232,240,0.92);
 }
 
 /* ===============================
@@ -134,8 +136,9 @@
 }
 
 .mig-table-wrap h3 {
-  font-size: 18px;
-  font-weight: 900;
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #fff;
   margin: 4px 0 12px;
 }
 
@@ -146,31 +149,38 @@
 .mig-table {
   width: 100%;
   min-width: 920px;
-  border-collapse: collapse;
-  background: rgba(255,255,255,0.06);
-  backdrop-filter: blur(10px);
-  border-radius: 16px;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: rgba(15,23,42,0.5);
+  border-radius: 10px;
   overflow: hidden;
-  border: 1px solid rgba(255,255,255,0.08);
+  border: 1px solid rgba(148,163,184,0.1);
 }
 
 .mig-table th {
-  background: rgba(0,0,0,0.35);
-  padding: 12px;
+  background: rgba(0,0,0,0.2);
+  padding: 10px 12px;
   text-align: left;
-  font-size: 13px;
-  color: #cbd5e1;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: rgba(148,163,184,0.7);
 }
 
 .mig-table td {
   padding: 10px 12px;
-  font-size: 14px;
-  border-bottom: 1px solid rgba(255,255,255,0.05);
-  color: #e2e8f0;
+  font-size: 0.82rem;
+  border-bottom: 1px solid rgba(148,163,184,0.06);
+  color: rgba(226,232,240,0.92);
+}
+
+.mig-table tbody tr:last-child td {
+  border-bottom: none;
 }
 
 .mig-table tr:hover {
-  background: rgba(255,255,255,0.10);
+  background: rgba(255,255,255,0.04);
 }
 
 /* ===============================
@@ -178,35 +188,37 @@
 =============================== */
 
 .mig-badge {
-  padding: 4px 10px;
-  border-radius: 999px;
-  font-size: 12px;
-  font-weight: 900;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 0.65rem;
+  font-weight: 700;
   text-transform: uppercase;
-  border: 1px solid rgba(255,255,255,0.10);
-  background: rgba(255,255,255,0.08);
+  letter-spacing: 0.3px;
+  display: inline-block;
 }
 
 .mig-badge.ok {
-  background: rgba(34,197,94,0.18);
-  border-color: rgba(34,197,94,0.25);
+  background: rgba(34,197,94,0.15);
+  border: 1px solid rgba(34,197,94,0.2);
   color: #86efac;
 }
 
 .mig-badge.warn {
-  background: rgba(251,146,60,0.18);
-  border-color: rgba(251,146,60,0.25);
+  background: rgba(251,146,60,0.15);
+  border: 1px solid rgba(251,146,60,0.2);
   color: #fdba74;
 }
 
 .mig-badge.bad {
-  background: rgba(239,68,68,0.18);
-  border-color: rgba(239,68,68,0.25);
+  background: rgba(239,68,68,0.15);
+  border: 1px solid rgba(239,68,68,0.2);
   color: #fecaca;
 }
 
 .mig-badge.neutral {
-  opacity: 0.9;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(148,163,184,0.1);
+  color: rgba(148,163,184,0.7);
 }
 
 /* ===============================
@@ -215,18 +227,19 @@
 
 .mig-loading,
 .mig-empty {
-  padding: 22px;
+  padding: 28px;
   text-align: center;
-  opacity: 0.85;
-  color: #cbd5e1;
+  color: rgba(148,163,184,0.7);
+  font-size: 0.82rem;
 }
 
 .mig-error {
-  padding: 14px 16px;
-  border-radius: 14px;
-  border: 1px solid rgba(239,68,68,0.25);
-  background: rgba(239,68,68,0.14);
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: 1px solid rgba(239,68,68,0.2);
+  background: rgba(239,68,68,0.1);
   color: #fecaca;
+  font-size: 0.82rem;
 }
 
 /* ===============================
@@ -235,5 +248,88 @@
 
 .mig-mono {
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 13px;
+  font-size: 0.78rem;
+}
+
+/* ===============================
+   RESPONSIVE
+=============================== */
+
+@media (max-width: 900px) {
+  .mig-tenant-header {
+    flex-direction: column;
+  }
+
+  .mig-tenant-panels {
+    grid-template-columns: 1fr;
+  }
+
+  .mig-table-wrap {
+    overflow-x: visible;
+  }
+
+  .mig-table {
+    min-width: 0;
+    display: block;
+    border: none;
+    background: none;
+  }
+
+  .mig-table thead {
+    display: none;
+  }
+
+  .mig-table tbody {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .mig-table tr {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    background: rgba(15,23,42,0.6);
+    border: 1px solid rgba(148,163,184,0.1);
+    border-radius: 12px;
+    padding: 14px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.04);
+  }
+
+  .mig-table tr:hover {
+    background: rgba(15,23,42,0.7);
+  }
+
+  .mig-table td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 0;
+    border-bottom: 1px solid rgba(148,163,184,0.06);
+    font-size: 0.8rem;
+  }
+
+  .mig-table td:last-child {
+    border-bottom: none;
+  }
+
+  .mig-table td::before {
+    content: attr(data-label);
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    color: rgba(148,163,184,0.7);
+    margin-right: 12px;
+    flex-shrink: 0;
+  }
+
+  .mig-actions {
+    width: 100%;
+  }
+
+  .mig-btn {
+    flex: 1;
+    text-align: center;
+  }
 }

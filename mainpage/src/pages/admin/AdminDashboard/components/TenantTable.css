@@ -1,307 +1,354 @@
-/* src/pages/superadmin/tenants/components/TenantTable.css */
+/* TenantTable.css */
 
-/* =========================
-   Layout
-========================= */
+/* ── Layout ────────────────────────────── */
 .tenant-table {
-  margin-top: 2rem;
+  margin-top: 1.5rem;
+  min-width: 0;        /* prevent flex child from overflowing parent */
+  overflow: hidden;     /* contain children */
 }
 
 .tenant-table__header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1vh;
-  gap: 14px;
-  margin-bottom: 10px;
+  padding: 0 0 0.75rem;
+  gap: 12px;
+  min-width: 0;
 }
-
+.tenant-table__header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;        /* allow text to shrink */
+  overflow: hidden;
+}
 .tenant-table__title {
   margin: 0;
-  font-size: var(--font-size-lg);
+  font-size: 1.1rem;
+  font-weight: 700;
   color: #fff;
-  letter-spacing: 0.2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
 }
-
+.tenant-table__count {
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.08);
+  color: rgba(226,232,240,0.7);
+}
 .tenant-table-empty {
-  padding: 1.2rem;
+  padding: 2rem;
   text-align: center;
-  color: rgba(226, 232, 240, 0.75);
+  color: rgba(226,232,240,0.6);
+}
+.tenant-table__loading {
+  text-align: center;
+  padding: 1rem;
+  color: rgba(226,232,240,0.6);
+  font-size: 0.85rem;
 }
 
-/* =========================
-   Table wrapper
-========================= */
-.tenant-table__tableWrap {
-  width: 100%;
+/* ── Env Pill ──────────────────────────── */
+.env-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  border: 1px solid rgba(255,255,255,0.1);
 }
+.env-pill--prod  { background: rgba(46,204,113,0.1); color: rgba(46,204,113,0.9); }
+.env-pill--sandbox { background: rgba(255,193,7,0.12); color: rgba(255,193,7,0.9); }
+.env-pill__tenant { opacity: 0.8; font-weight: 500; }
 
-/* Desktop table */
+/* ── Desktop Table ─────────────────────── */
+.tenant-table__desktop { display: block; }
+.tenant-table__mobile  { display: none; }
+
 .tenant-table__table {
-  width: auto;
+  width: 100%;
   border-collapse: separate;
   border-spacing: 0;
-  border-radius: var(--radius-lg);
+  border-radius: 12px;
   overflow: hidden;
-  background: rgba(15, 23, 42, 0.6);
-  box-shadow:
-    0 18px 40px rgba(0, 0, 0, 0.55),
-    0 0 0 1px rgba(255, 255, 255, 0.06);
+  background: rgba(15,23,42,0.55);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.05);
 }
-
 .tenant-table__thead {
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(255,255,255,0.03);
 }
-
 .tenant-table__table th,
 .tenant-table__table td {
-  padding: 0.85rem 1rem;
-  font-size: var(--font-size-sm);
-  border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+  padding: 0.7rem 0.9rem;
+  font-size: 0.82rem;
+  border-bottom: 1px solid rgba(148,163,184,0.08);
   vertical-align: middle;
-  white-space: nowrap;
 }
-
 .tenant-table__table th {
   text-align: left;
   font-weight: 700;
-  color: rgba(226, 232, 240, 0.92);
+  color: rgba(226,232,240,0.7);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
 }
-
-.tenant-table__row:hover {
-  background: rgba(255, 255, 255, 0.03);
-}
-
-.tenant-table__thActions {
-  text-align: right;
-}
-
-/* =========================
-   Name cell
-========================= */
-.tenant-table__name {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-}
+.tenant-table__row { transition: background 100ms; }
+.tenant-table__row:hover { background: rgba(255,255,255,0.025); }
 
 .tenant-table__nameText {
-  font-weight: 700;
-  color: rgba(226, 232, 240, 0.95);
+  font-weight: 600;
+  color: rgba(226,232,240,0.95);
+  display: block;
 }
-
-.tenant-table__rowPill {
-  display: inline-flex;
+.tenant-table__slug, .tenant-card__slug {
+  font-size: 0.7rem;
+  color: rgba(148,163,184,0.6);
+  font-family: monospace;
 }
+.tenant-table__date {
+  color: rgba(226,232,240,0.6);
+  font-size: 0.78rem;
+}
+.tenant-table__thActions { text-align: right; }
+.tenant-table__cell--actions { text-align: right; }
 
-/* =========================
-   Tipo badge
-========================= */
+/* ── Badges ────────────────────────────── */
 .tenant-type {
   display: inline-flex;
   align-items: center;
-  gap: 0.45rem;
+  gap: 4px;
+  font-weight: 600;
+  font-size: 0.78rem;
+  text-transform: capitalize;
+}
+.tenant-type--restaurante { color: #fb923c; }
+.tenant-type--shop { color: #4ade80; }
+
+.tenant-plan-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  background: rgba(99,102,241,0.12);
+  color: rgba(165,180,252,0.9);
+}
+
+.estado-tag {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 0.72rem;
   font-weight: 700;
   text-transform: capitalize;
 }
+.estado-trial     { background: rgba(59,130,246,0.12); color: #60a5fa; }
+.estado-activo    { background: rgba(34,197,94,0.12); color: #4ade80; }
+.estado-impago    { background: rgba(245,158,11,0.12); color: #fbbf24; }
+.estado-suspendido{ background: rgba(239,68,68,0.12); color: #f87171; }
+.estado-cancelado { background: rgba(148,163,184,0.12); color: #94a3b8; }
 
-.tenant-type--restaurante {
-  color: #fb923c;
-}
-
-.tenant-type--shop {
-  color: #4ade80;
-}
-
-.tenant-type__text {
-  font-weight: 700;
-}
-
-/* =========================
-   VeriFactu
-========================= */
-.tenant-vf {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.tenant-vf.is-on {
-  filter: drop-shadow(0 0 10px rgba(34, 197, 94, 0.15));
-}
-
-.tenant-vf.is-off {
-  opacity: 0.9;
-}
-
-/* =========================
-   Actions
-========================= */
-.tenant-table__cell--actions {
-  text-align: right;
-}
-
+/* ── Action Buttons (desktop) ──────────── */
 .tenant-actions {
   display: inline-flex;
-  gap: 0.45rem;
+  gap: 4px;
   justify-content: flex-end;
-  flex-wrap: nowrap;
 }
-
 .tenant-actions__btn {
-  width: 34px;
-  height: 34px;
-  border-radius: var(--radius-md);
-  background: rgba(15, 23, 42, 0.55);
-  border: 1px solid rgba(148, 163, 184, 0.3);
-  color: rgba(226, 232, 240, 0.92);
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  background: rgba(15,23,42,0.4);
+  border: 1px solid rgba(148,163,184,0.15);
+  color: rgba(226,232,240,0.85);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  transition: transform 120ms ease, background 120ms ease, border-color 120ms ease;
+  font-size: 0.85rem;
+  transition: background 100ms, border-color 100ms;
 }
-
 .tenant-actions__btn:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: var(--color-primario);
-  transform: translateY(-1px);
+  background: rgba(255,255,255,0.08);
+  border-color: rgba(99,102,241,0.4);
 }
-
-.tenant-actions__btn:active {
-  transform: translateY(0);
-}
-
-.tenant-actions__btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  transform: none;
-}
-
-.tenant-actions__btn:focus-visible {
-  outline: 2px solid rgba(255, 255, 255, 0.35);
-  outline-offset: 2px;
-}
-
-.tenant-actions__btn--danger {
-  border-color: rgba(239, 68, 68, 0.35);
-}
-
+.tenant-actions__btn:disabled { opacity: 0.4; cursor: not-allowed; }
 .tenant-actions__btn--danger:hover {
-  background: rgba(239, 68, 68, 0.3);
-  border-color: rgba(239, 68, 68, 0.55);
+  background: rgba(239,68,68,0.2);
+  border-color: rgba(239,68,68,0.4);
 }
 
-/* =========================
-   Impersonation modal content
-========================= */
-.tenant-impersonate {
-  display: grid;
-  gap: 10px;
+/* ── Actions Dropdown (renders via Portal) ─── */
+.actions-dropdown__trigger {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: rgba(15,23,42,0.5);
+  border: 1px solid rgba(148,163,184,0.2);
+  color: rgba(226,232,240,0.9);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+.actions-dropdown__trigger:hover { background: rgba(255,255,255,0.08); }
+.actions-dropdown__menu {
+  /* positioned via inline styles from JS (Portal) */
+  z-index: 9999;
+  min-width: 170px;
+  padding: 4px;
+  border-radius: 12px;
+  background: rgba(15,23,42,0.97);
+  border: 1px solid rgba(148,163,184,0.15);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+  backdrop-filter: blur(16px);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.actions-dropdown__item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border: none;
+  background: none;
+  color: rgba(226,232,240,0.9);
+  cursor: pointer;
+  font-size: 0.82rem;
+  border-radius: 8px;
+  text-align: left;
+  width: 100%;
+}
+.actions-dropdown__item:hover { background: rgba(255,255,255,0.06); }
+.actions-dropdown__item--danger { color: #f87171; }
+.actions-dropdown__item--danger:hover { background: rgba(239,68,68,0.1); }
+.actions-dropdown__item:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* ── Mobile Cards ──────────────────────── */
+.tenant-card {
+  padding: 12px;
+  border-bottom: 1px solid rgba(148,163,184,0.08);
+}
+.tenant-card:last-child { border-bottom: none; }
+.tenant-card__top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+.tenant-card__info { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.tenant-card__name {
+  font-weight: 700;
+  font-size: 0.92rem;
+  color: rgba(226,232,240,0.95);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.tenant-card__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
 }
 
+/* ── Pagination ────────────────────────── */
+.tenant-table__pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 1rem 0 0.5rem;
+}
+.tenant-table__pagination button {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: rgba(15,23,42,0.5);
+  border: 1px solid rgba(148,163,184,0.15);
+  color: rgba(226,232,240,0.85);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  transition: background 100ms;
+}
+.tenant-table__pagination button:hover:not(:disabled) {
+  background: rgba(255,255,255,0.08);
+}
+.tenant-table__pagination button:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+.tenant-table__pageInfo {
+  font-size: 0.8rem;
+  color: rgba(226,232,240,0.6);
+  font-weight: 600;
+  min-width: 60px;
+  text-align: center;
+}
+
+/* ── Impersonate modal ─────────────────── */
+.tenant-impersonate { display: grid; gap: 10px; }
 .tenant-impersonate__warn {
   padding: 8px 10px;
   border-radius: 10px;
-  background: rgba(255, 193, 7, 0.12);
-  color: rgba(226, 232, 240, 0.95);
+  background: rgba(255,193,7,0.12);
+  color: rgba(226,232,240,0.95);
+  font-size: 0.82rem;
 }
-
 .tenant-impersonate__label {
   font-weight: 700;
   display: grid;
   gap: 6px;
-  color: rgba(226, 232, 240, 0.92);
+  color: rgba(226,232,240,0.92);
 }
+.tenant-impersonate__loading { margin: 0; opacity: 0.7; font-size: 0.85rem; }
 
-.tenant-impersonate__loading {
-  margin: 0;
-  opacity: 0.8;
-}
-
-/* =========================
-   Responsive: NO overflow for actions
-   -> Convert to cards
-========================= */
+/* ── Responsive ────────────────────────── */
 @media (max-width: 900px) {
-  .tenant-table__title {
-    font-size: 1.05rem;
-  }
-
-  /* turn table into card list */
-  .tenant-table__table,
-  .tenant-table__thead,
-  .tenant-table__tbody,
-  .tenant-table__row,
-  .tenant-table__cell {
+  .tenant-table__desktop { display: none; }
+  .tenant-table__mobile {
     display: block;
-    width: auto;
-  }
-
-  .tenant-table__thead {
-    display: none;
-  }
-
-  .tenant-table__table {
-    border-radius: 16px;
-    overflow: hidden;
-  }
-
-  .tenant-table__row {
-    padding: 10px 10px 12px;
-    border-bottom: 1px solid rgba(148, 163, 184, 0.12);
-  }
-
-  .tenant-table__row:last-child {
-    border-bottom: 0;
-  }
-
-  .tenant-table__cell {
-    padding: 10px 10px;
-    white-space: normal;
-    border-bottom: 0;
-  }
-
-  .tenant-table__cell::before {
-    content: attr(data-label);
-    display: block;
-    font-size: 0.78rem;
-    font-weight: 800;
-    letter-spacing: 0.2px;
-    margin-bottom: 4px;
-    color: rgba(148, 163, 184, 0.9);
-    text-transform: uppercase;
-  }
-
-  .tenant-table__nameText {
-    font-size: 1rem;
-  }
-
-  /* Actions: wrap, big tap targets, no horizontal scroll */
-  .tenant-table__cell--actions {
-    text-align: left;
-  }
-
-  .tenant-actions {
-    width: auto;
-    display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-    gap: 10px;
-    justify-content: stretch;
-  }
-
-  .tenant-actions__btn {
-    width: auto;
-    height: 42px;
-    /* móvil: cómodo */
     border-radius: 12px;
+    overflow: hidden;
+    background: rgba(15,23,42,0.55);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.05);
   }
 }
 
-@media (max-width: 520px) {
-
-  /* On very small screens, 3 columns so icons breathe */
-  .tenant-actions {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
+/* ── AdminDashboard error ──────────────── */
+.admin-dashboard__error {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  margin-bottom: 1rem;
+  border-radius: 10px;
+  background: rgba(239,68,68,0.1);
+  border: 1px solid rgba(239,68,68,0.2);
+  color: #fca5a5;
+  font-size: 0.85rem;
 }
+.admin-dashboard__retry {
+  padding: 4px 12px;
+  border-radius: 6px;
+  border: 1px solid rgba(239,68,68,0.3);
+  background: rgba(239,68,68,0.15);
+  color: #fca5a5;
+  cursor: pointer;
+  font-size: 0.78rem;
+  white-space: nowrap;
+}
+.admin-dashboard__retry:hover { background: rgba(239,68,68,0.25); }

@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState, useContext, useRef } from "react";
 import api from "../../utils/api";
 import AlefSelect from "../AlefSelect/AlefSelect";
 import { useImageUpload } from "../../Hooks/useImageUpload";
+import { useCategorias } from "../../context/CategoriasContext";
 import AlertaMensaje from "../AlertaMensaje/AlertaMensaje";
 
 // ✅ reutiliza el CSS del CrearProducto (recomendado)
@@ -49,8 +50,6 @@ const EditProduct = ({
   onSave,
   onCancel,
 
-  // ✅ pásalas desde el padre si las tienes (como en CrearProducto)
-  categorias = [],
   ingredientesStock = [],
 
   // ✅ para bloquear receta como en CrearProducto
@@ -63,6 +62,7 @@ const EditProduct = ({
     onDrop: handleDrop,
     onFileChange: handleFileChange,
   } = useImageUpload();
+  const { categoryObjectsByTipo, fetchCategoryObjects } = useCategorias();
   const [secciones, setSecciones] = useState([]);
   const [estaciones, setEstaciones] = useState([]);
 
@@ -128,7 +128,22 @@ const EditProduct = ({
   // rehidratar si cambia el producto
   useEffect(() => setFormData(initial), [initial]);
 
-  // usarOtraCategoria: si hay lista de categorias y la actual no está, abre input
+  // Cargar categorías del modelo Categoria por tipo
+  useEffect(() => {
+    if (formData.tipo) {
+      fetchCategoryObjects(formData.tipo);
+    }
+  }, [formData.tipo, fetchCategoryObjects]);
+
+  // Nombres de categorías para el select
+  const categorias = useMemo(() => {
+    const tipo = formData.tipo;
+    if (!tipo) return [];
+    const objects = categoryObjectsByTipo[tipo] || [];
+    return objects.map((c) => c.nombre).sort((a, b) => a.localeCompare(b, "es"));
+  }, [formData.tipo, categoryObjectsByTipo]);
+
+  // usarOtraCategoria: si la categoría actual no está en la lista, abre input
   useEffect(() => {
     if (!categorias?.length) return;
     const actual = safeStr(formData.categoria);
@@ -500,23 +515,23 @@ const EditProduct = ({
                 {/* === CATEGORÍA === */}
                 <label className="label--crear">
                   Categoría:
-                  {categorias?.length ? (
-                    !usarOtraCategoria ? (
-                      <AlefSelect
-                        label=""
-                        value={formData.categoria}
-                        options={[...categorias, "Otra..."]}
-                        onChange={(value) => {
-                          if (value === "Otra...") {
-                            setUsarOtraCategoria(true);
-                            setFormData((prev) => ({ ...prev, categoria: "" }));
-                          } else {
-                            setUsarOtraCategoria(false);
-                            setFormData((prev) => ({ ...prev, categoria: value }));
-                          }
-                        }}
-                      />
-                    ) : (
+                  {!usarOtraCategoria ? (
+                    <AlefSelect
+                      label=""
+                      value={formData.categoria}
+                      options={[...categorias, "Otra..."]}
+                      onChange={(value) => {
+                        if (value === "Otra...") {
+                          setUsarOtraCategoria(true);
+                          setFormData((prev) => ({ ...prev, categoria: "" }));
+                        } else {
+                          setUsarOtraCategoria(false);
+                          setFormData((prev) => ({ ...prev, categoria: value }));
+                        }
+                      }}
+                    />
+                  ) : (
+                    <>
                       <input
                         type="text"
                         name="categoria"
@@ -526,21 +541,25 @@ const EditProduct = ({
                         className="input--crear"
                         required
                       />
-                    )
-                  ) : (
-                    <input
-                      type="text"
-                      name="categoria"
-                      placeholder="Ej: entrantes, postres..."
-                      value={formData.categoria}
-                      onChange={handleChange}
-                      className="input--crear"
-                      required
-                    />
+                      {categorias.length > 0 && (
+                        <button
+                          type="button"
+                          className="link-btn--crear"
+                          onClick={() => {
+                            setUsarOtraCategoria(false);
+                            setFormData((prev) => ({ ...prev, categoria: "" }));
+                          }}
+                        >
+                          ← Elegir categoría existente
+                        </button>
+                      )}
+                    </>
                   )}
 
                   <p className="help-text--crear">
-                    Organiza productos en TPV y permite filtrar la carta por tipo.
+                    {usarOtraCategoria
+                      ? "Escribe el nombre de la nueva categoría. Se creará automáticamente al guardar."
+                      : "Organiza productos en TPV y permite filtrar la carta por tipo."}
                   </p>
                 </label>
 

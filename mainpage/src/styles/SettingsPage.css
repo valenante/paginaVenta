@@ -1,55 +1,54 @@
 /* =========================================================
-   SETTINGS PAGE — Específico (SuperAdmin)
-   Base: dashboard-common.css
+   SETTINGS PAGE — Enterprise SaaS Design System
    ========================================================= */
 
 .settings-wrapper-settingsAdmin {
   display: flex;
   flex-direction: column;
   gap: 18px;
-  color: #e5e7eb;
+  color: rgba(226,232,240,0.92);
   width: 100%;
 }
 
 /* ===== TITLES ===== */
 
 .settings-title-settingsAdmin {
-  font-size: 28px;
-  font-weight: 900;
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #fff;
   margin: 0;
   letter-spacing: 0.2px;
 }
 
 .settings-subtitle-settingsAdmin {
   margin: -6px 0 8px;
-  color: var(--dash-text-soft);
-  font-size: 14px;
-  opacity: 0.95;
+  color: rgba(148,163,184,0.7);
+  font-size: 0.82rem;
 }
 
 /* ===== TABS ===== */
 
 .settings-tabs-settingsAdmin {
   display: flex;
-  gap: 12px;
+  gap: 10px;
   flex-wrap: wrap;
-  background: var(--dash-glass-bg);
-  backdrop-filter: blur(14px);
-  padding: 14px 16px;
-  border-radius: 14px;
-  border: 1px solid var(--dash-glass-border);
-  box-shadow: var(--dash-shadow);
+  background: rgba(15,23,42,0.6);
+  backdrop-filter: blur(16px);
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(148,163,184,0.1);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.04);
 }
 
 .tab-btn-settingsAdmin {
-  padding: 10px 14px;
-  border-radius: var(--dash-radius-md);
-  border: 1px solid rgba(255, 255, 255, 0.10);
-  background: rgba(255, 255, 255, 0.08);
-  color: #e2e8f0;
+  padding: 8px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(148,163,184,0.15);
+  background: rgba(255,255,255,0.06);
+  color: rgba(226,232,240,0.92);
   cursor: pointer;
-  font-weight: 800;
-  font-size: 13px;
+  font-weight: 700;
+  font-size: 0.8rem;
   letter-spacing: 0.2px;
   transition:
     transform 0.15s ease,
@@ -59,26 +58,27 @@
 }
 
 .tab-btn-settingsAdmin:hover {
-  background: rgba(255, 255, 255, 0.14);
-  transform: translateY(-2px);
-  border-color: rgba(255, 255, 255, 0.18);
+  background: rgba(255,255,255,0.1);
+  transform: translateY(-1px);
+  border-color: rgba(148,163,184,0.25);
 }
 
 .tab-btn-settingsAdmin.active {
-  background: rgba(106, 13, 173, 0.22);
-  border-color: rgba(106, 13, 173, 0.55);
-  box-shadow: 0 0 0 1px rgba(106, 13, 173, 0.25);
+  background: rgba(99,102,241,0.18);
+  border-color: rgba(99,102,241,0.5);
+  box-shadow: 0 0 0 1px rgba(99,102,241,0.2);
+  color: #fff;
 }
 
 /* ===== PANELS ===== */
 
 .settings-panel-settingsAdmin {
-  background: var(--dash-glass-bg);
-  backdrop-filter: blur(14px);
+  background: rgba(15,23,42,0.6);
+  backdrop-filter: blur(16px);
   padding: 18px 20px;
-  border-radius: 16px;
-  border: 1px solid var(--dash-glass-border);
-  box-shadow: var(--dash-shadow);
+  border-radius: 12px;
+  border: 1px solid rgba(148,163,184,0.1);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.04);
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -86,19 +86,20 @@
 
 .settings-panel-title-settingsAdmin {
   margin: 0 0 4px;
-  font-size: 18px;
-  font-weight: 900;
-  color: #cbd5f5;
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #fff;
 }
 
 /* ===== SECTION TITLES ===== */
 
 .settings-section-title-settingsAdmin {
   margin: 10px 0 0;
-  font-size: 14px;
-  font-weight: 900;
-  color: #dbeafe;
-  letter-spacing: 0.2px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: rgba(148,163,184,0.7);
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
 }
 
 /* ===== STATUS GRID ===== */
@@ -106,75 +107,75 @@
 .settings-status-grid-settingsAdmin {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 12px;
+  gap: 10px;
   margin-top: 4px;
 }
 
 .settings-status-grid-settingsAdmin p {
   margin: 0;
-  padding: 12px 14px;
-  border-radius: 14px;
-  background: rgba(0, 0, 0, 0.25);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: rgba(15,23,42,0.5);
+  border: 1px solid rgba(148,163,184,0.1);
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 10px;
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+  font-size: 0.82rem;
+  color: rgba(226,232,240,0.92);
 }
 
 /* ===== STATUS DOTS ===== */
 
 .estado {
-  font-weight: 900;
-  font-size: 12px;
+  font-weight: 700;
+  font-size: 0.65rem;
   letter-spacing: 0.4px;
-  padding: 4px 10px;
-  border-radius: var(--dash-radius-pill);
+  padding: 2px 8px;
+  border-radius: 6px;
   text-transform: uppercase;
-  border: 1px solid rgba(255, 255, 255, 0.10);
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
 }
 
 .estado.ok {
-  background: rgba(34, 197, 94, 0.18);
+  background: rgba(34,197,94,0.15);
   color: #86efac;
-  box-shadow: 0 0 10px rgba(34, 197, 94, 0.12);
+  border: 1px solid rgba(34,197,94,0.2);
 }
 
 .estado.fail {
-  background: rgba(239, 68, 68, 0.20);
+  background: rgba(239,68,68,0.15);
   color: #fecaca;
-  box-shadow: 0 0 10px rgba(239, 68, 68, 0.10);
+  border: 1px solid rgba(239,68,68,0.2);
 }
 
 /* ===== LABELS / SMALL TEXT ===== */
 
 .settings-label-settingsAdmin {
   margin-top: 8px;
-  font-size: 13px;
-  font-weight: 800;
-  color: var(--dash-text-soft);
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: rgba(226,232,240,0.92);
 }
 
 .settings-small-settingsAdmin {
-  font-size: 12px;
-  color: var(--dash-text-soft);
-  opacity: 0.9;
-  line-height: 1.4;
+  font-size: 0.75rem;
+  color: rgba(148,163,184,0.7);
+  line-height: 1.45;
 }
 
 /* ===== INPUTS ===== */
 
 .settings-input-settingsAdmin {
   width: auto;
-  padding: 10px 12px;
-  border-radius: var(--dash-radius-md);
-  background: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  padding: 9px 12px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(148,163,184,0.15);
   color: #fff;
+  font-size: 0.82rem;
   outline: none;
   transition:
     background 0.2s ease,
@@ -183,16 +184,15 @@
 }
 
 .settings-input-settingsAdmin::placeholder {
-  color: rgba(226, 232, 240, 0.55);
+  color: rgba(148,163,184,0.5);
 }
 
 .settings-input-settingsAdmin:focus {
-  background: rgba(255, 255, 255, 0.16);
-  border-color: var(--dash-accent-1);
-  box-shadow: 0 0 0 1px rgba(106, 13, 173, 0.45);
+  border-color: rgba(99,102,241,0.5);
+  box-shadow: 0 0 0 1px rgba(99,102,241,0.25);
 }
 
-/* ===== SWITCH ===== */
+/* ===== SWITCH (iOS-style pill) ===== */
 
 .settings-switch-settingsAdmin {
   display: inline-flex;
@@ -204,54 +204,51 @@
 .settings-switch-settingsAdmin input { display: none; }
 
 .settings-slider-settingsAdmin {
-  width: 56px;
-  height: 30px;
-  border-radius: var(--dash-radius-pill);
+  width: 48px;
+  height: 26px;
+  border-radius: 26px;
   position: relative;
   cursor: pointer;
-  background: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  box-shadow:
-    inset 0 0 0 1px rgba(255, 255, 255, 0.04),
-    0 10px 20px rgba(0, 0, 0, 0.18);
-  transition: background 0.2s ease, border-color 0.2s ease;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(148,163,184,0.15);
+  transition: background 0.25s ease, border-color 0.25s ease;
 }
 
 .settings-slider-settingsAdmin::after {
   content: "";
   position: absolute;
-  top: 50%;
-  left: 4px;
-  transform: translateY(-50%);
-  width: 22px;
-  height: 22px;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.85);
-  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.28);
-  transition: left 0.2s ease, background 0.2s ease;
+  background: rgba(226,232,240,0.85);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  transition: transform 0.25s cubic-bezier(0.4,0,0.2,1), background 0.25s ease;
 }
 
 .settings-switch-settingsAdmin input:checked + .settings-slider-settingsAdmin {
-  background: rgba(106, 13, 173, 0.25);
-  border-color: rgba(106, 13, 173, 0.55);
+  background: rgba(99,102,241,0.35);
+  border-color: rgba(99,102,241,0.5);
 }
 
 .settings-switch-settingsAdmin input:checked + .settings-slider-settingsAdmin::after {
-  left: 30px;
-  background: #ffffff;
+  transform: translateX(22px);
+  background: #fff;
 }
 
 /* ===== BUTTONS ===== */
 
 .settings-test-btn-settingsAdmin,
 .settings-save-btn-settingsAdmin {
-  padding: 11px 14px;
-  border-radius: var(--dash-radius-md);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(255, 255, 255, 0.12);
-  color: #f1f5f9;
+  padding: 8px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(148,163,184,0.15);
+  background: rgba(255,255,255,0.06);
+  color: rgba(226,232,240,0.92);
   cursor: pointer;
-  font-weight: 900;
+  font-weight: 700;
+  font-size: 0.8rem;
   letter-spacing: 0.2px;
   transition:
     transform 0.15s ease,
@@ -262,63 +259,69 @@
 
 .settings-test-btn-settingsAdmin:hover,
 .settings-save-btn-settingsAdmin:hover {
-  background: rgba(255, 255, 255, 0.20);
-  transform: translateY(-2px);
-  border-color: rgba(255, 255, 255, 0.18);
+  background: rgba(255,255,255,0.1);
+  transform: translateY(-1px);
+  border-color: rgba(148,163,184,0.25);
 }
 
 .settings-test-btn-settingsAdmin:disabled,
 .settings-save-btn-settingsAdmin:disabled {
-  opacity: 0.55;
+  opacity: 0.45;
   cursor: not-allowed;
   transform: none;
 }
 
 .settings-test-btn-settingsAdmin.secondary {
-  background: rgba(106, 13, 173, 0.16);
-  border-color: rgba(106, 13, 173, 0.35);
+  background: rgba(99,102,241,0.12);
+  border-color: rgba(99,102,241,0.3);
 }
 
 .settings-test-btn-settingsAdmin.secondary:hover {
-  background: rgba(106, 13, 173, 0.24);
-  border-color: rgba(106, 13, 173, 0.55);
+  background: rgba(99,102,241,0.2);
+  border-color: rgba(99,102,241,0.5);
 }
 
 .settings-save-btn-settingsAdmin {
   margin-top: 4px;
   align-self: flex-end;
   min-width: 220px;
-  background: rgba(255, 103, 0, 0.14);
-  border-color: rgba(255, 103, 0, 0.30);
+  background: rgba(99,102,241,0.14);
+  border-color: rgba(99,102,241,0.3);
+  color: #fff;
 }
 
 .settings-save-btn-settingsAdmin:hover {
-  background: rgba(255, 103, 0, 0.22);
-  border-color: rgba(255, 103, 0, 0.45);
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.18);
+  background: rgba(99,102,241,0.22);
+  border-color: rgba(99,102,241,0.5);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.25);
 }
 
 /* ===== SMTP BUTTON ROW ===== */
 
 .settings-smtp-buttons-settingsAdmin {
   display: flex;
-  gap: 12px;
+  gap: 10px;
   flex-wrap: wrap;
   margin-top: 6px;
 }
 
 /* ===== RESPONSIVE ===== */
 
-@media (max-width: 700px) {
-  .settings-title-settingsAdmin { font-size: 24px; }
-  .settings-tabs-settingsAdmin { padding: 12px; }
+@media (max-width: 900px) {
+  .settings-title-settingsAdmin { font-size: 1.2rem; }
+  .settings-tabs-settingsAdmin { padding: 10px; }
 
   .tab-btn-settingsAdmin {
     width: 100%;
     justify-content: center;
+    text-align: center;
   }
 
-  .settings-panel-settingsAdmin { padding: 16px; }
+  .settings-panel-settingsAdmin { padding: 14px; }
+
+  .settings-status-grid-settingsAdmin {
+    grid-template-columns: 1fr;
+  }
 
   .settings-save-btn-settingsAdmin {
     width: 100%;

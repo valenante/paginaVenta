@@ -17,8 +17,8 @@ export default function TenantsPage() {
     setLoading(true);
     try {
       // ✅ ajusta endpoint si el tuyo es distinto
-      const { data } = await api.get("/admin/superadmin/tenants");
-      setTenants(data || []);
+      const { data } = await api.get("/admin/superadmin/tenants", { params: { limit: 200 } });
+      setTenants(Array.isArray(data?.items) ? data.items : Array.isArray(data) ? data : []);
     } catch (e) {
       setError(e?.response?.data?.message || e?.message || "Error cargando tenants");
     } finally {

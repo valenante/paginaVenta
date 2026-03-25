@@ -2,9 +2,17 @@ import React, { useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import api from "../../utils/api";
 import { useTenant } from "../../context/TenantContext";
+import { useToast } from "../../context/ToastContext";
 import Portal from "../ui/Portal";
 import "./PagarFacturaProveedorModal.css";
-import { useToast } from "../../context/ToastContext";
+
+const METODOS_PAGO = [
+  { value: "transferencia", label: "Transferencia bancaria" },
+  { value: "efectivo", label: "Efectivo" },
+  { value: "tarjeta", label: "Tarjeta" },
+  { value: "domiciliacion", label: "Domiciliación" },
+];
+
 export default function PagarFacturaProveedorModal({ factura, onClose, onSaved }) {
   const { proveedorId } = useParams();
   const { tenantId } = useTenant();
@@ -28,9 +36,10 @@ export default function PagarFacturaProveedorModal({ factura, onClose, onSaved }
         { metodoPago, referenciaPago },
         headersTenant
       );
+      showToast("Factura marcada como pagada.", "success");
       onSaved?.();
     } catch {
-      showToast("Error pagando factura.", "error");
+      showToast("Error al registrar el pago.", "error");
     } finally {
       setSaving(false);
     }
@@ -38,34 +47,72 @@ export default function PagarFacturaProveedorModal({ factura, onClose, onSaved }
 
   return (
     <Portal>
-      <div className="ppModal-backdrop" onMouseDown={onClose}>
-        <div className="ppModal" onMouseDown={(e) => e.stopPropagation()}>
-          <header className="ppModal-head">
-            <h2>Pagar factura</h2>
-            <button className="ppModal-close" onClick={onClose}>✕</button>
+      <div className="pagarFactModal-backdrop" onMouseDown={onClose}>
+        <div className="pagarFactModal card" onMouseDown={(e) => e.stopPropagation()}>
+          {/* Header */}
+          <header className="pagarFactModal-head">
+            <h2 className="pagarFactModal-title">Registrar pago</h2>
+            <button
+              type="button"
+              className="pagarFactModal-close"
+              onClick={onClose}
+              aria-label="Cerrar"
+            >
+              ✕
+            </button>
           </header>
 
-          <form className="ppModal-body" onSubmit={submit}>
-            <div className="ppModal-grid">
-              <div className="ppModal-field">
-                <label>Método de pago</label>
-                <select value={metodoPago} onChange={e => setMetodoPago(e.target.value)}>
-                  <option value="transferencia">Transferencia</option>
-                  <option value="efectivo">Efectivo</option>
-                  <option value="tarjeta">Tarjeta</option>
+          {/* Body */}
+          <form className="pagarFactModal-body" onSubmit={submit}>
+            {/* Resumen factura */}
+            <div className="pagarFactModal-summary">
+              <span className="pagarFactModal-summary-label">
+                Factura {factura?.numeroFactura || "—"}
+              </span>
+              <span className="pagarFactModal-summary-value">
+                {Number(factura?.total || 0).toFixed(2)} €
+              </span>
+            </div>
+
+            {/* Campos */}
+            <div className="pagarFactModal-fields">
+              <div className="pagarFactModal-field">
+                <label>Método de pago *</label>
+                <select value={metodoPago} onChange={(e) => setMetodoPago(e.target.value)}>
+                  {METODOS_PAGO.map((m) => (
+                    <option key={m.value} value={m.value}>
+                      {m.label}
+                    </option>
+                  ))}
                 </select>
               </div>
 
-              <div className="ppModal-field">
-                <label>Referencia</label>
-                <input value={referenciaPago} onChange={e => setReferenciaPago(e.target.value)} />
+              <div className="pagarFactModal-field">
+                <label>Referencia / nº operación</label>
+                <input
+                  value={referenciaPago}
+                  onChange={(e) => setReferenciaPago(e.target.value)}
+                  placeholder="Ej: TR-20260325, recibo nº 412…"
+                />
               </div>
             </div>
 
-            <footer className="ppModal-foot">
-              <button type="button" className="btn-ghost" onClick={onClose}>Cancelar</button>
-              <button type="submit" className="btn-secondary" disabled={saving}>
-                {saving ? "Pagando…" : "Confirmar pago"}
+            {/* Footer */}
+            <footer className="pagarFactModal-foot">
+              <button
+                type="button"
+                className="btn btn-secundario"
+                onClick={onClose}
+                disabled={saving}
+              >
+                Cancelar
+              </button>
+              <button
+                type="submit"
+                className="btn btn-primario"
+                disabled={saving}
+              >
+                {saving ? "Registrando…" : "Confirmar pago"}
               </button>
             </footer>
           </form>

@@ -84,7 +84,7 @@
 .usuario-create-card input:focus,
 .usuario-create-card select:focus {
   background: rgba(255, 255, 255, 0.12);
-  border-color: #ff6700;
+  border-color: var(--color-primario, #6a0dad);
 }
 
 /* Botón crear */
@@ -101,7 +101,7 @@
 }
 
 .usuario-create-card button:hover {
-  background: var(--color-secundario, #ff6700);
+  filter: brightness(1.15);
   transform: translateY(-2px);
 }
 
@@ -176,11 +176,11 @@
 }
 
 .btn-stats {
-  background: #ff6700;
+  background: var(--color-primario, #6a0dad);
 }
 
 .btn-stats:hover {
-  background: #ff7f28;
+  filter: brightness(1.2);
 }
 
 /* =========================================================
@@ -346,7 +346,7 @@
   margin: 0 0 0.55rem;
   font-size: 0.98rem;
   font-weight: 750;
-  color: #ff6700;
+  color: var(--color-primario, #6a0dad);
   letter-spacing: 0.01em;
 }
 

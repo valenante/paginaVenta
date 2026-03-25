@@ -4,7 +4,7 @@ import api from "../../utils/api";
 import AlefSelect from "../AlefSelect/AlefSelect";
 import "./CrearIngredienteModal.css";
 
-const unidades = ["g", "kg", "ml", "L", "uds", "caja", "pack", "botella"];
+const unidades = ["g", "kg", "ml", "l", "uds", "caja", "pack", "botella"];
 
 const tipos = [
   { label: "Ingrediente (para recetas)", value: "ingrediente" },

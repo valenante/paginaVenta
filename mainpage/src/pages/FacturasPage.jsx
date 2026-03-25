@@ -16,6 +16,38 @@ import "../styles/FacturasPage.css";
 
 const LIMIT_DEFAULT = 20;
 
+const ESTADO_LABEL = {
+  pendiente: "Pendiente",
+  enviado: "Enviado",
+  aceptado: "Aceptado",
+  correcto: "Correcto",
+  rechazado: "Rechazado",
+  incorrecto: "Incorrecto",
+  error: "Error",
+  anulada: "Anulada",
+  aceptado_con_errores: "Aceptado con errores",
+};
+
+const ESTADO_OPTIONS = [
+  { value: "", label: "Todos" },
+  { value: "pendiente", label: "Pendiente" },
+  { value: "enviado", label: "Enviado" },
+  { value: "correcto", label: "Correcto (AEAT)" },
+  { value: "aceptado", label: "Aceptado" },
+  { value: "incorrecto", label: "Incorrecto (AEAT)" },
+  { value: "rechazado", label: "Rechazado" },
+  { value: "error", label: "Error" },
+  { value: "anulada", label: "Anulada" },
+];
+
+const TIPO_RECTIFICATIVA = [
+  { value: "R1", label: "R1 — Rectificación por sustitución", needsSubtipo: true },
+  { value: "R2", label: "R2 — Rectificación por diferencias", needsSubtipo: true },
+  { value: "R3", label: "R3 — Rectificación por devolución", needsSubtipo: false },
+  { value: "R4", label: "R4 — Rectificación resto", needsSubtipo: false },
+  { value: "R5", label: "R5 — Factura rectificativa simplificada", needsSubtipo: false },
+];
+
 export default function FacturasPage() {
   // ============================
   // State
@@ -499,18 +531,9 @@ export default function FacturasPage() {
           <div className="config-field">
             <label>Estado</label>
             <select value={estado} onChange={(e) => setEstado(e.target.value)}>
-              <option value="">Todos</option>
-              <option value="pendiente">pendiente</option>
-              <option value="enviado">enviado</option>
-              <option value="aceptado">aceptado</option>
-              <option value="rechazado">rechazado</option>
-              <option value="error">error</option>
-              <option value="anulada">anulada</option>
-              <option value="CORRECTO">CORRECTO</option>
-              <option value="INCORRECTO">INCORRECTO</option>
-              <option value="ACEPTADO_CON_ERRORES">ACEPTADO_CON_ERRORES</option>
-              <option value="correcto">correcto</option>
-              <option value="incorrecto">incorrecto</option>
+              {ESTADO_OPTIONS.map((o) => (
+                <option key={o.value} value={o.value}>{o.label}</option>
+              ))}
             </select>
           </div>
 
@@ -596,7 +619,7 @@ export default function FacturasPage() {
                 <tr key={f._id}>
                   <td>
                     <span className={`estado-factura ${String(f.estado || "").toLowerCase()}`}>
-                      {f.estado}
+                      {ESTADO_LABEL[String(f.estado || "").toLowerCase()] || f.estado}
                     </span>
                   </td>
                   <td>{f.numeroFactura}</td>
@@ -727,63 +750,103 @@ export default function FacturasPage() {
 
       {/* MODAL RECTIFICAR */}
       {mostrarModal && (
-        <div className="modal-overlay_facturaspage">
-          <div className="modal-contenido_facturaspage">
-            <h2>Rectificar factura</h2>
-            <p style={{ marginTop: 6, opacity: 0.9 }}>
-              Factura: <strong>{facturaSeleccionada?.numeroFactura}</strong>
-            </p>
-
-            <div className="config-field">
-              <label>Tipo</label>
-              <select value={tipo} onChange={(e) => setTipo(e.target.value)}>
-                <option value="">-- Selecciona --</option>
-                <option value="R1">R1 – Sustitución</option>
-                <option value="R2">R2 – Diferencias</option>
-                <option value="R3">R3 – Devolución</option>
-                <option value="R4">R4 – Descuento</option>
-                <option value="R5">R5 – Simplificada</option>
-              </select>
+        <div className="modal-overlay_facturaspage" onClick={() => { if (!rectificando) { setMostrarModal(false); setFacturaSeleccionada(null); resetRectificacionForm(); } }}>
+          <div className="modal-contenido_facturaspage" onClick={(e) => e.stopPropagation()}>
+            <div className="rectModal-header">
+              <div>
+                <h2>Rectificar factura</h2>
+                <p className="rectModal-sub">
+                  Factura original: <strong>{facturaSeleccionada?.numeroFactura}</strong>
+                  {facturaSeleccionada?.importeTotal != null && (
+                    <> — {Number(facturaSeleccionada.importeTotal).toFixed(2)} €</>
+                  )}
+                </p>
+              </div>
+              <button
+                type="button"
+                className="rectModal-close"
+                onClick={() => { setMostrarModal(false); setFacturaSeleccionada(null); resetRectificacionForm(); }}
+                disabled={rectificando}
+                aria-label="Cerrar"
+              >
+                ✕
+              </button>
             </div>
 
-            {["R1", "R2"].includes(tipo) && (
+            <div className="rectModal-section">
+              <p className="rectModal-section-title">Tipo de rectificación</p>
               <div className="config-field">
-                <label>Subtipo</label>
-                <select value={subtipo} onChange={(e) => setSubtipo(e.target.value)}>
-                  <option value="">-- Selecciona --</option>
-                  <option value="S">S – Sustitución</option>
-                  <option value="I">I – Diferencias</option>
+                <label>Tipo *</label>
+                <select value={tipo} onChange={(e) => { setTipo(e.target.value); setSubtipo(""); }}>
+                  <option value="">Selecciona tipo…</option>
+                  {TIPO_RECTIFICATIVA.map((t) => (
+                    <option key={t.value} value={t.value}>{t.label}</option>
+                  ))}
                 </select>
               </div>
-            )}
 
-            <div className="config-field">
-              <label>Nombre</label>
-              <input value={clienteNombre} onChange={(e) => setClienteNombre(e.target.value)} />
+              {TIPO_RECTIFICATIVA.find((t) => t.value === tipo)?.needsSubtipo && (
+                <div className="config-field">
+                  <label>Subtipo *</label>
+                  <select value={subtipo} onChange={(e) => setSubtipo(e.target.value)}>
+                    <option value="">Selecciona subtipo…</option>
+                    <option value="S">S — Por sustitución (reemplaza la factura original)</option>
+                    <option value="I">I — Por diferencias (corrige el importe)</option>
+                  </select>
+                </div>
+              )}
             </div>
 
-            <div className="config-field">
-              <label>NIF</label>
-              <input value={clienteNIF} onChange={(e) => setClienteNIF(e.target.value)} />
+            <div className="rectModal-section">
+              <p className="rectModal-section-title">Datos del cliente</p>
+              <div className="rectModal-grid">
+                <div className="config-field">
+                  <label>Nombre</label>
+                  <input
+                    value={clienteNombre}
+                    onChange={(e) => setClienteNombre(e.target.value)}
+                    placeholder="Nombre o razón social"
+                  />
+                </div>
+                <div className="config-field">
+                  <label>NIF / CIF</label>
+                  <input
+                    value={clienteNIF}
+                    onChange={(e) => setClienteNIF(e.target.value)}
+                    placeholder="12345678A"
+                  />
+                </div>
+              </div>
             </div>
 
-            <div className="config-field">
-              <label>Importe</label>
-              <input type="number" value={importeTotal} onChange={(e) => setImporteTotal(e.target.value)} />
-            </div>
-
-            <div className="config-field">
-              <label>Motivo</label>
-              <textarea value={motivo} onChange={(e) => setMotivo(e.target.value)} />
+            <div className="rectModal-section">
+              <p className="rectModal-section-title">Importe y motivo</p>
+              <div className="rectModal-grid">
+                <div className="config-field">
+                  <label>Importe total (€) *</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    value={importeTotal}
+                    onChange={(e) => setImporteTotal(e.target.value)}
+                    placeholder="0.00"
+                  />
+                </div>
+                <div className="config-field">
+                  <label>Motivo</label>
+                  <textarea
+                    value={motivo}
+                    onChange={(e) => setMotivo(e.target.value)}
+                    placeholder="Describe el motivo de la rectificación…"
+                    rows={3}
+                  />
+                </div>
+              </div>
             </div>
 
             <div className="modal-botones_facturaspage">
               <button
-                onClick={() => {
-                  setMostrarModal(false);
-                  setFacturaSeleccionada(null);
-                  resetRectificacionForm();
-                }}
+                onClick={() => { setMostrarModal(false); setFacturaSeleccionada(null); resetRectificacionForm(); }}
                 disabled={rectificando}
               >
                 Cancelar
@@ -795,12 +858,12 @@ export default function FacturasPage() {
                 disabled={
                   rectificando ||
                   !tipo ||
-                  (["R1", "R2"].includes(tipo) && !subtipo) ||
+                  (TIPO_RECTIFICATIVA.find((t) => t.value === tipo)?.needsSubtipo && !subtipo) ||
                   !Number.isFinite(Number(importeTotal)) ||
                   Number(importeTotal) === 0
                 }
               >
-                {rectificando ? "Confirmando…" : "Confirmar"}
+                {rectificando ? "Emitiendo rectificativa…" : "Emitir factura rectificativa"}
               </button>
             </div>
           </div>

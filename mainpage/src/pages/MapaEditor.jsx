@@ -161,7 +161,7 @@ export default function MapaEditor() {
   const eliminarMesa = async (id) => {
     if (!window.confirm("¿Seguro que deseas eliminar esta mesa?")) return;
     try {
-      await api.delete(`/mesas/${id}`);
+      await api.delete(`/mesas/id/${id}`);
       setMesaSeleccionada(null);
       cargarMesas();
     } catch (err) {

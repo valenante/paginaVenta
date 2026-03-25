@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import api from "../../utils/api";
+import { useTenant } from "../../context/TenantContext";
 import Portal from "../ui/Portal";
 import ErrorToast from "../common/ErrorToast.jsx";
 import { normalizeApiError } from "../../utils/normalizeApiError.js";
@@ -28,8 +29,9 @@ function toDateInputValue(v) {
   }
 }
 
-export default function PedidoProveedorModal({ onClose, onSaved, mode = "create", pedido }) {
+export default function PedidoProveedorModal({ onClose, onSaved, mode = "create", pedido, proveedor }) {
   const { proveedorId } = useParams();
+  const { tenant } = useTenant();
   const isEdit = mode === "edit";
 
   const [productos, setProductos] = useState([]);
@@ -220,66 +222,203 @@ export default function PedidoProveedorModal({ onClose, onSaved, mode = "create"
 
   const generarPDF = () => {
     const doc = new jsPDF({ orientation: "p", unit: "mm", format: "a4" });
+    const pageW = doc.internal.pageSize.getWidth();
+    const pageH = doc.internal.pageSize.getHeight();
+    const margin = 16;
 
+    // ── Colores ──
+    const purple = [106, 13, 173];
+    const darkText = [30, 30, 30];
+    const grayText = [120, 120, 120];
+
+    // ── Datos del emisor (restaurante) ──
+    const emisor = {
+      nombre: tenant?.nombre || tenant?.slug || "Mi Restaurante",
+      nif: tenant?.nif || tenant?.cif || "",
+      email: tenant?.email || "",
+      telefono: tenant?.telefono || "",
+      direccion: [
+        tenant?.direccion?.calle,
+        tenant?.direccion?.ciudad,
+        tenant?.direccion?.provincia,
+        tenant?.direccion?.codigoPostal,
+      ].filter(Boolean).join(", "),
+    };
+
+    // ── Datos del proveedor ──
+    const prov = {
+      nombre: proveedor?.nombreComercial || proveedor?.razonSocial || "Proveedor",
+      nif: proveedor?.nif || "",
+      email: proveedor?.contacto?.email || "",
+      telefono: proveedor?.contacto?.telefono || "",
+      direccion: [
+        proveedor?.direccion?.calle,
+        proveedor?.direccion?.ciudad,
+        proveedor?.direccion?.provincia,
+        proveedor?.direccion?.codigoPostal,
+      ].filter(Boolean).join(", "),
+    };
+
+    const fechaPedido = new Date().toLocaleDateString("es-ES", {
+      day: "2-digit", month: "long", year: "numeric",
+    });
     const fechaEsp = form.fechaEsperada
-      ? new Date(form.fechaEsperada + "T00:00:00").toLocaleDateString("es-ES")
-      : "Sin definir";
+      ? new Date(form.fechaEsperada + "T00:00:00").toLocaleDateString("es-ES", {
+          day: "2-digit", month: "long", year: "numeric",
+        })
+      : "—";
+    const numPedido = pedido?.numeroPedido || pedido?._id?.slice(-8)?.toUpperCase() || String(Date.now()).slice(-8);
 
-    // Header
-    doc.setFontSize(18);
+    // ══════════════════════════════════════════
+    // HEADER — banda púrpura
+    // ══════════════════════════════════════════
+    doc.setFillColor(...purple);
+    doc.rect(0, 0, pageW, 36, "F");
+
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(20);
     doc.setFont(undefined, "bold");
-    doc.text("Pedido a Proveedor", 14, 20);
+    doc.text("PEDIDO A PROVEEDOR", margin, 16);
 
     doc.setFontSize(10);
     doc.setFont(undefined, "normal");
-    doc.text(`Fecha esperada: ${fechaEsp}`, 14, 30);
-    doc.text(`Estado: ${pedido?.estado || (isEdit ? "borrador" : "nuevo")}`, 14, 36);
+    doc.text(`N.º ${numPedido}`, margin, 24);
+    doc.text(`Fecha: ${fechaPedido}`, margin, 30);
 
-    let cursorY = 42;
-    if (form.notas) {
-      const notasLines = doc.splitTextToSize(`Notas: ${form.notas}`, 180);
-      doc.text(notasLines, 14, cursorY);
-      cursorY += notasLines.length * 5 + 4;
-    }
+    doc.text(`Entrega estimada: ${fechaEsp}`, pageW - margin, 24, { align: "right" });
 
-    // Table
+    // ══════════════════════════════════════════
+    // EMISOR + PROVEEDOR (dos columnas)
+    // ══════════════════════════════════════════
+    let y = 46;
+
+    const drawBlock = (title, data, x, maxW) => {
+      doc.setFontSize(7);
+      doc.setTextColor(...grayText);
+      doc.setFont(undefined, "bold");
+      doc.text(title.toUpperCase(), x, y);
+
+      doc.setFontSize(11);
+      doc.setTextColor(...darkText);
+      doc.setFont(undefined, "bold");
+      doc.text(data.nombre, x, y + 6);
+
+      doc.setFontSize(8.5);
+      doc.setFont(undefined, "normal");
+      doc.setTextColor(...grayText);
+      let lineY = y + 12;
+      if (data.nif) { doc.text(`NIF/CIF: ${data.nif}`, x, lineY); lineY += 4.5; }
+      if (data.direccion) {
+        const lines = doc.splitTextToSize(data.direccion, maxW);
+        doc.text(lines, x, lineY);
+        lineY += lines.length * 4.5;
+      }
+      if (data.telefono) { doc.text(`Tel: ${data.telefono}`, x, lineY); lineY += 4.5; }
+      if (data.email) { doc.text(data.email, x, lineY); lineY += 4.5; }
+      return lineY;
+    };
+
+    const half = (pageW - margin * 2) / 2;
+    const y1 = drawBlock("De", emisor, margin, half - 5);
+    const y2 = drawBlock("Para", prov, margin + half + 5, half - 5);
+    y = Math.max(y1, y2) + 6;
+
+    // Línea separadora
+    doc.setDrawColor(220);
+    doc.setLineWidth(0.3);
+    doc.line(margin, y, pageW - margin, y);
+    y += 6;
+
+    // ══════════════════════════════════════════
+    // TABLA DE LÍNEAS
+    // ══════════════════════════════════════════
     const lineas = form.lineas || [];
     const body = lineas.map((l, i) => {
       const c = calcLinea(l);
       const prod = productoMap.get(String(l.productoProveedorId));
       return [
-        i + 1,
+        String(i + 1),
         prod?.nombre || "—",
-        Number(l.cantidad || 0),
+        prod?.formato || "",
+        String(Number(l.cantidad || 0)),
         `${Number(c.unit || 0).toFixed(2)} €`,
         `${c.iva}%`,
-        `${Number(c.base || 0).toFixed(2)} €`,
         `${Number(c.total || 0).toFixed(2)} €`,
       ];
     });
 
     autoTable(doc, {
-      startY: cursorY + 2,
-      head: [["#", "Producto", "Cant.", "Precio ud.", "IVA", "Base", "Total"]],
+      startY: y,
+      margin: { left: margin, right: margin },
+      head: [["#", "Producto", "Formato", "Cant.", "Precio ud.", "IVA", "Total"]],
       body,
-      styles: { fontSize: 9 },
-      headStyles: { fillColor: [106, 13, 173] },
-      foot: [
-        ["", "", "", "", "Subtotal", "", `${Number(totals.subtotal || 0).toFixed(2)} €`],
-        ["", "", "", "", "IVA", "", `${Number(totals.totalIva || 0).toFixed(2)} €`],
-        ["", "", "", "", "TOTAL", "", `${Number(totals.total || 0).toFixed(2)} €`],
-      ],
-      footStyles: { fillColor: [245, 245, 245], textColor: [0, 0, 0], fontStyle: "bold" },
+      styles: { fontSize: 8.5, cellPadding: 3 },
+      headStyles: {
+        fillColor: purple,
+        textColor: [255, 255, 255],
+        fontStyle: "bold",
+        fontSize: 8,
+      },
+      columnStyles: {
+        0: { halign: "center", cellWidth: 10 },
+        3: { halign: "center", cellWidth: 14 },
+        4: { halign: "right", cellWidth: 24 },
+        5: { halign: "center", cellWidth: 14 },
+        6: { halign: "right", cellWidth: 24 },
+      },
+      alternateRowStyles: { fillColor: [250, 248, 255] },
     });
 
-    const pageH = doc.internal.pageSize.getHeight();
-    doc.setFontSize(8);
-    doc.setTextColor(150);
-    doc.text(`Generado: ${new Date().toLocaleString("es-ES")}`, 14, pageH - 10);
-    doc.text("Alef", doc.internal.pageSize.getWidth() - 24, pageH - 10);
+    // ══════════════════════════════════════════
+    // TOTALES — alineados a la derecha
+    // ══════════════════════════════════════════
+    const finalY = doc.lastAutoTable.finalY + 6;
 
-    const numFact = pedido?.numero || pedido?._id?.slice(-6) || Date.now();
-    doc.save(`pedido_proveedor_${numFact}.pdf`);
+    const drawTotal = (label, value, yPos, bold) => {
+      doc.setFontSize(bold ? 11 : 9.5);
+      doc.setFont(undefined, bold ? "bold" : "normal");
+      doc.setTextColor(...(bold ? darkText : grayText));
+      doc.text(label, pageW - margin - 50, yPos, { align: "right" });
+      doc.setTextColor(...darkText);
+      doc.text(`${Number(value || 0).toFixed(2)} €`, pageW - margin, yPos, { align: "right" });
+    };
+
+    drawTotal("Subtotal", totals.subtotal, finalY, false);
+    drawTotal("IVA", totals.totalIva, finalY + 6, false);
+
+    doc.setDrawColor(...purple);
+    doc.setLineWidth(0.5);
+    doc.line(pageW - margin - 60, finalY + 10, pageW - margin, finalY + 10);
+
+    drawTotal("TOTAL", totals.total, finalY + 17, true);
+
+    // ══════════════════════════════════════════
+    // NOTAS
+    // ══════════════════════════════════════════
+    if (form.notas?.trim()) {
+      const notasY = finalY + 28;
+      doc.setFontSize(8);
+      doc.setFont(undefined, "bold");
+      doc.setTextColor(...grayText);
+      doc.text("OBSERVACIONES", margin, notasY);
+      doc.setFont(undefined, "normal");
+      const notasLines = doc.splitTextToSize(form.notas.trim(), pageW - margin * 2);
+      doc.text(notasLines, margin, notasY + 5);
+    }
+
+    // ══════════════════════════════════════════
+    // FOOTER
+    // ══════════════════════════════════════════
+    doc.setFontSize(7.5);
+    doc.setTextColor(180);
+    doc.text(
+      `Generado el ${new Date().toLocaleString("es-ES")} — ${emisor.nombre}`,
+      margin,
+      pageH - 8
+    );
+    doc.text("softalef.com", pageW - margin, pageH - 8, { align: "right" });
+
+    doc.save(`pedido_${prov.nombre.replace(/\s+/g, "_")}_${numPedido}.pdf`);
   };
 
   return (
@@ -487,7 +626,7 @@ export default function PedidoProveedorModal({ onClose, onSaved, mode = "create"
                   className="btn btn-primario"
                   disabled={saving || loadingProductos || productos.length === 0}
                 >
-                  {saving ? "Guardando…" : "Guardar"}
+                  {saving ? "Guardando…" : isEdit ? "Guardar cambios" : "Crear pedido"}
                 </button>
               </div>
             </footer>

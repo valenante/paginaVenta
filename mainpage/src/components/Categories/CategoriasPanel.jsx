@@ -2,6 +2,8 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import CategoriaFormModal from "./CategoriaFormModal";
+import CrearProducto from "./CrearProducto";
+import EditProduct from "./EditProducts";
 import { useCategorias } from "../../context/CategoriasContext";
 import Portal from "../ui/Portal";
 import api from "../../utils/api";
@@ -16,6 +18,11 @@ const CategoriasPanel = ({ onBack }) => {
   const [tab, setTab] = useState("plato");
   const [catModal, setCatModal] = useState({ open: false, categoria: null });
   const [confirmDelete, setConfirmDelete] = useState(null);
+  const [crearProductoTipo, setCrearProductoTipo] = useState(null); // "plato" | "bebida" | null
+  const [expandedCats, setExpandedCats] = useState(new Set());
+  const [productsByCat, setProductsByCat] = useState({}); // { catName: [...products] }
+  const [loadingProducts, setLoadingProducts] = useState(new Set());
+  const [editingProduct, setEditingProduct] = useState(null);
 
   const {
     categoryObjectsByTipo,
@@ -24,6 +31,8 @@ const CategoriasPanel = ({ onBack }) => {
     updateCategoryObject,
     deleteCategoryObject,
     fetchCategories,
+    fetchProducts,
+    updateProduct,
   } = useCategorias();
 
   // Cargar ambos tipos al montar
@@ -35,39 +44,131 @@ const CategoriasPanel = ({ onBack }) => {
   const catObjects = categoryObjectsByTipo[tab] || [];
 
   /* =====================================================
-     Drag & Drop — reordenar
+     Expandir / colapsar categoría
   ===================================================== */
-  const onDragEnd = useCallback(
-    async ({ source, destination }) => {
-      if (!destination) return;
-      if (source.index === destination.index) return;
-
-      // Reordenar localmente
-      const clone = [...catObjects];
-      const [moved] = clone.splice(source.index, 1);
-      clone.splice(destination.index, 0, moved);
-
-      // Asignar nuevos valores de orden
-      const ordenPayload = clone.map((cat, i) => ({
-        _id: cat._id,
-        orden: i,
-      }));
-
-      // Optimista: actualizar contexto inmediatamente
-      const reordered = clone.map((cat, i) => ({ ...cat, orden: i }));
-      // Hack: forzar el estado local via fetchCategoryObjects tras persistir
-
-      try {
-        await api.put("/categorias/reordenar", { orden: ordenPayload }, { withCredentials: true });
-        fetchCategoryObjects(tab, { force: true });
-      } catch {
-        // Revertir en caso de error
-        fetchCategoryObjects(tab, { force: true });
+  const toggleCategory = useCallback(
+    async (cat) => {
+      const next = new Set(expandedCats);
+      if (next.has(cat._id)) {
+        next.delete(cat._id);
+      } else {
+        next.add(cat._id);
+        // Cargar productos si no están cargados
+        const key = `${tab}::${cat.nombre}`;
+        if (!productsByCat[key]) {
+          setLoadingProducts((s) => new Set(s).add(cat._id));
+          try {
+            const prods = await fetchProducts(
+              { tipo: tab, categoria: cat.nombre },
+              { force: true }
+            );
+            setProductsByCat((prev) => ({ ...prev, [key]: prods }));
+          } finally {
+            setLoadingProducts((s) => {
+              const n = new Set(s);
+              n.delete(cat._id);
+              return n;
+            });
+          }
+        }
       }
+      setExpandedCats(next);
     },
-    [catObjects, tab, fetchCategoryObjects]
+    [expandedCats, tab, productsByCat, fetchProducts]
   );
 
+  /* =====================================================
+     Refrescar productos de una categoría
+  ===================================================== */
+  const refreshCatProducts = useCallback(
+    async (catName, tipo) => {
+      const key = `${tipo || tab}::${catName}`;
+      const prods = await fetchProducts(
+        { tipo: tipo || tab, categoria: catName },
+        { force: true }
+      );
+      setProductsByCat((prev) => ({ ...prev, [key]: prods }));
+    },
+    [tab, fetchProducts]
+  );
+
+  /* =====================================================
+     Drag & Drop — handle both category reorder and product move
+  ===================================================== */
+  const onDragEnd = useCallback(
+    async ({ source, destination, type }) => {
+      if (!destination) return;
+
+      // --- Category reorder ---
+      if (type === "CATEGORY") {
+        if (source.index === destination.index) return;
+
+        const clone = [...catObjects];
+        const [moved] = clone.splice(source.index, 1);
+        clone.splice(destination.index, 0, moved);
+
+        const ordenPayload = clone.map((cat, i) => ({
+          _id: cat._id,
+          orden: i,
+        }));
+
+        try {
+          await api.put("/categorias/reordenar", { orden: ordenPayload }, { withCredentials: true });
+          fetchCategoryObjects(tab, { force: true });
+        } catch {
+          fetchCategoryObjects(tab, { force: true });
+        }
+        return;
+      }
+
+      // --- Product move between categories ---
+      if (type === "PRODUCT") {
+        const srcCatId = source.droppableId.replace("products-", "");
+        const dstCatId = destination.droppableId.replace("products-", "");
+
+        const srcCat = catObjects.find((c) => c._id === srcCatId);
+        const dstCat = catObjects.find((c) => c._id === dstCatId);
+        if (!srcCat || !dstCat) return;
+
+        const srcKey = `${tab}::${srcCat.nombre}`;
+        const dstKey = `${tab}::${dstCat.nombre}`;
+        const srcProds = [...(productsByCat[srcKey] || [])];
+
+        if (srcCatId === dstCatId) {
+          // Reorder within same category — no-op for now (no product order in backend)
+          return;
+        }
+
+        // Move product to new category
+        const [movedProd] = srcProds.splice(source.index, 1);
+        if (!movedProd) return;
+
+        // Optimistic update
+        const dstProds = [...(productsByCat[dstKey] || [])];
+        const updatedProd = { ...movedProd, categoria: dstCat.nombre };
+        dstProds.splice(destination.index, 0, updatedProd);
+
+        setProductsByCat((prev) => ({
+          ...prev,
+          [srcKey]: srcProds,
+          [dstKey]: dstProds,
+        }));
+
+        try {
+          await updateProduct(movedProd._id, { categoria: dstCat.nombre });
+        } catch {
+          // Revert on error
+          refreshCatProducts(srcCat.nombre);
+          refreshCatProducts(dstCat.nombre);
+        }
+      }
+    },
+    [catObjects, tab, productsByCat, fetchCategoryObjects, updateProduct, refreshCatProducts]
+  );
+
+  /* =====================================================
+     Category CRUD handlers (existing)
+  ===================================================== */
   const handleSave = useCallback(
     async (payload, id) => {
       if (id) {
@@ -96,24 +197,64 @@ const CategoriasPanel = ({ onBack }) => {
     [deleteCategoryObject, fetchCategories]
   );
 
+  /* =====================================================
+     Product edit handler
+  ===================================================== */
+  const handleProductSave = useCallback(
+    async (updatedProduct) => {
+      await updateProduct(updatedProduct._id, updatedProduct);
+      setEditingProduct(null);
+      // Refresh the category the product belongs to
+      if (updatedProduct.categoria) {
+        refreshCatProducts(updatedProduct.categoria, updatedProduct.tipo);
+      }
+      return true;
+    },
+    [updateProduct, refreshCatProducts]
+  );
+
+  /* =====================================================
+     When tab changes, collapse all
+  ===================================================== */
+  useEffect(() => {
+    setExpandedCats(new Set());
+  }, [tab]);
+
   return (
     <div className="catpanel">
       {/* Header */}
       <header className="catpanel-header">
         <div>
-          <h2 className="catpanel-title">Gestión de categorías</h2>
+          <h2 className="catpanel-title">Gestión de carta</h2>
           <p className="catpanel-subtitle">
-            Crea, edita y organiza las categorías de tu carta. Arrastra para reordenar.
+            Organiza categorías y productos. Haz clic en una categoría para ver sus productos.
+            Arrastra productos entre categorías para moverlos.
           </p>
         </div>
 
-        <button
-          type="button"
-          className="catpanel-btn-new"
-          onClick={() => setCatModal({ open: true, categoria: null })}
-        >
-          + Nueva categoría
-        </button>
+        <div className="catpanel-header-actions">
+          <button
+            type="button"
+            className="catpanel-btn-new"
+            onClick={() => setCatModal({ open: true, categoria: null })}
+          >
+            + Nueva categoría
+          </button>
+          <button
+            type="button"
+            className="catpanel-btn-new catpanel-btn-new--plato"
+            onClick={() => setCrearProductoTipo("plato")}
+          >
+            + Nuevo plato
+          </button>
+          <button
+            type="button"
+            className="catpanel-btn-new catpanel-btn-new--bebida"
+            onClick={() => setCrearProductoTipo("bebida")}
+          >
+            + Nueva bebida
+          </button>
+        </div>
       </header>
 
       {/* Tabs */}
@@ -147,62 +288,150 @@ const CategoriasPanel = ({ onBack }) => {
         </div>
       ) : (
         <DragDropContext onDragEnd={onDragEnd}>
-          <Droppable droppableId="catpanel-list">
+          <Droppable droppableId="catpanel-list" type="CATEGORY">
             {(provided, snapshot) => (
               <div
                 ref={provided.innerRef}
                 {...provided.droppableProps}
                 className={`catpanel-list ${snapshot.isDraggingOver ? "catpanel-list--dragover" : ""}`}
               >
-                {catObjects.map((cat, index) => (
-                  <Draggable key={cat._id} draggableId={cat._id} index={index}>
-                    {(p, snap) => (
-                      <div
-                        ref={p.innerRef}
-                        {...p.draggableProps}
-                        className={`catpanel-item ${snap.isDragging ? "catpanel-item--dragging" : ""}`}
-                        style={p.draggableProps.style}
-                      >
-                        {/* Grip handle */}
-                        <div className="catpanel-item-grip" {...p.dragHandleProps}>
-                          <span className="catpanel-grip-icon">⠿</span>
-                          <span className="catpanel-item-index">{index + 1}</span>
-                        </div>
+                {catObjects.map((cat, index) => {
+                  const isExpanded = expandedCats.has(cat._id);
+                  const catKey = `${tab}::${cat.nombre}`;
+                  const catProds = productsByCat[catKey] || [];
+                  const isLoadingProds = loadingProducts.has(cat._id);
 
-                        <div className="catpanel-item-left">
-                          {cat.icono && (
-                            <span className="catpanel-item-icono">{cat.icono}</span>
-                          )}
-                          <div className="catpanel-item-info">
-                            <span className="catpanel-item-nombre">{cat.nombre}</span>
-                            {cat.descripcion && (
-                              <span className="catpanel-item-desc">{cat.descripcion}</span>
-                            )}
+                  return (
+                    <Draggable key={cat._id} draggableId={cat._id} index={index}>
+                      {(p, snap) => (
+                        <div
+                          ref={p.innerRef}
+                          {...p.draggableProps}
+                          className={`catpanel-item-wrapper ${isExpanded ? "catpanel-item-wrapper--expanded" : ""}`}
+                          style={p.draggableProps.style}
+                        >
+                          {/* Category row */}
+                          <div
+                            className={`catpanel-item ${snap.isDragging ? "catpanel-item--dragging" : ""} ${isExpanded ? "catpanel-item--expanded" : ""}`}
+                          >
+                            {/* Grip handle */}
+                            <div className="catpanel-item-grip" {...p.dragHandleProps}>
+                              <span className="catpanel-grip-icon">⠿</span>
+                              <span className="catpanel-item-index">{index + 1}</span>
+                            </div>
+
+                            {/* Clickable area to expand */}
+                            <div
+                              className="catpanel-item-left"
+                              onClick={() => toggleCategory(cat)}
+                              style={{ cursor: "pointer" }}
+                            >
+                              {cat.icono && (
+                                <span className="catpanel-item-icono">{cat.icono}</span>
+                              )}
+                              <div className="catpanel-item-info">
+                                <span className="catpanel-item-nombre">
+                                  {cat.nombre}
+                                  <span className="catpanel-item-prod-count">
+                                    {catProds.length > 0 ? ` (${catProds.length})` : ""}
+                                  </span>
+                                </span>
+                                {cat.descripcion && (
+                                  <span className="catpanel-item-desc">{cat.descripcion}</span>
+                                )}
+                              </div>
+                              <span className={`catpanel-expand-icon ${isExpanded ? "catpanel-expand-icon--open" : ""}`}>
+                                ▸
+                              </span>
+                            </div>
+
+                            <div className="catpanel-item-actions">
+                              <button
+                                type="button"
+                                className="catpanel-action-btn"
+                                title="Editar categoría"
+                                onClick={() => setCatModal({ open: true, categoria: cat })}
+                              >
+                                Editar
+                              </button>
+                              <button
+                                type="button"
+                                className="catpanel-action-btn catpanel-action-btn--del"
+                                title="Eliminar categoría"
+                                onClick={() => setConfirmDelete(cat)}
+                              >
+                                Eliminar
+                              </button>
+                            </div>
                           </div>
-                        </div>
 
-                        <div className="catpanel-item-actions">
-                          <button
-                            type="button"
-                            className="catpanel-action-btn"
-                            title="Editar categoría"
-                            onClick={() => setCatModal({ open: true, categoria: cat })}
-                          >
-                            Editar
-                          </button>
-                          <button
-                            type="button"
-                            className="catpanel-action-btn catpanel-action-btn--del"
-                            title="Eliminar categoría"
-                            onClick={() => setConfirmDelete(cat)}
-                          >
-                            Eliminar
-                          </button>
+                          {/* Expanded products list */}
+                          {isExpanded && (
+                            <Droppable droppableId={`products-${cat._id}`} type="PRODUCT">
+                              {(prodProvided, prodSnap) => (
+                                <div
+                                  ref={prodProvided.innerRef}
+                                  {...prodProvided.droppableProps}
+                                  className={`catpanel-products ${prodSnap.isDraggingOver ? "catpanel-products--dragover" : ""}`}
+                                >
+                                  {isLoadingProds ? (
+                                    <p className="catpanel-products-loading">Cargando productos…</p>
+                                  ) : catProds.length === 0 ? (
+                                    <p className="catpanel-products-empty">Sin productos en esta categoría.</p>
+                                  ) : (
+                                    catProds.map((prod, prodIndex) => (
+                                      <Draggable
+                                        key={prod._id}
+                                        draggableId={`prod-${prod._id}`}
+                                        index={prodIndex}
+                                      >
+                                        {(pp, ps) => (
+                                          <div
+                                            ref={pp.innerRef}
+                                            {...pp.draggableProps}
+                                            {...pp.dragHandleProps}
+                                            className={`catpanel-product ${ps.isDragging ? "catpanel-product--dragging" : ""}`}
+                                            style={pp.draggableProps.style}
+                                          >
+                                            <span className="catpanel-product-grip">⠿</span>
+                                            <div className="catpanel-product-info">
+                                              <span className="catpanel-product-nombre">{prod.nombre}</span>
+                                              {prod.descripcion && (
+                                                <span className="catpanel-product-desc">{prod.descripcion}</span>
+                                              )}
+                                            </div>
+                                            <div className="catpanel-product-meta">
+                                              {prod.precios?.precioBase != null && (
+                                                <span className="catpanel-product-price">
+                                                  {Number(prod.precios.precioBase).toFixed(2)} €
+                                                </span>
+                                              )}
+                                              <span className={`catpanel-product-estado ${prod.estado === "habilitado" ? "catpanel-product-estado--on" : "catpanel-product-estado--off"}`}>
+                                                {prod.estado === "habilitado" ? "Visible" : "Oculto"}
+                                              </span>
+                                            </div>
+                                            <button
+                                              type="button"
+                                              className="catpanel-action-btn"
+                                              onClick={() => setEditingProduct(prod)}
+                                            >
+                                              Editar
+                                            </button>
+                                          </div>
+                                        )}
+                                      </Draggable>
+                                    ))
+                                  )}
+                                  {prodProvided.placeholder}
+                                </div>
+                              )}
+                            </Droppable>
+                          )}
                         </div>
-                      </div>
-                    )}
-                  </Draggable>
-                ))}
+                      )}
+                    </Draggable>
+                  );
+                })}
                 {provided.placeholder}
               </div>
             )}
@@ -210,7 +439,7 @@ const CategoriasPanel = ({ onBack }) => {
         </DragDropContext>
       )}
 
-      {/* Modal crear / editar */}
+      {/* Modal crear / editar categoría */}
       {catModal.open && (
         <CategoriaFormModal
           categoria={catModal.categoria}
@@ -218,6 +447,35 @@ const CategoriasPanel = ({ onBack }) => {
           onClose={() => setCatModal({ open: false, categoria: null })}
           onSave={handleSave}
         />
+      )}
+
+      {/* Modal crear producto */}
+      {crearProductoTipo && (
+        <Portal>
+          <CrearProducto
+            initialTipo={crearProductoTipo}
+            onClose={() => setCrearProductoTipo(null)}
+            onCreated={(data) => {
+              const createdProd = data?.data || data;
+              if (createdProd?.categoria) {
+                refreshCatProducts(createdProd.categoria, createdProd.tipo);
+              }
+              fetchCategories(crearProductoTipo, { force: true });
+              fetchCategoryObjects(crearProductoTipo, { force: true });
+            }}
+          />
+        </Portal>
+      )}
+
+      {/* Modal editar producto */}
+      {editingProduct && (
+        <Portal>
+          <EditProduct
+            product={editingProduct}
+            onSave={handleProductSave}
+            onCancel={() => setEditingProduct(null)}
+          />
+        </Portal>
       )}
 
       {/* Confirm delete */}

@@ -120,6 +120,10 @@ const EditProduct = ({
       receta: recetaArr,
       nuevoIng: "",
       nuevaCantidad: "",
+
+      // stock directo
+      stock: product?.stock ?? 0,
+      controlStock: product?.controlStock ?? false,
     };
   }, [product]);
 
@@ -334,6 +338,10 @@ const EditProduct = ({
 
       // receta tal cual (ya son ids + cantidad)
       receta: Array.isArray(formData.receta) ? formData.receta : [],
+
+      // stock directo
+      stock: Number(formData.stock) || 0,
+      controlStock: !!formData.controlStock,
 
       // imagen (si se subió una nueva)
       img: formData.img || undefined,
@@ -854,6 +862,56 @@ const EditProduct = ({
               </label>
             </div>
           </section>
+
+          {/* === STOCK DIRECTO === */}
+          <fieldset className="fieldset--crear">
+            <legend className="legend--crear">
+              📦 Stock directo del producto
+            </legend>
+
+            <p className="help-text--crear">
+              Ideal para productos unitarios (solomillo, entreCôt, salmón…).
+              Activa el control y establece las unidades disponibles.
+              Se descontará automáticamente con cada pedido.
+            </p>
+
+            <div className="stock-directo-row--crear">
+              <label className="toggle-stock--crear">
+                <input
+                  type="checkbox"
+                  checked={!!formData.controlStock}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      controlStock: e.target.checked,
+                    }))
+                  }
+                />
+                <span className="toggle-stock-label--crear">
+                  Control de stock activo
+                </span>
+              </label>
+
+              {formData.controlStock && (
+                <label className="label--editar stock-cantidad--crear">
+                  Unidades disponibles
+                  <input
+                    type="number"
+                    min="0"
+                    step="1"
+                    className="input--crear"
+                    value={formData.stock}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        stock: e.target.value,
+                      }))
+                    }
+                  />
+                </label>
+              )}
+            </div>
+          </fieldset>
 
           {/* === RECETA === */}
           <fieldset className="fieldset--crear">

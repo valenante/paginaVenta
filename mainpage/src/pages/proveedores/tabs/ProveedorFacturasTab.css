@@ -1,185 +1,235 @@
 /*****************************************************
- * ProveedorFacturasTab – ALEF UI
+ * ProveedorFacturasTab – Alef UI (self-contained)
  *****************************************************/
 
-/* Grid base */
-.provDet-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--space-lg);
-  margin-top: var(--space-lg);
+/* =========================
+   Layout
+========================= */
+.factTab {
+  margin-top: var(--space-lg, 1.25rem);
 }
 
-.provDet-card {
-  padding: var(--space-lg);
+.factTab-card {
+  padding: var(--space-lg, 1.25rem);
 }
 
-.provDet-card--full {
-  grid-column: 1 / -1;
-}
-
-/* Header */
-.provTab-header {
+/* =========================
+   Header
+========================= */
+.factTab-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: var(--space-md);
-  margin-bottom: var(--space-md);
+  gap: var(--space-md, 1rem);
+  margin-bottom: var(--space-lg, 1.25rem);
 }
 
-.provDet-cardTitle {
-  font-size: var(--font-size-lg);
+.factTab-title {
+  margin: 0;
+  font-size: var(--font-size-lg, 1.15rem);
   font-weight: 700;
+  color: var(--color-texto, #1f2937);
 }
 
-/* Estados */
-.provDet-loading,
-.provDet-empty {
-  padding: var(--space-xl);
+/* =========================
+   States
+========================= */
+.factTab-loading,
+.factTab-empty {
+  padding: var(--space-xl, 2rem);
   text-align: center;
-  font-size: var(--font-size-sm);
-  color: var(--color-texto-suave);
+  font-size: var(--font-size-sm, 0.875rem);
+  color: var(--color-texto-suave, #6b7280);
 }
 
-.provDet-alert {
-  padding: var(--space-md);
-  border-radius: var(--radius-md);
-  font-size: var(--font-size-sm);
+.factTab-error {
+  padding: var(--space-md, 1rem);
+  border-radius: var(--radius-md, 8px);
+  font-size: var(--font-size-sm, 0.875rem);
+  background: var(--color-error-suave, #fef2f2);
+  color: var(--color-error, #dc2626);
+  border: 1px solid var(--color-error, #dc2626);
 }
 
-.provDet-alert--error {
-  background: var(--color-error-suave);
-  color: var(--color-error);
-  border: 1px solid var(--color-error);
-}
-
-/* Tabla */
-.prov-tableWrap {
+/* =========================
+   Table (desktop)
+========================= */
+.factTab-tableWrap {
   overflow-x: auto;
 }
 
-.prov-table {
+.factTab-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: var(--font-size-sm);
+  font-size: var(--font-size-sm, 0.875rem);
 }
 
-.prov-table th {
+.factTab-table th {
   text-align: left;
-  padding: 0.7rem;
-  font-size: var(--font-size-xs);
+  padding: 0.7rem 0.75rem;
+  font-size: var(--font-size-xs, 0.75rem);
+  font-weight: 700;
   text-transform: uppercase;
-  color: var(--color-texto-suave);
-  border-bottom: 1px solid var(--color-borde-suave);
+  letter-spacing: 0.03em;
+  color: var(--color-texto-suave, #6b7280);
+  border-bottom: 2px solid var(--color-borde-suave, #e5e7eb);
+  white-space: nowrap;
 }
 
-.prov-table td {
+.factTab-table td {
   padding: 0.75rem;
-  border-bottom: 1px solid var(--color-borde-suave);
+  border-bottom: 1px solid var(--color-borde-suave, #e5e7eb);
+  vertical-align: middle;
 }
 
-.prov-table tr:hover {
-  background: #f9fafb;
+.factTab-table tr:hover td {
+  background: rgba(96, 181, 255, 0.04);
 }
 
-.t-right {
+.factTab-table .t-right {
   text-align: right;
 }
 
-.prov-rowActions {
-  display: flex;
-  justify-content: flex-end;
-  gap: var(--space-sm);
+.factTab-total {
+  font-weight: 700;
+  font-size: 0.95rem;
 }
 
-/* ======================
-   Mobile
-====================== */
+.factTab-rowActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-sm, 0.5rem);
+  align-items: center;
+}
 
-.only-desktop {
+/* =========================
+   Badges
+========================= */
+.factTab-badge {
+  display: inline-block;
+  padding: 0.25em 0.7em;
+  border-radius: var(--radius-pill, 999px);
+  font-size: var(--font-size-xs, 0.75rem);
+  font-weight: 700;
+  white-space: nowrap;
+  letter-spacing: 0.02em;
+}
+
+.factTab-badge--pendiente {
+  background: var(--color-aviso-suave, #fffbeb);
+  color: var(--color-aviso, #d97706);
+  border: 1px solid rgba(217, 119, 6, 0.2);
+}
+
+.factTab-badge--pagada {
+  background: var(--color-exito-suave, #f0fdf4);
+  color: var(--color-exito, #16a34a);
+  border: 1px solid rgba(22, 163, 74, 0.2);
+}
+
+.factTab-badge--vencida {
+  background: var(--color-error-suave, #fef2f2);
+  color: var(--color-error, #dc2626);
+  border: 1px solid rgba(220, 38, 38, 0.2);
+}
+
+/* =========================
+   Mobile / Desktop toggle
+========================= */
+.factTab-desktop {
   display: block;
 }
 
-.only-mobile {
+.factTab-mobile {
   display: none;
 }
 
-@media (max-width: 768px) {
-  .provDet-grid {
-    grid-template-columns: 1fr;
-  }
+/* =========================
+   Mobile cards
+========================= */
+.factTab-mobileList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md, 1rem);
+}
 
-  .provTab-header {
+.factTab-mobileCard {
+  border: 1px solid var(--color-borde-suave, #e5e7eb);
+  border-radius: var(--radius-md, 8px);
+  padding: var(--space-md, 1rem);
+  background: var(--color-fondo-card, #fff);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md, 1rem);
+}
+
+.factTab-mobileHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.factTab-mobileName {
+  font-weight: 700;
+  font-size: var(--font-size-sm, 0.875rem);
+  color: var(--color-texto, #1f2937);
+}
+
+.factTab-mobileGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-sm, 0.5rem);
+}
+
+.factTab-mobileGrid .full {
+  grid-column: 1 / -1;
+}
+
+.factTab-mobileGrid .k {
+  display: block;
+  font-size: var(--font-size-xs, 0.75rem);
+  color: var(--color-texto-suave, #6b7280);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.factTab-mobileGrid .v {
+  display: block;
+  font-size: var(--font-size-sm, 0.875rem);
+  font-weight: 600;
+  color: var(--color-texto, #1f2937);
+}
+
+.factTab-mobileGrid .v.total {
+  font-size: var(--font-size-md, 1rem);
+  font-weight: 800;
+}
+
+.factTab-mobileActions {
+  display: flex;
+  gap: var(--space-sm, 0.5rem);
+}
+
+.factTab-mobileActions a,
+.factTab-mobileActions button {
+  flex: 1;
+  text-align: center;
+}
+
+/* =========================
+   Responsive
+========================= */
+@media (max-width: 768px) {
+  .factTab-header {
     flex-direction: column;
     align-items: stretch;
   }
 
-  .only-desktop {
+  .factTab-desktop {
     display: none;
   }
 
-  .only-mobile {
+  .factTab-mobile {
     display: block;
-  }
-
-  .prov-mobileList {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-md);
-  }
-
-  .prov-mobileCard {
-    border: 1px solid var(--color-borde-suave);
-    border-radius: var(--radius-md);
-    padding: var(--space-md);
-    background: var(--color-fondo-card);
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-md);
-  }
-
-  .prov-mobileHeader {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .prov-mobileTitle {
-    font-weight: 700;
-  }
-
-  .prov-mobileGrid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: var(--space-sm);
-  }
-
-  .prov-mobileGrid .full {
-    grid-column: 1 / -1;
-  }
-
-  .prov-mobileGrid .k {
-    font-size: var(--font-size-xs);
-    color: var(--color-texto-suave);
-  }
-
-  .prov-mobileGrid .v {
-    font-size: var(--font-size-sm);
-    font-weight: 600;
-  }
-
-  .prov-mobileGrid .v.total {
-    font-size: var(--font-size-md);
-    font-weight: 800;
-  }
-
-  .prov-mobileActions {
-    display: flex;
-    gap: var(--space-sm);
-  }
-
-  .prov-mobileActions a,
-  .prov-mobileActions button {
-    flex: 1;
   }
 }

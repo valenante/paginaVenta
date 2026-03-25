@@ -402,21 +402,116 @@
   gap: var(--space-md);
 }
 
-.modal-contenido_facturaspage h2 {
+/* ── Rectificación modal header ── */
+.rectModal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.rectModal-header h2 {
   margin: 0;
   letter-spacing: -0.01em;
 }
 
+.rectModal-sub {
+  margin: 4px 0 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-texto-suave, #6b7280);
+}
+
+.rectModal-close {
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  color: #111827;
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.rectModal-close:hover {
+  background: #f3f4f6;
+  border-color: var(--color-primario, #60b5ff);
+}
+
+/* ── Rectificación sections ── */
+.rectModal-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm, 0.5rem);
+}
+
+.rectModal-section-title {
+  margin: 0;
+  font-size: var(--font-size-xs, 0.75rem);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-texto-suave, #6b7280);
+}
+
+.rectModal-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-md, 1rem);
+}
+
+@media (max-width: 640px) {
+  .rectModal-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .modal-botones_facturaspage {
   display: grid;
-  grid-template-columns: 1fr 1fr; /* 50/50 pro */
-  gap: var(--space-sm);
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-sm, 0.5rem);
+  margin-top: var(--space-sm, 0.5rem);
 }
 
 .modal-botones_facturaspage button {
   min-height: 44px;
   border-radius: 14px;
-  font-weight: 900;
+  font-weight: 700;
+  font-size: var(--font-size-sm, 0.875rem);
+  cursor: pointer;
+  transition: background 0.15s, transform 0.12s, box-shadow 0.15s;
+  border: 1px solid var(--color-borde-suave, #e5e7eb);
+  background: var(--color-fondo-card, #fff);
+  color: var(--color-texto, #1f2937);
+}
+
+.modal-botones_facturaspage button:hover:not(:disabled) {
+  background: #f3f4f6;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+.modal-botones_facturaspage button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.modal-botones_facturaspage button.btn-primario {
+  background: var(--color-primario, #60b5ff);
+  color: #fff;
+  border-color: transparent;
+  box-shadow: 0 4px 14px rgba(96, 181, 255, 0.3);
+}
+
+.modal-botones_facturaspage button.btn-primario:hover:not(:disabled) {
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(96, 181, 255, 0.4);
 }
 
 /* =====================================================

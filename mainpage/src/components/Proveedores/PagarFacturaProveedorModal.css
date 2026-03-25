@@ -1,11 +1,196 @@
 /*****************************************************
- * Pagar Factura Proveedor Modal – Alef UI (polished)
- * Uses ppModal-* base from ProductoProveedorModal.css
- * Only overrides what's specific to the payment form.
+ * PagarFacturaProveedorModal – Alef UI (self-contained)
  *****************************************************/
 
-/* No base redefinitions — ppModal-* classes from
-   ProductoProveedorModal.css cover backdrop, modal,
-   header, body, grid, field, footer, responsive.
+/* =========================
+   Backdrop
+========================= */
+.pagarFactModal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.5);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-lg, 1.5rem);
+}
 
-   This file only adds payment-specific helpers if needed. */
+/* =========================
+   Modal
+========================= */
+.pagarFactModal {
+  width: 100%;
+  max-width: 480px;
+  max-height: calc(100vh - 48px);
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: var(--radius-lg, 12px);
+  background: var(--color-fondo-card, #fff);
+  border: 1px solid var(--color-borde-suave, #e5e7eb);
+  box-shadow:
+    0 20px 50px rgba(0, 0, 0, 0.18),
+    0 0 0 1px rgba(0, 0, 0, 0.04);
+}
+
+/* =========================
+   Header
+========================= */
+.pagarFactModal-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-md, 1rem);
+  padding: var(--space-lg, 1.25rem) var(--space-xl, 1.5rem);
+  border-bottom: 1px solid var(--color-borde-suave, #e5e7eb);
+  background: var(--color-fondo-claro, #f9fafb);
+  flex-shrink: 0;
+}
+
+.pagarFactModal-title {
+  margin: 0;
+  font-size: var(--font-size-lg, 1.15rem);
+  font-weight: 700;
+  color: var(--color-texto, #1f2937);
+}
+
+.pagarFactModal-close {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-pill, 999px);
+  border: 1px solid var(--color-borde-suave, #e5e7eb);
+  background: var(--color-fondo-card, #fff);
+  color: var(--color-texto, #1f2937);
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.pagarFactModal-close:hover {
+  background: var(--color-fondo-claro, #f3f4f6);
+  border-color: var(--color-primario, #60b5ff);
+}
+
+/* =========================
+   Body
+========================= */
+.pagarFactModal-body {
+  padding: var(--space-lg, 1.25rem) var(--space-xl, 1.5rem);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg, 1.25rem);
+  overflow-y: auto;
+  flex: 1 1 auto;
+}
+
+/* =========================
+   Summary
+========================= */
+.pagarFactModal-summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-md, 1rem);
+  border-radius: var(--radius-md, 8px);
+  background: rgba(96, 181, 255, 0.06);
+  border: 1px solid rgba(96, 181, 255, 0.15);
+}
+
+.pagarFactModal-summary-label {
+  font-size: var(--font-size-sm, 0.875rem);
+  color: var(--color-texto-suave, #6b7280);
+  font-weight: 600;
+}
+
+.pagarFactModal-summary-value {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--color-texto, #1f2937);
+}
+
+/* =========================
+   Fields
+========================= */
+.pagarFactModal-fields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md, 1rem);
+}
+
+.pagarFactModal-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.pagarFactModal-field label {
+  display: block;
+  font-size: var(--font-size-xs, 0.75rem);
+  font-weight: 700;
+  color: var(--color-texto-suave, #6b7280);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.pagarFactModal-field select,
+.pagarFactModal-field input {
+  width: 100%;
+  box-sizing: border-box;
+  font-family: var(--font-base, inherit);
+  font-size: var(--font-size-sm, 0.875rem);
+  padding: 0.6rem 0.75rem;
+  border-radius: var(--radius-sm, 6px);
+  border: 1px solid var(--color-borde-suave, #e5e7eb);
+  background: var(--color-fondo-card, #fff);
+  color: var(--color-texto, #1f2937);
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.pagarFactModal-field select:focus,
+.pagarFactModal-field input:focus {
+  border-color: var(--color-primario, #60b5ff);
+  box-shadow: 0 0 0 3px rgba(96, 181, 255, 0.18);
+}
+
+/* =========================
+   Footer
+========================= */
+.pagarFactModal-foot {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-sm, 0.5rem);
+  padding: var(--space-md, 1rem) var(--space-xl, 1.5rem);
+  border-top: 1px solid var(--color-borde-suave, #e5e7eb);
+  background: var(--color-fondo-claro, #f9fafb);
+  flex-shrink: 0;
+}
+
+/* =========================
+   Responsive
+========================= */
+@media (max-width: 640px) {
+  .pagarFactModal-backdrop {
+    padding: var(--space-md, 1rem);
+  }
+
+  .pagarFactModal {
+    max-width: 100%;
+  }
+
+  .pagarFactModal-foot {
+    flex-direction: column-reverse;
+  }
+
+  .pagarFactModal-foot .btn {
+    width: 100%;
+  }
+}

@@ -7,6 +7,14 @@ import ModalConfirmacion from "../../../components/Modal/ModalConfirmacion.jsx";
 import RecibirPedidoProveedorModal from "../../../components/Proveedores/RecibirPedidoProveedorModal.jsx";
 import "./ProveedorPedidoDetallePage.css";
 
+const ESTADO_LABEL = {
+  borrador: "Borrador",
+  enviado: "Enviado",
+  recibido: "Recibido",
+  parcial: "Recibido parcial",
+  cancelado: "Cancelado",
+};
+
 export default function ProveedorPedidoDetallePage() {
     const { proveedorId, pedidoId } = useParams();
     const navigate = useNavigate();
@@ -80,8 +88,8 @@ export default function ProveedorPedidoDetallePage() {
                     <h1 className="provDet-title">Pedido proveedor</h1>
 
                     <div className="provDet-metaRow">
-                        <span className="provDet-pill">
-                            Estado: <b>{pedido?.estado || "—"}</b>
+                        <span className={`provDet-pill estado-${pedido?.estado || ""}`}>
+                            Estado: <b>{ESTADO_LABEL[pedido?.estado] || pedido?.estado || "—"}</b>
                         </span>
                         <span className="provDet-pill">
                             Fecha:{" "}
@@ -103,7 +111,7 @@ export default function ProveedorPedidoDetallePage() {
                             ← Volver
                         </Link>
 
-                        {pedido?.estado === "borrador" && (
+                        {["borrador", "enviado"].includes(pedido?.estado) && (
                             <button
                                 className="btn btn-primario "
                                 onClick={() => setModalRecibir(true)}
@@ -112,7 +120,7 @@ export default function ProveedorPedidoDetallePage() {
                             </button>
                         )}
 
-                        {pedido?.estado === "borrador" && (
+                        {["borrador", "enviado"].includes(pedido?.estado) && (
                             <button
                                 className="btn btn-secundario"
                                 onClick={() => setModalCancel(true)}

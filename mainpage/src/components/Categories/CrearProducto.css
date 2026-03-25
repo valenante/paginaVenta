@@ -576,3 +576,42 @@
     font-size: 0.77rem;
   }
 }
+
+/* === STOCK DIRECTO === */
+.stock-directo-row--crear {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  margin-top: 0.5rem;
+}
+
+.toggle-stock--crear {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.toggle-stock--crear input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #6e42c1;
+  cursor: pointer;
+}
+
+.toggle-stock-label--crear {
+  font-size: 0.925rem;
+  color: #cbd5e1;
+  font-weight: 500;
+}
+
+.stock-cantidad--crear {
+  flex: 0 0 auto;
+}
+
+.stock-cantidad--crear .input--crear {
+  width: 110px;
+  text-align: center;
+}

@@ -1,75 +1,55 @@
 import React, { useEffect, useMemo, useState, useCallback } from "react";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
+import { useCategorias } from "../../context/CategoriasContext";
 import api from "../../utils/api";
 import "./CartaOrdenSection.css";
 
 const TABS = [
-  { key: "platos", label: "🍽 Platos" },
-  { key: "bebidas", label: "🍷 Bebidas" },
+  { key: "platos", label: "🍽 Platos", tipo: "plato" },
+  { key: "bebidas", label: "🍷 Bebidas", tipo: "bebida" },
 ];
-
-function buildOrdenVisual(categoriasDisponibles, ordenGuardado) {
-  const set = new Set(categoriasDisponibles);
-  const base = (Array.isArray(ordenGuardado) ? ordenGuardado : []).filter((c) =>
-    set.has(c)
-  );
-  const rest = categoriasDisponibles.filter((c) => !base.includes(c));
-  return [...base, ...rest];
-}
 
 export default function CartaOrdenSection({ form, setForm, handleChange, showAlert }) {
   const [tab, setTab] = useState("platos");
-  const [cats, setCats] = useState({ platos: [], bebidas: [] });
-  const [loadingCats, setLoadingCats] = useState(false);
 
-  // cargar categorías ordenables
+  const { categoryObjectsByTipo, fetchCategoryObjects } = useCategorias();
+
+  // Cargar ambos tipos al montar
   useEffect(() => {
-    let alive = true;
-    (async () => {
-      try {
-        setLoadingCats(true);
-        const { data } = await api.get("/configuracion/categorias-ordenables");
-        if (!alive) return;
-        setCats({
-          platos: Array.isArray(data?.platos) ? data.platos : [],
-          bebidas: Array.isArray(data?.bebidas) ? data.bebidas : [],
-        });
-      } catch (e) {
-        showAlert?.("error", "No se pudieron cargar las categorías para ordenar.");
-      } finally {
-        if (alive) setLoadingCats(false);
-      }
-    })();
-    return () => {
-      alive = false;
-    };
-  }, [showAlert]);
+    fetchCategoryObjects("plato");
+    fetchCategoryObjects("bebida");
+  }, [fetchCategoryObjects]);
 
-  const modoOrden = form?.carta?.modoOrden || "por_categoria";
-  const ordenGuardado = form?.carta?.ordenCategorias?.[tab] || [];
+  // Tipo backend correspondiente al tab
+  const tipoActual = TABS.find((t) => t.key === tab)?.tipo || "plato";
 
-  const ordenVisual = useMemo(() => {
-    return buildOrdenVisual(cats[tab], ordenGuardado);
-  }, [cats, tab, ordenGuardado]);
-
-  const setOrdenTab = useCallback(
-    (nuevoOrden) => {
-      setForm((prev) => ({
-        ...prev,
-        carta: {
-          ...(prev.carta || {}),
-          ordenCategorias: {
-            ...(prev.carta?.ordenCategorias || {}),
-            [tab]: nuevoOrden,
-          },
-        },
-      }));
-    },
-    [setForm, tab]
+  // Categorías ordenadas desde el contexto compartido
+  const catObjects = categoryObjectsByTipo[tipoActual] || [];
+  const ordenVisual = useMemo(
+    () => catObjects.map((c) => ({ _id: c._id, nombre: c.nombre })),
+    [catObjects]
   );
 
+  const modoOrden = form?.carta?.modoOrden || "por_categoria";
+
+  // Sincronizar form.carta.ordenCategorias cuando cambia el contexto
+  useEffect(() => {
+    if (catObjects.length === 0) return;
+    const nombres = catObjects.map((c) => c.nombre);
+    setForm((prev) => ({
+      ...prev,
+      carta: {
+        ...(prev.carta || {}),
+        ordenCategorias: {
+          ...(prev.carta?.ordenCategorias || {}),
+          [tab]: nombres,
+        },
+      },
+    }));
+  }, [catObjects, tab, setForm]);
+
   const onDragEnd = useCallback(
-    ({ source, destination }) => {
+    async ({ source, destination }) => {
       if (!destination) return;
       if (source.index === destination.index) return;
 
@@ -77,16 +57,65 @@ export default function CartaOrdenSection({ form, setForm, handleChange, showAle
       const [moved] = clone.splice(source.index, 1);
       clone.splice(destination.index, 0, moved);
 
-      setOrdenTab(clone);
+      const ordenPayload = clone.map((cat, i) => ({
+        _id: cat._id,
+        orden: i,
+      }));
+
+      // Actualizar form para que se guarde con la config
+      setForm((prev) => ({
+        ...prev,
+        carta: {
+          ...(prev.carta || {}),
+          ordenCategorias: {
+            ...(prev.carta?.ordenCategorias || {}),
+            [tab]: clone.map((c) => c.nombre),
+          },
+        },
+      }));
+
+      // Persistir en backend y refrescar contexto (sincroniza con CategoriasPanel)
+      try {
+        await api.put("/categorias/reordenar", { orden: ordenPayload }, { withCredentials: true });
+        fetchCategoryObjects(tipoActual, { force: true });
+      } catch {
+        fetchCategoryObjects(tipoActual, { force: true });
+        showAlert?.("error", "No se pudo guardar el orden.");
+      }
     },
-    [ordenVisual, setOrdenTab]
+    [ordenVisual, tab, tipoActual, setForm, fetchCategoryObjects, showAlert]
   );
 
-  const resetOrden = useCallback(() => {
-    const sorted = [...cats[tab]].sort((a, b) => a.localeCompare(b, "es"));
-    setOrdenTab(sorted);
-    showAlert?.("info", `Orden de ${tab} reseteado (A-Z).`);
-  }, [cats, tab, setOrdenTab, showAlert]);
+  const resetOrden = useCallback(async () => {
+    const sorted = [...catObjects].sort((a, b) =>
+      a.nombre.localeCompare(b.nombre, "es")
+    );
+
+    const ordenPayload = sorted.map((cat, i) => ({
+      _id: cat._id,
+      orden: i,
+    }));
+
+    setForm((prev) => ({
+      ...prev,
+      carta: {
+        ...(prev.carta || {}),
+        ordenCategorias: {
+          ...(prev.carta?.ordenCategorias || {}),
+          [tab]: sorted.map((c) => c.nombre),
+        },
+      },
+    }));
+
+    try {
+      await api.put("/categorias/reordenar", { orden: ordenPayload }, { withCredentials: true });
+      fetchCategoryObjects(tipoActual, { force: true });
+      showAlert?.("info", `Orden de ${tab} reseteado (A-Z).`);
+    } catch {
+      fetchCategoryObjects(tipoActual, { force: true });
+      showAlert?.("error", "No se pudo resetear el orden.");
+    }
+  }, [catObjects, tab, tipoActual, setForm, fetchCategoryObjects, showAlert]);
 
   return (
     <section className="config-section">
@@ -221,16 +250,14 @@ export default function CartaOrdenSection({ form, setForm, handleChange, showAle
                 type="button"
                 className="carta-orden__reset"
                 onClick={resetOrden}
-                disabled={loadingCats}
+                disabled={catObjects.length === 0}
                 title="Ordenar A-Z"
               >
                 ↺ Reset A-Z
               </button>
             </div>
 
-            {loadingCats ? (
-              <div className="carta-orden__state">Cargando categorías…</div>
-            ) : ordenVisual.length === 0 ? (
+            {ordenVisual.length === 0 ? (
               <div className="carta-orden__state">
                 No hay categorías detectadas para {tab}.
               </div>
@@ -244,7 +271,7 @@ export default function CartaOrdenSection({ form, setForm, handleChange, showAle
                       className="carta-orden__dnd"
                     >
                       {ordenVisual.map((cat, index) => (
-                        <Draggable key={cat} draggableId={cat} index={index}>
+                        <Draggable key={cat._id} draggableId={cat._id} index={index}>
                           {(p) => (
                             <div
                               ref={p.innerRef}
@@ -259,7 +286,7 @@ export default function CartaOrdenSection({ form, setForm, handleChange, showAle
                                 <span className="carta-orden__index">
                                   {index + 1}
                                 </span>
-                                <span className="carta-orden__name">{cat}</span>
+                                <span className="carta-orden__name">{cat.nombre}</span>
                               </div>
 
                               <span className="carta-orden__grip" aria-hidden>

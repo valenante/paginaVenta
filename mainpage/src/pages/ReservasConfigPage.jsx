@@ -296,7 +296,9 @@ export default function ReservasConfigPage() {
                   </p>
                 </div>
               ) : (
-                <div className="reservas-table-scroll">
+                <>
+                {/* ── DESKTOP: tabla ── */}
+                <div className="reservas-table-scroll reservas-desktop">
                   <table className="reservas-table">
                     <thead>
                       <tr>
@@ -374,6 +376,75 @@ export default function ReservasConfigPage() {
                     </tbody>
                   </table>
                 </div>
+
+                {/* ── MOBILE: cards ── */}
+                <div className="reservas-mobile">
+                  {reservas.map((r) => (
+                    <div key={r._id} className="reserva-mcard">
+                      <div className="reserva-mcard-head">
+                        <strong className="reserva-mcard-name">{r.nombre}</strong>
+                        <span className={`estado-reserva badge estado-${r.estado}`}>
+                          {r.estado}
+                        </span>
+                      </div>
+
+                      <div className="reserva-mcard-grid">
+                        <div>
+                          <span className="reserva-mcard-k">Personas</span>
+                          <span className="reserva-mcard-v">{r.personas}</span>
+                        </div>
+                        <div>
+                          <span className="reserva-mcard-k">Reserva para</span>
+                          <span className="reserva-mcard-v">
+                            {new Date(r.hora).toLocaleString("es-ES", {
+                              day: "2-digit", month: "2-digit",
+                              hour: "2-digit", minute: "2-digit",
+                            })}
+                          </span>
+                        </div>
+                        {r.telefono && (
+                          <div>
+                            <span className="reserva-mcard-k">Teléfono</span>
+                            <span className="reserva-mcard-v">{r.telefono}</span>
+                          </div>
+                        )}
+                        {r.email && (
+                          <div>
+                            <span className="reserva-mcard-k">Email</span>
+                            <span className="reserva-mcard-v">{r.email}</span>
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="reserva-mcard-actions">
+                        {r.estado === "pendiente" ? (
+                          <>
+                            <button
+                              className="btn btn-primario btn-compact"
+                              onClick={() => confirmarReserva(r._id)}
+                            >
+                              ✅ Confirmar
+                            </button>
+                            <button
+                              className="btn btn-secundario btn-compact"
+                              onClick={() => abrirCancelarReserva(r._id)}
+                            >
+                              ❌ Rechazar
+                            </button>
+                          </>
+                        ) : r.estado === "confirmada" || r.estado === "auto-confirmada" ? (
+                          <button
+                            className="btn btn-secundario btn-compact"
+                            onClick={() => abrirCancelarReserva(r._id)}
+                          >
+                            🛑 Cancelar
+                          </button>
+                        ) : null}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                </>
               )}
             </div>
           </section>

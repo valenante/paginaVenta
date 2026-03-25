@@ -25,6 +25,13 @@ const UNIDAD_OPTIONS = [
   { value: "pack", label: "Pack" },
 ];
 
+/* Detectar tipo de asociación de un producto existente */
+const detectTipoAsociacion = (prod) => {
+  if (prod?.ingredienteId) return "ingrediente";
+  if (prod?.productoId) return "producto";
+  return "producto"; // default para nuevos
+};
+
 export default function ProductoProveedorModal({
   mode = "create",
   producto,
@@ -35,18 +42,22 @@ export default function ProductoProveedorModal({
   const { proveedorId } = useParams();
   const { tenant } = useTenant();
 
-  const headersTenant = useMemo(() => ({}), []);
-
   const [form, setForm] = useState(() => ({
     ...DEFAULT,
     ...(producto || {}),
     precio: producto?.precioBase ?? "",
     ingredienteId: producto?.ingredienteId || "",
+    productoId: producto?.productoId || "",
     productoShopId: producto?.productoShopId || "",
     factorConversion: producto?.factorConversion ?? 1,
   }));
 
+  const [tipoAsociacion, setTipoAsociacion] = useState(() =>
+    isEdit ? detectTipoAsociacion(producto) : "producto"
+  );
+
   const [ingredientes, setIngredientes] = useState([]);
+  const [productosStock, setProductosStock] = useState([]);
   const [productosShop, setProductosShop] = useState([]);
 
   const [saving, setSaving] = useState(false);
@@ -58,7 +69,7 @@ export default function ProductoProveedorModal({
   const set = (k, v) => setForm((s) => ({ ...s, [k]: v }));
 
   /* =========================
-     Cargar stock según negocio
+     Cargar opciones según negocio
   ========================= */
   useEffect(() => {
     if (!tenant) return;
@@ -66,8 +77,13 @@ export default function ProductoProveedorModal({
     const load = async () => {
       try {
         if (isRest) {
-          const { data } = await api.get("/stock/ingredientes");
-          setIngredientes(data?.data || data?.ingredientes || []);
+          const [ingRes, prodRes] = await Promise.all([
+            api.get("/stock/ingredientes", { params: { limit: 200 } }),
+            api.get("/productos", { params: { limit: 500 } }),
+          ]);
+          setIngredientes(ingRes.data?.ingredientes || ingRes.data?.data || []);
+          const prods = prodRes.data?.data?.items ?? prodRes.data?.data ?? [];
+          setProductosStock(prods);
         }
 
         if (isShop) {
@@ -93,8 +109,13 @@ export default function ProductoProveedorModal({
       return "El factor de conversión debe ser mayor que 0.";
     }
 
-    if (isRest && !form.ingredienteId) {
-      return "Debes asociar un ingrediente.";
+    if (isRest) {
+      if (tipoAsociacion === "ingrediente" && !form.ingredienteId) {
+        return "Debes seleccionar un ingrediente.";
+      }
+      if (tipoAsociacion === "producto" && !form.productoId) {
+        return "Debes seleccionar un producto.";
+      }
     }
 
     if (isShop && !form.productoShopId) {
@@ -111,7 +132,8 @@ export default function ProductoProveedorModal({
     e.preventDefault();
     const msg = validate();
     if (msg) return setError(msg);
-    if (!form.unidad) return "Debes seleccionar una unidad.";
+    if (!form.unidad) return setError("Debes seleccionar una unidad.");
+
     try {
       setSaving(true);
       setError("");
@@ -123,11 +145,12 @@ export default function ProductoProveedorModal({
         precioBase: Number(form.precio),
         iva: Number(form.iva),
         activo: !!form.activo,
-
-        // 🔗 Asociación automática según negocio
-        ingredienteId: isRest ? form.ingredienteId : null,
-        productoShopId: isShop ? form.productoShopId : null,
         factorConversion: Number(form.factorConversion),
+
+        // Asociaciones: solo una activa
+        ingredienteId: isRest && tipoAsociacion === "ingrediente" ? form.ingredienteId : null,
+        productoId: isRest && tipoAsociacion === "producto" ? form.productoId : null,
+        productoShopId: isShop ? form.productoShopId : null,
       };
 
       if (isEdit) {
@@ -143,7 +166,7 @@ export default function ProductoProveedorModal({
       }
 
       onSaved?.();
-      onClose?.(); 
+      onClose?.();
     } catch {
       setError("No se pudo guardar el producto.");
     } finally {
@@ -185,23 +208,77 @@ export default function ProductoProveedorModal({
                 />
               </div>
 
+              {/* ── RESTAURANTE: tipo de asociación + dropdown ── */}
               {isRest && (
-                <div className="ppModal-field ppModal-field--full">
-                  <label>Ingrediente asociado *</label>
-                  <select
-                    value={form.ingredienteId}
-                    onChange={(e) => set("ingredienteId", e.target.value)}
-                  >
-                    <option value="">Selecciona ingrediente…</option>
-                    {ingredientes.map((i) => (
-                      <option key={i._id} value={i._id}>
-                        {i.nombre}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+                <>
+                  <div className="ppModal-field ppModal-field--full">
+                    <label>Asociar a *</label>
+                    <div className="ppModal-tipo-toggle">
+                      <button
+                        type="button"
+                        className={`ppModal-tipo-btn ${tipoAsociacion === "producto" ? "active" : ""}`}
+                        onClick={() => {
+                          setTipoAsociacion("producto");
+                          set("ingredienteId", "");
+                        }}
+                      >
+                        Producto
+                      </button>
+                      <button
+                        type="button"
+                        className={`ppModal-tipo-btn ${tipoAsociacion === "ingrediente" ? "active" : ""}`}
+                        onClick={() => {
+                          setTipoAsociacion("ingrediente");
+                          set("productoId", "");
+                        }}
+                      >
+                        Ingrediente
+                      </button>
+                    </div>
+                    <small className="ppModal-help">
+                      {tipoAsociacion === "producto"
+                        ? "Vincula a un producto de la carta (Coca-Cola, Solomillo…). Al recibir pedido se sumará a su stock."
+                        : "Vincula a un ingrediente del inventario (harina, aceite…). Al recibir pedido se sumará a su stock."}
+                    </small>
+                  </div>
+
+                  {tipoAsociacion === "ingrediente" && (
+                    <div className="ppModal-field ppModal-field--full">
+                      <label>Ingrediente *</label>
+                      <select
+                        value={form.ingredienteId}
+                        onChange={(e) => set("ingredienteId", e.target.value)}
+                      >
+                        <option value="">Selecciona ingrediente…</option>
+                        {ingredientes.map((i) => (
+                          <option key={i._id} value={i._id}>
+                            {i.nombre} ({i.stockActual ?? 0} {i.unidad})
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
+
+                  {tipoAsociacion === "producto" && (
+                    <div className="ppModal-field ppModal-field--full">
+                      <label>Producto *</label>
+                      <select
+                        value={form.productoId}
+                        onChange={(e) => set("productoId", e.target.value)}
+                      >
+                        <option value="">Selecciona producto…</option>
+                        {productosStock.map((p) => (
+                          <option key={p._id} value={p._id}>
+                            {p.nombre} {p.controlStock ? `(${p.stock ?? 0} uds)` : ""}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
+                </>
               )}
 
+              {/* ── SHOP: producto de tienda ── */}
               {isShop && (
                 <div className="ppModal-field ppModal-field--full">
                   <label>Producto de tienda asociado *</label>

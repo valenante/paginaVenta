@@ -4,6 +4,19 @@ import api from "../../../utils/api";
 import FacturaProveedorModal from "../../../components/Proveedores/FacturaProveedorModal.jsx";
 import { toImgSrc } from "../../../utils/media";
 import PagarFacturaProveedorModal from "../../../components/Proveedores/PagarFacturaProveedorModal.jsx";
+import "./ProveedorFacturasTab.css";
+
+const ESTADO_LABEL = {
+  pendiente: "Pendiente",
+  pagada: "Pagada",
+  vencida: "Vencida",
+};
+
+const ESTADO_BADGE = {
+  pendiente: "factTab-badge--pendiente",
+  pagada: "factTab-badge--pagada",
+  vencida: "factTab-badge--vencida",
+};
 
 export default function ProveedorFacturasTab() {
   const { proveedorId } = useParams();
@@ -38,40 +51,34 @@ export default function ProveedorFacturasTab() {
   }, [proveedorId]);
 
   return (
-    <section className="provDet-grid">
-      <div className="card provDet-card provDet-card--full">
+    <section className="factTab">
+      <div className="card factTab-card">
         {/* Header */}
-        <div className="provTab-header">
-          <h2 className="provDet-cardTitle">Facturas</h2>
+        <div className="factTab-header">
+          <h2 className="factTab-title">Facturas</h2>
           <button
-            className="btn btn-primario "
+            className="btn btn-primario"
             onClick={() => setModalCrear(true)}
           >
-            ➕ Nueva factura
+            + Nueva factura
           </button>
         </div>
 
-        {/* Estados */}
-        {loading && <div className="provDet-loading">Cargando facturas…</div>}
+        {/* States */}
+        {loading && <div className="factTab-loading">Cargando facturas…</div>}
 
-        {error && (
-          <div className="provDet-alert provDet-alert--error">
-            ❌ {error}
-          </div>
-        )}
+        {error && <div className="factTab-error">❌ {error}</div>}
 
-        {!loading && items.length === 0 && (
-          <div className="provDet-empty">
+        {!loading && items.length === 0 && !error && (
+          <div className="factTab-empty">
             No hay facturas registradas para este proveedor.
           </div>
         )}
 
-        {/* ======================
-            DESKTOP · TABLA
-        ====================== */}
+        {/* ── DESKTOP TABLE ── */}
         {!loading && items.length > 0 && (
-          <div className="prov-tableWrap only-desktop">
-            <table className="prov-table">
+          <div className="factTab-tableWrap factTab-desktop">
+            <table className="factTab-table">
               <thead>
                 <tr>
                   <th>Nº Factura</th>
@@ -85,23 +92,27 @@ export default function ProveedorFacturasTab() {
               <tbody>
                 {items.map((f) => (
                   <tr key={f._id}>
-                    <td>{f.numeroFactura}</td>
-                    <td>{new Date(f.fechaFactura).toLocaleDateString()}</td>
+                    <td>{f.numeroFactura || "—"}</td>
                     <td>
-                      {f.fechaVencimiento
-                        ? new Date(f.fechaVencimiento).toLocaleDateString()
+                      {f.fechaFactura
+                        ? new Date(f.fechaFactura).toLocaleDateString("es-ES")
                         : "—"}
                     </td>
                     <td>
-                      <strong>{Number(f.total).toFixed(2)} €</strong>
+                      {f.fechaVencimiento
+                        ? new Date(f.fechaVencimiento).toLocaleDateString("es-ES")
+                        : "—"}
+                    </td>
+                    <td className="factTab-total">
+                      {Number(f.total || 0).toFixed(2)} €
                     </td>
                     <td>
-                      <span className={`badge ${mapEstadoFactura(f.estado)}`}>
-                        {f.estado}
+                      <span className={`factTab-badge ${ESTADO_BADGE[f.estado] || ""}`}>
+                        {ESTADO_LABEL[f.estado] || f.estado}
                       </span>
                     </td>
                     <td className="t-right">
-                      <div className="prov-rowActions">
+                      <div className="factTab-rowActions">
                         {f.documentoUrl && (
                           <a
                             href={toImgSrc(f.documentoUrl)}
@@ -115,10 +126,10 @@ export default function ProveedorFacturasTab() {
 
                         {f.estado === "pendiente" && (
                           <button
-                            className="btn btn-secundario"
+                            className="btn btn-primario"
                             onClick={() => setModalPagar(f)}
                           >
-                            Pagar
+                            Marcar pagada
                           </button>
                         )}
                       </div>
@@ -130,71 +141,69 @@ export default function ProveedorFacturasTab() {
           </div>
         )}
 
-        {/* ======================
-            MOBILE · CARDS
-        ====================== */}
+        {/* ── MOBILE CARDS ── */}
         {!loading && items.length > 0 && (
-          <div className="prov-mobileList only-mobile">
-            {items.map((f) => (
-              <div key={f._id} className="prov-mobileCard">
-                <div className="prov-mobileHeader">
-                  <div className="prov-mobileTitle">
-                    Factura {f.numeroFactura}
-                  </div>
-
-                  <span className={`badge ${mapEstadoFactura(f.estado)}`}>
-                    {f.estado}
-                  </span>
-                </div>
-
-                <div className="prov-mobileGrid">
-                  <div>
-                    <span className="k">Fecha</span>
-                    <span className="v">
-                      {new Date(f.fechaFactura).toLocaleDateString()}
+          <div className="factTab-mobile">
+            <div className="factTab-mobileList">
+              {items.map((f) => (
+                <div key={f._id} className="factTab-mobileCard">
+                  <div className="factTab-mobileHead">
+                    <span className="factTab-mobileName">
+                      {f.numeroFactura || "Sin número"}
+                    </span>
+                    <span className={`factTab-badge ${ESTADO_BADGE[f.estado] || ""}`}>
+                      {ESTADO_LABEL[f.estado] || f.estado}
                     </span>
                   </div>
 
-                  <div>
-                    <span className="k">Vencimiento</span>
-                    <span className="v">
-                      {f.fechaVencimiento
-                        ? new Date(f.fechaVencimiento).toLocaleDateString()
-                        : "—"}
-                    </span>
+                  <div className="factTab-mobileGrid">
+                    <div>
+                      <span className="k">Fecha</span>
+                      <span className="v">
+                        {f.fechaFactura
+                          ? new Date(f.fechaFactura).toLocaleDateString("es-ES")
+                          : "—"}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="k">Vencimiento</span>
+                      <span className="v">
+                        {f.fechaVencimiento
+                          ? new Date(f.fechaVencimiento).toLocaleDateString("es-ES")
+                          : "—"}
+                      </span>
+                    </div>
+                    <div className="full">
+                      <span className="k">Total</span>
+                      <span className="v total">
+                        {Number(f.total || 0).toFixed(2)} €
+                      </span>
+                    </div>
                   </div>
 
-                  <div className="full">
-                    <span className="k">Total</span>
-                    <span className="v total">
-                      {Number(f.total).toFixed(2)} €
-                    </span>
+                  <div className="factTab-mobileActions">
+                    {f.documentoUrl && (
+                      <a
+                        href={toImgSrc(f.documentoUrl)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="btn btn-ghost"
+                      >
+                        📎 Ver
+                      </a>
+                    )}
+                    {f.estado === "pendiente" && (
+                      <button
+                        className="btn btn-primario"
+                        onClick={() => setModalPagar(f)}
+                      >
+                        Marcar pagada
+                      </button>
+                    )}
                   </div>
                 </div>
-
-                <div className="prov-mobileActions">
-                  {f.documentoUrl && (
-                    <a
-                      href={f.documentoUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="btn btn-ghost"
-                    >
-                      📎 Ver
-                    </a>
-                  )}
-
-                  {f.estado === "pendiente" && (
-                    <button
-                      className="btn btn-secundario"
-                      onClick={() => setModalPagar(f)}
-                    >
-                      Pagar
-                    </button>
-                  )}
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         )}
       </div>
@@ -222,18 +231,4 @@ export default function ProveedorFacturasTab() {
       )}
     </section>
   );
-}
-
-/* Helper de estado */
-function mapEstadoFactura(estado) {
-  switch (estado) {
-    case "pagada":
-      return "badge-exito";
-    case "pendiente":
-      return "badge-aviso";
-    case "vencida":
-      return "badge-error";
-    default:
-      return "badge";
-  }
 }

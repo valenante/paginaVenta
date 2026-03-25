@@ -7,9 +7,17 @@ import ModalConfirmacion from "../../../components/Modal/ModalConfirmacion.jsx";
 import PedidoProveedorModal from "../../../components/Proveedores/PedidoProveedorModal.jsx";
 import "./ProveedorPedidosTab.css";
 
+const ESTADO_LABEL = {
+  borrador: "Borrador",
+  enviado: "Enviado",
+  recibido: "Recibido",
+  parcial: "Recibido parcial",
+  cancelado: "Cancelado",
+};
+
 export default function ProveedorPedidosTab() {
     const { proveedorId } = useParams();
-    const { headersTenant } = useOutletContext();
+    const { headersTenant, proveedor } = useOutletContext();
     const { showToast } = useToast();
 
     const [items, setItems] = useState([]);
@@ -111,7 +119,7 @@ return (
 
                   <td>
                     <span className={`prov-pill estado-${p.estado}`}>
-                      {p.estado}
+                      {ESTADO_LABEL[p.estado] || p.estado}
                     </span>
                   </td>
 
@@ -133,7 +141,7 @@ return (
                         Ver
                       </Link>
 
-                      {p.estado === "borrador" && (
+                      {["borrador", "enviado"].includes(p.estado) && (
                         <button
                           className="btn btn-secundario"
                           onClick={() => setModalDelete(p)}
@@ -226,6 +234,7 @@ return (
 
     {modalNuevo && (
       <PedidoProveedorModal
+        proveedor={proveedor}
         onClose={() => setModalNuevo(false)}
         onSaved={() => {
           setModalNuevo(false);

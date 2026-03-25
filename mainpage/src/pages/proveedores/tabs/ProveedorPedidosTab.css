@@ -142,6 +142,11 @@
   color: var(--color-exito);
 }
 
+.estado-parcial {
+  background: var(--color-aviso-suave);
+  color: var(--color-aviso);
+}
+
 .estado-cancelado {
   background: var(--color-error-suave);
   color: var(--color-error);

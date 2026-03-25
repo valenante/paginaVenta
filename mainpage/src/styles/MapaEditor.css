@@ -77,22 +77,20 @@
 
 .toolbar-editor button {
   border: none;
-  background: linear-gradient(135deg, #f97316, #f97316);
-  color: #0b1120;
-  box-shadow: 0 4px 14px rgba(248, 113, 22, 0.55);
+  background: linear-gradient(135deg, var(--dash-accent-1, #6a0dad), var(--dash-accent-2, #a855f7));
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(106, 13, 173, 0.45);
 }
 
 .toolbar-editor button:hover {
   transform: translateY(-1px);
-  background: linear-gradient(135deg, #a855f7, #f97316);
-  box-shadow:
-    0 8px 20px rgba(15, 23, 42, 0.75),
-    0 0 0 1px rgba(255, 255, 255, 0.08);
+  filter: brightness(1.12);
+  box-shadow: 0 6px 20px rgba(106, 13, 173, 0.55);
 }
 
 .toolbar-editor button:active {
   transform: translateY(0);
-  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.9);
+  filter: brightness(0.95);
 }
 
 /* ===== PANEL PRINCIPAL DEL PLANO ===== */

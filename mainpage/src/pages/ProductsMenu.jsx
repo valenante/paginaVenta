@@ -1,40 +1,12 @@
 // src/pages/ProductsPage.jsx
-import React, { useState, useEffect, useMemo } from "react";
-import Products from "../components/Products/Products";
+import React, { useState } from "react";
 import ExtrasPanel from "../components/Extras/ExtrasPanel";
 import CategoriasPanel from "../components/Categories/CategoriasPanel";
-import { useCategorias } from "../context/CategoriasContext";
 import "../styles/ProductsMenu.css";
 
 const ProductsPage = () => {
-  // 'bebida' | 'plato' | 'extras' | 'categorias' | null
+  // 'extras' | 'carta' | null
   const [selectedType, setSelectedType] = useState(null);
-
-  const {
-    categoriesByTipo,
-    fetchCategories,
-    loading,
-    error,
-  } = useCategorias();
-
-  /* =====================================================
-     Cargar categorías cuando se selecciona tipo
-  ===================================================== */
-  useEffect(() => {
-    if (selectedType && selectedType !== "extras" && selectedType !== "categorias") {
-      fetchCategories(selectedType);
-    }
-  }, [selectedType, fetchCategories]);
-
-  /* =====================================================
-     Categorías seguras para el tipo actual
-  ===================================================== */
-  const categories = useMemo(() => {
-    if (!selectedType || selectedType === "extras" || selectedType === "categorias") return [];
-    return Array.isArray(categoriesByTipo[selectedType])
-      ? categoriesByTipo[selectedType]
-      : [];
-  }, [categoriesByTipo, selectedType]);
 
   /* =====================================================
      Helpers UI
@@ -43,24 +15,18 @@ const ProductsPage = () => {
 
   const getTitle = () => {
     if (!selectedType) return "Gestor de productos";
-    if (selectedType === "bebida") return "Gestión de bebidas";
-    if (selectedType === "plato") return "Gestión de platos";
     if (selectedType === "extras") return "Gestión de extras";
-    if (selectedType === "categorias") return "Gestión de categorías";
+    if (selectedType === "carta") return "Gestión de carta";
     return "Gestor de productos";
   };
 
   const getSubtitle = () => {
     if (!selectedType)
       return "Elige qué parte de la carta quieres configurar.";
-    if (selectedType === "bebida")
-      return "Edita precios, categorías y stock de todas tus bebidas.";
-    if (selectedType === "plato")
-      return "Gestiona platos, traducciones, alérgenos y precios.";
     if (selectedType === "extras")
       return "Crea y organiza los extras y suplementos de tus productos.";
-    if (selectedType === "categorias")
-      return "Crea, edita y organiza las categorías de tu carta.";
+    if (selectedType === "carta")
+      return "Gestiona categorías, platos y bebidas de tu carta. Arrastra para reordenar.";
     return "";
   };
 
@@ -82,7 +48,7 @@ const ProductsPage = () => {
             className="products-back-btn--productos"
             onClick={resetSelection}
           >
-            ← Cambiar tipo
+            ← Volver
           </button>
         )}
       </header>
@@ -93,23 +59,12 @@ const ProductsPage = () => {
           <div className="products-type-buttons--productos">
             <button
               type="button"
-              onClick={() => setSelectedType("bebida")}
-              className="products-type-btn--productos bebidas"
+              onClick={() => setSelectedType("carta")}
+              className="products-type-btn--productos categorias"
             >
-              🥂 Bebidas
+              📋 Carta
               <span className="products-type-desc--productos">
-                Copas, refrescos, vinos, cafés…
-              </span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setSelectedType("plato")}
-              className="products-type-btn--productos platos"
-            >
-              🍽️ Platos
-              <span className="products-type-desc--productos">
-                Entrantes, principales, postres y más.
+                Categorías, platos y bebidas de tu carta.
               </span>
             </button>
 
@@ -123,17 +78,6 @@ const ProductsPage = () => {
                 Suplementos, salsas y añadidos.
               </span>
             </button>
-
-            <button
-              type="button"
-              onClick={() => setSelectedType("categorias")}
-              className="products-type-btn--productos categorias"
-            >
-              🏷️ Categorías
-              <span className="products-type-desc--productos">
-                Gestiona las categorías, iconos y descripciones.
-              </span>
-            </button>
           </div>
         </section>
       )}
@@ -143,29 +87,8 @@ const ProductsPage = () => {
         <section className="products-content-card--productos">
           {selectedType === "extras" ? (
             <ExtrasPanel onBack={resetSelection} />
-          ) : selectedType === "categorias" ? (
-            <CategoriasPanel onBack={resetSelection} />
           ) : (
-            <>
-              {loading?.categories && (
-                <p className="products-loading--productos">
-                  Cargando categorías…
-                </p>
-              )}
-
-              {error?.categories && (
-                <p className="products-error--productos">
-                  Error cargando categorías.
-                </p>
-              )}
-
-              {!loading?.categories && !error?.categories && (
-                <Products
-                  type={selectedType}
-                  categories={categories}
-                />
-              )}
-            </>
+            <CategoriasPanel onBack={resetSelection} />
           )}
         </section>
       )}

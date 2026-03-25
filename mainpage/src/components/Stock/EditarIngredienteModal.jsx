@@ -5,7 +5,7 @@ import AlefSelect from "../AlefSelect/AlefSelect";
 import "./EditarIngredienteModal.css";
 
 // ⚙️ Opciones
-const unidades = ["g", "kg", "ml", "L", "uds", "caja", "pack", "botella"];
+const unidades = ["g", "kg", "ml", "l", "uds", "caja", "pack", "botella"];
 const tipos = [
   { label: "Ingrediente", value: "ingrediente" },
   { label: "Consumible", value: "consumible" },

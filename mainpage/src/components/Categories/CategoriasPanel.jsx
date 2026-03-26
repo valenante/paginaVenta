@@ -15,6 +15,14 @@ const TABS = [
   { key: "bebida", label: "Bebidas", emoji: "🥂" },
 ];
 
+const getFirstPrice = (precios) => {
+  if (Array.isArray(precios)) {
+    const sorted = [...precios].sort((a, b) => (a.orden ?? 0) - (b.orden ?? 0));
+    return sorted[0]?.precio ?? 0;
+  }
+  return precios?.precioBase ?? 0;
+};
+
 const CategoriasPanel = ({ onBack }) => {
   const [tab, setTab] = useState("plato");
   const [catModal, setCatModal] = useState({ open: false, categoria: null });
@@ -403,9 +411,9 @@ const CategoriasPanel = ({ onBack }) => {
                                                 )}
                                               </div>
                                               <div className="catpanel-product-meta">
-                                                {prod.precios?.precioBase != null && (
+                                                {(Array.isArray(prod.precios) ? prod.precios.length > 0 : prod.precios?.precioBase != null) && (
                                                   <span className="catpanel-product-price">
-                                                    {Number(prod.precios.precioBase).toFixed(2)} €
+                                                    {Number(getFirstPrice(prod.precios)).toFixed(2)} €
                                                   </span>
                                                 )}
                                                 <span className={`catpanel-product-estado ${prod.estado === "habilitado" ? "catpanel-product-estado--on" : "catpanel-product-estado--off"}`}>

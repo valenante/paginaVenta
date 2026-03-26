@@ -34,11 +34,28 @@ export default function ModalConfigPromocion({ producto, onClose, onSaved }) {
   const [alerta, setAlerta] = useState(null);
   const [confirmDesactivar, setConfirmDesactivar] = useState(false);
 
-  // Precio base para preview (si existe)
+  // Precio base para preview (si existe) — compatible con array y objeto
   const precioBase = useMemo(() => {
+    const precios = producto?.precios;
+
+    // New array format
+    if (Array.isArray(precios)) {
+      const base = precios.find((p) => p.clave === "precioBase");
+      if (base) {
+        const num = Number(base.precio);
+        return Number.isFinite(num) ? num : null;
+      }
+      // Fallback: first entry by orden
+      const sorted = [...precios].sort((a, b) => (a.orden ?? 0) - (b.orden ?? 0));
+      const first = sorted[0]?.precio;
+      const num = Number(first);
+      return Number.isFinite(num) ? num : null;
+    }
+
+    // Old object format
     const n =
-      producto?.precios?.precioBase ??
-      producto?.precios?.base ??
+      precios?.precioBase ??
+      precios?.base ??
       producto?.precioBase ??
       producto?.precio ??
       null;

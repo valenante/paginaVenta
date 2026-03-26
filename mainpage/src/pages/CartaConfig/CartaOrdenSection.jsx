@@ -54,6 +54,16 @@ export default function CartaOrdenSection({ form, handleChange }) {
         <span>Mostrar iconos en categorías</span>
       </label>
 
+      <label className="checkbox-row">
+        <input
+          type="checkbox"
+          name="carta.mostrarPreciosCarrito"
+          checked={form.carta?.mostrarPreciosCarrito !== false}
+          onChange={handleChange}
+        />
+        <span>Mostrar precios en el carrito</span>
+      </label>
+
       {/* tamaño */}
       <div className="config-field">
         <label>Tamaño de las imágenes de producto</label>

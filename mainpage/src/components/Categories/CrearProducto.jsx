@@ -48,13 +48,7 @@ const CrearProducto = ({ onClose, onCreated, initialTipo }) => {
     aliases: [],
     aliasesString: "",
     estado: "habilitado",
-    precios: {
-      precioBase: 0,
-      tapa: null,
-      racion: null,
-      precioCopa: null,
-      precioBotella: null,
-    },
+    precios: [{ clave: "precioBase", label: "Precio", precio: 0, orden: 0 }],
     alergenos: [],
     traducciones: {
       en: { nombre: "", descripcion: "" },
@@ -156,17 +150,42 @@ const CrearProducto = ({ onClose, onCreated, initialTipo }) => {
     fetchData();
   }, []);
 
+  // === Precios dinámicos ===
+  const PRECIO_SUGGESTIONS = [
+    "precioBase", "tapa", "racion", "copa", "botella",
+    "jarra", "pincho", "medio", "unidad", "docena",
+  ];
+
+  const handlePrecioChange = (index, field, value) => {
+    setFormData((prev) => {
+      const next = [...prev.precios];
+      next[index] = { ...next[index], [field]: value };
+      return { ...prev, precios: next };
+    });
+  };
+
+  const addPrecio = () => {
+    setFormData((prev) => ({
+      ...prev,
+      precios: [
+        ...prev.precios,
+        { clave: "", label: "", precio: 0, orden: prev.precios.length },
+      ],
+    }));
+  };
+
+  const removePrecio = (index) => {
+    setFormData((prev) => ({
+      ...prev,
+      precios: prev.precios.filter((_, i) => i !== index),
+    }));
+  };
+
   // Manejo genérico de cambios
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    if (name.startsWith("precios.")) {
-      const key = name.split(".")[1];
-      setFormData((prev) => ({
-        ...prev,
-        precios: { ...prev.precios, [key]: value },
-      }));
-    } else if (name.startsWith("traducciones.")) {
+    if (name.startsWith("traducciones.")) {
       const [, lang, key] = name.split(".");
       setFormData((prev) => ({
         ...prev,
@@ -531,7 +550,7 @@ const CrearProducto = ({ onClose, onCreated, initialTipo }) => {
                     pero <strong>seguirá disponible en el panel interno</strong> para que los camareros
                     puedan seguir tomando nota si lo necesitas.
                     <br />
-                    <em>Ejemplo:</em> si hoy te quedas sin “Tarta de queso”, la deshabilitas y no la
+                    <em>Ejemplo:</em> si hoy te quedas sin "Tarta de queso", la deshabilitas y no la
                     verá el cliente en su móvil, pero el camarero podrá seguir añadiéndola desde el TPV
                     si aún te interesa venderla en sala.
                   </p>
@@ -598,61 +617,90 @@ const CrearProducto = ({ onClose, onCreated, initialTipo }) => {
                 )}
               </div>
 
-              {/* === PRECIOS (dependen de tipo) === */}
-              {formData.tipo === "plato" && (
+              {/* === PRECIOS (array dinámico) === */}
+              {formData.tipo && (
                 <fieldset className="fieldset--crear">
-                  <legend className="legend--crear">Precios plato</legend>
+                  <legend className="legend--crear">Precios</legend>
+                  <p className="help-text--crear">
+                    Agrega tantas variantes de precio como necesites (base, tapa,
+                    ración, copa, botella, etc.). La primera entrada se considera el
+                    precio principal.
+                  </p>
 
-                  <div className="form-group--crear">
-                    <label className="label--crear">
-                      Precio base:
-                      <input
-                        type="number"
-                        name="precios.precioBase"
-                        value={formData.precios.precioBase}
-                        onChange={handleChange}
-                        className="input--crear"
-                        min="0"
-                        step="0.01"
-                        required
-                      />
-                      <p className="help-text--crear">
-                        Precio estándar del producto si no aplica “tapa” o “ración”.
-                      </p>
-                    </label>
+                  <datalist id="precio-suggestions">
+                    {PRECIO_SUGGESTIONS.map((s) => (
+                      <option key={s} value={s} />
+                    ))}
+                  </datalist>
 
-                    <label className="label--crear">
-                      Precio tapa:
-                      <input
-                        type="number"
-                        name="precios.tapa"
-                        value={formData.precios.tapa || ""}
-                        onChange={handleChange}
-                        className="input--crear"
-                        min="0"
-                        step="0.01"
-                      />
-                      <p className="help-text--crear">
-                        Opcional. Se usa si el plato puede pedirse en formato tapa.
-                      </p>
-                    </label>
+                  {formData.precios.map((entry, idx) => (
+                    <div key={idx} className="precio-entry-row">
+                      <label className="label--crear">
+                        Clave:
+                        <input
+                          type="text"
+                          list="precio-suggestions"
+                          value={entry.clave}
+                          onChange={(e) => handlePrecioChange(idx, "clave", e.target.value)}
+                          className="input--crear"
+                          placeholder="precioBase"
+                          required
+                        />
+                      </label>
+                      <label className="label--crear">
+                        Etiqueta:
+                        <input
+                          type="text"
+                          value={entry.label}
+                          onChange={(e) => handlePrecioChange(idx, "label", e.target.value)}
+                          className="input--crear"
+                          placeholder="Precio"
+                        />
+                      </label>
+                      <label className="label--crear">
+                        Detalle:
+                        <input
+                          type="text"
+                          value={entry.descripcion || ""}
+                          onChange={(e) => handlePrecioChange(idx, "descripcion", e.target.value)}
+                          className="input--crear"
+                          placeholder="2 uds, 200g..."
+                          maxLength={100}
+                        />
+                      </label>
+                      <label className="label--crear">
+                        Precio:
+                        <input
+                          type="number"
+                          value={entry.precio}
+                          onChange={(e) => handlePrecioChange(idx, "precio", e.target.value)}
+                          className="input--crear"
+                          min="0"
+                          step="0.01"
+                          required
+                        />
+                      </label>
+                      {formData.precios.length > 1 && (
+                        <button
+                          type="button"
+                          className="btn-icon--crear"
+                          onClick={() => removePrecio(idx)}
+                          title="Eliminar precio"
+                          aria-label="Eliminar precio"
+                        >
+                          ❌
+                        </button>
+                      )}
+                    </div>
+                  ))}
 
-                    <label className="label--crear">
-                      Precio ración:
-                      <input
-                        type="number"
-                        name="precios.racion"
-                        value={formData.precios.racion || ""}
-                        onChange={handleChange}
-                        className="input--crear"
-                        min="0"
-                        step="0.01"
-                      />
-                      <p className="help-text--crear">
-                        Opcional. Se usa si el plato puede pedirse en formato ración.
-                      </p>
-                    </label>
-                  </div>
+                  <button
+                    type="button"
+                    className="boton--secundario"
+                    onClick={addPrecio}
+                  >
+                    + Añadir precio
+                  </button>
 
                   <fieldset className="fieldset--crear fieldset--adicional">
                     <legend className="legend--crear">Adicional (unidad extra)</legend>
@@ -684,61 +732,6 @@ const CrearProducto = ({ onClose, onCreated, initialTipo }) => {
                       />
                     </label>
                   </fieldset>
-                </fieldset>
-              )}
-
-              {formData.tipo === "bebida" && (
-                <fieldset className="fieldset--crear">
-                  <legend className="legend--crear">Precios bebida</legend>
-
-                  <label className="label--crear">
-                    Precio base:
-                    <input
-                      type="number"
-                      name="precios.precioBase"
-                      value={formData.precios.precioBase}
-                      onChange={handleChange}
-                      className="input--crear"
-                      min="0"
-                      step="0.01"
-                      required
-                    />
-                    <p className="help-text--crear">
-                      Precio estándar si no aplica “copa” o “botella”.
-                    </p>
-                  </label>
-
-                  <label className="label--crear">
-                    Precio copa:
-                    <input
-                      type="number"
-                      name="precios.precioCopa"
-                      value={formData.precios.precioCopa || ""}
-                      onChange={handleChange}
-                      className="input--crear"
-                      min="0"
-                      step="0.01"
-                    />
-                    <p className="help-text--crear">
-                      Opcional. Útil para vinos o bebidas servidas por copa.
-                    </p>
-                  </label>
-
-                  <label className="label--crear">
-                    Precio botella:
-                    <input
-                      type="number"
-                      name="precios.precioBotella"
-                      value={formData.precios.precioBotella || ""}
-                      onChange={handleChange}
-                      className="input--crear"
-                      min="0"
-                      step="0.01"
-                    />
-                    <p className="help-text--crear">
-                      Opcional. Útil para vinos o bebidas vendidas por botella.
-                    </p>
-                  </label>
                 </fieldset>
               )}
             </section>
@@ -795,9 +788,9 @@ const CrearProducto = ({ onClose, onCreated, initialTipo }) => {
               {/* === VOZ (aliases) === */}
               <h4 className="subtitulo--crear">🎙️ Aliases para comandas por voz</h4>
               <p className="help-text--crear">
-                Los aliases son “subnombres” que el sistema utiliza para reconocer
+                Los aliases son "subnombres" que el sistema utiliza para reconocer
                 este producto en las comandas por voz. Añade formas habituales de
-                pedirlo (ej: “croqueta”, “croquetas de jamón”, “jamón”).
+                pedirlo (ej: "croqueta", "croquetas de jamón", "jamón").
               </p>
 
               <label className="label--editar">

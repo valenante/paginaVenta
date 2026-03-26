@@ -31,18 +31,55 @@ const ensureTraducciones = (t) => {
   };
 };
 
-const normalizePrecios = (precios) => {
-  const p = precios && typeof precios === "object" ? precios : {};
-  return {
-    // platos
-    precioBase: safeStr(p.precioBase ?? ""),
-    tapa: safeStr(p.tapa ?? ""),
-    racion: safeStr(p.racion ?? ""),
+const PRECIO_SUGGESTIONS = [
+  "precioBase", "tapa", "racion", "copa", "botella",
+  "jarra", "pincho", "medio", "unidad", "docena",
+];
 
-    // bebidas (compatibilidad: a veces guardabas copa/botella)
-    precioCopa: safeStr(p.precioCopa ?? p.copa ?? ""),
-    precioBotella: safeStr(p.precioBotella ?? p.botella ?? ""),
+/**
+ * Backward compat: convert old flat object format to new array format.
+ * If already an array, return as-is.
+ */
+const normalizePrecios = (precios) => {
+  // Already new format
+  if (Array.isArray(precios)) {
+    return precios.map((p, i) => ({
+      clave: p.clave || "",
+      label: p.label || "",
+      precio: p.precio ?? 0,
+      descripcion: p.descripcion || "",
+      orden: p.orden ?? i,
+    }));
+  }
+
+  // Old flat object format -> convert to array
+  const p = precios && typeof precios === "object" ? precios : {};
+  const arr = [];
+  let orden = 0;
+
+  const addIfPresent = (key, label) => {
+    const val = p[key];
+    if (val != null && val !== "" && val !== 0 && val !== "0") {
+      arr.push({ clave: key, label, precio: Number(val) || 0, orden: orden++ });
+    }
   };
+
+  // Always include precioBase
+  arr.push({
+    clave: "precioBase",
+    label: "Precio",
+    precio: Number(p.precioBase) || 0,
+    orden: orden++,
+  });
+
+  addIfPresent("tapa", "Tapa");
+  addIfPresent("racion", "Ración");
+  addIfPresent("precioCopa", "Copa");
+  addIfPresent("copa", "Copa");
+  addIfPresent("precioBotella", "Botella");
+  addIfPresent("botella", "Botella");
+
+  return arr.length ? arr : [{ clave: "precioBase", label: "Precio", precio: 0, orden: 0 }];
 };
 
 const EditProduct = ({
@@ -202,18 +239,32 @@ const EditProduct = ({
   // =========================
   const handleChange = (e) => {
     const { name, value } = e.target;
-
-    // precios.*
-    if (name.startsWith("precios.")) {
-      const key = name.split(".")[1];
-      setFormData((prev) => ({
-        ...prev,
-        precios: { ...prev.precios, [key]: value },
-      }));
-      return;
-    }
-
     setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handlePrecioChange = (index, field, value) => {
+    setFormData((prev) => {
+      const next = [...prev.precios];
+      next[index] = { ...next[index], [field]: value };
+      return { ...prev, precios: next };
+    });
+  };
+
+  const addPrecio = () => {
+    setFormData((prev) => ({
+      ...prev,
+      precios: [
+        ...prev.precios,
+        { clave: "", label: "", precio: 0, orden: prev.precios.length },
+      ],
+    }));
+  };
+
+  const removePrecio = (index) => {
+    setFormData((prev) => ({
+      ...prev,
+      precios: prev.precios.filter((_, i) => i !== index),
+    }));
   };
 
   const setTraduccion = (lang, campo, value) => {
@@ -280,25 +331,21 @@ const EditProduct = ({
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // ✅ construir payload final como en CrearProducto
-    const precioBase = toNumOrNull(formData.precios.precioBase) ?? 0;
-    const precioCopa = toNumOrNull(formData.precios.precioCopa) ?? 0;
-    const precioBotella = toNumOrNull(formData.precios.precioBotella) ?? 0;
-    const tapa = toNumOrNull(formData.precios.tapa) ?? 0;
-    const racion = toNumOrNull(formData.precios.racion) ?? 0;
+    // ✅ construir payload final — precios como array
+    const preciosArr = (formData.precios || []).map((p, i) => ({
+      clave: p.clave || "precioBase",
+      label: p.label || "",
+      precio: toNumOrNull(p.precio) ?? 0,
+      descripcion: p.descripcion || "",
+      orden: p.orden ?? i,
+    }));
 
-    const tienePrecio =
-      formData.tipo === "plato"
-        ? precioBase > 0 || tapa > 0 || racion > 0
-        : precioBase > 0 || precioCopa > 0 || precioBotella > 0;
+    const tienePrecio = preciosArr.some((p) => (toNumOrNull(p.precio) ?? 0) > 0);
 
     if (!tienePrecio) {
       setAlerta({
         tipo: "error",
-        mensaje:
-          formData.tipo === "plato"
-            ? "Debes indicar al menos un precio (base, tapa o ración)."
-            : "Debes indicar al menos un precio (base, copa o botella).",
+        mensaje: "Debes indicar al menos un precio.",
       });
       return;
     }
@@ -320,18 +367,8 @@ const EditProduct = ({
       seccion: formData.seccion,
       estacion: formData.estacion,
 
-      // precios normalizados
-      precios: {
-        precioBase: toNumOrNull(formData.precios.precioBase) ?? 0,
-
-        // platos
-        tapa: toNumOrNull(formData.precios.tapa),
-        racion: toNumOrNull(formData.precios.racion),
-
-        // bebidas
-        precioCopa: toNumOrNull(formData.precios.precioCopa),
-        precioBotella: toNumOrNull(formData.precios.precioBotella),
-      },
+      // precios como array dinámico
+      precios: preciosArr,
 
       traducciones: formData.traducciones,
       adicionales,
@@ -598,7 +635,7 @@ const EditProduct = ({
                     Si lo deshabilitas, <strong>no se mostrará en la carta digital</strong> para clientes,
                     pero <strong>seguirá apareciendo en el panel interno</strong> para tomar nota.
                     <br />
-                    <em>Ejemplo:</em> si hoy no tienes “Croquetas”, la deshabilitas para que no la pidan
+                    <em>Ejemplo:</em> si hoy no tienes "Croquetas", la deshabilitas para que no la pidan
                     por QR, pero el camarero aún podrá añadirla desde el TPV si decides venderlas en sala.
                   </p>
                 </label>
@@ -658,59 +695,90 @@ const EditProduct = ({
                 )}
               </div>
 
-              {/* === PRECIOS === */}
-              {formData.tipo === "plato" && (
+              {/* === PRECIOS (array dinámico) === */}
+              {formData.tipo && (
                 <fieldset className="fieldset--crear">
-                  <legend className="legend--crear">Precios plato</legend>
+                  <legend className="legend--crear">Precios</legend>
+                  <p className="help-text--crear">
+                    Agrega tantas variantes de precio como necesites (base, tapa,
+                    ración, copa, botella, etc.). La primera entrada se considera el
+                    precio principal.
+                  </p>
 
-                  <div className="form-group--crear">
-                    <label className="label--crear">
-                      Precio base:
-                      <input
-                        type="number"
-                        name="precios.precioBase"
-                        value={formData.precios.precioBase}
-                        onChange={handleChange}
-                        className="input--crear"
-                        min="0"
-                        step="0.01"
-                        required
-                      />
-                      <p className="help-text--crear">Precio estándar del producto.</p>
-                    </label>
+                  <datalist id="precio-suggestions-edit">
+                    {PRECIO_SUGGESTIONS.map((s) => (
+                      <option key={s} value={s} />
+                    ))}
+                  </datalist>
 
-                    <label className="label--crear">
-                      Precio tapa:
-                      <input
-                        type="number"
-                        name="precios.tapa"
-                        value={formData.precios.tapa || ""}
-                        onChange={handleChange}
-                        className="input--crear"
-                        min="0"
-                        step="0.01"
-                      />
-                      <p className="help-text--crear">
-                        Opcional si se vende como tapa.
-                      </p>
-                    </label>
+                  {formData.precios.map((entry, idx) => (
+                    <div key={idx} className="precio-entry-row">
+                      <label className="label--crear">
+                        Clave:
+                        <input
+                          type="text"
+                          list="precio-suggestions-edit"
+                          value={entry.clave}
+                          onChange={(e) => handlePrecioChange(idx, "clave", e.target.value)}
+                          className="input--crear"
+                          placeholder="precioBase"
+                          required
+                        />
+                      </label>
+                      <label className="label--crear">
+                        Etiqueta:
+                        <input
+                          type="text"
+                          value={entry.label}
+                          onChange={(e) => handlePrecioChange(idx, "label", e.target.value)}
+                          className="input--crear"
+                          placeholder="Precio"
+                        />
+                      </label>
+                      <label className="label--crear">
+                        Detalle:
+                        <input
+                          type="text"
+                          value={entry.descripcion || ""}
+                          onChange={(e) => handlePrecioChange(idx, "descripcion", e.target.value)}
+                          className="input--crear"
+                          placeholder="2 uds, 200g..."
+                          maxLength={100}
+                        />
+                      </label>
+                      <label className="label--crear">
+                        Precio:
+                        <input
+                          type="number"
+                          value={entry.precio}
+                          onChange={(e) => handlePrecioChange(idx, "precio", e.target.value)}
+                          className="input--crear"
+                          min="0"
+                          step="0.01"
+                          required
+                        />
+                      </label>
+                      {formData.precios.length > 1 && (
+                        <button
+                          type="button"
+                          className="btn-icon--crear"
+                          onClick={() => removePrecio(idx)}
+                          title="Eliminar precio"
+                          aria-label="Eliminar precio"
+                        >
+                          ❌
+                        </button>
+                      )}
+                    </div>
+                  ))}
 
-                    <label className="label--crear">
-                      Precio ración:
-                      <input
-                        type="number"
-                        name="precios.racion"
-                        value={formData.precios.racion || ""}
-                        onChange={handleChange}
-                        className="input--crear"
-                        min="0"
-                        step="0.01"
-                      />
-                      <p className="help-text--crear">
-                        Opcional si se vende como ración.
-                      </p>
-                    </label>
-                  </div>
+                  <button
+                    type="button"
+                    className="boton--secundario"
+                    onClick={addPrecio}
+                  >
+                    + Añadir precio
+                  </button>
 
                   <fieldset className="fieldset--crear fieldset--adicional">
                     <legend className="legend--crear">Adicional (unidad extra)</legend>
@@ -735,61 +803,6 @@ const EditProduct = ({
                       />
                     </label>
                   </fieldset>
-                </fieldset>
-              )}
-
-              {formData.tipo === "bebida" && (
-                <fieldset className="fieldset--crear">
-                  <legend className="legend--crear">Precios bebida</legend>
-
-                  <label className="label--crear">
-                    Precio base:
-                    <input
-                      type="number"
-                      name="precios.precioBase"
-                      value={formData.precios.precioBase}
-                      onChange={handleChange}
-                      className="input--crear"
-                      min="0"
-                      step="0.01"
-                      required
-                    />
-                    <p className="help-text--crear">
-                      Precio estándar si no aplica copa/botella.
-                    </p>
-                  </label>
-
-                  <label className="label--crear">
-                    Precio copa:
-                    <input
-                      type="number"
-                      name="precios.precioCopa"
-                      value={formData.precios.precioCopa || ""}
-                      onChange={handleChange}
-                      className="input--crear"
-                      min="0"
-                      step="0.01"
-                    />
-                    <p className="help-text--crear">
-                      Opcional para vinos/servicio por copa.
-                    </p>
-                  </label>
-
-                  <label className="label--crear">
-                    Precio botella:
-                    <input
-                      type="number"
-                      name="precios.precioBotella"
-                      value={formData.precios.precioBotella || ""}
-                      onChange={handleChange}
-                      className="input--crear"
-                      min="0"
-                      step="0.01"
-                    />
-                    <p className="help-text--crear">
-                      Opcional para venta por botella.
-                    </p>
-                  </label>
                 </fieldset>
               )}
             </section>
@@ -844,8 +857,8 @@ const EditProduct = ({
               {/* === VOZ (aliases) === */}
               <h4 className="subtitulo--crear">🎙️ Aliases para comandas por voz</h4>
               <p className="help-text--crear">
-                Añade formas habituales de pedirlo (ej: “croqueta”, “croquetas de
-                jamón”, “jamón”).
+                Añade formas habituales de pedirlo (ej: "croqueta", "croquetas de
+                jamón", "jamón").
               </p>
 
               <label className="label--editar">

@@ -331,6 +331,7 @@ export default function CartaConfigPage() {
       cartaPayload.mostrarDestacados = !!cartaPayload.mostrarDestacados;
       cartaPayload.mostrarPromociones = !!cartaPayload.mostrarPromociones;
       cartaPayload.mostrarIconosCategorias = !!cartaPayload.mostrarIconosCategorias;
+      cartaPayload.mostrarPreciosCarrito = cartaPayload.mostrarPreciosCarrito !== false;
 
       const payload = {
         informacionRestaurante: {

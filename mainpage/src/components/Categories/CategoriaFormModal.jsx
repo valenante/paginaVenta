@@ -18,6 +18,14 @@ const ICONOS_SUGERIDOS = [
   "🧁", "🍦", "🍩", "🍫", "🎂",
 ];
 
+const getFirstPrice = (precios) => {
+  if (Array.isArray(precios)) {
+    const sorted = [...precios].sort((a, b) => (a.orden ?? 0) - (b.orden ?? 0));
+    return sorted[0]?.precio ?? 0;
+  }
+  return precios?.precioBase ?? 0;
+};
+
 const CategoriaFormModal = ({ categoria, tipo, onClose, onSave }) => {
   const isEdit = !!categoria;
 
@@ -334,7 +342,7 @@ const CategoriaFormModal = ({ categoria, tipo, onClose, onSave }) => {
                       >
                         <span className="catmodal-product-name">{p.nombre}</span>
                         <span className="catmodal-product-price">
-                          {Number(p.precios?.precioBase || 0).toFixed(2)} €
+                          {Number(getFirstPrice(p.precios)).toFixed(2)} €
                         </span>
                       </button>
                     ))

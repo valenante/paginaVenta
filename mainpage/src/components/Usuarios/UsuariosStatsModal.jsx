@@ -63,12 +63,13 @@ const UsuarioStatsModal = ({ usuario, onClose }) => {
           params.hasta = hasta;
         }
 
-        const { data } = await api.get(
+        const resp = await api.get(
           `/admin/usuarios/${usuario._id}/estadisticas`,
           { params }
         );
 
-        if (!cancelado) setStats(data);
+        // sendOk wraps: { ok, data: payload } — unwrap
+        if (!cancelado) setStats(resp.data?.data ?? resp.data);
       } catch (err) {
         logger.error("Error stats usuario:", err);
         if (!cancelado) {

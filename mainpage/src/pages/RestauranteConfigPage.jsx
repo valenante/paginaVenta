@@ -310,6 +310,7 @@ export default function RestauranteConfigPage() {
               (confirm.mode === "save" ? "Aplicar configuración general" : "Rollback desde panel");
 
             const mode = confirm.mode;
+            console.log("[CONFIG] Modal confirmed, mode:", mode, "reason:", r);
             setConfirm(null);
 
             if (mode === "save") handleSave(r);

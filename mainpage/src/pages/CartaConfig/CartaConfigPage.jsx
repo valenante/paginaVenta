@@ -702,9 +702,7 @@ export default function CartaConfigPage() {
             <div className="embedded-section-reset">
               <CartaOrdenSection
                 form={form}
-                setForm={setForm}
                 handleChange={handleChange}
-                showAlert={showAlert}
               />
             </div>
           </section>

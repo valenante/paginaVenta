@@ -1,121 +1,8 @@
-import React, { useEffect, useMemo, useState, useCallback } from "react";
-import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
-import { useCategorias } from "../../context/CategoriasContext";
-import api from "../../utils/api";
+import React from "react";
 import "./CartaOrdenSection.css";
 
-const TABS = [
-  { key: "platos", label: "🍽 Platos", tipo: "plato" },
-  { key: "bebidas", label: "🍷 Bebidas", tipo: "bebida" },
-];
-
-export default function CartaOrdenSection({ form, setForm, handleChange, showAlert }) {
-  const [tab, setTab] = useState("platos");
-
-  const { categoryObjectsByTipo, fetchCategoryObjects } = useCategorias();
-
-  // Cargar ambos tipos al montar
-  useEffect(() => {
-    fetchCategoryObjects("plato");
-    fetchCategoryObjects("bebida");
-  }, [fetchCategoryObjects]);
-
-  // Tipo backend correspondiente al tab
-  const tipoActual = TABS.find((t) => t.key === tab)?.tipo || "plato";
-
-  // Categorías ordenadas desde el contexto compartido
-  const catObjects = categoryObjectsByTipo[tipoActual] || [];
-  const ordenVisual = useMemo(
-    () => catObjects.map((c) => ({ _id: c._id, nombre: c.nombre })),
-    [catObjects]
-  );
-
+export default function CartaOrdenSection({ form, handleChange }) {
   const modoOrden = form?.carta?.modoOrden || "por_categoria";
-
-  // Sincronizar form.carta.ordenCategorias cuando cambia el contexto
-  useEffect(() => {
-    if (catObjects.length === 0) return;
-    const nombres = catObjects.map((c) => c.nombre);
-    setForm((prev) => ({
-      ...prev,
-      carta: {
-        ...(prev.carta || {}),
-        ordenCategorias: {
-          ...(prev.carta?.ordenCategorias || {}),
-          [tab]: nombres,
-        },
-      },
-    }));
-  }, [catObjects, tab, setForm]);
-
-  const onDragEnd = useCallback(
-    async ({ source, destination }) => {
-      if (!destination) return;
-      if (source.index === destination.index) return;
-
-      const clone = [...ordenVisual];
-      const [moved] = clone.splice(source.index, 1);
-      clone.splice(destination.index, 0, moved);
-
-      const ordenPayload = clone.map((cat, i) => ({
-        _id: cat._id,
-        orden: i,
-      }));
-
-      // Actualizar form para que se guarde con la config
-      setForm((prev) => ({
-        ...prev,
-        carta: {
-          ...(prev.carta || {}),
-          ordenCategorias: {
-            ...(prev.carta?.ordenCategorias || {}),
-            [tab]: clone.map((c) => c.nombre),
-          },
-        },
-      }));
-
-      // Persistir en backend y refrescar contexto (sincroniza con CategoriasPanel)
-      try {
-        await api.put("/categorias/reordenar", { orden: ordenPayload }, { withCredentials: true });
-        fetchCategoryObjects(tipoActual, { force: true });
-      } catch {
-        fetchCategoryObjects(tipoActual, { force: true });
-        showAlert?.("error", "No se pudo guardar el orden.");
-      }
-    },
-    [ordenVisual, tab, tipoActual, setForm, fetchCategoryObjects, showAlert]
-  );
-
-  const resetOrden = useCallback(async () => {
-    const sorted = [...catObjects].sort((a, b) =>
-      a.nombre.localeCompare(b.nombre, "es")
-    );
-
-    const ordenPayload = sorted.map((cat, i) => ({
-      _id: cat._id,
-      orden: i,
-    }));
-
-    setForm((prev) => ({
-      ...prev,
-      carta: {
-        ...(prev.carta || {}),
-        ordenCategorias: {
-          ...(prev.carta?.ordenCategorias || {}),
-          [tab]: sorted.map((c) => c.nombre),
-        },
-      },
-    }));
-
-    try {
-      await api.put("/categorias/reordenar", { orden: ordenPayload }, { withCredentials: true });
-      fetchCategoryObjects(tipoActual, { force: true });
-      showAlert?.("info", `Orden de ${tab} reseteado (A-Z).`);
-    } catch {
-      fetchCategoryObjects(tipoActual, { force: true });
-      showAlert?.("error", "No se pudo resetear el orden.");
-    }
-  }, [catObjects, tab, tipoActual, setForm, fetchCategoryObjects, showAlert]);
 
   return (
     <section className="config-section">
@@ -189,9 +76,6 @@ export default function CartaOrdenSection({ form, setForm, handleChange, showAle
           <option value="alfabetico">Alfabético (A-Z)</option>
           <option value="precio_asc">Precio: de menor a mayor</option>
           <option value="precio_desc">Precio: de mayor a menor</option>
-          <option value="personalizado">
-            Personalizado (por orden de categorías)
-          </option>
         </select>
       </div>
 
@@ -222,89 +106,6 @@ export default function CartaOrdenSection({ form, setForm, handleChange, showAle
           </select>
         </div>
       </div>
-
-      {/* 🆕 Orden por categorías (solo si personalizado) */}
-      {modoOrden === "personalizado" && (
-        <div className="config-field">
-          <div className="carta-orden carta-orden__box">
-            <div className="carta-orden__label">
-              <span>Orden de categorías (arrastrar y soltar)</span>
-              <p className="carta-orden__help">
-                Este orden se aplica a la carta del cliente cuando el modo es “Personalizado”.
-              </p>
-            </div>
-
-            <div className="carta-orden__tabs">
-              {TABS.map((t) => (
-                <button
-                  key={t.key}
-                  type="button"
-                  className={`carta-orden__tab ${tab === t.key ? "is-active" : ""}`}
-                  onClick={() => setTab(t.key)}
-                >
-                  {t.label}
-                </button>
-              ))}
-
-              <button
-                type="button"
-                className="carta-orden__reset"
-                onClick={resetOrden}
-                disabled={catObjects.length === 0}
-                title="Ordenar A-Z"
-              >
-                ↺ Reset A-Z
-              </button>
-            </div>
-
-            {ordenVisual.length === 0 ? (
-              <div className="carta-orden__state">
-                No hay categorías detectadas para {tab}.
-              </div>
-            ) : (
-              <DragDropContext onDragEnd={onDragEnd}>
-                <Droppable droppableId="ordenCategorias">
-                  {(provided) => (
-                    <div
-                      ref={provided.innerRef}
-                      {...provided.droppableProps}
-                      className="carta-orden__dnd"
-                    >
-                      {ordenVisual.map((cat, index) => (
-                        <Draggable key={cat._id} draggableId={cat._id} index={index}>
-                          {(p) => (
-                            <div
-                              ref={p.innerRef}
-                              {...p.draggableProps}
-                              className="carta-orden__item"
-                              style={p.draggableProps.style}
-                            >
-                              <div
-                                className="carta-orden__item-left"
-                                {...p.dragHandleProps}
-                              >
-                                <span className="carta-orden__index">
-                                  {index + 1}
-                                </span>
-                                <span className="carta-orden__name">{cat.nombre}</span>
-                              </div>
-
-                              <span className="carta-orden__grip" aria-hidden>
-                                ⠿
-                              </span>
-                            </div>
-                          )}
-                        </Draggable>
-                      ))}
-                      {provided.placeholder}
-                    </div>
-                  )}
-                </Droppable>
-              </DragDropContext>
-            )}
-          </div>
-        </div>
-      )}
     </section>
   );
 }

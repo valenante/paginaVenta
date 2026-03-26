@@ -1,5 +1,6 @@
 // src/components/Categories/CategoriasPanel.jsx
 import React, { useState, useEffect, useCallback } from "react";
+import { createPortal } from "react-dom";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import CategoriaFormModal from "./CategoriaFormModal";
 import CrearProducto from "./CrearProducto";
@@ -385,40 +386,44 @@ const CategoriasPanel = ({ onBack }) => {
                                         draggableId={`prod-${prod._id}`}
                                         index={prodIndex}
                                       >
-                                        {(pp, ps) => (
-                                          <div
-                                            ref={pp.innerRef}
-                                            {...pp.draggableProps}
-                                            {...pp.dragHandleProps}
-                                            className={`catpanel-product ${ps.isDragging ? "catpanel-product--dragging" : ""}`}
-                                            style={pp.draggableProps.style}
-                                          >
-                                            <span className="catpanel-product-grip">⠿</span>
-                                            <div className="catpanel-product-info">
-                                              <span className="catpanel-product-nombre">{prod.nombre}</span>
-                                              {prod.descripcion && (
-                                                <span className="catpanel-product-desc">{prod.descripcion}</span>
-                                              )}
-                                            </div>
-                                            <div className="catpanel-product-meta">
-                                              {prod.precios?.precioBase != null && (
-                                                <span className="catpanel-product-price">
-                                                  {Number(prod.precios.precioBase).toFixed(2)} €
-                                                </span>
-                                              )}
-                                              <span className={`catpanel-product-estado ${prod.estado === "habilitado" ? "catpanel-product-estado--on" : "catpanel-product-estado--off"}`}>
-                                                {prod.estado === "habilitado" ? "Visible" : "Oculto"}
-                                              </span>
-                                            </div>
-                                            <button
-                                              type="button"
-                                              className="catpanel-action-btn"
-                                              onClick={() => setEditingProduct(prod)}
+                                        {(pp, ps) => {
+                                          const node = (
+                                            <div
+                                              ref={pp.innerRef}
+                                              {...pp.draggableProps}
+                                              {...pp.dragHandleProps}
+                                              className={`catpanel-product ${ps.isDragging ? "catpanel-product--dragging" : ""}`}
+                                              style={pp.draggableProps.style}
                                             >
-                                              Editar
-                                            </button>
-                                          </div>
-                                        )}
+                                              <span className="catpanel-product-grip">⠿</span>
+                                              <div className="catpanel-product-info">
+                                                <span className="catpanel-product-nombre">{prod.nombre}</span>
+                                                {prod.descripcion && (
+                                                  <span className="catpanel-product-desc">{prod.descripcion}</span>
+                                                )}
+                                              </div>
+                                              <div className="catpanel-product-meta">
+                                                {prod.precios?.precioBase != null && (
+                                                  <span className="catpanel-product-price">
+                                                    {Number(prod.precios.precioBase).toFixed(2)} €
+                                                  </span>
+                                                )}
+                                                <span className={`catpanel-product-estado ${prod.estado === "habilitado" ? "catpanel-product-estado--on" : "catpanel-product-estado--off"}`}>
+                                                  {prod.estado === "habilitado" ? "Visible" : "Oculto"}
+                                                </span>
+                                              </div>
+                                              <button
+                                                type="button"
+                                                className="catpanel-action-btn"
+                                                onClick={() => setEditingProduct(prod)}
+                                              >
+                                                Editar
+                                              </button>
+                                            </div>
+                                          );
+                                          // Portal while dragging: avoids offset caused by parent Draggable transforms
+                                          return ps.isDragging ? createPortal(node, document.body) : node;
+                                        }}
                                       </Draggable>
                                     ))
                                   )}

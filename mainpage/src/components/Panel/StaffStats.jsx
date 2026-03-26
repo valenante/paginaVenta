@@ -44,8 +44,9 @@ export default function StaffStats() {
         ]);
 
         if (!cancelado) {
-          setActual(actualRes.data);
-          setAnterior(anteriorRes.data);
+          // sendOk wraps: { ok, data: payload } — unwrap
+          setActual(actualRes.data?.data ?? actualRes.data);
+          setAnterior(anteriorRes.data?.data ?? anteriorRes.data);
         }
       } catch (err) {
         logger.error("Error cargando estadísticas de staff:", err);

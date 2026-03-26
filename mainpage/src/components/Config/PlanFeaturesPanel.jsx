@@ -231,6 +231,41 @@ export default function PlanFeaturesPanel({ onAlert }) {
                             )}
                         </div>
                     ))}
+
+                    {/* === Pitidos de impresora === */}
+                    <div className="features-cat">
+                        <button
+                            type="button"
+                            className="features-cat-header"
+                            onClick={() => toggleCat("__pitidos")}
+                        >
+                            <span className="features-cat-title">
+                                Pitidos de impresora <span className="features-cat-count">(2)</span>
+                            </span>
+                            <span className="features-cat-chevron">{openCats["__pitidos"] ? "▾" : "▸"}</span>
+                        </button>
+
+                        {openCats["__pitidos"] && (
+                            <div className="feature-grid">
+                                <label className="feature-item">
+                                    <input
+                                        type="checkbox"
+                                        checked={Boolean(getConfigValue(config, "impresion.pitidoNuevoPedidoCocina"))}
+                                        onChange={(e) => handleFeatureUpdate("impresion.pitidoNuevoPedidoCocina", e.target.checked)}
+                                    />
+                                    <span>Pitido nuevo pedido — Cocina</span>
+                                </label>
+                                <label className="feature-item">
+                                    <input
+                                        type="checkbox"
+                                        checked={Boolean(getConfigValue(config, "impresion.pitidoNuevoPedidoBarra"))}
+                                        onChange={(e) => handleFeatureUpdate("impresion.pitidoNuevoPedidoBarra", e.target.checked)}
+                                    />
+                                    <span>Pitido nuevo pedido — Barra</span>
+                                </label>
+                            </div>
+                        )}
+                    </div>
                 </div>
             )}
         </section>

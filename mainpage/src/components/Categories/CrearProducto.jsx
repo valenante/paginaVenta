@@ -63,6 +63,7 @@ const CrearProducto = ({ onClose, onCreated, initialTipo }) => {
     receta: [],
     stock: 0,
     controlStock: false,
+    imprimirSiempre: false,
   });
   const [ingredientesStock, setIngredientesStock] = useState([]);
 
@@ -186,6 +187,7 @@ const CrearProducto = ({ onClose, onCreated, initialTipo }) => {
     const productData = { ...formData };
     productData.stock = Number(productData.stock) || 0;
     productData.controlStock = !!productData.controlStock;
+    productData.imprimirSiempre = !!productData.imprimirSiempre;
 
     if (productData.tipo === "plato") {
       delete productData.conHielo;
@@ -876,6 +878,28 @@ const CrearProducto = ({ onClose, onCreated, initialTipo }) => {
                   />
                 </label>
               )}
+            </div>
+
+            <div className="stock-directo-row--crear" style={{ marginTop: "12px" }}>
+              <label className="toggle-stock--crear">
+                <input
+                  type="checkbox"
+                  checked={!!formData.imprimirSiempre}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      imprimirSiempre: e.target.checked,
+                    }))
+                  }
+                />
+                <span className="toggle-stock-label--crear">
+                  Imprimir siempre
+                </span>
+              </label>
+              <p className="help-text--crear" style={{ marginTop: "4px" }}>
+                Si la impresion de pedidos esta desactivada para cocina o barra,
+                este producto se seguira imprimiendo igualmente.
+              </p>
             </div>
           </fieldset>
 

@@ -124,6 +124,8 @@ const EditProduct = ({
       // stock directo
       stock: product?.stock ?? 0,
       controlStock: product?.controlStock ?? false,
+
+      imprimirSiempre: product?.imprimirSiempre ?? false,
     };
   }, [product]);
 
@@ -342,6 +344,8 @@ const EditProduct = ({
       // stock directo
       stock: Number(formData.stock) || 0,
       controlStock: !!formData.controlStock,
+
+      imprimirSiempre: !!formData.imprimirSiempre,
 
       // imagen (si se subió una nueva)
       img: formData.img || undefined,
@@ -910,6 +914,28 @@ const EditProduct = ({
                   />
                 </label>
               )}
+            </div>
+
+            <div className="stock-directo-row--crear" style={{ marginTop: "12px" }}>
+              <label className="toggle-stock--crear">
+                <input
+                  type="checkbox"
+                  checked={!!formData.imprimirSiempre}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      imprimirSiempre: e.target.checked,
+                    }))
+                  }
+                />
+                <span className="toggle-stock-label--crear">
+                  Imprimir siempre
+                </span>
+              </label>
+              <p className="help-text--crear" style={{ marginTop: "4px" }}>
+                Si la impresion de pedidos esta desactivada para cocina o barra,
+                este producto se seguira imprimiendo igualmente.
+              </p>
             </div>
           </fieldset>
 

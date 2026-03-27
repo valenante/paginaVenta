@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import LightSelect from "./LightSelect";
 import { useRoles } from "../../hooks/useRoles";
 import "./UsuarioEditModal.css";
 
@@ -131,42 +132,25 @@ export default function UsuarioEditModal({
 
           {/* Rol */}
           <div className="userEditModal-field">
-            <label>Rol</label>
-            <select
+            <LightSelect
+              label="Rol"
+              placeholder="Selecciona rol"
               value={form.role}
-              onChange={(e) =>
-                setForm((p) => ({
-                  ...p,
-                  role: e.target.value,
-                }))
-              }
-            >
-              <option value="">--</option>
-              {roles.map((r) => (
-                <option key={r.value} value={r.value}>
-                  {r.label}
-                </option>
-              ))}
-            </select>
+              onChange={(v) => setForm((p) => ({ ...p, role: v }))}
+              options={roles}
+            />
             {errors.role && <p className="userEditModal-error">{errors.role}</p>}
           </div>
 
           {/* Estación */}
           <div className="userEditModal-field">
-            <label>Estación</label>
-            <select
+            <LightSelect
+              label="Estación"
+              placeholder="Sin estación"
               value={form.estacion}
-              onChange={(e) =>
-                setForm((p) => ({ ...p, estacion: e.target.value }))
-              }
-            >
-              <option value="">Sin estación</option>
-              {estaciones.map((est) => (
-                <option key={est.value} value={est.value}>
-                  {est.label}
-                </option>
-              ))}
-            </select>
+              onChange={(v) => setForm((p) => ({ ...p, estacion: v }))}
+              options={estaciones}
+            />
           </div>
 
           {/* Error servidor */}

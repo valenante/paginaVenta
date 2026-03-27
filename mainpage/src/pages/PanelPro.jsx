@@ -6,21 +6,21 @@ import "../styles/PanelPro.css";
 // ✅ Restaurante
 import EstadisticasPage from "./EstadisticasPage";
 import CajaDiaria from "../components/CajaDiariaUltraPro/CajaDiariaUltraPro";
-import UsuariosPage from "../components/Usuarios/UsuariosPage";
 import MapaEditor from "./MapaEditor";
 import ProductsMenu from "./ProductsMenu";
 import StockPage from "./StockPage";
 import ValoracionesPanel from "./ValoracionesPanel";
-import RolesPermisosPanel from "../components/RolesPermisos/RolesPermisosPanel";
 
 // ✅ Tienda
 import VentasPageShop from "./VentasPageShop";
 import ProductosPageShop from "./ProductosPageShop";
 import StockPageShop from "./StockPageShop";
-import UsuariosShopPage from "../components/UsuariosShop/UsuariosShopPage";
 
 // ✅ Staff (integrado como tab operativo)
 import StaffPanel from "./panel/StaffPanel";
+
+// ✅ Cortesias (invitaciones + comida personal)
+import CortesiasPage from "../components/Cortesias/CortesiasPage";
 
 // ✅ Tenant + Auth
 import { useTenant } from "../context/TenantContext";
@@ -30,18 +30,15 @@ const PANEL_BY_TIPO = {
   restaurante: [
     { key: "mapa", label: "🗺️ Mapa del restaurante", permiso: "mapa.manage", render: () => <MapaEditor /> },
     { key: "productos", label: "🧾 Carta y productos", permiso: "productos.manage", render: () => <ProductsMenu /> },
-    { key: "usuarios", label: "👥 Usuarios", permiso: "usuarios.manage", render: () => <UsuariosPage /> },
-    { key: "roles", label: "🔐 Roles y Permisos", permiso: "roles.manage", render: () => <RolesPermisosPanel /> },
     { key: "caja", label: "💶 Caja diaria", permiso: "caja.manage", render: () => <CajaDiaria /> },
     { key: "stock", label: "📦 Stock", permiso: "stock.manage", render: () => <StockPage /> },
     { key: "valoraciones", label: "⭐ Valoraciones", permiso: "valoraciones.manage", render: () => <ValoracionesPanel /> },
     { key: "estadisticas", label: "📊 Estadísticas", permiso: "estadisticas.manage", render: () => <EstadisticasPage type="plato" /> },
+    { key: "cortesias", label: "🎁 Cortesias", permiso: null, render: () => <CortesiasPage /> },
   ],
 
   shop: [
     { key: "productos", label: "🏷️ Productos", permiso: "productos.manage", render: () => <ProductosPageShop /> },
-    { key: "usuarios", label: "👥 Usuarios", permiso: "usuarios.manage", render: () => <UsuariosShopPage /> },
-    { key: "roles", label: "🔐 Roles y Permisos", permiso: "roles.manage", render: () => <RolesPermisosPanel /> },
     { key: "caja", label: "💶 Caja", permiso: "caja.manage", render: () => <CajaDiaria /> },
     { key: "stock", label: "📦 Stock", permiso: "stock.manage", render: () => <StockPageShop /> },
     { key: "ventas", label: "📈 Ventas", permiso: "ventas.manage", render: () => <VentasPageShop /> },

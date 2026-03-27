@@ -1,189 +1,283 @@
-/*****************************************************
- * Modal promociones – Overlay
- *****************************************************/
+/* =========================================================
+   PROMOCIONES PANEL — Alef Professional SaaS
+   ========================================================= */
 
+/* ===== Overlay ===== */
 .modal-overlay-promos {
   position: fixed;
   inset: 0;
   z-index: 50;
-  background: rgba(15, 23, 42, 0.45);
-
+  background: rgba(15, 23, 42, 0.18);
+  backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 1.5rem;
+  animation: promosFadeIn 0.15s ease-out;
 }
 
-/*****************************************************
- * Modal principal
- *****************************************************/
+@keyframes promosFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
 
+/* ===== Modal Card ===== */
 .modal-promos {
   background: #ffffff;
-  border-radius: var(--radius-lg);
-  padding: var(--space-lg);
+  border-radius: var(--radius-lg, 16px);
   width: 100%;
-  max-width: 960px;
-  max-height: 90vh;
-
+  max-width: 920px;
+  max-height: 88vh;
   display: flex;
   flex-direction: column;
-  box-shadow: var(--shadow-lg);
+  box-shadow: var(--shadow-lg, 0 20px 60px rgba(0, 0, 0, 0.1));
+  border: 1px solid #e2e8f0;
+  overflow: hidden;
+  animation: promosSlideUp 0.2s ease-out;
 }
 
-/*****************************************************
- * Header del modal
- *****************************************************/
+@keyframes promosSlideUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
 
+/* ===== Header ===== */
 .modal-promos-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: var(--space-md);
-  margin-bottom: var(--space-md);
+  gap: 1rem;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid #e2e8f0;
+  background: #ffffff;
 }
 
 .modal-promos-header h3 {
-  margin: 0 0 var(--space-xs);
-  font-size: var(--font-size-lg);
-  color: var(--color-primario);
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #0f172a;
 }
 
 .modal-promos-header p {
-  margin: 0;
-  font-size: var(--font-size-sm);
-  color: var(--color-texto-suave);
+  margin: 0.25rem 0 0;
+  font-size: 0.85rem;
+  color: #64748b;
+  line-height: 1.4;
 }
 
 .modal-promos-header .btn-icon {
   background: transparent;
   border: none;
-  font-size: var(--font-size-md);
+  font-size: 1.1rem;
   cursor: pointer;
-  line-height: 1;
+  color: #94a3b8;
+  padding: 0.25rem;
+  border-radius: 8px;
+  transition: all 0.15s;
 }
 
-/*****************************************************
- * Panel contenido
- *****************************************************/
+.modal-promos-header .btn-icon:hover {
+  background: rgba(0, 0, 0, 0.04);
+  color: #0f172a;
+}
 
+/* ===== Content ===== */
 .panel-promos {
-  display: grid;
-  gap: var(--space-lg);
-  overflow: hidden;
-}
-
-/*****************************************************
- * Selector de tipo (pills)
- *****************************************************/
-
-.promo-tipos {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-xs);
-}
-
-/*****************************************************
- * Filtro por categoría
- *****************************************************/
-
-.promo-categorias {
   display: flex;
   flex-direction: column;
-  gap: var(--space-xs);
+  gap: 1rem;
+  padding: 1.25rem 1.5rem;
+  overflow: hidden;
+  flex: 1;
+}
+
+/* ===== Type Pills ===== */
+.promo-tipos {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.promo-tipos .pill {
+  padding: 0.45rem 1rem;
+  border-radius: var(--radius-pill, 999px);
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  color: #64748b;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.promo-tipos .pill:hover {
+  border-color: var(--color-primario, #6a0dad);
+  color: var(--color-primario, #6a0dad);
+}
+
+.promo-tipos .pill.active {
+  background: var(--color-primario, #6a0dad);
+  border-color: var(--color-primario, #6a0dad);
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(106, 13, 173, 0.2);
+}
+
+/* ===== Category Filter ===== */
+.promo-categorias {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
 }
 
 .promo-categorias label {
-  font-size: var(--font-size-sm);
-  font-weight: 600;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
 }
 
 .promo-categorias select {
-  padding: 0.55rem 0.7rem;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--color-borde-suave);
-  font-size: var(--font-size-sm);
+  flex: 1;
+  max-width: 280px;
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--radius-md, 10px);
+  border: 1px solid #e2e8f0;
+  font-size: 0.85rem;
+  color: #0f172a;
+  background: #ffffff;
+  outline: none;
+  transition: border-color 0.15s;
 }
 
-/*****************************************************
- * Lista de productos
- *****************************************************/
+.promo-categorias select:focus {
+  border-color: var(--color-primario, #6a0dad);
+  box-shadow: 0 0 0 3px rgba(106, 13, 173, 0.1);
+}
 
+/* ===== Product List ===== */
 .promo-lista {
-  border: 1px solid var(--color-borde-suave);
-  border-radius: var(--radius-md);
-  background: #ffffff;
-  padding: var(--space-md);
-
-  max-height: 55vh;
+  flex: 1;
   overflow-y: auto;
+  border: 1px solid #e2e8f0;
+  border-radius: var(--radius-md, 10px);
+  background: #fafbfc;
+}
+
+.promo-lista > p {
+  padding: 2rem;
+  text-align: center;
+  color: #94a3b8;
+  font-size: 0.9rem;
+  margin: 0;
 }
 
 .promo-lista ul {
   list-style: none;
   padding: 0;
   margin: 0;
-
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-xs);
 }
 
+/* ===== Product Row ===== */
 .promo-item {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  gap: var(--space-md);
-
-  padding: var(--space-sm) var(--space-md);
-  border-radius: var(--radius-md);
-  border: 1px solid var(--color-borde-suave);
-  background: #f9fafb;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #f1f5f9;
+  transition: background 0.12s;
 }
 
-.promo-item span {
-  font-size: var(--font-size-sm);
+.promo-item:last-child {
+  border-bottom: none;
+}
+
+.promo-item:hover {
+  background: rgba(106, 13, 173, 0.02);
+}
+
+.promo-item > span {
+  font-size: 0.88rem;
   font-weight: 500;
+  color: #0f172a;
   flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-/*****************************************************
- * Toggles
- *****************************************************/
-
+/* ===== Toggle Controls ===== */
 .promo-toggles {
   display: flex;
-  flex-direction: column;
-  gap: var(--space-xs);
+  gap: 0.75rem;
   flex-shrink: 0;
 }
 
 .promo-toggles label {
   display: flex;
   align-items: center;
-  gap: var(--space-sm);
-  font-size: var(--font-size-xs);
+  gap: 0.4rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #64748b;
+  cursor: pointer;
+  white-space: nowrap;
+  padding: 0.3rem 0.6rem;
+  border-radius: var(--radius-pill, 999px);
+  border: 1px solid transparent;
+  transition: all 0.15s;
+}
+
+.promo-toggles label:hover {
+  background: rgba(106, 13, 173, 0.04);
+  border-color: #e2e8f0;
 }
 
 .promo-toggles input[type="checkbox"] {
   width: 16px;
   height: 16px;
   cursor: pointer;
+  accent-color: var(--color-primario, #6a0dad);
 }
 
-/*****************************************************
- * Responsive
- *****************************************************/
-
+/* ===== Responsive ===== */
 @media (max-width: 768px) {
+  .modal-overlay-promos {
+    padding: 0;
+  }
+
   .modal-promos {
-    width: 100%;
     max-width: 100%;
-    height: 90vh;
-    max-height: 90vh;
+    max-height: 100vh;
+    height: 100vh;
     border-radius: 0;
   }
 
-  .promo-lista {
-    max-height: 45vh;
+  .promo-item {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+  }
+
+  .promo-toggles {
+    justify-content: flex-end;
+  }
+}
+
+@media (max-width: 480px) {
+  .modal-promos-header {
+    padding: 1rem;
+  }
+
+  .panel-promos {
+    padding: 1rem;
+  }
+
+  .promo-tipos .pill {
+    padding: 0.4rem 0.75rem;
+    font-size: 0.78rem;
   }
 }

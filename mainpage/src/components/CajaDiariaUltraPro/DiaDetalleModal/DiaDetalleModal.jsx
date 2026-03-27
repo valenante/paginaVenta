@@ -1,13 +1,6 @@
 import React from "react";
+import { formatFechaUI } from "../cajaHelpers";
 import "./DiaDetalleModal.css";
-
-const formatFechaUI = (iso) => {
-  if (!iso) return "—";
-  const d = new Date(`${iso}T00:00:00`);
-  return Number.isNaN(d.getTime())
-    ? "—"
-    : d.toLocaleDateString("es-ES");
-};
 
 export default function DiaDetalleModal({ dia, onClose }) {
   if (!dia) return null;

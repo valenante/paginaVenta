@@ -1,11 +1,12 @@
 import React, { useEffect, useMemo, useState } from "react";
 import "./EditarMesa.css";
 
-export default function ModalEditarMesa({ mesa, onClose, onSave, onDelete }) {
+export default function ModalEditarMesa({ mesa, mesas = [], onClose, onSave, onDelete }) {
   const [numero, setNumero] = useState(String(mesa.numero ?? ""));
   const [zona, setZona] = useState(mesa.zona ?? "interior");
   const [error, setError] = useState("");
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   const numeroLimpio = useMemo(() => numero.trim(), [numero]);
 
@@ -23,10 +24,20 @@ export default function ModalEditarMesa({ mesa, onClose, onSave, onDelete }) {
     if (!/^\d+$/.test(numeroLimpio)) {
       return "El número debe ser un valor numérico (por ejemplo: 12).";
     }
+
+    // Validar unicidad en frontend (contra lista de mesas conocidas)
+    const num = Number(numeroLimpio);
+    if (num !== mesa.numero) {
+      const duplicada = mesas.find((m) => m.numero === num && m._id !== mesa._id);
+      if (duplicada) {
+        return `Ya existe una mesa con el número ${num}.`;
+      }
+    }
+
     return "";
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     const msg = validar();
     if (msg) {
       setError(msg);
@@ -34,19 +45,39 @@ export default function ModalEditarMesa({ mesa, onClose, onSave, onDelete }) {
     }
 
     setError("");
-    onSave?.({
-      numero: Number(numeroLimpio),
-      zona,
-    });
+    setSaving(true);
+
+    try {
+      await onSave?.({
+        numero: Number(numeroLimpio),
+        zona,
+      });
+      // onSave cierra el modal si tiene éxito (desde MapaEditor)
+    } catch (err) {
+      setError(err?.message || "Error al guardar cambios.");
+    } finally {
+      setSaving(false);
+    }
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (!confirmDelete) {
       setConfirmDelete(true);
       return;
     }
 
-    onDelete?.(mesa._id);
+    setError("");
+    setSaving(true);
+
+    try {
+      await onDelete?.(mesa._id);
+      // onDelete cierra el modal si tiene éxito (desde MapaEditor)
+    } catch (err) {
+      setError(err?.message || "Error al eliminar mesa.");
+      setConfirmDelete(false);
+    } finally {
+      setSaving(false);
+    }
   };
 
   const zonaLabel = (z) => {
@@ -103,6 +134,7 @@ export default function ModalEditarMesa({ mesa, onClose, onSave, onDelete }) {
             inputMode="numeric"
             placeholder="Ej: 12"
             className={`modal-input-editar ${error ? "is-error-editar" : ""}`}
+            disabled={saving}
           />
 
           <label className="modal-label-editar">
@@ -119,6 +151,7 @@ export default function ModalEditarMesa({ mesa, onClose, onSave, onDelete }) {
               if (confirmDelete) setConfirmDelete(false);
             }}
             className="modal-select-editar"
+            disabled={saving}
           >
             <option value="interior">Interior</option>
             <option value="exterior">Terraza</option>
@@ -136,19 +169,20 @@ export default function ModalEditarMesa({ mesa, onClose, onSave, onDelete }) {
         </div>
 
         <div className="modal-botones-editar">
-          <button className="btn-guardar-editar" onClick={handleSave}>
-            Guardar cambios
+          <button className="btn-guardar-editar" onClick={handleSave} disabled={saving}>
+            {saving ? "Guardando..." : "Guardar cambios"}
           </button>
 
           <button
             className={`btn-eliminar-editar ${confirmDelete ? "is-confirm-editar" : ""}`}
             onClick={handleDelete}
+            disabled={saving}
             title="Eliminar mesa"
           >
             {confirmDelete ? "Confirmar eliminar" : "Eliminar"}
           </button>
 
-          <button className="btn-cerrar-editar" onClick={onClose}>
+          <button className="btn-cerrar-editar" onClick={onClose} disabled={saving}>
             Cerrar
           </button>
         </div>

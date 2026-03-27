@@ -1,30 +1,16 @@
 // src/components/Categories/CategoriaFormModal.jsx
 import React, { useState, useEffect, useCallback } from "react";
 import Portal from "../ui/Portal";
-import EditProduct from "./EditProducts";
-import { useCategorias } from "../../context/CategoriasContext";
-import api from "../../utils/api";
 import "./CategoriaFormModal.css";
 
 const ICONOS_SUGERIDOS = [
-  // Platos
   "🍽️", "🍕", "🍔", "🥗", "🍣", "🍰", "🍝", "🥘",
   "🫕", "🍖", "🥩", "🐟", "🍤", "🧀", "🥖", "🌮",
   "🥟", "🧆", "🫓", "🥙", "🍢", "🫔", "🥮", "🍳",
-  // Bebidas
   "🥂", "🍷", "🍺", "🍻", "🥤", "☕", "🫖", "🍵",
   "🧃", "🥛", "🍶", "🧊", "🍹", "🍸", "🫗", "💧",
-  // Postres / dulce
   "🧁", "🍦", "🍩", "🍫", "🎂",
 ];
-
-const getFirstPrice = (precios) => {
-  if (Array.isArray(precios)) {
-    const sorted = [...precios].sort((a, b) => (a.orden ?? 0) - (b.orden ?? 0));
-    return sorted[0]?.precio ?? 0;
-  }
-  return precios?.precioBase ?? 0;
-};
 
 const CategoriaFormModal = ({ categoria, tipo, onClose, onSave }) => {
   const isEdit = !!categoria;
@@ -49,48 +35,13 @@ const CategoriaFormModal = ({ categoria, tipo, onClose, onSave }) => {
   // Opciones avanzadas toggle
   const [showAdvanced, setShowAdvanced] = useState(false);
 
-  // Productos asociados
-  const [productos, setProductos] = useState([]);
-  const [loadingProds, setLoadingProds] = useState(false);
-  const [editingProduct, setEditingProduct] = useState(null);
-
-  const { updateProduct, fetchProducts, fetchCategories } = useCategorias();
-
-  // Cargar productos de esta categoría (solo en edición)
-  useEffect(() => {
-    if (!isEdit || !categoria?.nombre) return;
-    let alive = true;
-    (async () => {
-      setLoadingProds(true);
-      try {
-        const res = await api.get(
-          `/productos/category/${encodeURIComponent(categoria.nombre)}?tipo=${encodeURIComponent(categoria.tipo)}`
-        );
-        if (alive) {
-          setProductos(res?.data?.data ?? res?.data?.products ?? []);
-        }
-      } catch {
-        // silencioso
-      } finally {
-        if (alive) setLoadingProds(false);
-      }
-    })();
-    return () => { alive = false; };
-  }, [isEdit, categoria]);
-
   useEffect(() => {
     const onKey = (e) => {
-      if (e.key === "Escape") {
-        if (editingProduct) {
-          setEditingProduct(null);
-        } else {
-          onClose();
-        }
-      }
+      if (e.key === "Escape") onClose();
     };
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
-  }, [onClose, editingProduct]);
+  }, [onClose]);
 
   const handleSubmit = useCallback(
     async (e) => {
@@ -133,37 +84,6 @@ const CategoriaFormModal = ({ categoria, tipo, onClose, onSave }) => {
     },
     [nombre, descripcion, icono, orden, trEN, trFR, tipo, isEdit, categoria, onSave, onClose]
   );
-
-  // Guardar producto editado y refrescar lista
-  const handleSaveProduct = useCallback(
-    async (updatedProduct) => {
-      await updateProduct(updatedProduct._id, updatedProduct);
-      setEditingProduct(null);
-      // Refrescar la mini-lista
-      try {
-        const res = await api.get(
-          `/productos/category/${encodeURIComponent(categoria.nombre)}?tipo=${encodeURIComponent(categoria.tipo)}`
-        );
-        setProductos(res?.data?.data ?? res?.data?.products ?? []);
-      } catch { /* silencioso */ }
-      // Refrescar contexto
-      fetchProducts({ tipo: categoria.tipo, categoria: categoria.nombre }, { force: true });
-    },
-    [updateProduct, categoria, fetchProducts]
-  );
-
-  // Si estamos editando un producto, mostrar ese modal encima
-  if (editingProduct) {
-    return (
-      <Portal>
-        <EditProduct
-          product={editingProduct}
-          onSave={handleSaveProduct}
-          onCancel={() => setEditingProduct(null)}
-        />
-      </Portal>
-    );
-  }
 
   return (
     <Portal>
@@ -310,43 +230,6 @@ const CategoriaFormModal = ({ categoria, tipo, onClose, onSave }) => {
                     placeholder="Description en français"
                     maxLength={300}
                   />
-                </div>
-              </div>
-            )}
-
-            {/* ========================================
-               Productos asociados (solo en edición)
-            ======================================== */}
-            {isEdit && (
-              <div className="catmodal-products">
-                <span className="catmodal-products-title">
-                  Productos en esta categoría
-                  {!loadingProds && (
-                    <span className="catmodal-products-count">{productos.length}</span>
-                  )}
-                </span>
-
-                <div className="catmodal-products-scroll">
-                  {loadingProds ? (
-                    <span className="catmodal-products-empty">Cargando…</span>
-                  ) : productos.length === 0 ? (
-                    <span className="catmodal-products-empty">Sin productos</span>
-                  ) : (
-                    productos.map((p) => (
-                      <button
-                        key={p._id}
-                        type="button"
-                        className="catmodal-product-row"
-                        onClick={() => setEditingProduct(p)}
-                        title="Editar producto"
-                      >
-                        <span className="catmodal-product-name">{p.nombre}</span>
-                        <span className="catmodal-product-price">
-                          {Number(getFirstPrice(p.precios)).toFixed(2)} €
-                        </span>
-                      </button>
-                    ))
-                  )}
                 </div>
               </div>
             )}

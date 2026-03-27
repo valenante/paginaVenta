@@ -54,7 +54,7 @@ const Categories = ({ category, tipo }) => {
       await fetchProducts({ tipo, categoria: category }, { force: true });
 
       setMensajeAlerta({
-        tipo: "success", // ✅ NO "exito"
+        tipo: "exito",
         mensaje: "Producto actualizado correctamente",
       });
 

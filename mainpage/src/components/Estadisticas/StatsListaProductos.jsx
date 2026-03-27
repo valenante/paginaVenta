@@ -33,7 +33,7 @@ const StatsListaProductos = ({ productosConStats, loading }) => {
                 <div className="statlist-stat">
                   <span className="statlist-label">Ingresos</span>
                   <strong className="statlist-value statlist-money">
-                    {p.totalIngresos.toFixed(2)} €
+                    {(p.totalIngresos ?? 0).toFixed(2)} €
                   </strong>
                 </div>
               </div>

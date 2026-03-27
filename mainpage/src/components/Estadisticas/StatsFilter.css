@@ -31,6 +31,12 @@
   gap: 0.6rem;
 }
 
+.stats-filter-loading {
+  font-size: 0.85rem;
+  color: rgba(229, 229, 229, 0.6);
+  padding: 0.5rem 0;
+}
+
 .stats-filter-label {
   font-size: 0.75rem;
   font-weight: 600;

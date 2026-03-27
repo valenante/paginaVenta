@@ -1,16 +1,12 @@
-import React, { useEffect, useMemo, useState, useContext, useRef } from "react";
+import React, { useEffect, useMemo, useState, useRef } from "react";
 import api from "../../utils/api";
 import AlefSelect from "../AlefSelect/AlefSelect";
 import { useImageUpload } from "../../Hooks/useImageUpload";
 import { useCategorias } from "../../context/CategoriasContext";
+import { useAuth } from "../../context/AuthContext";
 import AlertaMensaje from "../AlertaMensaje/AlertaMensaje";
 
-// ✅ reutiliza el CSS del CrearProducto (recomendado)
-// Ajusta la ruta real a tu proyecto:
 import "./CrearProducto.css";
-
-// Si prefieres, puedes dejar EditProducts.css y copiar ahí los estilos --crear.
-// import "./EditProducts.css";
 
 /* =========================
    Helpers
@@ -86,12 +82,10 @@ const EditProduct = ({
   product,
   onSave,
   onCancel,
-
   ingredientesStock = [],
-
-  // ✅ para bloquear receta como en CrearProducto
-  isPlanEsencial = false,
 }) => {
+  const { user } = useAuth();
+  const isPlanEsencial = user?.plan === "esencial" || user?.plan === "tpv-esencial";
   const {
     dragging,
     onDragOver: handleDragOver,
@@ -111,6 +105,7 @@ const EditProduct = ({
   const [previewUrl, setPreviewUrl] = useState("");
   const [alerta, setAlerta] = useState(null);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef(null);
 
   // =========================
@@ -205,7 +200,7 @@ const EditProduct = ({
         params: { destino, includeInactive: 0 },
       })
       .then((res) => {
-        const items = res?.data?.data?.items ?? res?.data ?? [];
+        const items = res?.data?.items || [];
         setEstaciones(Array.isArray(items) ? items : []);
       })
       .catch((err) =>
@@ -217,7 +212,7 @@ const EditProduct = ({
     const fetchSecciones = async () => {
       try {
         const res = await api.get("/secciones");
-        const items = res?.data?.data?.items ?? res?.data ?? [];
+        const items = res?.data?.items || [];
         setSecciones(Array.isArray(items) ? items : []);
       } catch (err) {
         console.error("Error cargando secciones:", err);
@@ -302,36 +297,45 @@ const EditProduct = ({
     setFormData((prev) => ({ ...prev, alergenos: arr }));
   };
 
-  const manejarCambioArchivo = (e) => {
+  const manejarCambioArchivo = async (e) => {
     const file = e?.target?.files?.[0];
-    if (file) {
-      setImageFile(file);
-      const url = URL.createObjectURL(file);
-      setPreviewUrl(url);
+    if (!file) return;
+
+    setImageFile(file);
+    setPreviewUrl(URL.createObjectURL(file));
+    setUploading(true);
+
+    try {
+      await handleFileChange(e, setFormData);
+    } catch {
+      setAlerta({ tipo: "error", mensaje: "Error al subir la imagen." });
+    } finally {
+      setUploading(false);
     }
-    // tu lógica de subida (deja que setee formData.img si subes a cloud)
-    handleFileChange(e, setFormData);
   };
 
-  const manejarDropArchivo = (e) => {
+  const manejarDropArchivo = async (e) => {
     e.preventDefault();
     e.stopPropagation();
+    setUploading(true);
 
-    const file = e?.dataTransfer?.files?.[0];
-    if (file) {
-      setImageFile(file);
-      const url = URL.createObjectURL(file);
-      setPreviewUrl(url);
+    try {
+      const file = await handleDrop(e, setFormData);
+      if (file) {
+        setImageFile(file);
+        setPreviewUrl(URL.createObjectURL(file));
+      }
+    } catch {
+      setAlerta({ tipo: "error", mensaje: "Error al subir la imagen." });
+    } finally {
+      setUploading(false);
     }
-
-    // tu lógica de subida
-    handleDrop(e, setFormData);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (saving || uploading) return;
 
-    // ✅ construir payload final — precios como array
     const preciosArr = (formData.precios || []).map((p, i) => ({
       clave: p.clave || "precioBase",
       label: p.label || "",
@@ -350,7 +354,6 @@ const EditProduct = ({
       return;
     }
 
-    // adicional
     const adicionalPrecio = toNumOrNull(formData.adicionalPrecioUI);
     const adicionales =
       adicionalPrecio != null && adicionalPrecio > 0
@@ -366,46 +369,28 @@ const EditProduct = ({
       estado: formData.estado,
       seccion: formData.seccion,
       estacion: formData.estacion,
-
-      // precios como array dinámico
       precios: preciosArr,
-
       traducciones: formData.traducciones,
       adicionales,
       aliases: formData.aliases,
       alergenos: formData.alergenos,
-
-      // receta tal cual (ya son ids + cantidad)
       receta: Array.isArray(formData.receta) ? formData.receta : [],
-
-      // stock directo
       stock: Number(formData.stock) || 0,
       controlStock: !!formData.controlStock,
-
       imprimirSiempre: !!formData.imprimirSiempre,
-
-      // imagen (si se subió una nueva)
       img: formData.img || undefined,
     };
 
     try {
       setSaving(true);
-
       await onSave(payload);
-
-      setAlerta({
-        tipo: "success",
-        mensaje: "✅ Producto actualizado correctamente",
-      });
-
-      setTimeout(onCancel, 800);
-
+      // onSave del padre se encarga de cerrar el modal si tiene éxito
     } catch (error) {
       setAlerta({
         tipo: "error",
         mensaje:
           error.response?.data?.message ||
-          "❌ Error al actualizar el producto",
+          "Error al actualizar el producto",
       });
     } finally {
       setSaving(false);
@@ -835,7 +820,7 @@ const EditProduct = ({
                 onDrop={manejarDropArchivo}
                 onClick={() => fileInputRef.current?.click()}
               >
-                <p>Arrastra una imagen aquí o haz clic para subir</p>
+                <p>{uploading ? "Subiendo imagen..." : "Arrastra una imagen aquí o haz clic para subir"}</p>
 
                 <input
                   ref={fileInputRef}
@@ -1075,11 +1060,11 @@ const EditProduct = ({
 
           {/* === BOTONES === */}
           <div className="botones--crear">
-            <button type="submit" className="boton--crear" disabled={saving}>
-              {saving ? "Guardando..." : "Guardar cambios"}
+            <button type="submit" className="boton--crear" disabled={saving || uploading}>
+              {saving ? "Guardando..." : uploading ? "Subiendo imagen..." : "Guardar cambios"}
             </button>
 
-            <button type="button" onClick={onCancel} className="boton--cancelar">
+            <button type="button" onClick={onCancel} className="boton--cancelar" disabled={saving}>
               Cancelar
             </button>
           </div>

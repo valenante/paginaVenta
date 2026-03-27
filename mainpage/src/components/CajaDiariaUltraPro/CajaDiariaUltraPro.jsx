@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useMemo, useRef } from "react";
+import React, { useState, useEffect, useMemo, useRef, useCallback } from "react";
+import html2canvas from "html2canvas";
 import { obtenerCajasPorRango } from "./ObtenerCajasPorRango";
 import UpsellEstadisticasPro from "../../components/Estadisticas/UpsellEstadisticasPro";
 import { useAuth } from "../../context/AuthContext.jsx";
@@ -6,52 +7,32 @@ import { generarPDFCaja } from "./pdfs/pdfCajaUltraPro";
 import { useTenant } from "../../context/TenantContext";
 import HeatmapSemana from "./HeatMapSemana";
 import CajaIngresosChart from "./CajaIngresosChart";
+import ComparacionPeriodos from "./ComparacionPeriodos";
 import DiasPeriodo from "./DiaDetalleModal/DiasPeriodo";
+import { toISODateKey, formatFechaUI } from "./cajaHelpers";
 import "./CajaDiariaUltraPro.css";
 
-
-const toISODateKey = (value) => {
-  if (!value) return "";
-
-  // Date object
-  if (value instanceof Date && !Number.isNaN(value.getTime())) {
-    return value.toISOString().slice(0, 10);
-  }
-
-  const s = String(value).trim();
-
-  // "YYYY-MM-DD..." (ISO o similar)
-  if (/^\d{4}-\d{2}-\d{2}/.test(s)) return s.slice(0, 10);
-
-  // "DD/MM/YYYY"
-  const m = s.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
-  if (m) return `${m[3]}-${m[2]}-${m[1]}`;
-
-  // Último intento
-  const d = new Date(s);
-  if (!Number.isNaN(d.getTime())) return d.toISOString().slice(0, 10);
-
-  return "";
-};
-
-const safeDateObjFromISO = (iso) => {
-  if (!iso) return null;
-  const d = new Date(`${iso}T00:00:00`);
-  return Number.isNaN(d.getTime()) ? null : d;
-};
-
-const formatFechaUI = (iso) => {
-  const d = safeDateObjFromISO(iso);
-  return d ? d.toLocaleDateString("es-ES") : "—";
-};
-
-
 export default function CajaDiariaUltraPro() {
-  const [fechaInicio, setFechaInicio] = useState("");
-  const [fechaFin, setFechaFin] = useState("");
-  const [datos, setDatos] = useState([]); // datos horario (fecha + hora)
+  const [fechaInicio, setFechaInicio] = useState(() => {
+    const hoy = new Date();
+    return new Date(hoy.getFullYear(), hoy.getMonth(), 1).toISOString().slice(0, 10);
+  });
+  const [fechaFin, setFechaFin] = useState(() => {
+    const m = new Date();
+    m.setDate(m.getDate() + 1);
+    return m.toISOString().slice(0, 10);
+  });
+
+  const [datos, setDatos] = useState([]);
   const [error, setError] = useState(null);
-  const chartRef = useRef(null);
+  const [loading, setLoading] = useState(false);
+  const [generandoPDF, setGenerandoPDF] = useState(false);
+  const [comparando, setComparando] = useState(false);
+
+  const chartSectionRef = useRef(null);
+  const heatmapSectionRef = useRef(null);
+  const controllerRef = useRef(null);
+
   const { user } = useAuth();
   const { tenant } = useTenant();
   const tipoNegocio = tenant?.tipoNegocio || "restaurante";
@@ -59,40 +40,38 @@ export default function CajaDiariaUltraPro() {
     tipoNegocio === "restaurante" &&
     (user?.plan === "esencial" || user?.plan === "tpv-esencial");
 
-  /* 🌅 Fechas iniciales al abrir */
-  useEffect(() => {
-    const hoy = new Date();
-    const primerDiaMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
-    const mañana = new Date(hoy);
-    mañana.setDate(hoy.getDate() + 1);
+  // Fix #1 + #2: cargarDatos estable con AbortController
+  const cargarDatos = useCallback(async () => {
+    if (!fechaInicio || !fechaFin) return;
 
-    setFechaInicio(primerDiaMes.toISOString().split("T")[0]);
-    setFechaFin(mañana.toISOString().split("T")[0]);
-  }, []);
+    controllerRef.current?.abort();
+    const controller = new AbortController();
+    controllerRef.current = controller;
 
-  /* 🔄 Cargar datos desde el backend */
-  const cargarDatos = async () => {
+    setLoading(true);
+    setError(null);
+
     try {
       const cajas = await obtenerCajasPorRango(fechaInicio, fechaFin, tipoNegocio);
-
+      if (controller.signal.aborted) return;
       setDatos(Array.isArray(cajas) ? cajas : []);
-      setError(null);
     } catch (err) {
-      console.error("[CAJA] ERROR:", err?.response?.status, err?.response?.data || err);
+      if (err?.name === "CanceledError" || err?.code === "ERR_CANCELED") return;
       setDatos([]);
-      setError("Error al cargar datos.");
+      setError("Error al cargar datos. Comprueba el rango de fechas.");
+    } finally {
+      if (!controller.signal.aborted) setLoading(false);
     }
-  };
-
+  }, [fechaInicio, fechaFin, tipoNegocio]);
 
   useEffect(() => {
-    if (fechaInicio && fechaFin) cargarDatos();
-  }, [fechaInicio, fechaFin]);
+    cargarDatos();
+    return () => controllerRef.current?.abort();
+  }, [cargarDatos]);
 
   /* =========================================================================
-      📌 AGREGACIÓN POR DÍA PARA KPIs, LISTA Y GRÁFICAS
+      Agregación por día
      ========================================================================= */
-
   const datosDiarios = useMemo(() => {
     const map = {};
 
@@ -105,7 +84,7 @@ export default function CajaDiariaUltraPro() {
           fecha: fechaKey,
           total: 0,
           numTickets: 0,
-          mensajeCierre: d.mensajeCierre || null
+          mensajeCierre: d.mensajeCierre || null,
         };
       }
 
@@ -116,7 +95,7 @@ export default function CajaDiariaUltraPro() {
     return Object.values(map).sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
   }, [datos]);
 
-  /* KPI */
+  /* KPIs */
   const totalIngresos = useMemo(
     () => datosDiarios.reduce((acc, d) => acc + d.total, 0),
     [datosDiarios]
@@ -129,18 +108,16 @@ export default function CajaDiariaUltraPro() {
 
   const ticketMedio = totalTickets > 0 ? totalIngresos / totalTickets : 0;
 
+  // Fix #7: no mostrar mejor/peor si es el mismo día
   const diaMasFuerte = datosDiarios.length
     ? datosDiarios.reduce((a, b) => (a.total > b.total ? a : b))
     : null;
 
-  const diaMasDebil = datosDiarios.length
+  const diaMasDebil = datosDiarios.length > 1
     ? datosDiarios.reduce((a, b) => (a.total < b.total ? a : b))
     : null;
 
-  /* =========================================================================
-      📅 VARIACIONES DÍA A DÍA
-     ========================================================================= */
-
+  /* Variaciones día a día */
   const variaciones = useMemo(() => {
     return datosDiarios.map((d, i) => {
       if (i === 0) return { ...d, variacion: 0 };
@@ -152,19 +129,33 @@ export default function CajaDiariaUltraPro() {
   }, [datosDiarios]);
 
   /* =========================================================================
-      🧾 GENERAR PDF
+      PDF — Fix #5 + #6: html2canvas para capturar DOM real
      ========================================================================= */
+  const handlePDF = async () => {
+    setGenerandoPDF(true);
 
-  const handlePDF = () => {
-    const el = document.querySelector("#heatmap-canvas");
+    let chartImg = null;
+    let heatmapImg = null;
 
-    const heatmapImg =
-      el && typeof el.toDataURL === "function"
-        ? el.toDataURL("image/png")
-        : null;
+    try {
+      if (chartSectionRef.current) {
+        const canvas = await html2canvas(chartSectionRef.current, {
+          backgroundColor: "#0a0a13",
+          scale: 2,
+        });
+        chartImg = canvas.toDataURL("image/png");
+      }
+    } catch { /* chart capture failed, continue without it */ }
 
-    const chartImg =
-      chartRef?.current?.toBase64Image?.() ?? null;
+    try {
+      if (heatmapSectionRef.current) {
+        const canvas = await html2canvas(heatmapSectionRef.current, {
+          backgroundColor: "#0a0a13",
+          scale: 2,
+        });
+        heatmapImg = canvas.toDataURL("image/png");
+      }
+    } catch { /* heatmap capture failed, continue without it */ }
 
     generarPDFCaja({
       datos: datosDiarios,
@@ -178,59 +169,93 @@ export default function CajaDiariaUltraPro() {
         accent: "#ff9149",
       },
     });
+
+    setGenerandoPDF(false);
   };
 
   /* =========================================================================
-      🖥️ RENDER
+      Render
      ========================================================================= */
-
   return (
     <div className="caja-ultra-root">
-
       {/* HEADER */}
       <header className="caja-ultra-header">
         <div>
-          <h1 className="caja-ultra-titulo">📊 Caja Diaria</h1>
+          <h1 className="caja-ultra-titulo">Caja Diaria</h1>
           <p className="caja-ultra-sub">
             Control financiero del restaurante.
           </p>
         </div>
 
         <div className="caja-ultra-filtros">
-          <input type="date" value={fechaInicio} onChange={(e) => setFechaInicio(e.target.value)} />
-          <input type="date" value={fechaFin} onChange={(e) => setFechaFin(e.target.value)} />
-          {error && <div style={{ padding: 10, background: "#300", color: "#fff" }}>{error}</div>}
-          {!error && datos.length === 0 && <div style={{ padding: 10 }}>No hay datos en este rango.</div>}
+          <input
+            type="date"
+            value={fechaInicio}
+            onChange={(e) => setFechaInicio(e.target.value)}
+          />
+          <input
+            type="date"
+            value={fechaFin}
+            onChange={(e) => setFechaFin(e.target.value)}
+          />
 
-          <button onClick={cargarDatos}>Actualizar</button>
+          <button onClick={cargarDatos} disabled={loading}>
+            {loading ? "Cargando..." : "Actualizar"}
+          </button>
 
           {!isPlanEsencial && (
-            <button className="pdf-btn" onClick={handlePDF}>Descargar PDF</button>
+            <>
+              <button
+                className={`comp-toggle-btn ${comparando ? "is-active" : ""}`}
+                onClick={() => setComparando((v) => !v)}
+              >
+                {comparando ? "Cerrar comparador" : "Comparar periodos"}
+              </button>
+              <button className="pdf-btn" onClick={handlePDF} disabled={generandoPDF || loading}>
+                {generandoPDF ? "Generando..." : "Descargar PDF"}
+              </button>
+            </>
           )}
         </div>
       </header>
 
-      {/* =====================================================
-         GRAFICO → SIEMPRE VISIBLE PARA TODOS LOS PLANES
-       ===================================================== */}
-      <CajaIngresosChart
-        ref={chartRef}
-        datosDiarios={datosDiarios}
-      />
-
-      {/* =====================================================
-         SI PLAN ESENCIAL → MOSTRAR SOLO EL UPSELL
-       ===================================================== */}
-      {isPlanEsencial && (
-        <UpsellEstadisticasPro />
+      {/* Fix #3: error con clase CSS en vez de inline */}
+      {error && (
+        <div className="caja-ultra-error">
+          <span>{error}</span>
+          <button onClick={cargarDatos}>Reintentar</button>
+        </div>
       )}
 
-      {/* =====================================================
-         SI PLAN PRO → MOSTRAR TODO LO DEMÁS
-       ===================================================== */}
+      {/* Fix #11: loading state */}
+      {loading && datos.length === 0 && (
+        <div className="caja-ultra-loading">Cargando datos...</div>
+      )}
+
+      {!loading && !error && datos.length === 0 && (
+        <div className="caja-ultra-empty">No hay datos en este rango.</div>
+      )}
+
+      {/* Chart — siempre visible */}
+      <div ref={chartSectionRef}>
+        <CajaIngresosChart datosDiarios={datosDiarios} />
+      </div>
+
+      {/* Comparador de periodos */}
+      {comparando && !isPlanEsencial && (
+        <ComparacionPeriodos
+          periodoA={{ fechaInicio, fechaFin, datos }}
+          tipoNegocio={tipoNegocio}
+        />
+      )}
+
+      {/* Plan esencial: upsell */}
+      {isPlanEsencial && <UpsellEstadisticasPro />}
+
+      {/* Plan pro: todo lo demás */}
       {!isPlanEsencial && (
         <>
-          {/* KPI */}
+          {/* KPIs */}
           <section className="caja-ultra-kpi">
             <div className="kpi-card">
               <span>Ingresos totales</span>
@@ -255,7 +280,8 @@ export default function CajaDiariaUltraPro() {
               </div>
             )}
 
-            {diaMasDebil && (
+            {/* Fix #7: solo si hay >1 día y es diferente del mejor */}
+            {diaMasDebil && diaMasDebil.fecha !== diaMasFuerte?.fecha && (
               <div className="kpi-card worst">
                 <span>Peor día</span>
                 <strong>{formatFechaUI(diaMasDebil.fecha)}</strong>
@@ -266,8 +292,10 @@ export default function CajaDiariaUltraPro() {
 
           <DiasPeriodo dias={variaciones} />
 
-          {/* HEATMAP */}
-          <HeatmapSemana datos={datos} />
+          {/* Heatmap — ref para captura PDF */}
+          <div ref={heatmapSectionRef}>
+            <HeatmapSemana datos={datos} />
+          </div>
         </>
       )}
     </div>

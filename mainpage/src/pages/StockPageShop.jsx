@@ -38,7 +38,7 @@ const StockShopPage = () => {
                 },
             });
 
-            setProductos(data?.data || data?.productos || []);
+            setProductos(Array.isArray(data) ? data : []);
             setTotalPages(data?.meta?.totalPages || data?.totalPages || 1);
             setError("");
         } catch (err) {

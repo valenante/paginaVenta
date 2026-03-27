@@ -46,7 +46,7 @@ export default function SeccionesPanel({
     try {
       setLoading(true);
       const res = await api.get("/secciones?includeInactive=0");
-      const items = res?.data?.data?.items;
+      const items = res?.data?.items;
       setSecciones(Array.isArray(items) ? items : []);
     } catch {
       onAlert?.({ tipo: "error", mensaje: "Error al cargar secciones." });
@@ -77,7 +77,7 @@ export default function SeccionesPanel({
       };
 
       const res = await api.post("/secciones", payload);
-      const created = res?.data?.data?.item;
+      const created = res?.data?.item;
 
       if (!created?._id) {
         return onAlert?.({ tipo: "error", mensaje: "La API no devolvió la sección creada." });
@@ -125,7 +125,7 @@ export default function SeccionesPanel({
       };
 
       const res = await api.put(`/secciones/${editando._id}`, payload);
-      const updated = res?.data?.data?.item;
+      const updated = res?.data?.item;
       if (!updated?._id) {
         return onAlert?.({ tipo: "error", mensaje: "La API no devolvió la sección actualizada." });
       }

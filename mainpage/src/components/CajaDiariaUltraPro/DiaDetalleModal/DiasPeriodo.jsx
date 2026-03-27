@@ -1,14 +1,7 @@
 import React, { useState } from "react";
 import DiaDetalleModal from "./DiaDetalleModal";
+import { formatFechaUI } from "../cajaHelpers";
 import "./DiasPeriodo.css";
-
-const formatFechaUI = (iso) => {
-  if (!iso) return "—";
-  const d = new Date(`${iso}T00:00:00`);
-  return Number.isNaN(d.getTime())
-    ? "—"
-    : d.toLocaleDateString("es-ES");
-};
 
 export default function DiasPeriodo({ dias }) {
   const [diaSeleccionado, setDiaSeleccionado] = useState(null);

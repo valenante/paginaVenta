@@ -187,11 +187,11 @@ export default function TopBar() {
                     type="button"
                     onClick={() => {
                       cerrarMenu();
-                      navigate("/dashboard");
+                      navigate("/configuracion");
                     }}
-                    className={`TopBar-btn login ${isActive("/dashboard") ? "active" : ""}`}
+                    className={`TopBar-btn login ${isActive("/configuracion") ? "active" : ""}`}
                   >
-                    Dashboard
+                    Configuración
                   </button>
 
                   {!esTienda ? (
@@ -241,7 +241,7 @@ export default function TopBar() {
                 </button>
               )}
 
-              {/* DASHBOARD */}
+              {/* CONFIGURACIÓN */}
               {!isSuperadmin && (
                 canAccessModule("dashboard") ||
                 canAccessModule("config") ||
@@ -253,11 +253,11 @@ export default function TopBar() {
                     type="button"
                     onClick={() => {
                       cerrarMenu();
-                      navigate("/dashboard");
+                      navigate("/configuracion");
                     }}
-                    className={`TopBar-btn login ${isActive("/dashboard") ? "active" : ""}`}
+                    className={`TopBar-btn login ${isActive("/configuracion") ? "active" : ""}`}
                   >
-                    Dashboard
+                    Configuración
                   </button>
                 )}
 

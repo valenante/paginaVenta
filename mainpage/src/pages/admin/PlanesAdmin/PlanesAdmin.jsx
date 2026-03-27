@@ -43,14 +43,14 @@ export default function PlanesAdmin() {
   const cargarPlanes = async () => {
     try {
       const { data } = await api.get("/admin/superadminPlans");
-      setPlanes(Array.isArray(data?.data) ? data.data : Array.isArray(data) ? data : []);
+      setPlanes(Array.isArray(data) ? data : []);
     } catch { showToast("Error cargando planes", "error"); }
   };
 
   const cargarFeatures = async () => {
     try {
       const { data } = await api.get("/admin/superadmin/features");
-      setFeatures(Array.isArray(data?.data) ? data.data : Array.isArray(data) ? data : []);
+      setFeatures(Array.isArray(data) ? data : []);
     } catch { showToast("Error cargando features", "error"); }
   };
 

@@ -2,7 +2,7 @@
    STATS POR MES — ALEF (TABLE DESKTOP + CARDS MOBILE)
    ========================================================= */
 
-.statsmesa-container {
+.statsmeses-container {
   background: rgba(255, 255, 255, 0.06);
   border-radius: var(--radius-lg);
   padding: 1.6rem 2rem;
@@ -10,15 +10,15 @@
   box-shadow:
     0 8px 24px rgba(0, 0, 0, 0.25),
     0 0 0 1px rgba(255, 255, 255, 0.05);
-  animation: fadeInStatsMesa 0.3s ease;
+  animation: fadeInStatsMeses 0.3s ease;
 }
 
-@keyframes fadeInStatsMesa {
+@keyframes fadeInStatsMeses {
   from { opacity: 0; transform: translateY(6px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
-.statsmesa-header {
+.statsmeses-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -26,19 +26,19 @@
   margin-bottom: 1.2rem;
 }
 
-.statsmesa-title h3 {
+.statsmeses-title h3 {
   font-size: 1.25rem;
   margin: 0;
   color: #ffffff;
 }
 
-.statsmesa-desc {
+.statsmeses-desc {
   font-size: 0.9rem;
   opacity: 0.8;
   margin-top: 0.25rem;
 }
 
-.statsmesa-badge {
+.statsmeses-badge {
   background: linear-gradient(90deg, #6a0dad, #ff6700);
   padding: 0.35rem 0.75rem;
   border-radius: 999px;
@@ -49,7 +49,7 @@
   white-space: nowrap;
 }
 
-.statsmesa-empty {
+.statsmeses-empty {
   padding: 1rem 0;
   text-align: center;
   color: #cbd5e1;
@@ -59,11 +59,11 @@
 /* =========================
    DESKTOP TABLE
 ========================= */
-.statsmesa-table-wrapper {
+.statsmeses-table-wrapper {
   width: 100%;
 }
 
-.statsmesa-table {
+.statsmeses-table {
   width: 100%;
   border-collapse: collapse;
   font-size: 0.95rem;
@@ -71,11 +71,11 @@
   table-layout: auto;
 }
 
-.statsmesa-table thead tr {
+.statsmeses-table thead tr {
   background: rgba(255, 255, 255, 0.06);
 }
 
-.statsmesa-table th {
+.statsmeses-table th {
   text-align: left;
   font-weight: 700;
   padding: 0.9rem 1rem;
@@ -86,21 +86,21 @@
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.statsmesa-table tbody tr {
+.statsmeses-table tbody tr {
   background: rgba(255, 255, 255, 0.025);
   transition: background 0.2s ease, transform 0.2s ease;
 }
 
-.statsmesa-table tbody tr:nth-child(even) {
+.statsmeses-table tbody tr:nth-child(even) {
   background: rgba(255, 255, 255, 0.04);
 }
 
-.statsmesa-table tbody tr:hover {
+.statsmeses-table tbody tr:hover {
   background: rgba(255, 255, 255, 0.08);
   transform: translateY(-1px);
 }
 
-.statsmesa-table td {
+.statsmeses-table td {
   padding: 0.85rem 1rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   white-space: nowrap;
@@ -126,37 +126,37 @@
    - convert rows into cards
 ========================= */
 @media (max-width: 768px) {
-  .statsmesa-container {
+  .statsmeses-container {
     padding: 1.15rem 1.15rem;
     max-height: 40vh;
     overflow-y: auto;
   }
 
-  .statsmesa-header {
+  .statsmeses-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 0.5rem;
   }
 
-  .statsmesa-table-wrapper {
+  .statsmeses-table-wrapper {
     overflow: visible;
   }
 
   /* hide thead */
-  .statsmesa-table thead {
+  .statsmeses-table thead {
     display: none;
   }
 
   /* table becomes blocks */
-  .statsmesa-table,
-  .statsmesa-table tbody,
-  .statsmesa-table tr,
-  .statsmesa-table td {
+  .statsmeses-table,
+  .statsmeses-table tbody,
+  .statsmeses-table tr,
+  .statsmeses-table td {
     display: block;
   }
 
   /* each row is a card */
-  .statsmesa-table tbody tr {
+  .statsmeses-table tbody tr {
     border: 1px solid rgba(255, 255, 255, 0.10);
     background: rgba(255, 255, 255, 0.04);
     border-radius: var(--radius-lg);
@@ -168,12 +168,12 @@
     transform: none;
   }
 
-  .statsmesa-table tbody tr:hover {
+  .statsmeses-table tbody tr:hover {
     transform: none;
   }
 
   /* each cell becomes "label : value" */
-  .statsmesa-table td {
+  .statsmeses-table td {
     border: 0;
     padding: 0.55rem 0;
     white-space: normal;
@@ -183,7 +183,7 @@
     gap: 0.8rem;
   }
 
-  .statsmesa-table td::before {
+  .statsmeses-table td::before {
     content: attr(data-label);
     font-size: 0.72rem;
     font-weight: 700;
@@ -194,18 +194,18 @@
   }
 
   /* Mes arriba como "título" dentro de la card */
-  .statsmesa-table td.mesa-name {
+  .statsmeses-table td.mesa-name {
     padding-top: 0.15rem;
     padding-bottom: 0.75rem;
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     margin-bottom: 0.2rem;
   }
 
-  .statsmesa-table td.mesa-name::before {
+  .statsmeses-table td.mesa-name::before {
     content: "Mes";
   }
 
-  .statsmesa-table td.mesa-name {
+  .statsmeses-table td.mesa-name {
     font-size: 1rem;
   }
 

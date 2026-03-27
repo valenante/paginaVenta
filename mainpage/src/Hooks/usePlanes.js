@@ -9,7 +9,7 @@ export default function usePlanes() {
     const cargar = async () => {
       try {
         const { data } = await api.get("/superadminPlans/publicPlans");
-        setPlanes(Array.isArray(data?.data) ? data.data : Array.isArray(data) ? data : []);
+        setPlanes(Array.isArray(data) ? data : []);
       } catch (err) {
         console.error("Error cargando planes:", err);
       } finally {

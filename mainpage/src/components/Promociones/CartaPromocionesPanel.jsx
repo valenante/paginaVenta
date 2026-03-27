@@ -30,9 +30,9 @@ export default function CartaPromocionesPanel({ abierto, onClose }) {
                     params: { tipo: promoTipo },
                 });
 
-                setPromoProductos(data?.data || []);
+                setPromoProductos(Array.isArray(data) ? data : []);
             } catch (err) {
-                console.error("❌ Error cargando productos:", err);
+                // error handled by setAlerta below
                 setAlerta({
                     tipo: "error",
                     mensaje: "No se pudieron cargar los productos.",
@@ -70,7 +70,7 @@ export default function CartaPromocionesPanel({ abierto, onClose }) {
                         : "Promoción actualizada.",
             });
         } catch (err) {
-            console.error("❌ Error toggle estado:", err);
+            // error handled by setAlerta below
             setAlerta({
                 tipo: "error",
                 mensaje: "No se pudo actualizar el producto.",

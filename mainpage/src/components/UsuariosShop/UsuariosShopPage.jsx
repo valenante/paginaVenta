@@ -82,7 +82,7 @@ export default function UsuariosShopPage() {
   ===================== */
 
   return (
-    <div className="usuarios-root usuarios-layout">
+    <main className="cfg-page section section--wide">
       {/* ALERTAS */}
       {alerta && (
         <AlertaMensaje
@@ -91,6 +91,15 @@ export default function UsuariosShopPage() {
           onClose={() => setAlerta(null)}
         />
       )}
+
+      <header className="cfg-header">
+        <div>
+          <h1>Usuarios de la tienda</h1>
+          <p className="text-suave">
+            Gestiona el equipo que usa la tienda: crea usuarios, edítalos y controla accesos.
+          </p>
+        </div>
+      </header>
 
       <div className="usuarios-grid">
         {/* ================= COLUMNA CREAR ================= */}
@@ -139,6 +148,6 @@ export default function UsuariosShopPage() {
           onClose={() => setUsuarioStats(null)}
         />
       )}
-    </div>
+    </main>
   );
 }

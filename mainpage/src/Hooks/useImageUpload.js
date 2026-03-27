@@ -10,7 +10,7 @@ export function useImageUpload() {
         fd.append("file", file);
 
         const { data } = await api.post("/images/upload-producto", fd);
-        const imageUrl = data?.data?.imageUrl || data?.imageUrl;
+        const imageUrl = data?.imageUrl;
 
         if (!imageUrl) throw new Error("UPLOAD_NO_URL");
         return imageUrl;

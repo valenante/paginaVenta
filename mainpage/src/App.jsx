@@ -97,10 +97,9 @@ const AyudaPage = lazy(() => import("./pages/Ayuda/AyudaPage.jsx"));
 const PrintCenterPage = lazy(() => import("./pages/PrintCenterPage.jsx"));
 const ExportsPage = lazy(() => import("./pages/ExportsPage.jsx"));
 
-const EstadisticasPage = lazy(() => import("./pages/EstadisticasPage.jsx"));
-const CajaDiaria = lazy(() =>
-  import("./components/CajaDiariaUltraPro/CajaDiariaUltraPro")
-);
+const UsuariosPage = lazy(() => import("./components/Usuarios/UsuariosPage"));
+const UsuariosShopPage = lazy(() => import("./components/UsuariosShop/UsuariosShopPage"));
+const RolesPermisosPanel = lazy(() => import("./components/RolesPermisos/RolesPermisosPanel"));
 
 const PanelPro = lazy(() => import("./pages/PanelPro"));
 const ConfigImpresionPage = lazy(() => import("./pages/ConfigImpresionPage"));
@@ -211,17 +210,15 @@ function WhatsAppFloatingGate() {
   const location = useLocation();
 
   const isInternalRoute =
-    location.pathname.startsWith("/dashboard") ||
-    location.pathname.startsWith("/tpv") ||
     location.pathname.startsWith("/configuracion") ||
+    location.pathname.startsWith("/tpv") ||
     location.pathname.startsWith("/perfil") ||
     location.pathname.startsWith("/mi-cuenta") ||
     location.pathname.startsWith("/facturas") ||
-    location.pathname.startsWith("/estadisticas") ||
-    location.pathname.startsWith("/caja-diaria") ||
     location.pathname.startsWith("/pro") ||
     location.pathname.startsWith("/staff") ||
     location.pathname.startsWith("/panel") ||
+    location.pathname.startsWith("/dashboard") ||
     location.pathname.startsWith("/superadmin") ||
     location.pathname.startsWith("/camarero") ||
     location.pathname.startsWith("/cocinero") ||
@@ -230,6 +227,16 @@ function WhatsAppFloatingGate() {
   if (authLoading || user || isInternalRoute) return null;
 
   return <WhatsAppFloating />;
+}
+
+/* ==========================================
+   WRAPPER — elige componente de usuarios
+   según tipoNegocio del tenant
+   ========================================== */
+function UsuariosRoute() {
+  const { tenant } = useTenant();
+  const tipo = (tenant?.tipoNegocio || "restaurante").toLowerCase();
+  return tipo === "shop" ? <UsuariosShopPage /> : <UsuariosPage />;
 }
 
 /* =============================
@@ -276,23 +283,19 @@ function AppRoutes() {
       {/* LOGIN IMPERSONAR */}
       <Route path="/tpv/login/:tenantId" element={<LoginImpersonar />} />
 
-      {/* TPV / ÁREA RESTAURANTE */}
+      {/* CONFIGURACIÓN (hub principal de ajustes) */}
       <Route
-        path="/tpv/:tenantId/dashboard"
+        path="/configuracion"
         element={
           <UserLayout>
             <DashboardPage />
           </UserLayout>
         }
       />
-      <Route
-        path="/dashboard"
-        element={
-          <UserLayout>
-            <DashboardPage />
-          </UserLayout>
-        }
-      />
+
+      {/* Legacy: /dashboard → /configuracion */}
+      <Route path="/dashboard" element={<Navigate to="/configuracion" replace />} />
+      <Route path="/tpv/:tenantId/dashboard" element={<Navigate to="/configuracion" replace />} />
       <Route
         path="/mi-cuenta"
         element={
@@ -405,6 +408,24 @@ function AppRoutes() {
         }
       />
 
+      {/* CONFIGURACIÓN — Usuarios y Roles */}
+      <Route
+        path="/configuracion/usuarios"
+        element={
+          <UserLayout>
+            <UsuariosRoute />
+          </UserLayout>
+        }
+      />
+      <Route
+        path="/configuracion/roles"
+        element={
+          <UserLayout>
+            <RolesPermisosPanel />
+          </UserLayout>
+        }
+      />
+
       {/* SOPORTE */}
       <Route element={<UserLayout />}>
         <Route path="soporte" element={<SoporteLista />} />
@@ -421,23 +442,9 @@ function AppRoutes() {
         }
       />
 
-      {/* ESTADÍSTICAS / CAJA */}
-      <Route
-        path="/estadisticas"
-        element={
-          <UserLayout>
-            <EstadisticasPage type="plato" />
-          </UserLayout>
-        }
-      />
-      <Route
-        path="/caja-diaria"
-        element={
-          <UserLayout>
-            <CajaDiaria />
-          </UserLayout>
-        }
-      />
+      {/* Legacy: estadísticas y caja-diaria ahora viven en PanelPro */}
+      <Route path="/estadisticas" element={<Navigate to="/pro" replace />} />
+      <Route path="/caja-diaria" element={<Navigate to="/pro" replace />} />
 
       {/* PANEL PRO */}
       <Route

@@ -1,15 +1,8 @@
 import React, { useEffect, useMemo, useState } from "react";
 import api from "../../utils/api";
+import { toNum, clampMin } from "./stockHelpers";
+import "./StockModalBase.css";
 import "./AjustarStockModal.css";
-
-// helpers
-const toNum = (v, fallback = 0) => {
-  if (v === "" || v == null) return fallback;
-  const n = Number(v);
-  return Number.isFinite(n) ? n : fallback;
-};
-
-const clampMin = (n, min = 0) => Math.max(min, n);
 
 const AjustarStockModal = ({ ingrediente, onClose, onSave }) => {
   const stockInicial = useMemo(
@@ -25,7 +18,6 @@ const AjustarStockModal = ({ ingrediente, onClose, onSave }) => {
 
   const cantidadNum = useMemo(() => clampMin(toNum(cantidad, stockInicial), 0), [cantidad, stockInicial]);
   const diferencia = useMemo(() => cantidadNum - stockInicial, [cantidadNum, stockInicial]);
-
   const hasChanges = useMemo(() => cantidadNum !== stockInicial, [cantidadNum, stockInicial]);
 
   const ajustar = (delta) => {
@@ -37,37 +29,28 @@ const AjustarStockModal = ({ ingrediente, onClose, onSave }) => {
 
   const enviarAjuste = async () => {
     setError("");
-
-    // guard rail extra
     const nuevoStock = clampMin(toNum(cantidad, stockInicial), 0);
 
     try {
       setLoading(true);
-
       await api.post("/stock/ajustar", {
         ingredienteId: ingrediente._id,
         nuevoStock,
       });
-
       onSave?.();
       onClose?.();
     } catch (err) {
-      setError("⚠ No se pudo guardar el ajuste. Intenta de nuevo.");
+      setError(err?.response?.data?.message || "No se pudo guardar el ajuste. Intenta de nuevo.");
     } finally {
       setLoading(false);
     }
   };
 
-  // Atajos teclado (Escape / Enter)
   useEffect(() => {
     const onKey = (e) => {
       if (e.key === "Escape") onClose?.();
-      if (e.key === "Enter") {
-        // solo guardar si hay cambios y no está cargando
-        if (!loading && hasChanges) enviarAjuste();
-      }
+      if (e.key === "Enter" && !loading && hasChanges) enviarAjuste();
     };
-
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -76,61 +59,36 @@ const AjustarStockModal = ({ ingrediente, onClose, onSave }) => {
   return (
     <div className="alef-modal-overlay stock-ajuste-overlay" onClick={onClose}>
       <div
-        className="alef-modal-content stock-ajuste-modal"
+        className="alef-modal-content stk-modal"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* ===== HEADER ===== */}
-        <header className="stock-ajuste-header">
-          <div className="stock-ajuste-titleRow">
-            <h3 className="stock-ajuste-title">📦 Ajustar stock</h3>
-            <span className="stock-ajuste-chip">{unidad || "ud"}</span>
+        {/* Header */}
+        <header className="stk-header">
+          <div className="stk-header-top">
+            <h3 className="stk-title">Ajustar stock</h3>
+            <span className="stk-chip">{unidad || "ud"}</span>
           </div>
 
-          <p className="stock-ajuste-subtitle">
+          <p className="stk-subtitle">
             Ajusta el stock real del ítem. Este cambio quedará registrado en{" "}
             <strong>Movimientos de stock</strong> como ajuste manual.
           </p>
 
-          <div className="stock-ajuste-item">
-            <span className="stock-ajuste-itemName">{ingrediente.nombre}</span>
-            <span className="stock-ajuste-itemMeta">
+          <div className="stk-item-card">
+            <span className="stk-item-name">{ingrediente.nombre}</span>
+            <span className="stk-item-meta">
               Stock actual: <strong>{stockInicial}</strong> {unidad}
             </span>
           </div>
         </header>
 
-        {/* ===== BODY ===== */}
-        <section className="stock-ajuste-body">
-          <div className="stock-ajuste-controls">
-            <div className="stock-ajuste-stepRow">
-              <button
-                type="button"
-                className="ajuste-pill"
-                onClick={() => ajustar(-10)}
-                disabled={loading}
-                title="Restar 10"
-              >
-                −10
-              </button>
-              <button
-                type="button"
-                className="ajuste-pill"
-                onClick={() => ajustar(-5)}
-                disabled={loading}
-                title="Restar 5"
-              >
-                −5
-              </button>
-              <button
-                type="button"
-                className="ajuste-btn"
-                onClick={() => ajustar(-1)}
-                disabled={loading}
-                aria-label="Disminuir"
-                title="Restar 1"
-              >
-                −
-              </button>
+        {/* Body */}
+        <section className="stk-body">
+          <div className="stk-controls">
+            <div className="ajuste-stepRow">
+              <button type="button" className="stk-pill" onClick={() => ajustar(-10)} disabled={loading} title="Restar 10">−10</button>
+              <button type="button" className="stk-pill" onClick={() => ajustar(-5)} disabled={loading} title="Restar 5">−5</button>
+              <button type="button" className="stk-pill stk-pill--lg" onClick={() => ajustar(-1)} disabled={loading} title="Restar 1">−</button>
 
               <div className="ajuste-inputWrap">
                 <input
@@ -139,95 +97,52 @@ const AjustarStockModal = ({ ingrediente, onClose, onSave }) => {
                   value={cantidad}
                   min="0"
                   step="1"
-                  onChange={(e) => {
-                    setError("");
-                    setCantidad(e.target.value);
-                  }}
-                  onBlur={() => {
-                    // normalizar al salir
-                    setCantidad(String(clampMin(toNum(cantidad, stockInicial), 0)));
-                  }}
+                  onChange={(e) => { setError(""); setCantidad(e.target.value); }}
+                  onBlur={() => setCantidad(String(clampMin(toNum(cantidad, stockInicial), 0)))}
                   disabled={loading}
                   autoFocus
                 />
                 <span className="ajuste-unit">{unidad}</span>
               </div>
 
-              <button
-                type="button"
-                className="ajuste-btn"
-                onClick={() => ajustar(1)}
-                disabled={loading}
-                aria-label="Aumentar"
-                title="Sumar 1"
-              >
-                +
-              </button>
-              <button
-                type="button"
-                className="ajuste-pill"
-                onClick={() => ajustar(5)}
-                disabled={loading}
-                title="Sumar 5"
-              >
-                +5
-              </button>
-              <button
-                type="button"
-                className="ajuste-pill"
-                onClick={() => ajustar(10)}
-                disabled={loading}
-                title="Sumar 10"
-              >
-                +10
-              </button>
+              <button type="button" className="stk-pill stk-pill--lg" onClick={() => ajustar(1)} disabled={loading} title="Sumar 1">+</button>
+              <button type="button" className="stk-pill" onClick={() => ajustar(5)} disabled={loading} title="Sumar 5">+5</button>
+              <button type="button" className="stk-pill" onClick={() => ajustar(10)} disabled={loading} title="Sumar 10">+10</button>
             </div>
 
-            {/* Resumen */}
-            <div className="stock-ajuste-summary">
-              <div className="summary-card">
-                <span className="summary-label">Antes</span>
-                <strong className="summary-value">
-                  {stockInicial} {unidad}
-                </strong>
+            {/* Summary */}
+            <div className="ajuste-summary">
+              <div className="stk-card ajuste-summary-card">
+                <span className="stk-item-meta">Antes</span>
+                <strong className="ajuste-summary-value">{stockInicial} {unidad}</strong>
               </div>
-
-              <div className="summary-card">
-                <span className="summary-label">Después</span>
-                <strong className="summary-value">
-                  {cantidadNum} {unidad}
-                </strong>
+              <div className="stk-card ajuste-summary-card">
+                <span className="stk-item-meta">Después</span>
+                <strong className="ajuste-summary-value">{cantidadNum} {unidad}</strong>
               </div>
-
-              <div className={`summary-card summary-diff ${diferencia === 0 ? "" : diferencia > 0 ? "pos" : "neg"}`}>
-                <span className="summary-label">Variación</span>
-                <strong className="summary-value">
+              <div className={`stk-card ajuste-summary-card ${diferencia === 0 ? "" : diferencia > 0 ? "ajuste-diff-pos" : "ajuste-diff-neg"}`}>
+                <span className="stk-item-meta">Variación</span>
+                <strong className="ajuste-summary-value">
                   {diferencia > 0 ? `+${diferencia}` : `${diferencia}`} {unidad}
                 </strong>
               </div>
             </div>
 
-            <p className="stock-ajuste-hint">
+            <p className="stk-hint">
               Tip: usa <strong>Enter</strong> para guardar y <strong>Esc</strong> para cerrar.
             </p>
 
-            {error && <div className="stock-ajuste-error">{error}</div>}
+            {error && <div className="stk-error">{error}</div>}
           </div>
         </section>
 
-        {/* ===== ACTIONS ===== */}
-        <footer className="stock-ajuste-actions">
-          <button
-            type="button"
-            className="btn-cancelar"
-            onClick={onClose}
-            disabled={loading}
-          >
+        {/* Footer */}
+        <footer className="stk-footer">
+          <button type="button" className="stk-btn stk-btn--ghost" onClick={onClose} disabled={loading}>
             Cancelar
           </button>
-
           <button
-            className="btn-confirmar"
+            className="stk-btn stk-btn--primary"
             onClick={enviarAjuste}
             disabled={loading || !hasChanges}
             title={!hasChanges ? "No hay cambios para guardar" : ""}

@@ -552,19 +552,24 @@
 /* ===== ACTIONS ROW ===== */
 .stock-card-actions {
   display: flex;
-  gap: 10px;
+  flex-wrap: wrap;
+  gap: 8px;
   margin-top: auto;
 }
 
 .stock-card-actions button {
-  flex: 1;
+  flex: 1 1 calc(50% - 4px);
+  min-width: 0;
   border-radius: var(--dash-radius-pill);
-  padding: 0.6rem 1rem;
+  padding: 0.5rem 0.6rem;
   font-weight: 600;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   cursor: pointer;
   transition: 0.25s ease;
   border: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .stock-card-actions .btn-ajustar {
@@ -596,12 +601,41 @@
 }
 
 /* ===== LOADING, ERROR, EMPTY ===== */
-.stock-loading,
-.stock-error {
+.stock-loading {
   margin-top: 3rem;
   text-align: center;
   font-size: 1.05rem;
   color: rgba(255, 255, 255, 0.5);
+}
+
+.stock-error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+  margin-top: 1.5rem;
+  padding: 0.8rem 1.2rem;
+  border-radius: 12px;
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  color: #fca5a5;
+  font-size: 0.92rem;
+}
+
+.stock-error-retry {
+  padding: 0.35rem 0.8rem;
+  border-radius: 999px;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  background: rgba(239, 68, 68, 0.12);
+  color: #fca5a5;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.stock-error-retry:hover {
+  background: rgba(239, 68, 68, 0.22);
 }
 
 .stock-empty {

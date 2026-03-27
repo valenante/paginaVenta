@@ -1,55 +1,52 @@
-.upsellusers-container {
-  margin: 1.5rem 0 2rem;
-  padding: 1.8rem;
-  border-radius: 18px;
-  background: linear-gradient(
-    135deg,
-    rgba(255, 103, 0, 0.25),
-    rgba(106, 13, 173, 0.25)
-  );
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  color: #fff;
-  text-align: center;
-  backdrop-filter: blur(6px);
-  animation: fadeInUpsellUsers 0.3s ease;
-}
+/*****************************************************
+ * Upsell Estadisticas — Alef (tema config claro)
+ *****************************************************/
 
-@keyframes fadeInUpsellUsers {
-  from { opacity: 0; transform: translateY(10px); }
-  to   { opacity: 1; transform: translateY(0); }
+.upsellusers-container {
+  padding: var(--space-lg);
+  border-radius: var(--radius-lg);
+  background: rgba(96, 181, 255, 0.06);
+  border: 1px solid rgba(96, 181, 255, 0.2);
+  color: var(--color-texto);
+  text-align: center;
 }
 
 .upsellusers-title {
-  font-size: 1.4rem;
-  margin-bottom: .5rem;
+  font-size: var(--font-size-md);
+  margin: 0 0 var(--space-xs);
   font-weight: 700;
+  color: var(--color-primario);
 }
 
 .upsellusers-text {
-  font-size: 1rem;
-  max-width: 580px;
-  margin: 0.5rem auto 1rem;
-  opacity: .95;
+  font-size: var(--font-size-sm);
+  max-width: 480px;
+  margin: var(--space-xs) auto var(--space-md);
+  color: var(--color-texto-suave);
+  line-height: 1.45;
 }
 
 .upsellusers-footnote {
-  font-size: 0.9rem;
-  opacity: .75;
+  font-size: var(--font-size-xs);
+  color: var(--color-texto-suave);
+  margin: 0 0 var(--space-md);
 }
 
 .upsellusers-btn {
-  margin-top: 1.2rem;
-  padding: 0.7rem 1.6rem;
-  background: linear-gradient(90deg, #6a0dad, #ff6700);
+  padding: 0.6rem 1.3rem;
+  background: var(--color-primario);
   color: #fff;
   border: none;
-  border-radius: 999px;
-  font-weight: 600;
+  border-radius: var(--radius-pill);
+  font-weight: 700;
+  font-size: var(--font-size-sm);
   cursor: pointer;
-  transition: .2s;
+  transition: all 0.15s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .upsellusers-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(255, 103, 0, 0.4);
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
 }

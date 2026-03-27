@@ -16,9 +16,25 @@ function Tarjeta({ titulo, valor, subtitulo, color, icono }) {
 }
 
 export default function ResumenDia() {
-  const { data, loading } = useResumenDia();
+  const { data, loading, error, refetch } = useResumenDia();
 
-  if (loading || !data) return null;
+  if (loading) return null;
+
+  if (error) {
+    return (
+      <section className="resumen-dia">
+        <h3 className="resumen-dia__titulo">Resumen de hoy</h3>
+        <div className="resumen-dia__error">
+          <span className="resumen-dia__error-text">{error}</span>
+          <button className="resumen-dia__error-btn" onClick={refetch}>
+            Reintentar
+          </button>
+        </div>
+      </section>
+    );
+  }
+
+  if (!data) return null;
 
   const {
     reservasHoy,
@@ -85,8 +101,8 @@ export default function ResumenDia() {
         <div className="resumen-dia__top">
           <span className="resumen-dia__top-label">Top productos</span>
           <div className="resumen-dia__top-lista">
-            {topProductos.map((p, i) => (
-              <span key={i} className="resumen-dia__top-item">
+            {topProductos.map((p) => (
+              <span key={p.productoId || p.nombre} className="resumen-dia__top-item">
                 {p.nombre} ({p.cantidad})
               </span>
             ))}

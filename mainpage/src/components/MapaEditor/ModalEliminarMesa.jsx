@@ -46,8 +46,13 @@ export default function ModalEliminarMesa({ open, onClose, mesas = [], onDeleted
       onDeleted?.();
       onClose?.();
     } catch (error) {
-      const code = error?.response?.data?.error || "ERROR_ELIMINAR_MESA";
-      setErr(code);
+      const code = error?.response?.data?.code || error?.response?.data?.error || "";
+      const map = {
+        MESA_NOT_FOUND: "Mesa no encontrada.",
+        MESA_ABIERTA_NO_ELIMINABLE: "No se puede eliminar una mesa que está abierta. Ciérrala primero.",
+        ID_INVALIDO: "ID de mesa inválido.",
+      };
+      setErr(map[code] || error?.response?.data?.message || "Error al eliminar la mesa.");
     } finally {
       setLoading(false);
     }

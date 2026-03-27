@@ -68,8 +68,7 @@ const UsuarioStatsModal = ({ usuario, onClose }) => {
           { params }
         );
 
-        // sendOk wraps: { ok, data: payload } — unwrap
-        if (!cancelado) setStats(resp.data?.data ?? resp.data);
+        if (!cancelado) setStats(resp.data);
       } catch (err) {
         logger.error("Error stats usuario:", err);
         if (!cancelado) {

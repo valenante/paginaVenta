@@ -1,300 +1,352 @@
-/* =========================================================
-   USUARIOS — Panel de Administración Alef
-   ---------------------------------------------------------
-   - Vidrio oscuro con blur
-   - Gradiente profesional morado/naranja
-   - Tarjetas limpias y botones pill
-   - Tabla premium estilo SaaS
-   - Animaciones suaves
-   ========================================================= */
+/*****************************************************
+ * Usuarios — Alef
+ * Base: config-common.css (cfg-page, card, config-card…)
+ * Hermana visual de ConfigImpresionPage / RolesPermisos
+ *****************************************************/
 
-/* =========================================================
-   GRID PRINCIPAL — DESKTOP 50 / 50
-   ========================================================= */
-
+/* ===== Grid principal (form + tabla) ===== */
 .usuarios-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  /* 50 / 50 */
-  gap: 2rem;
+  gap: var(--space-xl);
   align-items: flex-start;
 }
 
-/* ===== ROOT GENERAL ===== */
-.usuarios-root {
-  min-height: 100vh;
-  padding: 2.5rem 1.5rem 4rem;
-
-  background: radial-gradient(circle at top right,
-      #1d1b2f 0%,
-      #0c0c17 85%);
-
-  color: #f5f7fa;
-  display: flex;
-  flex-direction: column;
-  gap: 2.5rem;
-
-  animation: fadeIn 0.35s ease;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* =========================================================
-   FORMULARIO CREAR USUARIO
-   ========================================================= */
+/* ===== Formulario crear usuario ===== */
 .usuario-create-card {
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(12px);
+  background: var(--color-fondo-card, #ffffff);
   border-radius: var(--radius-lg);
-  border: 1px solid rgba(255, 255, 255, 0.10);
-  padding: 2rem;
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
-  animation: fadeIn 0.4s ease;
+  border: 1px solid var(--color-borde-suave);
+  padding: var(--space-lg) var(--space-xl);
+  box-shadow: var(--shadow-suave);
 }
 
 .usuario-create-card h2 {
-  font-size: 1.4rem;
-  font-weight: 600;
-  margin-bottom: 1rem;
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  margin: 0 0 var(--space-md);
+  color: var(--color-texto);
 }
 
-/* Inputs */
 .usuario-create-card input,
 .usuario-create-card select {
   width: 100%;
-  padding: 0.7rem 0.9rem;
-  background: rgba(255, 255, 255, 0.07);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 0.7rem 0.85rem;
+  background: var(--color-fondo-card, #ffffff);
+  border: 1px solid var(--color-borde-suave);
   border-radius: var(--radius-md);
-  color: #fff;
+  color: var(--color-texto);
+  font-family: var(--font-base);
+  font-size: var(--font-size-sm);
   outline: none;
-  margin-bottom: 1rem;
-  transition: all .2s ease;
+  margin-bottom: var(--space-md);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .usuario-create-card input:focus,
 .usuario-create-card select:focus {
-  background: rgba(255, 255, 255, 0.12);
-  border-color: #ff6700;
+  border-color: var(--color-secundario, #4465e7);
+  box-shadow: 0 0 0 3px rgba(68, 101, 231, 0.14);
 }
 
-/* Botón crear */
+.usuario-create-card input::placeholder {
+  color: var(--color-texto-suave);
+  opacity: 0.6;
+}
+
 .usuario-create-card button {
-  background: var(--color-primario, #6a0dad);
-  color: white;
+  background: var(--color-primario);
+  color: #fff;
   border: none;
-  padding: 0.7rem 1.6rem;
+  padding: 0.65rem 1.4rem;
   border-radius: var(--radius-pill);
   font-weight: 600;
-  font-size: 1rem;
+  font-size: var(--font-size-sm);
   cursor: pointer;
-  transition: all .2s ease;
+  transition: all 0.15s ease;
 }
 
 .usuario-create-card button:hover {
-  background: var(--color-secundario, #ff6700);
-  transform: translateY(-2px);
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
 }
 
-/* =========================================================
-   TABLA USUARIOS
-   ========================================================= */
+/* ===== Tabla de usuarios ===== */
 .usuarios-table-wrapper {
-  background: rgba(255, 255, 255, 0.06);
-  backdrop-filter: blur(14px);
+  background: var(--color-fondo-card, #ffffff);
   border-radius: var(--radius-lg);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  padding: 1.8rem 2rem;
-  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.25);
+  border: 1px solid var(--color-borde-suave);
+  padding: var(--space-lg) var(--space-xl);
+  box-shadow: var(--shadow-suave);
+  overflow-x: auto;
 }
 
 .usuarios-table {
   width: 100%;
   border-collapse: collapse;
-  color: #e5e7eb;
-  font-size: 0.95rem;
+  color: var(--color-texto);
+  font-size: var(--font-size-sm);
 }
 
-/* Encabezados */
 .usuarios-table th {
-  padding: 0.75rem 1rem;
+  padding: 0.75rem 0.8rem;
   text-align: left;
-  color: #cbd5e1;
+  color: var(--color-texto);
   text-transform: uppercase;
-  font-size: 0.78rem;
-  letter-spacing: .05em;
-  border-bottom: 2px solid rgba(255, 255, 255, 0.12);
-  background: rgba(255, 255, 255, 0.03);
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.04em;
+  font-weight: 700;
+  border-bottom: 1px solid var(--color-borde-suave);
+  background: var(--color-fondo-claro, #f8fafc);
+  white-space: nowrap;
 }
 
-/* Filas */
 .usuarios-table td {
-  padding: 0.75rem 1rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 0.75rem 0.8rem;
+  border-bottom: 1px solid var(--color-borde-suave);
+  vertical-align: middle;
 }
 
 .usuarios-table tr:hover td {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(0, 0, 0, 0.02);
 }
 
-/* ===== Botones de acción ===== */
+/* ===== Botones de acción (tabla) ===== */
 .btn-accion {
-  padding: 0.35rem 0.75rem;
+  padding: 0.3rem 0.65rem;
   border-radius: var(--radius-pill);
   border: none;
   cursor: pointer;
   color: #fff;
-  font-size: 0.82rem;
+  font-size: var(--font-size-xs);
   font-weight: 600;
-  margin-right: 0.4rem;
-  transition: all .18s ease;
+  margin-right: 0.3rem;
+  transition: all 0.15s ease;
 }
 
 .btn-editar {
-  background: #4c5ea8;
+  background: var(--color-primario);
 }
 
 .btn-editar:hover {
-  background: #6473c9;
+  filter: brightness(1.1);
 }
 
 .btn-eliminar {
-  background: #9b1c1c;
+  background: var(--color-error);
 }
 
 .btn-eliminar:hover {
-  background: #b62828;
+  filter: brightness(1.1);
 }
 
 .btn-stats {
-  background: #ff6700;
+  background: var(--color-secundario);
 }
 
 .btn-stats:hover {
-  background: #ff7f28;
+  filter: brightness(1.1);
 }
 
-/* =========================================================
-   MODALES (EDITAR / STATS)
-   ========================================================= */
+/* ===== Modales ===== */
 .modal-usuarios {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  backdrop-filter: blur(6px);
-  background: rgba(0, 0, 0, 0.55);
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
   justify-content: center;
-  animation: fadeIn .25s ease;
+  z-index: 1000;
+  animation: usFadeIn 0.2s ease;
+}
+
+@keyframes usFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 
 .modal-usuarios .modal-content {
   width: min(480px, 95%);
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--color-fondo-card, #ffffff);
+  border: 1px solid var(--color-borde-suave);
   border-radius: var(--radius-lg);
-  padding: 2rem;
-  box-shadow: 0 10px 36px rgba(0, 0, 0, 0.35);
-  animation: fadeInUp .25s ease;
+  padding: var(--space-xl);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.2);
+  animation: usSlideUp 0.2s ease;
 }
 
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(14px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+@keyframes usSlideUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 .modal-usuarios h2 {
-  font-size: 1.3rem;
-  margin-bottom: 1rem;
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  margin: 0 0 var(--space-md);
+  color: var(--color-texto);
 }
 
-/* Inputs modal */
 .modal-usuarios input,
 .modal-usuarios select {
-  padding: 0.7rem 0.9rem;
-  background: rgba(255, 255, 255, 0.07);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  color: #fff;
+  width: 100%;
+  padding: 0.7rem 0.85rem;
+  background: var(--color-fondo-card, #ffffff);
+  border: 1px solid var(--color-borde-suave);
   border-radius: var(--radius-md);
-  margin-bottom: 1rem;
+  color: var(--color-texto);
+  font-family: var(--font-base);
+  font-size: var(--font-size-sm);
+  outline: none;
+  margin-bottom: var(--space-md);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
-/* Botones modal */
+.modal-usuarios input:focus,
+.modal-usuarios select:focus {
+  border-color: var(--color-secundario, #4465e7);
+  box-shadow: 0 0 0 3px rgba(68, 101, 231, 0.14);
+}
+
 .modal-buttons {
   display: flex;
-  justify-content: space-between;
-  margin-top: 1.5rem;
+  gap: var(--space-sm);
+  margin-top: var(--space-lg);
 }
 
 .modal-btn {
   flex: 1;
-  padding: 0.8rem;
+  padding: 0.7rem;
   text-align: center;
   border-radius: var(--radius-pill);
   font-weight: 600;
+  font-size: var(--font-size-sm);
   cursor: pointer;
   border: none;
-  color: #fff;
-  transition: all .2s ease;
+  transition: all 0.15s ease;
 }
 
 .modal-btn-confirmar {
-  background: #6a0dad;
-  margin-right: 0.5rem;
+  background: var(--color-primario);
+  color: #fff;
 }
 
 .modal-btn-confirmar:hover {
-  background: #ff6700;
+  filter: brightness(1.1);
+  transform: translateY(-1px);
 }
 
 .modal-btn-cerrar {
-  background: #444;
+  background: var(--color-fondo-claro, #f1f5f9);
+  color: var(--color-texto);
+  border: 1px solid var(--color-borde-suave);
 }
 
 .modal-btn-cerrar:hover {
-  background: #555;
+  background: var(--color-borde-suave);
 }
 
-/* =========================================================
-   RESPONSIVE
-   ========================================================= */
+/* ===== Bloque informativo ===== */
+.usuarios-info {
+  background: var(--color-fondo-card, #ffffff);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-borde-suave);
+  padding: var(--space-lg) var(--space-xl);
+  box-shadow: var(--shadow-suave);
+}
+
+.usuarios-info-header {
+  margin-bottom: var(--space-md);
+}
+
+.usuarios-info-title {
+  margin: 0 0 var(--space-xs);
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  color: var(--color-texto);
+}
+
+.usuarios-info-subtitle {
+  margin: 0;
+  color: var(--color-texto-suave);
+  font-size: var(--font-size-sm);
+  line-height: 1.45;
+}
+
+.usuarios-info-cards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-md);
+}
+
+.usuarios-info-card {
+  background: var(--color-fondo-claro, #f8fafc);
+  border: 1px solid var(--color-borde-suave);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+}
+
+.usuarios-info-card h3 {
+  margin: 0 0 var(--space-xs);
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: var(--color-primario);
+}
+
+.usuarios-info-card p {
+  margin: 0;
+  color: var(--color-texto);
+  font-size: var(--font-size-sm);
+  line-height: 1.45;
+}
+
+.usuarios-info-note {
+  margin-top: var(--space-sm) !important;
+  padding-top: var(--space-sm);
+  border-top: 1px solid var(--color-borde-suave);
+  color: var(--color-texto-suave) !important;
+  font-size: var(--font-size-xs) !important;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 1200px) {
+  .usuarios-grid {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "tabla"
+      "crear";
+    gap: var(--space-lg);
+  }
+
+  .usuarios-col-table { grid-area: tabla; }
+  .usuarios-col-create { grid-area: crear; }
+}
+
+@media (max-width: 900px) {
+  .usuarios-info-cards {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 768px) {
   .usuarios-grid {
     grid-template-columns: 1fr;
-    /* una columna */
   }
 
-  .usuarios-root {
-    padding: 1.5rem;
+  .usuario-create-card,
+  .usuarios-table-wrapper,
+  .usuarios-info {
+    padding: var(--space-md);
   }
 
   .usuarios-table th,
   .usuarios-table td {
     padding: 0.55rem;
-    font-size: 0.82rem;
-  }
-
-  .usuario-create-card {
-    padding: 1.5rem;
+    font-size: var(--font-size-xs);
   }
 }

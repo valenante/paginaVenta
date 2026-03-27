@@ -2,6 +2,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import api from "../../utils/api";
 import AlefSelect from "../AlefSelect/AlefSelect";
+import "./StockModalBase.css";
 import "./EditarIngredienteModal.css";
 
 // ⚙️ Opciones
@@ -11,13 +12,7 @@ const tipos = [
   { label: "Consumible", value: "consumible" },
 ];
 
-// 🧰 Helpers
-const toNum = (v, fallback = 0) => {
-  if (v === "" || v == null) return fallback;
-  const n = Number(v);
-  return Number.isFinite(n) ? n : fallback;
-};
-const clampMin = (n, min = 0) => Math.max(min, n);
+import { toNum, clampMin } from "./stockHelpers";
 
 function buildFormFromIngrediente(ing) {
   const tipoItem = ing?.tipoItem || "ingrediente";
@@ -96,6 +91,7 @@ export default function EditarIngredienteModal({ ingrediente, onClose, onSave })
   const [form, setForm] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [confirmTipoChange, setConfirmTipoChange] = useState(null);
 
   const initialForm = useMemo(
     () => (ingrediente ? buildFormFromIngrediente(ingrediente) : null),
@@ -149,10 +145,8 @@ export default function EditarIngredienteModal({ ingrediente, onClose, onSave })
     if (prevTipo === "consumible" && value === "ingrediente") {
       const estabaAuto = Boolean(form?.consumoAuto?.enabled);
       if (estabaAuto) {
-        const ok = window.confirm(
-          "Cambiar a Ingrediente desactivará el consumo automático. ¿Continuar?"
-        );
-        if (!ok) return;
+        setConfirmTipoChange(value);
+        return;
       }
       setForm((p) => ({
         ...p,
@@ -163,6 +157,16 @@ export default function EditarIngredienteModal({ ingrediente, onClose, onSave })
     }
 
     setForm((p) => ({ ...p, tipoItem: value }));
+  };
+
+  const confirmarCambioTipo = () => {
+    if (!confirmTipoChange) return;
+    setForm((p) => ({
+      ...p,
+      tipoItem: confirmTipoChange,
+      consumoAuto: { ...p.consumoAuto, enabled: false },
+    }));
+    setConfirmTipoChange(null);
   };
 
   const guardar = async () => {
@@ -229,49 +233,47 @@ export default function EditarIngredienteModal({ ingrediente, onClose, onSave })
       onClick={() => !loading && onClose?.()}
     >
       <div
-        className="alef-modal-content stock-editar-modal"
+        className="alef-modal-content stk-modal"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* ===== HEADER (idéntico a AjustarStockModal) ===== */}
-        <header className="stock-editar-header">
-          <div className="stock-editar-titleRow">
-            <h3 className="stock-editar-title">✏️ Editar ítem</h3>
-
-            {/* chips con misma clase visual */}
-            <div className="stock-editar-chipRow">
-              <span className="stock-editar-chip">{unidadChip}</span>
-              <span className="stock-editar-chip">
+        {/* Header */}
+        <header className="stk-header">
+          <div className="stk-header-top">
+            <h3 className="stk-title">Editar ítem</h3>
+            <div className="stk-chip-row">
+              <span className="stk-chip">{unidadChip}</span>
+              <span className="stk-chip">
                 {form.tipoItem === "consumible" ? "Consumible" : "Ingrediente"}
               </span>
             </div>
           </div>
 
-          <p className="stock-editar-subtitle">
+          <p className="stk-subtitle">
             Edita nombre, unidad, umbrales y consumo automático. El{" "}
-            <strong>stock actual</strong> se ajusta en “Ajustar stock” para mantener trazabilidad.
+            <strong>stock actual</strong> se ajusta en "Ajustar stock" para mantener trazabilidad.
           </p>
 
-          <div className="stock-editar-item">
-            <span className="stock-editar-itemName">{ingrediente.nombre}</span>
-            <span className="stock-editar-itemMeta">
+          <div className="stk-item-card">
+            <span className="stk-item-name">{ingrediente.nombre}</span>
+            <span className="stk-item-meta">
               Stock actual: <strong>{toNum(ingrediente.stockActual, 0)}</strong> {unidadChip} ·
               Máx actual: <strong>{toNum(ingrediente.stockMax, 0)}</strong> {unidadChip}
             </span>
           </div>
         </header>
 
-        {/* ===== BODY (idéntico a AjustarStockModal) ===== */}
-        <section className="stock-editar-body">
-          <div className="stock-editar-controls">
+        {/* Body */}
+        <section className="stk-body">
+          <div className="stk-controls">
             {/* Card: Datos */}
-            <div className="stock-editar-card">
-              <div className="stock-editar-cardTitle">🧾 Datos principales</div>
+            <div className="stk-card">
+              <div className="stk-card-title">Datos principales</div>
 
-              <div className="stock-editar-grid">
-                <div className="stock-editar-field">
-                  <label className="stock-editar-label">Nombre</label>
+              <div className="stk-grid">
+                <div className="stk-field">
+                  <label className="stk-label">Nombre</label>
                   <input
-                    className="stock-editar-input"
+                    className="stk-input"
                     value={form.nombre}
                     onChange={(e) => {
                       setError("");
@@ -283,9 +285,9 @@ export default function EditarIngredienteModal({ ingrediente, onClose, onSave })
                   />
                 </div>
 
-                <div className="stock-editar-field">
-                  <label className="stock-editar-label">Tipo</label>
-                  <div className="stock-editar-selectWrap">
+                <div className="stk-field">
+                  <label className="stk-label">Tipo</label>
+                  <div className="stk-select-wrap">
                     <AlefSelect
                       label=""
                       value={form.tipoItem}
@@ -296,9 +298,9 @@ export default function EditarIngredienteModal({ ingrediente, onClose, onSave })
                   </div>
                 </div>
 
-                <div className="stock-editar-field">
-                  <label className="stock-editar-label">Unidad</label>
-                  <div className="stock-editar-selectWrap">
+                <div className="stk-field">
+                  <label className="stk-label">Unidad</label>
+                  <div className="stk-select-wrap">
                     <AlefSelect
                       label=""
                       value={form.unidad}
@@ -315,14 +317,14 @@ export default function EditarIngredienteModal({ ingrediente, onClose, onSave })
             </div>
 
             {/* Card: Umbrales */}
-            <div className="stock-editar-card">
-              <div className="stock-editar-cardTitle">📦 Stock y alertas</div>
+            <div className="stk-card">
+              <div className="stk-cardTitle">📦 Stock y alertas</div>
 
-              <div className="stock-editar-grid">
-                <div className="stock-editar-field">
-                  <label className="stock-editar-label">Stock máximo</label>
+              <div className="stk-grid">
+                <div className="stk-field">
+                  <label className="stk-label">Stock máximo</label>
                   <input
-                    className="stock-editar-input"
+                    className="stk-input"
                     type="number"
                     min="1"
                     step="1"
@@ -341,10 +343,10 @@ export default function EditarIngredienteModal({ ingrediente, onClose, onSave })
                   />
                 </div>
 
-                <div className="stock-editar-field">
-                  <label className="stock-editar-label">Stock mínimo</label>
+                <div className="stk-field">
+                  <label className="stk-label">Stock mínimo</label>
                   <input
-                    className="stock-editar-input"
+                    className="stk-input"
                     type="number"
                     min="0"
                     step="1"
@@ -363,10 +365,10 @@ export default function EditarIngredienteModal({ ingrediente, onClose, onSave })
                   />
                 </div>
 
-                <div className="stock-editar-field">
-                  <label className="stock-editar-label">Stock crítico</label>
+                <div className="stk-field">
+                  <label className="stk-label">Stock crítico</label>
                   <input
-                    className="stock-editar-input"
+                    className="stk-input"
                     type="number"
                     min="0"
                     step="1"
@@ -386,17 +388,17 @@ export default function EditarIngredienteModal({ ingrediente, onClose, onSave })
                 </div>
               </div>
 
-              <p className="stock-editar-hint">
+              <p className="stk-hint">
                 Coherencia: <strong>crítico ≤ mínimo ≤ máximo</strong>.
               </p>
             </div>
 
             {/* Card: Consumo auto (si consumible) */}
             {esConsumible && (
-              <div className="stock-editar-card">
-                <div className="stock-editar-cardTitle">⏳ Consumo automático</div>
+              <div className="stk-card">
+                <div className="stk-cardTitle">⏳ Consumo automático</div>
 
-                <label className="stock-editar-toggle">
+                <label className="stk-toggle">
                   <input
                     type="checkbox"
                     checked={form.consumoAuto.enabled}
@@ -407,18 +409,18 @@ export default function EditarIngredienteModal({ ingrediente, onClose, onSave })
                         consumoAuto: { ...p.consumoAuto, enabled: e.target.checked },
                       }));
                     }}
-                    className="stock-editar-checkbox"
+                    className="stk-checkbox"
                     disabled={loading}
                   />
                   Activar consumo automático
                 </label>
 
                 {form.consumoAuto.enabled && (
-                  <div className="stock-editar-grid stock-editar-grid--top">
-                    <div className="stock-editar-field">
-                      <label className="stock-editar-label">Unidades por ciclo</label>
+                  <div className="stk-grid stk-grid--top">
+                    <div className="stk-field">
+                      <label className="stk-label">Unidades por ciclo</label>
                       <input
-                        className="stock-editar-input"
+                        className="stk-input"
                         type="number"
                         min="1"
                         step="1"
@@ -443,10 +445,10 @@ export default function EditarIngredienteModal({ ingrediente, onClose, onSave })
                       />
                     </div>
 
-                    <div className="stock-editar-field">
-                      <label className="stock-editar-label">Cada cuántos días</label>
+                    <div className="stk-field">
+                      <label className="stk-label">Cada cuántos días</label>
                       <input
-                        className="stock-editar-input"
+                        className="stk-input"
                         type="number"
                         min="1"
                         step="1"
@@ -476,10 +478,10 @@ export default function EditarIngredienteModal({ ingrediente, onClose, onSave })
             )}
 
             {/* Card: Archivado */}
-            <div className="stock-editar-card">
-              <div className="stock-editar-cardTitle">🗄️ Estado</div>
+            <div className="stk-card">
+              <div className="stk-cardTitle">🗄️ Estado</div>
 
-              <label className="stock-editar-toggle">
+              <label className="stk-toggle">
                 <input
                   type="checkbox"
                   checked={form.archivado}
@@ -487,35 +489,39 @@ export default function EditarIngredienteModal({ ingrediente, onClose, onSave })
                     setError("");
                     setForm((p) => ({ ...p, archivado: e.target.checked }));
                   }}
-                  className="stock-editar-checkbox"
+                  className="stk-checkbox"
                   disabled={loading}
                 />
                 Archivar ítem
               </label>
 
-              <p className="stock-editar-hint">
+              <p className="stk-hint">
                 Tip: <strong>Enter</strong> guarda · <strong>Esc</strong> cierra
               </p>
             </div>
 
-            {error && <div className="stock-editar-error">{error}</div>}
+            {error && <div className="stk-error">{error}</div>}
+
+            {confirmTipoChange && (
+              <div className="stk-confirm">
+                <p>Cambiar a <strong>Ingrediente</strong> desactivará el consumo automático. ¿Continuar?</p>
+                <div className="stk-confirm-actions">
+                  <button onClick={() => setConfirmTipoChange(null)}>No, cancelar</button>
+                  <button onClick={confirmarCambioTipo}>Sí, cambiar</button>
+                </div>
+              </div>
+            )}
           </div>
         </section>
 
-        {/* ===== FOOTER (idéntico a AjustarStockModal) ===== */}
-        <footer className="stock-editar-actions">
-          <button
-            type="button"
-            className="btn-cancelar"
-            onClick={onClose}
-            disabled={loading}
-          >
+        {/* Footer */}
+        <footer className="stk-footer">
+          <button type="button" className="stk-btn stk-btn--ghost" onClick={onClose} disabled={loading}>
             Cancelar
           </button>
-
           <button
             type="button"
-            className="btn-confirmar"
+            className="stk-btn stk-btn--primary"
             onClick={guardar}
             disabled={loading || !hasChanges}
             title={!hasChanges ? "No hay cambios para guardar" : ""}

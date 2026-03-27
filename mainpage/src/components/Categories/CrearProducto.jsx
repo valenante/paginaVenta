@@ -33,6 +33,8 @@ const CrearProducto = ({ onClose, onCreated, initialTipo }) => {
   const [secciones, setSecciones] = useState([]);
   const [estaciones, setEstaciones] = useState([]);
   const [alerta, setAlerta] = useState(null);
+  const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
 
   const isPlanEsencial =
     user?.plan === "esencial" || user?.plan === "tpv-esencial";
@@ -114,13 +116,6 @@ const CrearProducto = ({ onClose, onCreated, initialTipo }) => {
     setFormData((prev) => ({
       ...prev,
       estacion: "",
-    }));
-  }, [formData.tipo]);
-
-  useEffect(() => {
-    setFormData((prev) => ({
-      ...prev,
-      estacion: "",
       seccion: "",
     }));
   }, [formData.tipo]);
@@ -137,8 +132,8 @@ const CrearProducto = ({ onClose, onCreated, initialTipo }) => {
             }),
           ]);
 
-        const seccionesDB = seccionesRes?.data?.data?.items ?? seccionesRes?.data ?? [];
-        const estacionesDB = estacionesRes?.data?.data?.items ?? estacionesRes?.data ?? [];
+        const seccionesDB = seccionesRes?.data?.items || [];
+        const estacionesDB = estacionesRes?.data?.items || [];
 
         setSecciones(Array.isArray(seccionesDB) ? seccionesDB : []);
         setEstaciones(Array.isArray(estacionesDB) ? estacionesDB : []);
@@ -202,6 +197,7 @@ const CrearProducto = ({ onClose, onCreated, initialTipo }) => {
   // Envío del formulario
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (saving || uploading) return;
 
     const productData = { ...formData };
     productData.stock = Number(productData.stock) || 0;
@@ -228,6 +224,7 @@ const CrearProducto = ({ onClose, onCreated, initialTipo }) => {
       }
     }
 
+    setSaving(true);
     try {
       const response = await api.post("/productos", productData, {
         withCredentials: true,
@@ -243,38 +240,45 @@ const CrearProducto = ({ onClose, onCreated, initialTipo }) => {
         }
 
         setAlerta({
-          tipo: "success",
-          mensaje: "✅ Producto creado correctamente",
+          tipo: "exito",
+          mensaje: "Producto creado correctamente",
         });
 
         setTimeout(() => {
           onClose();
-        }, 1200);
+        }, 1000);
       }
     } catch (error) {
       setAlerta({
         tipo: "error",
         mensaje:
           error.response?.data?.message ||
-          "❌ Error al crear el producto",
+          "Error al crear el producto",
       });
 
       logger.error(
         "Error al crear el producto:",
         error.response?.data || error.message
       );
+    } finally {
+      setSaving(false);
     }
   };
 
-  const manejarCambioArchivo = (e) => {
-    // llama a la lógica real de subida si existe
-    handleFileChange(e, setFormData);
-
+  const manejarCambioArchivo = async (e) => {
     const file = e.target.files?.[0];
-    if (file) {
-      setImageFile(file);
-      const url = URL.createObjectURL(file);
-      setPreviewUrl(url);
+    if (!file) return;
+
+    setImageFile(file);
+    setPreviewUrl(URL.createObjectURL(file));
+    setUploading(true);
+
+    try {
+      await handleFileChange(e, setFormData);
+    } catch (err) {
+      setAlerta({ tipo: "error", mensaje: "Error al subir la imagen." });
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -751,18 +755,25 @@ const CrearProducto = ({ onClose, onCreated, initialTipo }) => {
                 className={`drop-zone ${dragging ? "dragging" : ""}`}
                 onDragOver={handleDragOver}
                 onDragLeave={handleDragLeave}
-                onDrop={(e) => {
+                onDrop={async (e) => {
                   e.preventDefault();
                   e.stopPropagation();
-
-                  const file = e.dataTransfer.files[0];
-                  if (file) {
-                    manejarCambioArchivo({ target: { files: [file] } });
+                  setUploading(true);
+                  try {
+                    const file = await handleDrop(e, setFormData);
+                    if (file) {
+                      setImageFile(file);
+                      setPreviewUrl(URL.createObjectURL(file));
+                    }
+                  } catch {
+                    setAlerta({ tipo: "error", mensaje: "Error al subir la imagen." });
+                  } finally {
+                    setUploading(false);
                   }
                 }}
                 onClick={() => document.getElementById("file-upload").click()}
               >
-                <p>Arrastra una imagen aquí o haz clic para subir</p>
+                <p>{uploading ? "Subiendo imagen..." : "Arrastra una imagen aquí o haz clic para subir"}</p>
 
                 <input
                   type="file"
@@ -1024,10 +1035,10 @@ const CrearProducto = ({ onClose, onCreated, initialTipo }) => {
 
           {/* === BOTONES FINALES === */}
           <div className="botones--crear">
-            <button type="submit" className="boton--crear">
-              Guardar
+            <button type="submit" className="boton--crear" disabled={saving || uploading}>
+              {saving ? "Guardando..." : uploading ? "Subiendo imagen..." : "Guardar"}
             </button>
-            <button type="button" onClick={onClose} className="boton--cancelar">
+            <button type="button" onClick={onClose} className="boton--cancelar" disabled={saving}>
               Cancelar
             </button>
           </div>

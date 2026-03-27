@@ -1,12 +1,7 @@
 import React, { useMemo, useState, useEffect, useCallback } from "react";
 import "./HeatMapSemana.css";
 
-/**
- * Espera datos en formato:
- * [
- *   { fecha: "2025-12-08", hora: 23, total: 14.40, numTickets: 1, diaSemana?: 1..6 }
- * ]
- */
+const DIAS_SEMANA = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
 
 const HeatmapSemana = ({ datos = [] }) => {
   const [isMobile, setIsMobile] = useState(() => window.innerWidth < 700);
@@ -54,7 +49,7 @@ const HeatmapSemana = ({ datos = [] }) => {
     return max;
   }, [mapa]);
 
-  const diasSemana = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
+  const diasSemana = DIAS_SEMANA;
 
   const resumenMovil = useMemo(() => {
     const horas = [];
@@ -114,7 +109,7 @@ const HeatmapSemana = ({ datos = [] }) => {
         ))}
       </div>
     ),
-    [diasSemana, mapa, maxValor]
+    [mapa, maxValor]
   );
 
   return (

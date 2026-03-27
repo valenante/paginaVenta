@@ -1,4 +1,4 @@
-import { forwardRef, useMemo } from "react";
+import { useMemo, useState, useEffect } from "react";
 import {
   AreaChart,
   Area,
@@ -11,8 +11,15 @@ import {
 } from "recharts";
 import "./CajaIngresosChart.css";
 
-const CajaIngresosChart = forwardRef(({ datosDiarios }, ref) => {
-  const isMobile = window.innerWidth < 768;
+export default function CajaIngresosChart({ datosDiarios }) {
+  // Fix #4: isMobile reactivo
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768);
+
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
 
   const data = useMemo(() => {
     const slice = isMobile ? datosDiarios.slice(-7) : datosDiarios;
@@ -26,9 +33,7 @@ const CajaIngresosChart = forwardRef(({ datosDiarios }, ref) => {
   }, [datosDiarios, isMobile]);
 
   return (
-    // ref forwarded to the section DOM node (toBase64Image no longer available;
-    // parent already handles null gracefully via optional chaining)
-    <section className={`caja-ingresos-chart ${isMobile ? "mobile" : ""}`} ref={ref}>
+    <section className={`caja-ingresos-chart ${isMobile ? "mobile" : ""}`}>
       <header className="chart-header">
         <h3>Ingresos diarios</h3>
         {isMobile ? (
@@ -101,6 +106,4 @@ const CajaIngresosChart = forwardRef(({ datosDiarios }, ref) => {
       </div>
     </section>
   );
-});
-
-export default CajaIngresosChart;
+}

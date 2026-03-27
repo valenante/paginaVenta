@@ -1,400 +1,133 @@
-/* =========================================================
-   USUARIOS — Panel de Administración Alef
-   ---------------------------------------------------------
-   - Vidrio oscuro con blur
-   - Gradiente profesional morado/naranja
-   - Tarjetas limpias y botones pill
-   - Tabla premium estilo SaaS
-   - Animaciones suaves
-   ========================================================= */
+/*****************************************************
+ * Usuarios Page — Alef
+ * Base: config-common.css (cfg-page, cfg-header…)
+ * Hermana visual de ConfigImpresionPage / RolesPermisos
+ *****************************************************/
 
-/* =========================================================
-   GRID PRINCIPAL — DESKTOP 50 / 50
-   ========================================================= */
-
-.usuarios-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 2rem;
-  align-items: flex-start;
-}
-
-/* ===== ROOT GENERAL ===== */
-.usuarios-root {
-  min-height: 100vh;
-  padding: 2.5rem 1.5rem 4rem;
-
-  background: radial-gradient(circle at top right,
-      #1d1b2f 0%,
-      #0c0c17 85%);
-
-  color: #f5f7fa;
-  display: flex;
-  flex-direction: column;
-  gap: 2.5rem;
-
-  animation: fadeIn 0.35s ease;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* =========================================================
-   FORMULARIO CREAR USUARIO
-   ========================================================= */
-.usuario-create-card {
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(12px);
-  border-radius: var(--radius-lg);
-  border: 1px solid rgba(255, 255, 255, 0.10);
-  padding: 2rem;
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
-  animation: fadeIn 0.4s ease;
-}
-
-.usuario-create-card h2 {
-  font-size: 1.4rem;
-  font-weight: 600;
-  margin-bottom: 1rem;
-}
-
-/* Inputs */
-.usuario-create-card input,
-.usuario-create-card select {
-  width: 100%;
-  padding: 0.7rem 0.9rem;
-  background: rgba(255, 255, 255, 0.07);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: var(--radius-md);
+/* ===== Boton nuevo usuario (header) ===== */
+.usuarios-btn-nuevo {
+  background: var(--color-primario);
   color: #fff;
-  outline: none;
-  margin-bottom: 1rem;
-  transition: all .2s ease;
-}
-
-.usuario-create-card input:focus,
-.usuario-create-card select:focus {
-  background: rgba(255, 255, 255, 0.12);
-  border-color: var(--color-primario, #6a0dad);
-}
-
-/* Botón crear */
-.usuario-create-card button {
-  background: var(--color-primario, #6a0dad);
-  color: white;
   border: none;
-  padding: 0.7rem 1.6rem;
+  padding: 0.65rem 1.3rem;
   border-radius: var(--radius-pill);
-  font-weight: 600;
-  font-size: 1rem;
+  font-weight: 700;
+  font-size: var(--font-size-sm);
   cursor: pointer;
-  transition: all .2s ease;
+  transition: all 0.15s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
-.usuario-create-card button:hover {
-  filter: brightness(1.15);
-  transform: translateY(-2px);
+.usuarios-btn-nuevo:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
 }
 
-/* =========================================================
-   TABLA USUARIOS
-   ========================================================= */
-.usuarios-table-wrapper {
-  background: rgba(255, 255, 255, 0.06);
-  backdrop-filter: blur(14px);
-  border-radius: var(--radius-lg);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  padding: 1.8rem 2rem;
-  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.25);
-}
-
-.usuarios-table {
-  width: 100%;
-  border-collapse: collapse;
-  color: #e5e7eb;
-  font-size: 0.95rem;
-}
-
-/* Encabezados */
-.usuarios-table th {
-  padding: 0.75rem 1rem;
-  text-align: left;
-  color: #cbd5e1;
-  text-transform: uppercase;
-  font-size: 0.78rem;
-  letter-spacing: .05em;
-  border-bottom: 2px solid rgba(255, 255, 255, 0.12);
-  background: rgba(255, 255, 255, 0.03);
-}
-
-/* Filas */
-.usuarios-table td {
-  padding: 0.75rem 1rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-}
-
-.usuarios-table tr:hover td {
-  background: rgba(255, 255, 255, 0.05);
-}
-
-/* ===== Botones de acción ===== */
-.btn-accion {
-  padding: 0.35rem 0.75rem;
-  border-radius: var(--radius-pill);
-  border: none;
-  cursor: pointer;
-  color: #fff;
-  font-size: 0.82rem;
-  font-weight: 600;
-  margin-right: 0.4rem;
-  transition: all .18s ease;
-}
-
-.btn-editar {
-  background: #4c5ea8;
-}
-
-.btn-editar:hover {
-  background: #6473c9;
-}
-
-.btn-eliminar {
-  background: #9b1c1c;
-}
-
-.btn-eliminar:hover {
-  background: #b62828;
-}
-
-.btn-stats {
-  background: var(--color-primario, #6a0dad);
-}
-
-.btn-stats:hover {
-  filter: brightness(1.2);
-}
-
-/* =========================================================
-   MODALES (EDITAR / STATS)
-   ========================================================= */
-.modal-usuarios {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  backdrop-filter: blur(6px);
-  background: rgba(0, 0, 0, 0.55);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  animation: fadeIn .25s ease;
-}
-
-.modal-usuarios .modal-content {
-  width: min(480px, 95%);
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: var(--radius-lg);
-  padding: 2rem;
-  box-shadow: 0 10px 36px rgba(0, 0, 0, 0.35);
-  animation: fadeInUp .25s ease;
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(14px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.modal-usuarios h2 {
-  font-size: 1.3rem;
-  margin-bottom: 1rem;
-}
-
-/* Inputs modal */
-.modal-usuarios input,
-.modal-usuarios select {
-  padding: 0.7rem 0.9rem;
-  background: rgba(255, 255, 255, 0.07);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  color: #fff;
-  border-radius: var(--radius-md);
-  margin-bottom: 1rem;
-}
-
-/* Botones modal */
-.modal-buttons {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 1.5rem;
-}
-
-.modal-btn {
-  flex: 1;
-  padding: 0.8rem;
-  text-align: center;
-  border-radius: var(--radius-pill);
-  font-weight: 600;
-  cursor: pointer;
-  border: none;
-  color: #fff;
-  transition: all .2s ease;
-}
-
-.modal-btn-confirmar {
-  background: #6a0dad;
-  margin-right: 0.5rem;
-}
-
-.modal-btn-confirmar:hover {
-  background: #ff6700;
-}
-
-.modal-btn-cerrar {
-  background: #444;
-}
-
-.modal-btn-cerrar:hover {
-  background: #555;
-}
-
-@media (max-width: 1200px) {
-  .usuarios-grid {
-    grid-template-columns: 1fr;
-    /* una columna */
-    grid-template-areas:
-      "tabla"
-      "crear";
-    gap: 1.5rem;
-  }
-
-  .usuarios-col-table {
-    grid-area: tabla;
-  }
-
-  .usuarios-col-create {
-    grid-area: crear;
-  }
-}
-
-/* =========================================================
-   BLOQUE EXPLICATIVO — USUARIOS (INFO)
-   ========================================================= */
-
+/* ===== Bloque informativo "Cómo funciona" ===== */
 .usuarios-info {
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(12px);
+  background: var(--color-fondo-card, #ffffff);
   border-radius: var(--radius-lg);
-  border: 1px solid rgba(255, 255, 255, 0.10);
-  padding: 1.6rem 1.6rem 1.4rem;
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.28);
+  border: 1px solid var(--color-borde-suave);
+  padding: var(--space-lg) var(--space-xl);
+  box-shadow: var(--shadow-suave);
+  margin-bottom: var(--space-lg);
 }
 
 .usuarios-info-header {
-  display: grid;
-  gap: 0.35rem;
-  margin-bottom: 1.2rem;
+  margin-bottom: var(--space-md);
 }
 
 .usuarios-info-title {
-  margin: 0;
-  font-size: 1.35rem;
-  font-weight: 750;
-  color: #f8fafc;
-  letter-spacing: 0.01em;
+  margin: 0 0 var(--space-xs);
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  color: var(--color-texto);
 }
 
 .usuarios-info-subtitle {
   margin: 0;
-  color: #cbd5e1;
-  font-size: 0.95rem;
+  color: var(--color-texto-suave);
+  font-size: var(--font-size-sm);
   line-height: 1.45;
-  opacity: 0.95;
 }
 
 .usuarios-info-cards {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-md);
 }
 
 .usuarios-info-card {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 16px;
-  padding: 1.1rem 1.1rem 1rem;
-  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.22);
+  background: var(--color-fondo-claro, #f8fafc);
+  border: 1px solid var(--color-borde-suave);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.usuarios-info-card:hover {
+  box-shadow: var(--shadow-suave);
+  transform: translateY(-1px);
 }
 
 .usuarios-info-card h3 {
-  margin: 0 0 0.55rem;
-  font-size: 0.98rem;
-  font-weight: 750;
-  color: var(--color-primario, #6a0dad);
-  letter-spacing: 0.01em;
+  margin: 0 0 var(--space-xs);
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: var(--color-primario);
 }
 
 .usuarios-info-card p {
   margin: 0;
-  color: #e5e7eb;
-  font-size: 0.9rem;
+  color: var(--color-texto);
+  font-size: var(--font-size-sm);
   line-height: 1.45;
-  opacity: 0.95;
 }
 
 .usuarios-info-note {
-  margin-top: 0.7rem !important;
-  padding-top: 0.7rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-  color: #cbd5e1 !important;
-  opacity: 0.85 !important;
-  font-size: 0.85rem !important;
+  margin-top: var(--space-sm) !important;
+  padding-top: var(--space-sm);
+  border-top: 1px solid var(--color-borde-suave);
+  color: var(--color-texto-suave) !important;
+  font-size: var(--font-size-xs) !important;
 }
 
-/* Responsive */
+/* ===== Upsell wrap ===== */
+.usuarios-upsell-wrap {
+  margin-top: var(--space-lg);
+}
+
+/* ===== Loading inline ===== */
+.usuarios-loading {
+  text-align: center;
+  padding: var(--space-lg);
+  color: var(--color-texto-suave);
+  font-size: var(--font-size-sm);
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 1200px) {
+  .usuarios-info-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
 @media (max-width: 900px) {
   .usuarios-info-cards {
     grid-template-columns: 1fr;
   }
 }
 
-
-/* =========================================================
-   RESPONSIVE
-   ========================================================= */
 @media (max-width: 768px) {
-  .usuarios-grid {
-    grid-template-columns: 1fr;
-    /* una columna */
+  .usuarios-info {
+    padding: var(--space-md);
   }
 
-  .usuarios-root {
-    padding: 1.5rem;
-  }
-
-  .usuarios-table th,
-  .usuarios-table td {
-    padding: 0.55rem;
-    font-size: 0.82rem;
-  }
-
-  .usuario-create-card {
-    padding: 1.5rem;
+  .usuarios-btn-nuevo {
+    width: 100%;
+    text-align: center;
   }
 }

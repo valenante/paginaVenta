@@ -1,315 +1,252 @@
-/* =========================================================
-   USUARIOS TABLE — Estilo Profesional Alef
-   ---------------------------------------------------------
-   - Tarjeta vidrio oscuro
-   - Tabla premium con hover elegante
-   - Botones pill para acciones
-   - Badge moderno
-   - Compatible con modo oscuro
-   ========================================================= */
+/*****************************************************
+ * Tabla Usuarios — Alef (tema config claro)
+ * Base: config-common.css
+ *****************************************************/
 
-/* --- CONTENEDOR --- */
+/* ===== Contenedor ===== */
 .usuarios-table-card {
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-
+  background: var(--color-fondo-card, #ffffff);
   border-radius: var(--radius-lg);
-  border: 1px solid rgba(255, 255, 255, 0.10);
-
-  padding: 1.8rem 2rem;
-
-  box-shadow:
-    0 16px 36px rgba(0, 0, 0, 0.35),
-    0 0 0 1px rgba(255, 255, 255, 0.04);
-
-  animation: fadeIn 0.35s ease;
+  border: 1px solid var(--color-borde-suave);
+  padding: var(--space-lg) var(--space-xl);
+  box-shadow: var(--shadow-suave);
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* --- HEADER --- */
+/* ===== Header ===== */
 .usuarios-table-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 1.2rem;
+  margin-bottom: var(--space-md);
 }
 
 .usuarios-table-header h3 {
-  font-size: 1.35rem;
-  font-weight: 600;
-  color: #fff;
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  margin: 0;
+  color: var(--color-texto);
 }
 
 .usuarios-badge {
-  background: linear-gradient(135deg, #6a0dad, #ff6700);
-  padding: 0.35rem 0.75rem;
+  background: var(--color-primario);
+  padding: 0.25rem 0.7rem;
   border-radius: var(--radius-pill);
-  font-weight: 600;
-  font-size: 0.9rem;
+  font-weight: 700;
+  font-size: var(--font-size-xs);
   color: #fff;
-  box-shadow: 0 4px 12px rgba(255, 103, 0, 0.3);
 }
 
-
-/* =========================================================
-   TABLA
-   ========================================================= */
-
-.usuarios-table-main {
-  width: 100%;
-  border-collapse: collapse;
-  color: #e5e7eb;
-}
-
-/* Encabezados */
-.usuarios-table-main thead th {
-  text-align: left;
-  padding: 0.75rem 1rem;
-
-  text-transform: uppercase;
-  font-size: 0.78rem;
-  font-weight: 600;
-  letter-spacing: 0.05em;
-
-  color: #cbd5e1;
-  border-bottom: 2px solid rgba(255, 255, 255, 0.12);
-
-  background: rgba(255, 255, 255, 0.03);
-}
-
-/* Filas */
-.usuarios-table-main tbody td {
-  padding: 0.75rem 1rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-}
-
-.usuarios-table-main tbody tr:hover td {
-  background: rgba(255, 255, 255, 0.05);
-  transition: background 0.22s ease;
-}
-
-/* Mensaje vacío */
-.usuarios-empty-cell {
-  padding: 1.2rem;
-  text-align: center;
-  color: #b6b9c2;
-  opacity: 0.85;
-  font-style: italic;
-}
-
-
-/* =========================================================
-   BOTONES DE ACCIÓN
-   ========================================================= */
-
-.usuarios-acciones {
-  display: flex;
-  gap: 0.4rem;
-}
-
-.usuarios-btn {
-  background: rgba(255, 255, 255, 0.10);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-
-  padding: 0.4rem 0.7rem;
-  border-radius: var(--radius-pill);
-
-  cursor: pointer;
-  color: #fff;
-  font-size: 0.9rem;
-
-  transition: all 0.22s ease;
-}
-
-.usuarios-btn:hover {
-  background: rgba(255, 255, 255, 0.18);
-  transform: translateY(-2px);
-}
-
-/* Botón stats (naranja) */
-.usuarios-btn-stats {
-  background: rgba(255, 103, 0, 0.22);
-  border-color: rgba(255, 103, 0, 0.45);
-}
-
-.usuarios-btn-stats:hover {
-  background: rgba(255, 103, 0, 0.35);
-}
-
-/* Botón editar (azulado) */
-.usuarios-btn-editar {
-  background: rgba(76, 94, 168, 0.25);
-  border-color: rgba(76, 94, 168, 0.4);
-}
-
-.usuarios-btn-editar:hover {
-  background: rgba(76, 94, 168, 0.38);
-}
-
-/* Botón eliminar (rojo) */
-.usuarios-btn-eliminar {
-  background: rgba(155, 28, 28, 0.25);
-  border-color: rgba(155, 28, 28, 0.4);
-}
-
-.usuarios-btn-eliminar:hover {
-  background: rgba(155, 28, 28, 0.38);
-}
-
-/* =========================================================
-   SCROLL RESPONSIVE PARA TABLAS — ALEF
-   ========================================================= */
-
+/* ===== Tabla ===== */
 .usuarios-table-scroll {
   width: 100%;
   overflow-x: auto;
-
-  /* estética elegante compatible con tu diseño */
-  scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
-
-  /* padding para que no quede cortado */
-  padding-bottom: 0.4rem;
+  -webkit-overflow-scrolling: touch;
 }
 
-/* Estilo de scrollbar para Chrome/Safari */
 .usuarios-table-scroll::-webkit-scrollbar {
-  height: 8px;
+  height: 6px;
 }
 
 .usuarios-table-scroll::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--color-fondo-claro, #f8fafc);
   border-radius: var(--radius-md);
 }
 
 .usuarios-table-scroll::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.25);
+  background: var(--color-borde-suave);
   border-radius: var(--radius-pill);
 }
 
-.usuarios-table-scroll::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.4);
+.usuarios-table-main {
+  width: 100%;
+  min-width: 700px;
+  border-collapse: collapse;
 }
 
+.usuarios-table-main thead th {
+  text-align: left;
+  padding: 0.7rem 0.8rem;
+  text-transform: uppercase;
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--color-texto);
+  border-bottom: 1px solid var(--color-borde-suave);
+  background: var(--color-fondo-claro, #f8fafc);
+  white-space: nowrap;
+}
 
-/* ===== MOBILE CARDS ===== */
+.usuarios-table-main tbody td {
+  padding: 0.7rem 0.8rem;
+  border-bottom: 1px solid var(--color-borde-suave);
+  font-size: var(--font-size-sm);
+  color: var(--color-texto);
+  vertical-align: middle;
+}
+
+.usuarios-table-main tbody tr:hover td {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.usuarios-empty-cell {
+  padding: var(--space-lg);
+  text-align: center;
+  color: var(--color-texto-suave);
+  font-style: italic;
+}
+
+/* ===== Botones de acción ===== */
+.usuarios-acciones {
+  display: flex;
+  gap: 0.35rem;
+}
+
+.usuarios-btn {
+  background: var(--color-fondo-claro, #f1f5f9);
+  border: 1px solid var(--color-borde-suave);
+  padding: 0.35rem 0.6rem;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  font-size: var(--font-size-sm);
+  color: var(--color-texto);
+  transition: all 0.15s ease;
+}
+
+.usuarios-btn:hover {
+  background: var(--color-borde-suave);
+  transform: translateY(-1px);
+}
+
+.usuarios-btn-stats {
+  background: rgba(255, 145, 73, 0.1);
+  border-color: rgba(255, 145, 73, 0.3);
+  color: var(--color-secundario-oscuro, #e86f1c);
+}
+
+.usuarios-btn-stats:hover {
+  background: rgba(255, 145, 73, 0.2);
+}
+
+.usuarios-btn-editar {
+  background: rgba(96, 181, 255, 0.1);
+  border-color: rgba(96, 181, 255, 0.3);
+  color: var(--color-primario-oscuro, #2f7ed8);
+}
+
+.usuarios-btn-editar:hover {
+  background: rgba(96, 181, 255, 0.2);
+}
+
+.usuarios-btn-eliminar {
+  background: rgba(239, 68, 68, 0.08);
+  border-color: rgba(239, 68, 68, 0.25);
+  color: var(--color-error, #ef4444);
+}
+
+.usuarios-btn-eliminar:hover {
+  background: rgba(239, 68, 68, 0.15);
+}
+
+/* ===== Mobile cards ===== */
 .usuarios-mobile-list {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: var(--space-sm);
 }
 
 .usuario-card {
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 14px;
-  padding: 0.8rem;
+  background: var(--color-fondo-claro, #f8fafc);
+  border: 1px solid var(--color-borde-suave);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
 }
 
 .usuario-main {
   display: flex;
   justify-content: space-between;
-  gap: 0.8rem;
+  gap: var(--space-sm);
 }
 
 .usuario-info {
   display: flex;
   flex-direction: column;
-  font-size: 0.9rem;
+  font-size: var(--font-size-sm);
+  color: var(--color-texto);
 }
 
 .usuario-info span {
-  font-size: 0.8rem;
-  opacity: 0.75;
+  font-size: var(--font-size-xs);
+  color: var(--color-texto-suave);
 }
 
 .usuario-badges {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 0.2rem;
   align-items: flex-end;
 }
 
 .badge-role,
 .badge-estacion {
-  font-size: 0.7rem;
+  font-size: var(--font-size-xs);
   padding: 0.2rem 0.5rem;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.15);
+  border-radius: var(--radius-pill);
+  background: var(--color-fondo-claro, #f1f5f9);
+  border: 1px solid var(--color-borde-suave);
+  color: var(--color-texto);
+  font-weight: 600;
 }
 
 .badge-estacion {
-  background: rgba(106, 13, 173, 0.35);
+  background: rgba(96, 181, 255, 0.1);
+  border-color: rgba(96, 181, 255, 0.3);
+  color: var(--color-primario-oscuro);
 }
 
-/* ===== ACCIONES ===== */
+/* ===== Acciones mobile ===== */
 .usuario-actions {
-  margin-top: 0.6rem;
+  margin-top: var(--space-sm);
   display: flex;
-  justify-content: space-between;
+  gap: var(--space-xs);
 }
 
 .usuario-actions button {
   flex: 1;
-  margin: 0 0.15rem;
-  padding: 0.45rem 0;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  background: rgba(255, 255, 255, 0.12);
-  color: white;
+  padding: 0.4rem 0;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--color-borde-suave);
+  background: var(--color-fondo-card, #ffffff);
+  color: var(--color-texto);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+
+.usuario-actions button:hover {
+  background: var(--color-fondo-claro);
 }
 
 .usuario-actions button.danger {
-  background: rgba(155, 28, 28, 0.35);
+  background: rgba(239, 68, 68, 0.08);
+  border-color: rgba(239, 68, 68, 0.25);
+  color: var(--color-error);
 }
 
-/* =========================================================
-   RESPONSIVE
-   ========================================================= */
+/* ===== Visibilidad ===== */
+.desktop-only { display: block; }
+.mobile-only  { display: none; }
 
+/* ===== Responsive ===== */
 @media (max-width: 768px) {
   .usuarios-table-card {
-    padding: 1.4rem;
+    padding: var(--space-md);
   }
 
-  .usuarios-table-main th,
-  .usuarios-table-main td {
-    padding: 0.6rem;
-    font-size: 0.85rem;
-  }
+  .desktop-only { display: none; }
+  .mobile-only  { display: block; }
 
   .usuarios-acciones {
     flex-wrap: wrap;
-  }
-}
-
-/* ===== VISIBILIDAD ===== */
-.desktop-only {
-  display: block;
-}
-
-.mobile-only {
-  display: none;
-}
-
-@media (max-width: 768px) {
-  .desktop-only {
-    display: none;
-  }
-
-  .mobile-only {
-    display: block;
   }
 }

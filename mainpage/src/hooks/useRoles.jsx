@@ -20,7 +20,7 @@ export function useRoles(scope) {
         if (!alive) return;
 
         // sendOk envuelve en { ok, data: { roles } }
-        const raw = data?.data?.roles ?? data?.roles ?? [];
+        const raw = data?.roles ?? [];
         let list = Array.isArray(raw) ? raw : [];
         if (scope) {
           list = list.filter((r) => r.scope === scope);

@@ -69,8 +69,9 @@ export default function ModalCrearMesa({
       onCreated?.();
       onClose?.();
     } catch (error) {
-      const code = error?.response?.data?.error || "ERROR_CREAR_MESA";
-      setErr(code);
+      const code = error?.response?.data?.code || error?.response?.data?.error || "";
+      const msg = mapCrearError(code) || error?.response?.data?.message || "Error al crear la mesa.";
+      setErr(msg);
     } finally {
       setLoading(false);
     }
@@ -154,8 +155,19 @@ export default function ModalCrearMesa({
           <b>{Math.round(suggestedPos.x)}%</b> / <b>{Math.round(suggestedPos.y)}%</b>
         </div>
 
-        {err && <div className="alefError">Error: {err}</div>}
+        {err && <div className="alefError">{err}</div>}
       </form>
     </ModalBase>
   );
+}
+
+function mapCrearError(code) {
+  const map = {
+    MESA_YA_EXISTE: "Ya existe una mesa con ese número.",
+    NUMERO_INVALIDO: "El número de mesa no es válido.",
+    ZONA_INVALIDA: "La zona seleccionada no es válida.",
+    CAPACIDAD_INVALIDA: "La capacidad debe ser un número mayor a 0.",
+    VALIDATION_ERROR: "Datos inválidos. Revisa los campos.",
+  };
+  return map[code] || null;
 }

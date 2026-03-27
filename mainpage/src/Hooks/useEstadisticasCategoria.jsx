@@ -1,226 +1,138 @@
 // src/Hooks/useEstadisticasCategoria.jsx
-import { useEffect, useMemo, useState } from "react";
-import { useTenant } from "../context/TenantContext";
+import { useEffect, useMemo, useState, useRef, useCallback } from "react";
 import api from "../utils/api";
 
-/* =====================================================
-   Helpers de rango
-===================================================== */
-const normalizarInicioDia = (date) => {
-  if (!date) return null;
-  return new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0, 0);
-};
-
-const normalizarFinDia = (date) => {
-  if (!date) return null;
-  return new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59, 999);
-};
-
-const estaDentroDelRango = (fechaVenta, startDate, endDate) => {
-  const fecha = new Date(fechaVenta);
-  const inicio = normalizarInicioDia(startDate);
-  const fin = normalizarFinDia(endDate);
-  if (inicio && fecha < inicio) return false;
-  if (fin && fecha > fin) return false;
-  return true;
-};
-
-/* =====================================================
-   Hook
-===================================================== */
-
 /**
- * Carga ventas para los productos dados y calcula estadísticas agregadas.
+ * Carga estadísticas agregadas SERVER-SIDE via GET /reportes/estadisticas-categoria.
+ * Un solo request con $facet en MongoDB — no carga ventas individuales.
  *
- * @param {Array}  products            - Productos de la categoría activa
- * @param {object} filters             - { startDate?: Date, endDate?: Date }
- *   Todos los casos son válidos:
- *     {}                  → sin filtro de fecha
- *     { startDate }       → desde startDate
- *     { endDate }         → hasta endDate
- *     { startDate, endDate } → rango completo
+ * @param {Array}  products  — Productos de la categoría activa (necesitamos sus _id)
+ * @param {object} filters   — { startDate?: Date, endDate?: Date }
  */
 export const useEstadisticasCategoria = (products, filters = {}) => {
   const { startDate, endDate } = filters || {};
 
   const [loading, setLoading] = useState(false);
-  // Mapa sin filtrar: { productoId: [venta, venta, ...] }
-  // Solo se recalcula cuando cambian los productos o el tipo de negocio.
-  const [ventasPorProducto, setVentasPorProducto] = useState({});
+  const [error, setError] = useState(null);
+  const [data, setData] = useState(null);
+  const controllerRef = useRef(null);
 
-  const { tenant } = useTenant();
-  const tipoNegocio = tenant?.tipoNegocio || "restaurante";
+  // IDs de productos como string estable para deps
+  const productoIds = useMemo(() => {
+    if (!products || products.length === 0) return "";
+    return products.map((p) => p._id).join(",");
+  }, [products]);
 
-  /* =====================================================
-   * Fetch — solo cuando cambian los productos o tipoNegocio.
-   * Las fechas NO están en las dependencias a propósito:
-   * el filtrado se hace en useMemo client-side sin re-fetch.
-   * ===================================================== */
-  useEffect(() => {
-    const cargar = async () => {
-      if (!products || products.length === 0) {
-        setVentasPorProducto({});
-        return;
-      }
-
-      setLoading(true);
-      try {
-        const endpoint =
-          tipoNegocio === "shop" ? "/shop/estadisticas/ventas" : "/ventas";
-
-        const { data } = await api.get(endpoint, { params: { limit: 10000 } });
-
-        const ventasTodas = Array.isArray(data)
-          ? data
-          : Array.isArray(data?.data)
-            ? data.data
-            : Array.isArray(data?.items)
-              ? data.items
-              : Array.isArray(data?.ventas)
-                ? data.ventas
-                : [];
-
-        const idsProductos = new Set(products.map((p) => String(p._id)));
-
-        const ventasCategoria = ventasTodas.filter((v) =>
-          idsProductos.has(String(v.producto?._id || v.producto))
-        );
-
-        const ventasMap = {};
-        for (const p of products) {
-          const id = String(p._id);
-          ventasMap[id] = ventasCategoria.filter(
-            (v) => String(v.producto?._id || v.producto) === id
-          );
-        }
-
-        setVentasPorProducto(ventasMap);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    cargar();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [products, tipoNegocio]);
-
-  /* =====================================================
-   * productosConStats — filtrado client-side por fechas.
-   * Se recalcula instantáneamente al cambiar fechas, sin re-fetch.
-   * ===================================================== */
-  const productosConStats = useMemo(() => {
-    if (!products || products.length === 0) return [];
-
-    return products.map((p) => {
-      const ventas = ventasPorProducto[String(p._id)] || [];
-      const ventasFiltradas = ventas.filter((v) =>
-        estaDentroDelRango(v.fecha, startDate, endDate)
-      );
-
-      const totalCantidad = ventasFiltradas.reduce(
-        (acc, v) => acc + (v.cantidad || 0),
-        0
-      );
-      const totalIngresos = ventasFiltradas.reduce(
-        (acc, v) => acc + (v.total || 0),
-        0
-      );
-
-      return { ...p, totalCantidad, totalIngresos };
-    });
-  }, [ventasPorProducto, products, startDate, endDate]);
-
-  /* =====================================================
-   * resumenCategoria
-   * ===================================================== */
-  const resumenCategoria = useMemo(() => {
-    const totalCantidad = productosConStats.reduce(
-      (acc, p) => acc + (p.totalCantidad || 0),
-      0
-    );
-    const totalIngresos = productosConStats.reduce(
-      (acc, p) => acc + (p.totalIngresos || 0),
-      0
-    );
-    const precioMedioUnidad =
-      totalCantidad > 0 ? totalIngresos / totalCantidad : 0;
-
-    return { totalCantidad, totalIngresos, precioMedioUnidad };
-  }, [productosConStats]);
-
-  /* =====================================================
-   * estadisticasPorMes, estadisticasPorHora, horaPunta
-   * ===================================================== */
-  const { estadisticasPorMes, estadisticasPorHora, horaPunta } = useMemo(() => {
-    const mesMap = {};
-    const horaMap = {};
-
-    const todasLasVentas = Object.values(ventasPorProducto)
-      .flat()
-      .filter((venta) => estaDentroDelRango(venta.fecha, startDate, endDate));
-
-    let maxIngresosHora = 0;
-    let horaPuntaLocal = null;
-
-    for (const venta of todasLasVentas) {
-      const cantidad = venta.cantidad || 0;
-      const total = venta.total || 0;
-
-      // Agrupar por mes (YYYY-MM)
-      const d = new Date(venta.fecha);
-      const mesKey = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
-
-      if (!mesMap[mesKey]) {
-        mesMap[mesKey] = {
-          mes: mesKey,
-          totalCantidad: 0,
-          totalIngresos: 0,
-          numTickets: 0,
-        };
-      }
-      mesMap[mesKey].totalCantidad += cantidad;
-      mesMap[mesKey].totalIngresos += total;
-      mesMap[mesKey].numTickets += 1;
-
-      const hora = d.getHours();
-      if (!horaMap[hora]) {
-        horaMap[hora] = { hour: hora, totalCantidad: 0, totalIngresos: 0 };
-      }
-      horaMap[hora].totalCantidad += cantidad;
-      horaMap[hora].totalIngresos += total;
-
-      if (horaMap[hora].totalIngresos > maxIngresosHora) {
-        maxIngresosHora = horaMap[hora].totalIngresos;
-        horaPuntaLocal = hora;
-      }
+  const fetchStats = useCallback(async () => {
+    if (!productoIds) {
+      setData(null);
+      setLoading(false);
+      return;
     }
 
-    return {
-      estadisticasPorMes: Object.values(mesMap).sort(
-        (a, b) => b.totalIngresos - a.totalIngresos
-      ),
-      estadisticasPorHora: Array.from({ length: 24 }, (_, hour) => ({
-        hour,
-        totalCantidad: horaMap[hour]?.totalCantidad || 0,
-        totalIngresos: horaMap[hour]?.totalIngresos || 0,
-      })),
-      horaPunta: horaPuntaLocal,
-    };
-  }, [ventasPorProducto, startDate, endDate]);
+    controllerRef.current?.abort();
+    const controller = new AbortController();
+    controllerRef.current = controller;
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const params = { productoIds };
+
+      if (startDate) {
+        const d = startDate instanceof Date ? startDate : new Date(startDate);
+        if (!Number.isNaN(d.getTime())) params.desde = d.toISOString().slice(0, 10);
+      }
+      if (endDate) {
+        const d = endDate instanceof Date ? endDate : new Date(endDate);
+        if (!Number.isNaN(d.getTime())) params.hasta = d.toISOString().slice(0, 10);
+      }
+
+      const res = await api.get("/reportes/estadisticas-categoria", {
+        params,
+        signal: controller.signal,
+      });
+
+      if (controller.signal.aborted) return;
+
+      setData(res.data || null);
+    } catch (err) {
+      if (err?.name === "CanceledError" || err?.code === "ERR_CANCELED") return;
+      setError("No se pudieron cargar las estadísticas.");
+      setData(null);
+    } finally {
+      if (!controller.signal.aborted) setLoading(false);
+    }
+  }, [productoIds, startDate, endDate]);
+
+  useEffect(() => {
+    fetchStats();
+    return () => controllerRef.current?.abort();
+  }, [fetchStats]);
 
   /* =====================================================
-   * topProductos
+   * Derivar datos del response del backend
    * ===================================================== */
+
+  const resumenCategoria = useMemo(() => {
+    if (!data?.resumen) return { totalCantidad: 0, totalIngresos: 0, precioMedioUnidad: 0 };
+    return data.resumen;
+  }, [data]);
+
+  // porProducto ya viene con nombre, productoId, totalCantidad, totalIngresos
+  const productosConStats = useMemo(() => {
+    if (!data?.porProducto || !products) return [];
+
+    // Mapear datos del backend a los productos originales (mantener campos extra del producto)
+    const statsMap = {};
+    for (const s of data.porProducto) {
+      statsMap[String(s.productoId)] = s;
+    }
+
+    return products.map((p) => {
+      const stats = statsMap[String(p._id)];
+      return {
+        ...p,
+        totalCantidad: stats?.totalCantidad || 0,
+        totalIngresos: stats?.totalIngresos || 0,
+      };
+    });
+  }, [data, products]);
+
   const topProductos = useMemo(
-    () =>
-      [...productosConStats]
-        .sort((a, b) => b.totalIngresos - a.totalIngresos)
-        .slice(0, 5),
+    () => [...productosConStats].sort((a, b) => b.totalIngresos - a.totalIngresos).slice(0, 5),
     [productosConStats]
   );
 
+  // porHora: backend devuelve solo horas con datos, rellenar las 24
+  const estadisticasPorHora = useMemo(() => {
+    const horaMap = {};
+    for (const h of data?.porHora || []) {
+      horaMap[h.hour] = h;
+    }
+    return Array.from({ length: 24 }, (_, hour) => ({
+      hour,
+      totalCantidad: horaMap[hour]?.totalCantidad || 0,
+      totalIngresos: horaMap[hour]?.totalIngresos || 0,
+    }));
+  }, [data]);
+
+  const horaPunta = useMemo(() => {
+    if (!data?.porHora || data.porHora.length === 0) return null;
+    return data.porHora.reduce((best, h) =>
+      h.totalIngresos > (best?.totalIngresos || 0) ? h : best
+    , null)?.hour ?? null;
+  }, [data]);
+
+  // estadisticasPorMes: el backend NO lo devuelve en este endpoint.
+  // Lo dejamos vacío — si se necesita, se puede añadir un $facet extra en el backend.
+  const estadisticasPorMes = useMemo(() => [], []);
+
   return {
     loading,
+    error,
+    refetch: fetchStats,
     productosConStats,
     resumenCategoria,
     estadisticasPorMes,

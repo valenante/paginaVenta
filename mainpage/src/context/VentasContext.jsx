@@ -147,17 +147,18 @@ export function VentasProvider({
         limit: pageSize,
       };
 
-      const { data } = await api.get(ventasEndpoint, {
+      const res = await api.get(ventasEndpoint, {
         ...headersTenant,
         params,
       });
+      const { data } = res;
+      const meta = res.meta;
 
-      const items = data?.data || data?.items || [];
-      setVentas(Array.isArray(items) ? items : []);
+      setVentas(Array.isArray(data) ? data : []);
       setServerMeta({
-        totalItems: Number(data?.meta?.total || data?.totalItems || 0),
-        totalPages: Number(data?.meta?.totalPages || data?.totalPages || 1),
-        resumen: data?.resumen || DEFAULT_META.resumen,
+        totalItems: Number(meta?.total || 0),
+        totalPages: Number(meta?.totalPages || 1),
+        resumen: meta?.resumen || DEFAULT_META.resumen,
       });
 
       setLastUpdatedAt(new Date());

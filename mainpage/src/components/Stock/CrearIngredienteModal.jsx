@@ -2,6 +2,7 @@
 import React, { useMemo, useState } from "react";
 import api from "../../utils/api";
 import AlefSelect from "../AlefSelect/AlefSelect";
+import "./StockModalBase.css";
 import "./CrearIngredienteModal.css";
 
 const unidades = ["g", "kg", "ml", "l", "uds", "caja", "pack", "botella"];
@@ -11,12 +12,7 @@ const tipos = [
   { label: "Consumible (se consume solo)", value: "consumible" },
 ];
 
-// helpers
-const toNum = (v, fallback = 0) => {
-  if (v === "" || v == null) return fallback;
-  const n = Number(v);
-  return Number.isFinite(n) ? n : fallback;
-};
+import { toNum } from "./stockHelpers";
 
 export default function CrearIngredienteModal({ onClose, onSave }) {
   const [form, setForm] = useState({
@@ -114,242 +110,117 @@ export default function CrearIngredienteModal({ onClose, onSave }) {
 
   return (
     <div className="alef-modal-overlay" onClick={onClose}>
-      <div
-        className="alef-modal-content alefIngredienteModalContent"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="alefIngredienteModal">
-          {/* HEADER (sticky en móvil) */}
-          <div className="alefIngredienteHeader">
-            <h3 className="alefIngredienteTitle">➕ Nuevo ítem de stock</h3>
-            <p className="alefIngredienteSub">
-              Crea un <strong>ingrediente</strong> (para recetas) o un{" "}
-              <strong>consumible</strong> (servilletas, bolsas, rollos de papel…).
-              Los consumibles pueden <strong>descontarse automáticamente</strong> con el paso del tiempo.
-            </p>
-          </div>
+      <div className="alef-modal-content stk-modal" onClick={(e) => e.stopPropagation()}>
+        {/* Header */}
+        <header className="stk-header">
+          <h3 className="stk-title">Nuevo ítem de stock</h3>
+          <p className="stk-subtitle">
+            Crea un <strong>ingrediente</strong> (para recetas) o un{" "}
+            <strong>consumible</strong> (servilletas, bolsas, rollos de papel…).
+          </p>
+        </header>
 
-          {/* BODY (scroll interno, perfecto móvil) */}
-          <div className="alefIngredienteScroll">
-            {/* DATOS PRINCIPALES */}
-            <div className="alefIngredienteSection">
-              <h4 className="alefIngredienteH4">🧾 Datos principales</h4>
-              <p className="alefIngredienteHint">
-                El nombre y la unidad se usan en stock, recetas, pantallas y movimientos.
-              </p>
-
-              <div className="alefIngredienteGrid">
-                <div className="alefIngredienteField">
-                  <label className="alefIngredienteLabel">
-                    Nombre <span className="alefIngredienteReq">(obligatorio)</span>
-                  </label>
-                  <input
-                    className="alefIngredienteInput"
-                    name="nombre"
-                    value={form.nombre}
-                    onChange={update}
-                    placeholder="Ej: Harina / Servilletas / Aceite de oliva"
-                    autoFocus
-                    autoComplete="off"
-                  />
+        {/* Body */}
+        <section className="stk-body">
+          <div className="stk-controls">
+            {/* Datos principales */}
+            <div className="stk-card">
+              <div className="stk-card-title">Datos principales</div>
+              <div className="stk-grid">
+                <div className="stk-field">
+                  <label className="stk-label">Nombre <span style={{ opacity: 0.6 }}>(obligatorio)</span></label>
+                  <input className="stk-input" name="nombre" value={form.nombre} onChange={update} placeholder="Ej: Harina / Servilletas" autoFocus autoComplete="off" />
                 </div>
-
-                <div className="alefIngredienteField">
-                  <label className="alefIngredienteLabel">Tipo</label>
-                  {/* mantenemos tu AlefSelect, pero lo “encapsulamos” visualmente */}
-                  <div className="alefIngredienteSelectWrap">
-                    <AlefSelect
-                      label=""
-                      value={form.tipoItem}
-                      options={tipos}
-                      onChange={setTipo}
-                      placeholder="Selecciona tipo"
-                    />
+                <div className="stk-field">
+                  <label className="stk-label">Tipo</label>
+                  <div className="stk-select-wrap">
+                    <AlefSelect label="" value={form.tipoItem} options={tipos} onChange={setTipo} placeholder="Selecciona tipo" />
                   </div>
-                  <p className="alefIngredienteMicro">
-                    <strong>Ingrediente:</strong> se descuenta en recetas.{" "}
-                    <strong>Consumible:</strong> stock independiente + consumo automático.
-                  </p>
                 </div>
-
-                <div className="alefIngredienteField">
-                  <label className="alefIngredienteLabel">Unidad</label>
-                  <div className="alefIngredienteSelectWrap">
-                    <AlefSelect
-                      label=""
-                      value={form.unidad}
-                      options={unidades}
-                      onChange={setUnidad}
-                      placeholder="Selecciona unidad"
-                    />
+                <div className="stk-field">
+                  <label className="stk-label">Unidad</label>
+                  <div className="stk-select-wrap">
+                    <AlefSelect label="" value={form.unidad} options={unidades} onChange={setUnidad} placeholder="Selecciona unidad" />
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* STOCK Y UMBRALES */}
-            <div className="alefIngredienteSection">
-              <h4 className="alefIngredienteH4">📦 Stock y alertas</h4>
-              <p className="alefIngredienteHint">
-                Define umbrales para marcar el ítem como <strong>bajo</strong> o <strong>crítico</strong>.
-              </p>
-
-              <div className="alefIngredienteGrid">
-                <div className="alefIngredienteField">
-                  <label className="alefIngredienteLabel">Stock inicial</label>
-                  <input
-                    className="alefIngredienteInput"
-                    type="number"
-                    name="stockActual"
-                    min="0"
-                    step="1"
-                    value={form.stockActual}
-                    onChange={update}
-                  />
+            {/* Stock y alertas */}
+            <div className="stk-card">
+              <div className="stk-card-title">Stock y alertas</div>
+              <div className="stk-grid">
+                <div className="stk-field">
+                  <label className="stk-label">Stock inicial</label>
+                  <input className="stk-input" type="number" name="stockActual" min="0" step="1" value={form.stockActual} onChange={update} />
                 </div>
-
-                <div className="alefIngredienteField">
-                  <label className="alefIngredienteLabel">Stock mínimo</label>
-                  <input
-                    className="alefIngredienteInput"
-                    type="number"
-                    name="stockMinimo"
-                    min="0"
-                    step="1"
-                    value={form.stockMinimo}
-                    onChange={update}
-                  />
-                  <p className="alefIngredienteMicro">
-                    Si baja de esto → <strong>🟠 Bajo</strong>.
-                  </p>
+                <div className="stk-field">
+                  <label className="stk-label">Stock mínimo</label>
+                  <input className="stk-input" type="number" name="stockMinimo" min="0" step="1" value={form.stockMinimo} onChange={update} />
                 </div>
-
-                <div className="alefIngredienteField">
-                  <label className="alefIngredienteLabel">Stock crítico</label>
-                  <input
-                    className="alefIngredienteInput"
-                    type="number"
-                    name="stockCritico"
-                    min="0"
-                    step="1"
-                    value={form.stockCritico}
-                    onChange={update}
-                  />
-                  <p className="alefIngredienteMicro">
-                    Si baja de esto → <strong>🔴 Crítico</strong>.
-                  </p>
+                <div className="stk-field">
+                  <label className="stk-label">Stock crítico</label>
+                  <input className="stk-input" type="number" name="stockCritico" min="0" step="1" value={form.stockCritico} onChange={update} />
                 </div>
-
-                <div className="alefIngredienteField">
-                  <label className="alefIngredienteLabel">
-                    Stock máximo <span className="alefIngredienteReq">(obligatorio)</span>
-                  </label>
-                  <input
-                    className="alefIngredienteInput"
-                    type="number"
-                    name="stockMax"
-                    min="1"
-                    step="1"
-                    value={form.stockMax}
-                    onChange={update}
-                  />
-                  <p className="alefIngredienteMicro">
-                    Se usa para la barra de porcentaje (actual vs máximo).
-                  </p>
+                <div className="stk-field">
+                  <label className="stk-label">Stock máximo <span style={{ opacity: 0.6 }}>(obligatorio)</span></label>
+                  <input className="stk-input" type="number" name="stockMax" min="1" step="1" value={form.stockMax} onChange={update} />
                 </div>
               </div>
+              <p className="stk-hint">Coherencia: <strong>crítico ≤ mínimo ≤ máximo</strong>.</p>
             </div>
 
-            {/* CONSUMO AUTOMÁTICO */}
+            {/* Consumo automático */}
             {esConsumible && (
-              <div className="alefIngredienteSection">
-                <h4 className="alefIngredienteH4">⏳ Consumo automático por tiempo</h4>
-                <p className="alefIngredienteHint">
-                  Ejemplo: <strong>1 caja de servilletas cada 7 días</strong>. Se descuenta stock y se registra el movimiento.
-                </p>
-
-                <label className="alefIngredienteToggle">
+              <div className="stk-card">
+                <div className="stk-card-title">Consumo automático por tiempo</div>
+                <label className="stk-toggle">
                   <input
                     type="checkbox"
                     checked={form.consumoAutoEnabled}
-                    onChange={(e) =>
-                      setForm((p) => ({ ...p, consumoAutoEnabled: e.target.checked }))
-                    }
-                    className="alefIngredienteCheckbox"
+                    onChange={(e) => setForm((p) => ({ ...p, consumoAutoEnabled: e.target.checked }))}
+                    className="stk-checkbox"
                   />
                   Activar consumo automático
                 </label>
 
                 {form.consumoAutoEnabled && (
-                  <div className="alefIngredienteGrid">
-                    <div className="alefIngredienteField">
-                      <label className="alefIngredienteLabel">Unidades por ciclo</label>
-                      <input
-                        className="alefIngredienteInput"
-                        type="number"
-                        min="1"
-                        step="1"
-                        value={form.consumoAutoCantidad}
-                        onChange={(e) =>
-                          setForm((p) => ({ ...p, consumoAutoCantidad: e.target.value }))
-                        }
-                        placeholder="Ej: 1"
-                      />
-                      <p className="alefIngredienteMicro">
-                        Cuántas unidades se descuentan cada vez (1 caja / 2 packs).
-                      </p>
+                  <div className="stk-grid stk-grid--top">
+                    <div className="stk-field">
+                      <label className="stk-label">Unidades por ciclo</label>
+                      <input className="stk-input" type="number" min="1" step="1" value={form.consumoAutoCantidad} onChange={(e) => setForm((p) => ({ ...p, consumoAutoCantidad: e.target.value }))} placeholder="Ej: 1" />
                     </div>
-
-                    <div className="alefIngredienteField">
-                      <label className="alefIngredienteLabel">Cada cuántos días</label>
-                      <input
-                        className="alefIngredienteInput"
-                        type="number"
-                        min="1"
-                        step="1"
-                        value={form.consumoAutoCadaDias}
-                        onChange={(e) =>
-                          setForm((p) => ({ ...p, consumoAutoCadaDias: e.target.value }))
-                        }
-                        placeholder="Ej: 7"
-                      />
-                      <p className="alefIngredienteMicro">
-                        Frecuencia del descuento automático (ej: cada 7 días).
-                      </p>
+                    <div className="stk-field">
+                      <label className="stk-label">Cada cuántos días</label>
+                      <input className="stk-input" type="number" min="1" step="1" value={form.consumoAutoCadaDias} onChange={(e) => setForm((p) => ({ ...p, consumoAutoCadaDias: e.target.value }))} placeholder="Ej: 7" />
                     </div>
                   </div>
                 )}
               </div>
             )}
 
-            {error && <div className="alefIngredienteError">{error}</div>}
+            {error && <div className="stk-error">{error}</div>}
 
-            <p className="alefIngredienteHint">
-              Tip: si configuras consumo automático, se generarán movimientos{" "}
-              <strong>consumo_auto</strong> para trazabilidad.
+            <p className="stk-hint">
+              Tip: si configuras consumo automático, se generarán movimientos <strong>consumo_auto</strong> para trazabilidad.
             </p>
           </div>
+        </section>
 
-          {/* FOOTER (sticky en móvil + botones 50/50) */}
-          <div className="alefIngredienteFooter">
-            <button
-              className="alefIngredienteBtn ghost"
-              onClick={onClose}
-              disabled={loading}
-            >
-              Cancelar
-            </button>
-
-            <button
-              className="alefIngredienteBtn primary"
-              onClick={crear}
-              disabled={loading || !canSubmit}
-              title={!canSubmit ? "Completa los campos obligatorios" : ""}
-            >
-              {loading ? "Guardando…" : "Crear ítem"}
-            </button>
-          </div>
-        </div>
+        {/* Footer */}
+        <footer className="stk-footer">
+          <button className="stk-btn stk-btn--ghost" onClick={onClose} disabled={loading}>
+            Cancelar
+          </button>
+          <button
+            className="stk-btn stk-btn--primary"
+            onClick={crear}
+            disabled={loading || !canSubmit}
+            title={!canSubmit ? "Completa los campos obligatorios" : ""}
+          >
+            {loading ? "Guardando…" : "Crear ítem"}
+          </button>
+        </footer>
       </div>
     </div>
   );

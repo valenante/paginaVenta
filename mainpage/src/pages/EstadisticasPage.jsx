@@ -26,7 +26,10 @@ export default function EstadisticasPage({ type = "plato" }) {
 
   const { hasFeature } = useFeaturesPlan();
 
+  // Fix #6: sync tipo with prop
   const [tipo, setTipo] = useState(type);
+  useEffect(() => { setTipo(type); }, [type]);
+
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
@@ -34,6 +37,16 @@ export default function EstadisticasPage({ type = "plato" }) {
   const isPro = hasFeature("estadisticas_avanzadas");
 
   const userChangedCategoryRef = useRef(false);
+
+  /* =====================================================
+   * Handlers (Fix #5: declared before early returns)
+   * ===================================================== */
+  const handleChangeTipo = (t) => setTipo(t);
+
+  const handleChangeCategory = (cat) => {
+    userChangedCategoryRef.current = true;
+    setSelectedCategory(cat);
+  };
 
   /* =====================================================
    * 1) Categorías del tipo actual
@@ -47,7 +60,7 @@ export default function EstadisticasPage({ type = "plato" }) {
   }, [categorias]);
 
   /* =====================================================
-   * 2) Cargar categorías al cambiar tipo — resetear todo
+   * 2) Cargar categorías al cambiar tipo
    * ===================================================== */
   useEffect(() => {
     if (!tipo) return;
@@ -59,7 +72,7 @@ export default function EstadisticasPage({ type = "plato" }) {
   }, [tipo, fetchCategories]);
 
   /* =====================================================
-   * 3) Autoselect de categoría (solo si el usuario no ha tocado)
+   * 3) Autoselect de categoría
    * ===================================================== */
   useEffect(() => {
     if (selectedCategory) return;
@@ -69,7 +82,7 @@ export default function EstadisticasPage({ type = "plato" }) {
   }, [categoriasNormalizadas, selectedCategory]);
 
   /* =====================================================
-   * 4) Validar categoría seleccionada (si el tipo cambia)
+   * 4) Validar categoría seleccionada
    * ===================================================== */
   useEffect(() => {
     if (!selectedCategory) return;
@@ -87,7 +100,7 @@ export default function EstadisticasPage({ type = "plato" }) {
   }, [tipo, selectedCategory, fetchProducts]);
 
   /* =====================================================
-   * 6) Productos de la categoría actual (desde cache)
+   * 6) Productos de la categoría actual
    * ===================================================== */
   const productosCategoria = useMemo(() => {
     if (!tipo || !selectedCategory) return [];
@@ -96,10 +109,11 @@ export default function EstadisticasPage({ type = "plato" }) {
   }, [tipo, selectedCategory, productsByKey]);
 
   /* =====================================================
-   * 7) Estadísticas — se pasa el rango como objeto { startDate, endDate }
+   * 7) Estadísticas — server-side via /reportes/estadisticas-categoria
    * ===================================================== */
   const {
     loading: loadingStats,
+    error: statsError,
     productosConStats,
     resumenCategoria,
     estadisticasPorMes,
@@ -109,7 +123,7 @@ export default function EstadisticasPage({ type = "plato" }) {
   } = useEstadisticasCategoria(productosCategoria, { startDate, endDate });
 
   /* =====================================================
-   * 8) Texto descriptivo del rango de fechas activo
+   * 8) Texto descriptivo del rango
    * ===================================================== */
   const fechaTexto = useMemo(() => {
     const fmt = (d) => d.toLocaleDateString();
@@ -123,46 +137,7 @@ export default function EstadisticasPage({ type = "plato" }) {
   const productoEstrella = topProductos?.[0] ?? null;
 
   /* =====================================================
-   * 9) Estados de UI
-   * ===================================================== */
-  if (loading.categories) {
-    return (
-      <div className="estadisticas-final--estadisticas">
-        <p className="mensaje-carga--estadisticas">Cargando categorías…</p>
-      </div>
-    );
-  }
-
-  if (error.categories) {
-    return (
-      <div className="estadisticas-final--estadisticas">
-        <p className="mensaje-error--estadisticas">Error al cargar las categorías</p>
-      </div>
-    );
-  }
-
-  if (categoriasNormalizadas.length === 0) {
-    return (
-      <div className="estadisticas-final--estadisticas">
-        <p className="mensaje-vacio--estadisticas">
-          Todavía no hay estadísticas para mostrar.
-        </p>
-      </div>
-    );
-  }
-
-  /* =====================================================
-   * 10) Handlers
-   * ===================================================== */
-  const handleChangeTipo = (t) => setTipo(t);
-
-  const handleChangeCategory = (cat) => {
-    userChangedCategoryRef.current = true;
-    setSelectedCategory(cat);
-  };
-
-  /* =====================================================
-   * 11) Render
+   * 9) Render
    * ===================================================== */
   return (
     <div className="estadisticas-root">
@@ -177,9 +152,29 @@ export default function EstadisticasPage({ type = "plato" }) {
           endDate={endDate}
           onChangeStartDate={setStartDate}
           onChangeEndDate={setEndDate}
+          loadingCategories={loading.categories}
         />
 
-        {selectedCategory && (
+        {/* Estados de UI */}
+        {loading.categories && (
+          <p className="mensaje-carga--estadisticas">Cargando categorías…</p>
+        )}
+
+        {error.categories && !loading.categories && (
+          <p className="mensaje-error--estadisticas">Error al cargar las categorías.</p>
+        )}
+
+        {!loading.categories && !error.categories && categoriasNormalizadas.length === 0 && (
+          <p className="mensaje-vacio--estadisticas">
+            Todavía no hay categorías de {tipo === "plato" ? "platos" : "bebidas"} para mostrar estadísticas.
+          </p>
+        )}
+
+        {statsError && (
+          <p className="mensaje-error--estadisticas">{statsError}</p>
+        )}
+
+        {selectedCategory && !loading.categories && (
           <>
             <StatsResumenCategoria
               category={selectedCategory}

@@ -1,5 +1,5 @@
 // src/pages/StockPage.jsx
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import api from "../utils/api";
 import { useAuth } from "../context/AuthContext";
 import { useToast } from "../context/ToastContext";
@@ -9,6 +9,7 @@ import CrearIngredienteModal from "../components/Stock/CrearIngredienteModal";
 import UpsellStock from "../components/Stock/UpsellStock";
 import ModalConfirmacion from "../components/Modal/ModalConfirmacion.jsx";
 import EditarIngredienteModal from "../components/Stock/EditarIngredienteModal";
+import HistorialMovimientosModal from "../components/Stock/HistorialMovimientosModal";
 
 import "../styles/StockPage.css";
 
@@ -23,12 +24,12 @@ const getEstadoIng = (it) => {
   return "ok";
 };
 
+// Fix #10: removed magic "stock <= 3" threshold
 const getEstadoProd = (p) => {
   if (p.estado === "agotado") return "agotado";
   if (p.stock <= 0) return "agotado";
   if (p.stockCritico > 0 && p.stock <= p.stockCritico) return "critico";
   if (p.stockMinimo > 0 && p.stock <= p.stockMinimo) return "bajo";
-  if (p.stock <= 3) return "bajo";
   return "ok";
 };
 
@@ -42,7 +43,7 @@ const StockPage = () => {
     user?.plan === "esencial" || user?.plan === "tpv-esencial";
 
   // ── Tab ──
-  const [tab, setTab] = useState("productos"); // "productos" | "ingredientes"
+  const [tab, setTab] = useState("productos");
 
   // ── State: ingredientes ──
   const [loading, setLoading] = useState(true);
@@ -54,18 +55,24 @@ const StockPage = () => {
   const [estadoFiltro, setEstadoFiltro] = useState("todos");
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const fetchId = useRef(0);
+  const [totalIngCount, setTotalIngCount] = useState(0);
 
   // ── State: productos con stock ──
   const [prodLoading, setProdLoading] = useState(true);
+  const [prodError, setProdError] = useState(null);
   const [productos, setProductos] = useState([]);
   const [prodSearch, setProdSearch] = useState("");
   const [prodFiltro, setProdFiltro] = useState("todos");
-  const [prodEditing, setProdEditing] = useState(null); // { _id, stock }
-  const [prodConfiguring, setProdConfiguring] = useState(null); // { _id, stockMinimo, stockCritico, stockMax }
+  const [prodEditing, setProdEditing] = useState(null);
+  const [prodConfiguring, setProdConfiguring] = useState(null);
   const [prodSaving, setProdSaving] = useState(null);
 
-  // ── Counters for tab badges ──
+  // ── AbortControllers ──
+  const ingControllerRef = useRef(null);
+  const prodControllerRef = useRef(null);
+  const flashTimerRef = useRef(null);
+
+  // ── Counters for tab badges (fix #11: use total from server for ingredients) ──
   const ingCriticos = useMemo(
     () => ingredientes.filter((i) => getEstadoIng(i) === "critico").length,
     [ingredientes]
@@ -76,52 +83,68 @@ const StockPage = () => {
   );
 
   /* ================================================================
-     Fetch: ingredientes
+     Fetch: ingredientes (fix #4 + #5)
   ================================================================ */
-  const fetchStock = async () => {
-    const id = ++fetchId.current;
+  const fetchStock = useCallback(async () => {
+    ingControllerRef.current?.abort();
+    const controller = new AbortController();
+    ingControllerRef.current = controller;
+
     setLoading(true);
     setError("");
     try {
       const { data } = await api.get("/stock/ingredientes", {
         params: { page, limit: ITEMS_PER_PAGE, search },
+        signal: controller.signal,
       });
-      if (id !== fetchId.current) return;
+      if (controller.signal.aborted) return;
       setIngredientes(data.ingredientes || []);
       setTotalPages(data.totalPages || 1);
+      setTotalIngCount(data.total || 0);
     } catch (err) {
-      if (id !== fetchId.current) return;
+      if (err?.name === "CanceledError" || err?.code === "ERR_CANCELED") return;
       setError(err?.response?.data?.message || "No se pudo cargar el stock.");
     } finally {
-      if (id === fetchId.current) setLoading(false);
+      if (!controller.signal.aborted) setLoading(false);
     }
-  };
+  }, [page, search]);
 
   useEffect(() => {
     fetchStock();
-  }, [page, search]);
+    return () => ingControllerRef.current?.abort();
+  }, [fetchStock]);
 
   /* ================================================================
-     Fetch: productos con controlStock
+     Fetch: productos con controlStock (fix #1 + #2)
   ================================================================ */
-  const fetchProductos = async () => {
+  const fetchProductos = useCallback(async () => {
+    prodControllerRef.current?.abort();
+    const controller = new AbortController();
+    prodControllerRef.current = controller;
+
     setProdLoading(true);
+    setProdError(null);
     try {
       const { data } = await api.get("/productos", {
-        params: { limit: 500 },
+        params: { controlStock: true, limit: 200 },
+        signal: controller.signal,
       });
-      const items = (data?.data?.items ?? data?.data ?? data?.items ?? []);
-      setProductos(items.filter((p) => p.controlStock));
-    } catch {
+      if (controller.signal.aborted) return;
+      const items = Array.isArray(data) ? data : [];
+      setProductos(items);
+    } catch (err) {
+      if (err?.name === "CanceledError" || err?.code === "ERR_CANCELED") return;
       setProductos([]);
+      setProdError("No se pudieron cargar los productos con stock.");
     } finally {
-      setProdLoading(false);
+      if (!controller.signal.aborted) setProdLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchProductos();
-  }, []);
+    return () => prodControllerRef.current?.abort();
+  }, [fetchProductos]);
 
   /* ================================================================
      Helpers
@@ -143,10 +166,18 @@ const StockPage = () => {
     return arr;
   }, [productos, prodSearch, prodFiltro]);
 
-  const showFlash = (msg) => {
+  // Fix #6: flash with cleanup
+  const showFlash = useCallback((msg) => {
     setFlash(msg);
-    setTimeout(() => setFlash(""), 2500);
-  };
+    if (flashTimerRef.current) clearTimeout(flashTimerRef.current);
+    flashTimerRef.current = setTimeout(() => setFlash(""), 2500);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (flashTimerRef.current) clearTimeout(flashTimerRef.current);
+    };
+  }, []);
 
   /* ================================================================
      Actions: ingredientes
@@ -166,7 +197,7 @@ const StockPage = () => {
   };
 
   /* ================================================================
-     Actions: productos stock
+     Actions: productos stock (fix #7: optimistic update)
   ================================================================ */
   const guardarStockProducto = async (prod) => {
     const nuevoStock = Number(prodEditing?.stock);
@@ -175,9 +206,15 @@ const StockPage = () => {
     setProdSaving(prod._id);
     try {
       await api.put(`/productos/${prod._id}`, { stock: nuevoStock });
+
+      // Optimistic local update
+      setProductos((prev) =>
+        prev.map((p) =>
+          p._id === prod._id ? { ...p, stock: nuevoStock } : p
+        )
+      );
       showFlash(`Stock de "${prod.nombre}" actualizado`);
       setProdEditing(null);
-      fetchProductos();
     } catch (err) {
       showToast(
         err?.response?.data?.message || "Error guardando stock.",
@@ -209,9 +246,17 @@ const StockPage = () => {
         stockCritico: crit,
         stockMax: max,
       });
+
+      // Optimistic local update
+      setProductos((prev) =>
+        prev.map((p) =>
+          p._id === prod._id
+            ? { ...p, stockMinimo: min, stockCritico: crit, stockMax: max }
+            : p
+        )
+      );
       showFlash(`Umbrales de "${prod.nombre}" actualizados`);
       setProdConfiguring(null);
-      fetchProductos();
     } catch (err) {
       showToast(
         err?.response?.data?.message || "Error guardando umbrales.",
@@ -242,7 +287,7 @@ const StockPage = () => {
               <span className="stock-kpi-label">Productos</span>
             </div>
             <div className="stock-kpi">
-              <span className="stock-kpi-value">{ingredientes.length}</span>
+              <span className="stock-kpi-value">{totalIngCount || ingredientes.length}</span>
               <span className="stock-kpi-label">Ingredientes</span>
             </div>
             {(prodAlertas > 0 || ingCriticos > 0) && (
@@ -324,9 +369,17 @@ const StockPage = () => {
             Cuando llega a 0, el producto se marca como <strong>agotado</strong> en la carta.
           </p>
 
+          {/* Fix #2: error state for productos */}
+          {prodError && (
+            <div className="stock-error">
+              <span>{prodError}</span>
+              <button className="stock-error-retry" onClick={fetchProductos}>Reintentar</button>
+            </div>
+          )}
+
           {prodLoading ? (
             <div className="stock-loading">Cargando productos…</div>
-          ) : productosFiltrados.length === 0 ? (
+          ) : !prodError && productosFiltrados.length === 0 ? (
             <div className="stock-empty">
               <p>
                 {productos.length === 0
@@ -569,7 +622,10 @@ const StockPage = () => {
           {loading ? (
             <div className="stock-loading">Cargando ingredientes…</div>
           ) : error ? (
-            <div className="stock-error">{error}</div>
+            <div className="stock-error">
+              <span>{error}</span>
+              <button className="stock-error-retry" onClick={fetchStock}>Reintentar</button>
+            </div>
           ) : ingredientesFiltrados.length === 0 ? (
             <div className="stock-empty">
               <p>No hay ingredientes que mostrar.</p>
@@ -642,6 +698,14 @@ const StockPage = () => {
                       >
                         Editar
                       </button>
+                      <button
+                        className="btn-editar"
+                        onClick={() =>
+                          setModal({ type: "historial", ingrediente: ing })
+                        }
+                      >
+                        Historial
+                      </button>
                     </div>
                   </div>
                 );
@@ -700,6 +764,12 @@ const StockPage = () => {
                 showFlash("Ingrediente actualizado correctamente");
                 fetchStock();
               }}
+            />
+          )}
+          {modal?.type === "historial" && (
+            <HistorialMovimientosModal
+              ingrediente={modal.ingrediente}
+              onClose={() => setModal(null)}
             />
           )}
         </>

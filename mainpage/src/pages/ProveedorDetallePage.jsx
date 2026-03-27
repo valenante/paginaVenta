@@ -57,8 +57,7 @@ export default function ProveedorDetallePage() {
 
       const { data } = await api.get(`/admin/proveedores/${id}`, headersTenant);
 
-      // backend suele devolver { ok:true, proveedor } o algo similar
-      const p = data?.proveedor || data?.item || data || null;
+      const p = data?.proveedor || data || null;
 
       setProveedor(p);
     } catch (err) {

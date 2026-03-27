@@ -156,7 +156,7 @@ export default function ExtrasPanel({ onBack }) {
 
     try {
       const res = await api.post("/extras", { nombre, precio });
-      const created = res.data?.extra || res.data?.data?.extra || res.data?.data || res.data;
+      const created = res.data?.extra || res.data;
 
       // reemplazar el temp por el real
       setExtras((prev) => {
@@ -219,7 +219,7 @@ export default function ExtrasPanel({ onBack }) {
         nombre,
         precio,
       });
-      const updated = res.data?.extra || res.data?.data?.extra || res.data?.data || res.data;
+      const updated = res.data?.extra || res.data;
 
       // asegurar estado final con respuesta backend
       setExtras((prev) => {

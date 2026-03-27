@@ -1,8 +1,4 @@
-// src/components/Usuarios/UsuariosPage.jsx ✅ PERFECTO (UX Errors PRO)
-// - OK/avisos: AlertaMensaje
-// - Errores backend: ErrorToast (normalizeApiError vía hook useUsuarios)
-// Requiere: useUsuarios() actualizado para devolver { ok, error } (error normalizado)
-
+// src/components/Usuarios/UsuariosPage.jsx
 import React, { useCallback, useState } from "react";
 import { useUsuarios } from "./useUsuarios";
 import { useAuth } from "../../context/AuthContext";
@@ -31,7 +27,7 @@ export default function UsuariosPage() {
     crearUsuario,
     eliminarUsuario,
     editarUsuario,
-    actualizarPermisosUsuario, // (si lo activas luego)
+    actualizarPermisosUsuario,
   } = useUsuarios();
 
   // OK / avisos
@@ -41,9 +37,10 @@ export default function UsuariosPage() {
   const [errorToast, setErrorToast] = useState(null);
 
   // Modales
+  const [showCreate, setShowCreate] = useState(false);
   const [usuarioEdit, setUsuarioEdit] = useState(null);
   const [usuarioStats, setUsuarioStats] = useState(null);
-  const [usuarioPermisos, setUsuarioPermisos] = useState(null); // (por si lo reactivas)
+  const [usuarioPermisos, setUsuarioPermisos] = useState(null);
   const [deletingId, setDeletingId] = useState(null);
   const [usuarioAEliminar, setUsuarioAEliminar] = useState(null);
 
@@ -57,10 +54,8 @@ export default function UsuariosPage() {
     (user?.plan === "esencial" || user?.plan === "tpv-esencial");
 
   const showOk = (mensaje) => setAlerta({ tipo: "exito", mensaje });
-  const showWarn = (mensaje) => setAlerta({ tipo: "warn", mensaje });
 
   const showErr = (errNormalized, fallback = "No se pudo completar la operación.") => {
-    // errNormalized ya viene de normalizeApiError en el hook
     if (!errNormalized) {
       setErrorToast({
         status: null,
@@ -108,7 +103,7 @@ export default function UsuariosPage() {
   };
 
   return (
-    <div className="usuarios-root usuarios-layout">
+    <main className="cfg-page section section--wide">
       {/* ERROR TOAST (KO) */}
       {errorToast && (
         <ErrorToast
@@ -127,12 +122,29 @@ export default function UsuariosPage() {
         />
       )}
 
+      {/* === Header === */}
+      <header className="cfg-header">
+        <div>
+          <h1>Usuarios del restaurante</h1>
+          <p className="text-suave">
+            Desde aquí gestionas el equipo que usa el TPV: crea usuarios, edítalos, elimina accesos y revisa estadísticas.
+          </p>
+        </div>
+
+        <button
+          className="usuarios-btn-nuevo"
+          onClick={() => setShowCreate(true)}
+        >
+          + Nuevo usuario
+        </button>
+      </header>
+
       {/* === Info / Cómo funciona === */}
       <section className="usuarios-info">
         <div className="usuarios-info-header">
-          <h1 className="usuarios-info-title">Usuarios del restaurante</h1>
+          <h2 className="usuarios-info-title">Cómo funciona</h2>
           <p className="usuarios-info-subtitle">
-            Desde aquí gestionas el equipo que usa el TPV: crea usuarios, edítalos, elimina accesos y revisa estadísticas.
+            Gestiona el acceso de tu equipo al sistema.
           </p>
         </div>
 
@@ -144,7 +156,7 @@ export default function UsuariosPage() {
               y acceder según el rol y permisos asignados.
             </p>
             <p className="usuarios-info-note">
-              Recomendación: usa nombres claros (ej. “Camarero 1”, “Cocina”, “Barra”).
+              Recomendación: usa nombres claros (ej. "Camarero 1", "Cocina", "Barra").
             </p>
           </article>
 
@@ -166,7 +178,7 @@ export default function UsuariosPage() {
               Esta acción es irreversible.
             </p>
             <p className="usuarios-info-note">
-              Antes de eliminar, confirma que no sea una cuenta necesaria (ej. “Caja”).
+              Antes de eliminar, confirma que no sea una cuenta necesaria (ej. "Caja").
             </p>
           </article>
 
@@ -183,35 +195,34 @@ export default function UsuariosPage() {
         </div>
       </section>
 
-      <div className="usuarios-grid">
-        <div className="usuarios-col usuarios-col-create">
-          <UsuarioCreateForm onCrear={onCrear} />
+      {/* === Tabla (ancho completo) === */}
+      <UsuariosTable
+        usuarios={usuarios}
+        onEditar={setUsuarioEdit}
+        onEliminar={onEliminarClick}
+        onStats={setUsuarioStats}
+        onPermisos={setUsuarioPermisos}
+        isPlanEsencial={isPlanEsencial}
+        deletingId={deletingId}
+      />
 
-          {isPlanEsencial && (
-            <div style={{ marginTop: "1.2rem" }}>
-              <UpsellEstadisticasUsuarios />
-            </div>
-          )}
+      {loading && (
+        <div className="usuarios-loading">Cargando…</div>
+      )}
+
+      {isPlanEsencial && (
+        <div className="usuarios-upsell-wrap">
+          <UpsellEstadisticasUsuarios />
         </div>
+      )}
 
-        <div className="usuarios-col usuarios-col-table">
-          <UsuariosTable
-            usuarios={usuarios}
-            onEditar={setUsuarioEdit}
-            onEliminar={onEliminarClick}
-            onStats={setUsuarioStats}
-            onPermisos={setUsuarioPermisos}
-            isPlanEsencial={isPlanEsencial}
-            deletingId={deletingId}
-          />
-
-          {loading && (
-            <div style={{ marginTop: 10, opacity: 0.8 }}>
-              Cargando…
-            </div>
-          )}
-        </div>
-      </div>
+      {/* Modal crear */}
+      {showCreate && (
+        <UsuarioCreateForm
+          onCrear={onCrear}
+          onClose={() => setShowCreate(false)}
+        />
+      )}
 
       {/* Modal editar */}
       {usuarioEdit && (
@@ -260,6 +271,6 @@ export default function UsuariosPage() {
           }}
         />
       )}
-    </div>
+    </main>
   );
 }

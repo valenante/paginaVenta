@@ -120,8 +120,8 @@ const AUTH_ROUTES = [
   "/auth/refresh-token",
   "/auth/logout",
   "/auth/password-setup",
-  "/auth/forgot-password",
-  "/auth/reset-password",
+  "/password/forgot-password",
+  "/password/reset-password",
 ];
 
 const NO_REFRESH_ROUTES = [
@@ -287,7 +287,17 @@ api.interceptors.request.use((config) => {
 ===================================================== */
 
 api.interceptors.response.use(
-  (response) => response,
+  (res) => {
+    // Auto-unwrap standard { ok, data } API responses.
+    // After this, `const { data } = await api.get(...)` gives the payload directly.
+    // For paginated responses, `res.meta` contains { page, limit, total, totalPages }.
+    const body = res.data;
+    if (body && typeof body === "object" && body.ok === true && "data" in body) {
+      res.data = body.data;
+      if (body.meta) res.meta = body.meta;
+    }
+    return res;
+  },
   async (error) => {
     const original = error.config;
 

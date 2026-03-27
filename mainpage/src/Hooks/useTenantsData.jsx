@@ -44,12 +44,13 @@ export default function useTenantsData() {
       params.set("limit", String(LIMIT));
       if (debouncedSearch.trim()) params.set("q", debouncedSearch.trim());
 
-      const { data } = await api.get(`/admin/superadmin/tenants?${params}`, {
+      const res = await api.get(`/admin/superadmin/tenants?${params}`, {
         signal: controller.signal,
       });
+      const { data } = res;
 
       // Backend returns { items, total, page, limit, totalPages }
-      const list = Array.isArray(data?.items) ? data.items : Array.isArray(data) ? data : [];
+      const list = Array.isArray(data?.items) ? data.items : [];
       setItems(list);
       setTotal(data?.total ?? list.length);
       setTotalPages(data?.totalPages ?? 1);

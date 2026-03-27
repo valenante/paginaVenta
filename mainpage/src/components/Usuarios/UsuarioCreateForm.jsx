@@ -1,6 +1,6 @@
 // src/components/Usuarios/UsuarioCreateForm.jsx
 import React, { useState } from "react";
-import AlefSelect from "../AlefSelect/AlefSelect";
+import LightSelect from "./LightSelect";
 import { useRoles } from "../../hooks/useRoles";
 import "./UsuarioCreateForm.css";
 
@@ -10,7 +10,7 @@ const ESTACIONES = [
   { value: "frio", label: "Frío" },
 ];
 
-export default function UsuarioCreateForm({ onCrear }) {
+export default function UsuarioCreateForm({ onCrear, onClose }) {
   const { roles: rolesDisponibles } = useRoles("tpv");
   const [form, setForm] = useState({
     name: "",
@@ -22,6 +22,7 @@ export default function UsuarioCreateForm({ onCrear }) {
   });
 
   const [errors, setErrors] = useState({});
+  const [saving, setSaving] = useState(false);
 
   const validate = () => {
     const e = {};
@@ -42,105 +43,152 @@ export default function UsuarioCreateForm({ onCrear }) {
     const e2 = validate();
     setErrors(e2);
 
-    if (Object.keys(e2).length === 0) {
-      const result = await onCrear({
-        name: form.name,
-        email: form.email,
-        role: form.role,
-        estacion: form.estacion || "",
-        password: form.password,
-      });
+    if (Object.keys(e2).length > 0) return;
 
-      if (result?.ok !== false) {
-        setForm({
-          name: "",
-          email: "",
-          role: "",
-          estacion: "",
-          password: "",
-          confirmPassword: "",
-        });
-      }
+    setSaving(true);
+    const result = await onCrear({
+      name: form.name,
+      email: form.email,
+      role: form.role,
+      estacion: form.estacion || "",
+      password: form.password,
+    });
+    setSaving(false);
+
+    if (result?.ok !== false) {
+      onClose();
     }
   };
 
   return (
-    <section className="usuarios-card">
-      <h3>Crear usuario</h3>
+    <div
+      className="userCreateModal-overlay"
+      role="dialog"
+      aria-modal="true"
+      onClick={saving ? undefined : onClose}
+    >
+      <div
+        className="userCreateModal-container"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* HEADER */}
+        <header className="userCreateModal-header">
+          <div>
+            <h2 className="userCreateModal-title">Nuevo usuario</h2>
+            <p className="userCreateModal-subtitle">
+              Rellena los datos para dar de alta un nuevo miembro del equipo.
+            </p>
+          </div>
+          <button
+            className="userCreateModal-close"
+            onClick={onClose}
+            aria-label="Cerrar"
+            disabled={saving}
+            type="button"
+          >
+            ✕
+          </button>
+        </header>
 
-      <form onSubmit={handleSubmit} className="usuarios-form">
-        {/* Nombre */}
-        <div className="field">
-          <label>Nombre</label>
-          <input
-            value={form.name}
-            onChange={(e) => setForm({ ...form, name: e.target.value })}
-          />
-          {errors.name && <p className="error">{errors.name}</p>}
-        </div>
+        {/* BODY */}
+        <form onSubmit={handleSubmit} className="userCreateModal-body">
+          {/* Nombre + Email en row */}
+          <div className="userCreateModal-row">
+            <div className="userCreateModal-field">
+              <label>Nombre</label>
+              <input
+                value={form.name}
+                onChange={(e) => setForm({ ...form, name: e.target.value })}
+                placeholder="Ej. Camarero 1"
+                autoFocus
+              />
+              {errors.name && <p className="userCreateModal-error">{errors.name}</p>}
+            </div>
 
-        {/* Email */}
-        <div className="field">
-          <label>Email</label>
-          <input
-            value={form.email}
-            onChange={(e) => setForm({ ...form, email: e.target.value })}
-          />
-          {errors.email && <p className="error">{errors.email}</p>}
-        </div>
+            <div className="userCreateModal-field">
+              <label>Email</label>
+              <input
+                type="email"
+                value={form.email}
+                onChange={(e) => setForm({ ...form, email: e.target.value })}
+                placeholder="usuario@ejemplo.com"
+              />
+              {errors.email && <p className="userCreateModal-error">{errors.email}</p>}
+            </div>
+          </div>
 
-        {/* Rol - AlefSelect */}
-        <div className="field">
-          <AlefSelect
-            label="Rol"
-            placeholder="Selecciona rol"
-            value={form.role}
-            onChange={(v) => setForm({ ...form, role: v })}
-            options={rolesDisponibles}
-          />
-          {errors.role && <p className="error">{errors.role}</p>}
-        </div>
+          {/* Rol + Estación en row */}
+          <div className="userCreateModal-row">
+            <div className="userCreateModal-field">
+              <LightSelect
+                label="Rol"
+                placeholder="Selecciona rol"
+                value={form.role}
+                onChange={(v) => setForm({ ...form, role: v })}
+                options={rolesDisponibles}
+              />
+              {errors.role && <p className="userCreateModal-error">{errors.role}</p>}
+            </div>
 
-        {/* Estación */}
-        <div className="field">
-          <AlefSelect
-            label="Estación"
-            placeholder="Sin estación"
-            value={form.estacion}
-            onChange={(v) => setForm({ ...form, estacion: v })}
-            options={ESTACIONES}
-          />
-          {errors.estacion && <p className="error">{errors.estacion}</p>}
-        </div>
+            <div className="userCreateModal-field">
+              <LightSelect
+                label="Estación"
+                placeholder="Sin estación"
+                value={form.estacion}
+                onChange={(v) => setForm({ ...form, estacion: v })}
+                options={ESTACIONES}
+              />
+            </div>
+          </div>
 
-        {/* Contraseña */}
-        <div className="field">
-          <label>Contraseña</label>
-          <input
-            type="password"
-            value={form.password}
-            onChange={(e) => setForm({ ...form, password: e.target.value })}
-          />
-          {errors.password && <p className="error">{errors.password}</p>}
-        </div>
+          {/* Contraseñas en row */}
+          <div className="userCreateModal-row">
+            <div className="userCreateModal-field">
+              <label>Contraseña</label>
+              <input
+                type="password"
+                value={form.password}
+                onChange={(e) => setForm({ ...form, password: e.target.value })}
+                placeholder="Min 8 caracteres"
+              />
+              {errors.password && <p className="userCreateModal-error">{errors.password}</p>}
+            </div>
 
-        {/* Confirmar contraseña */}
-        <div className="field">
-          <label>Confirmar contraseña</label>
-          <input
-            type="password"
-            value={form.confirmPassword}
-            onChange={(e) =>
-              setForm({ ...form, confirmPassword: e.target.value })
-            }
-          />
-          {errors.confirmPassword && (
-            <p className="error">{errors.confirmPassword}</p>
-          )}
-        </div>
+            <div className="userCreateModal-field">
+              <label>Confirmar contraseña</label>
+              <input
+                type="password"
+                value={form.confirmPassword}
+                onChange={(e) =>
+                  setForm({ ...form, confirmPassword: e.target.value })
+                }
+              />
+              {errors.confirmPassword && (
+                <p className="userCreateModal-error">{errors.confirmPassword}</p>
+              )}
+            </div>
+          </div>
 
-        <button className="btn-primary">Crear usuario</button>
-      </form>
-    </section>
+          {/* FOOTER */}
+          <footer className="userCreateModal-footer">
+            <button
+              className="userCreateModal-btn userCreateModal-btn--secondary"
+              onClick={onClose}
+              disabled={saving}
+              type="button"
+            >
+              Cancelar
+            </button>
+            <button
+              className="userCreateModal-btn userCreateModal-btn--primary"
+              disabled={saving}
+              type="submit"
+            >
+              {saving ? "Creando..." : "Crear usuario"}
+            </button>
+          </footer>
+        </form>
+      </div>
+    </div>
   );
 }

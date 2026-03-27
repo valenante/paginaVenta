@@ -156,8 +156,7 @@ export default function ModalConfigPromocion({ producto, onClose, onSaved }) {
       // opcional: cerrar
       // onClose();
     } catch (err) {
-      console.error(err);
-      setAlerta({ tipo: "error", mensaje: "Error guardando la promoción" });
+      setAlerta({ tipo: "error", mensaje: err?.response?.data?.message || "Error guardando la promoción." });
     } finally {
       setSaving(false);
     }
@@ -169,10 +168,8 @@ export default function ModalConfigPromocion({ producto, onClose, onSaved }) {
       const { data } = await api.delete(`/productos/${producto._id}/promocion`);
       const productoActualizado = data?.producto || data;
       onSaved(productoActualizado);
-      // onClose();
     } catch (err) {
-      console.error(err);
-      setAlerta({ tipo: "error", mensaje: "No se pudo desactivar la promoción." });
+      setAlerta({ tipo: "error", mensaje: err?.response?.data?.message || "No se pudo desactivar la promoción." });
     } finally {
       setSaving(false);
       setConfirmDesactivar(false);
@@ -202,8 +199,8 @@ export default function ModalConfigPromocion({ producto, onClose, onSaved }) {
   const promoActiva = !!producto?.promocion?.activa;
 
   return (
-    <div className="modal-overlay">
-      <div className="modal card modal-promocion" role="dialog" aria-modal="true">
+    <div className="modal-promo-overlay" onClick={onClose}>
+      <div className="modal-promocion" role="dialog" aria-modal="true" onClick={(e) => e.stopPropagation()}>
         <header className="modal-header">
           <h3>Configurar promoción</h3>
           <button onClick={onClose} aria-label="Cerrar">✕</button>

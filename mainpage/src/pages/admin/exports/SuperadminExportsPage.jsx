@@ -64,7 +64,7 @@ export default function SuperadminExportsPage() {
   const fetchTenants = async () => {
     try {
       const { data } = await api.get("/admin/superadmin/tenants", { params: { limit: 200 } });
-      setTenants(Array.isArray(data?.items) ? data.items : Array.isArray(data) ? data : []);
+      setTenants(Array.isArray(data?.items) ? data.items : []);
     } catch (e) {
       setAlert({
         type: "error",

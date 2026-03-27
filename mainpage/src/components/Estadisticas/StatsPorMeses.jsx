@@ -19,28 +19,28 @@ const formatMesLabel = (mesKey) => {
 const StatsPorMeses = ({ data }) => {
   if (!data || data.length === 0) {
     return (
-      <section className="statsmesa-container">
-        <header className="statsmesa-header">
+      <section className="statsmeses-container">
+        <header className="statsmeses-header">
           <h3>Estadísticas por mes</h3>
         </header>
-        <p className="statsmesa-empty">No hay ventas para este filtro.</p>
+        <p className="statsmeses-empty">No hay ventas para este filtro.</p>
       </section>
     );
   }
 
   return (
-    <section className="statsmesa-container">
-      <header className="statsmesa-header">
-        <div className="statsmesa-title">
+    <section className="statsmeses-container">
+      <header className="statsmeses-header">
+        <div className="statsmeses-title">
           <h3>Estadísticas por mes</h3>
-          <p className="statsmesa-desc">Meses ordenados por ingresos generados.</p>
+          <p className="statsmeses-desc">Meses ordenados por ingresos generados.</p>
         </div>
 
-        <span className="statsmesa-badge">{data.length} meses</span>
+        <span className="statsmeses-badge">{data.length} meses</span>
       </header>
 
-      <div className="statsmesa-table-wrapper">
-        <table className="statsmesa-table">
+      <div className="statsmeses-table-wrapper">
+        <table className="statsmeses-table">
           <thead>
             <tr>
               <th>Mes</th>

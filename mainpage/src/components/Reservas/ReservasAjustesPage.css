@@ -1,375 +1,234 @@
 /*****************************************************
- * ReservasAjustesPage – Alef (1 columna, por filas)
- * mismo estilo, más ordenado
+ * Reservas Ajustes – Modal Alef
+ * Reutiliza: mnr-overlay, card mnr-dialog, mnr-header,
+ *   mnr-headtext, mnr-title, mnr-subtitle, mnr-close,
+ *   mnr-form, mnr-field, mnr-actions, mnr-btn
+ * Solo estilos propios de ajustes (ra-*)
  *****************************************************/
 
-/* ===== Root container ===== */
-.reservas-ajustes-page {
+/* Dialog más ancho que nueva reserva */
+.ra-dialog {
+  max-width: 780px;
+}
+
+/* Body interno */
+.ra-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg, 1.25rem);
+}
+
+/* ===== Date row ===== */
+.ra-date-row {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-md, 1rem);
+}
+
+.ra-date-field {
+  flex: 1;
+  min-width: 0;
+}
+
+.ra-date-field .react-datepicker-wrapper,
+.ra-date-field .react-datepicker__input-container,
+.ra-date-field .react-datepicker__input-container input {
   width: 100%;
-  max-width: 980px; /* más “panel” vertical */
-  margin: var(--space-2xl) auto;
-  padding: 0 var(--space-md) var(--space-3xl);
+}
+
+.ra-date-pill {
+  flex-shrink: 0;
+  padding: 0.5rem 0.85rem;
+  border-radius: var(--radius-md, 10px);
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
   display: flex;
   flex-direction: column;
-  gap: var(--space-xl);
-  overflow-x: hidden;
+  gap: 0.1rem;
 }
 
-/* ===== Header ===== */
-.reservas-ajustes-header {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-md);
-  padding-bottom: var(--space-md);
-  border-bottom: 1px solid var(--color-borde-suave);
-}
-
-.reservas-ajustes-header .config-title {
-  margin: 0 0 var(--space-xxs);
-  font-size: var(--font-size-xl);
-  line-height: 1.2;
-}
-
-/* Pill día seleccionado */
-.reservas-ajustes-fecha-pill {
-  width: 100%;
-  padding: var(--space-sm) var(--space-md);
-  border-radius: var(--radius-lg);
-  background: #fff;
-  border: 1px solid var(--color-borde-suave);
-  box-shadow: var(--shadow-sm);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-xxs);
-}
-
-.pill-label {
-  font-size: var(--font-size-xs);
+.ra-date-pill-label {
+  font-size: var(--font-size-xs, 0.7rem);
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.07em;
-  color: var(--color-texto-suave);
+  letter-spacing: 0.04em;
+  color: #94a3b8;
 }
 
-.pill-value {
-  font-size: var(--font-size-sm);
-  font-weight: 800;
-  color: var(--color-texto);
+.ra-date-pill-value {
+  font-size: var(--font-size-sm, 0.82rem);
+  font-weight: 700;
+  color: #0f172a;
 }
 
-/* ===== GRID GENERAL (siempre 1 columna) ===== */
-.reservas-ajustes-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--space-lg);
-}
-
-/* ===== Tarjetas base ===== */
-.config-section.card {
-  background: #ffffff;
-  border-radius: var(--radius-xl);
-  padding: var(--space-lg);
-  box-shadow: var(--shadow-md);
-  border: 1px solid var(--color-borde-medio);
+/* ===== Sections ===== */
+.ra-section {
   display: flex;
   flex-direction: column;
-  gap: var(--space-lg);
-  min-width: 0;
+  gap: var(--space-sm, 0.75rem);
+  padding: var(--space-md, 1rem);
+  border-radius: var(--radius-md, 10px);
+  border: 1px solid #f1f5f9;
+  background: #fafbfc;
 }
 
-/* ===== Títulos ===== */
-.reservas-main-header,
-.reservas-especial-card {
+.ra-section--special {
+  border-color: #e2e8f0;
+}
+
+.ra-section-header {
   display: flex;
-  flex-direction: column;
-  gap: var(--space-xs);
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-sm);
 }
 
-.section-title {
+.ra-section-title {
   margin: 0;
-  font-size: var(--font-size-lg);
+  font-size: var(--font-size-base, 0.95rem);
+  font-weight: 700;
+  color: #0f172a;
 }
 
-.section-description {
-  margin: 0;
-}
-
-/* ======================================================
-   ✅ NUEVO: Layout interno en 1 columna por filas
-====================================================== */
-
-.reservas-main-layout {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-lg);
-  min-width: 0;
-}
-
-/* Cada “panel” pasa a ser un bloque apilado */
-.reservas-franjas-panel,
-.reservas-dias-panel {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-md);
-  min-width: 0;
-  padding: var(--space-md);
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--color-borde-suave);
-  background: #fff;
-  box-shadow: var(--shadow-sm);
-}
-
-/* Input date (react-datepicker) */
-.input-date {
-  width: 100%;
-  box-sizing: border-box;
-  padding: 0.65rem 0.85rem;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--color-borde-medio);
-  background: #ffffff;
-  font-size: var(--font-size-sm);
-  box-shadow: var(--shadow-xs);
-}
-
-.react-datepicker-wrapper,
-.react-datepicker__input-container {
-  width: 100%;
-}
-
-.react-datepicker__input-container input {
-  width: 100%;
-}
-
-/* ===== Lista de franjas ===== */
-.reservas-franjas-list {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-sm);
-}
-
-/* ===== Card franja (general y especial) ===== */
-.franja-item,
-.franja-especial-item {
-  background: #ffffff;
-  padding: var(--space-md);
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--color-borde-suave);
-  box-shadow: var(--shadow-sm);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-md);
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
-  min-width: 0;
-}
-
-.franja-item:hover,
-.franja-especial-item:hover {
-  border-color: var(--color-primario);
-  box-shadow: var(--shadow-md);
-}
-
-/* ✅ Horas: SIEMPRE en 1 columna (ordenado) */
-.franja-horas {
-  display: grid;
+/* ===== Single-button actions (no grid 50/50) ===== */
+.ra-actions-single {
   grid-template-columns: 1fr;
-  gap: var(--space-sm);
-  align-items: start;
-  min-width: 0;
 }
 
-.franja-separador {
-  display: none;
-}
-
-/* Campo dentro de franja */
-.franja-field {
+/* ===== Franja cards ===== */
+.ra-franja {
   display: flex;
   flex-direction: column;
-  gap: var(--space-xxs);
-  min-width: 0;
-}
-
-.franja-field label {
-  font-size: var(--font-size-xs);
-  font-weight: 800;
-  color: var(--color-texto-suave);
-}
-
-.franja-field input {
-  width: 100%;
-  box-sizing: border-box;
-  padding: 0.6rem 0.75rem;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--color-borde-medio);
-  font-size: var(--font-size-sm);
+  gap: 0.75rem;
+  padding: 0.85rem;
+  border-radius: var(--radius-md, 10px);
+  border: 1px solid #e2e8f0;
   background: #ffffff;
+  transition: border-color 0.15s, box-shadow 0.15s;
 }
 
-/* Extra: max + delete (una fila) */
-.franja-extra {
+.ra-franja:hover {
+  border-color: var(--color-primario, #6a0dad);
+  box-shadow: 0 2px 8px rgba(106, 13, 173, 0.06);
+}
+
+.ra-franja-row {
   display: grid;
-  grid-template-columns: 1fr auto;
-  gap: var(--space-sm);
+  grid-template-columns: 1fr 1fr;
+  gap: 0.6rem;
   align-items: end;
 }
 
-/* Botón eliminar */
-.btn-icon.btn-delete-franja {
-  background: #fee2e2;
-  color: #b91c1c;
-  border: 1px solid rgba(185, 28, 28, 0.18);
-  padding: 0.55rem 0.75rem;
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  transition: background 0.15s ease, transform 0.15s ease;
-  font-size: var(--font-size-sm);
-  line-height: 1;
-  height: 40px;
+.ra-franja-extra {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.6rem;
+  align-items: end;
 }
 
-.btn-icon.btn-delete-franja:hover {
-  background: #fecaca;
+.ra-btn-delete {
+  flex: 0 0 auto;
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-md, 10px);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  background: #fef2f2;
+  color: #dc2626;
+  font-size: 0.9rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+}
+
+.ra-btn-delete:hover:not(:disabled) {
+  background: #fee2e2;
+  border-color: rgba(239, 68, 68, 0.35);
   transform: translateY(-1px);
 }
 
-.btn-icon.btn-delete-franja:disabled {
-  opacity: 0.6;
+.ra-btn-delete:disabled {
+  opacity: 0.5;
   cursor: not-allowed;
-  transform: none;
 }
 
-/* Botón añadir */
-.btn-add-franja,
-.btn-add-franja-especial {
-  width: 100%;
-}
-
-/* ===== Panel días habilitados ===== */
-.dias-grid {
+/* ===== Day pills ===== */
+.ra-dias-grid {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-sm);
-  min-width: 0;
+  gap: 0.4rem;
 }
 
-.dia-pill {
+.ra-dia {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-xs);
-  padding: 0.45rem 0.85rem;
-  border-radius: 999px;
-  border: 1px solid var(--color-borde-medio);
-  background: #fafafa;
+  gap: 0.35rem;
+  padding: 0.4rem 0.75rem;
+  border-radius: var(--radius-pill, 999px);
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #64748b;
   cursor: pointer;
-  font-size: var(--font-size-xs);
-  transition: background 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
   user-select: none;
+  transition: all 0.15s;
 }
 
-.dia-pill input {
-  width: 16px;
-  height: 16px;
+.ra-dia input[type="checkbox"] {
+  width: 14px;
+  height: 14px;
+  accent-color: var(--color-primario, #6a0dad);
+  cursor: pointer;
 }
 
-.dia-activo {
-  background: var(--color-primario-suave);
-  border-color: var(--color-primario);
-  color: var(--color-primario-oscuro);
+.ra-dia--on {
+  background: rgba(106, 13, 173, 0.08);
+  border-color: var(--color-primario, #6a0dad);
+  color: var(--color-primario, #6a0dad);
+  font-weight: 700;
 }
 
-.dia-inactivo {
-  opacity: 0.65;
+.ra-dia--off {
+  opacity: 0.55;
 }
 
-/* ===== Toggle fecha especial ===== */
-.toggle-especial {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-xs);
-}
-
-.checkbox-row {
+/* ===== Toggle ===== */
+.ra-toggle {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-sm);
-  font-size: var(--font-size-sm);
+  gap: 0.5rem;
+  font-size: var(--font-size-sm, 0.88rem);
+  font-weight: 600;
+  color: #0f172a;
+  cursor: pointer;
 }
 
-.checkbox-row input {
+.ra-toggle input[type="checkbox"] {
   width: 16px;
   height: 16px;
+  accent-color: var(--color-primario, #6a0dad);
+  cursor: pointer;
 }
 
-/* ===== Franjas especiales wrapper ===== */
-.franjas-especiales {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-md);
-}
-
-/* ===== Estados / badges ===== */
-.estado-especial.badge,
-.estado-normal {
-  align-self: flex-start;
-}
-
-/* ===== Acciones ===== */
-.config-actions {
-  display: flex;
-  gap: var(--space-sm);
-}
-
-.btn-guardar-config,
-.btn-guardar-especial {
-  width: 100%;
-}
-
-/* ===== Alerta global ===== */
-.reservas-ajustes-alerta {
-  margin-top: var(--space-lg);
-}
-
-/* =====================================================
-   BREAKPOINTS (sigue 1 columna, solo ajusta padding)
-===================================================== */
-
-@media (min-width: 768px) {
-  .reservas-ajustes-page {
-    padding: 0 var(--space-lg) var(--space-3xl);
-    gap: var(--space-2xl);
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+  .ra-dialog {
+    max-width: none;
   }
 
-  .reservas-ajustes-header {
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: var(--space-2xl);
+  .ra-date-row {
+    flex-direction: column;
+    align-items: stretch;
   }
 
-  .reservas-ajustes-fecha-pill {
-    width: auto;
-    min-width: 280px;
+  .ra-franja-row {
+    grid-template-columns: 1fr;
   }
 
-  .config-section.card {
-    padding: var(--space-xl);
-    gap: var(--space-xl);
-  }
-
-  .reservas-franjas-panel,
-  .reservas-dias-panel {
-    padding: var(--space-lg);
-  }
-
-  .btn-add-franja,
-  .btn-add-franja-especial {
-    width: auto;
-    align-self: flex-start;
-    min-width: 240px;
-  }
-
-  .btn-guardar-config,
-  .btn-guardar-especial {
-    width: auto;
-    min-width: 260px;
+  .ra-section-header {
+    flex-direction: column;
+    gap: 0.4rem;
   }
 }

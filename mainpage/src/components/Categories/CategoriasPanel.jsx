@@ -8,20 +8,13 @@ import EditProduct from "./EditProducts";
 import { useCategorias } from "../../context/CategoriasContext";
 import Portal from "../ui/Portal";
 import api from "../../utils/api";
+import { getFirstPrice } from "./categoriesHelpers";
 import "./CategoriasPanel.css";
 
 const TABS = [
   { key: "plato", label: "Platos", emoji: "🍽️" },
   { key: "bebida", label: "Bebidas", emoji: "🥂" },
 ];
-
-const getFirstPrice = (precios) => {
-  if (Array.isArray(precios)) {
-    const sorted = [...precios].sort((a, b) => (a.orden ?? 0) - (b.orden ?? 0));
-    return sorted[0]?.precio ?? 0;
-  }
-  return precios?.precioBase ?? 0;
-};
 
 const CategoriasPanel = ({ onBack }) => {
   const [tab, setTab] = useState("plato");
@@ -32,6 +25,7 @@ const CategoriasPanel = ({ onBack }) => {
   const [productsByCat, setProductsByCat] = useState({}); // { catName: [...products] }
   const [loadingProducts, setLoadingProducts] = useState(new Set());
   const [editingProduct, setEditingProduct] = useState(null);
+  const [deleteError, setDeleteError] = useState(null);
 
   const {
     categoryObjectsByTipo,
@@ -135,6 +129,8 @@ const CategoriasPanel = ({ onBack }) => {
         const srcCatId = source.droppableId.replace("products-", "");
         const dstCatId = destination.droppableId.replace("products-", "");
 
+        if (srcCatId === dstCatId) return;
+
         const srcCat = catObjects.find((c) => c._id === srcCatId);
         const dstCat = catObjects.find((c) => c._id === dstCatId);
         if (!srcCat || !dstCat) return;
@@ -143,14 +139,11 @@ const CategoriasPanel = ({ onBack }) => {
         const dstKey = `${tab}::${dstCat.nombre}`;
         const srcProds = [...(productsByCat[srcKey] || [])];
 
-        if (srcCatId === dstCatId) {
-          // Reorder within same category — no-op for now (no product order in backend)
-          return;
-        }
-
-        // Move product to new category
         const [movedProd] = srcProds.splice(source.index, 1);
         if (!movedProd) return;
+
+        // Snapshot for rollback
+        const prevState = { ...productsByCat };
 
         // Optimistic update
         const dstProds = [...(productsByCat[dstKey] || [])];
@@ -166,9 +159,8 @@ const CategoriasPanel = ({ onBack }) => {
         try {
           await updateProduct(movedProd._id, { categoria: dstCat.nombre });
         } catch {
-          // Revert on error
-          refreshCatProducts(srcCat.nombre);
-          refreshCatProducts(dstCat.nombre);
+          // Revert to snapshot
+          setProductsByCat(prevState);
         }
       }
     },
@@ -180,7 +172,17 @@ const CategoriasPanel = ({ onBack }) => {
   ===================================================== */
   const handleSave = useCallback(
     async (payload, id) => {
+      // Si es edición y el nombre cambió, invalidar cache bajo la key vieja
       if (id) {
+        const oldCat = catObjects.find((c) => c._id === id);
+        if (oldCat && oldCat.nombre !== payload.nombre) {
+          const oldKey = `${payload.tipo || tab}::${oldCat.nombre}`;
+          setProductsByCat((prev) => {
+            const next = { ...prev };
+            delete next[oldKey];
+            return next;
+          });
+        }
         await updateCategoryObject(id, payload);
       } else {
         await createCategoryObject(payload);
@@ -188,19 +190,20 @@ const CategoriasPanel = ({ onBack }) => {
       fetchCategoryObjects(payload.tipo || tab, { force: true });
       fetchCategories(payload.tipo || tab, { force: true });
     },
-    [tab, updateCategoryObject, createCategoryObject, fetchCategoryObjects, fetchCategories]
+    [tab, catObjects, updateCategoryObject, createCategoryObject, fetchCategoryObjects, fetchCategories]
   );
 
   const handleDelete = useCallback(
     async (cat) => {
       try {
+        setDeleteError(null);
         await deleteCategoryObject(cat._id, cat.tipo);
         fetchCategories(cat.tipo, { force: true });
         setConfirmDelete(null);
       } catch (err) {
         const msg =
           err?.response?.data?.message || "No se pudo eliminar la categoría.";
-        alert(msg);
+        setDeleteError(msg);
       }
     },
     [deleteCategoryObject, fetchCategories]
@@ -494,18 +497,19 @@ const CategoriasPanel = ({ onBack }) => {
       {/* Confirm delete */}
       {confirmDelete && (
         <Portal>
-          <div className="catmodal-overlay" onClick={() => setConfirmDelete(null)}>
+          <div className="catmodal-overlay" onClick={() => { setConfirmDelete(null); setDeleteError(null); }}>
             <div className="catconfirm-card" onClick={(e) => e.stopPropagation()}>
               <h3 className="catconfirm-title">Eliminar categoría</h3>
               <p className="catconfirm-msg">
                 ¿Seguro que quieres eliminar <strong>{confirmDelete.nombre}</strong>?
                 Solo se puede eliminar si no tiene productos asignados.
               </p>
+              {deleteError && <div className="catmodal-error">{deleteError}</div>}
               <div className="catmodal-actions">
                 <button
                   type="button"
                   className="catmodal-btn catmodal-btn--cancel"
-                  onClick={() => setConfirmDelete(null)}
+                  onClick={() => { setConfirmDelete(null); setDeleteError(null); }}
                 >
                   Cancelar
                 </button>

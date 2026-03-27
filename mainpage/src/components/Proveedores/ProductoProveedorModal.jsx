@@ -81,14 +81,14 @@ export default function ProductoProveedorModal({
             api.get("/stock/ingredientes", { params: { limit: 200 } }),
             api.get("/productos", { params: { limit: 500 } }),
           ]);
-          setIngredientes(ingRes.data?.ingredientes || ingRes.data?.data || []);
-          const prods = prodRes.data?.data?.items ?? prodRes.data?.data ?? [];
+          setIngredientes(ingRes.data?.ingredientes || []);
+          const prods = Array.isArray(prodRes.data) ? prodRes.data : [];
           setProductosStock(prods);
         }
 
         if (isShop) {
           const { data } = await api.get("/shop/stock/productos");
-          setProductosShop(data?.data || data?.productos || []);
+          setProductosShop(Array.isArray(data) ? data : []);
         }
       } catch {
         // silencioso

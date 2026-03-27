@@ -44,7 +44,6 @@ export function ShopCategoriasProvider({ children }) {
       const list =
         data?.categories ||
         data?.categorias ||
-        data?.data ||
         (Array.isArray(data) ? data : []);
 
       setCategories(Array.isArray(list) ? list : []);
@@ -76,7 +75,6 @@ export function ShopCategoriasProvider({ children }) {
         data?.products ||
         data?.productos ||
         data?.items ||
-        data?.data ||
         (Array.isArray(data) ? data : []);
 
       setProducts(Array.isArray(list) ? list : []);

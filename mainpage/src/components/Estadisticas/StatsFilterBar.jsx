@@ -32,6 +32,7 @@ const StatsFilterBar = ({
   endDate,
   onChangeStartDate,
   onChangeEndDate,
+  loadingCategories = false,
 }) => {
   const handleStartDateChange = (e) => {
     onChangeStartDate(parseDateInput(e.target.value));
@@ -72,12 +73,16 @@ const StatsFilterBar = ({
 
         {/* Selector de categoría */}
         <div className="stats-filter-group">
-          <AlefSelect
-            label="Categoría"
-            value={selectedCategory}
-            options={categories}
-            onChange={onChangeCategory}
-          />
+          {loadingCategories ? (
+            <span className="stats-filter-loading">Cargando…</span>
+          ) : (
+            <AlefSelect
+              label="Categoría"
+              value={selectedCategory}
+              options={categories}
+              onChange={onChangeCategory}
+            />
+          )}
         </div>
 
         {/* Rango de fechas */}

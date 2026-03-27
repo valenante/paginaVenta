@@ -38,14 +38,21 @@ export default function RolesPermisosPanel() {
   // Eliminar rol
   const [deleting, setDeleting] = useState(null);
 
+  // Acordeón módulos + paginación
+  const [openModulos, setOpenModulos] = useState(new Set());
+  const MODULOS_PER_PAGE = 6;
+  const [moduloPage, setModuloPage] = useState(0);
+
   // Staff config
   const { config, refreshConfig } = useConfig();
   const [mostrarEstadisticas, setMostrarEstadisticas] = useState(true);
+  const [comidaPersonalActiva, setComidaPersonalActiva] = useState(false);
   const [savingStaff, setSavingStaff] = useState(false);
 
   useEffect(() => {
     setMostrarEstadisticas(config?.staff?.mostrarEstadisticas !== false);
-  }, [config?.staff?.mostrarEstadisticas]);
+    setComidaPersonalActiva(config?.staff?.comidaPersonalActiva === true);
+  }, [config?.staff?.mostrarEstadisticas, config?.staff?.comidaPersonalActiva]);
 
   useEffect(() => {
     let alive = true;
@@ -62,9 +69,8 @@ export default function RolesPermisosPanel() {
 
         if (!alive) return;
 
-        // sendOk wraps as { ok, data: { catalogo, grupos, defaults } }
-        const catPayload = catalogoRes?.data?.data || catalogoRes?.data || {};
-        const resPayload = resumenRes?.data?.data || resumenRes?.data || {};
+        const catPayload = catalogoRes?.data || {};
+        const resPayload = resumenRes?.data || {};
 
         const cat = catPayload?.catalogo || [];
         const grp = catPayload?.grupos || {};
@@ -101,9 +107,7 @@ export default function RolesPermisosPanel() {
       }
     })();
 
-    return () => {
-      alive = false;
-    };
+    return () => { alive = false; };
   }, []);
 
   useEffect(() => {
@@ -145,12 +149,6 @@ export default function RolesPermisosPanel() {
       return permsGrupo.some((p) => draft.has(p.clave));
     }).length;
   }, [draft, grupos, gruposOrdenados]);
-
-  const activeRoleCount = useMemo(() => {
-    if (!activeRoleData) return 0;
-    const perms = activeRoleData?.permisos || [];
-    return perms.includes("*") ? totalPermisos : perms.length;
-  }, [activeRoleData, totalPermisos]);
 
   const selectRole = (roleName) => {
     if (!roles[roleName]) return;
@@ -243,7 +241,7 @@ export default function RolesPermisosPanel() {
     }
   };
 
-  // Detectar scope del tenant (basado en roles existentes)
+  // Detectar scope del tenant
   const detectedScope = useMemo(() => {
     const scopes = roleNames.map((r) => roles[r]?.scope).filter(Boolean);
     if (scopes.includes("tpv")) return "tpv";
@@ -314,6 +312,30 @@ export default function RolesPermisosPanel() {
     }
   };
 
+  const toggleComidaPersonal = async () => {
+    const nuevoValor = !comidaPersonalActiva;
+    setComidaPersonalActiva(nuevoValor);
+    setSavingStaff(true);
+    try {
+      await api.put("/configuracion", { staff: { comidaPersonalActiva: nuevoValor } });
+      refreshConfig();
+      showToast(
+        nuevoValor
+          ? "Comida del personal activada"
+          : "Comida del personal desactivada",
+        "success"
+      );
+    } catch (err) {
+      setComidaPersonalActiva(!nuevoValor);
+      showToast(
+        err?.response?.data?.message || "Error al guardar configuración",
+        "error"
+      );
+    } finally {
+      setSavingStaff(false);
+    }
+  };
+
   const eliminarRolHandler = async (roleName) => {
     if (PROTECTED_ROLES.includes(roleName)) return;
 
@@ -348,75 +370,81 @@ export default function RolesPermisosPanel() {
     }
   };
 
+  /* ===== LOADING ===== */
   if (loading) {
     return (
-      <div className="rpp-root">
-        <div className="rpp-loading-card">
-          <div className="rpp-spinner" />
-          <span>Cargando permisos...</span>
+      <main className="cfg-page section section--wide">
+        <div className="card config-card" style={{ textAlign: "center", padding: "2rem" }}>
+          Cargando permisos...
         </div>
-      </div>
+      </main>
     );
   }
 
+  /* ===== ERROR ===== */
   if (error) {
     return (
-      <div className="rpp-root">
-        <div className="rpp-error-card">{error}</div>
-      </div>
+      <main className="cfg-page section section--wide">
+        <div className="card config-card" style={{ color: "var(--color-error)" }}>
+          {error}
+        </div>
+      </main>
     );
   }
 
   const noRoles = roleNames.length === 0;
 
   return (
-    <div className="rpp-root">
-      {/* Header */}
-      <section className="rpp-header">
-        {noRoles && (
-          <div className="rpp-empty-card">
-            <h3>No hay roles disponibles</h3>
-            <p>Puedes crear el primer rol para este tenant.</p>
-          </div>
-        )}
+    <main className="cfg-page section section--wide">
+      {/* ===== HEADER ===== */}
+      <header className="cfg-header">
         <div>
-          <h2>Roles y permisos</h2>
-          <p>
+          <h1>Roles y permisos</h1>
+          <p className="text-suave">
             Selecciona un rol, revisa sus módulos activos y ajusta sus permisos
             con una configuración clara y centralizada.
           </p>
         </div>
+      </header>
 
-        <div className="rpp-header-kpis">
-          <div className="rpp-kpi">
-            <span>Roles</span>
-            <strong>{roleNames.length}</strong>
-          </div>
-          <div className="rpp-kpi">
-            <span>Permisos</span>
-            <strong>{totalPermisos}</strong>
-          </div>
-          <div className="rpp-kpi">
-            <span>Módulos</span>
-            <strong>{gruposOrdenados.length}</strong>
-          </div>
+      {/* ===== KPIs ===== */}
+      <div className="cfg-stats" style={{ marginBottom: "var(--space-lg)" }}>
+        <article className="cfg-stat">
+          <span className="cfg-stat__label">Roles</span>
+          <strong>{roleNames.length}</strong>
+        </article>
+        <article className="cfg-stat">
+          <span className="cfg-stat__label">Permisos</span>
+          <strong>{totalPermisos}</strong>
+        </article>
+        <article className="cfg-stat">
+          <span className="cfg-stat__label">Módulos</span>
+          <strong>{gruposOrdenados.length}</strong>
+        </article>
+      </div>
+
+      {noRoles && (
+        <div className="card config-card">
+          <h3>No hay roles disponibles</h3>
+          <p className="text-suave">Puedes crear el primer rol para este tenant.</p>
         </div>
-      </section>
+      )}
 
-      {/* Selector de rol */}
-      <section className="rpp-role-selector-card">
-        <div className="rpp-section-head">
+      {/* ===== SELECTOR DE ROL ===== */}
+      <section className="card config-card">
+        <div className="config-card-header">
           <div>
-            <h3>Selecciona el rol a editar</h3>
-            <p>
+            <h2>Selecciona el rol a editar</h2>
+            <p className="config-card-subtitle">
               Aquí eliges el rol activo. Los roles protegidos pueden revisarse,
               pero no editarse.
             </p>
           </div>
           <button
-            className="rpp-btn rpp-btn--primary rpp-btn--sm"
+            className="btn btn-primario"
             onClick={() => setShowCreateForm((v) => !v)}
             type="button"
+            style={{ whiteSpace: "nowrap" }}
           >
             {showCreateForm ? "Cancelar" : "+ Crear rol"}
           </button>
@@ -426,21 +454,25 @@ export default function RolesPermisosPanel() {
         {showCreateForm && (
           <div className="rpp-create-form">
             <div className="rpp-create-fields">
-              <input
-                className="rpp-create-input"
-                placeholder="Identificador (ej: encargado)"
-                value={newRole.nombre}
-                onChange={(e) => setNewRole((p) => ({ ...p, nombre: e.target.value }))}
-              />
-              <input
-                className="rpp-create-input"
-                placeholder="Descripción (ej: Encargado de sala)"
-                value={newRole.descripcion}
-                onChange={(e) => setNewRole((p) => ({ ...p, descripcion: e.target.value }))}
-              />
+              <div className="config-field">
+                <label>Identificador</label>
+                <input
+                  placeholder="ej: encargado"
+                  value={newRole.nombre}
+                  onChange={(e) => setNewRole((p) => ({ ...p, nombre: e.target.value }))}
+                />
+              </div>
+              <div className="config-field">
+                <label>Descripción</label>
+                <input
+                  placeholder="ej: Encargado de sala"
+                  value={newRole.descripcion}
+                  onChange={(e) => setNewRole((p) => ({ ...p, descripcion: e.target.value }))}
+                />
+              </div>
             </div>
             <button
-              className="rpp-btn rpp-btn--primary rpp-btn--sm"
+              className="btn btn-primario"
               onClick={crearRolHandler}
               disabled={creating}
               type="button"
@@ -524,9 +556,9 @@ export default function RolesPermisosPanel() {
         )}
       </section>
 
-      {/* Resumen del rol activo */}
+      {/* ===== RESUMEN DEL ROL ACTIVO ===== */}
       {activeRoleData && (
-        <section className="rpp-active-role-card">
+        <section className="card config-card rpp-active-role-card">
           <div className="rpp-active-role-left">
             <span className={`rpp-role-badge ${isProtected ? "protected" : "editable"}`}>
               {isProtected ? "Rol protegido" : "Rol editable"}
@@ -543,31 +575,31 @@ export default function RolesPermisosPanel() {
             </p>
           </div>
 
-          <div className="rpp-active-role-stats">
-            <div className="rpp-mini-stat">
-              <span>Permisos activos</span>
+          <div className="cfg-stats">
+            <article className="cfg-stat">
+              <span className="cfg-stat__label">Permisos activos</span>
               <strong>{isProtected ? totalPermisos : activeCount}</strong>
-            </div>
-            <div className="rpp-mini-stat">
-              <span>Módulos activos</span>
+            </article>
+            <article className="cfg-stat">
+              <span className="cfg-stat__label">Módulos activos</span>
               <strong>{isProtected ? gruposOrdenados.length : modulosAccesibles}</strong>
-            </div>
-            <div className="rpp-mini-stat">
-              <span>Estado</span>
+            </article>
+            <article className="cfg-stat">
+              <span className="cfg-stat__label">Estado</span>
               <strong>{dirty ? "Con cambios" : "Sin cambios"}</strong>
-            </div>
+            </article>
           </div>
         </section>
       )}
 
-      {/* Toolbar */}
+      {/* ===== TOOLBAR ===== */}
       {!isProtected && activeRole && (
-        <section className="rpp-toolbar">
+        <div className="rpp-toolbar">
           <div className="rpp-toolbar-left">
             <span className="rpp-counter">
               <strong>{activeCount}</strong> / {totalPermisos} permisos activos
             </span>
-            <span className="rpp-counter-sep">•</span>
+            <span className="rpp-counter-sep">·</span>
             <span className="rpp-counter">
               <strong>{modulosAccesibles}</strong> / {gruposOrdenados.length} módulos accesibles
             </span>
@@ -575,7 +607,7 @@ export default function RolesPermisosPanel() {
 
           <div className="rpp-toolbar-right">
             <button
-              className="rpp-btn rpp-btn--ghost"
+              className="btn btn-secundario"
               onClick={restaurarDefaults}
               type="button"
             >
@@ -583,7 +615,7 @@ export default function RolesPermisosPanel() {
             </button>
 
             <button
-              className="rpp-btn rpp-btn--primary"
+              className="btn btn-primario"
               onClick={guardar}
               disabled={!dirty || saving}
               type="button"
@@ -591,37 +623,37 @@ export default function RolesPermisosPanel() {
               {saving ? "Guardando..." : "Guardar cambios"}
             </button>
           </div>
-        </section>
+        </div>
       )}
 
-      {/* Avisos */}
+      {/* ===== AVISOS ===== */}
       {isProtected && activeRole && (
-        <div className="rpp-info-card">
+        <div className="card config-card" style={{ background: "rgba(59,130,246,0.06)", borderColor: "rgba(59,130,246,0.25)" }}>
           El rol <strong>{prettifyRole(activeRole, activeRoleData)}</strong> tiene todos los
-          permisos mediante <code>*</code> y no puede modificarse desde este panel.
+          permisos mediante <code style={{ padding: "0.1rem 0.3rem", borderRadius: "6px", background: "rgba(59,130,246,0.1)" }}>*</code> y no puede modificarse desde este panel.
         </div>
       )}
 
       {!isProtected && activeRole && activeCount === 0 && (
-        <div className="rpp-warning-card">
+        <div className="card config-card" style={{ background: "var(--color-error-suave)", borderColor: "rgba(239,68,68,0.25)", color: "var(--color-error)" }}>
           Este rol no tiene ningún permiso asignado. Los usuarios con este rol
           no podrán acceder a ninguna funcionalidad.
         </div>
       )}
 
-      {/* Opciones de staff */}
-      <section className="rpp-staff-config-card">
-        <div className="rpp-section-head">
+      {/* ===== OPCIONES DE STAFF ===== */}
+      <section className="card config-card">
+        <div className="config-card-header">
           <div>
-            <h3>Opciones de staff</h3>
-            <p>
+            <h2>Opciones de staff</h2>
+            <p className="config-card-subtitle">
               Controla qué información pueden ver los usuarios no administradores
               en su panel de inicio.
             </p>
           </div>
         </div>
 
-        <div className="rpp-permiso-row">
+        <div className="rpp-permiso-row" style={{ marginBottom: "var(--space-xs)" }}>
           <div className="rpp-permiso-info">
             <span className="rpp-permiso-clave">Mostrar estadísticas personales</span>
             <span className="rpp-permiso-desc">
@@ -639,67 +671,169 @@ export default function RolesPermisosPanel() {
             <span className="rpp-toggle-slider" />
           </label>
         </div>
+
+        <div className="rpp-permiso-row">
+          <div className="rpp-permiso-info">
+            <span className="rpp-permiso-clave">Comida del personal</span>
+            <span className="rpp-permiso-desc">
+              Permite que los empleados pidan su comida desde el TPV.
+              Los productos elegibles se configuran en la sección Cortesias.
+            </span>
+          </div>
+          <label className="rpp-toggle">
+            <input
+              type="checkbox"
+              checked={comidaPersonalActiva}
+              onChange={toggleComidaPersonal}
+              disabled={savingStaff}
+            />
+            <span className="rpp-toggle-slider" />
+          </label>
+        </div>
       </section>
 
-      {/* Módulos */}
-      <section className="rpp-modulos-grid">
-        {gruposOrdenados.map((grupo) => {
-          const permsGrupo = grupos[grupo] || [];
-          const activosEnGrupo = permsGrupo.filter((p) => draft.has(p.clave)).length;
-          const todosActivos = activosEnGrupo === permsGrupo.length && permsGrupo.length > 0;
+      {/* ===== MÓDULOS (acordeón paginado) ===== */}
+      {(() => {
+        const totalPages = Math.ceil(gruposOrdenados.length / MODULOS_PER_PAGE);
+        const safePage = Math.min(moduloPage, totalPages - 1);
+        const start = safePage * MODULOS_PER_PAGE;
+        const pageGrupos = gruposOrdenados.slice(start, start + MODULOS_PER_PAGE);
 
-          return (
-            <article className="rpp-modulo-card" key={grupo}>
-              <div className="rpp-modulo-header">
-                <div>
-                  <h4>{grupo}</h4>
-                  <p>
-                    {activosEnGrupo} de {permsGrupo.length} permisos activos
-                  </p>
+        return (
+          <section className="card config-card rpp-accordion">
+            <div className="config-card-header">
+              <div>
+                <h2>Permisos por módulo</h2>
+                <p className="config-card-subtitle">
+                  Expande cada módulo para ver y editar sus permisos individuales.
+                </p>
+              </div>
+              {totalPages > 1 && (
+                <span className="badge badge-aviso">
+                  Página {safePage + 1} de {totalPages}
+                </span>
+              )}
+            </div>
+
+            <div className="rpp-accordion-list">
+              {pageGrupos.map((grupo) => {
+                const permsGrupo = grupos[grupo] || [];
+                const activosEnGrupo = permsGrupo.filter((p) => draft.has(p.clave)).length;
+                const todosActivos = activosEnGrupo === permsGrupo.length && permsGrupo.length > 0;
+                const isOpen = openModulos.has(grupo);
+
+                return (
+                  <article className="rpp-accordion-item" key={grupo}>
+                    <button
+                      type="button"
+                      className={`rpp-accordion-trigger ${isOpen ? "open" : ""}`}
+                      onClick={() =>
+                        setOpenModulos((prev) => {
+                          const next = new Set(prev);
+                          if (next.has(grupo)) next.delete(grupo);
+                          else next.add(grupo);
+                          return next;
+                        })
+                      }
+                    >
+                      <div className="rpp-accordion-trigger-left">
+                        <span className={`rpp-accordion-chevron ${isOpen ? "open" : ""}`}>&#8250;</span>
+                        <span className="rpp-accordion-title">{grupo}</span>
+                      </div>
+
+                      <div className="rpp-accordion-trigger-right">
+                        <span className={`badge ${todosActivos ? "badge-exito" : activosEnGrupo > 0 ? "badge-aviso" : "badge-error"}`}>
+                          {activosEnGrupo} / {permsGrupo.length}
+                        </span>
+                      </div>
+                    </button>
+
+                    {isOpen && (
+                      <div className="rpp-accordion-body">
+                        {!isProtected && (
+                          <div className="rpp-accordion-body-toolbar">
+                            <button
+                              className="rpp-modulo-toggle-all"
+                              onClick={() => toggleModulo(grupo)}
+                              type="button"
+                            >
+                              {todosActivos ? "Quitar todo" : "Activar todo"}
+                            </button>
+                          </div>
+                        )}
+
+                        <div className="rpp-modulo-permisos">
+                          {permsGrupo.map((perm) => (
+                            <div className="rpp-permiso-row" key={perm.clave}>
+                              <div className="rpp-permiso-info">
+                                <span className="rpp-permiso-clave">{perm.clave}</span>
+                                <span className="rpp-permiso-desc">{perm.descripcion}</span>
+                              </div>
+
+                              <label className="rpp-toggle">
+                                <input
+                                  type="checkbox"
+                                  checked={draft.has(perm.clave)}
+                                  onChange={() => togglePermiso(perm.clave)}
+                                  disabled={isProtected}
+                                />
+                                <span className="rpp-toggle-slider" />
+                              </label>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </article>
+                );
+              })}
+            </div>
+
+            {/* Paginación */}
+            {totalPages > 1 && (
+              <div className="rpp-pager">
+                <button
+                  type="button"
+                  className="btn btn-secundario"
+                  disabled={safePage === 0}
+                  onClick={() => setModuloPage((p) => Math.max(0, p - 1))}
+                >
+                  Anterior
+                </button>
+
+                <div className="rpp-pager-nums">
+                  {Array.from({ length: totalPages }, (_, i) => (
+                    <button
+                      key={i}
+                      type="button"
+                      className={`rpp-pager-num ${i === safePage ? "active" : ""}`}
+                      onClick={() => setModuloPage(i)}
+                    >
+                      {i + 1}
+                    </button>
+                  ))}
                 </div>
 
-                {!isProtected && (
-                  <button
-                    className="rpp-modulo-toggle-all"
-                    onClick={() => toggleModulo(grupo)}
-                    type="button"
-                  >
-                    {todosActivos ? "Quitar todo" : "Activar todo"}
-                  </button>
-                )}
+                <button
+                  type="button"
+                  className="btn btn-secundario"
+                  disabled={safePage >= totalPages - 1}
+                  onClick={() => setModuloPage((p) => Math.min(totalPages - 1, p + 1))}
+                >
+                  Siguiente
+                </button>
               </div>
+            )}
+          </section>
+        );
+      })()}
 
-              <div className="rpp-modulo-permisos">
-                {permsGrupo.map((perm) => (
-                  <div className="rpp-permiso-row" key={perm.clave}>
-                    <div className="rpp-permiso-info">
-                      <span className="rpp-permiso-clave">{perm.clave}</span>
-                      <span className="rpp-permiso-desc">{perm.descripcion}</span>
-                    </div>
-
-                    <label className="rpp-toggle">
-                      <input
-                        type="checkbox"
-                        checked={draft.has(perm.clave)}
-                        onChange={() => togglePermiso(perm.clave)}
-                        disabled={isProtected}
-                      />
-                      <span className="rpp-toggle-slider" />
-                    </label>
-                  </div>
-                ))}
-              </div>
-            </article>
-          );
-        })}
-      </section>
-
-      {/* Toast */}
+      {/* ===== TOAST ===== */}
       {toast && (
         <div className={`rpp-toast ${toast.type}`}>
           {toast.msg}
         </div>
       )}
-    </div>
+    </main>
   );
 }

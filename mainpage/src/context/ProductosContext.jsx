@@ -61,9 +61,9 @@ export const ProductosProvider = ({ children }) => {
   const cargarProductos = useCallback(async () => {
     try {
       const { data } = await api.get('/productos');
-      setProductos(data.data);
+      setProductos(data);
 
-      const categoriasUnicas = [...new Set(data.data.map((producto) => producto.categoria))];
+      const categoriasUnicas = [...new Set(data.map((producto) => producto.categoria))];
       setCategorias(categoriasUnicas);
     } catch (error) {
       logger.error('Error al cargar productos:', error);
@@ -73,7 +73,7 @@ export const ProductosProvider = ({ children }) => {
   const obtenerMesaId = useCallback(async (numeroMesa) => {
     try {
       const { data } = await api.get(`/mesas?numero=${numeroMesa}`);
-      const mesasArray = Array.isArray(data) ? data : data?.data || [];
+      const mesasArray = Array.isArray(data) ? data : [];
 
       if (mesasArray.length > 0) {
         const mesa = mesasArray[0];

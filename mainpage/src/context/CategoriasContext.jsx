@@ -78,7 +78,7 @@ export const CategoriasProvider = ({ children }) => {
          * Backend devuelve:
          * { ok: true, data: [...] }
          */
-        const raw = res?.data?.data ?? res?.data?.categories ?? [];
+        const raw = res?.data ?? [];
 
         const categorias = raw
           .filter((c) => typeof c === "string" && c.trim().length > 0)
@@ -136,7 +136,7 @@ export const CategoriasProvider = ({ children }) => {
          * Backend devuelve:
          * { ok: true, data: [...] }
          */
-        const productos = res?.data?.data ?? res?.data?.products ?? [];
+        const productos = res?.data ?? [];
 
         setProductsByKey((prev) => ({
           ...prev,
@@ -215,7 +215,7 @@ export const CategoriasProvider = ({ children }) => {
 
       try {
         const res = await api.get(`/categorias`, { params: { tipo } });
-        const data = res?.data?.data ?? [];
+        const data = res?.data ?? [];
 
         setCategoryObjectsByTipo((prev) => ({
           ...prev,
@@ -233,7 +233,7 @@ export const CategoriasProvider = ({ children }) => {
 
   const createCategoryObject = useCallback(async (data) => {
     const res = await api.post("/categorias", data, { withCredentials: true });
-    const cat = res?.data?.data;
+    const cat = res?.data;
     if (cat) {
       setCategoryObjectsByTipo((prev) => ({
         ...prev,
@@ -245,7 +245,7 @@ export const CategoriasProvider = ({ children }) => {
 
   const updateCategoryObject = useCallback(async (id, data) => {
     const res = await api.put(`/categorias/${id}`, data, { withCredentials: true });
-    const cat = res?.data?.data;
+    const cat = res?.data;
     if (cat) {
       setCategoryObjectsByTipo((prev) => {
         const list = (prev[cat.tipo] || []).map((c) =>

@@ -946,6 +946,7 @@ export default function CartaConfigPage() {
         abierto={promoPanelAbierto}
         onClose={() => setPromoPanelAbierto(false)}
       />
+
     </main>
   );
 }

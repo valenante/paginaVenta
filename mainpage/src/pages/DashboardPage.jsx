@@ -29,7 +29,7 @@ export default function DashboardPage() {
 
   useEffect(() => {
     const fallback = tipoNegocio === "shop" ? "Tienda" : "Restaurante";
-    document.title = `${config?.branding?.nombreRestaurante || fallback} | Dashboard`;
+    document.title = `${config?.branding?.nombreRestaurante || fallback} | Configuración`;
   }, [config, tipoNegocio]);
 
   if (loading) return <LoadingScreen />;
@@ -69,19 +69,19 @@ export default function DashboardPage() {
         </div>
 
         <div className="dashboard-header-right">
-          <p className="dashboard-welcome-label">Panel Alef</p>
+          <p className="dashboard-welcome-label">Configuración</p>
           <p className="dashboard-welcome-user">
             Hola, <span>{user?.name || "usuario"}</span>
           </p>
           <p className="dashboard-welcome-sub">
-            Gestiona {labelArticulo} desde un único lugar.
+            Configura y administra {labelArticulo} desde un único lugar.
           </p>
         </div>
       </header>
 
       {/* Grid de accesos rápidos */}
       <section className="dashboard-grid">
-        {/* 1) Operación / Negocio */}
+        {/* 1) Negocio / Operación */}
         {hasPermission("config.edit") && (
           <Link to="/configuracion/restaurante" className="dashboard-tile card">
             <div className="dashboard-tile-icon">🏪</div>
@@ -126,7 +126,24 @@ export default function DashboardPage() {
           </Link>
         )}
 
-        {/* 2) Cuenta / Facturación */}
+        {/* 2) Equipo / Acceso */}
+        {hasPermission("usuarios.manage") && (
+          <Link to="/configuracion/usuarios" className="dashboard-tile card">
+            <div className="dashboard-tile-icon">👥</div>
+            <h2>Usuarios</h2>
+            <p>Gestiona el equipo: alta, baja, permisos individuales y estadísticas de cada usuario.</p>
+          </Link>
+        )}
+
+        {hasPermission("roles.manage") && (
+          <Link to="/configuracion/roles" className="dashboard-tile card">
+            <div className="dashboard-tile-icon">🔐</div>
+            <h2>Roles y Permisos</h2>
+            <p>Crea y edita roles personalizados, asigna permisos granulares por módulo.</p>
+          </Link>
+        )}
+
+        {/* 3) Cuenta / Facturación */}
         {isOwner && (
           <Link to="/mi-cuenta" className="dashboard-tile card">
             <div className="dashboard-tile-icon">💼</div>
@@ -154,7 +171,7 @@ export default function DashboardPage() {
           </Link>
         )}
 
-        {/* 3) Usuario (siempre visible) */}
+        {/* 4) Usuario (siempre visible) */}
         <Link to="/perfil" className="dashboard-tile card">
           <div className="dashboard-tile-icon">👤</div>
           <h2>Perfil</h2>

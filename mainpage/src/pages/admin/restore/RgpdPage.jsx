@@ -82,7 +82,7 @@ export default function RgpdPage() {
             // Ajusta al endpoint que ya uses para listar tenants
             // En tu panel supeadmin ya tienes tenants en TenantTable, así que seguramente:
             const { data } = await api.get("/admin/superadmin/tenants", { params: { limit: 200 } });
-            setTenants(Array.isArray(data?.items) ? data.items : Array.isArray(data) ? data : []);
+            setTenants(Array.isArray(data?.items) ? data.items : []);
         } catch (e) {
             setAlert({ type: "error", text: e?.response?.data?.message || "No se pudieron cargar los tenants" });
         } finally {

@@ -193,9 +193,7 @@ export default function UsuarioPermisosModal({
 
         {/* FOOTER */}
         {saveError && (
-          <p style={{ color: "#f87171", fontSize: "0.85rem", textAlign: "center", margin: "0.5rem 0 0" }}>
-            {saveError}
-          </p>
+          <p className="permModal-saveError">{saveError}</p>
         )}
         <footer className="permModal-footer">
           <button

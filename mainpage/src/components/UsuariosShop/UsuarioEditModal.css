@@ -1,124 +1,229 @@
-/* =========================================================
-   MODAL EDITAR USUARIO — Estilo Profesional Alef
-   ---------------------------------------------------------
-   - Fondo semitransparente con blur
-   - Tarjeta vidrio oscuro
-   - Inputs modernos
-   - Botones pill 50/50
-   ========================================================= */
+/*****************************************************
+ * Modal Editar Usuario — Alef (tema config claro)
+ * Header / Body (scroll) / Footer
+ *****************************************************/
 
-.modal-usuarios {
+.userEditModal-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 2000;
-
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
   justify-content: center;
-
-  background: rgba(0,0,0,0.55);
-  backdrop-filter: blur(7px);
-
-  animation: fadeIn 0.25s ease;
+  padding: 12px;
+  overflow: auto;
+  z-index: 3000;
+  animation: userEditFade 0.2s ease;
 }
 
-.modal-content {
-  width: min(480px, 90%);
-  background: rgba(255,255,255,0.06);
+@keyframes userEditFade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.userEditModal-container {
+  width: min(600px, 95%);
+  max-height: calc(100vh - 24px);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-fondo-card, #ffffff);
   border-radius: var(--radius-lg);
-  border: 1px solid rgba(255,255,255,0.1);
-
-  padding: 2rem;
-  color: #fff;
-
-  box-shadow:
-    0 18px 38px rgba(0,0,0,0.45),
-    0 0 0 1px rgba(255,255,255,0.05);
-
-  animation: fadeUp 0.25s ease;
+  border: 1px solid var(--color-borde-suave);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.2);
+  animation: userEditUp 0.2s ease;
 }
 
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(14px); }
+@keyframes userEditUp {
+  from { opacity: 0; transform: translateY(12px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ===== TITULO ===== */
-.modal-content h2 {
-  margin-bottom: 1.5rem;
-  font-size: 1.35rem;
+/* ===== Header ===== */
+.userEditModal-header {
+  flex: 0 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: var(--space-lg) var(--space-xl) var(--space-md);
+  border-bottom: 1px solid var(--color-borde-suave);
+}
+
+.userEditModal-title {
+  font-size: var(--font-size-xl, 1.4rem);
+  font-weight: 800;
+  color: var(--color-texto);
+  margin: 0;
+}
+
+.userEditModal-subtitle {
+  margin: var(--space-xs) 0 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-texto-suave);
+}
+
+.userEditModal-role {
+  color: var(--color-primario);
+  font-weight: 700;
+}
+
+.userEditModal-close {
+  background: var(--color-fondo-claro, #f1f5f9);
+  border: 1px solid var(--color-borde-suave);
+  border-radius: 50%;
+  width: 34px;
+  height: 34px;
+  cursor: pointer;
+  color: var(--color-texto);
+  font-size: 1.1rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.userEditModal-close:hover {
+  background: var(--color-borde-suave);
+}
+
+.userEditModal-close:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ===== Body ===== */
+.userEditModal-body {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: var(--space-lg) var(--space-xl);
+  display: grid;
+  gap: var(--space-md);
+}
+
+.userEditModal-field {
+  display: grid;
+  gap: var(--space-xs);
+}
+
+.userEditModal-field label {
+  color: var(--color-texto);
+  font-weight: 600;
+  font-size: var(--font-size-sm);
+}
+
+.userEditModal-field input,
+.userEditModal-field select {
+  width: auto;
+  padding: 0.7rem 0.85rem;
+  border-radius: var(--radius-md);
+  background: var(--color-fondo-card, #ffffff);
+  border: 1px solid var(--color-borde-suave);
+  color: var(--color-texto);
+  font-family: var(--font-base);
+  font-size: var(--font-size-sm);
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.userEditModal-field input:focus,
+.userEditModal-field select:focus {
+  border-color: var(--color-secundario, #4465e7);
+  box-shadow: 0 0 0 3px rgba(68, 101, 231, 0.14);
+}
+
+.userEditModal-inputReadonly {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background: var(--color-fondo-claro, #f8fafc) !important;
+}
+
+.userEditModal-hint {
+  margin: 0;
+  font-size: var(--font-size-xs);
+  color: var(--color-texto-suave);
+}
+
+/* ===== Errors ===== */
+.userEditModal-error {
+  margin: 0;
+  color: var(--color-error, #ef4444);
+  font-size: var(--font-size-sm);
   font-weight: 600;
 }
 
-/* ===== CAMPOS ===== */
-.field {
-  margin-bottom: 1.1rem;
-  display: flex;
-  flex-direction: column;
-}
-
-.field label {
-  font-size: 0.95rem;
-  font-weight: 600;
-  margin-bottom: 0.35rem;
-  color: var(--color-blanco);
-}
-
-/* ===== ERROR ===== */
-.error {
-  color: #ff6b6b;
-  margin-top: 0.35rem;
-  font-size: 0.85rem;
-}
-
-/* ===== BOTONES ===== */
-.modal-buttons {
-  display: flex;
-  gap: 0.7rem;
-  margin-top: 1.8rem;
-}
-
-.modal-btn {
-  flex: 1;
-  padding: 0.8rem;
+.userEditModal-error--server {
   text-align: center;
+}
+
+/* ===== Footer ===== */
+.userEditModal-footer {
+  flex: 0 0 auto;
+  padding: var(--space-md) var(--space-xl) var(--space-lg);
+  border-top: 1px solid var(--color-borde-suave);
+}
+
+.userEditModal-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-sm);
+}
+
+.userEditModal-btn {
+  padding: 0.75rem 1rem;
   border-radius: var(--radius-pill);
   border: none;
   cursor: pointer;
-  font-weight: 600;
-  font-size: 0.95rem;
-  transition: all 0.25s ease;
+  font-weight: 700;
+  font-size: var(--font-size-sm);
+  transition: all 0.15s ease;
 }
 
-.modal-btn-confirmar {
-  background: #6a0dad;
+.userEditModal-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.userEditModal-btn--primary {
   color: #fff;
+  background: var(--color-primario);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
 }
 
-.modal-btn-confirmar:hover {
-  background: #ff6700;
-  transform: translateY(-2px);
+.userEditModal-btn--primary:hover:not(:disabled) {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
 }
 
-.modal-btn-cerrar {
-  background: rgba(255,255,255,0.12);
-  color: #ddd;
+.userEditModal-btn--secondary {
+  color: var(--color-texto);
+  background: var(--color-fondo-claro, #f1f5f9);
+  border: 1px solid var(--color-borde-suave);
 }
 
-.modal-btn-cerrar:hover {
-  background: rgba(255,255,255,0.18);
-  transform: translateY(-2px);
+.userEditModal-btn--secondary:hover:not(:disabled) {
+  background: var(--color-borde-suave);
 }
 
-/* ===== RESPONSIVE ===== */
-@media (max-width: 480px) {
-  .modal-content {
-    padding: 1.6rem;
+/* ===== Responsive ===== */
+@media (max-width: 520px) {
+  .userEditModal-header {
+    padding: var(--space-md);
   }
-  .modal-buttons {
-    flex-direction: column;
+
+  .userEditModal-body {
+    padding: var(--space-md);
+  }
+
+  .userEditModal-footer {
+    padding: var(--space-md);
+  }
+
+  .userEditModal-title {
+    font-size: var(--font-size-lg);
+  }
+
+  .userEditModal-actions {
+    grid-template-columns: 1fr;
   }
 }

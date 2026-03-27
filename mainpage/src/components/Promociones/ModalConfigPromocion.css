@@ -1,145 +1,220 @@
-/*****************************************************
- * Overlay
- *****************************************************/
+/* =========================================================
+   MODAL CONFIG PROMOCION — Alef Professional SaaS
+   ========================================================= */
 
-.modal-overlay {
+/* Overlay — z-index 60 so it stacks above the promos panel (z-50) */
+.modal-promo-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(15, 23, 42, 0.55);
+  z-index: 60;
+  background: rgba(15, 23, 42, 0.22);
+  backdrop-filter: blur(3px);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 50;
+  padding: 1.5rem;
 }
-
-/*****************************************************
- * Modal base
- *****************************************************/
 
 .modal-promocion {
   width: 100%;
   max-width: 520px;
-  max-height: 90vh;
+  max-height: 88vh;
   display: flex;
   flex-direction: column;
-  padding: 0;
+  background: #ffffff;
+  border-radius: var(--radius-lg, 16px);
+  border: 1px solid #e2e8f0;
+  box-shadow: var(--shadow-lg, 0 20px 60px rgba(0, 0, 0, 0.1));
+  overflow: hidden;
+  animation: promoModalIn 0.2s ease-out;
 }
 
-/*****************************************************
- * Header
- *****************************************************/
+@keyframes promoModalIn {
+  from { opacity: 0; transform: translateY(10px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
 
-.modal-header {
+/* ===== Header ===== */
+.modal-promocion .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: var(--space-md) var(--space-lg);
-  border-bottom: 1px solid var(--color-borde-suave);
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid #e2e8f0;
 }
 
-.modal-header h3 {
+.modal-promocion .modal-header h3 {
   margin: 0;
-  font-size: var(--font-size-lg);
-  color: var(--color-primario);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #0f172a;
 }
 
-.modal-header button {
+.modal-promocion .modal-header button {
   border: none;
   background: transparent;
-  font-size: var(--font-size-md);
+  font-size: 1.1rem;
   cursor: pointer;
-  color: var(--color-texto-suave);
+  color: #94a3b8;
+  padding: 0.25rem;
+  border-radius: 8px;
+  transition: all 0.15s;
 }
 
-.modal-header button:hover {
-  color: var(--color-texto);
+.modal-promocion .modal-header button:hover {
+  background: rgba(0, 0, 0, 0.04);
+  color: #0f172a;
 }
 
-/*****************************************************
- * Body
- *****************************************************/
-
-.modal-body {
-  padding: var(--space-lg);
+/* ===== Body ===== */
+.modal-promocion .modal-body {
+  padding: 1.25rem;
   display: flex;
   flex-direction: column;
-  gap: var(--space-md);
+  gap: 0.9rem;
   overflow-y: auto;
 }
 
-.modal-body label {
-  font-size: var(--font-size-sm);
-  font-weight: 600;
+.modal-promocion .modal-body label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--color-texto-suave, #475569);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
 }
 
-.modal-body input,
-.modal-body select,
-.modal-body textarea {
+.modal-promocion .modal-body input,
+.modal-promocion .modal-body select,
+.modal-promocion .modal-body textarea {
+  width: 100%;
   padding: 0.6rem 0.8rem;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--color-borde-suave);
-  font-size: var(--font-size-sm);
-  font-family: var(--font-base);
+  border-radius: var(--radius-md, 10px);
+  border: 1px solid #e2e8f0;
+  font-size: 0.88rem;
+  color: #0f172a;
   background: #ffffff;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
 }
 
-.modal-body textarea {
+.modal-promocion .modal-body input:focus,
+.modal-promocion .modal-body select:focus,
+.modal-promocion .modal-body textarea:focus {
+  border-color: var(--color-primario, #6a0dad);
+  box-shadow: 0 0 0 3px rgba(106, 13, 173, 0.1);
+}
+
+.modal-promocion .modal-body textarea {
   resize: vertical;
-  min-height: 70px;
+  min-height: 72px;
 }
 
-/*****************************************************
- * Row fechas
- *****************************************************/
+.modal-promocion .modal-body input::placeholder,
+.modal-promocion .modal-body textarea::placeholder {
+  color: #94a3b8;
+}
 
-.modal-body .row {
+/* ===== Date Row ===== */
+.modal-promocion .modal-body .row {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--space-md);
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
 }
 
-/*****************************************************
- * Footer / acciones
- *****************************************************/
+/* ===== Errors ===== */
+.modal-promocion .form-error {
+  font-size: 0.78rem;
+  color: var(--color-error, #ef4444);
+  margin: -0.25rem 0 0;
+  line-height: 1.3;
+}
 
-.modal-actions {
+/* ===== Preview ===== */
+.promo-preview {
+  padding: 0.65rem 0.85rem;
+  border-radius: var(--radius-md, 10px);
+  background: rgba(106, 13, 173, 0.06);
+  border: 1px solid rgba(106, 13, 173, 0.15);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-primario, #6a0dad);
+}
+
+/* ===== Footer / Actions ===== */
+.modal-promocion .modal-actions {
   display: flex;
   justify-content: flex-end;
-  gap: var(--space-sm);
-  padding: var(--space-md) var(--space-lg);
-  border-top: 1px solid var(--color-borde-suave);
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.85rem 1.25rem;
+  border-top: 1px solid #e2e8f0;
+  background: #fafbfc;
 }
 
-.modal-actions .btn btn-primario  {
-  color: var(--color-texto-invertido);
-}
-
-.modal-actions button {
-  border-radius: var(--radius-pill);
-  padding: 0.45rem 1.1rem;
-  font-size: var(--font-size-xs);
+.modal-promocion .modal-actions button {
+  border-radius: var(--radius-pill, 999px);
+  padding: 0.5rem 1.15rem;
+  font-size: 0.82rem;
   font-weight: 600;
   cursor: pointer;
   border: none;
+  transition: all 0.15s;
 }
 
-.modal-actions button:disabled {
-  opacity: 0.6;
+.modal-promocion .modal-actions button:disabled {
+  opacity: 0.55;
   cursor: not-allowed;
 }
 
-/*****************************************************
- * Responsive
- *****************************************************/
+.modal-promocion .modal-actions .btn-secundario,
+.modal-promocion .modal-actions .btn.btn-secundario {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  color: #64748b;
+}
 
-@media (max-width: 768px) {
-  .modal-promocion {
-    max-width: 100%;
-    height: 90vh;
-    border-radius: 0;
+.modal-promocion .modal-actions .btn-secundario:hover:not(:disabled),
+.modal-promocion .modal-actions .btn.btn-secundario:hover:not(:disabled) {
+  border-color: #94a3b8;
+  color: #0f172a;
+}
+
+.modal-promocion .modal-actions .btn-primario,
+.modal-promocion .modal-actions .btn.btn-primario {
+  background: var(--color-primario, #6a0dad);
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(106, 13, 173, 0.2);
+}
+
+.modal-promocion .modal-actions .btn-primario:hover:not(:disabled),
+.modal-promocion .modal-actions .btn.btn-primario:hover:not(:disabled) {
+  filter: brightness(1.08);
+  box-shadow: 0 4px 12px rgba(106, 13, 173, 0.3);
+  transform: translateY(-1px);
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 640px) {
+  .modal-promo-overlay {
+    padding: 1rem;
+    align-items: center;
   }
 
-  .modal-body .row {
+  .modal-promocion {
+    max-width: 100%;
+    max-height: 90vh;
+    border-radius: var(--radius-md, 12px);
+  }
+
+  .modal-promocion .modal-body .row {
     grid-template-columns: 1fr;
+  }
+
+  .modal-promocion .modal-actions {
+    flex-direction: column-reverse;
+  }
+
+  .modal-promocion .modal-actions button {
+    width: 100%;
   }
 }

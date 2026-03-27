@@ -1,3 +1,5 @@
+import "./UsuariosTable.css";
+
 export default function UsuariosTable({
   usuarios = [],
   onEditar,

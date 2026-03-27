@@ -1,0 +1,173 @@
+/* =============================================================
+   Ticket Preview — simula papel térmico 80mm / 58mm
+   ============================================================= */
+
+.tp-wrapper {
+  position: sticky;
+  top: var(--space-lg);
+  max-height: calc(100vh - 3rem);
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+/* Paper container */
+.tp-paper {
+  background: #fff;
+  color: #111;
+  font-family: "Courier New", "Consolas", "Liberation Mono", monospace;
+  font-size: 11px;
+  line-height: 1.35;
+  padding: 16px 12px 24px;
+  border-radius: 4px;
+  box-shadow:
+    0 2px 12px rgba(0, 0, 0, 0.12),
+    0 0 0 1px rgba(0, 0, 0, 0.04);
+  /* Simular borde de papel */
+  border-top: 3px dashed #ccc;
+  border-bottom: 3px dashed #ccc;
+  word-break: break-word;
+  white-space: pre-wrap;
+}
+
+/* 80mm: ~302px (48 chars * ~6.3px per char at 11px) */
+.tp-80mm .tp-paper {
+  width: 302px;
+  max-width: 302px;
+}
+
+/* 58mm: ~202px (32 chars * ~6.3px per char) */
+.tp-58mm .tp-paper {
+  width: 202px;
+  max-width: 202px;
+}
+
+/* ── Size classes (simula ESC/POS sizes) ─── */
+.tp-size-normal { font-size: 11px; }
+.tp-size-dh { font-size: 15px; }
+.tp-size-dw { font-size: 11px; letter-spacing: 2px; }
+.tp-size-dhw { font-size: 15px; letter-spacing: 2px; }
+
+/* ── Alignment ─── */
+.tp-center { text-align: center; }
+.tp-right { text-align: right; }
+
+/* ── Bold ─── */
+.tp-bold { font-weight: 700; }
+.tp-small { font-size: 9px; color: #555; }
+
+/* ── Separator ─── */
+.tp-sep {
+  color: #999;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+/* ── Logo ─── */
+.tp-logo {
+  text-align: center;
+  margin-bottom: 8px;
+}
+.tp-logo img {
+  display: block;
+  margin: 0 auto;
+  max-height: 80px;
+  object-fit: contain;
+  filter: grayscale(100%) contrast(1.5);
+}
+
+/* ── Encabezado / Pie ─── */
+.tp-encabezado {
+  font-style: italic;
+  margin-bottom: 4px;
+}
+.tp-pie {
+  font-style: italic;
+  margin-top: 4px;
+}
+
+/* ── Row (flex space-between) ─── */
+.tp-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 4px;
+}
+
+/* ── Table (cuenta/factura) ─── */
+.tp-table-header {
+  display: flex;
+  font-weight: 700;
+  font-size: 10px;
+}
+.tp-table-row {
+  display: flex;
+  font-size: 10.5px;
+}
+.tp-col-art { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.tp-col-qty { width: 28px; text-align: right; flex-shrink: 0; }
+.tp-col-price { width: 52px; text-align: right; flex-shrink: 0; }
+.tp-col-amt { width: 58px; text-align: right; flex-shrink: 0; }
+
+/* ── Producto (pedido) ─── */
+.tp-producto {
+  margin-bottom: 2px;
+}
+.tp-detalle {
+  padding-left: 12px;
+  color: #444;
+}
+
+/* ── QR placeholder ─── */
+.tp-qr-placeholder {
+  text-align: center;
+  margin: 8px 0;
+}
+.tp-qr-box {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  border: 2px solid #999;
+  border-radius: 4px;
+  font-size: 20px;
+  font-weight: 700;
+  color: #999;
+  margin-bottom: 4px;
+}
+
+/* ── Cut line ─── */
+.tp-cut {
+  margin-top: 16px;
+  border-top: 2px dashed #ccc;
+}
+
+/* ── Tabs para tipo de ticket ─── */
+.tp-type-tabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: var(--space-sm);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid var(--color-borde-suave, #e0e4ee);
+}
+.tp-type-tab {
+  flex: 1;
+  padding: 0.5rem 0.75rem;
+  border: none;
+  background: var(--color-blanco, #fff);
+  cursor: pointer;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-texto-suave, #6b7280);
+  transition: background 0.15s, color 0.15s;
+}
+.tp-type-tab:hover {
+  background: var(--color-fondo, #f9fafb);
+}
+.tp-type-tab--active {
+  background: var(--color-primario, #60b5ff);
+  color: #fff;
+}
+.tp-type-tab--active:hover {
+  background: var(--color-primario-oscuro, #2f7ed8);
+}

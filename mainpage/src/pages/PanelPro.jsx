@@ -34,7 +34,7 @@ const PANEL_BY_TIPO = {
     { key: "stock", label: "📦 Stock", permiso: "stock.manage", render: () => <StockPage /> },
     { key: "valoraciones", label: "⭐ Valoraciones", permiso: "valoraciones.manage", render: () => <ValoracionesPanel /> },
     { key: "estadisticas", label: "📊 Estadísticas", permiso: "estadisticas.manage", render: () => <EstadisticasPage type="plato" /> },
-    { key: "cortesias", label: "🎁 Cortesias", permiso: null, render: () => <CortesiasPage /> },
+    { key: "cortesias", label: "🎁 Cortesias", permiso: "cortesias.view", render: () => <CortesiasPage /> },
   ],
 
   shop: [

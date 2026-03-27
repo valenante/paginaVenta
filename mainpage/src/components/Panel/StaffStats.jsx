@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 import { useAuth } from "../../context/AuthContext";
 import api from "../../utils/api";
 import * as logger from "../../utils/logger";
@@ -13,16 +13,15 @@ export default function StaffStats() {
   const [anterior, setAnterior] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [ordenProductos, setOrdenProductos] = useState("cantidad");
 
   const controllerRef = useRef(null);
 
-  // Actualizar "hoy" si el componente sigue montado tras medianoche
   useEffect(() => {
     const check = setInterval(() => {
       const now = new Date().toISOString().slice(0, 10);
       if (now !== hoyRef.current) {
         hoyRef.current = now;
-        // Si el usuario tenía seleccionado el día anterior como "hoy", actualizar
         setFecha((prev) => (prev === hoyRef.current ? now : prev));
       }
     }, 60_000);
@@ -41,17 +40,16 @@ export default function StaffStats() {
 
     const fechaAnterior = getFechaOffsetFrom(fecha, 1);
 
-    const actualReq = api.get(`/admin/usuarios/${user.id}/estadisticas`, {
-      params: { desde: fecha, hasta: fecha },
-      signal: controller.signal,
-    });
-
-    const anteriorReq = api.get(`/admin/usuarios/${user.id}/estadisticas`, {
-      params: { desde: fechaAnterior, hasta: fechaAnterior },
-      signal: controller.signal,
-    });
-
-    Promise.all([actualReq, anteriorReq])
+    Promise.all([
+      api.get(`/admin/usuarios/${user.id}/estadisticas`, {
+        params: { desde: fecha, hasta: fecha },
+        signal: controller.signal,
+      }),
+      api.get(`/admin/usuarios/${user.id}/estadisticas`, {
+        params: { desde: fechaAnterior, hasta: fechaAnterior },
+        signal: controller.signal,
+      }),
+    ])
       .then(([actualRes, anteriorRes]) => {
         if (controller.signal.aborted) return;
         setActual(actualRes.data);
@@ -73,33 +71,38 @@ export default function StaffStats() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.id, fecha]);
 
-  const resumenActual = actual?.resumenGlobal || {
-    totalPedidos: 0,
-    totalImporte: 0,
-  };
+  const resumenActual = actual?.resumenGlobal || { totalPedidos: 0, totalImporte: 0 };
+  const resumenAnterior = anterior?.resumenGlobal || { totalPedidos: 0, totalImporte: 0 };
 
-  const resumenAnterior = anterior?.resumenGlobal || {
-    totalPedidos: 0,
-    totalImporte: 0,
-  };
+  const variacionImporte = calcularVariacion(resumenActual.totalImporte, resumenAnterior.totalImporte);
+  const variacionPedidos = calcularVariacion(resumenActual.totalPedidos, resumenAnterior.totalPedidos);
 
-  const variacionImporte = calcularVariacion(
-    resumenActual.totalImporte,
-    resumenAnterior.totalImporte
-  );
+  const productosRaw = actual?.productos || [];
 
-  const productos = actual?.productos || [];
+  const productos = useMemo(() => {
+    const sorted = [...productosRaw].sort((a, b) =>
+      ordenProductos === "cantidad"
+        ? (b.cantidad || 0) - (a.cantidad || 0)
+        : (b.totalFacturado || 0) - (a.totalFacturado || 0)
+    );
+    return sorted.slice(0, 10);
+  }, [productosRaw, ordenProductos]);
+
+  const maxVal = useMemo(() => {
+    if (!productos.length) return 1;
+    return ordenProductos === "cantidad"
+      ? Math.max(...productos.map((p) => p.cantidad || 0), 1)
+      : Math.max(...productos.map((p) => p.totalFacturado || 0), 1);
+  }, [productos, ordenProductos]);
 
   const formatCurrency = (v) => `${Number(v || 0).toFixed(2)} €`;
 
   return (
     <section className="staff-stats">
-      <h3 className="stats-title">Tu rendimiento</h3>
+      <h3 className="stats-title">Estadísticas del usuario</h3>
 
       <div className="stats-fecha">
-        <label htmlFor="fecha-staff" className="stats-fecha-label">
-          Día
-        </label>
+        <label htmlFor="fecha-staff" className="stats-fecha-label">Día</label>
         <input
           id="fecha-staff"
           type="date"
@@ -113,9 +116,7 @@ export default function StaffStats() {
       {error ? (
         <div className="stats-error">
           <span className="stats-error-text">{error}</span>
-          <button className="stats-error-btn" onClick={fetchStats}>
-            Reintentar
-          </button>
+          <button className="stats-error-btn" onClick={fetchStats}>Reintentar</button>
         </div>
       ) : (
         <>
@@ -135,14 +136,52 @@ export default function StaffStats() {
               <span className="stat-value">
                 {loading ? "—" : resumenActual.totalPedidos}
               </span>
-              <span className="stat-sub">
-                {loading ? "" : "Actividad registrada"}
+              <span className={`stat-sub ${variacionPedidos.clase}`}>
+                {loading ? "" : variacionPedidos.texto}
               </span>
+            </div>
+
+            <div className="card stat-card">
+              <span className="stat-label">Ticket medio</span>
+              <span className="stat-value">
+                {loading
+                  ? "—"
+                  : resumenActual.totalPedidos > 0
+                    ? formatCurrency(resumenActual.totalImporte / resumenActual.totalPedidos)
+                    : "0.00 €"}
+              </span>
+              <span className="stat-sub">Por pedido</span>
+            </div>
+
+            <div className="card stat-card">
+              <span className="stat-label">Productos vendidos</span>
+              <span className="stat-value">
+                {loading ? "—" : productosRaw.reduce((s, p) => s + (p.cantidad || 0), 0)}
+              </span>
+              <span className="stat-sub">Unidades totales</span>
             </div>
           </div>
 
           <section className="staff-top-productos">
-            <h4 className="stats-subtitle">Productos más vendidos</h4>
+            <div className="top-productos-header">
+              <h4 className="stats-subtitle">Productos más vendidos</h4>
+              <div className="top-productos-toggle">
+                <button
+                  type="button"
+                  className={`top-toggle-btn ${ordenProductos === "cantidad" ? "top-toggle-btn--active" : ""}`}
+                  onClick={() => setOrdenProductos("cantidad")}
+                >
+                  Cantidad
+                </button>
+                <button
+                  type="button"
+                  className={`top-toggle-btn ${ordenProductos === "importe" ? "top-toggle-btn--active" : ""}`}
+                  onClick={() => setOrdenProductos("importe")}
+                >
+                  Importe
+                </button>
+              </div>
+            </div>
 
             {loading ? (
               <p className="stats-muted">Cargando productos...</p>
@@ -150,20 +189,28 @@ export default function StaffStats() {
               <p className="stats-muted">No hay ventas en este día.</p>
             ) : (
               <ul className="top-productos-list">
-                {productos.slice(0, 5).map((p, index) => (
-                  <li
-                    key={p.productoId || `${p.nombre}-${index}`}
-                    className="top-producto-item"
-                  >
-                    <div className="info">
-                      <span className="nombre">{p.nombre}</span>
-                      <span className="cantidad">{p.cantidad} uds</span>
-                    </div>
-                    <span className="importe">
-                      {formatCurrency(p.totalFacturado)}
-                    </span>
-                  </li>
-                ))}
+                {productos.map((p, index) => {
+                  const val = ordenProductos === "cantidad" ? (p.cantidad || 0) : (p.totalFacturado || 0);
+                  const pct = maxVal > 0 ? (val / maxVal) * 100 : 0;
+
+                  return (
+                    <li key={p.productoId || `${p.nombre}-${index}`} className="top-producto-item">
+                      <span className="top-producto-rank">#{index + 1}</span>
+                      <div className="top-producto-content">
+                        <div className="top-producto-info">
+                          <span className="nombre">{p.nombre}</span>
+                          <span className="cantidad">{p.cantidad} uds · {formatCurrency(p.totalFacturado)}</span>
+                        </div>
+                        <div className="top-producto-bar-wrap">
+                          <div className="top-producto-bar" style={{ width: `${Math.max(pct, 2)}%` }} />
+                        </div>
+                      </div>
+                      <span className="top-producto-badge">
+                        {ordenProductos === "cantidad" ? `${p.cantidad}` : formatCurrency(p.totalFacturado)}
+                      </span>
+                    </li>
+                  );
+                })}
               </ul>
             )}
           </section>
@@ -182,31 +229,10 @@ function getFechaOffsetFrom(fechaISO, dias) {
 
 function calcularVariacion(actual, anterior) {
   if (!anterior || anterior === 0) {
-    return {
-      texto: "Primer día comparable",
-      clase: "neutral",
-    };
+    return { texto: actual > 0 ? "Primer día comparable" : "", clase: "neutral" };
   }
-
-  const diff = actual - anterior;
-  const pct = (diff / anterior) * 100;
-
-  if (pct > 0) {
-    return {
-      texto: `+${pct.toFixed(1)}% respecto al día anterior`,
-      clase: "positivo",
-    };
-  }
-
-  if (pct < 0) {
-    return {
-      texto: `${pct.toFixed(1)}% respecto al día anterior`,
-      clase: "negativo",
-    };
-  }
-
-  return {
-    texto: "Sin cambios respecto al día anterior",
-    clase: "neutral",
-  };
+  const pct = ((actual - anterior) / anterior) * 100;
+  if (pct > 0) return { texto: `+${pct.toFixed(1)}% vs ayer`, clase: "positivo" };
+  if (pct < 0) return { texto: `${pct.toFixed(1)}% vs ayer`, clase: "negativo" };
+  return { texto: "Sin cambios vs ayer", clase: "neutral" };
 }

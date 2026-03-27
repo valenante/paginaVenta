@@ -23,11 +23,8 @@ export function useResumenDia() {
 
       if (controller.signal.aborted) return;
 
-      if (res.data?.ok) {
-        setData(res.data);
-      } else {
-        setData(null);
-      }
+      // El interceptor ya desenvuelve { ok, data } → res.data es el payload directo
+      setData(res.data || null);
     } catch (e) {
       if (e?.name === "CanceledError" || e?.code === "ERR_CANCELED") return;
       logger.error("useResumenDia: error", e);

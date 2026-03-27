@@ -123,8 +123,18 @@ export function useCortesias() {
       const res = await api.get("/cortesias/productos-elegibles", { params, signal: controller.signal });
       if (controller.signal.aborted) return;
 
-      setProductos(res.data?.items || []);
-      if (res.data?.pagination) setProdPagination(res.data.pagination);
+      // sendPaginated: interceptor desenvuelve a res.data = array, res.meta = { page, limit, total, totalPages }
+      const items = Array.isArray(res.data) ? res.data : (res.data?.items || []);
+      setProductos(items);
+      if (res.meta) {
+        setProdPagination({
+          page: res.meta.page || 1,
+          totalPages: res.meta.totalPages || 1,
+          total: res.meta.total || 0,
+          hasPrev: (res.meta.page || 1) > 1,
+          hasNext: (res.meta.page || 1) < (res.meta.totalPages || 1),
+        });
+      }
     } catch (err) {
       if (err?.name === "CanceledError" || err?.code === "ERR_CANCELED") return;
       setProdError("No se pudieron cargar los productos.");

@@ -152,12 +152,12 @@
   flex-direction: column;
   gap: 0;
   border-radius: 1rem;
-  overflow: hidden;
 }
 
 .catpanel-item-wrapper--expanded {
   border: 1px solid rgba(165, 180, 252, 0.25);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
 }
 
 .catpanel-item-wrapper--expanded .catpanel-item {
@@ -203,14 +203,19 @@
   );
 }
 
-/* Dragging state */
+/* Dragging state — category */
 .catpanel-item--dragging {
   border-color: #a5b4fc;
-  background: rgba(30, 41, 59, 0.95);
+  background: rgb(30, 41, 59);
   box-shadow:
     0 20px 40px rgba(0, 0, 0, 0.9),
     0 0 0 2px rgba(165, 180, 252, 0.4);
-  transform: scale(1.02);
+  border-radius: 1rem;
+}
+
+/* Wrapper when portaled during drag */
+.catpanel-item-wrapper:has(.catpanel-item--dragging) {
+  border-radius: 1rem;
 }
 
 /* ===== Grip handle ===== */
@@ -221,6 +226,7 @@
   cursor: grab;
   flex-shrink: 0;
   padding: 0.2rem 0.1rem;
+  touch-action: none;
 }
 
 .catpanel-item-grip:active {
@@ -359,6 +365,7 @@
   transition: background 0.2s;
   border-bottom-left-radius: 1rem;
   border-bottom-right-radius: 1rem;
+  overflow: hidden;
 }
 
 .catpanel-products--dragover {
@@ -384,7 +391,6 @@
   border-radius: 0.6rem;
   border: 1px solid rgba(148, 163, 184, 0.2);
   background: rgba(30, 41, 59, 0.5);
-  cursor: grab;
   transition: border-color 0.15s, background 0.15s, transform 0.12s;
   user-select: none;
 }
@@ -396,11 +402,10 @@
 
 .catpanel-product--dragging {
   border-color: #a5b4fc;
-  background: rgba(30, 41, 59, 0.95);
+  background: rgb(30, 41, 59);
   box-shadow:
     0 12px 28px rgba(0, 0, 0, 0.8),
     0 0 0 2px rgba(165, 180, 252, 0.35);
-  transform: scale(1.01);
 }
 
 .catpanel-product-grip {
@@ -408,6 +413,30 @@
   color: #4b5563;
   flex-shrink: 0;
   line-height: 1;
+  cursor: grab;
+  touch-action: none;
+  padding: 0.3rem;
+}
+
+.catpanel-product-grip:active {
+  cursor: grabbing;
+}
+
+.catpanel-product-actions {
+  display: flex;
+  gap: 0.3rem;
+  flex-shrink: 0;
+}
+
+.catpanel-action-btn--clone {
+  color: #93c5fd;
+  border-color: rgba(59, 130, 246, 0.3);
+}
+
+.catpanel-action-btn--clone:hover {
+  border-color: rgba(59, 130, 246, 0.6);
+  background: rgba(59, 130, 246, 0.12);
+  color: #93c5fd;
 }
 
 .catpanel-product:hover .catpanel-product-grip {
@@ -507,13 +536,40 @@
     justify-content: flex-end;
   }
 
+  /* Grip handles más grandes en mobile para mejor touch target */
+  .catpanel-item-grip {
+    padding: 0.5rem 0.3rem;
+    min-width: 44px;
+    min-height: 44px;
+    justify-content: center;
+  }
+
+  .catpanel-grip-icon {
+    font-size: 1.4rem;
+  }
+
   .catpanel-product {
     flex-wrap: wrap;
     gap: 0.4rem;
   }
 
+  .catpanel-product-grip {
+    font-size: 1.2rem;
+    padding: 0.5rem 0.3rem;
+    min-width: 44px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
   .catpanel-product-meta {
     width: 100%;
     justify-content: flex-start;
+  }
+
+  .catpanel-product-actions {
+    width: 100%;
+    justify-content: flex-end;
   }
 }

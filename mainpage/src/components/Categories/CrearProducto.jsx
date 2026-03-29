@@ -11,7 +11,7 @@ import * as logger from "../../utils/logger";
 import api from "../../utils/api";
 import "./CrearProducto.css";
 
-const CrearProducto = ({ onClose, onCreated, initialTipo }) => {
+const CrearProducto = ({ onClose, onCreated, initialTipo, cloneFrom }) => {
   // 🔹 ProductosContext — opcional
   const productosCtx = useContext(ProductosContext);
   const { categoryObjectsByTipo, fetchCategoryObjects } = useCategorias();
@@ -39,27 +39,68 @@ const CrearProducto = ({ onClose, onCreated, initialTipo }) => {
   const isPlanEsencial =
     user?.plan === "esencial" || user?.plan === "tpv-esencial";
 
-  const [formData, setFormData] = useState({
-    nombre: "",
-    descripcion: "",
-    categoria: "",
-    tipo: initialTipo || "",
-    seccion: "",
-    img: "",
-    estacion: "",
-    aliases: [],
-    aliasesString: "",
-    estado: "habilitado",
-    precios: [{ clave: "precioBase", label: "Precio", precio: 0, orden: 0 }],
-    alergenos: [],
-    traducciones: {
-      en: { nombre: "", descripcion: "" },
-      fr: { nombre: "", descripcion: "" },
-    },
-    receta: [],
-    stock: 0,
-    controlStock: false,
-    imprimirSiempre: false,
+  const [formData, setFormData] = useState(() => {
+    if (cloneFrom) {
+      const aliasesArr = Array.isArray(cloneFrom.aliases) ? cloneFrom.aliases : [];
+      const alergenosArr = Array.isArray(cloneFrom.alergenos) ? cloneFrom.alergenos : [];
+      const preciosArr = Array.isArray(cloneFrom.precios)
+        ? cloneFrom.precios.map((p, i) => ({
+            clave: p.clave || "precioBase",
+            label: p.label || "",
+            precio: p.precio ?? 0,
+            descripcion: p.descripcion || "",
+            orden: p.orden ?? i,
+          }))
+        : [{ clave: "precioBase", label: "Precio", precio: 0, orden: 0 }];
+      const trad = cloneFrom.traducciones && typeof cloneFrom.traducciones === "object" ? cloneFrom.traducciones : {};
+
+      return {
+        nombre: `Copia de ${cloneFrom.nombre || ""}`,
+        descripcion: cloneFrom.descripcion || "",
+        categoria: cloneFrom.categoria || "",
+        tipo: cloneFrom.tipo || initialTipo || "",
+        seccion: cloneFrom.seccion || "",
+        img: "", // no clonar imagen, el usuario sube una nueva si quiere
+        estacion: cloneFrom.estacion || "",
+        aliases: [],
+        aliasesString: "",
+        estado: cloneFrom.estado || "habilitado",
+        precios: preciosArr,
+        alergenos: alergenosArr,
+        adicionales: Array.isArray(cloneFrom.adicionales) ? cloneFrom.adicionales : [],
+        traducciones: {
+          en: { nombre: trad?.en?.nombre || "", descripcion: trad?.en?.descripcion || "" },
+          fr: { nombre: trad?.fr?.nombre || "", descripcion: trad?.fr?.descripcion || "" },
+        },
+        receta: Array.isArray(cloneFrom.receta) ? cloneFrom.receta : [],
+        stock: 0,
+        controlStock: cloneFrom.controlStock ?? false,
+        imprimirSiempre: cloneFrom.imprimirSiempre ?? false,
+      };
+    }
+
+    return {
+      nombre: "",
+      descripcion: "",
+      categoria: "",
+      tipo: initialTipo || "",
+      seccion: "",
+      img: "",
+      estacion: "",
+      aliases: [],
+      aliasesString: "",
+      estado: "habilitado",
+      precios: [{ clave: "precioBase", label: "Precio", precio: 0, orden: 0 }],
+      alergenos: [],
+      traducciones: {
+        en: { nombre: "", descripcion: "" },
+        fr: { nombre: "", descripcion: "" },
+      },
+      receta: [],
+      stock: 0,
+      controlStock: false,
+      imprimirSiempre: false,
+    };
   });
   const [ingredientesStock, setIngredientesStock] = useState([]);
 
@@ -294,7 +335,7 @@ const CrearProducto = ({ onClose, onCreated, initialTipo }) => {
         className="crear-producto-modal--crear"
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 className="titulo--crear">Crear producto</h2>
+        <h2 className="titulo--crear">{cloneFrom ? "Clonar producto" : "Crear producto"}</h2>
 
         {alerta && (
           <AlertaMensaje

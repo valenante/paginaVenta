@@ -1,5 +1,5 @@
 // src/components/Categories/CategoriasPanel.jsx
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { createPortal } from "react-dom";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import CategoriaFormModal from "./CategoriaFormModal";
@@ -25,7 +25,12 @@ const CategoriasPanel = ({ onBack }) => {
   const [productsByCat, setProductsByCat] = useState({}); // { catName: [...products] }
   const [loadingProducts, setLoadingProducts] = useState(new Set());
   const [editingProduct, setEditingProduct] = useState(null);
+  const [cloningProduct, setCloningProduct] = useState(null); // product to clone
   const [deleteError, setDeleteError] = useState(null);
+  const [confirmDeleteProduct, setConfirmDeleteProduct] = useState(null);
+  const [deleteProductError, setDeleteProductError] = useState(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const bodyStylesRef = useRef(null);
 
   const {
     categoryObjectsByTipo,
@@ -36,6 +41,7 @@ const CategoriasPanel = ({ onBack }) => {
     fetchCategories,
     fetchProducts,
     updateProduct,
+    deleteProduct,
   } = useCategorias();
 
   // Cargar ambos tipos al montar
@@ -96,10 +102,39 @@ const CategoriasPanel = ({ onBack }) => {
   );
 
   /* =====================================================
-     Drag & Drop — handle both category reorder and product move
+     Drag & Drop — lock body scroll on start, unlock on end
   ===================================================== */
+  const lockBodyScroll = useCallback(() => {
+    bodyStylesRef.current = {
+      overflow: document.body.style.overflow,
+      touchAction: document.body.style.touchAction,
+      overscrollBehavior: document.body.style.overscrollBehavior,
+    };
+    document.body.style.overflow = "hidden";
+    document.body.style.touchAction = "none";
+    document.body.style.overscrollBehavior = "none";
+    document.documentElement.style.overflow = "hidden";
+  }, []);
+
+  const unlockBodyScroll = useCallback(() => {
+    const prev = bodyStylesRef.current || {};
+    document.body.style.overflow = prev.overflow || "";
+    document.body.style.touchAction = prev.touchAction || "";
+    document.body.style.overscrollBehavior = prev.overscrollBehavior || "";
+    document.documentElement.style.overflow = "";
+    bodyStylesRef.current = null;
+  }, []);
+
+  const onDragStart = useCallback(() => {
+    setIsDragging(true);
+    lockBodyScroll();
+  }, [lockBodyScroll]);
+
   const onDragEnd = useCallback(
     async ({ source, destination, type }) => {
+      setIsDragging(false);
+      unlockBodyScroll();
+
       if (!destination) return;
 
       // --- Category reorder ---
@@ -226,11 +261,39 @@ const CategoriasPanel = ({ onBack }) => {
   );
 
   /* =====================================================
+     Product delete handler
+  ===================================================== */
+  const handleDeleteProduct = useCallback(
+    async (prod) => {
+      try {
+        setDeleteProductError(null);
+        await deleteProduct(prod._id);
+        setConfirmDeleteProduct(null);
+        refreshCatProducts(prod.categoria, prod.tipo);
+      } catch (err) {
+        const msg = err?.response?.data?.message || "No se pudo eliminar el producto.";
+        setDeleteProductError(msg);
+      }
+    },
+    [deleteProduct, refreshCatProducts]
+  );
+
+  /* =====================================================
      When tab changes, collapse all
   ===================================================== */
   useEffect(() => {
     setExpandedCats(new Set());
   }, [tab]);
+
+  // Clean up body scroll lock on unmount
+  useEffect(() => {
+    return () => {
+      document.body.style.overflow = "";
+      document.body.style.touchAction = "";
+      document.body.style.overscrollBehavior = "";
+      document.documentElement.style.overflow = "";
+    };
+  }, []);
 
   return (
     <div className="catpanel">
@@ -299,7 +362,7 @@ const CategoriasPanel = ({ onBack }) => {
           </button>
         </div>
       ) : (
-        <DragDropContext onDragEnd={onDragEnd}>
+        <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd}>
           <Droppable droppableId="catpanel-list" type="CATEGORY">
             {(provided, snapshot) => (
               <div
@@ -315,136 +378,163 @@ const CategoriasPanel = ({ onBack }) => {
 
                   return (
                     <Draggable key={cat._id} draggableId={cat._id} index={index}>
-                      {(p, snap) => (
-                        <div
-                          ref={p.innerRef}
-                          {...p.draggableProps}
-                          className={`catpanel-item-wrapper ${isExpanded ? "catpanel-item-wrapper--expanded" : ""}`}
-                          style={p.draggableProps.style}
-                        >
-                          {/* Category row */}
+                      {(p, snap) => {
+                        const showExpanded = isExpanded && !snap.isDragging;
+
+                        const catNode = (
                           <div
-                            className={`catpanel-item ${snap.isDragging ? "catpanel-item--dragging" : ""} ${isExpanded ? "catpanel-item--expanded" : ""}`}
+                            ref={p.innerRef}
+                            {...p.draggableProps}
+                            className={`catpanel-item-wrapper ${showExpanded ? "catpanel-item-wrapper--expanded" : ""}`}
+                            style={p.draggableProps.style}
                           >
-                            {/* Grip handle */}
-                            <div className="catpanel-item-grip" {...p.dragHandleProps}>
-                              <span className="catpanel-grip-icon">⠿</span>
-                              <span className="catpanel-item-index">{index + 1}</span>
-                            </div>
-
-                            {/* Clickable area to expand */}
+                            {/* Category row */}
                             <div
-                              className="catpanel-item-left"
-                              onClick={() => toggleCategory(cat)}
-                              style={{ cursor: "pointer" }}
+                              className={`catpanel-item ${snap.isDragging ? "catpanel-item--dragging" : ""} ${showExpanded ? "catpanel-item--expanded" : ""}`}
                             >
-                              {cat.icono && (
-                                <span className="catpanel-item-icono">{cat.icono}</span>
-                              )}
-                              <div className="catpanel-item-info">
-                                <span className="catpanel-item-nombre">
-                                  {cat.nombre}
-                                  <span className="catpanel-item-prod-count">
-                                    {catProds.length > 0 ? ` (${catProds.length})` : ""}
-                                  </span>
-                                </span>
-                                {cat.descripcion && (
-                                  <span className="catpanel-item-desc">{cat.descripcion}</span>
-                                )}
+                              {/* Grip handle */}
+                              <div className="catpanel-item-grip" {...p.dragHandleProps}>
+                                <span className="catpanel-grip-icon">⠿</span>
+                                <span className="catpanel-item-index">{index + 1}</span>
                               </div>
-                              <span className={`catpanel-expand-icon ${isExpanded ? "catpanel-expand-icon--open" : ""}`}>
-                                ▸
-                              </span>
-                            </div>
 
-                            <div className="catpanel-item-actions">
-                              <button
-                                type="button"
-                                className="catpanel-action-btn"
-                                title="Editar categoría"
-                                onClick={() => setCatModal({ open: true, categoria: cat })}
+                              {/* Clickable area to expand */}
+                              <div
+                                className="catpanel-item-left"
+                                onClick={() => toggleCategory(cat)}
+                                style={{ cursor: "pointer" }}
                               >
-                                Editar
-                              </button>
-                              <button
-                                type="button"
-                                className="catpanel-action-btn catpanel-action-btn--del"
-                                title="Eliminar categoría"
-                                onClick={() => setConfirmDelete(cat)}
-                              >
-                                Eliminar
-                              </button>
-                            </div>
-                          </div>
-
-                          {/* Expanded products list */}
-                          {isExpanded && (
-                            <Droppable droppableId={`products-${cat._id}`} type="PRODUCT">
-                              {(prodProvided, prodSnap) => (
-                                <div
-                                  ref={prodProvided.innerRef}
-                                  {...prodProvided.droppableProps}
-                                  className={`catpanel-products ${prodSnap.isDraggingOver ? "catpanel-products--dragover" : ""}`}
-                                >
-                                  {isLoadingProds ? (
-                                    <p className="catpanel-products-loading">Cargando productos…</p>
-                                  ) : catProds.length === 0 ? (
-                                    <p className="catpanel-products-empty">Sin productos en esta categoría.</p>
-                                  ) : (
-                                    catProds.map((prod, prodIndex) => (
-                                      <Draggable
-                                        key={prod._id}
-                                        draggableId={`prod-${prod._id}`}
-                                        index={prodIndex}
-                                      >
-                                        {(pp, ps) => {
-                                          const node = (
-                                            <div
-                                              ref={pp.innerRef}
-                                              {...pp.draggableProps}
-                                              {...pp.dragHandleProps}
-                                              className={`catpanel-product ${ps.isDragging ? "catpanel-product--dragging" : ""}`}
-                                              style={pp.draggableProps.style}
-                                            >
-                                              <span className="catpanel-product-grip">⠿</span>
-                                              <div className="catpanel-product-info">
-                                                <span className="catpanel-product-nombre">{prod.nombre}</span>
-                                                {prod.descripcion && (
-                                                  <span className="catpanel-product-desc">{prod.descripcion}</span>
-                                                )}
-                                              </div>
-                                              <div className="catpanel-product-meta">
-                                                {(Array.isArray(prod.precios) ? prod.precios.length > 0 : prod.precios?.precioBase != null) && (
-                                                  <span className="catpanel-product-price">
-                                                    {Number(getFirstPrice(prod.precios)).toFixed(2)} €
-                                                  </span>
-                                                )}
-                                                <span className={`catpanel-product-estado ${prod.estado === "habilitado" ? "catpanel-product-estado--on" : "catpanel-product-estado--off"}`}>
-                                                  {prod.estado === "habilitado" ? "Visible" : "Oculto"}
-                                                </span>
-                                              </div>
-                                              <button
-                                                type="button"
-                                                className="catpanel-action-btn"
-                                                onClick={() => setEditingProduct(prod)}
-                                              >
-                                                Editar
-                                              </button>
-                                            </div>
-                                          );
-                                          // Portal while dragging: avoids offset caused by parent Draggable transforms
-                                          return ps.isDragging ? createPortal(node, document.body) : node;
-                                        }}
-                                      </Draggable>
-                                    ))
+                                {cat.icono && (
+                                  <span className="catpanel-item-icono">{cat.icono}</span>
+                                )}
+                                <div className="catpanel-item-info">
+                                  <span className="catpanel-item-nombre">
+                                    {cat.nombre}
+                                    <span className="catpanel-item-prod-count">
+                                      {catProds.length > 0 ? ` (${catProds.length})` : ""}
+                                    </span>
+                                  </span>
+                                  {cat.descripcion && (
+                                    <span className="catpanel-item-desc">{cat.descripcion}</span>
                                   )}
-                                  {prodProvided.placeholder}
                                 </div>
-                              )}
-                            </Droppable>
-                          )}
-                        </div>
-                      )}
+                                <span className={`catpanel-expand-icon ${showExpanded ? "catpanel-expand-icon--open" : ""}`}>
+                                  ▸
+                                </span>
+                              </div>
+
+                              <div className="catpanel-item-actions">
+                                <button
+                                  type="button"
+                                  className="catpanel-action-btn"
+                                  title="Editar categoría"
+                                  onClick={() => setCatModal({ open: true, categoria: cat })}
+                                >
+                                  Editar
+                                </button>
+                                <button
+                                  type="button"
+                                  className="catpanel-action-btn catpanel-action-btn--del"
+                                  title="Eliminar categoría"
+                                  onClick={() => setConfirmDelete(cat)}
+                                >
+                                  Eliminar
+                                </button>
+                              </div>
+                            </div>
+
+                            {/* Expanded products — hidden while this category is being dragged */}
+                            {showExpanded && (
+                              <Droppable droppableId={`products-${cat._id}`} type="PRODUCT">
+                                {(prodProvided, prodSnap) => (
+                                  <div
+                                    ref={prodProvided.innerRef}
+                                    {...prodProvided.droppableProps}
+                                    className={`catpanel-products ${prodSnap.isDraggingOver ? "catpanel-products--dragover" : ""}`}
+                                  >
+                                    {isLoadingProds ? (
+                                      <p className="catpanel-products-loading">Cargando productos…</p>
+                                    ) : catProds.length === 0 ? (
+                                      <p className="catpanel-products-empty">Sin productos en esta categoría.</p>
+                                    ) : (
+                                      catProds.map((prod, prodIndex) => (
+                                        <Draggable
+                                          key={prod._id}
+                                          draggableId={`prod-${prod._id}`}
+                                          index={prodIndex}
+                                        >
+                                          {(pp, ps) => {
+                                            const prodNode = (
+                                              <div
+                                                ref={pp.innerRef}
+                                                {...pp.draggableProps}
+                                                className={`catpanel-product ${ps.isDragging ? "catpanel-product--dragging" : ""}`}
+                                                style={pp.draggableProps.style}
+                                              >
+                                                <span
+                                                  className="catpanel-product-grip"
+                                                  {...pp.dragHandleProps}
+                                                >⠿</span>
+                                                <div className="catpanel-product-info">
+                                                  <span className="catpanel-product-nombre">{prod.nombre}</span>
+                                                  {prod.descripcion && (
+                                                    <span className="catpanel-product-desc">{prod.descripcion}</span>
+                                                  )}
+                                                </div>
+                                                <div className="catpanel-product-meta">
+                                                  {(Array.isArray(prod.precios) ? prod.precios.length > 0 : prod.precios?.precioBase != null) && (
+                                                    <span className="catpanel-product-price">
+                                                      {Number(getFirstPrice(prod.precios)).toFixed(2)} €
+                                                    </span>
+                                                  )}
+                                                  <span className={`catpanel-product-estado ${prod.estado === "habilitado" ? "catpanel-product-estado--on" : "catpanel-product-estado--off"}`}>
+                                                    {prod.estado === "habilitado" ? "Visible" : "Oculto"}
+                                                  </span>
+                                                </div>
+                                                <div className="catpanel-product-actions">
+                                                  <button
+                                                    type="button"
+                                                    className="catpanel-action-btn"
+                                                    onClick={() => setEditingProduct(prod)}
+                                                  >
+                                                    Editar
+                                                  </button>
+                                                  <button
+                                                    type="button"
+                                                    className="catpanel-action-btn catpanel-action-btn--clone"
+                                                    title="Clonar producto"
+                                                    onClick={() => setCloningProduct(prod)}
+                                                  >
+                                                    Clonar
+                                                  </button>
+                                                  <button
+                                                    type="button"
+                                                    className="catpanel-action-btn catpanel-action-btn--del"
+                                                    title="Eliminar producto"
+                                                    onClick={() => setConfirmDeleteProduct(prod)}
+                                                  >
+                                                    Eliminar
+                                                  </button>
+                                                </div>
+                                              </div>
+                                            );
+                                            // Portal while dragging avoids offset from parent transforms
+                                            return ps.isDragging ? createPortal(prodNode, document.body) : prodNode;
+                                          }}
+                                        </Draggable>
+                                      ))
+                                    )}
+                                    {prodProvided.placeholder}
+                                  </div>
+                                )}
+                              </Droppable>
+                            )}
+                          </div>
+                        );
+
+                        // Portal category while dragging — avoids overflow clipping + transform offset
+                        return snap.isDragging ? createPortal(catNode, document.body) : catNode;
+                      }}
                     </Draggable>
                   );
                 })}
@@ -494,7 +584,27 @@ const CategoriasPanel = ({ onBack }) => {
         </Portal>
       )}
 
-      {/* Confirm delete */}
+      {/* Modal clonar producto (abre CrearProducto pre-rellenado) */}
+      {cloningProduct && (
+        <Portal>
+          <CrearProducto
+            initialTipo={cloningProduct.tipo}
+            cloneFrom={cloningProduct}
+            onClose={() => setCloningProduct(null)}
+            onCreated={(data) => {
+              const createdProd = data?.data || data;
+              if (createdProd?.categoria) {
+                refreshCatProducts(createdProd.categoria, createdProd.tipo);
+              }
+              fetchCategories(cloningProduct.tipo, { force: true });
+              fetchCategoryObjects(cloningProduct.tipo, { force: true });
+              setCloningProduct(null);
+            }}
+          />
+        </Portal>
+      )}
+
+      {/* Confirm delete category */}
       {confirmDelete && (
         <Portal>
           <div className="catmodal-overlay" onClick={() => { setConfirmDelete(null); setDeleteError(null); }}>
@@ -517,6 +627,38 @@ const CategoriasPanel = ({ onBack }) => {
                   type="button"
                   className="catmodal-btn catmodal-btn--delete"
                   onClick={() => handleDelete(confirmDelete)}
+                >
+                  Eliminar
+                </button>
+              </div>
+            </div>
+          </div>
+        </Portal>
+      )}
+
+      {/* Confirm delete product */}
+      {confirmDeleteProduct && (
+        <Portal>
+          <div className="catmodal-overlay" onClick={() => { setConfirmDeleteProduct(null); setDeleteProductError(null); }}>
+            <div className="catconfirm-card" onClick={(e) => e.stopPropagation()}>
+              <h3 className="catconfirm-title">Eliminar producto</h3>
+              <p className="catconfirm-msg">
+                ¿Seguro que quieres eliminar <strong>{confirmDeleteProduct.nombre}</strong>?
+                Esta acción no se puede deshacer.
+              </p>
+              {deleteProductError && <div className="catmodal-error">{deleteProductError}</div>}
+              <div className="catmodal-actions">
+                <button
+                  type="button"
+                  className="catmodal-btn catmodal-btn--cancel"
+                  onClick={() => { setConfirmDeleteProduct(null); setDeleteProductError(null); }}
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="button"
+                  className="catmodal-btn catmodal-btn--delete"
+                  onClick={() => handleDeleteProduct(confirmDeleteProduct)}
                 >
                   Eliminar
                 </button>

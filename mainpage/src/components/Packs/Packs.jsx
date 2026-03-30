@@ -1,7 +1,7 @@
 // src/components/Packs/Packs.jsx
 import React, { useEffect, useState } from "react";
 import api from "../../utils/api";
-import useRevealOnScroll from "../../Hooks/useRevealOnScroll";
+import useRevealOnScroll from "../../hooks/useRevealOnScroll";
 import "./Packs.css";
 
 import PlanDetallesModal from "../Packs/PlanDetallesModal";

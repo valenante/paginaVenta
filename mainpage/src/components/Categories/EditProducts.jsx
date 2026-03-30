@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState, useRef } from "react";
 import api from "../../utils/api";
 import AlefSelect from "../AlefSelect/AlefSelect";
-import { useImageUpload } from "../../Hooks/useImageUpload";
+import { useImageUpload } from "../../hooks/useImageUpload";
 import { useCategorias } from "../../context/CategoriasContext";
 import { useAuth } from "../../context/AuthContext";
 import AlertaMensaje from "../AlertaMensaje/AlertaMensaje";

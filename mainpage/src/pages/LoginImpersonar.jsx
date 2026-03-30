@@ -22,8 +22,6 @@ export default function LoginImpersonar() {
           const { user } = data;
           const { tenantId } = user;
 
-          // ✅ Guardar datos en sessionStorage
-          sessionStorage.setItem("token", token);
           sessionStorage.setItem("tenantId", tenantId);
           sessionStorage.setItem("impersonado", "true");
           sessionStorage.setItem("user", JSON.stringify(user));

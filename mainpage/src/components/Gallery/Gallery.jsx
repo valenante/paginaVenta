@@ -1,6 +1,6 @@
 // src/components/Gallery/Gallery.jsx
 import React from "react";
-import useRevealOnScroll from "../../Hooks/useRevealOnScroll";
+import useRevealOnScroll from "../../hooks/useRevealOnScroll";
 import "./Gallery.css";
 
 const capturas = [

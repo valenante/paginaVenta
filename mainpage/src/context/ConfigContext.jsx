@@ -1,7 +1,7 @@
 import { createContext, useEffect, useState, useContext } from "react";
 import api from "../utils/api";
 import { useTenant } from "./TenantContext.jsx";
-import { useConfigStyles } from "../Hooks/useConfigStyles";
+import { useConfigStyles } from "../hooks/useConfigStyles";
 
 export const ConfigContext = createContext();
 

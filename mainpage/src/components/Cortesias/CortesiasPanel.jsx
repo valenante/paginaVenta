@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useCortesias } from "../../Hooks/useCortesias";
+import { useCortesias } from "../../hooks/useCortesias";
 import "./CortesiasPanel.css";
 
 export default function CortesiasPanel({ abierto, onClose }) {

@@ -12,4 +12,7 @@ export default defineConfig({
       "tpv.local.softalef.com",
     ],
   },
+  esbuild: {
+    drop: ["console", "debugger"],
+  },
 });

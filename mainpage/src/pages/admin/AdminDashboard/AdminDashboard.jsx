@@ -2,7 +2,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import "../../../styles/AdminDashboard.css";
-import useTenantsData from "../../../Hooks/useTenantsData";
+import useTenantsData from "../../../hooks/useTenantsData";
 import DashboardHeader from "./components/DashboardHeader";
 import StatsCards from "./components/StatsCards";
 import TenantTable from "./components/TenantTable";

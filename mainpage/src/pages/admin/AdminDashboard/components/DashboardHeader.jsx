@@ -1,6 +1,6 @@
 import React from "react";
 import { FiRefreshCcw, FiSearch } from "react-icons/fi";
-import usePlanes from "../../../../Hooks/usePlanes";
+import usePlanes from "../../../../hooks/usePlanes";
 
 export default function DashboardHeader({
   search,

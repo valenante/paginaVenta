@@ -2,7 +2,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useCategorias } from "../context/CategoriasContext";
 import { useFeaturesPlan } from "../context/FeaturesPlanContext";
-import { useEstadisticasCategoria } from "../Hooks/useEstadisticasCategoria";
+import { useEstadisticasCategoria } from "../hooks/useEstadisticasCategoria";
 
 import StatsFilterBar from "../components/Estadisticas/StatsFilterBar";
 import StatsResumenCategoria from "../components/Estadisticas/StatsResumenCategoria";

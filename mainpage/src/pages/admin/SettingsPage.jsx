@@ -473,6 +473,8 @@ export default function SettingsPage() {
 
           <label className="settings-label-settingsAdmin">Access Key ID</label>
           <input
+            type="password"
+            autoComplete="off"
             className="settings-input-settingsAdmin"
             value={secrets.r2AccessKeyId}
             onChange={(e) => setSecrets((p) => ({ ...p, r2AccessKeyId: e.target.value }))}

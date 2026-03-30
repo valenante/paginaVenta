@@ -6,7 +6,7 @@ import ModalNuevaReserva from "../components/Reservas/ModalNuevaReserva.jsx";
 import ReservasAjustesPage from "../components/Reservas/ReservasAjustesPage.jsx";
 import ErrorToast from "../components/common/ErrorToast.jsx";
 import { normalizeApiError } from "../utils/normalizeApiError.js";
-import { useFeature } from "../Hooks/useFeature";
+import { useFeature } from "../hooks/useFeature";
 import "../styles/ReservasConfigPage.css";
 
 const fmtFecha = (v) => {

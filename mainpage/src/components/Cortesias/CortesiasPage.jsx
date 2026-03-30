@@ -1,4 +1,4 @@
-import { useCortesias } from "../../Hooks/useCortesias";
+import { useCortesias } from "../../hooks/useCortesias";
 import "./CortesiasPage.css";
 
 export default function CortesiasPage() {

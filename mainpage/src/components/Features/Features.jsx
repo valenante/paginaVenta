@@ -1,6 +1,6 @@
 // src/components/Features/Features.jsx
 import React from "react";
-import useRevealOnScroll from "../../Hooks/useRevealOnScroll";
+import useRevealOnScroll from "../../hooks/useRevealOnScroll";
 import "./Features.css";
 
 const ventajas = [

@@ -4,7 +4,7 @@ import { ProductosContext } from "../../context/ProductosContext";
 import { useCategorias } from "../../context/CategoriasContext";
 import { useAuth } from "../../context/AuthContext";
 import { useToast } from "../../context/ToastContext";
-import { useImageUpload } from "../../Hooks/useImageUpload";
+import { useImageUpload } from "../../hooks/useImageUpload";
 import AlefSelect from "../AlefSelect/AlefSelect";
 import AlertaMensaje from "../AlertaMensaje/AlertaMensaje";
 import * as logger from "../../utils/logger";

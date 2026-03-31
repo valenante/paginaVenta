@@ -8,6 +8,13 @@ import { TenantProvider } from "./context/TenantContext";
 import { ConfigProvider } from "./context/ConfigContext";
 import { ToastProvider } from "./context/ToastContext";
 
+/* ── PWA: registrar Service Worker ── */
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("/sw.js").catch(() => {});
+  });
+}
+
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <BrowserRouter>

@@ -1,13 +1,8 @@
 import React, { useState } from "react";
 import LightSelect from "./LightSelect";
 import { useRoles } from "../../hooks/useRoles";
+import { useEstaciones } from "../../hooks/useEstaciones";
 import "./UsuarioEditModal.css";
-
-const ESTACIONES = [
-  { value: "frito", label: "Frito" },
-  { value: "plancha", label: "Plancha" },
-  { value: "frio", label: "Frío" },
-];
 
 export default function UsuarioEditModal({
   usuario,
@@ -15,7 +10,7 @@ export default function UsuarioEditModal({
   onClose,
 }) {
   const { roles } = useRoles("tpv");
-  const estaciones = ESTACIONES;
+  const { estaciones } = useEstaciones();
 
   const [form, setForm] = useState({
     name: usuario?.name || "",

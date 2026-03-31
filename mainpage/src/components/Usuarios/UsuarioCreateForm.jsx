@@ -2,16 +2,12 @@
 import React, { useState } from "react";
 import LightSelect from "./LightSelect";
 import { useRoles } from "../../hooks/useRoles";
+import { useEstaciones } from "../../hooks/useEstaciones";
 import "./UsuarioCreateForm.css";
-
-const ESTACIONES = [
-  { value: "frito", label: "Frito" },
-  { value: "plancha", label: "Plancha" },
-  { value: "frio", label: "Frío" },
-];
 
 export default function UsuarioCreateForm({ onCrear, onClose }) {
   const { roles: rolesDisponibles } = useRoles("tpv");
+  const { estaciones } = useEstaciones();
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -136,7 +132,7 @@ export default function UsuarioCreateForm({ onCrear, onClose }) {
                 placeholder="Sin estación"
                 value={form.estacion}
                 onChange={(v) => setForm({ ...form, estacion: v })}
-                options={ESTACIONES}
+                options={estaciones}
               />
             </div>
           </div>

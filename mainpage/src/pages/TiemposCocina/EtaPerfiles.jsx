@@ -14,11 +14,13 @@ const fmtMin = (seg) => {
 };
 
 function ConfidenceBar({ muestras }) {
-  const pct = Math.min(100, Math.round((num(muestras, 0) / 20) * 100));
-  const cls = pct >= 70 ? "eta-conf-bar__fill--high" : pct >= 35 ? "eta-conf-bar__fill--mid" : "eta-conf-bar__fill--low";
+  // Misma sigmoide que el backend: (1 - e^(-n/300)) * 95
+  const n = num(muestras, 0);
+  const pct = n <= 0 ? 0 : Math.min(95, Math.round((1 - Math.exp(-n / 300)) * 95));
+  const cls = pct >= 60 ? "eta-conf-bar__fill--high" : pct >= 25 ? "eta-conf-bar__fill--mid" : "eta-conf-bar__fill--low";
 
   return (
-    <span className="eta-conf-bar" title={`${num(muestras, 0)} de 20 platos necesarios para precision completa`}>
+    <span className="eta-conf-bar" title={`${n} muestras · ${pct}% precision (necesita ~1000 para maxima fiabilidad)`}>
       <span className="eta-conf-bar__track">
         <span className={`eta-conf-bar__fill ${cls}`} style={{ width: `${pct}%` }} />
       </span>
@@ -28,8 +30,8 @@ function ConfidenceBar({ muestras }) {
 }
 
 function SourceBadge({ muestras }) {
-  if (muestras >= 20) return <span className="eta-source eta-source--learned">fiable</span>;
-  if (muestras >= 5) return <span className="eta-source eta-source--blended">aprendiendo</span>;
+  if (muestras >= 200) return <span className="eta-source eta-source--learned">fiable</span>;
+  if (muestras >= 20) return <span className="eta-source eta-source--blended">aprendiendo</span>;
   return <span className="eta-source eta-source--config">pocos datos</span>;
 }
 
@@ -58,9 +60,9 @@ export default function EtaPerfiles({ perfiles, onRefresh }) {
       list = list.filter((p) => p.estacionSlug === filterStation);
     }
     if (filterSource === "learned") {
-      list = list.filter((p) => p.muestrasValidas >= 20);
+      list = list.filter((p) => p.muestrasValidas >= 200);
     } else if (filterSource === "blended") {
-      list = list.filter((p) => p.muestrasValidas >= 5 && p.muestrasValidas < 20);
+      list = list.filter((p) => p.muestrasValidas >= 20 && p.muestrasValidas < 200);
     } else if (filterSource === "config") {
       list = list.filter((p) => p.muestrasValidas < 5);
     }

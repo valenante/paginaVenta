@@ -362,7 +362,7 @@ export default function EtaSimulador({ productos, estaciones, drafts, perfilByPr
                             <span className="sim-prod__name">{p.nombre}</span>
                             <span className="sim-prod__meta">
                               {t > 0 ? `${t}m` : "sin tiempo"}
-                              {pp && pp.muestrasValidas >= 5 ? ` · ~${Math.round(pp.p50Seg / 60)}m real` : ""}
+                              {pp && pp.muestrasValidas >= 60 ? ` · ~${Math.round(pp.p50Seg / 60)}m real` : ""}
                             </span>
                             {inCarrito && <span className="sim-prod__qty">x{inCarrito.qty}</span>}
                           </button>

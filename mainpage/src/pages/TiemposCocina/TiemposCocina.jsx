@@ -31,6 +31,7 @@ export default function TiemposCocina() {
   // Perfiles aprendidos (se cargan al montar)
   const [perfiles, setPerfiles] = useState(null);
   const [cocinaActiva, setCocinaActiva] = useState(true);
+  const [showHelp, setShowHelp] = useState(false);
 
   // ── Load ──
   useEffect(() => {
@@ -61,9 +62,10 @@ export default function TiemposCocina() {
         setDrafts(d);
         setOriginals(o);
 
-        setCocinaActiva(!!cfgRes?.data?.pantallas?.cocina?.activa);
+        const cfgObj = cfgRes?.data?.config || cfgRes?.data?.data?.config || cfgRes?.data || {};
+        setCocinaActiva(!!cfgObj?.pantallas?.cocina?.activa);
 
-        const sla = cfgRes?.data?.slaMesas || {};
+        const sla = cfgObj?.slaMesas || {};
         const slaInit = {
           activo: sla.activo ?? true,
           umbralAbsolutoMin: sla.umbralAbsolutoMin ?? 25,
@@ -121,7 +123,7 @@ export default function TiemposCocina() {
       if (drafts[p._id]?.slaDefaultMinutos !== "") configured++;
     }
     if (perfiles?.productProfiles) {
-      learned = new Set(perfiles.productProfiles.filter((pp) => pp.muestrasValidas >= 5).map((pp) => String(pp.productoId))).size;
+      learned = new Set(perfiles.productProfiles.filter((pp) => pp.muestrasValidas >= 60).map((pp) => String(pp.productoId))).size;
     }
     return { total, configured, missing: total - configured, learned };
   }, [productos, drafts, perfiles]);
@@ -211,11 +213,14 @@ export default function TiemposCocina() {
             <h2>Tiempos de cocina</h2>
             <p>Configura cuanto tarda cada plato y simula pedidos reales con el motor adaptativo de Alef.</p>
           </div>
-          <div className="tc-mode-toggle">
-            <button className={mode === "config" ? "tc-mode--on" : ""} onClick={() => setMode("config")}>Tiempos</button>
-            <button className={mode === "sim" ? "tc-mode--on" : ""} onClick={() => setMode("sim")}>Simulador</button>
-            <button className={mode === "alertas" ? "tc-mode--on" : ""} onClick={() => setMode("alertas")}>Alertas</button>
-            <button className={mode === "aprendizaje" ? "tc-mode--on" : ""} onClick={() => setMode("aprendizaje")}>Aprendizaje</button>
+          <div className="tc-header__actions">
+            <button className="tc-help-btn" onClick={() => setShowHelp(true)} title="Como funciona">?</button>
+            <div className="tc-mode-toggle">
+              <button className={mode === "config" ? "tc-mode--on" : ""} onClick={() => setMode("config")}>Tiempos</button>
+              <button className={mode === "sim" ? "tc-mode--on" : ""} onClick={() => setMode("sim")}>Simulador</button>
+              <button className={mode === "alertas" ? "tc-mode--on" : ""} onClick={() => setMode("alertas")}>Alertas</button>
+              <button className={mode === "aprendizaje" ? "tc-mode--on" : ""} onClick={() => setMode("aprendizaje")}>Aprendizaje</button>
+            </div>
           </div>
         </div>
       </header>
@@ -320,37 +325,41 @@ export default function TiemposCocina() {
                         <div className="tc-card__name">{p.nombre}</div>
                         <div className="tc-card__tipo">
                           {p.tipo}
-                          {pp && pp.muestrasValidas >= 5
-                            ? <span className="tc-card__badge tc-card__badge--ok" title={`Alef ha medido ${pp.muestrasValidas} veces este plato`}>
+                          {pp && pp.muestrasValidas >= 60
+                            ? <span className="tc-card__badge tc-card__badge--ok" title={`${pp.muestrasValidas} muestras — dato real de tu cocina`}>
                                 real ~{Math.round(pp.p50Seg / 60)}m
                               </span>
                             : pp && pp.muestrasValidas > 0
-                            ? <span className="tc-card__badge tc-card__badge--learning" title={`${pp.muestrasValidas} de 5 platos minimos para dar prediccion fiable`}>
-                                {pp.muestrasValidas}/5
+                            ? <span className="tc-card__badge tc-card__badge--learning" title={`${pp.muestrasValidas} muestras — aun aprendiendo`}>
+                                {pp.muestrasValidas} platos
                               </span>
                             : null
                           }
                         </div>
-                        <div className="tc-card__fields">
-                          <label className="tc-card__field"><span>Tiempo (min)</span>
-                            <input type="number" className={`tc-inp ${empty ? "tc-inp--empty" : ""}`} value={d.slaDefaultMinutos}
+                        <div className="tc-card__time-row">
+                          <label className="tc-card__time-field">
+                            <input type="number" className={`tc-inp tc-inp--big ${empty ? "tc-inp--empty" : ""}`} value={d.slaDefaultMinutos}
                               onChange={(e) => updateDraft(p._id, "slaDefaultMinutos", e.target.value)} min="0" max="120" placeholder="-" />
-                          </label>
-                          <label className="tc-card__field" title="Cuantos puestos de la estacion ocupa este plato mientras se prepara"><span>Puestos</span>
-                            <input type="number" className="tc-inp" value={d.cargaEstacion}
-                              onChange={(e) => updateDraft(p._id, "cargaEstacion", e.target.value)} min="1" max="20" placeholder="1" />
-                          </label>
-                          <label className="tc-card__field" title="Minutos extra por cada unidad adicional (ej: 2 del mismo plato)"><span>Extra/ud</span>
-                            <input type="number" className="tc-inp" value={d.tiempoExtraUnidadMin}
-                              onChange={(e) => updateDraft(p._id, "tiempoExtraUnidadMin", e.target.value)} min="0" max="30" step="0.5" placeholder="0" />
+                            <span>min</span>
                           </label>
                         </div>
-                        <div className="tc-card__est">
+                        <div className="tc-card__details">
+                          <label className="tc-card__detail" title="Cuantos fuegos/puestos de la estacion ocupa este plato">
+                            <span className="tc-card__detail-val">{d.cargaEstacion || "1"}</span>
+                            <span className="tc-card__detail-label">{Number(d.cargaEstacion || 1) === 1 ? "puesto" : "puestos"}</span>
+                            <input type="number" className="tc-inp-hidden" value={d.cargaEstacion}
+                              onChange={(e) => updateDraft(p._id, "cargaEstacion", e.target.value)} min="1" max="20" placeholder="1" />
+                          </label>
+                          {Number(d.tiempoExtraUnidadMin || 0) > 0 && (
+                            <span className="tc-card__detail-extra" title="Si piden 2 del mismo plato, el segundo tarda este extra">
+                              +{d.tiempoExtraUnidadMin}m por ud extra
+                            </span>
+                          )}
                           <select className="tc-sel" value={p.estacion || ""} onChange={(e) => {
                             setProductos((prev) => prev.map((pr) => pr._id === p._id ? { ...pr, estacion: e.target.value } : pr));
                             setDrafts((prev) => ({ ...prev, [p._id]: { ...prev[p._id], _estacionChanged: e.target.value } }));
                           }}>
-                            <option value="">-</option>
+                            <option value="">Sin estacion</option>
                             {estaciones.map((est) => <option key={est._id} value={est.slug}>{est.nombre}</option>)}
                           </select>
                         </div>
@@ -431,6 +440,59 @@ export default function TiemposCocina() {
          ══════════════════════════════════════ */}
       {mode === "aprendizaje" && (
         <EtaPerfiles perfiles={perfiles} onRefresh={refreshPerfiles} />
+      )}
+
+      {/* ══════════════════════════════════════
+          MODAL AYUDA
+         ══════════════════════════════════════ */}
+      {showHelp && (
+        <div className="tc-help-overlay" onClick={() => setShowHelp(false)}>
+          <div className="tc-help-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="tc-help-modal__head">
+              <h3>Como funciona</h3>
+              <button className="tc-help-modal__close" onClick={() => setShowHelp(false)}>&times;</button>
+            </div>
+            <div className="tc-help-modal__body">
+              <section>
+                <h4>Tiempos</h4>
+                <p>Cada plato tiene un <strong>tiempo estimado en minutos</strong> — cuanto tarda en estar listo desde que entra en cocina. Este es el dato base que usa el sistema para calcular todo lo demas.</p>
+                <dl>
+                  <dt>Tiempo (min)</dt>
+                  <dd>Cuantos minutos tarda este plato en prepararse. Es el dato mas importante.</dd>
+                  <dt>Puestos</dt>
+                  <dd>Cuantos fuegos o huecos de la estacion ocupa este plato mientras se prepara. Una paella puede ocupar 2 fuegos, una croqueta solo 1. Si la estacion tiene 4 fuegos y el plato ocupa 2, solo caben 2 de este plato a la vez.</dd>
+                  <dt>Extra por unidad</dt>
+                  <dd>Si un cliente pide 3 del mismo plato, el primero tarda el tiempo normal. Cada unidad extra suma estos minutos adicionales. Ejemplo: una hamburguesa tarda 8 min, pero si piden 3, la segunda y tercera suman 2 min extra cada una (8 + 2 + 2 = 12 min total).</dd>
+                  <dt>Estacion</dt>
+                  <dd>A que zona de la cocina pertenece este plato (frio, frito, plancha, barra...). Cada estacion tiene una capacidad limitada.</dd>
+                </dl>
+              </section>
+
+              <section>
+                <h4>Simulador</h4>
+                <p>Monta pedidos ficticios para ver como responderia tu cocina. Puedes abrir varias mesas, agregar platos, y el motor calcula cuanto tardaria cada uno teniendo en cuenta la capacidad real de cada estacion.</p>
+                <p>Tambien puedes <strong>ajustar los cocineros y la capacidad</strong> de cada estacion para ver que pasa si contratas mas personal o reduces fuegos.</p>
+              </section>
+
+              <section>
+                <h4>Secciones y prioridad</h4>
+                <p>Los platos se agrupan por secciones (Entrantes, Medio, Final). La cocina <strong>prioriza las secciones por orden</strong> — los entrantes se preparan antes que los finales aunque entren al mismo tiempo.</p>
+                <p>Puedes marcar una seccion como <strong>"Junto"</strong> al hacer un pedido. Eso significa que todos los platos de esa seccion se sirven a la vez — el camarero espera a que esten todos listos.</p>
+              </section>
+
+              <section>
+                <h4>Alertas</h4>
+                <p>El sistema vigila cada mesa abierta. Si un plato tarda mas de lo esperado, la mesa se marca <strong>amarilla</strong> (en riesgo) y luego <strong>roja</strong> (retraso). Puedes configurar los umbrales.</p>
+              </section>
+
+              <section>
+                <h4>Aprendizaje</h4>
+                <p>Cada vez que un cocinero marca un plato como "listo", Alef mide cuanto tardo realmente. Con el tiempo, las predicciones dejan de usar los tiempos que configuraste aqui y empiezan a usar <strong>datos reales de tu cocina</strong>.</p>
+                <p>El aprendizaje es gradual y nunca se detiene. Las primeras muestras apenas pesan — necesita <strong>unas 60 para empezar a influir</strong> y cerca de <strong>1000 para maxima fiabilidad</strong> (95%). Siempre mantiene un 5% del tiempo que configuraste como red de seguridad.</p>
+              </section>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

@@ -40,6 +40,58 @@
   font-weight: 600;
 }
 
+/* ===== FULL WIDTH (MRR) ===== */
+
+.charts-section--full {
+  grid-template-columns: 1fr;
+  margin-top: 1.5rem;
+}
+
+.chart-card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.chart-card__subtitle {
+  margin: 2px 0 0;
+  font-size: 0.78rem;
+  color: #94a3b8;
+}
+
+.chart-card__kpi {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.chart-card__value {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #fff;
+}
+
+.chart-card__change {
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+}
+
+.chart-card__change--up {
+  color: #4ade80;
+  background: rgba(74, 222, 128, 0.12);
+}
+
+.chart-card__change--down {
+  color: #f87171;
+  background: rgba(248, 113, 113, 0.12);
+}
+
 /* ===== RESPONSIVE ===== */
 
 @media (max-width: 600px) {

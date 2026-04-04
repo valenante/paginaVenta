@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Modal from "react-modal";
 import api from "../../../../utils/api";
 import AlertaMensaje from "../../../../components/AlertaMensaje/AlertaMensaje";
@@ -40,6 +40,12 @@ export default function TenantModal({ tenant, onClose }) {
   // =========================
   const [releases, setReleases] = useState([]);
   const [selectedReleaseId, setSelectedReleaseId] = useState("");
+  const rollbackTimerRef = useRef(null);
+  // Cleanup timer on unmount
+  useEffect(() => {
+    return () => clearTimeout(rollbackTimerRef.current);
+  }, []);
+
   // =========================
   // Sync tenant
   // =========================
@@ -76,8 +82,7 @@ export default function TenantModal({ tenant, onClose }) {
         tipo: "success",
         mensaje: `Se detectaron ${lista.length} impresoras`,
       });
-    } catch (err) {
-      console.error(err);
+    } catch {
       setAlerta({
         tipo: "error",
         mensaje: "No se pudo obtener la lista de impresoras",
@@ -125,8 +130,7 @@ export default function TenantModal({ tenant, onClose }) {
         tipo: "success",
         mensaje: "Configuración guardada correctamente",
       });
-    } catch (err) {
-      console.error(err);
+    } catch {
       setAlerta({
         tipo: "error",
         mensaje: "Error al guardar la configuración",
@@ -186,8 +190,9 @@ export default function TenantModal({ tenant, onClose }) {
           : "Rollback iniciado",
       });
 
-      // opcional: refrescar estado/versión tras unos segundos
-      setTimeout(() => {
+      // refrescar estado/versión tras unos segundos
+      clearTimeout(rollbackTimerRef.current);
+      rollbackTimerRef.current = setTimeout(() => {
         verificarConexion();
       }, 1200);
     } catch (err) {
@@ -220,8 +225,7 @@ export default function TenantModal({ tenant, onClose }) {
         tipo: "success",
         mensaje: data?.message || "Prueba enviada",
       });
-    } catch (err) {
-      console.error(err);
+    } catch {
       setAlerta({
         tipo: "error",
         mensaje: "Error al enviar prueba de impresión",
@@ -249,8 +253,7 @@ export default function TenantModal({ tenant, onClose }) {
           ? `Agente en línea (${payload.ms} ms)`
           : "Agente fuera de línea",
       });
-    } catch (err) {
-      console.error(err);
+    } catch {
       setEstado("offline");
       setAlerta({
         tipo: "error",

@@ -57,6 +57,7 @@ export const TenantProvider = ({ children }) => {
   const [tenant, setTenant] = useState(null);
   const [loadingTenant, setLoadingTenant] = useState(false);
   const [tenantError, setTenantError] = useState(null);
+  const [tenantErrorCode, setTenantErrorCode] = useState(null);
 
   // ✅ 1) Si la URL trae tenantId, lo sincronizamos
   useEffect(() => {
@@ -95,17 +96,18 @@ export const TenantProvider = ({ children }) => {
       try {
         setLoadingTenant(true);
         setTenantError(null);
+        setTenantErrorCode(null);
 
         const { data } = await api.get("/meTenant/me", {
           signal: controller.signal,
         });
-        // /meTenant/me uses sendOk → { ok, data: { tenant } }
-        // Axios gives us data = { ok, data: { tenant } }, so unwrap:
         const payload = data?.data || data;
         if (!cancelled) setTenant(payload?.tenant || null);
       } catch (e) {
         if (cancelled || e?.name === "CanceledError" || e?.code === "ERR_CANCELED") return;
         setTenant(null);
+        const code = e?.response?.data?.code || null;
+        setTenantErrorCode(code);
         setTenantError(
           e?.response?.data?.error ||
           e?.response?.data?.message ||
@@ -129,6 +131,7 @@ export const TenantProvider = ({ children }) => {
     setTenantId(null);
     setTenant(null);
     setTenantError(null);
+    setTenantErrorCode(null);
     setLoadingTenant(false);
 
     sessionStorage.removeItem("tenantId");
@@ -142,9 +145,10 @@ export const TenantProvider = ({ children }) => {
       tenant,
       loadingTenant,
       tenantError,
-      clearTenant, // ✅
+      tenantErrorCode,
+      clearTenant,
     };
-  }, [tenantId, tenant, loadingTenant, tenantError]);
+  }, [tenantId, tenant, loadingTenant, tenantError, tenantErrorCode]);
 
   return (
     <TenantContext.Provider value={value}>

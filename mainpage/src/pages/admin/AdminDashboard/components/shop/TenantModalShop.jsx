@@ -68,8 +68,7 @@ export default function TenantModalShop({ tenant, onClose }) {
 
       setImpresoras(lista);
       setMensaje(`✅ Se detectaron ${lista.length} impresoras`);
-    } catch (e) {
-      console.error(e);
+    } catch {
       setMensaje("❌ No se pudo obtener la lista de impresoras");
     } finally {
       setLoading(false);
@@ -96,8 +95,7 @@ export default function TenantModalShop({ tenant, onClose }) {
       });
 
       setMensaje("✅ Configuración guardada correctamente");
-    } catch (e) {
-      console.error(e);
+    } catch {
       setMensaje("❌ Error al guardar la configuración");
     } finally {
       setLoading(false);
@@ -120,8 +118,7 @@ export default function TenantModalShop({ tenant, onClose }) {
       setMensaje(
         data?.message || `✅ Prueba enviada (${impresora || "predeterminada"})`
       );
-    } catch (e) {
-      console.error(e);
+    } catch {
       setMensaje("❌ Error al enviar prueba");
     } finally {
       setLoading(false);
@@ -143,8 +140,7 @@ export default function TenantModalShop({ tenant, onClose }) {
           ? `🟢 Agente en línea (${data.ms} ms)`
           : "🔴 Agente fuera de línea"
       );
-    } catch (e) {
-      console.error(e);
+    } catch {
       setEstado("offline");
       setMensaje("⚠️ No se pudo contactar con el agente");
     } finally {

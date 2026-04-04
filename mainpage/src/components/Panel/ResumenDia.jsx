@@ -96,19 +96,6 @@ export default function ResumenDia() {
           icono="💰"
         />
       </div>
-
-      {topProductos?.length > 0 && (
-        <div className="resumen-dia__top">
-          <span className="resumen-dia__top-label">Top productos</span>
-          <div className="resumen-dia__top-lista">
-            {topProductos.map((p) => (
-              <span key={p.productoId || p.nombre} className="resumen-dia__top-item">
-                {p.nombre} ({p.cantidad})
-              </span>
-            ))}
-          </div>
-        </div>
-      )}
     </section>
   );
 }

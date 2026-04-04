@@ -1,0 +1,169 @@
+/* ChurnSection — Tenants en riesgo */
+
+.churn-section {
+  margin-top: 1.5rem;
+  padding: 1.2rem 1.4rem;
+  border-radius: var(--radius-lg, 18px);
+  background: rgba(15, 23, 42, 0.55);
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.churn-section--ok {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.85rem;
+  color: #4ade80;
+  padding: 0.9rem 1.2rem;
+}
+
+.churn-section__ok-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.churn-section__header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 1rem;
+}
+
+.churn-section__warn-icon {
+  width: 20px;
+  height: 20px;
+  color: #fbbf24;
+}
+
+.churn-section__title {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #e2e8f0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.churn-section__count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  background: rgba(239, 68, 68, 0.2);
+  color: #f87171;
+}
+
+.churn-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 12px;
+}
+
+.churn-card {
+  padding: 1rem 1.2rem;
+  border-radius: 12px;
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(148, 163, 184, 0.12);
+  transition: border-color 0.15s;
+}
+
+.churn-card--high { border-left: 3px solid #f87171; }
+.churn-card--medium { border-left: 3px solid #fbbf24; }
+
+.churn-card__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.churn-card__name {
+  display: block;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #e2e8f0;
+}
+
+.churn-card__slug {
+  display: block;
+  font-size: 0.72rem;
+  color: #64748b;
+  font-family: monospace;
+}
+
+.churn-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  flex-shrink: 0;
+}
+
+.churn-badge--high {
+  background: rgba(239, 68, 68, 0.18);
+  color: #f87171;
+}
+
+.churn-badge--medium {
+  background: rgba(251, 191, 36, 0.18);
+  color: #fbbf24;
+}
+
+.churn-card__reasons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.churn-reason {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 0.7rem;
+  font-weight: 500;
+  background: rgba(148, 163, 184, 0.1);
+  color: #94a3b8;
+}
+
+.churn-card__footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.churn-card__login {
+  font-size: 0.75rem;
+  color: #64748b;
+}
+.churn-card__login strong { color: #94a3b8; }
+
+.churn-card__action {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 10px;
+  border-radius: 6px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #818cf8;
+  background: rgba(129, 140, 248, 0.1);
+  text-decoration: none;
+  transition: background 0.15s;
+}
+.churn-card__action:hover { background: rgba(129, 140, 248, 0.2); }
+
+@media (max-width: 600px) {
+  .churn-grid { grid-template-columns: 1fr; }
+}

@@ -1,5 +1,4 @@
-// src/pages/admin/AdminDashboard/AdminDashboard.jsx
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../../../styles/AdminDashboard.css";
 import useTenantsData from "../../../hooks/useTenantsData";
@@ -7,9 +6,12 @@ import DashboardHeader from "./components/DashboardHeader";
 import StatsCards from "./components/StatsCards";
 import TenantTable from "./components/TenantTable";
 import ChartsSection from "./components/ChartsSection";
+import ChurnSection from "./components/ChurnSection";
+import api from "../../../utils/api";
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
+  const [billingData, setBillingData] = useState(null);
 
   const {
     filtered,
@@ -25,6 +27,19 @@ export default function AdminDashboard() {
     totalPages,
     total,
   } = useTenantsData();
+
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        const { data } = await api.get("/admin/superadminBilling");
+        if (mounted) setBillingData(data);
+      } catch {
+        // billing data is optional — dashboard still works without it
+      }
+    })();
+    return () => { mounted = false; };
+  }, []);
 
   return (
     <div className="admin-dashboard">
@@ -51,7 +66,8 @@ export default function AdminDashboard() {
       )}
 
       <StatsCards tenants={filtered} />
-      <ChartsSection tenants={filtered} />
+      <ChurnSection />
+      <ChartsSection tenants={filtered} billingData={billingData} />
       <TenantTable
         tenants={filtered}
         onRefresh={fetchTenants}

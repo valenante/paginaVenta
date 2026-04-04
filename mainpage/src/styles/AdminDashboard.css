@@ -334,6 +334,12 @@
 
 .stat-card.verifactu .icon { color: #4ade80; }
 
+.stat-card.inactivos {
+  border-color: rgba(239, 68, 68, 0.35);
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.12), rgba(15, 23, 42, 0.75));
+}
+.stat-card.inactivos .icon { color: #f87171; }
+
 @media (max-width: 640px) {
   .stats-cards { grid-template-columns: 1fr; }
   .stat-card { padding: 1.1rem 1.2rem; }

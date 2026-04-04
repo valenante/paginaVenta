@@ -2,6 +2,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import api from "../../utils/api";
+import EmptyState from "../../components/ui/EmptyState";
+import { FiFileText } from "react-icons/fi";
 import "../../styles/LogsPage.css";
 import { useToast } from "../../context/ToastContext";
 
@@ -102,13 +104,13 @@ export default function LogsPage() {
       setTotalPages(data?.totalPages || 1);
     } catch (err) {
       if (!isCanceled(err)) {
-        console.error("❌ Error cargando logs:", err);
+        showToast("Error cargando logs", "error");
       }
     } finally {
       // Evita flicker si la respuesta ya no es la última
       if (reqId === listReqSeq.current) setLoading(false);
     }
-  }, [page, nivel, debouncedSearch, debouncedTenant]);
+  }, [page, nivel, debouncedSearch, debouncedTenant, showToast]);
 
   useEffect(() => {
     fetchLogs();
@@ -145,7 +147,7 @@ export default function LogsPage() {
         setSelected(data?.log || null);
       } catch (err) {
         if (!isCanceled(err)) {
-          console.error("❌ Error cargando detalle del log:", err);
+          showToast("Error cargando detalle del log", "error");
         }
       } finally {
         if (alive) setDetailLoading(false);
@@ -206,7 +208,6 @@ export default function LogsPage() {
       fetchLogs();
       showToast("Logs eliminados (se conservó el audit del borrado).", "exito");
     } catch (err) {
-      console.error("❌ Error eliminando logs:", err);
       showToast("No se pudieron eliminar los logs.", "error");
     }
   }, [closeModal, fetchLogs]);
@@ -391,7 +392,11 @@ export default function LogsPage() {
     {loading ? (
       <p className="logs-state logs-state--muted">Cargando logs…</p>
     ) : logs.length === 0 ? (
-      <p className="logs-state logs-state--muted">No hay logs.</p>
+      <EmptyState
+        icon={FiFileText}
+        title="Sin registros"
+        description="No hay logs que coincidan con los filtros actuales."
+      />
     ) : (
       <div className="logs-tableWrap">
         <table className="logs-table">

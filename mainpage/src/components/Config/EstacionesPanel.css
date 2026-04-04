@@ -4,16 +4,19 @@
  *****************************************************/
 
 /* ==================================================
-   Card
-================================================== */
-/* ==================================================
-   Grid
+   Grid helpers
 ================================================== */
 
 .config-grid-2 {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: var(--space-sm);
+  gap: var(--space-sm, 0.75rem);
+}
+
+.config-grid-3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: var(--space-sm, 0.75rem);
 }
 
 /* ==================================================
@@ -23,28 +26,57 @@
 .lista-simple {
   list-style: none;
   padding: 0;
-  margin: var(--space-sm) 0 0;
+  margin: var(--space-sm, 0.75rem) 0 0;
   display: flex;
   flex-direction: column;
-  gap: var(--space-xs);
+  gap: var(--space-xs, 0.5rem);
 }
 
 .lista-simple li {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: var(--space-sm);
-  padding: 0.55rem 0.85rem;
-  border-radius: var(--radius-sm);
+  gap: var(--space-sm, 0.75rem);
+  padding: 0.7rem 1rem;
+  border-radius: var(--radius-md, 10px);
   background: #f9fafb;
-  border: 1px solid transparent;
-  font-size: var(--font-size-sm);
-  transition: background 0.2s ease, border 0.2s ease;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  font-size: var(--font-size-sm, 0.85rem);
+  transition: all 0.2s ease;
 }
 
 .lista-simple li:hover {
   background: #f3f4f6;
-  border-color: var(--color-borde-suave);
+  border-color: rgba(0, 0, 0, 0.10);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+/* info dentro del li */
+.lista-simple li > span {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.lista-simple li > span > strong {
+  font-weight: 700;
+  font-size: var(--font-size-sm, 0.85rem);
+  color: var(--color-texto-principal, #1e293b);
+}
+
+.lista-simple li .text-suave {
+  font-size: var(--font-size-xs, 0.75rem);
+  color: var(--color-texto-secundario, #64748b);
+  font-weight: 500;
+}
+
+/* Tags inline de capacidad */
+.lista-simple li .estacion-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 4px;
 }
 
 /* ==================================================
@@ -53,22 +85,29 @@
 
 .acciones-mini {
   display: flex;
-  gap: 8px;
+  gap: 6px;
+  flex-shrink: 0;
 }
 
 .acciones-mini button {
   background: transparent;
-  border: none;
+  border: 1px solid transparent;
   cursor: pointer;
-  font-size: 17px;
-  padding: 4px;
-  border-radius: 4px;
-  transition: background 0.2s ease, transform 0.15s ease;
+  font-size: 15px;
+  padding: 6px 8px;
+  border-radius: var(--radius-sm, 6px);
+  transition: all 0.2s ease;
 }
 
 .acciones-mini button:hover {
-  background: rgba(0, 0, 0, 0.05);
+  background: rgba(0, 0, 0, 0.04);
+  border-color: rgba(0, 0, 0, 0.08);
   transform: scale(1.05);
+}
+
+.acciones-mini .delete-btn:hover {
+  background: rgba(220, 38, 38, 0.06);
+  border-color: rgba(220, 38, 38, 0.15);
 }
 
 .delete-btn {
@@ -76,15 +115,23 @@
 }
 
 /* ==================================================
-   Checkbox estación central
+   Checkbox estacion central
 ================================================== */
 
 .check-central {
   display: inline-flex;
   align-items: center;
-  gap: 0.45rem;
-  font-size: var(--font-size-sm);
+  gap: 0.5rem;
+  font-size: var(--font-size-sm, 0.85rem);
   font-weight: 500;
+  cursor: pointer;
+  padding: 6px 0;
+}
+
+.check-central input[type="checkbox"] {
+  accent-color: var(--color-primario, #6a0dad);
+  width: 16px;
+  height: 16px;
 }
 
 /* ==================================================
@@ -93,47 +140,97 @@
 
 .config-sep {
   height: 1px;
-  background: var(--color-borde-suave);
-  margin: var(--space-md) 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--color-borde-suave, #e2e8f0),
+    transparent
+  );
+  margin: var(--space-md, 1rem) 0;
 }
 
 /* ==================================================
-   MENSAJES EXPLICATIVOS (VERSIÓN PROFESIONAL)
+   Mensajes explicativos
 ================================================== */
 
 .estacion-central-info {
   grid-column: 1 / -1;
   margin-top: 6px;
   padding: 12px 14px;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-sm, 6px);
 
-  /* Estilo informativo profesional */
   background: linear-gradient(
     135deg,
-    rgba(106, 13, 173, 0.06),
-    rgba(255, 103, 0, 0.05)
+    rgba(106, 13, 173, 0.05),
+    rgba(255, 103, 0, 0.04)
   );
 
-  border: 1px solid rgba(106, 13, 173, 0.15);
-
-  font-size: var(--font-size-sm);
-  line-height: 1.45;
-  color: var(--color-texto-principal);
-
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(106, 13, 173, 0.12);
+  font-size: var(--font-size-xs, 0.75rem);
+  line-height: 1.5;
+  color: var(--color-texto-principal, #1e293b);
 }
 
-/* Icono destacado */
 .estacion-central-info::before {
   content: "⭐";
   margin-right: 6px;
 }
 
-/* Variante modal (ligeramente más contenida) */
 .estaciones-modal-body .estacion-central-info {
-  background: rgba(106, 13, 173, 0.05);
-  border-color: rgba(106, 13, 173, 0.2);
-  font-size: var(--font-size-xs);
+  background: rgba(106, 13, 173, 0.04);
+  border-color: rgba(106, 13, 173, 0.15);
+}
+
+/* ==================================================
+   Textos suaves y helpers
+================================================== */
+
+.text-suave {
+  color: var(--color-texto-secundario, #64748b);
+  font-size: var(--font-size-xs, 0.75rem);
+}
+
+small.text-suave {
+  display: block;
+  margin-top: 4px;
+  line-height: 1.45;
+  font-weight: 500;
+}
+
+/* ==================================================
+   Formulario: separacion label/input
+================================================== */
+
+.config-field--stacked {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 0.35rem;
+}
+
+.config-field--stacked > label {
+  font-size: var(--font-size-sm, 0.85rem);
+  font-weight: 600;
+  color: var(--color-texto-principal, #1e293b);
+  margin-bottom: 2px;
+}
+
+.config-field--stacked > input,
+.config-field--stacked > select {
+  padding: 0.6rem 0.8rem;
+  border-radius: var(--radius-sm, 6px);
+  border: 1px solid var(--color-borde-suave, #e2e8f0);
+  font-size: var(--font-size-sm, 0.85rem);
+  background: #fafbfc;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.config-field--stacked > input:focus,
+.config-field--stacked > select:focus {
+  outline: none;
+  border-color: var(--color-primario, #6a0dad);
+  box-shadow: 0 0 0 3px rgba(106, 13, 173, 0.08);
+  background: #fff;
 }
 
 /* ==================================================
@@ -142,12 +239,23 @@
 
 @media (max-width: 1200px) {
   .config-card {
-    padding: var(--space-md) var(--space-lg);
+    padding: var(--space-md, 1rem) var(--space-lg, 1.25rem);
   }
 }
 
 @media (max-width: 768px) {
-  .config-grid-2 {
+  .config-grid-2,
+  .config-grid-3 {
     grid-template-columns: 1fr;
+  }
+
+  .lista-simple li {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-xs, 0.5rem);
+  }
+
+  .acciones-mini {
+    align-self: flex-end;
   }
 }

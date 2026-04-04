@@ -10,6 +10,8 @@ import EditarPlanModal from "./EditarPlanModal";
 import NuevoFeatureModal from "./NuevoFeatureModal";
 import EditarFeatureModal from "./EditarFeatureModal";
 import Portal from "../../../components/ui/Portal";
+import EmptyState from "../../../components/ui/EmptyState";
+import { FiLayers, FiToggleRight } from "react-icons/fi";
 
 const PAGE_SIZE = 10;
 
@@ -132,7 +134,7 @@ export default function PlanesAdmin() {
                 </thead>
                 <tbody>
                   {planesPaged.length === 0 ? (
-                    <tr><td className="planes-table__empty" colSpan={5}>No hay planes.</td></tr>
+                    <tr><td colSpan={5}><EmptyState icon={FiLayers} title="Sin planes" description="Define planes para tus clientes." actionLabel="Crear plan" onAction={() => setModalNuevoPlan(true)} /></td></tr>
                   ) : planesPaged.map((p) => (
                     <tr className="planes-table__row" key={p._id}>
                       <td><span className="planes-name">{p.nombre}</span></td>
@@ -154,7 +156,7 @@ export default function PlanesAdmin() {
             {/* Mobile */}
             <div className="planes-mobile">
               {planesPaged.length === 0 ? (
-                <p className="planes-table__empty">No hay planes.</p>
+                <EmptyState icon={FiLayers} title="Sin planes" description="Define planes para tus clientes." actionLabel="Crear plan" onAction={() => setModalNuevoPlan(true)} />
               ) : planesPaged.map((p) => (
                 <div className="planes-card" key={p._id}>
                   <div className="planes-card__top">
@@ -197,7 +199,7 @@ export default function PlanesAdmin() {
                 </thead>
                 <tbody>
                   {featPaged.length === 0 ? (
-                    <tr><td className="planes-table__empty" colSpan={5}>No hay features.</td></tr>
+                    <tr><td colSpan={5}><EmptyState icon={FiToggleRight} title="Sin features" description="Crea features para asignar a tus planes." actionLabel="Crear feature" onAction={() => setModalNuevoFeature(true)} /></td></tr>
                   ) : featPaged.map((f) => (
                     <tr className="planes-table__row" key={f._id}>
                       <td><span className="planes-name">{f.nombre}</span></td>
@@ -222,7 +224,7 @@ export default function PlanesAdmin() {
             {/* Mobile */}
             <div className="planes-mobile">
               {featPaged.length === 0 ? (
-                <p className="planes-table__empty">No hay features.</p>
+                <EmptyState icon={FiToggleRight} title="Sin features" description="Crea features para asignar a tus planes." actionLabel="Crear feature" onAction={() => setModalNuevoFeature(true)} />
               ) : featPaged.map((f) => (
                 <div className="planes-card" key={f._id}>
                   <div className="planes-card__top">

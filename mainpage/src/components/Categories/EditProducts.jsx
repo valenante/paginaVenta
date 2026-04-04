@@ -158,6 +158,7 @@ const EditProduct = ({
       controlStock: product?.controlStock ?? false,
 
       imprimirSiempre: product?.imprimirSiempre ?? false,
+
     };
   }, [product]);
 
@@ -678,6 +679,7 @@ const EditProduct = ({
                     </p>
                   </label>
                 )}
+
               </div>
 
               {/* === PRECIOS (array dinámico) === */}

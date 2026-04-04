@@ -1,5 +1,5 @@
 import React, { Suspense, useEffect } from "react";
-import { Routes, useLocation, useParams, Navigate } from "react-router-dom";
+import { Routes, useLocation, useParams, Navigate, useNavigate } from "react-router-dom";
 
 /* ── Landing sections (eager — first paint) ── */
 import TopBar from "./components/TopBar/TopBar";
@@ -116,10 +116,37 @@ function WhatsAppFloatingGate() {
 /* ══════════════════════════════════════════════
    App routes — ensambla los módulos
    ══════════════════════════════════════════════ */
-function AppRoutes() {
-  const { tenantError } = useTenant();
+const TENANT_BLOCKED_MESSAGES = {
+  TENANT_SUSPENDIDO: {
+    title: "Cuenta suspendida",
+    message: "Tu cuenta ha sido suspendida temporalmente. Contacta con soporte de Alef para más información.",
+  },
+  TENANT_IMPAGO: {
+    title: "Pago pendiente",
+    message: "Hay un pago pendiente en tu suscripción. Actualiza tu método de pago o contacta con soporte.",
+  },
+  TENANT_CANCELADO: {
+    title: "Suscripción cancelada",
+    message: "Tu suscripción ha sido cancelada. Si deseas reactivar tu cuenta, contacta con soporte.",
+  },
+};
 
-  if (tenantError) {
+function AppRoutes() {
+  const { tenantError, tenantErrorCode, clearTenant } = useTenant();
+  const navigate = useNavigate();
+
+  // Tenant bloqueado → redirigir a login con mensaje
+  useEffect(() => {
+    if (!tenantErrorCode) return;
+    const blocked = TENANT_BLOCKED_MESSAGES[tenantErrorCode];
+    if (blocked) {
+      clearTenant();
+      sessionStorage.setItem("tenantBlockedMsg", JSON.stringify(blocked));
+      navigate("/login", { replace: true });
+    }
+  }, [tenantErrorCode, clearTenant, navigate]);
+
+  if (tenantError && !TENANT_BLOCKED_MESSAGES[tenantErrorCode]) {
     return (
       <TenantErrorScreen
         error={tenantError}

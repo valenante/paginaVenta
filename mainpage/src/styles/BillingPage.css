@@ -8,7 +8,14 @@
 }
 
 /* Header */
-.billing__header { margin-bottom: 1.2rem; }
+.billing__header {
+  margin-bottom: 1.2rem;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
 .billing__title {
   margin: 0;
   font-size: 1.5rem;
@@ -20,6 +27,35 @@
   font-size: 0.85rem;
   color: rgba(148,163,184,0.85);
 }
+
+/* Stripe button */
+.billing__stripe-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #818cf8;
+  background: rgba(129, 140, 248, 0.1);
+  border: 1px solid rgba(129, 140, 248, 0.25);
+  border-radius: 10px;
+  text-decoration: none;
+  transition: background 0.15s ease, color 0.15s ease;
+  white-space: nowrap;
+}
+.billing__stripe-btn:hover {
+  background: rgba(129, 140, 248, 0.2);
+  color: #a5b4fc;
+}
+
+.billing-stripe-link {
+  display: inline-flex;
+  align-items: center;
+  color: #818cf8;
+  transition: color 0.15s;
+}
+.billing-stripe-link:hover { color: #a5b4fc; }
 
 /* States */
 .billing-state {
@@ -211,6 +247,160 @@
   min-width: 50px;
   text-align: center;
 }
+
+/* KPI variants */
+.billing-kpi--warn {
+  border-color: rgba(251, 191, 36, 0.35);
+  background: linear-gradient(135deg, rgba(251, 191, 36, 0.1), rgba(15, 23, 42, 0.75));
+}
+.billing-kpi--warn .billing-kpi__value { color: #fbbf24; }
+
+.billing-kpi--danger {
+  border-color: rgba(239, 68, 68, 0.35);
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(15, 23, 42, 0.75));
+}
+.billing-kpi--danger .billing-kpi__value { color: #f87171; }
+
+/* Action buttons (in table rows) */
+.billing-table__actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.billing-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 10px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s, opacity 0.15s;
+  white-space: nowrap;
+}
+.billing-action-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.billing-action-btn--refund {
+  background: rgba(251, 191, 36, 0.15);
+  color: #fbbf24;
+}
+.billing-action-btn--refund:hover:not(:disabled) { background: rgba(251, 191, 36, 0.25); }
+
+.billing-action-btn--retry {
+  background: rgba(74, 222, 128, 0.15);
+  color: #4ade80;
+}
+.billing-action-btn--retry:hover:not(:disabled) { background: rgba(74, 222, 128, 0.25); }
+
+.billing-table__row--loading { opacity: 0.5; pointer-events: none; }
+
+.billing-card__actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+/* Refund Modal */
+.billing-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeOverlayBilling 0.15s ease;
+}
+@keyframes fadeOverlayBilling { from { opacity: 0; } to { opacity: 1; } }
+
+.billing-modal {
+  background: rgba(15, 23, 42, 0.95);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 16px;
+  padding: 1.8rem 2rem;
+  width: 90%;
+  max-width: 440px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+  animation: slideUpBilling 0.2s ease;
+}
+@keyframes slideUpBilling { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+.billing-modal__title {
+  margin: 0 0 0.5rem;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #fff;
+}
+
+.billing-modal__info {
+  margin: 0 0 1.2rem;
+  font-size: 0.85rem;
+  color: #94a3b8;
+}
+
+.billing-modal__label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #e2e8f0;
+  margin-bottom: 1rem;
+}
+
+.billing-modal__input {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  background: rgba(15, 23, 42, 0.6);
+  color: #e2e8f0;
+  font-size: 0.85rem;
+}
+.billing-modal__input:focus {
+  outline: none;
+  border-color: #818cf8;
+  box-shadow: 0 0 0 2px rgba(129, 140, 248, 0.2);
+}
+
+.billing-modal__hint {
+  font-size: 0.75rem;
+  color: #64748b;
+  font-weight: 400;
+}
+
+.billing-modal__actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 0.5rem;
+}
+
+.billing-modal__btn {
+  padding: 9px 18px;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  transition: background 0.15s, opacity 0.15s;
+}
+.billing-modal__btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.billing-modal__btn--cancel {
+  background: rgba(148, 163, 184, 0.15);
+  color: #94a3b8;
+}
+.billing-modal__btn--cancel:hover { background: rgba(148, 163, 184, 0.25); }
+
+.billing-modal__btn--confirm {
+  background: linear-gradient(135deg, #6A0DAD, #8b5cf6);
+  color: #fff;
+}
+.billing-modal__btn--confirm:hover { opacity: 0.9; }
 
 /* Responsive */
 @media (max-width: 900px) {

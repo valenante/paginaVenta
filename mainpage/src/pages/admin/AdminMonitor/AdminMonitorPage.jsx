@@ -96,7 +96,7 @@ export default function AdminMonitorPage() {
       setRows(ten.data?.items || []);
       setHttpGlobal(http.data || null);
       setHttpTenants(httpT.data?.items || []);
-    } catch (e) { console.error("Monitor core error:", e); }
+    } catch { /* monitor fetch failed — UI shows stale data */ }
 
     try {
       const emailT = await api.get("/admin/superadminMonitor/services", { params: { service: "email", q } });

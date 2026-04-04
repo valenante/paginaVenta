@@ -24,8 +24,7 @@ export default function EditPlanModal({ tenant, onClose, onSave }) {
         if (!tenant.plan && activos[0]) {
           setSelectedPlan(activos[0].slug);
         }
-      } catch (err) {
-        console.error("❌ Error cargando planes:", err);
+      } catch {
         setError("No se pudieron cargar los planes disponibles.");
       } finally {
         setLoadingPlanes(false);
@@ -49,7 +48,6 @@ export default function EditPlanModal({ tenant, onClose, onSave }) {
       await onSave(tenant._id, selectedPlan);
       onClose();
     } catch (err) {
-      console.error("❌ Error guardando plan del tenant:", err);
       setError(
         err?.response?.data?.error ||
           "No se pudo actualizar el plan del restaurante."

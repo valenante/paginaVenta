@@ -22,6 +22,9 @@ import StaffPanel from "./panel/StaffPanel";
 // ✅ Cortesias (invitaciones + comida personal)
 import CortesiasPage from "../components/Cortesias/CortesiasPage";
 
+// ✅ Tiempos de cocina (SLA)
+import TiemposCocina from "./TiemposCocina/TiemposCocina";
+
 // ✅ Tenant + Auth
 import { useTenant } from "../context/TenantContext";
 import { useAuth } from "../context/AuthContext.jsx";
@@ -35,6 +38,7 @@ const PANEL_BY_TIPO = {
     { key: "valoraciones", label: "⭐ Valoraciones", permiso: "valoraciones.manage", render: () => <ValoracionesPanel /> },
     { key: "estadisticas", label: "📊 Estadísticas", permiso: "estadisticas.manage", render: () => <EstadisticasPage type="plato" /> },
     { key: "cortesias", label: "🎁 Cortesias", permiso: "cortesias.view", render: () => <CortesiasPage /> },
+    { key: "tiempos", label: "⏱️ Tiempos cocina", permiso: null, render: () => <TiemposCocina /> },
   ],
 
   shop: [

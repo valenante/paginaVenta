@@ -469,3 +469,122 @@
 @media (max-width: 520px) {
   .tickets__header { flex-direction: column; align-items: stretch; }
 }
+
+/* ===== SLA BADGES ===== */
+.sla-badge {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.sla-badge--ok       { background: rgba(34,197,94,0.15); color: #4ade80; }
+.sla-badge--warning   { background: rgba(251,191,36,0.15); color: #fbbf24; }
+.sla-badge--critical  { background: rgba(239,68,68,0.15); color: #f87171; }
+.sla-badge--breached  { background: rgba(239,68,68,0.25); color: #fca5a5; font-weight: 800; }
+.sla-badge--neutral   { color: #64748b; }
+
+/* SLA banner in modal */
+.tickets-sla-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  margin: 0 16px 0;
+}
+.sla-banner--ok       { background: rgba(34,197,94,0.08); color: #4ade80; }
+.sla-banner--warning   { background: rgba(251,191,36,0.08); color: #fbbf24; }
+.sla-banner--critical  { background: rgba(239,68,68,0.08); color: #f87171; }
+.sla-banner--breached  { background: rgba(239,68,68,0.15); color: #fca5a5; }
+.tickets-sla-hours { font-weight: 400; font-size: 0.75rem; opacity: 0.7; }
+
+/* Assignment row */
+.tickets-assign-row {
+  display: flex;
+  gap: 6px;
+}
+.tickets-assign-btn {
+  padding: 6px 12px;
+  border: 1px solid rgba(129,140,248,0.3);
+  background: rgba(129,140,248,0.1);
+  color: #818cf8;
+  border-radius: 8px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s;
+}
+.tickets-assign-btn:hover:not(:disabled) { background: rgba(129,140,248,0.2); }
+.tickets-assign-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* Internal notes */
+.tickets-notas {
+  padding: 0 16px 12px;
+}
+.tickets-notas__title {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin: 0 0 8px;
+}
+.tickets-notas__input {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(148,163,184,0.2);
+  background: rgba(15,23,42,0.5);
+  color: #e2e8f0;
+  font-family: inherit;
+  font-size: 0.82rem;
+  resize: vertical;
+  outline: none;
+  transition: border-color 0.15s;
+}
+.tickets-notas__input:focus {
+  border-color: rgba(129,140,248,0.5);
+}
+.tickets-notas__btn {
+  margin-top: 6px;
+  padding: 7px 14px;
+  border: 1px solid rgba(148,163,184,0.2);
+  background: rgba(148,163,184,0.08);
+  color: #94a3b8;
+  border-radius: 8px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.tickets-notas__btn:hover:not(:disabled) { background: rgba(148,163,184,0.15); }
+.tickets-notas__btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* Confirm delete inline */
+.tickets-confirmDelete {
+  padding: 12px 16px;
+}
+.tickets-confirmDelete p {
+  margin: 0 0 8px;
+  font-size: 0.85rem;
+  color: #f87171;
+  font-weight: 600;
+}
+.tickets-confirmDelete__actions {
+  display: flex;
+  gap: 8px;
+}
+.tickets-cancelBtn {
+  padding: 8px 16px;
+  border: 1px solid rgba(148,163,184,0.2);
+  background: rgba(148,163,184,0.08);
+  color: #94a3b8;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  cursor: pointer;
+}

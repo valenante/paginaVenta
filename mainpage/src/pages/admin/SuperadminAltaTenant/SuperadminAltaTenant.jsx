@@ -142,8 +142,8 @@ export default function SuperadminAltaTenant() {
         // usa el mismo endpoint que el registro real
         const { data } = await api.get("/admin/superadminPlans/publicPlans");
         setPlanes(Array.isArray(data) ? data : []);
-      } catch (e) {
-        console.error(e);
+      } catch {
+        // plans load failed — will show empty list
       }
     })();
   }, []);
@@ -226,7 +226,6 @@ export default function SuperadminAltaTenant() {
         );
       }
     } catch (err) {
-      console.error(err);
       setError(err?.response?.data?.message || err?.message || "Error al provisionar.");
     } finally {
       setLoading(false);

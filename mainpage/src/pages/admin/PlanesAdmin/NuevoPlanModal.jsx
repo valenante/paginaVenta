@@ -24,8 +24,8 @@ export default function NuevoPlanModal({ onClose, onSave }) {
       try {
         const { data } = await api.get("/admin/superadmin/features");
         setFeatures(data);
-      } catch (err) {
-        console.error("Error cargando features:", err);
+      } catch {
+        // features load failed — form still usable
       }
     };
     fetchFeatures();

@@ -15,6 +15,18 @@ export default function Login() {
   const [uiError, setUiError] = useState(null);
   const [cooldown, setCooldown] = useState(0);
   const [showPassword, setShowPassword] = useState(false);
+  const [blockedMsg, setBlockedMsg] = useState(null);
+
+  // Leer mensaje de tenant bloqueado (si viene redirigido)
+  useEffect(() => {
+    try {
+      const raw = sessionStorage.getItem("tenantBlockedMsg");
+      if (raw) {
+        setBlockedMsg(JSON.parse(raw));
+        sessionStorage.removeItem("tenantBlockedMsg");
+      }
+    } catch {}
+  }, []);
 
   const handleChange = (e) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -156,6 +168,13 @@ export default function Login() {
                 </button>
               </div>
             </div>
+
+            {blockedMsg && (
+              <div className="login-blocked-banner" role="alert">
+                <strong>{blockedMsg.title}</strong>
+                <p>{blockedMsg.message}</p>
+              </div>
+            )}
 
             {uiError && (
               <ErrorToast

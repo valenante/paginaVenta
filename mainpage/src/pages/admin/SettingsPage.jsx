@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import api from "../../utils/api";
 import "../../styles/SettingsPage.css";
 import { useToast } from "../../context/ToastContext";
@@ -72,8 +72,14 @@ function buildPayload(config, secrets) {
 }
 
 function stableStringify(obj) {
-  // stringify estable para dirty state
-  return JSON.stringify(obj, Object.keys(obj).sort());
+  return JSON.stringify(obj, (_key, value) => {
+    if (value && typeof value === "object" && !Array.isArray(value)) {
+      const sorted = {};
+      for (const k of Object.keys(value).sort()) sorted[k] = value[k];
+      return sorted;
+    }
+    return value;
+  });
 }
 
 export default function SettingsPage() {
@@ -90,21 +96,27 @@ export default function SettingsPage() {
   // snapshot para detectar cambios
   const basePayloadRef = useRef("");
 
-  const cargarConfig = async () => {
+  const [loadError, setLoadError] = useState(null);
+
+  const cargarConfig = useCallback(async () => {
     const res = await api.get("/admin/superadmin/system/config");
     setConfig(res.data.config);
-  };
+  }, []);
 
-  const cargarStatus = async () => {
+  const cargarStatus = useCallback(async () => {
     const res = await api.get("/admin/superadmin/system/status");
     setStatus(res.data.status);
-  };
+  }, []);
 
   useEffect(() => {
     (async () => {
-      await Promise.all([cargarConfig(), cargarStatus()]);
+      try {
+        await Promise.all([cargarConfig(), cargarStatus()]);
+      } catch {
+        setLoadError("No se pudo cargar la configuración del sistema.");
+      }
     })();
-  }, []);
+  }, [cargarConfig, cargarStatus]);
 
   // cuando config llega por primera vez, guardamos snapshot de payload "sin secretos"
   useEffect(() => {
@@ -175,8 +187,7 @@ export default function SettingsPage() {
       basePayloadRef.current = stableStringify(base);
 
       showToast("Cambios guardados", "exito");
-    } catch (err) {
-      console.error("Error guardando ajustes:", err);
+    } catch {
       showToast("No se pudieron guardar los cambios", "error");
     } finally {
       setSaving(false);
@@ -196,6 +207,7 @@ export default function SettingsPage() {
     }
   };
 
+  if (loadError) return <p style={{ color: "var(--color-error)" }}>{loadError}</p>;
   if (!config || !status) return <p>Cargando configuración...</p>;
 
   const estado = (ok) => (

@@ -1,19 +1,26 @@
-import { useEffect, useMemo, useState } from "react";
-import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { FiChevronLeft, FiChevronRight, FiCreditCard, FiRepeat, FiExternalLink, FiRotateCw, FiCornerDownLeft, FiAlertTriangle } from "react-icons/fi";
 import api from "../../utils/api";
+import EmptyState from "../../components/ui/EmptyState";
+import { useToast } from "../../context/ToastContext";
 import "../../styles/BillingPage.css";
 
 const PAGE_SIZE = 10;
 
-function moneyEUR(v) {
-  return `${Number(v || 0).toFixed(2)} €`;
+function stripeUrl(path, mode) {
+  const base = mode === "test" ? "https://dashboard.stripe.com/test" : "https://dashboard.stripe.com";
+  return path ? `${base}/${path}` : base;
 }
+
+function moneyEUR(v) { return `${Number(v || 0).toFixed(2)} €`; }
+
 function fmtDateTime(ts) {
   if (!ts) return "—";
   const n = Number(ts);
   const ms = n < 1e10 ? n * 1000 : n;
   try { return new Date(ms).toLocaleString("es-ES"); } catch { return "—"; }
 }
+
 function fmtDate(d) {
   if (!d) return "—";
   try { return new Date(d).toLocaleDateString("es-ES"); } catch { return "—"; }
@@ -37,25 +44,45 @@ function Pagination({ page, totalPages, setPage, disabled }) {
 }
 
 export default function BillingPage() {
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState(null);
   const [error, setError] = useState("");
   const [pagoPag, setPagoPag] = useState(1);
   const [subPag, setSubPag] = useState(1);
 
+  // Refund modal
+  const [refundTarget, setRefundTarget] = useState(null); // payment object
+  const [refundAmount, setRefundAmount] = useState("");
+  const [refundReason, setRefundReason] = useState("requested_by_customer");
+  const [refundLoading, setRefundLoading] = useState(false);
+
+  // Per-row loading
+  const [rowLoading, setRowLoading] = useState(null); // paymentIntentId
+
+  // Churn stats
+  const [churnStats, setChurnStats] = useState(null);
+
+  const fetchData = useCallback(async () => {
+    try {
+      const res = await api.get("/admin/superadminBilling");
+      setData(res.data);
+    } catch {
+      setError("No se pudo cargar la información de facturación.");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => { fetchData(); }, [fetchData]);
+
   useEffect(() => {
-    let mounted = true;
     (async () => {
       try {
-        const res = await api.get("/admin/superadminBilling");
-        if (mounted) setData(res.data);
-      } catch {
-        if (mounted) setError("No se pudo cargar la información de facturación.");
-      } finally {
-        if (mounted) setLoading(false);
-      }
+        const { data: d } = await api.get("/admin/superadminBilling/churn-overview");
+        setChurnStats(d.stats);
+      } catch { /* churn stats optional */ }
     })();
-    return () => { mounted = false; };
   }, []);
 
   const view = useMemo(() => {
@@ -63,6 +90,7 @@ export default function BillingPage() {
     return {
       mrr: Number(safe.mrr || 0),
       totalTenants: Number(safe.totalTenants || 0),
+      stripeMode: safe.stripeMode || "live",
       pagos: Array.isArray(safe.pagos) ? safe.pagos : [],
       suscripciones: Array.isArray(safe.suscripciones) ? safe.suscripciones : [],
     };
@@ -80,15 +108,72 @@ export default function BillingPage() {
   }, [view.suscripciones, subPag]);
   const subsTotalPages = Math.ceil(view.suscripciones.length / PAGE_SIZE) || 1;
 
+  // ── Refund ──
+  const openRefundModal = (p) => {
+    setRefundTarget(p);
+    setRefundAmount(((p.amount || 0) / 100).toFixed(2));
+    setRefundReason("requested_by_customer");
+  };
+
+  const submitRefund = async () => {
+    if (!refundTarget) return;
+    setRefundLoading(true);
+    try {
+      const body = {
+        paymentIntentId: refundTarget.id,
+        reason: refundReason,
+      };
+      const totalEur = (refundTarget.amount || 0) / 100;
+      const requestedEur = parseFloat(refundAmount);
+      if (requestedEur > 0 && requestedEur < totalEur) {
+        body.amount = requestedEur; // partial
+      }
+      await api.post("/admin/superadminBilling/refund", body);
+      showToast("Reembolso procesado correctamente", "exito");
+      setRefundTarget(null);
+      await fetchData();
+    } catch (err) {
+      showToast(err?.response?.data?.error || "Error procesando reembolso", "error");
+    } finally {
+      setRefundLoading(false);
+    }
+  };
+
+  // ── Retry ──
+  const retryPayment = async (p) => {
+    setRowLoading(p.id);
+    try {
+      const invoiceId = p.invoice;
+      if (!invoiceId) {
+        showToast("Este pago no tiene invoice asociada para reintentar", "aviso");
+        return;
+      }
+      await api.post("/admin/superadminBilling/retry", { invoiceId });
+      showToast("Cobro reintentado correctamente", "exito");
+      await fetchData();
+    } catch (err) {
+      showToast(err?.response?.data?.error || "Error reintentando cobro", "error");
+    } finally {
+      setRowLoading(null);
+    }
+  };
+
   if (loading) return <p className="billing-state billing-state--loading">Cargando datos...</p>;
   if (error) return <p className="billing-state billing-state--error">{error}</p>;
   if (!data) return <p className="billing-state billing-state--error">No hay datos.</p>;
 
+  const pStatus = (s) => String(s || "").toLowerCase();
+
   return (
     <section className="billing">
       <header className="billing__header">
-        <h1 className="billing__title">Facturación</h1>
-        <p className="billing__subtitle">Ingresos recurrentes, pagos recientes y suscripciones activas.</p>
+        <div>
+          <h1 className="billing__title">Facturación</h1>
+          <p className="billing__subtitle">Ingresos, pagos, suscripciones y riesgo de churn.</p>
+        </div>
+        <a href={stripeUrl("", view.stripeMode)} target="_blank" rel="noopener noreferrer" className="billing__stripe-btn">
+          <FiExternalLink /> Stripe Dashboard
+        </a>
       </header>
 
       {/* KPIs */}
@@ -108,16 +193,29 @@ export default function BillingPage() {
           <div className="billing-kpi__value">{view.suscripciones.length}</div>
           <div className="billing-kpi__hint">Activas</div>
         </article>
+        {churnStats && (
+          <>
+            <article className="billing-kpi billing-kpi--warn">
+              <div className="billing-kpi__label">En riesgo</div>
+              <div className="billing-kpi__value">{churnStats.atRisk}</div>
+              <div className="billing-kpi__hint">Tenants en riesgo de churn</div>
+            </article>
+            <article className="billing-kpi billing-kpi--danger">
+              <div className="billing-kpi__label">Past due</div>
+              <div className="billing-kpi__value">{churnStats.pastDue}</div>
+              <div className="billing-kpi__hint">Pagos fallidos</div>
+            </article>
+          </>
+        )}
       </div>
 
-      {/* Pagos */}
+      {/* ── Pagos ── */}
       <section className="billing-block">
         <header className="billing-block__header">
           <h2 className="billing-block__title">Últimos pagos</h2>
           <span className="billing-block__count">{view.pagos.length}</span>
         </header>
 
-        {/* Desktop */}
         <div className="billing-desktop">
           <table className="billing-table">
             <thead className="billing-table__thead">
@@ -126,17 +224,43 @@ export default function BillingPage() {
                 <th>Estado</th>
                 <th>Cliente</th>
                 <th>Fecha</th>
+                <th>Acciones</th>
               </tr>
             </thead>
             <tbody>
               {pagosPaged.length === 0 ? (
-                <tr><td className="billing-table__empty" colSpan={4}>No hay pagos recientes.</td></tr>
+                <tr><td colSpan={5}><EmptyState icon={FiCreditCard} title="Sin pagos recientes" description="Los pagos aparecerán aquí cuando se procesen." /></td></tr>
               ) : pagosPaged.map((p) => (
-                <tr key={p.id}>
+                <tr key={p.id} className={rowLoading === p.id ? "billing-table__row--loading" : ""}>
                   <td>{moneyEUR((p.amount || 0) / 100)}</td>
                   <td><StatusPill status={p.status} /></td>
                   <td className="billing-table__customer">{p.customer || "—"}</td>
                   <td>{fmtDateTime(p.created)}</td>
+                  <td className="billing-table__actions">
+                    <a href={stripeUrl(`payments/${p.id}`, view.stripeMode)} target="_blank" rel="noopener noreferrer" className="billing-stripe-link" title="Ver en Stripe">
+                      <FiExternalLink />
+                    </a>
+                    {pStatus(p.status) === "succeeded" && (
+                      <button
+                        className="billing-action-btn billing-action-btn--refund"
+                        onClick={() => openRefundModal(p)}
+                        title="Reembolsar"
+                        disabled={rowLoading === p.id}
+                      >
+                        <FiCornerDownLeft /> Reembolsar
+                      </button>
+                    )}
+                    {(pStatus(p.status) === "requires_payment_method" || pStatus(p.status) === "requires_confirmation") && p.invoice && (
+                      <button
+                        className="billing-action-btn billing-action-btn--retry"
+                        onClick={() => retryPayment(p)}
+                        title="Reintentar cobro"
+                        disabled={rowLoading === p.id}
+                      >
+                        <FiRotateCw /> {rowLoading === p.id ? "..." : "Reintentar"}
+                      </button>
+                    )}
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -146,7 +270,7 @@ export default function BillingPage() {
         {/* Mobile cards */}
         <div className="billing-mobile">
           {pagosPaged.length === 0 ? (
-            <p className="billing-table__empty">No hay pagos recientes.</p>
+            <EmptyState icon={FiCreditCard} title="Sin pagos recientes" description="Los pagos aparecerán aquí." />
           ) : pagosPaged.map((p) => (
             <div className="billing-card" key={p.id}>
               <div className="billing-card__row">
@@ -157,6 +281,18 @@ export default function BillingPage() {
                 <span>{p.customer || "—"}</span>
                 <span>{fmtDateTime(p.created)}</span>
               </div>
+              <div className="billing-card__actions">
+                {pStatus(p.status) === "succeeded" && (
+                  <button className="billing-action-btn billing-action-btn--refund" onClick={() => openRefundModal(p)}>
+                    <FiCornerDownLeft /> Reembolsar
+                  </button>
+                )}
+                {(pStatus(p.status) === "requires_payment_method" || pStatus(p.status) === "requires_confirmation") && p.invoice && (
+                  <button className="billing-action-btn billing-action-btn--retry" onClick={() => retryPayment(p)} disabled={rowLoading === p.id}>
+                    <FiRotateCw /> Reintentar
+                  </button>
+                )}
+              </div>
             </div>
           ))}
         </div>
@@ -164,14 +300,13 @@ export default function BillingPage() {
         <Pagination page={pagoPag} totalPages={pagosTotalPages} setPage={setPagoPag} />
       </section>
 
-      {/* Suscripciones */}
+      {/* ── Suscripciones ── */}
       <section className="billing-block">
         <header className="billing-block__header">
           <h2 className="billing-block__title">Suscripciones</h2>
           <span className="billing-block__count">{view.suscripciones.length}</span>
         </header>
 
-        {/* Desktop */}
         <div className="billing-desktop">
           <table className="billing-table">
             <thead className="billing-table__thead">
@@ -180,27 +315,34 @@ export default function BillingPage() {
                 <th>Precio</th>
                 <th>Inicio</th>
                 <th>Renovación</th>
+                <th>Stripe</th>
               </tr>
             </thead>
             <tbody>
               {subsPaged.length === 0 ? (
-                <tr><td className="billing-table__empty" colSpan={4}>No hay suscripciones.</td></tr>
+                <tr><td colSpan={5}><EmptyState icon={FiRepeat} title="Sin suscripciones activas" description="Las suscripciones se mostrarán aquí." /></td></tr>
               ) : subsPaged.map((s) => (
                 <tr key={s._id}>
                   <td className="billing-table__tenant">{s.tenantId}</td>
                   <td>{moneyEUR(s.precioMensual || 0)}</td>
                   <td>{fmtDate(s.fechaInicio)}</td>
                   <td>{fmtDate(s.fechaRenovacion)}</td>
+                  <td>
+                    {s.stripeSubscriptionId ? (
+                      <a href={stripeUrl(`subscriptions/${s.stripeSubscriptionId}`, view.stripeMode)} target="_blank" rel="noopener noreferrer" className="billing-stripe-link" title="Ver en Stripe">
+                        <FiExternalLink />
+                      </a>
+                    ) : "—"}
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
 
-        {/* Mobile cards */}
         <div className="billing-mobile">
           {subsPaged.length === 0 ? (
-            <p className="billing-table__empty">No hay suscripciones.</p>
+            <EmptyState icon={FiRepeat} title="Sin suscripciones" description="Las suscripciones aparecerán aquí." />
           ) : subsPaged.map((s) => (
             <div className="billing-card" key={s._id}>
               <div className="billing-card__row">
@@ -217,6 +359,51 @@ export default function BillingPage() {
 
         <Pagination page={subPag} totalPages={subsTotalPages} setPage={setSubPag} />
       </section>
+
+      {/* ── Refund Modal ── */}
+      {refundTarget && (
+        <div className="billing-modal-overlay" onClick={() => !refundLoading && setRefundTarget(null)}>
+          <div className="billing-modal" onClick={(e) => e.stopPropagation()}>
+            <h3 className="billing-modal__title">Reembolsar pago</h3>
+            <p className="billing-modal__info">
+              Pago: <strong>{moneyEUR((refundTarget.amount || 0) / 100)}</strong> — {refundTarget.customer || "—"}
+            </p>
+
+            <label className="billing-modal__label">
+              Monto a reembolsar (€)
+              <input
+                type="number"
+                step="0.01"
+                min="0.01"
+                max={((refundTarget.amount || 0) / 100).toFixed(2)}
+                className="billing-modal__input"
+                value={refundAmount}
+                onChange={(e) => setRefundAmount(e.target.value)}
+                disabled={refundLoading}
+              />
+              <small className="billing-modal__hint">Deja el total para reembolso completo, o reduce para parcial.</small>
+            </label>
+
+            <label className="billing-modal__label">
+              Motivo
+              <select className="billing-modal__input" value={refundReason} onChange={(e) => setRefundReason(e.target.value)} disabled={refundLoading}>
+                <option value="requested_by_customer">Solicitado por el cliente</option>
+                <option value="duplicate">Pago duplicado</option>
+                <option value="fraudulent">Fraudulento</option>
+              </select>
+            </label>
+
+            <div className="billing-modal__actions">
+              <button className="billing-modal__btn billing-modal__btn--cancel" onClick={() => setRefundTarget(null)} disabled={refundLoading}>
+                Cancelar
+              </button>
+              <button className="billing-modal__btn billing-modal__btn--confirm" onClick={submitRefund} disabled={refundLoading}>
+                {refundLoading ? "Procesando..." : "Confirmar reembolso"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }

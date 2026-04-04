@@ -5,6 +5,7 @@ import {
   FiClock,
   FiShoppingBag,
   FiCoffee,
+  FiAlertTriangle,
 } from "react-icons/fi";
 
 export default function StatsCards({ tenants }) {
@@ -26,6 +27,11 @@ export default function StatsCards({ tenants }) {
     (t) => t.verifactuEnabled
   ).length;
 
+  const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+  const inactivos = tenants.filter(
+    (t) => !t.lastLogin || new Date(t.lastLogin) < sevenDaysAgo
+  ).length;
+
   const latest =
     tenants.length > 0
       ? new Date(
@@ -35,7 +41,6 @@ export default function StatsCards({ tenants }) {
 
   return (
     <div className="stats-cards">
-      {/* TOTAL */}
       <div className="stat-card">
         <FiUsers className="icon" />
         <div>
@@ -44,7 +49,6 @@ export default function StatsCards({ tenants }) {
         </div>
       </div>
 
-      {/* RESTAURANTES */}
       <div className="stat-card restaurante">
         <FiCoffee className="icon" />
         <div>
@@ -53,7 +57,6 @@ export default function StatsCards({ tenants }) {
         </div>
       </div>
 
-      {/* TIENDAS */}
       <div className="stat-card shop">
         <FiShoppingBag className="icon" />
         <div>
@@ -62,7 +65,6 @@ export default function StatsCards({ tenants }) {
         </div>
       </div>
 
-      {/* PREMIUM */}
       <div className="stat-card premium">
         <FiStar className="icon" />
         <div>
@@ -71,7 +73,6 @@ export default function StatsCards({ tenants }) {
         </div>
       </div>
 
-      {/* VERIFACTU */}
       <div className="stat-card verifactu">
         <FiCheckCircle className="icon" />
         <div>
@@ -80,7 +81,14 @@ export default function StatsCards({ tenants }) {
         </div>
       </div>
 
-      {/* ÚLTIMO REGISTRO */}
+      <div className="stat-card inactivos">
+        <FiAlertTriangle className="icon" />
+        <div>
+          <h3>Inactivos (7d+)</h3>
+          <p>{inactivos}</p>
+        </div>
+      </div>
+
       <div className="stat-card">
         <FiClock className="icon" />
         <div>

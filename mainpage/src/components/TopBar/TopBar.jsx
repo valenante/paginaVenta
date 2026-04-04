@@ -67,15 +67,15 @@ export default function TopBar() {
   const toggleMenu = useCallback(() => setMenuAbierto((v) => !v), []);
 
   const tpvURL = isDev
-    ? `http://localhost:3002/${tenantSlug}`
+    ? `http://localhost:5175/${tenantSlug}`
     : `https://${tenantSlug}-tpv.${import.meta.env.VITE_MAIN_DOMAIN}`;
 
   const cartaURL = isDev
-    ? `http://localhost:3001/${tenantSlug}`
+    ? `http://localhost:5174/${tenantSlug}`
     : `https://${tenantSlug}-carta.${import.meta.env.VITE_MAIN_DOMAIN}`;
 
   const shopsURL = isDev
-    ? `http://localhost:3003/${tenantSlug}`
+    ? `http://localhost:5176/${tenantSlug}`
     : `https://${tenantSlug}-shops.${import.meta.env.VITE_MAIN_DOMAIN}`;
 
   useEffect(() => {

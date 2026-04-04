@@ -15,10 +15,29 @@ import AlertaMensaje from "../../../../components/AlertaMensaje/AlertaMensaje.js
 
 import api from "../../../../utils/api";
 import Portal from "../../../../components/ui/Portal";
+import EmptyState from "../../../../components/ui/EmptyState";
 
 import "./TenantTable.css";
 
 /* ── Helpers ─────────────────────────────────────────── */
+
+function formatLastLogin(date) {
+  if (!date) return { text: "nunca", cls: "last-login--never" };
+  const d = new Date(date);
+  if (isNaN(d.getTime())) return { text: "nunca", cls: "last-login--never" };
+  const diffMs = Date.now() - d.getTime();
+  const diffH = Math.floor(diffMs / (1000 * 60 * 60));
+  const diffD = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+  let text;
+  if (diffH < 1) text = "hace <1h";
+  else if (diffH < 24) text = `hace ${diffH}h`;
+  else if (diffD < 30) text = `hace ${diffD}d`;
+  else text = d.toLocaleDateString("es-ES");
+
+  const cls = diffH < 24 ? "last-login--recent" : diffD < 7 ? "last-login--warning" : "last-login--danger";
+  return { text, cls };
+}
 
 function readEnvMode() {
   return String(sessionStorage.getItem("alef_env") || "prod").toLowerCase() === "sandbox" ? "sandbox" : "prod";
@@ -196,9 +215,12 @@ export default function TenantTable({ tenants, onRefresh, loading, page, setPage
     }
   };
 
-  const handleEstadoChange = async (tenantId, nuevoEstado) => {
+  const handleEstadoChange = async (tenantId, nuevoEstado, motivo) => {
     try {
-      await api.patch(`/admin/superadmin/tenants/${tenantId}/estado`, { estado: nuevoEstado });
+      await api.patch(`/admin/superadmin/tenants/${tenantId}/estado`, {
+        estado: nuevoEstado,
+        ...(motivo ? { motivo } : {}),
+      });
       await onRefresh();
       showAlert("info", "Estado actualizado.");
     } catch (err) { showAlert("error", normalizeErr(err)); }
@@ -245,7 +267,15 @@ export default function TenantTable({ tenants, onRefresh, loading, page, setPage
   /* ── Empty state ─────────────────────── */
 
   if (!loading && !tenants.length) {
-    return <p className="tenant-table-empty">No hay tenants registrados.</p>;
+    return (
+      <EmptyState
+        icon={FiCoffee}
+        title="Sin negocios registrados"
+        description="Aún no tienes negocios. Crea tu primer tenant para empezar a gestionar."
+        actionLabel="Crear negocio"
+        onAction={() => window.location.assign("/superadmin/tenants/nuevo")}
+      />
+    );
   }
 
   /* ── Render ──────────────────────────── */
@@ -276,6 +306,7 @@ export default function TenantTable({ tenants, onRefresh, loading, page, setPage
               <th>Plan</th>
               <th>Estado</th>
               <th>Creación</th>
+              <th>Último acceso</th>
               <th className="tenant-table__thActions">Acciones</th>
             </tr>
           </thead>
@@ -298,6 +329,9 @@ export default function TenantTable({ tenants, onRefresh, loading, page, setPage
                   <td><span className="tenant-plan-badge">{t.plan}</span></td>
                   <td><span className={`estado-tag estado-${t.estado}`}>{t.estado}</span></td>
                   <td className="tenant-table__date">{new Date(t.createdAt).toLocaleDateString("es-ES")}</td>
+                  <td className="tenant-table__date">
+                    {(() => { const ll = formatLastLogin(t.lastLogin); return <span className={ll.cls}>{ll.text}</span>; })()}
+                  </td>
                   <td className="tenant-table__cell--actions">{renderActions(t, slug, false)}</td>
                 </tr>
               );
@@ -327,6 +361,7 @@ export default function TenantTable({ tenants, onRefresh, loading, page, setPage
                 </span>
                 <span className="tenant-plan-badge">{t.plan}</span>
                 <span className={`estado-tag estado-${t.estado}`}>{t.estado}</span>
+                {(() => { const ll = formatLastLogin(t.lastLogin); return <span className={`last-login-badge ${ll.cls}`}>{ll.text}</span>; })()}
               </div>
             </div>
           );

@@ -27,7 +27,10 @@ export default function EstacionesPanel({
     slug: "",
     destino: "cocina",
     esCentral: false,
-    capacidadMax: 9999,
+    capacidadMax: 3,
+    capacidadEspacio: "",
+    capacidadAccion: "",
+    workersActivos: 1,
     orden: 0,
   });
 
@@ -72,7 +75,10 @@ export default function EstacionesPanel({
         ...nueva,
         nombre: nueva.nombre.trim(),
         slug: nueva.slug.trim(),
-        capacidadMax: Number(nueva.capacidadMax) || 9999,
+        capacidadMax: Number(nueva.capacidadMax) || 3,
+        capacidadEspacio: nueva.capacidadEspacio !== "" ? Number(nueva.capacidadEspacio) : null,
+        capacidadAccion: nueva.capacidadAccion !== "" ? Number(nueva.capacidadAccion) : null,
+        workersActivos: Number(nueva.workersActivos) || 1,
         orden: Number(nueva.orden) || 0,
       };
 
@@ -92,7 +98,10 @@ export default function EstacionesPanel({
         slug: "",
         destino: "cocina",
         esCentral: false,
-        capacidadMax: 9999,
+        capacidadMax: 3,
+        capacidadEspacio: "",
+        capacidadAccion: "",
+        workersActivos: 1,
         orden: 0,
       });
 
@@ -122,7 +131,10 @@ export default function EstacionesPanel({
         ...editando,
         nombre: editando.nombre.trim(),
         slug: editando.slug.trim(),
-        capacidadMax: Number(editando.capacidadMax) || 9999,
+        capacidadMax: Number(editando.capacidadMax) || 3,
+        capacidadEspacio: editando.capacidadEspacio !== "" && editando.capacidadEspacio != null ? Number(editando.capacidadEspacio) : null,
+        capacidadAccion: editando.capacidadAccion !== "" && editando.capacidadAccion != null ? Number(editando.capacidadAccion) : null,
+        workersActivos: Number(editando.workersActivos) || 1,
         orden: Number(editando.orden) || 0,
       };
 
@@ -170,9 +182,11 @@ export default function EstacionesPanel({
       <header className="config-card-header">
         <h2>🔥 Estaciones de cocina / barra</h2>
         <p className="config-card-subtitle">
-          La estación central puede ver todos los pedidos del sistema y coordinar
-          solicitudes entre estaciones. Las estaciones normales solo reciben los
-          pedidos asignados a su destino.
+          Cada estacion representa un puesto de trabajo en cocina o barra
+          (plancha, freidora, frio...). Puedes configurar cuantas cosas
+          caben fisicamente, cuantas puede manejar cada persona, y cuantas
+          personas hay trabajando. El sistema usa esto para predecir tiempos
+          y detectar colas.
         </p>
       </header>
 
@@ -227,16 +241,63 @@ export default function EstacionesPanel({
               />
             </div>
 
-            <div className="config-grid-2">
+            <div className="config-field config-field--stacked">
+              <label>Cuantas cosas caben (espacio fisico)</label>
               <input
                 type="number"
-                value={nueva.capacidadMax}
+                value={nueva.capacidadEspacio}
                 onChange={(e) =>
-                  setNueva((p) => ({ ...p, capacidadMax: e.target.value }))
+                  setNueva((p) => ({ ...p, capacidadEspacio: e.target.value }))
                 }
-                placeholder="Capacidad máxima"
+                placeholder="Ej: 12"
+                min="1"
               />
+              <small className="text-suave">
+                Cuantas cosas caben fisicamente en esta estacion a la vez.
+                Ej: en la plancha caben 12 hamburguesas, en la freidora 6 cestas.
+                Si lo dejas vacio, se usara el valor de "platos por persona".
+              </small>
+            </div>
 
+            <div className="config-field config-field--stacked">
+              <label>Platos por persona</label>
+              <input
+                type="number"
+                value={nueva.capacidadAccion}
+                onChange={(e) =>
+                  setNueva((p) => ({ ...p, capacidadAccion: e.target.value }))
+                }
+                placeholder="Ej: 4"
+                min="1"
+              />
+              <small className="text-suave">
+                Cuantas cosas puede manejar <strong>una persona</strong> a la vez
+                en esta estacion. No es lo que cabe, sino lo que puede atender
+                bien un cocinero. Ej: en plancha puede llevar 4 platos a la vez,
+                montando ensaladas 2-3, en barra 6-8 cafes.
+              </small>
+            </div>
+
+            <div className="config-field config-field--stacked">
+              <label>Personas trabajando ahora</label>
+              <input
+                type="number"
+                value={nueva.workersActivos}
+                onChange={(e) =>
+                  setNueva((p) => ({ ...p, workersActivos: e.target.value }))
+                }
+                placeholder="1"
+                min="1"
+                max="10"
+              />
+              <small className="text-suave">
+                Cuantos cocineros o baristas hay ahora mismo en esta estacion.
+                Si hay 2 personas y cada una puede llevar 4 platos, la estacion
+                puede manejar 8 a la vez. Puedes cambiarlo segun el turno.
+              </small>
+            </div>
+
+            <div className="config-grid-2">
               <label className="check-central">
                 <input
                   type="checkbox"
@@ -245,7 +306,7 @@ export default function EstacionesPanel({
                     setNueva((p) => ({ ...p, esCentral: e.target.checked }))
                   }
                 />
-                Estación central
+                Estacion central
               </label>
             </div>
             <button
@@ -271,14 +332,22 @@ export default function EstacionesPanel({
                 <span>
                   <strong>{e.nombre}</strong>{" "}
                   <span className="text-suave">
-                    ({e.slug}) — {e.destino} — cap {e.capacidadMax}{" "}
-                    {e.esCentral ? "⭐ Central" : ""}
+                    ({e.slug}) — {e.destino}
+                    {e.capacidadEspacio ? ` — ${e.capacidadEspacio} caben` : ""}
+                    {e.capacidadAccion ? ` — ${e.capacidadAccion}/persona` : ` — ${e.capacidadMax} sim.`}
+                    {e.workersActivos > 1 ? ` — ${e.workersActivos} personas` : ""}
+                    {e.esCentral ? " — Central" : ""}
                   </span>
                 </span>
 
                 <div className="acciones-mini">
                   <button
-                    onClick={() => setEditando({ ...e })}
+                    onClick={() => setEditando({
+                      ...e,
+                      capacidadEspacio: e.capacidadEspacio ?? "",
+                      capacidadAccion: e.capacidadAccion ?? e.capacidadMax ?? "",
+                      workersActivos: e.workersActivos ?? 1,
+                    })}
                     disabled={!puedeGestionar}
                   >
                     ✏️
@@ -346,19 +415,67 @@ export default function EstacionesPanel({
                 />
               </div>
 
-              <div className="config-grid-2">
+              <div className="config-field config-field--stacked">
+                <label>Cuantas cosas caben (espacio fisico)</label>
                 <input
                   type="number"
-                  value={editando.capacidadMax}
+                  value={editando.capacidadEspacio ?? ""}
                   onChange={(e) =>
                     setEditando((p) => ({
                       ...p,
-                      capacidadMax: e.target.value,
+                      capacidadEspacio: e.target.value,
                     }))
                   }
-                  placeholder="Capacidad máxima"
+                  placeholder="Ej: 12"
+                  min="1"
                 />
+                <small className="text-suave">
+                  Cuantas cosas caben fisicamente a la vez.
+                  Dejalo vacio para usar el valor de "platos por persona".
+                </small>
+              </div>
 
+              <div className="config-field config-field--stacked">
+                <label>Platos por persona</label>
+                <input
+                  type="number"
+                  value={editando.capacidadAccion ?? ""}
+                  onChange={(e) =>
+                    setEditando((p) => ({
+                      ...p,
+                      capacidadAccion: e.target.value,
+                    }))
+                  }
+                  placeholder="Ej: 4"
+                  min="1"
+                />
+                <small className="text-suave">
+                  Cuantas cosas puede manejar una persona a la vez.
+                </small>
+              </div>
+
+              <div className="config-field config-field--stacked">
+                <label>Personas trabajando ahora</label>
+                <input
+                  type="number"
+                  value={editando.workersActivos ?? 1}
+                  onChange={(e) =>
+                    setEditando((p) => ({
+                      ...p,
+                      workersActivos: e.target.value,
+                    }))
+                  }
+                  placeholder="1"
+                  min="1"
+                  max="10"
+                />
+                <small className="text-suave">
+                  Cuantos cocineros o baristas hay ahora en esta estacion.
+                  Puedes cambiarlo segun el turno.
+                </small>
+              </div>
+
+              <div className="config-grid-2">
                 <label className="check-central">
                   <input
                     type="checkbox"
@@ -370,11 +487,11 @@ export default function EstacionesPanel({
                       }))
                     }
                   />
-                  Estación central
+                  Estacion central
                 </label>
                 {editando?.esCentral && (
                   <div className="estacion-central-info">
-                    ⭐ La estación central puede ver todos los pedidos y coordinar
+                    La estacion central puede ver todos los pedidos y coordinar
                     solicitudes entre estaciones.
                   </div>
                 )}

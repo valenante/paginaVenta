@@ -27,6 +27,10 @@ export default function MigrationsTenantPage() {
   const [dryRunning, setDryRunning] = useState(false);
   const [dryResult, setDryResult] = useState(null);
 
+  const [executing, setExecuting] = useState(false);
+  const [execResult, setExecResult] = useState(null);
+  const [confirmExec, setConfirmExec] = useState(false);
+
   const fetchTenant = async () => {
     setLoading(true);
     setErr("");
@@ -51,6 +55,22 @@ export default function MigrationsTenantPage() {
     fetchTenant();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slug]);
+
+  const runExecute = async () => {
+    setConfirmExec(false);
+    setExecuting(true);
+    setExecResult(null);
+    setErr("");
+    try {
+      const { data } = await api.post("/admin/system/migrations/execute", { tenant: slug });
+      setExecResult(data);
+      await fetchTenant();
+    } catch (e) {
+      setErr(e?.response?.data?.error || e?.message || "Error ejecutando migraciones");
+    } finally {
+      setExecuting(false);
+    }
+  };
 
   const runDry = async () => {
     setDryRunning(true);
@@ -88,9 +108,18 @@ export default function MigrationsTenantPage() {
           <button className="mig-btn" onClick={fetchTenant} disabled={loading}>
             Recargar
           </button>
-          <button className="mig-btn" onClick={runDry} disabled={dryRunning || loading}>
+          <button className="mig-btn" onClick={runDry} disabled={dryRunning || loading || executing}>
             {dryRunning ? "Dry-run..." : "Dry-run"}
           </button>
+          {pending.length > 0 && (
+            <button
+              className="mig-btn mig-btn--execute"
+              onClick={() => setConfirmExec(true)}
+              disabled={executing || loading || dryRunning}
+            >
+              {executing ? "Ejecutando..." : `Ejecutar (${pending.length})`}
+            </button>
+          )}
         </div>
       </header>
 
@@ -170,7 +199,41 @@ export default function MigrationsTenantPage() {
               </table>
             )}
           </section>
+          {/* Execution result */}
+          {execResult && (
+            <div className={`mig-exec-result ${execResult.failed ? "mig-exec-result--fail" : "mig-exec-result--ok"}`}>
+              {execResult.failed ? (
+                <>
+                  <strong>Migración fallida: {execResult.failed}</strong>
+                  {execResult.error && <p>{execResult.error}</p>}
+                  {execResult.applied?.length > 0 && (
+                    <p>Aplicadas antes del fallo: {execResult.applied.join(", ")}</p>
+                  )}
+                </>
+              ) : (
+                <>
+                  <strong>Migraciones aplicadas correctamente</strong>
+                  {execResult.applied?.length > 0 && <p>{execResult.applied.join(", ")}</p>}
+                </>
+              )}
+            </div>
+          )}
         </>
+      )}
+
+      {/* Confirm execution modal */}
+      {confirmExec && (
+        <div className="mig-confirm-overlay" onClick={() => setConfirmExec(false)}>
+          <div className="mig-confirm-modal" onClick={(e) => e.stopPropagation()}>
+            <h3>Ejecutar migraciones</h3>
+            <p>Se ejecutarán <strong>{pending.length}</strong> migraciones pendientes en <strong>{dbName}</strong>.</p>
+            <p className="mig-confirm-warn">Esta acción modifica la base de datos. Asegúrate de tener un backup reciente.</p>
+            <div className="mig-confirm-actions">
+              <button className="mig-btn ghost" onClick={() => setConfirmExec(false)}>Cancelar</button>
+              <button className="mig-btn mig-btn--execute" onClick={runExecute}>Confirmar ejecución</button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

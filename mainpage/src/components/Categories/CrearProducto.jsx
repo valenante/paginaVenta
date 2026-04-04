@@ -660,6 +660,7 @@ const CrearProducto = ({ onClose, onCreated, initialTipo, cloneFrom }) => {
                     </p>
                   </label>
                 )}
+
               </div>
 
               {/* === PRECIOS (array dinámico) === */}

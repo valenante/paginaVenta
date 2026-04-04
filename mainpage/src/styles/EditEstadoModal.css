@@ -203,6 +203,86 @@
   transform: none;
 }
 
+/* Estado pill colors */
+.estado-pill--trial     { background: rgba(59,130,246,0.15); color: #60a5fa; border-color: rgba(59,130,246,0.3); }
+.estado-pill--activo    { background: rgba(34,197,94,0.15); color: #4ade80; border-color: rgba(34,197,94,0.3); }
+.estado-pill--impago    { background: rgba(245,158,11,0.15); color: #fbbf24; border-color: rgba(245,158,11,0.3); }
+.estado-pill--suspendido{ background: rgba(239,68,68,0.15); color: #f87171; border-color: rgba(239,68,68,0.3); }
+.estado-pill--cancelado { background: rgba(148,163,184,0.15); color: #94a3b8; border-color: rgba(148,163,184,0.3); }
+
+/* Warning banner */
+.estado-warning {
+  margin-top: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  line-height: 1.45;
+  border: 1px solid rgba(251,191,36,0.3);
+  background: rgba(251,191,36,0.1);
+  color: #fbbf24;
+}
+.estado-warning--cancelado { border-color: rgba(239,68,68,0.3); background: rgba(239,68,68,0.1); color: #f87171; }
+.estado-warning--activo    { border-color: rgba(34,197,94,0.3); background: rgba(34,197,94,0.1); color: #4ade80; }
+
+/* Textarea */
+.estado-textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(255,255,255,0.10);
+  color: #fff;
+  font-family: inherit;
+  font-size: 0.85rem;
+  resize: vertical;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+.estado-textarea:focus {
+  border-color: rgba(106,13,173,0.70);
+  box-shadow: 0 0 0 2px rgba(106,13,173,0.25);
+}
+
+/* Historial */
+.estado-historial {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+.estado-historial h4 {
+  margin: 0 0 8px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.estado-historial-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.estado-historial-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  padding: 6px 8px;
+  border-radius: 8px;
+  background: rgba(0,0,0,0.2);
+  font-size: 0.72rem;
+}
+.estado-historial-arrow { color: #64748b; font-weight: 700; }
+.estado-historial-prev { color: #94a3b8; font-weight: 600; }
+.estado-historial-date { color: #64748b; margin-left: auto; }
+.estado-historial-motivo {
+  width: 100%;
+  color: #94a3b8;
+  font-style: italic;
+  padding-top: 2px;
+}
+
 /* Mobile */
 @media (max-width: 560px){
   .modal-overlay{

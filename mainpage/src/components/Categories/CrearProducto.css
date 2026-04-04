@@ -641,3 +641,21 @@
   width: 110px;
   text-align: center;
 }
+
+/* ── Predicción de tiempos (SLA) en producto ── */
+.sla-producto-toggle {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(148, 163, 184, 0.15);
+}
+
+.sla-producto-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-top: 0.75rem;
+  padding: 1rem;
+  border-radius: 10px;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  background: rgba(148, 163, 184, 0.04);
+}

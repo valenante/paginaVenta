@@ -1,0 +1,319 @@
+/* =========================================================
+   ETA PERFILES — Panel de aprendizaje del motor adaptativo
+   ========================================================= */
+
+.eta-perfiles {
+  margin-top: 1.5rem;
+}
+
+.eta-perfiles__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.eta-perfiles__title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #e2e8f0;
+  margin: 0;
+}
+
+.eta-perfiles__subtitle {
+  font-size: 0.8rem;
+  color: #94a3b8;
+  margin: 0.15rem 0 0;
+}
+
+/* ── Summary cards ── */
+
+.eta-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 0.8rem;
+  margin-bottom: 1.2rem;
+}
+
+.eta-summary__card {
+  padding: 0.8rem 1rem;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.eta-summary__val {
+  font-size: 1.4rem;
+  font-weight: 800;
+  display: block;
+}
+
+.eta-summary__val--purple { color: #8b5cf6; }
+.eta-summary__val--green { color: #22c55e; }
+.eta-summary__val--amber { color: #f59e0b; }
+.eta-summary__val--cyan { color: #06b6d4; }
+
+.eta-summary__label {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  display: block;
+  margin-top: 0.15rem;
+}
+
+/* ── Filtros ── */
+
+.eta-filters {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.eta-filter-btn {
+  padding: 0.35rem 0.8rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  color: #94a3b8;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.eta-filter-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #e2e8f0;
+}
+
+.eta-filter-btn--on {
+  background: rgba(139, 92, 246, 0.2);
+  border-color: rgba(139, 92, 246, 0.4);
+  color: #c4b5fd;
+}
+
+/* ── Tabla ── */
+
+.eta-table-wrap {
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  overflow-x: auto;
+}
+
+.eta-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+}
+
+.eta-table th {
+  text-align: left;
+  padding: 0.65rem 0.8rem;
+  font-weight: 800;
+  color: #94a3b8;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  white-space: nowrap;
+}
+
+.eta-table td {
+  padding: 0.6rem 0.8rem;
+  color: #e2e8f0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  white-space: nowrap;
+}
+
+.eta-table tr:hover td {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.eta-table__name {
+  font-weight: 700;
+  color: #f8fafc;
+}
+
+.eta-table__station {
+  font-weight: 600;
+  color: #a5b4fc;
+}
+
+.eta-table__qty {
+  font-size: 0.72rem;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.06);
+  color: #94a3b8;
+}
+
+/* ── Confidence bar inline ── */
+
+.eta-conf-bar {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.eta-conf-bar__track {
+  width: 50px;
+  height: 6px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+.eta-conf-bar__fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+.eta-conf-bar__fill--high { background: #22c55e; }
+.eta-conf-bar__fill--mid { background: #f59e0b; }
+.eta-conf-bar__fill--low { background: #ef4444; }
+
+.eta-conf-bar__pct {
+  font-size: 0.72rem;
+  font-weight: 700;
+  min-width: 32px;
+}
+
+/* ── Source badge ── */
+
+.eta-source {
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
+.eta-source--learned {
+  background: rgba(34, 197, 94, 0.15);
+  color: #22c55e;
+}
+
+.eta-source--blended {
+  background: rgba(245, 158, 11, 0.15);
+  color: #f59e0b;
+}
+
+.eta-source--config {
+  background: rgba(148, 163, 184, 0.15);
+  color: #94a3b8;
+}
+
+/* ── Reset button ── */
+
+.eta-reset-btn {
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  background: rgba(239, 68, 68, 0.1);
+  color: #fca5a5;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.eta-reset-btn:hover {
+  background: rgba(239, 68, 68, 0.25);
+  color: #fecaca;
+}
+
+.eta-reset-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ── Empty state ── */
+
+.eta-empty {
+  text-align: center;
+  padding: 3rem 2rem;
+  color: #64748b;
+  font-size: 0.88rem;
+  border-radius: 12px;
+  border: 1px dashed rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.eta-empty__icon {
+  font-size: 2.2rem;
+  margin-bottom: 0.6rem;
+  opacity: 0.6;
+}
+
+.eta-empty__title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #94a3b8;
+  margin-bottom: 0.4rem;
+}
+
+.eta-empty__text {
+  max-width: 420px;
+  margin: 0 auto;
+  line-height: 1.5;
+}
+
+/* ── Station profiles section ── */
+
+.eta-stations {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.8rem;
+  margin-top: 1.2rem;
+}
+
+.eta-station-card {
+  padding: 0.8rem 1rem;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.eta-station-card__name {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #e2e8f0;
+  margin-bottom: 0.4rem;
+}
+
+.eta-station-card__row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.78rem;
+  color: #94a3b8;
+  margin-top: 0.2rem;
+}
+
+.eta-station-card__val {
+  color: #e2e8f0;
+  font-weight: 700;
+}
+
+/* ── Responsive ── */
+
+@media (max-width: 768px) {
+  .eta-summary {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .eta-table {
+    font-size: 0.75rem;
+  }
+
+  .eta-table th,
+  .eta-table td {
+    padding: 0.45rem 0.5rem;
+  }
+
+  .eta-conf-bar__track {
+    width: 36px;
+  }
+}

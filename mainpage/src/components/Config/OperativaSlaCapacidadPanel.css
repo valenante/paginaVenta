@@ -1,122 +1,154 @@
 /*****************************************************
  * OperativaSlaCapacidadPanel
- * (usa las mismas cards/fields del RestauranteConfigPage)
+ * Hereda la base de config-common.css / index.css
+ * (.config-card, .config-field, .card, etc.)
  *****************************************************/
 
-/* Tabla editable (tramos SLA + pesos) */
-.tabla-tramos {
-  display: grid;
-  gap: var(--space-sm);
-  margin-top: var(--space-sm);
+/* ── Layout del panel ── */
+.sla-panel__fields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  margin-top: var(--space-md);
 }
 
-/* Cabecera */
-.tabla-tramos__head {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1.2fr 48px;
-  gap: var(--space-sm);
+/* ── Toggle principal (on/off) ── */
+.sla-toggle {
+  display: flex;
   align-items: center;
-
-  padding: 0.35rem 0.1rem;
-  font-size: var(--font-size-xs);
-  font-weight: 700;
-  color: var(--color-texto-suave);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
-
-/* Fila */
-.tabla-tramos__row {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1.2fr 48px;
-  gap: var(--space-sm);
-  align-items: center;
-
-  padding: 0.55rem 0.55rem;
-  border-radius: var(--radius-md);
-  background: #f9fafb;
+  gap: 12px;
+  padding: var(--space-md);
+  border-radius: var(--radius-lg);
   border: 1px solid var(--color-borde-suave);
+  background: var(--color-gris-claro, #f8fafc);
+  cursor: pointer;
+  transition: background 140ms ease, border-color 140ms ease;
+  user-select: none;
 }
 
-/* Inputs dentro de la tabla */
-.tabla-tramos__row input {
+.sla-toggle:hover {
+  background: rgba(68, 101, 231, 0.04);
+  border-color: var(--color-secundario, #4465e7);
+}
+
+.sla-toggle input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--color-secundario, #4465e7);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.sla-toggle__text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sla-toggle__label {
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: var(--color-texto);
+}
+
+.sla-toggle__hint {
+  font-size: var(--font-size-xs);
+  color: var(--color-texto-suave);
+  line-height: 1.35;
+}
+
+/* ── Grid de campos (2 columnas en desktop) ── */
+.sla-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-lg);
+}
+
+.sla-grid--full {
+  grid-column: 1 / -1;
+}
+
+/* ── Campo individual ── */
+.sla-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.sla-field label {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-texto);
+}
+
+.sla-field input,
+.sla-field select {
   font-family: var(--font-base);
   font-size: var(--font-size-sm);
-  padding: 0.5rem 0.65rem;
-  border-radius: var(--radius-sm);
+  padding: 0.65rem 0.85rem;
+  border-radius: var(--radius-md);
   border: 1px solid var(--color-borde-suave);
-  background: #ffffff;
+  background: var(--color-blanco, #ffffff);
+  color: var(--color-texto);
+  outline: none;
+  transition: border-color 140ms ease, box-shadow 140ms ease;
 }
 
-/* Input readOnly (índice) */
-.tabla-tramos__row input[readonly] {
-  background: rgba(148, 163, 184, 0.16);
-  color: rgba(15, 23, 42, 0.85);
-  cursor: default;
+.sla-field input:focus,
+.sla-field select:focus {
+  border-color: var(--color-secundario, #4465e7);
+  box-shadow: 0 0 0 3px rgba(68, 101, 231, 0.18);
 }
 
-/* Botón eliminar en fila (reusa delete-btn, pero afinamos) */
-.tabla-tramos__row .delete-btn {
-  width: 42px;
-  height: 38px;
-  border-radius: var(--radius-sm);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-
-  border: 1px solid transparent;
-  transition: transform 0.12s ease, background 0.12s ease, border-color 0.12s ease;
+.sla-field input[type="number"] {
+  max-width: 160px;
 }
 
-.tabla-tramos__row .delete-btn:hover {
-  transform: scale(1.05);
-  background: rgba(220, 38, 38, 0.08);
-  border-color: rgba(220, 38, 38, 0.25);
-}
-
-.tabla-tramos__row .delete-btn:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-  transform: none;
-  background: transparent;
-  border-color: transparent;
-}
-
-/* Small text (si no existe en tu sistema) */
-.text-suave {
-  color: var(--color-texto-suave);
+.sla-field__hint {
   font-size: var(--font-size-xs);
-  line-height: 1.25rem;
+  color: var(--color-texto-suave);
+  line-height: 1.4;
 }
 
-/*****************************************************
- * Responsive
- *****************************************************/
+/* ── Separador visual entre bloques ── */
+.sla-divider {
+  grid-column: 1 / -1;
+  height: 1px;
+  background: var(--color-borde-suave);
+  margin: var(--space-xs) 0;
+}
+
+/* ── Info box ── */
+.sla-info {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: var(--space-md);
+  border-radius: var(--radius-md);
+  background: rgba(14, 165, 233, 0.06);
+  border: 1px solid rgba(14, 165, 233, 0.18);
+}
+
+.sla-info__icon {
+  font-size: 1.1rem;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.sla-info__text {
+  font-size: var(--font-size-xs);
+  color: var(--color-texto-suave);
+  line-height: 1.45;
+}
+
+/* ===== Responsive ===== */
 @media (max-width: 768px) {
-  .tabla-tramos__head {
-    display: none; /* en móvil se entiende por placeholders/orden */
+  .sla-grid {
+    grid-template-columns: 1fr;
   }
 
-  .tabla-tramos__row {
-    grid-template-columns: 1fr 1fr;
-    grid-template-areas:
-      "a b"
-      "c d";
-    gap: var(--space-sm);
-  }
-
-  .tabla-tramos__row > input:nth-child(1) {
-    grid-area: a;
-  }
-  .tabla-tramos__row > input:nth-child(2) {
-    grid-area: b;
-  }
-  .tabla-tramos__row > input:nth-child(3) {
-    grid-area: c;
-  }
-  .tabla-tramos__row > button,
-  .tabla-tramos__row > .delete-btn {
-    grid-area: d;
-    justify-self: end;
+  .sla-field input[type="number"] {
+    max-width: 100%;
   }
 }

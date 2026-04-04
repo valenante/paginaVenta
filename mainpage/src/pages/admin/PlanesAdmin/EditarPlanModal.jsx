@@ -42,8 +42,7 @@ export default function EditarPlanModal({ plan, onClose, onSave, features = [] }
       onSave();
       onClose();
     } catch (err) {
-      console.error("Error actualizando plan:", err);
-      showToast(err.response?.data?.error || "Error actualizando plan.", "error");
+      showToast(err?.response?.data?.error || "Error actualizando plan.", "error");
     } finally {
       setLoading(false);
     }

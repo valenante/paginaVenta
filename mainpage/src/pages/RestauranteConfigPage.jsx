@@ -45,14 +45,12 @@ export default function RestauranteConfigPage() {
 
     slaMesas: {
       activo: true,
+      fallbackMinutosMax: 10,
+      margenGraciaSegundos: 60,
       porcentajeAvisoRiesgo: 80,
-      cooldownAvisoMinutos: 0,
-      tramosOcupacion: [
-        { desde: 0, hasta: 25, minutosMaxSinServicio: 8 },
-        { desde: 26, hasta: 50, minutosMaxSinServicio: 11 },
-        { desde: 51, hasta: 75, minutosMaxSinServicio: 14 },
-        { desde: 76, hasta: 100, minutosMaxSinServicio: 18 },
-      ],
+      cooldownAvisoMinutos: 5,
+      proximosMax: 3,
+      factorOcupacionK: 0.35,
     },
 
     capacidadEstaciones: {
@@ -376,6 +374,7 @@ export default function RestauranteConfigPage() {
           {esRestaurante && (
             <EstacionesPanel isPlanEsencial={isPlanEsencial} onAlert={setAlerta} />
           )}
+
         </div>
       </div>
 

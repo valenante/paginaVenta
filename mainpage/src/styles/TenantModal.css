@@ -290,36 +290,6 @@
 }
 
 
-/* ===== BOTÓN ACCESO TPV (especial) ===== */
-.btn-acceso-tpv {
-  width: 100%;
-  padding: 0.6rem 0.9rem;
-  border-radius: var(--radius-md);
-  border: 1px solid rgba(148, 163, 184, 0.35);
-  background: rgba(255, 255, 255, 0.06);
-  color: rgba(255, 255, 255, 0.92);
-
-  font-weight: 700;
-  font-size: var(--font-size-xs);
-  letter-spacing: 0.02em;
-
-  cursor: pointer;
-  transition: 0.15s ease;
-
-  box-shadow:
-    0 10px 18px rgba(0, 0, 0, 0.35),
-    inset 0 1px 0 rgba(255, 255, 255, 0.08);
-}
-
-.btn-acceso-tpv:hover {
-  background: rgba(255, 255, 255, 0.10);
-  transform: translateY(-1px);
-}
-
-.btn-acceso-tpv:active {
-  transform: translateY(0);
-}
-
 /* =========================================================
    BOTÓN ROLLBACK AGENTE (AISLADO)
    ========================================================= */

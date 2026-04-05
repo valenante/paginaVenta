@@ -82,8 +82,7 @@ export default function TenantModalShop({ tenant, onClose }) {
       setLoading(true);
       setMensaje("💾 Guardando configuración...");
 
-      await api.put(`/admin/tenant/${tenant._id}/config-impresion`, {
-        ipTailscale,
+      const body = {
         printSecret,
         printerName,
         impresion: {
@@ -92,7 +91,9 @@ export default function TenantModalShop({ tenant, onClose }) {
             tickets: impTickets,
           },
         },
-      });
+      };
+      if (ipTailscale) body.ipTailscale = ipTailscale;
+      await api.put(`/admin/tenant/${tenant._id}/config-impresion`, body);
 
       setMensaje("✅ Configuración guardada correctamente");
     } catch {
@@ -193,14 +194,6 @@ export default function TenantModalShop({ tenant, onClose }) {
       <h3>🖨️ Agente de impresión</h3>
 
       <div className="impresora-section">
-        <label>IP Tailscale</label>
-        <input
-          type="text"
-          value={ipTailscale}
-          onChange={(e) => setIpTailscale(e.target.value)}
-          placeholder="ej: tienda-tpv.tailscale.net"
-        />
-
         <label>Clave secreta (printSecret)</label>
         <input
           type="text"
@@ -279,7 +272,7 @@ export default function TenantModalShop({ tenant, onClose }) {
 
         <p className={`estado ${estado}`}>
           Estado del agente:{" "}
-          <strong>{estado === "online" ? "🟢 Online" : "🔴 Offline"}</strong>
+          <strong>{estado === "online" ? "🟢 Online (WebSocket)" : "🔴 Offline"}</strong>
         </p>
 
         {mensaje && <p className="mensaje">{mensaje}</p>}

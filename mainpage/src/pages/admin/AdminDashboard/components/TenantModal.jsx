@@ -115,8 +115,7 @@ export default function TenantModal({ tenant, onClose }) {
       setLoading(true);
       setAlerta({ tipo: "info", mensaje: "Guardando configuración..." });
 
-      await api.put(`/admin/tenant/${tenant._id}/config-impresion`, {
-        ipTailscale,
+      const body = {
         printSecret,
         printerName,
         impresoras: {
@@ -124,7 +123,9 @@ export default function TenantModal({ tenant, onClose }) {
           barra: impBarra,
           caja: impCaja,
         },
-      });
+      };
+      if (ipTailscale) body.ipTailscale = ipTailscale;
+      await api.put(`/admin/tenant/${tenant._id}/config-impresion`, body);
 
       setAlerta({
         tipo: "success",
@@ -264,39 +265,6 @@ export default function TenantModal({ tenant, onClose }) {
     }
   };
 
-  const accederTPV = async () => {
-    if (!ipTailscale) {
-      setAlerta({
-        tipo: "error",
-        mensaje: "IP Tailscale no configurada",
-      });
-      return;
-    }
-
-    const sshUser = "alef";
-    const comando = `tailscale ssh ${sshUser}@${ipTailscale}`;
-
-    try {
-      if (navigator.clipboard && window.isSecureContext) {
-        await navigator.clipboard.writeText(comando);
-        setAlerta({
-          tipo: "info",
-          mensaje: `Comando copiado al portapapeles:\n\n${comando}\n\nPégalo en tu terminal.`,
-        });
-      } else {
-        setAlerta({
-          tipo: "info",
-          mensaje: `Ejecuta este comando en tu terminal:\n\n${comando}`,
-        });
-      }
-    } catch {
-      setAlerta({
-        tipo: "info",
-        mensaje: `Ejecuta este comando en tu terminal:\n\n${comando}`,
-      });
-    }
-  };
-
   useEffect(() => {
     if (tenant?._id) verificarConexion();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -331,17 +299,6 @@ export default function TenantModal({ tenant, onClose }) {
       <h2>Detalles del Restaurante</h2>
 
       <div className="impresora-section">
-        <button className="btn-acceso-tpv" onClick={accederTPV} disabled={loading}>
-          🖥️ Acceder al TPV (Tailscale SSH)
-        </button>
-
-        <label>IP Tailscale</label>
-        <input
-          value={ipTailscale}
-          onChange={(e) => setIpTailscale(e.target.value)}
-          disabled={loading}
-        />
-
         <label>Clave secreta</label>
         <input
           value={printSecret}
@@ -455,7 +412,7 @@ export default function TenantModal({ tenant, onClose }) {
         </div>
 
         <p className={`estado ${estado}`}>
-          Estado: <strong>{estado === "online" ? "🟢 Online" : "🔴 Offline"}</strong>
+          Estado: <strong>{estado === "online" ? "🟢 Online (WebSocket)" : "🔴 Offline"}</strong>
         </p>
 
         <p>

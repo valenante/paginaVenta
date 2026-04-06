@@ -125,9 +125,7 @@ export const useEstadisticasCategoria = (products, filters = {}) => {
     , null)?.hour ?? null;
   }, [data]);
 
-  // estadisticasPorMes: el backend NO lo devuelve en este endpoint.
-  // Lo dejamos vacío — si se necesita, se puede añadir un $facet extra en el backend.
-  const estadisticasPorMes = useMemo(() => [], []);
+  const estadisticasPorMes = useMemo(() => data?.porMes || [], [data]);
 
   return {
     loading,

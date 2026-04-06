@@ -115,3 +115,81 @@
   color: var(--color-texto-suave);
   line-height: 1.6;
 }
+
+/* ── Features principales (3 cards grandes) ── */
+
+.Features-grid--main {
+  margin-bottom: var(--space-xl);
+}
+
+.Features-card--main {
+  padding: 1.6rem 1.5rem;
+}
+
+.Features-card--main .Features-icono {
+  width: 3rem;
+  height: 3rem;
+  font-size: 1.6rem;
+}
+
+.Features-card--main .Features-titulo {
+  font-size: var(--font-size-xl);
+}
+
+.Features-card--main .Features-descripcion {
+  font-size: var(--font-size-md);
+}
+
+/* ── Features secundarias (lista compacta) ── */
+
+.Features-secondary {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.Features-secondary-title {
+  text-align: center;
+  font-size: var(--font-size-lg);
+  color: var(--color-texto);
+  margin: 0 0 1rem;
+  font-weight: 700;
+}
+
+.Features-secondary-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.8rem;
+}
+
+@media (max-width: 640px) {
+  .Features-secondary-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.Features-secondary-item {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.7rem 1rem;
+  border-radius: var(--radius-sm);
+  background: var(--color-fondo-card);
+  border: 1px solid var(--color-borde-suave);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.Features-secondary-item:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-soft);
+}
+
+.Features-secondary-icon {
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.Features-secondary-text {
+  font-size: var(--font-size-sm);
+  color: var(--color-texto);
+  line-height: 1.4;
+}

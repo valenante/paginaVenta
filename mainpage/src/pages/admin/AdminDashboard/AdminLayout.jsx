@@ -108,6 +108,9 @@ export default function AdminLayout() {
           <NavLink to="/superadmin/settings" onClick={closeMenu}>
             <FiSettings /> Ajustes
           </NavLink>
+          <NavLink to="/superadmin/changelog" onClick={closeMenu}>
+            <FiFileText /> Changelog
+          </NavLink>
 
           <NavLink
             to="#"

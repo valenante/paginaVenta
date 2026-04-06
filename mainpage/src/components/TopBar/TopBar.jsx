@@ -158,6 +158,10 @@ export default function TopBar() {
                 Ventajas
               </a>
 
+              <a href="#faq" onClick={cerrarMenu}>
+                FAQ
+              </a>
+
               <a href="#contacto" onClick={cerrarMenu}>
                 Contacto
               </a>
@@ -167,8 +171,16 @@ export default function TopBar() {
                 onClick={cerrarMenu}
                 className="TopBar-btn login"
               >
-                Iniciar sesión
+                Iniciar sesion
               </Link>
+
+              <a
+                href="#packs"
+                onClick={cerrarMenu}
+                className="TopBar-btn cta"
+              >
+                Probar Alef
+              </a>
             </>
           ) : (
             <>

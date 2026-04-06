@@ -3,61 +3,34 @@ import React from "react";
 import useRevealOnScroll from "../../hooks/useRevealOnScroll";
 import "./Features.css";
 
-const ventajas = [
+const principales = [
   {
     icono: "🧾",
-    titulo: "Tickets claros y comandas sin errores",
+    titulo: "Comandas en 3 toques",
     descripcion:
-      "Notas por plato y por sección, orden de salida y tickets entendibles para cocina y barra. Menos confusiones, más ritmo de servicio.",
+      "Buscador inteligente de productos, notas por plato, orden de salida y mensajes a cocina. El camarero no pierde tiempo y cocina recibe todo claro.",
   },
   {
     icono: "👨‍🍳",
-    titulo: "Cocina y barra en tiempo real por secciones",
+    titulo: "Cocina y barra coordinadas en tiempo real",
     descripcion:
-      "Organiza la producción por estaciones (cocina/bar/mostrador), marca estados y coordina el flujo sin perder el control del servicio.",
+      "Cada seccion ve solo lo suyo en pantalla. El cocinero marca listo, salta un ticket automatico al camarero. Cero confusion, maximo ritmo.",
   },
   {
-    icono: "📲",
-    titulo: "Carta digital (3 idiomas) y pedidos ON/OFF",
+    icono: "✅",
+    titulo: "Cumple con Hacienda sin pensar",
     descripcion:
-      "Tu carta por QR, lista para turistas. Puedes activar o bloquear pedidos desde mesa cuando quieras (según volumen y operativa).",
+      "Facturacion encadenada con hash antifraude, registro de cada emision y preparado para VERI*FACTU. Tu trabajas, Alef se encarga de la ley.",
   },
-  {
-    icono: "💳",
-    titulo: "Caja diaria y control de cierres",
-    descripcion:
-      "Aperturas/cierres, totales, registros y control diario para tener la caja ordenada y evitar descuadres.",
-  },
-  {
-    icono: "📦",
-    titulo: "Stock y proveedores integrados",
-    descripcion:
-      "Alertas de mínimos, consumo y control de inventario. Proveedores, pedidos y facturas organizados desde el panel.",
-  },
-  {
-    icono: "📈",
-    titulo: "Estadísticas que sirven para decidir",
-    descripcion:
-      "Ventas, márgenes, productos top, horas fuertes y rendimiento. Datos claros para mejorar el negocio sin adivinar.",
-  },
-  {
-    icono: "🗣️",
-    titulo: "Voz inteligente para acciones rápidas",
-    descripcion:
-      "Comandas y acciones por voz para sala, cocina o barra (ideal en horas pico). Más velocidad sin tocar pantallas.",
-  },
-  {
-    icono: "🧾",
-    titulo: "Facturación encadenada y antifraude",
-    descripcion:
-      "Registro encadenado, trazabilidad y base preparada para integraciones de cumplimiento cuando aplique (VERI*FACTU).",
-  },
-  {
-    icono: "💻",
-    titulo: "Web multi-dispositivo y sin instalaciones",
-    descripcion:
-      "PC, tablet o móvil desde el navegador. Todo sincronizado en tiempo real, sin límites de dispositivos.",
-  },
+];
+
+const secundarias = [
+  { icono: "📲", texto: "Carta digital QR en 3 idiomas con reservas y valoraciones" },
+  { icono: "💳", texto: "Caja diaria con cierres automaticos y control de descuadres" },
+  { icono: "📦", texto: "Stock con alertas de minimos y gestion de proveedores" },
+  { icono: "📈", texto: "Estadisticas de ventas, productos top y horas fuertes" },
+  { icono: "🗣️", texto: "Voz inteligente para comandas y acciones en horas pico" },
+  { icono: "🖥️", texto: "Funciona en PC, tablet y movil — sin instalar nada" },
 ];
 
 const Features = () => {
@@ -67,22 +40,36 @@ const Features = () => {
     <section className="Features bg-fondo-claro reveal" id="ventajas">
       <div className="Features-inner section--wide">
         <div className="Features-header">
-          <span className="Features-kicker">Ventajas clave</span>
-          <h2>Trabaja más rápido y con menos errores</h2>
+          <span className="Features-kicker">Lo que cambia en tu dia a dia</span>
+          <h2>Tu sala mas rapida. Tu cocina sin errores. Tu negocio bajo control.</h2>
           <p>
-            Alef está diseñado para el servicio real: comandas claras, cocina/bar
-            coordinadas, carta QR y gestión completa del negocio desde un solo panel.
+            Alef esta pensado para el servicio real — no para demos bonitas.
+            Esto es lo que notas desde el primer dia.
           </p>
         </div>
 
-        <div className="Features-grid">
-          {ventajas.map((v, i) => (
-            <article key={i} className="Features-card">
+        {/* 3 features principales - cards grandes */}
+        <div className="Features-grid Features-grid--main">
+          {principales.map((v, i) => (
+            <article key={i} className="Features-card Features-card--main">
               <div className="Features-icono">{v.icono}</div>
               <h3 className="Features-titulo">{v.titulo}</h3>
               <p className="Features-descripcion">{v.descripcion}</p>
             </article>
           ))}
+        </div>
+
+        {/* 6 features secundarias - lista compacta */}
+        <div className="Features-secondary">
+          <h3 className="Features-secondary-title">Y ademas...</h3>
+          <div className="Features-secondary-grid">
+            {secundarias.map((s, i) => (
+              <div key={i} className="Features-secondary-item">
+                <span className="Features-secondary-icon">{s.icono}</span>
+                <span className="Features-secondary-text">{s.texto}</span>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </section>

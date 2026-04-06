@@ -1,0 +1,416 @@
+/* =========================================================
+   CHANGELOG ADMIN — Enterprise SaaS Design System (Dark)
+   ========================================================= */
+
+.cla-page {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2.2rem 1.4rem;
+  color: rgba(226, 232, 240, 0.92);
+}
+
+/* ===== Header ===== */
+
+.cla-title {
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.01em;
+}
+
+.cla-subtitle {
+  margin: 4px 0 0;
+  font-size: 0.78rem;
+  color: rgba(148, 163, 184, 0.7);
+}
+
+.cla-error {
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.25);
+  color: #fca5a5;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+/* ===== Form (glass card) ===== */
+
+.cla-form {
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(148, 163, 184, 0.1);
+  border-radius: 14px;
+  padding: 1.4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.04);
+}
+
+.cla-form h3 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.cla-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.cla-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  min-width: 140px;
+}
+
+.cla-field label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: rgba(148, 163, 184, 0.7);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.cla-field input,
+.cla-field select,
+.cla-field textarea {
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(148, 163, 184, 0.15);
+  color: #fff;
+  font-size: 0.82rem;
+  outline: none;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+
+.cla-field input::placeholder,
+.cla-field textarea::placeholder {
+  color: rgba(148, 163, 184, 0.5);
+}
+
+.cla-field input:focus,
+.cla-field select:focus,
+.cla-field textarea:focus {
+  border-color: rgba(99, 102, 241, 0.5);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+}
+
+.cla-field select option {
+  background: #1e293b;
+  color: #fff;
+}
+
+.cla-field--check {
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  min-width: auto;
+}
+
+.cla-field--check label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  text-transform: none;
+  font-size: 0.82rem;
+  color: rgba(226, 232, 240, 0.9);
+  cursor: pointer;
+}
+
+/* ===== Items ===== */
+
+.cla-items-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.cla-items-section > label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: rgba(148, 163, 184, 0.7);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.cla-item-row {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.cla-item-row select {
+  width: 105px;
+  padding: 7px 8px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(148, 163, 184, 0.15);
+  color: #fff;
+  font-size: 0.78rem;
+}
+
+.cla-item-row select option {
+  background: #1e293b;
+}
+
+.cla-item-row input {
+  flex: 1;
+  padding: 7px 10px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(148, 163, 184, 0.15);
+  color: #fff;
+  font-size: 0.78rem;
+}
+
+.cla-item-remove {
+  width: 1.5rem;
+  height: 1.5rem;
+  border: none;
+  background: rgba(239, 68, 68, 0.15);
+  color: #fca5a5;
+  border-radius: 50%;
+  font-size: 0.7rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+}
+
+.cla-item-remove:hover {
+  background: rgba(239, 68, 68, 0.3);
+}
+
+.cla-add-item {
+  align-self: flex-start;
+  padding: 6px 12px;
+  border: 1px dashed rgba(148, 163, 184, 0.2);
+  background: none;
+  border-radius: 8px;
+  font-size: 0.78rem;
+  color: rgba(129, 140, 248, 0.9);
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.15s;
+}
+
+.cla-add-item:hover {
+  background: rgba(99, 102, 241, 0.1);
+}
+
+/* ===== Buttons ===== */
+
+.cla-form-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.cla-btn {
+  padding: 8px 18px;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.12s, box-shadow 0.12s;
+}
+
+.cla-btn--primary {
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: #fff;
+  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.3);
+}
+
+.cla-btn--primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px rgba(99, 102, 241, 0.4);
+}
+
+.cla-btn--primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.cla-btn--secondary {
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(226, 232, 240, 0.9);
+  border: 1px solid rgba(148, 163, 184, 0.15);
+}
+
+.cla-btn--secondary:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* ===== List ===== */
+
+.cla-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cla-entry {
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(148, 163, 184, 0.1);
+  border-radius: 12px;
+  padding: 14px 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  transition: border-color 0.15s;
+}
+
+.cla-entry:hover {
+  border-color: rgba(148, 163, 184, 0.2);
+}
+
+.cla-entry--draft {
+  opacity: 0.5;
+  border-style: dashed;
+}
+
+.cla-entry-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.cla-entry-version {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.78rem;
+  background: rgba(99, 102, 241, 0.15);
+  color: #a5b4fc;
+  padding: 2px 8px;
+  border-radius: 6px;
+  margin-right: 8px;
+  font-weight: 700;
+}
+
+.cla-entry-titulo {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #fff;
+  margin-right: 8px;
+}
+
+.cla-entry-status {
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: rgba(251, 191, 36, 0.15);
+  color: #fbbf24;
+  margin-right: 6px;
+}
+
+.cla-entry-status--pub {
+  background: rgba(52, 211, 153, 0.15);
+  color: #34d399;
+}
+
+.cla-entry-dest {
+  font-size: 0.68rem;
+  color: rgba(148, 163, 184, 0.6);
+}
+
+.cla-entry-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.cla-entry-actions button {
+  padding: 5px 10px;
+  border: 1px solid rgba(148, 163, 184, 0.15);
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 8px;
+  font-size: 0.72rem;
+  cursor: pointer;
+  font-weight: 600;
+  color: rgba(226, 232, 240, 0.8);
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.cla-entry-actions button:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(148, 163, 184, 0.25);
+}
+
+.cla-entry-actions .cla-btn--danger {
+  border-color: rgba(239, 68, 68, 0.2);
+  color: #fca5a5;
+  background: rgba(239, 68, 68, 0.08);
+}
+
+.cla-entry-actions .cla-btn--danger:hover {
+  background: rgba(239, 68, 68, 0.15);
+}
+
+/* Items in list */
+
+.cla-entry-items {
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.cla-entry-items li {
+  font-size: 0.78rem;
+  color: rgba(226, 232, 240, 0.8);
+}
+
+.cla-tipo {
+  font-size: 0.62rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-right: 6px;
+  display: inline-block;
+}
+
+.cla-tipo--nueva { background: rgba(52, 211, 153, 0.15); color: #34d399; }
+.cla-tipo--mejora { background: rgba(99, 102, 241, 0.15); color: #a5b4fc; }
+.cla-tipo--fix { background: rgba(251, 191, 36, 0.15); color: #fbbf24; }
+.cla-tipo--cambio { background: rgba(167, 139, 250, 0.15); color: #c4b5fd; }
+
+.cla-empty {
+  text-align: center;
+  color: rgba(148, 163, 184, 0.5);
+  font-size: 0.85rem;
+  padding: 2.5rem;
+}
+
+/* ===== Responsive ===== */
+
+@media (max-width: 640px) {
+  .cla-page {
+    padding: 1.2rem 0.8rem;
+  }
+
+  .cla-row {
+    flex-direction: column;
+  }
+
+  .cla-entry-header {
+    flex-direction: column;
+  }
+
+  .cla-item-row {
+    flex-wrap: wrap;
+  }
+}

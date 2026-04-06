@@ -29,6 +29,9 @@ import TiemposCocina from "./TiemposCocina/TiemposCocina";
 import { useTenant } from "../context/TenantContext";
 import { useAuth } from "../context/AuthContext.jsx";
 
+// ✅ Changelog (novedades al entrar)
+import ChangelogModal from "../components/Changelog/ChangelogModal";
+
 const PANEL_BY_TIPO = {
   restaurante: [
     { key: "mapa", label: "🗺️ Mapa del restaurante", permiso: "mapa.manage", render: () => <MapaEditor /> },
@@ -134,6 +137,7 @@ export default function PanelPro() {
 
   return (
     <div className="panelpro-root">
+      <ChangelogModal />
       {/* 👇 wrapper para gradientes/flechas */}
       <div
         className={[

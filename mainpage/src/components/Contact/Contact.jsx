@@ -67,13 +67,12 @@ const Contact = () => {
       <div className="Contact-inner section--wide">
         {/* LADO IZQUIERDO: TEXTO + CANALES DIRECTOS */}
         <div className="Contact-left">
-          <span className="Contact-kicker">Contacto</span>
-          <h2 className="Contact-title">Hablemos de tu negocio</h2>
+          <span className="Contact-kicker">Demo gratuita</span>
+          <h2 className="Contact-title">¿Quieres verlo en accion? Te lo enseñamos en 10 minutos</h2>
 
           <p className="Contact-subtitle">
-            Cuéntanos cómo trabajas ahora y te ayudamos a ver cómo Alef puede
-            encajar en tu día a día: TPV, gestión de ventas, stock, proveedores,
-            facturación legal y mucho más, tanto en restaurante como en tienda.
+            Te mostramos Alef funcionando con datos reales: comandas, cocina,
+            cuenta, caja y carta digital. Sin compromiso, sin presion.
           </p>
 
           <div className="Contact-channels">

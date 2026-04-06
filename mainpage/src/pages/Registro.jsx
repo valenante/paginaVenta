@@ -1,14 +1,14 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../utils/api";
 import "../styles/Registro.css";
 import { useToast } from "../context/ToastContext";
 
 import Paso1DatosRestaurante from "../components/Registro/Paso1DatosRestaurante.jsx";
-import Paso2ConfiguracionBasica from "../components/Registro/Paso2ConfiguracionBasica.jsx";
-import Paso3ServiciosExtras from "../components/Registro/Paso3ServiciosExtras.jsx";
-import Paso4ResumenPago from "../components/Registro/Paso4ResumenPago.jsx";
-import PanelPrecio from "../components/Registro/PanelPrecio.jsx";
+import Paso2Pago from "../components/Registro/Paso2Pago.jsx";
+
+const STORAGE_KEY = "alef_registro_draft";
+const STORAGE_TTL = 2 * 60 * 60 * 1000; // 2 horas
 
 export default function Registro() {
   const navigate = useNavigate();
@@ -17,374 +17,226 @@ export default function Registro() {
   const [paso, setPaso] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState(false);
+  const [validationError, setValidationError] = useState("");
   const [periodo, setPeriodo] = useState("mensual");
   const [precheckoutId, setPrecheckoutId] = useState(null);
+
   // ======== QUERY ========
   const params = new URLSearchParams(window.location.search);
   const planSlug = (params.get("plan") || "").toLowerCase();
 
-  // ======== ESTADOS PRINCIPALES ========
-  const [tenant, setTenant] = useState({
-    nombre: "",
-    plan: "premium",
-    tipoNegocio: null,
-  });
-
-  const [admin, setAdmin] = useState({
-    name: "",
-    email: "",
-  });
-
-  const [config, setConfig] = useState({
-    permitePedidosComida: true,
-    permitePedidosBebida: true,
-    stockHabilitado: true,
-    colores: { principal: "#6A0DAD", secundario: "#FF6700" },
-    informacionRestaurante: { telefono: "", direccion: "" },
-  });
-
+  // ======== ESTADOS ========
+  const [tenant, setTenant] = useState({ nombre: "", plan: "", tipoNegocio: null });
+  const [admin, setAdmin] = useState({ name: "", email: "" });
   const [planSeleccionado, setPlanSeleccionado] = useState(null);
-  const [precioBasePlan, setPrecioBasePlan] = useState(0);
 
-  const [servicios, setServicios] = useState({
-    // servicios previos
-    vozCocina: false,
-    vozComandas: false,
-
-    // puesta en marcha
-    cargaProductos: false,
-    mesasQr: false,
-    mesasQrCantidad: "",
-    cartaAdjuntos: [], // [{ key, url, name, size, type }]
-    mesasAdjuntos: [], // [{ key, url, name, size, type }]
-
-    // hardware
-    tpvOpcion: "propio",          // "propio" | "nuevo"
-    instalacionTpvPropio: true,   // bool
-    tpvNuevo: 0,                  // nº de TPV nuevos (normalmente 1)
-
-    impresoras: 0,
-
-    pantallaTipo: "tablet",       // "tablet" | "pro"
-    pantallas: 0,
-
-    pda: 0,
-    scanner: 0,                   // shop
-
-    // extras
-    fotografia: false,
-    formacion: false,
-    formacionPersonas: "",
-  });
-
-  const [precio, setPrecio] = useState({
-    mensual: 0,
-    unico: 0,
-    totalPrimerMes: 0,
-  });
-
-  const [pago, setPago] = useState({
-    metodo: "simulado",
-    idPago: "TEST-" + Date.now(),
-  });
-
-  // ✅ Determinar tipo de negocio (preferimos el del plan; fallback por URL)
   const isShop = useMemo(() => {
     const t = (planSeleccionado?.tipoNegocio || "").toLowerCase();
     if (t) return t === "shop";
     return planSlug === "shop" || planSlug.includes("shop");
   }, [planSeleccionado, planSlug]);
 
-  // ✅ Steps con labels dinámicos (sin cambiar estructura)
-  const STEPS = useMemo(
-    () => [
-      { id: 1, label: isShop ? "Datos de la tienda" : "Datos del restaurante" },
-      { id: 2, label: isShop ? "Configuración inicial" : "Configuración inicial" },
-      { id: 3, label: isShop ? "Servicios y herramientas" : "Servicios y hardware" },
-      { id: 4, label: "Resumen y pago" },
-    ],
-    [isShop]
-  );
+  const STEPS = useMemo(() => [
+    { id: 1, label: isShop ? "Datos de la tienda" : "Datos del restaurante" },
+    { id: 2, label: "Resumen y pago" },
+  ], [isShop]);
 
+  // ======== REDIRECT SI NO HAY PLAN ========
   useEffect(() => {
-    if (!planSlug) {
-      navigate("/?seleccionarPlan=1");
-    }
+    if (!planSlug) navigate("/?seleccionarPlan=1");
   }, [planSlug, navigate]);
 
-  // ======== CARGAR PLAN (1) – guarda planSeleccionado y precio base ========
+  // ======== CARGAR PLAN ========
   useEffect(() => {
-    const cargarPlan = async () => {
-      if (!planSlug) return;
-
+    if (!planSlug) return;
+    (async () => {
       try {
         const { data } = await api.get("/admin/superadminPlans/publicPlans");
-        const planesArr = Array.isArray(data) ? data : [];
-        const encontrado = planesArr.find(
-          (p) => p.slug.toLowerCase() === planSlug.toLowerCase()
-        );
+        const planes = Array.isArray(data) ? data : [];
+        const found = planes.find((p) => p.slug.toLowerCase() === planSlug);
 
-        if (!encontrado) {
+        if (!found) {
           showToast("El plan seleccionado no existe.", "error");
           navigate("/");
           return;
         }
 
-        setPlanSeleccionado(encontrado);
-
-        // ✅ set tipoNegocio (plan > fallback URL)
-        const tipoNegocio =
-          (encontrado.tipoNegocio || "").toLowerCase() ||
-          (planSlug === "shop" || planSlug.includes("shop") ? "shop" : "restaurante");
-
-        setTenant((prev) => ({
-          ...prev,
-          plan: encontrado.slug,
-          tipoNegocio, // 👈 NUEVO
-        }));
-
-        setPrecio((prev) => ({
-          ...prev,
-          mensual: encontrado.precioMensual,
-          totalPrimerMes: encontrado.precioMensual + prev.unico,
-        }));
-
-        setPrecioBasePlan(encontrado.precioMensual);
-      } catch (err) {
-        console.error("Error cargando plan:", err);
+        setPlanSeleccionado(found);
+        const tipoNegocio = (found.tipoNegocio || "").toLowerCase() || "restaurante";
+        setTenant((prev) => ({ ...prev, plan: found.slug, tipoNegocio }));
+      } catch {
+        showToast("Error cargando el plan.", "error");
       }
-    };
+    })();
+  }, [planSlug, navigate]); // eslint-disable-line
 
-    cargarPlan();
-  }, [planSlug, navigate]);
-
-  // ======== CALCULAR PRECIO ========
-  useEffect(() => {
-    const mensual =
-      precioBasePlan +
-      (servicios.vozCocina ? 10 : 0) +
-      (servicios.vozComandas ? 10 : 0);
-
-    const PRECIO_TPV_NUEVO = 550;
-    const PRECIO_INSTALACION_TPV_PROPIO = 120;
-
-    const PRECIO_TABLET = 180;
-    const PRECIO_PANTALLA_PRO = 450;
-
-    const PRECIO_IMPRESORA = 150;
-    const PRECIO_PDA = 180;
-
-    const PRECIO_FORMACION = 120;
-    const PRECIO_FOTOGRAFIA = 120;
-    const PRECIO_CARGA_PRODUCTOS = 80;
-    const PRECIO_MESAS_QR = 80;
-
-    const unico =
-      // TPV principal
-      (servicios.tpvOpcion === "nuevo"
-        ? servicios.tpvNuevo * PRECIO_TPV_NUEVO
-        : servicios.instalacionTpvPropio
-          ? PRECIO_INSTALACION_TPV_PROPIO
-          : 0) +
-
-      // pantallas
-      servicios.pantallas *
-      (servicios.pantallaTipo === "pro"
-        ? PRECIO_PANTALLA_PRO
-        : PRECIO_TABLET) +
-
-      // hardware
-      servicios.impresoras * PRECIO_IMPRESORA +
-      servicios.pda * PRECIO_PDA +
-
-      // servicios
-      (servicios.cargaProductos ? PRECIO_CARGA_PRODUCTOS : 0) +
-      (servicios.mesasQr ? PRECIO_MESAS_QR : 0) +
-      (servicios.formacion ? PRECIO_FORMACION : 0) +
-      (servicios.fotografia ? PRECIO_FOTOGRAFIA : 0);
-
-    setPrecio({
-      mensual,
-      unico,
-      totalPrimerMes: mensual + unico,
-    });
-  }, [servicios, precioBasePlan]);
-
+  // ======== SEO ========
   useEffect(() => {
     document.title = "Registro | Alef";
-
-    // meta robots: noindex
     let meta = document.querySelector('meta[name="robots"]');
-    if (!meta) {
-      meta = document.createElement("meta");
-      meta.setAttribute("name", "robots");
-      document.head.appendChild(meta);
-    }
+    if (!meta) { meta = document.createElement("meta"); meta.setAttribute("name", "robots"); document.head.appendChild(meta); }
     meta.setAttribute("content", "noindex, nofollow");
-
-    // opcional: canonical para esta página
-    let canonical = document.querySelector('link[rel="canonical"]');
-    if (!canonical) {
-      canonical = document.createElement("link");
-      canonical.setAttribute("rel", "canonical");
-      document.head.appendChild(canonical);
-    }
-    canonical.setAttribute("href", window.location.href);
   }, []);
 
-  const pasos = [
-    <Paso1DatosRestaurante
-      tenant={tenant}
-      setTenant={setTenant}
-      admin={admin}
-      setAdmin={setAdmin}
-      isShop={isShop} // 👈 por si quieres adaptar textos/campos dentro
-    />,
-    <Paso2ConfiguracionBasica
-      config={config}
-      setConfig={setConfig}
-      plan={planSeleccionado}
-      isShop={isShop}
-    />,
-    <Paso3ServiciosExtras
-      servicios={servicios}
-      setServicios={setServicios}
-      isShop={isShop}
-      precheckoutId={precheckoutId}
-      setPrecheckoutId={setPrecheckoutId}
-      tenant={tenant}
-      admin={admin}
-      config={config}
-      precio={precio}
-      plan={planSeleccionado}
-      periodo={periodo}
-    />,
-    <Paso4ResumenPago
-      tenant={tenant}
-      admin={admin}
-      config={config}
-      servicios={servicios}
-      precio={precio}
-      pago={pago}
-      loading={loading}
-      setLoading={setLoading}
-      error={error}
-      setError={setError}
-      precheckoutId={precheckoutId}
-      setPrecheckoutId={setPrecheckoutId}
-      precioBasePlan={precioBasePlan}
-      plan={planSeleccionado}
-      periodo={periodo}
-      setPeriodo={setPeriodo}
-      isShop={isShop}
-    />,
-  ];
+  // ======== PERSISTENCIA LOCALSTORAGE ========
+  useEffect(() => {
+    if (!tenant.nombre && !admin.email) return;
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({
+        tenant, admin, paso, periodo, precheckoutId, _ts: Date.now(),
+      }));
+    } catch {}
+  }, [tenant, admin, paso, periodo, precheckoutId]);
 
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return;
+      const saved = JSON.parse(raw);
+      if (saved._ts && Date.now() - saved._ts > STORAGE_TTL) { localStorage.removeItem(STORAGE_KEY); return; }
+      if (saved.tenant?.plan && saved.tenant.plan !== planSlug) return;
+      if (saved.tenant) setTenant(saved.tenant);
+      if (saved.admin) setAdmin(saved.admin);
+      if (saved.paso) setPaso(saved.paso);
+      if (saved.periodo) setPeriodo(saved.periodo);
+      if (saved.precheckoutId) setPrecheckoutId(saved.precheckoutId);
+    } catch {}
+  }, []); // eslint-disable-line
+
+  // ======== PRECIO (simple - solo plan base) ========
+  const precio = useMemo(() => {
+    const mensual = planSeleccionado?.precioMensual || 0;
+    const anual = planSeleccionado?.precioAnual || mensual * 11;
+    return {
+      mensual,
+      anual,
+      total: periodo === "anual" ? anual : mensual,
+    };
+  }, [planSeleccionado, periodo]);
+
+  // ======== VALIDACION ========
+  const validateStep = useCallback((stepNum) => {
+    setValidationError("");
+    if (stepNum === 1) {
+      if (!tenant.nombre.trim()) { setValidationError("El nombre del negocio es obligatorio."); return false; }
+      if (!admin.email.trim()) { setValidationError("El email del administrador es obligatorio."); return false; }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(admin.email.trim())) { setValidationError("Introduce un email valido."); return false; }
+      if (!admin.name.trim()) { setValidationError("El nombre del administrador es obligatorio."); return false; }
+    }
+    return true;
+  }, [tenant, admin]);
+
+  const handleNext = useCallback(() => {
+    if (!validateStep(paso)) return;
+    setValidationError("");
+    setPaso(paso + 1);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [paso, validateStep]);
+
+  const handlePrev = useCallback(() => {
+    setValidationError("");
+    setPaso(paso - 1);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [paso]);
+
+  // ======== RENDER ========
   const stepActual = STEPS.find((s) => s.id === paso);
 
   return (
     <main className="registro-avanzado registro-page">
-
       <div className="registro-shell">
-        {/* COLUMNA PRINCIPAL */}
         <div className="registro-main card">
           <header className="registro-header">
             <div>
               <p className="registro-kicker">
                 Alta de {isShop ? "tienda" : "restaurante"}
               </p>
-
               <h1 className="registro-title">
-                Configura tu {isShop ? "tienda online" : "restaurante"} en Alef
+                {paso === 1
+                  ? `¿Como se llama tu ${isShop ? "tienda" : "restaurante"}?`
+                  : "Confirma y empieza"}
               </h1>
-
               <p className="registro-subtitle">
-                Completa estos pasos para crear tu entorno y empezar a trabajar con{" "}
-                {isShop ? "Alef Shop" : "el TPV"}.
+                {paso === 1
+                  ? "Solo necesitamos 3 datos para crear tu cuenta."
+                  : "Revisa tu plan, elige como pagar y listo. En 2 minutos tienes todo funcionando."}
               </p>
             </div>
 
             {planSeleccionado && (
               <div className="registro-plan-box">
                 <span className="registro-plan-label">Plan seleccionado</span>
-                <strong className="registro-plan-nombre">
-                  {planSeleccionado.nombre}
-                </strong>
-                <span className="registro-plan-precio">
-                  {planSeleccionado.precioMensual} €/mes
-                </span>
+                <strong className="registro-plan-nombre">{planSeleccionado.nombre}</strong>
+                <span className="registro-plan-precio">{planSeleccionado.precioMensual} €/mes</span>
               </div>
             )}
           </header>
 
           {/* STEPPER */}
           <div className="registro-stepper">
-            {STEPS.map((step, index) => {
-              const isActive = paso === step.id;
-              const isDone = paso > step.id;
-
-              return (
-                <div className="registro-step" key={step.id}>
-                  <div
-                    className={`registro-step-circle ${isActive ? "active" : ""} ${isDone ? "done" : ""
-                      }`}
-                  >
-                    {isDone ? "✓" : step.id}
-                  </div>
-                  <span
-                    className={`registro-step-label ${isActive ? "active" : ""}`}
-                  >
-                    {step.label}
-                  </span>
-                  {index < STEPS.length - 1 && <div className="registro-step-line" />}
+            {STEPS.map((step, index) => (
+              <div className="registro-step" key={step.id}>
+                <div className={`registro-step-circle ${paso === step.id ? "active" : ""} ${paso > step.id ? "done" : ""}`}>
+                  {paso > step.id ? "✓" : step.id}
                 </div>
-              );
-            })}
+                <span className={`registro-step-label ${paso === step.id ? "active" : ""}`}>
+                  {step.label}
+                </span>
+                {index < STEPS.length - 1 && <div className="registro-step-line" />}
+              </div>
+            ))}
           </div>
 
           <p className="registro-step-counter">
             Paso {paso} de {STEPS.length}: <span>{stepActual?.label}</span>
           </p>
 
-          {/* CONTENIDO DEL PASO */}
-          <div className="registro-step-content">{pasos[paso - 1]}</div>
+          {/* CONTENIDO */}
+          <div className="registro-step-content">
+            {paso === 1 && (
+              <Paso1DatosRestaurante
+                tenant={tenant}
+                setTenant={setTenant}
+                admin={admin}
+                setAdmin={setAdmin}
+                isShop={isShop}
+              />
+            )}
+            {paso === 2 && (
+              <Paso2Pago
+                tenant={tenant}
+                admin={admin}
+                plan={planSeleccionado}
+                precio={precio}
+                periodo={periodo}
+                setPeriodo={setPeriodo}
+                precheckoutId={precheckoutId}
+                setPrecheckoutId={setPrecheckoutId}
+                loading={loading}
+                setLoading={setLoading}
+                error={error}
+                setError={setError}
+                isShop={isShop}
+              />
+            )}
+          </div>
 
-          {/* NAVIGATION BOTTOM */}
+          {/* NAVEGACION */}
           <div className="registro-nav">
             {paso > 1 && (
-              <button
-                type="button"
-                className="registro-btn registro-btn-secundario"
-                onClick={() => setPaso(paso - 1)}
-                disabled={loading}
-              >
+              <button type="button" className="registro-btn registro-btn-secundario" onClick={handlePrev} disabled={loading}>
                 Anterior
               </button>
             )}
             {paso < STEPS.length && (
-              <button
-                type="button"
-                className="registro-btn registro-btn btn-primario "
-                onClick={() => setPaso(paso + 1)}
-                disabled={loading}
-              >
-                Siguiente
+              <button type="button" className="registro-btn registro-btn btn-primario" onClick={handleNext} disabled={loading}>
+                Continuar
               </button>
             )}
           </div>
 
+          {validationError && <p className="registro-error">{validationError}</p>}
           {error && <p className="registro-error">{error}</p>}
-          {success && (
-            <p className="registro-success">
-              {isShop ? "Tienda" : "Restaurante"} creado correctamente. Redirigiendo...
-            </p>
-          )}
-        </div>
-
-        {/* COLUMNA DERECHA: RESUMEN DE PRECIOS */}
-        <div className="registro-side">
-          <PanelPrecio precio={precio} periodo={periodo} />
         </div>
       </div>
     </main>

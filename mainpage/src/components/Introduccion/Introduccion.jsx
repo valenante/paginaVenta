@@ -12,7 +12,7 @@ const Introduccion = () => {
         <div className="Introduccion-left">
           <div className="Introduccion-contenido">
             <div className="Introduccion-badge">
-              <span>La plataforma que se adapta a tu negocio</span>
+              <span>Usado en restaurantes reales cada dia</span>
 
               <span
                 className="badge-verifactu"
@@ -29,53 +29,51 @@ const Introduccion = () => {
             </div>
 
             <h1 className="Introduccion-titulo">
-              TPV web
-              rápido, claro y listo para crecer
+              Tus camareros toman comandas en segundos.
+              Cocina no se equivoca. Caja siempre cuadra.
             </h1>
 
             <p className="Introduccion-subtitulo">
-              Alef está diseñado para el día a día real: tomar comandas sin
-              perder tiempo, enviar a cocina/bar con información clara y tener
-              todo el negocio bajo control desde un solo sistema. Sin
-              instalaciones complicadas, sin límites de dispositivos.
+              Alef agiliza tu sala, coordina cocina y barra en tiempo real
+              y te da el control completo de tu negocio. Sin instalar nada,
+              funciona en cualquier dispositivo con navegador.
             </p>
 
             <div className="Introduccion-highlights">
-              <span>⚡ Puesta en marcha en minutos</span>
-              <span>🧾 Tickets claros + notas a cocina</span>
-              <span>🔎 Búsqueda rápida de productos</span>
-              <span>📲 Carta digital (3 idiomas) + pedidos ON/OFF</span>
-              <span>🖥️ Multi-dispositivo (PC, tablet y móvil)</span>
-              <span>📦 Stock y proveedores integrados</span>
-              <span>✅ Facturación encadenada (Ley 11/2021) y preparada para VERI*FACTU</span>
+              <span>🔎 Buscador inteligente de productos al tomar comanda</span>
+              <span>🧾 Tickets por seccion con notas, orden y mensajes a cocina</span>
+              <span>👨‍🍳 Pantallas de cocina y barra con marcado en tiempo real</span>
+              <span>📲 Carta digital QR en 3 idiomas con pedidos y reservas</span>
+              <span>✅ Facturacion encadenada y preparada para VERI*FACTU</span>
+              <span>📊 Estadisticas, stock, caja diaria y gestion completa</span>
             </div>
 
             <div className="Introduccion-botones">
-              <a href="#contacto" className="Introduccion-boton principal">
-                Pedir una demo
+              <a href="#packs" className="Introduccion-boton principal">
+                Ver planes desde 59€/mes
               </a>
 
-              <a href="#ventajas" className="Introduccion-boton secundario">
-                Ver funcionalidades
+              <a href="#contacto" className="Introduccion-boton secundario">
+                Pedir demo de 10 min
               </a>
             </div>
 
             <div className="Introduccion-metricas">
               <div>
-                <strong>+40</strong>
-                <span>funciones para operar y crecer</span>
+                <strong>3 toques</strong>
+                <span>para una comanda completa</span>
               </div>
               <div>
-                <strong>24/7</strong>
-                <span>acceso desde cualquier dispositivo</span>
+                <strong>0 errores</strong>
+                <span>tickets claros por seccion</span>
               </div>
               <div>
-                <strong>Todo en uno</strong>
-                <span>TPV, carta, stock, caja y gestión</span>
+                <strong>59€/mes</strong>
+                <span>todo incluido, sin permanencia</span>
               </div>
               <div>
-                <strong>Soporte real</strong>
-                <span>acompañamiento desde el día 1</span>
+                <strong>1 minuto</strong>
+                <span>para estar operativo</span>
               </div>
             </div>
           </div>
@@ -86,13 +84,13 @@ const Introduccion = () => {
           <div className="hero-orbit">
             {/* Pills flotantes alrededor */}
             <div className="hero-pill pill-voz">
-              🗣️ Voz inteligente en sala, cocina y barra
+              🗣️ Comandas por voz en horas pico
             </div>
             <div className="hero-pill pill-cocina">
-              👨‍🍳 Cocina, barra y mostrador por secciones
+              👨‍🍳 Cocina marca listo → ticket al camarero
             </div>
             <div className="hero-pill pill-carta">
-              📲 Carta digital y TPV web en cualquier dispositivo
+              📲 Tu carta QR en 3 idiomas con reservas
             </div>
 
             {/* Stack principal de pantallas */}

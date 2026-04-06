@@ -10,40 +10,41 @@ const Hero = () => {
         {/* Columna texto */}
         <div className="Hero-texto">
           <div className="Hero-badge">
-            Listo para Ley Antifraude y VERI*FACTU
+            Obligatorio desde julio 2026
           </div>
 
           <h2 className="Hero-titulo">
-            Facturación encadenada, <br />
-            preparada para conectarse con Hacienda
+            ¿Tu TPV actual cumple <br />
+            con la Ley Antifraude?
           </h2>
 
           <p className="Hero-parrafo">
-            Alef genera facturas encadenadas con hash inalterable, registra
-            cada emisión y rectificación y está diseñado para integrarse con
-            VERI*FACTU en cuanto la Agencia Tributaria habilite el sistema
-            definitivo. Así tu restaurante se adelanta a la normativa y evita
-            sorpresas de última hora.
+            A partir de julio 2026 todos los negocios de hosteleria deben
+            emitir facturas con software certificado. Alef ya genera facturas
+            encadenadas con hash inalterable y esta preparado para VERI*FACTU.
+            No esperes a que te pillen — adelantate.
           </p>
 
           <ul className="Hero-lista">
-            <li>📌 Numeración encadenada y registro de cada factura y ticket.</li>
-            <li>📌 Hash antifraude y trazabilidad de modificaciones.</li>
-            <li>📌 Preparado para enviar la información a la AEAT (VERI*FACTU).</li>
+            <li>📌 Cada factura y ticket queda registrado con numeracion encadenada.</li>
+            <li>📌 Hash antifraude que garantiza que nadie modifica los datos.</li>
+            <li>📌 Listo para enviar a la AEAT cuando se active VERI*FACTU.</li>
           </ul>
 
           <p className="Hero-aviso">
-            <strong>Sin letra pequeña:</strong> te acompañamos en la adaptación
-            a la nueva normativa y te explicamos, en lenguaje claro, qué implica
-            para tu restaurante.
+            <strong>Sin letra pequeña:</strong> te acompañamos en la adaptacion,
+            te explicamos que implica para tu restaurante y lo dejamos funcionando.
           </p>
 
           <div className="Hero-acciones">
             <a href="#packs" className="Hero-boton btn btn-primario ">
-              Ver planes con facturación antifraude
+              Cumple desde hoy
+            </a>
+            <a href="/verifactu" className="Hero-link">
+              Leer guia completa VERI*FACTU →
             </a>
             <a href="#contacto" className="Hero-link">
-              Resolver dudas legales →
+              Tengo dudas, quiero hablar →
             </a>
           </div>
         </div>

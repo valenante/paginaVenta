@@ -33,9 +33,10 @@ export default function Paso3ServiciosExtras({
         return { ...prev, [name]: checked };
       }
 
-      // ✅ number
+      // ✅ number (nunca negativo)
       if (type === "number") {
-        return { ...prev, [name]: value === "" ? "" : Number(value) };
+        const num = value === "" ? 0 : Math.max(0, Math.floor(Number(value)));
+        return { ...prev, [name]: num };
       }
 
       // ✅ radio/select/text
@@ -503,7 +504,7 @@ export default function Paso3ServiciosExtras({
           <div className="servicio-item servicio-item--number">
             <div className="servicio-number-text">
               <label>Scanner de códigos de barras</label>
-              <small className="servicio-helper">(precio a definir) por unidad</small>
+              <small className="servicio-helper">Consultanos por precio</small>
             </div>
             <input
               className="servicio-number-input"

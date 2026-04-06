@@ -98,6 +98,7 @@ export default function RegistroSuccess() {
       if (data.status === "ACTIVE") {
         setView("activo");
         stopPolling();
+        try { localStorage.removeItem("alef_registro_draft"); } catch {}
         return;
       }
 

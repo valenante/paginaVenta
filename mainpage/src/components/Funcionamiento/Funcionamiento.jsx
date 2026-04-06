@@ -7,13 +7,11 @@ export default function Funcionamiento() {
       <div className="Fn-inner">
         {/* TÍTULO CENTRAL */}
         <header className="Fn-header">
-          <span className="Fn-badge">Así funciona Alef de principio a fin</span>
-          <h2 id="fn-title">Tu sistema Alef funcionando en minutos</h2>
+          <span className="Fn-badge">De 0 a operativo en minutos</span>
+          <h2 id="fn-title">Asi de rapido empiezas con Alef</h2>
           <p>
-            De la activación del entorno a tu primer servicio real.
-            Alef está pensado para operar desde el día 1: TPV, cocina/bar,
-            impresión, carta digital y panel de gestión, todo en tiempo real y con
-            soporte incluido.
+            Sin tecnicos, sin instalaciones, sin esperas.
+            Eliges plan, te preparamos todo y empiezas a trabajar.
           </p>
         </header>
 
@@ -23,37 +21,35 @@ export default function Funcionamiento() {
             <div className="Fn-step-icon">📦</div>
             <h3>Elige tu plan</h3>
             <p>
-              Seleccionas el plan según tu negocio (restaurante o tienda) y
-              Alef te activa el entorno para empezar sin complicaciones.
+              59 segundos. Eliges el plan que encaja con tu restaurante,
+              pones nombre y email. Listo.
             </p>
           </div>
 
           <div className="Fn-step">
             <div className="Fn-step-icon">⚙️</div>
-            <h3>Configura tu operativa</h3>
+            <h3>Te lo dejamos listo</h3>
             <p>
-              Ajustas lo importante: mesas, secciones/estaciones, roles, impuestos,
-              horarios y el comportamiento del TPV. Todo editable desde el panel.
+              Creamos tu entorno con mesas, categorias, carta digital
+              y accesos para tu equipo. Todo configurado.
             </p>
           </div>
 
           <div className="Fn-step">
-            <div className="Fn-step-icon">🖨️</div>
-            <h3>Conecta dispositivos e impresión</h3>
+            <div className="Fn-step-icon">🖥️</div>
+            <h3>Abre desde cualquier dispositivo</h3>
             <p>
-              Funciona en PC, tablet o móvil desde el navegador. Puedes asignar
-              impresoras por estación, hacer pruebas y usar tickets con secciones y
-              mensajes personalizados.
+              PC, tablet o movil. Solo abre el navegador y entra.
+              Sin descargar nada, sin licencias por dispositivo.
             </p>
           </div>
 
           <div className="Fn-step">
             <div className="Fn-step-icon">🚀</div>
-            <h3>Empieza a trabajar</h3>
+            <h3>Tu primer servicio</h3>
             <p>
-              Tomas comandas, cocina/bar marca listo, caja y cierres diarios. Si lo
-              activas, tus clientes usan carta QR (idiomas + reservas + “pedir cuenta”
-              y valoraciones).
+              Comandas, cocina marca listo, cuenta, impresion y cierre de caja.
+              Todo funciona desde el primer dia.
             </p>
           </div>
         </div>

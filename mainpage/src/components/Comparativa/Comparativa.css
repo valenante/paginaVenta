@@ -1,0 +1,147 @@
+/* src/components/Comparativa/Comparativa.css */
+
+.Comp {
+  padding: 5rem 0;
+  color: white;
+  background:
+    radial-gradient(circle at top left, #60b5ff20 0, #0b1020 60%),
+    radial-gradient(circle at bottom right, #ff914930 0, #0b1020 70%);
+}
+
+.Comp-inner {
+  padding: var(--space-2xl) var(--space-lg);
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.Comp-header {
+  text-align: center;
+  margin-bottom: var(--space-xl);
+}
+
+.Comp-kicker {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: rgba(96, 181, 255, 0.15);
+  color: #60b5ff;
+  margin-bottom: 0.6rem;
+}
+
+.Comp-header h2 {
+  font-size: 2rem;
+  font-weight: 800;
+  margin: 0 0 0.6rem;
+  color: #fff;
+}
+
+.Comp-header p {
+  margin: 0;
+  font-size: 1rem;
+  color: rgba(226, 232, 240, 0.8);
+}
+
+/* Tabla */
+
+.Comp-table-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: var(--radius-md);
+}
+
+.Comp-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.Comp-table thead th {
+  padding: 0.8rem 1rem;
+  text-align: center;
+  font-weight: 700;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: rgba(226, 232, 240, 0.7);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+.Comp-table thead th:first-child {
+  text-align: left;
+}
+
+.Comp-th--alef {
+  color: #60b5ff !important;
+  font-size: 0.875rem !important;
+}
+
+.Comp-table tbody tr {
+  border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+  transition: background 0.12s ease;
+}
+
+.Comp-table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.Comp-feature {
+  padding: 0.7rem 1rem;
+  color: rgba(226, 232, 240, 0.9);
+  font-weight: 500;
+}
+
+.Comp-cell {
+  padding: 0.7rem 1rem;
+  text-align: center;
+}
+
+.Comp-cell--alef {
+  background: rgba(96, 181, 255, 0.05);
+}
+
+.Comp-check {
+  color: #4ade80;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.Comp-cross {
+  color: #f87171;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.Comp-text {
+  color: rgba(226, 232, 240, 0.7);
+  font-size: 0.75rem;
+}
+
+/* CTA */
+
+.Comp-cta {
+  text-align: center;
+  margin-top: var(--space-lg);
+}
+
+/* Responsive */
+
+@media (max-width: 640px) {
+  .Comp-feature {
+    font-size: var(--font-size-xs);
+    padding: 0.5rem 0.6rem;
+  }
+
+  .Comp-cell {
+    padding: 0.5rem 0.4rem;
+  }
+
+  .Comp-table thead th {
+    padding: 0.6rem 0.4rem;
+    font-size: 0.65rem;
+  }
+}

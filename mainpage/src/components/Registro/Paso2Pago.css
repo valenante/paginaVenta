@@ -1,0 +1,198 @@
+/* src/components/Registro/Paso2Pago.css */
+
+.paso2-pago {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Resumen */
+.p2-resumen h3,
+.p2-plan h3,
+.p2-periodo h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-texto);
+  margin: 0 0 0.6rem;
+}
+
+.p2-dl {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.3rem 1rem;
+  font-size: 0.875rem;
+}
+
+.p2-dl dt {
+  color: var(--color-texto-suave);
+  font-weight: 600;
+}
+
+.p2-dl dd {
+  margin: 0;
+  color: var(--color-texto);
+}
+
+/* Plan */
+.p2-plan-desc {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--color-texto-suave);
+  line-height: 1.5;
+}
+
+/* Periodo cards */
+.p2-periodo-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.8rem;
+}
+
+@media (max-width: 640px) {
+  .p2-periodo-cards {
+    grid-template-columns: 1fr;
+  }
+}
+
+.p2-periodo-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 1.2rem 1rem;
+  border-radius: var(--radius-md);
+  border: 2px solid var(--color-borde-suave);
+  background: var(--color-fondo-card);
+  cursor: pointer;
+  transition: border-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+  text-align: center;
+}
+
+.p2-periodo-card:hover {
+  border-color: var(--color-primario);
+  transform: translateY(-2px);
+}
+
+.p2-periodo-card--active {
+  border-color: var(--color-primario);
+  background: var(--color-primario-suave);
+  box-shadow: 0 4px 12px rgba(96, 181, 255, 0.15);
+  transform: translateY(-2px);
+}
+
+.p2-periodo-card strong {
+  font-size: 1rem;
+  color: var(--color-texto);
+}
+
+.p2-periodo-precio {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--color-primario-oscuro);
+}
+
+.p2-periodo-card small {
+  font-size: 0.75rem;
+  color: var(--color-texto-suave);
+}
+
+.p2-periodo-badge {
+  position: absolute;
+  top: -0.5rem;
+  right: 0.8rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  background: var(--color-secundario);
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* Total */
+.p2-total {
+  padding: 1rem;
+  border-radius: var(--radius-md);
+  background: var(--color-fondo-card);
+  border: 1px solid var(--color-borde-suave);
+}
+
+.p2-total-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.p2-total-row span {
+  font-size: 1rem;
+  color: var(--color-texto-suave);
+  font-weight: 600;
+}
+
+.p2-total-amount {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--color-primario-oscuro);
+}
+
+.p2-total-note {
+  margin: 0.4rem 0 0;
+  font-size: 0.75rem;
+  color: var(--color-texto-suave);
+}
+
+/* Boton pagar */
+.p2-btn-pagar {
+  width: 100%;
+  padding: 0.9rem;
+  border: none;
+  border-radius: var(--radius-pill);
+  background: linear-gradient(135deg, var(--color-primario), var(--color-primario-oscuro));
+  color: #fff;
+  font-size: 1.05rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+  box-shadow: 0 8px 20px rgba(96, 181, 255, 0.3);
+}
+
+.p2-btn-pagar:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(96, 181, 255, 0.4);
+  filter: brightness(1.05);
+}
+
+.p2-btn-pagar:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Legal */
+.p2-legal {
+  text-align: center;
+  font-size: 0.7rem;
+  color: var(--color-texto-suave);
+  margin: 0;
+}
+
+.p2-legal a {
+  color: var(--color-primario);
+  text-decoration: underline;
+}
+
+/* Info post-pago */
+.p2-info {
+  padding: 0.8rem 1rem;
+  border-radius: var(--radius-sm);
+  background: var(--color-primario-suave);
+  border-left: 3px solid var(--color-primario);
+}
+
+.p2-info p {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--color-texto);
+  line-height: 1.5;
+}

@@ -14,8 +14,10 @@ export default function Footer() {
         </div>
 
         <nav className="Footer-links">
-          <Link to="/aviso-legal">Aviso legal</Link>
+          <Link to="/terminos">Condiciones</Link>
           <Link to="/privacidad">Privacidad</Link>
+          <Link to="/dpa">DPA</Link>
+          <Link to="/aviso-legal">Aviso legal</Link>
           <Link to="/cookies">Cookies</Link>
         </nav>
       </div>

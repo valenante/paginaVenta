@@ -39,12 +39,11 @@ const Packs = () => {
         {/* HEADER */}
         <div className="fila-superior">
           <div className="packs-header">
-            <span className="packs-kicker">Planes Alef</span>
-            <h2>Elige el plan que encaja con tu búsqueda</h2>
+            <span className="packs-kicker">Planes</span>
+            <h2>Desde 59€/mes. Todo incluido. Sin permanencia.</h2>
             <p>
-              Todos los planes incluyen soporte, actualizaciones y acceso al
-              panel de administración. Puedes empezar con uno y subir cuando tu
-              restaurante lo necesite.
+              Todos los planes incluyen soporte, actualizaciones, carta digital
+              y facturacion antifraude. Cambia o cancela cuando quieras.
             </p>
           </div>
         </div>

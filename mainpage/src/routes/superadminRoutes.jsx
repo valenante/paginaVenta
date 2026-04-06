@@ -17,6 +17,7 @@ const MigrationsPage = lazy(() => import("../pages/admin/AdminDashboard/migratio
 const MigrationsTenantPage = lazy(() => import("../pages/admin/AdminDashboard/migrations/MigrationsTenantPage.jsx"));
 const TenantsPage = lazy(() => import("../pages/admin/tenants/TenantsPage"));
 const SuperadminAltaTenant = lazy(() => import("../pages/admin/SuperadminAltaTenant/SuperadminAltaTenant.jsx"));
+const ChangelogAdmin = lazy(() => import("../pages/admin/ChangelogAdmin"));
 
 export default function superadminRoutes() {
   return (
@@ -36,6 +37,7 @@ export default function superadminRoutes() {
       <Route path="exports" element={<SuperadminExportsPage />} />
       <Route path="migrations" element={<MigrationsPage />} />
       <Route path="migrations/:slug" element={<MigrationsTenantPage />} />
+      <Route path="changelog" element={<ChangelogAdmin />} />
     </Route>
   );
 }

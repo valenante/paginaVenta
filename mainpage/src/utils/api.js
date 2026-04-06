@@ -319,6 +319,24 @@ api.interceptors.response.use(
       return api(original);
     }
 
+    // ✅ Suscripción inactiva (402) → redirigir a login con mensaje
+    const SUBSCRIPTION_BLOCKED = [
+      "ACCOUNT_DISABLED", "TRIAL_EXPIRED", "SUBSCRIPTION_PAUSED",
+      "PAYMENT_REQUIRED", "SUBSCRIPTION_CANCELED", "SUBSCRIPTION_REFUNDED",
+      "DISPUTE_LOST", "SUBSCRIPTION_INACTIVE",
+    ];
+    if (status === 402 && SUBSCRIPTION_BLOCKED.includes(code)) {
+      try {
+        sessionStorage.setItem("tenantBlockedMsg", JSON.stringify({
+          title: server.message || "Suscripcion inactiva",
+          message: server.message || "Contacta con soporte.",
+          code,
+        }));
+      } catch {}
+      window.location.href = "/login";
+      return Promise.reject(error);
+    }
+
     // ✅ Si no es 401, dejamos pasar el error (pero ya normalizable en UI)
     if (status !== 401) {
       // Adjunta server normalizado para que la UI lo use directo

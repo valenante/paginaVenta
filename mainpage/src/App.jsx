@@ -7,7 +7,9 @@ import Introduccion from "./components/Introduccion/Introduccion";
 import Hero from "./components/Hero/Hero";
 import Funcionamiento from "./components/Funcionamiento/Funcionamiento";
 import Features from "./components/Features/Features";
+import Comparativa from "./components/Comparativa/Comparativa";
 import Packs from "./components/Packs/Packs";
+import FAQ from "./components/FAQ/FAQ";
 import Contact from "./components/Contact/Contact";
 import Footer from "./components/Footer/Footer";
 
@@ -63,7 +65,9 @@ function LandingPage() {
       <Hero />
       <Funcionamiento />
       <Features />
+      <Comparativa />
       <Packs />
+      <FAQ />
       <Contact />
       <Footer />
     </div>
@@ -128,6 +132,38 @@ const TENANT_BLOCKED_MESSAGES = {
   TENANT_CANCELADO: {
     title: "Suscripción cancelada",
     message: "Tu suscripción ha sido cancelada. Si deseas reactivar tu cuenta, contacta con soporte.",
+  },
+  ACCOUNT_DISABLED: {
+    title: "Cuenta desactivada",
+    message: "La cuenta ha sido desactivada. Contacta con soporte.",
+  },
+  TRIAL_EXPIRED: {
+    title: "Periodo de prueba finalizado",
+    message: "Tu periodo de prueba ha terminado. Suscribete a un plan para seguir usando Alef.",
+  },
+  SUBSCRIPTION_PAUSED: {
+    title: "Suscripcion pausada",
+    message: "Tu suscripcion esta pausada. Reanudala desde tu panel de facturacion.",
+  },
+  PAYMENT_REQUIRED: {
+    title: "Pago pendiente",
+    message: "No hemos podido cobrar tu suscripcion. Actualiza tu metodo de pago.",
+  },
+  SUBSCRIPTION_CANCELED: {
+    title: "Suscripcion cancelada",
+    message: "Tu suscripcion fue cancelada y el periodo de acceso ha terminado.",
+  },
+  SUBSCRIPTION_REFUNDED: {
+    title: "Suscripcion reembolsada",
+    message: "Tu suscripcion fue reembolsada. Contacta con soporte.",
+  },
+  DISPUTE_LOST: {
+    title: "Disputa de pago",
+    message: "El acceso esta restringido por una disputa de pago. Contacta con soporte.",
+  },
+  SUBSCRIPTION_INACTIVE: {
+    title: "Suscripcion inactiva",
+    message: "Tu suscripcion no esta activa. Contacta con soporte.",
   },
 };
 

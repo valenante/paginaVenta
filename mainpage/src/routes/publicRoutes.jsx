@@ -12,6 +12,9 @@ const LoginImpersonar = lazy(() => import("../pages/LoginImpersonar"));
 const AvisoLegal = lazy(() => import("../pages/legal/AvisoLegal"));
 const Privacidad = lazy(() => import("../pages/legal/Privacidad"));
 const Cookies = lazy(() => import("../pages/legal/Cookies"));
+const TerminosServicio = lazy(() => import("../pages/legal/TerminosServicio"));
+const DPA = lazy(() => import("../pages/legal/DPA"));
+const GuiaVerifactu = lazy(() => import("../pages/legal/GuiaVerifactu"));
 
 export default function publicRoutes(HomeEntry) {
   return (
@@ -32,6 +35,9 @@ export default function publicRoutes(HomeEntry) {
       <Route path="/aviso-legal" element={<AvisoLegal />} />
       <Route path="/privacidad" element={<Privacidad />} />
       <Route path="/cookies" element={<Cookies />} />
+      <Route path="/terminos" element={<TerminosServicio />} />
+      <Route path="/dpa" element={<DPA />} />
+      <Route path="/verifactu" element={<GuiaVerifactu />} />
 
       {/* PASSWORD */}
       <Route path="/forgot-password" element={<ForgotPassword />} />

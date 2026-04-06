@@ -61,7 +61,9 @@ export default function Paso4ResumenPago({
         throw new Error("SESSION_FAIL");
       }
 
-      window.location.href = sesion.url; // aquí te vas a Stripe
+      // Limpiar borrador del registro antes de salir a Stripe
+      try { localStorage.removeItem("alef_registro_draft"); } catch {}
+      window.location.href = sesion.url;
       // NO pongas setLoading(false) aquí porque ya te vas
     } catch (err) {
       console.error("❌ Error al procesar pago:", err);
@@ -302,7 +304,7 @@ export default function Paso4ResumenPago({
 
             {isShop && (servicios.scanner ?? 0) > 0 && (
               <li>
-                {servicios.scanner} × Scanner códigos de barras — (a definir)
+                {servicios.scanner} × Scanner codigos de barras — consultar precio
               </li>
             )}
 

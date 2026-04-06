@@ -25,9 +25,10 @@ import CortesiasPage from "../components/Cortesias/CortesiasPage";
 // ✅ Tiempos de cocina (SLA)
 import TiemposCocina from "./TiemposCocina/TiemposCocina";
 
-// ✅ Tenant + Auth
+// ✅ Tenant + Auth + Plan
 import { useTenant } from "../context/TenantContext";
 import { useAuth } from "../context/AuthContext.jsx";
+import { useFeaturesPlan } from "../context/FeaturesPlanContext";
 
 // ✅ Changelog (novedades al entrar)
 import ChangelogModal from "../components/Changelog/ChangelogModal";
@@ -37,11 +38,11 @@ const PANEL_BY_TIPO = {
     { key: "mapa", label: "🗺️ Mapa del restaurante", permiso: "mapa.manage", render: () => <MapaEditor /> },
     { key: "productos", label: "🧾 Carta y productos", permiso: "productos.manage", render: () => <ProductsMenu /> },
     { key: "caja", label: "💶 Caja diaria", permiso: "caja.manage", render: () => <CajaDiaria /> },
-    { key: "stock", label: "📦 Stock", permiso: "stock.manage", render: () => <StockPage /> },
-    { key: "valoraciones", label: "⭐ Valoraciones", permiso: "valoraciones.manage", render: () => <ValoracionesPanel /> },
+    { key: "stock", label: "📦 Stock", permiso: "stock.manage", feature: "stock_basico", render: () => <StockPage /> },
+    { key: "valoraciones", label: "⭐ Valoraciones", permiso: "valoraciones.manage", feature: "carta_valoraciones", render: () => <ValoracionesPanel /> },
     { key: "estadisticas", label: "📊 Estadísticas", permiso: "estadisticas.manage", render: () => <EstadisticasPage type="plato" /> },
     { key: "cortesias", label: "🎁 Cortesias", permiso: "cortesias.view", render: () => <CortesiasPage /> },
-    { key: "tiempos", label: "⏱️ Tiempos cocina", permiso: null, render: () => <TiemposCocina /> },
+    { key: "tiempos", label: "⏱️ Tiempos cocina", permiso: null, feature: "motor_adaptativo_cocina", render: () => <TiemposCocina /> },
   ],
 
   shop: [
@@ -62,6 +63,7 @@ const STAFF_TAB = {
 export default function PanelPro() {
   const { tenant, loadingTenant, tenantError } = useTenant();
   const { tienePermiso } = useAuth();
+  const { hasFeature } = useFeaturesPlan();
 
   const tipoNegocio = (
     tenant?.tipoNegocio ||
@@ -71,9 +73,10 @@ export default function PanelPro() {
 
   const tabs = useMemo(() => {
     const gestion = (PANEL_BY_TIPO[tipoNegocio] || PANEL_BY_TIPO.shop)
-      .filter((t) => !t.permiso || tienePermiso(t.permiso));
+      .filter((t) => !t.permiso || tienePermiso(t.permiso))
+      .filter((t) => !t.feature || hasFeature(t.feature));
     return [STAFF_TAB, ...gestion];
-  }, [tipoNegocio, tienePermiso]);
+  }, [tipoNegocio, tienePermiso, hasFeature]);
 
   const [active, setActive] = useState("staff");
 

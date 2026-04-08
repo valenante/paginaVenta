@@ -7,6 +7,9 @@ import "./VerifactuGlobalModal.css";
 const VF_COOLDOWN_MS = 10 * 60 * 1000; // 10 minutos
 
 export default function VerifactuGlobalModal() {
+  // DESACTIVADO hasta 1 enero 2027 — VeriFactu no es obligatorio aún
+  return null;
+
   const [visible, setVisible] = useState(false);
   const [checking, setChecking] = useState(true);
 

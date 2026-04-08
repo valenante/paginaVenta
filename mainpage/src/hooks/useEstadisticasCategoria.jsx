@@ -42,11 +42,16 @@ export const useEstadisticasCategoria = (products, filters = {}) => {
 
       if (startDate) {
         const d = startDate instanceof Date ? startDate : new Date(startDate);
-        if (!Number.isNaN(d.getTime())) params.desde = d.toISOString().slice(0, 10);
+        if (!Number.isNaN(d.getTime())) {
+          // Usar formato local YYYY-MM-DD sin conversión UTC (evita desfase de día)
+          params.desde = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+        }
       }
       if (endDate) {
         const d = endDate instanceof Date ? endDate : new Date(endDate);
-        if (!Number.isNaN(d.getTime())) params.hasta = d.toISOString().slice(0, 10);
+        if (!Number.isNaN(d.getTime())) {
+          params.hasta = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+        }
       }
 
       const res = await api.get("/reportes/estadisticas-categoria", {

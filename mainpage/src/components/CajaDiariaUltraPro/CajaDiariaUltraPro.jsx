@@ -89,10 +89,13 @@ export default function CajaDiariaUltraPro() {
       }
 
       map[fechaKey].total += Number(d.total || 0);
-      map[fechaKey].numTickets += Number(d.numTickets || 0);
+      // numTickets = mesas cerradas por día (viene repetido por hora, usar el máximo)
+      map[fechaKey].numTickets = Math.max(map[fechaKey].numTickets, Number(d.numTickets || 0));
     });
 
-    return Object.values(map).sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
+    return Object.values(map)
+      .filter((d) => d.total > 0 || d.numTickets > 0)
+      .sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
   }, [datos]);
 
   /* KPIs */

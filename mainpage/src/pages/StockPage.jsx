@@ -66,6 +66,8 @@ const StockPage = () => {
   const [prodEditing, setProdEditing] = useState(null);
   const [prodConfiguring, setProdConfiguring] = useState(null);
   const [prodSaving, setProdSaving] = useState(null);
+  const [prodPage, setProdPage] = useState(1);
+  const PROD_PER_PAGE = 12;
 
   // ── AbortControllers ──
   const ingControllerRef = useRef(null);
@@ -158,13 +160,16 @@ const StockPage = () => {
     let arr = productos;
     if (prodSearch) {
       const q = prodSearch.toLowerCase();
-      arr = arr.filter((p) => p.nombre?.toLowerCase().includes(q));
+      arr = arr.filter((p) => p.nombre?.toLowerCase().includes(q) || p.categoria?.toLowerCase().includes(q));
     }
     if (prodFiltro !== "todos") {
       arr = arr.filter((p) => getEstadoProd(p) === prodFiltro);
     }
     return arr;
   }, [productos, prodSearch, prodFiltro]);
+
+  const prodTotalPages = Math.max(1, Math.ceil(productosFiltrados.length / PROD_PER_PAGE));
+  const productosPaginados = productosFiltrados.slice((prodPage - 1) * PROD_PER_PAGE, prodPage * PROD_PER_PAGE);
 
   // Fix #6: flash with cleanup
   const showFlash = useCallback((msg) => {
@@ -339,9 +344,9 @@ const StockPage = () => {
           <div className="stock-toolbar">
             <input
               className="stock-search"
-              placeholder="Buscar producto…"
+              placeholder="Buscar producto o categoría…"
               value={prodSearch}
-              onChange={(e) => setProdSearch(e.target.value)}
+              onChange={(e) => { setProdSearch(e.target.value); setProdPage(1); }}
             />
 
             <div className="stock-header-filtros">
@@ -356,7 +361,7 @@ const StockPage = () => {
                   key={key}
                   type="button"
                   className={`btn-toggle ${prodFiltro === key ? "active" : ""}`}
-                  onClick={() => setProdFiltro(key)}
+                  onClick={() => { setProdFiltro(key); setProdPage(1); }}
                 >
                   {label}
                 </button>
@@ -394,7 +399,7 @@ const StockPage = () => {
             </div>
           ) : (
             <div className="stock-grid stock-grid--productos">
-              {productosFiltrados.map((prod) => {
+              {productosPaginados.map((prod) => {
                 const estado = getEstadoProd(prod);
                 const isEditing = prodEditing?._id === prod._id;
                 const isConfiguring = prodConfiguring?._id === prod._id;
@@ -563,6 +568,27 @@ const StockPage = () => {
                   </div>
                 );
               })}
+            </div>
+          )}
+
+          {/* Paginación productos */}
+          {prodTotalPages > 1 && (
+            <div className="stock-pagination">
+              <button
+                disabled={prodPage <= 1}
+                onClick={() => setProdPage((p) => p - 1)}
+              >
+                ← Anterior
+              </button>
+              <span>
+                {prodPage} / {prodTotalPages} · {productosFiltrados.length} productos
+              </span>
+              <button
+                disabled={prodPage >= prodTotalPages}
+                onClick={() => setProdPage((p) => p + 1)}
+              >
+                Siguiente →
+              </button>
             </div>
           )}
         </>

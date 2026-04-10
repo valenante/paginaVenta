@@ -266,6 +266,60 @@ export default function PlanFeaturesPanel({ onAlert }) {
                             </div>
                         )}
                     </div>
+
+                    {/* === Comportamiento al marcar listo === */}
+                    <div className="features-cat">
+                        <button
+                            type="button"
+                            className="features-cat-header"
+                            onClick={() => toggleCat("__marcarListo")}
+                        >
+                            <span className="features-cat-title">
+                                Al marcar listo <span className="features-cat-count">(1)</span>
+                            </span>
+                            <span className="features-cat-chevron">{openCats["__marcarListo"] ? "▾" : "▸"}</span>
+                        </button>
+
+                        {openCats["__marcarListo"] && (
+                            <div className="feature-grid">
+                                <label className="feature-item">
+                                    <input
+                                        type="checkbox"
+                                        checked={getConfigValue(config, "impresion.reimprimirSiempreAlMarcarListo") !== false}
+                                        onChange={(e) => handleFeatureUpdate("impresion.reimprimirSiempreAlMarcarListo", e.target.checked)}
+                                    />
+                                    <span>Reimprimir productos &quot;imprimir siempre&quot; al marcar listo</span>
+                                </label>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* === Predicción de tiempos === */}
+                    <div className="features-cat">
+                        <button
+                            type="button"
+                            className="features-cat-header"
+                            onClick={() => toggleCat("__eta")}
+                        >
+                            <span className="features-cat-title">
+                                Predicción de tiempos <span className="features-cat-count">(1)</span>
+                            </span>
+                            <span className="features-cat-chevron">{openCats["__eta"] ? "▾" : "▸"}</span>
+                        </button>
+
+                        {openCats["__eta"] && (
+                            <div className="feature-grid">
+                                <label className="feature-item">
+                                    <input
+                                        type="checkbox"
+                                        checked={Boolean(getConfigValue(config, "mostrarEtaPreview"))}
+                                        onChange={(e) => handleFeatureUpdate("mostrarEtaPreview", e.target.checked)}
+                                    />
+                                    <span>Mostrar tiempos estimados (ETA) en el carrito</span>
+                                </label>
+                            </div>
+                        )}
+                    </div>
                 </div>
             )}
         </section>

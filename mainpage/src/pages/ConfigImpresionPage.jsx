@@ -383,9 +383,24 @@ export default function ConfigImpresionPage() {
     }
   }, [estiloTicket, estado]);
 
-  const handleSaveFromModal = useCallback(() => {
-    guardar("Cambios diseño ticket");
-  }, [estiloTicket, impCocina, impBarra, impCaja, impTickets]);
+  const handleSaveFromModal = useCallback(async () => {
+    setSuccess(null); setError(null);
+    try {
+      setLoading(true);
+      const patch = { "impresion.estiloTicket": estiloTicket };
+      const { data: draft } = await api.post("/admin/config/versions", { patch, scope: "impresion_estilo", reason: "Cambios diseño ticket" });
+      const versionId = draft?.version?.id || draft?.versionId || draft?.id;
+      if (!versionId) throw new Error("No se recibió versionId del draft");
+      await api.post(`/admin/config/versions/${versionId}/apply`, { reason: "Cambios diseño ticket" });
+      await refreshConfig();
+      setSuccess("Diseño del ticket guardado correctamente");
+    } catch (err) {
+      const normalized = normalizeApiError(err);
+      setError({ ...normalized, retryFn: handleSaveFromModal });
+    } finally {
+      setLoading(false);
+    }
+  }, [estiloTicket, refreshConfig]);
 
   // ── Labels ──
   const estadoLabel = estado === "online" ? "Agente online" : estado === "offline" ? "Agente offline" : "Estado desconocido";

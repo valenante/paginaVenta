@@ -562,7 +562,7 @@ const CategoriasPanel = ({ onBack }) => {
             initialTipo={crearProductoTipo}
             onClose={() => setCrearProductoTipo(null)}
             onCreated={(data) => {
-              const createdProd = data?.data || data;
+              const createdProd = data?.data?.producto || data?.producto || data?.data || data;
               if (createdProd?.categoria) {
                 refreshCatProducts(createdProd.categoria, createdProd.tipo);
               }
@@ -592,7 +592,7 @@ const CategoriasPanel = ({ onBack }) => {
             cloneFrom={cloningProduct}
             onClose={() => setCloningProduct(null)}
             onCreated={(data) => {
-              const createdProd = data?.data || data;
+              const createdProd = data?.data?.producto || data?.producto || data?.data || data;
               if (createdProd?.categoria) {
                 refreshCatProducts(createdProd.categoria, createdProd.tipo);
               }

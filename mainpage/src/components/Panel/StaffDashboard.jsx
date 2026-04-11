@@ -1,7 +1,7 @@
 import { useAuth } from "../../context/AuthContext";
 import { useConfig } from "../../context/ConfigContext";
 import { Navigate } from "react-router-dom";
-import ResumenDia from "./ResumenDia.jsx";
+import AdminDashboard from "./AdminDashboard.jsx";
 import StaffStats from "./StaffStats.jsx";
 import "./StaffDashboard.css";
 
@@ -19,7 +19,6 @@ export default function StaffDashboard() {
 
   const roleLabel = user?.roleLabel || user?.role || "staff";
   const isAdmin = ADMIN_ROLES.includes(user?.role);
-  const mostrarStats = isAdmin || config?.staff?.mostrarEstadisticas !== false;
 
   return (
     <div className="staff-dashboard">
@@ -28,9 +27,11 @@ export default function StaffDashboard() {
         <span className="role dash-badge-role">{roleLabel}</span>
       </header>
 
-      <ResumenDia />
-
-      {mostrarStats && <StaffStats />}
+      {isAdmin ? (
+        <AdminDashboard />
+      ) : (
+        <StaffStats />
+      )}
     </div>
   );
 }

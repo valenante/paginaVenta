@@ -1,0 +1,273 @@
+/* AdminDashboard.css */
+
+.adm { display: flex; flex-direction: column; gap: 20px; padding: 0 4px; }
+.adm-loading, .adm-error { text-align: center; padding: 40px 20px; color: var(--dash-text-soft); }
+.adm-error button { margin-top: 12px; padding: 8px 20px; border-radius: 8px; border: 1px solid var(--dash-glass-border); background: var(--dash-glass-bg); color: var(--dash-text); cursor: pointer; }
+
+/* ── KPIs principales ── */
+.adm__kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 14px;
+}
+.adm__kpi {
+  background: var(--dash-glass-bg);
+  border: 1px solid var(--dash-glass-border);
+  border-radius: var(--dash-radius-lg, 14px);
+  padding: 20px 18px;
+  text-align: center;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.adm__kpi:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.2); }
+.adm__kpi-value {
+  display: block;
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--dash-text);
+  letter-spacing: -0.02em;
+}
+.adm__kpi-label {
+  display: block;
+  font-size: 0.78rem;
+  color: var(--dash-text-muted);
+  margin-top: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: 600;
+}
+.adm__kpi--total { border-left: 3px solid #22c55e; }
+.adm__kpi--cobrado { border-left: 3px solid #6a0dad; }
+.adm__kpi--mesas { border-left: 3px solid #f59e0b; }
+.adm__kpi--comensales { border-left: 3px solid #0ea5e9; }
+
+/* ── Tarjetas secundarias ── */
+.adm__cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+.adm__card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 14px 10px;
+  background: var(--dash-glass-bg);
+  border: 1px solid var(--dash-glass-border);
+  border-radius: var(--dash-radius-lg, 14px);
+  cursor: pointer;
+  transition: background 0.15s, transform 0.12s;
+  color: var(--dash-text);
+  font-family: inherit;
+  font-size: inherit;
+}
+.adm__card:hover { background: var(--dash-glass-bg-hover); transform: translateY(-1px); }
+.adm__card-icon { font-size: 1.3rem; }
+.adm__card-value { font-size: 1.4rem; font-weight: 800; }
+.adm__card-label { font-size: 0.72rem; color: var(--dash-text-muted); text-transform: uppercase; letter-spacing: 0.04em; font-weight: 600; }
+
+/* ── Row 2 columnas ── */
+.adm__row {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 16px;
+}
+
+/* ── Secciones ── */
+.adm__section {
+  background: var(--dash-glass-bg);
+  border: 1px solid var(--dash-glass-border);
+  border-radius: var(--dash-radius-lg, 14px);
+  padding: 16px;
+}
+.adm__section-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--dash-text);
+  margin: 0 0 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.adm__section-link {
+  font-size: 0.72rem;
+  color: var(--dash-text-muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-decoration: underline;
+  font-family: inherit;
+}
+.adm__empty { color: var(--dash-text-muted); font-size: 0.8rem; text-align: center; padding: 12px 0; margin: 0; }
+
+/* ── Desglose ── */
+.adm__desglose { display: flex; flex-direction: column; gap: 8px; }
+.adm__desglose-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: var(--dash-text-soft);
+  padding: 4px 0;
+}
+.adm__desglose-row--total {
+  border-top: 1px solid var(--dash-glass-border);
+  padding-top: 8px;
+  margin-top: 4px;
+  font-weight: 700;
+  color: var(--dash-text);
+}
+
+/* ── Top productos ── */
+.adm__top { display: flex; flex-direction: column; gap: 4px; }
+.adm__top-row {
+  display: grid;
+  grid-template-columns: 24px 1fr 50px 70px;
+  gap: 6px;
+  align-items: center;
+  font-size: 0.82rem;
+  padding: 5px 4px;
+  border-radius: 6px;
+  color: var(--dash-text-soft);
+}
+.adm__top-row:nth-child(odd) { background: rgba(255,255,255,0.03); }
+.adm__top-pos { font-weight: 800; color: var(--dash-text-muted); text-align: center; }
+.adm__top-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.adm__top-qty { text-align: right; color: var(--dash-text-muted); }
+.adm__top-amt { text-align: right; font-weight: 600; color: var(--dash-text); }
+
+/* ── Staff ── */
+.adm__staff { display: flex; flex-direction: column; }
+.adm__staff-head, .adm__staff-row {
+  display: grid;
+  grid-template-columns: 1fr 80px 80px 90px;
+  gap: 8px;
+  padding: 7px 8px;
+  font-size: 0.82rem;
+}
+.adm__staff-head {
+  font-weight: 700;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--dash-text-muted);
+  border-bottom: 1px solid var(--dash-glass-border);
+}
+.adm__staff-row { color: var(--dash-text-soft); }
+.adm__staff-row:nth-child(odd) { background: rgba(255,255,255,0.03); border-radius: 6px; }
+.adm__staff-name { font-weight: 600; color: var(--dash-text); }
+.adm__staff-amt { text-align: right; font-weight: 600; color: var(--dash-text); }
+
+/* ── Eliminaciones ── */
+.adm__elim { display: flex; flex-direction: column; gap: 2px; }
+.adm__elim-row {
+  display: grid;
+  grid-template-columns: 1fr 80px 80px 60px;
+  gap: 6px;
+  font-size: 0.8rem;
+  padding: 5px 4px;
+  color: var(--dash-text-soft);
+  border-radius: 6px;
+}
+.adm__elim-row:nth-child(odd) { background: rgba(255,255,255,0.03); }
+.adm__elim-name { font-weight: 600; color: var(--dash-text); }
+.adm__elim-time { text-align: right; color: var(--dash-text-muted); }
+
+/* ── Modales ── */
+.adm__overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: admFadeIn 0.18s ease-out;
+}
+@keyframes admFadeIn { from { opacity: 0; } to { opacity: 1; } }
+.adm__modal {
+  background: var(--dash-bg, #1a1a2e);
+  border: 1px solid var(--dash-glass-border);
+  border-radius: var(--dash-radius-lg, 14px);
+  width: 100%;
+  max-width: 480px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+}
+.adm__modal--wide { max-width: 640px; }
+.adm__modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--dash-glass-border);
+}
+.adm__modal-header h3 { margin: 0; font-size: 0.95rem; color: var(--dash-text); }
+.adm__modal-header button {
+  background: none; border: none; color: var(--dash-text-muted); font-size: 1.2rem; cursor: pointer; padding: 4px 8px;
+}
+.adm__modal-body {
+  padding: 16px 20px;
+  overflow-y: auto;
+}
+.adm__modal-list { display: flex; flex-direction: column; }
+.adm__modal-list-head {
+  display: grid;
+  gap: 8px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--dash-text-muted);
+  padding: 6px 4px;
+  border-bottom: 1px solid var(--dash-glass-border);
+}
+.adm__modal-list-row {
+  display: grid;
+  gap: 8px;
+  font-size: 0.82rem;
+  padding: 8px 4px;
+  color: var(--dash-text-soft);
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+/* Stock modal: 3 cols */
+.adm__modal:not(.adm__modal--wide):not(.adm__modal--reservas) .adm__modal-list-head,
+.adm__modal:not(.adm__modal--wide):not(.adm__modal--reservas) .adm__modal-list-row {
+  grid-template-columns: 1fr 60px 60px;
+}
+/* Reservas modal: 4 cols */
+.adm__modal--reservas .adm__modal-list-head,
+.adm__modal--reservas .adm__modal-list-row {
+  grid-template-columns: 60px 1fr 70px 100px;
+}
+/* Eliminaciones modal: 5 cols */
+.adm__modal--wide .adm__modal-list-head,
+.adm__modal--wide .adm__modal-list-row {
+  grid-template-columns: 1fr 60px 50px 80px 60px;
+}
+.adm__modal-danger { color: #ef4444; font-weight: 700; }
+.adm__badge {
+  display: inline-block;
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 10px;
+  text-transform: uppercase;
+}
+.adm__badge--pendiente { background: rgba(245,158,11,0.2); color: #f59e0b; }
+.adm__badge--confirmada, .adm__badge--auto-confirmada { background: rgba(34,197,94,0.2); color: #22c55e; }
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .adm__kpis { grid-template-columns: repeat(2, 1fr); }
+  .adm__cards { grid-template-columns: repeat(2, 1fr); }
+  .adm__row { grid-template-columns: 1fr; }
+  .adm__staff-head, .adm__staff-row { grid-template-columns: 1fr 60px 60px 70px; font-size: 0.75rem; }
+}
+@media (max-width: 480px) {
+  .adm__kpis { grid-template-columns: 1fr; }
+  .adm__cards { grid-template-columns: repeat(2, 1fr); }
+  .adm__elim-row { grid-template-columns: 1fr 60px 60px; }
+  .adm__elim-who { display: none; }
+}

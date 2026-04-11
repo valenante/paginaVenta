@@ -17,6 +17,7 @@ export const DEFAULT_TEMA_TPV = {
   info: "#0ea5e9",
   solicitado: "#e65100",
   productoListo: "#16a34a",
+  todoJunto: "#8b5cf6",
 
   mesaCerradaBg: "#1a1a1a",
   mesaCerradaBorder: "#333333",

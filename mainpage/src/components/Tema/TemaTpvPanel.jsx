@@ -162,7 +162,7 @@ export default function TemaTpvPanel({ temaTpv, setTemaTpv }) {
             <ColorPick label="Info" value={temaTpv.info} onChange={(v) => set("info", v)} />
             <ColorPick label="Solicitado" value={temaTpv.solicitado} onChange={(v) => set("solicitado", v)} />
             <ColorPick label="Listo" value={temaTpv.productoListo} onChange={(v) => set("productoListo", v)} />
-            <ColorPick label="Todo junto" value={temaTpv.todoJunto} onChange={(v) => set("todoJunto", v)} />
+            <ColorPick label="Todo junto" value={temaTpv.todoJunto || "#8b5cf6"} onChange={(v) => set("todoJunto", v)} />
           </div>
         </fieldset>
 

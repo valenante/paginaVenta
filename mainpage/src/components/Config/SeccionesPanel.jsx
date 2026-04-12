@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import api from "../../utils/api";
+import BorrarConReasignacionModal from "./BorrarConReasignacionModal";
 import "./SeccionesPanel.css";
 import "./SeccionesModal.css";
 
@@ -32,7 +33,7 @@ export default function SeccionesPanel({
   });
 
   const [editando, setEditando] = useState(null);
-  const [aEliminar, setAEliminar] = useState(null);
+  // (modal anterior reemplazado por BorrarConReasignacionModal)
 
   const puedeGestionar = useMemo(
     () => !disabled && !isPlanEsencial,
@@ -142,16 +143,22 @@ export default function SeccionesPanel({
   };
 
   // ============================
-  // Eliminar
+  // Eliminar — abre modal de borrado seguro con reasignación
   // ============================
-  const eliminar = async (id) => {
-    try {
-      await api.delete(`/secciones/${id}`);
-      setSecciones((prev) => prev.filter((s) => s._id !== id));
-      onAlert?.({ tipo: "success", mensaje: "Sección eliminada." });
-    } catch {
-      onAlert?.({ tipo: "error", mensaje: "Error al eliminar sección." });
+  const [borrando, setBorrando] = useState(null); // objeto sección o null
+
+  const pedirBorrar = (sec) => setBorrando(sec);
+
+  const handleEliminado = (result) => {
+    if (!borrando) return;
+    setSecciones((prev) => prev.filter((s) => s._id !== borrando._id));
+    let mensaje = "Sección eliminada.";
+    if (result?.reassigned) {
+      mensaje = `Sección eliminada. Reasignados ${result.productosAfectados} productos`;
+      if (result.pedidosAfectados) mensaje += ` y ${result.pedidosAfectados} pedidos`;
+      mensaje += ` a "${result.reassignedTo}".`;
     }
+    onAlert?.({ tipo: "success", mensaje });
   };
 
   // ============================
@@ -283,7 +290,7 @@ export default function SeccionesPanel({
                   <button
                     type="button"
                     className="secciones-delete"
-                    onClick={() => setAEliminar(s)}
+                    onClick={() => pedirBorrar(s)}
                     disabled={!puedeGestionar}
                     title="Eliminar"
                   >
@@ -381,40 +388,14 @@ export default function SeccionesPanel({
         </div>
       )}
 
-      {/* ===== MODAL ELIMINAR ===== */}
-      {aEliminar && (
-        <div className="secciones-modal-overlay" role="dialog" aria-modal="true">
-          <div className="secciones-modal">
-            <header className="secciones-modal-header">
-              <h3>Eliminar sección</h3>
-            </header>
-
-            <div className="secciones-modal-body">
-              ¿Seguro que deseas eliminar <strong>{aEliminar.nombre}</strong>?{" "}
-              Esta acción no se puede deshacer.
-            </div>
-
-            <footer className="secciones-modal-footer">
-              <button
-                type="button"
-                className="btn btn-secundario"
-                onClick={() => setAEliminar(null)}
-              >
-                Cancelar
-              </button>
-              <button
-                type="button"
-                className="btn btn-peligro"
-                onClick={async () => {
-                  await eliminar(aEliminar._id);
-                  setAEliminar(null);
-                }}
-              >
-                Eliminar
-              </button>
-            </footer>
-          </div>
-        </div>
+      {/* Modal de borrado seguro (con impacto y reasignación) */}
+      {borrando && (
+        <BorrarConReasignacionModal
+          tipo="seccion"
+          item={borrando}
+          onClose={() => setBorrando(null)}
+          onEliminado={handleEliminado}
+        />
       )}
     </section>
   );

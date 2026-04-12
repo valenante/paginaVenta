@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import api from "../../utils/api";
+import BorrarConReasignacionModal from "./BorrarConReasignacionModal";
 import "./EstacionesPanel.css";
 import "./EstacionesModal.css";
 
@@ -35,7 +36,7 @@ export default function EstacionesPanel({
   });
 
   const [editando, setEditando] = useState(null);
-  const [aEliminar, setAEliminar] = useState(null);
+  // (modal anterior reemplazado por BorrarConReasignacionModal)
 
   const puedeGestionar = useMemo(
     () => !disabled && !isPlanEsencial,
@@ -162,16 +163,25 @@ export default function EstacionesPanel({
   };
 
   // ============================
-  // Eliminar
+  // Eliminar — modal de borrado seguro con reasignación
   // ============================
-  const eliminar = async (id) => {
-    try {
-      await api.delete(`/estaciones/${id}`);
-      setEstaciones((prev) => prev.filter((e) => e._id !== id));
-      onAlert?.({ tipo: "success", mensaje: "Estación eliminada." });
-    } catch {
-      onAlert?.({ tipo: "error", mensaje: "Error al eliminar estación." });
+  const [borrando, setBorrando] = useState(null);
+
+  const pedirBorrar = (est) => setBorrando(est);
+
+  const handleEliminado = (result) => {
+    if (!borrando) return;
+    setEstaciones((prev) => prev.filter((e) => e._id !== borrando._id));
+    let mensaje = "Estación eliminada.";
+    if (result?.reassigned) {
+      mensaje = `Estación eliminada. Reasignados ${result.productosAfectados} productos`;
+      if (result.pedidosAfectados) mensaje += ` y ${result.pedidosAfectados} pedidos`;
+      mensaje += ` a "${result.reassignedTo}".`;
+      if (result.eraCentral) mensaje += " La estación destino se marcó como central.";
+    } else if (result?.eraCentral) {
+      mensaje += " Se reasignó la marca de central a otra estación.";
     }
+    onAlert?.({ tipo: "success", mensaje });
   };
 
   // ============================
@@ -354,7 +364,7 @@ export default function EstacionesPanel({
                   </button>
                   <button
                     className="delete-btn"
-                    onClick={() => setAEliminar(e)}
+                    onClick={() => pedirBorrar(e)}
                     disabled={!puedeGestionar}
                   >
                     ❌
@@ -513,35 +523,14 @@ export default function EstacionesPanel({
         </div>
       )}
 
-      {/* ELIMINAR */}
-      {aEliminar && (
-        <div className="estaciones-modal-overlay">
-          <div className="estaciones-modal">
-            <header className="estaciones-modal-header">
-              <h3>Eliminar estación</h3>
-            </header>
-            <div className="estaciones-modal-body">
-              ¿Seguro que deseas eliminar <strong>{aEliminar.nombre}</strong>?
-            </div>
-            <footer className="estaciones-modal-footer">
-              <button
-                className="btn btn-secundario"
-                onClick={() => setAEliminar(null)}
-              >
-                Cancelar
-              </button>
-              <button
-                className="btn btn-peligro"
-                onClick={() => {
-                  eliminar(aEliminar._id);
-                  setAEliminar(null);
-                }}
-              >
-                Eliminar
-              </button>
-            </footer>
-          </div>
-        </div>
+      {/* Modal de borrado seguro (con impacto y reasignación) */}
+      {borrando && (
+        <BorrarConReasignacionModal
+          tipo="estacion"
+          item={borrando}
+          onClose={() => setBorrando(null)}
+          onEliminado={handleEliminado}
+        />
       )}
     </section>
   );

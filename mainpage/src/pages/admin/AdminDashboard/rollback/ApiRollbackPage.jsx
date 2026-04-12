@@ -2,8 +2,10 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import api from "../../../../utils/api";
 import "./ApiRollbackPage.css";
 
-// Si tu backend monta en otra base, cámbialo aquí:
 const API_BASE = "/admin/system";
+
+// Warning si el slot destino lleva más de estos días sin deploy
+const STALE_DAYS = 14;
 
 function Badge({ tone = "neutral", children }) {
   return <span className={`rb-badge ${tone}`}>{children}</span>;
@@ -17,14 +19,71 @@ function humanNow(ts) {
   }
 }
 
+function timeAgo(ts) {
+  if (!ts) return null;
+  const diff = Date.now() - new Date(ts).getTime();
+  if (diff < 0) return null;
+  const h = Math.floor(diff / 3_600_000);
+  const d = Math.floor(h / 24);
+  if (d >= 1) return `hace ${d}d`;
+  if (h >= 1) return `hace ${h}h`;
+  const m = Math.floor(diff / 60_000);
+  return `hace ${m}m`;
+}
+
+function daysSince(ts) {
+  if (!ts) return Infinity;
+  return (Date.now() - new Date(ts).getTime()) / 86_400_000;
+}
+
+function SlotSummary({ name, meta, active, lkg }) {
+  const days = daysSince(meta?.deployedAt);
+  const stale = days > STALE_DAYS;
+  return (
+    <div className={`rb-slot-card ${name === active ? "active" : ""}`}>
+      <div className="rb-slot-card-head">
+        <span className={`rb-badge ${name === "blue" ? "blue" : name === "green" ? "green" : "warn"}`}>
+          {name.toUpperCase()}
+        </span>
+        <span className="rb-slot-tags">
+          {name === active && <span className="rb-tag rb-tag-active">ACTIVO</span>}
+          {name === lkg && <span className="rb-tag rb-tag-lkg">LKG</span>}
+          {stale && meta?.deployedAt && <span className="rb-tag rb-tag-stale" title={`Deploy hace ${Math.round(days)} días`}>VIEJO</span>}
+        </span>
+      </div>
+      {meta ? (
+        <div className="rb-slot-card-body">
+          <div className="rb-slot-line">
+            <span className="rb-slot-label">SHA</span>
+            <code className="rb-code">{meta.deployShaShort || "?"}</code>
+          </div>
+          <div className="rb-slot-line">
+            <span className="rb-slot-label">Deploy</span>
+            <span title={meta.deployedAt}>{timeAgo(meta.deployedAt) || "—"}</span>
+          </div>
+          {meta.commitSubject && (
+            <div className="rb-slot-subject" title={meta.commitSubject}>
+              {meta.commitSubject}
+            </div>
+          )}
+        </div>
+      ) : (
+        <div className="rb-slot-card-body rb-muted">Sin deploy construido.</div>
+      )}
+    </div>
+  );
+}
+
 export default function ApiRollbackPage() {
   const [loading, setLoading] = useState(true);
   const [status, setStatus] = useState(null);
+  const [history, setHistory] = useState([]);
+  const [historyLoading, setHistoryLoading] = useState(false);
 
   const [lastRefreshedAt, setLastRefreshedAt] = useState(null);
   const reqSeq = useRef(0);
 
-  const [target, setTarget] = useState("blue"); // blue|green|legacy|lkg
+  const [target, setTarget] = useState("blue");
   const [reason, setReason] = useState("");
   const [confirmText, setConfirmText] = useState("");
 
@@ -34,30 +93,35 @@ export default function ApiRollbackPage() {
 
   const active = status?.api?.active || "unknown";
   const lkg = status?.api?.lkg || null;
+  const lkgMeta = status?.api?.lkgMeta || null;
+  const slotsMeta = status?.api?.slots || {};
+  const availableFromBackend = status?.api?.available;
 
-  // ✅ “LKG” aparece como opción solo si el backend la reporta
-  const availableRaw = status?.api?.available || ["blue", "green", "legacy"];
+  // ✅ La lista "available" viene del agent (slots con /ready OK).
+  // Si no viene, fallback a blue/green.
   const available = useMemo(() => {
-    const base = Array.isArray(availableRaw) ? availableRaw : ["blue", "green", "legacy"];
-    const hasLkg = !!lkg;
-    // ponemos LKG arriba si existe
+    const base = Array.isArray(availableFromBackend) && availableFromBackend.length
+      ? availableFromBackend
+      : ["blue", "green"];
+    const hasLkg = !!lkg && base.includes(lkg);
     return hasLkg ? ["lkg", ...base] : base;
-  }, [availableRaw, lkg]);
+  }, [availableFromBackend, lkg]);
 
   const targetUpper = useMemo(
     () => String(target || "").toUpperCase(),
     [target]
   );
 
-  // ✅ Confirmación específica cuando el target es LKG
   const expectedConfirm = useMemo(() => {
     if (target === "lkg") return "ROLLBACK:LKG";
     return `ROLLBACK:${targetUpper}`;
   }, [target, targetUpper]);
 
-  // ✅ “notSame” especial:
-  // - si target es LKG, comparamos contra el slot al que apunta (lkg)
-  // - si no hay lkg definido, no dejamos enviar
+  const resolvedTargetSlot = target === "lkg" ? lkg : target;
+  const resolvedMeta = resolvedTargetSlot ? slotsMeta[resolvedTargetSlot] : null;
+  const resolvedStaleDays = daysSince(resolvedMeta?.deployedAt);
+  const resolvedStale = resolvedMeta && resolvedStaleDays > STALE_DAYS;
+
   const canSubmit = useMemo(() => {
     const rOk = reason.trim().length >= 10;
     const cOk = confirmText.trim().toUpperCase() === String(expectedConfirm).toUpperCase();
@@ -65,12 +129,10 @@ export default function ApiRollbackPage() {
 
     if (target === "lkg") {
       if (!lkg) return false;
-      const notSame = active !== lkg;
-      return rOk && cOk && notSame;
+      return rOk && cOk && active !== lkg;
     }
 
-    const notSame = active !== target;
-    return rOk && cOk && notSame;
+    return rOk && cOk && active !== target;
   }, [reason, confirmText, expectedConfirm, active, target, submitting, lkg]);
 
   const activeTone = useMemo(() => {
@@ -102,22 +164,16 @@ export default function ApiRollbackPage() {
       setStatus(data);
       setLastRefreshedAt(data?.ts ? Number(data.ts) : Date.now());
 
-      // normaliza arrays
-      const nextActive = data?.api?.active || "unknown";
       const nextLkg = data?.api?.lkg || null;
-      const nextAvail = Array.isArray(data?.api?.available)
+      const nextAvail = Array.isArray(data?.api?.available) && data.api.available.length
         ? data.api.available
-        : ["blue", "green", "legacy"];
+        : ["blue", "green"];
 
       const nextAvailList = nextLkg ? ["lkg", ...nextAvail] : nextAvail;
 
       if (!nextAvailList.includes(target)) {
         setTarget(nextLkg ? "lkg" : nextAvail[0] || "blue");
       }
-
-      // si target=lkg y ya estás en lkg, lo indicamos en UI (no forzamos cambio)
-      // (no hay que hacer nada aquí)
-      void nextActive;
     } catch (e) {
       if (mySeq !== reqSeq.current) return;
 
@@ -128,8 +184,21 @@ export default function ApiRollbackPage() {
     }
   };
 
+  const fetchHistory = async () => {
+    setHistoryLoading(true);
+    try {
+      const { data } = await api.get(`${API_BASE}/api/rollback/history?limit=10`);
+      setHistory(data?.items || data?.data?.items || []);
+    } catch {
+      setHistory([]);
+    } finally {
+      setHistoryLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchStatus();
+    fetchHistory();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -161,6 +230,7 @@ export default function ApiRollbackPage() {
       setReason("");
 
       await fetchStatus();
+      await fetchHistory();
     } catch (e2) {
       setErr(e2?.response?.data?.message || e2?.message || "Rollback falló");
     } finally {
@@ -196,7 +266,8 @@ export default function ApiRollbackPage() {
         <div>
           <h2>Rollback API</h2>
           <p className="rb-muted">
-            Cambia la versión activa (blue/green/legacy) en producción sin downtime, usando el switch de Nginx.
+            Cambia la versión activa (blue/green) en producción sin downtime,
+            usando el switch de Nginx.
           </p>
         </div>
 
@@ -215,7 +286,6 @@ export default function ApiRollbackPage() {
               <Badge tone={activeTone}>{String(active).toUpperCase()}</Badge>
             </p>
 
-            {/* ✅ LKG visible */}
             <p className="rb-line">
               Last Known Good:{" "}
               {lkg ? (
@@ -225,41 +295,40 @@ export default function ApiRollbackPage() {
               )}
             </p>
 
-            <p className="rb-muted">Último refresh: {humanNow(lastRefreshedAt)}</p>
-            {status?.api?.link && (
-              <p className="rb-muted">
-                Symlink: <code className="rb-code">{status.api.link}</code>
-              </p>
+            {lkgMeta && (
+              <div className="rb-lkg-meta">
+                {lkgMeta.deployShaShort && (
+                  <div>SHA: <code className="rb-code">{lkgMeta.deployShaShort}</code></div>
+                )}
+                {lkgMeta.updatedAt && (
+                  <div className="rb-muted">Marcado: {humanNow(lkgMeta.updatedAt)} ({timeAgo(lkgMeta.updatedAt)})</div>
+                )}
+                {lkgMeta.reason && (
+                  <div className="rb-muted">Razón: {lkgMeta.reason}</div>
+                )}
+                {lkgMeta.commitSubject && (
+                  <div className="rb-muted rb-lkg-subject" title={lkgMeta.commitSubject}>
+                    {lkgMeta.commitSubject}
+                  </div>
+                )}
+                {lkgMeta.reason === "bootstrap" && (
+                  <div className="rb-warn-inline">
+                    ⚠️ LKG en "bootstrap" — aún no se ha marcado un deploy real como estable.
+                  </div>
+                )}
+              </div>
             )}
+
+            <p className="rb-muted">Último refresh: {humanNow(lastRefreshedAt)}</p>
           </div>
 
           <div className="rb-col">
-            <h3>Slots disponibles</h3>
-            <div className="rb-slots">
-              {available.map((s) => {
-                const isActive =
-                  s === "lkg" ? !!lkg && active === lkg : s === active;
-
-                const label =
-                  s === "lkg"
-                    ? lkg
-                      ? `LKG → ${String(lkg).toUpperCase()}`
-                      : "LKG"
-                    : String(s).toUpperCase();
-
-                return (
-                  <span key={s} className={`rb-slot ${isActive ? "active" : ""}`}>
-                    {label}
-                  </span>
-                );
-              })}
+            <h3>Slots</h3>
+            <div className="rb-slot-grid">
+              {["blue", "green"].map((s) => (
+                <SlotSummary key={s} name={s} meta={slotsMeta[s]} active={active} lkg={lkg} />
+              ))}
             </div>
-
-            <p className="rb-muted" style={{ marginTop: 10 }}>
-              * “legacy” = antiguo node/pm2 (si lo mantienes preparado).
-              <br />
-              * “LKG” = último slot marcado como estable (para rollback rápido “seguro”).
-            </p>
           </div>
         </div>
       </section>
@@ -275,10 +344,6 @@ export default function ApiRollbackPage() {
             Target (a qué quieres volver)
             <div className="rb-targets">
               {available.map((s) => {
-                // disabled si:
-                // - submitting
-                // - target normal = ya activo
-                // - target lkg = no existe o ya estás en lkg
                 const disabled =
                   submitting ||
                   (s !== "lkg" && s === active) ||
@@ -287,7 +352,7 @@ export default function ApiRollbackPage() {
                 const title =
                   s === "lkg"
                     ? !lkg
-                      ? "No hay LKG definido aún (haz deploy y marca LKG en el backend/agent)"
+                      ? "No hay LKG definido aún (deployar marca LKG automáticamente)"
                       : active === lkg
                         ? "Ya estás en LKG"
                         : `Volver a LKG → ${String(lkg).toUpperCase()}`
@@ -313,6 +378,16 @@ export default function ApiRollbackPage() {
             </div>
           </label>
 
+          {resolvedStale && (
+            <div className="rb-warn-block">
+              ⚠️ El slot <strong>{resolvedTargetSlot?.toUpperCase()}</strong> tiene un
+              deploy de hace <strong>{Math.round(resolvedStaleDays)} días</strong>
+              {resolvedMeta?.commitSubject && <> ({resolvedMeta.commitSubject})</>}.
+              Si la DB ha cambiado de esquema, volver aquí puede romper cosas. Confirma
+              que el código de ese slot sigue siendo compatible.
+            </div>
+          )}
+
           <label className="rb-label">
             Motivo (obligatorio)
             <textarea
@@ -327,7 +402,7 @@ export default function ApiRollbackPage() {
               disabled={submitting}
             />
             <small className="rb-help">
-              Mínimo 10 caracteres. Esto es clave para auditoría y trazabilidad.
+              Mínimo 10 caracteres. Se guarda en auditoría.
             </small>
           </label>
 
@@ -368,13 +443,51 @@ export default function ApiRollbackPage() {
               Ya estás en {target === "lkg" ? `LKG (${String(lkg).toUpperCase()})` : targetUpper}.
             </p>
           )}
-
-          {target === "lkg" && !lkg && (
-            <p className="rb-muted" style={{ marginTop: 10 }}>
-              No hay LKG definido todavía. El backend debe exponer <code className="rb-code">api.lkg</code> en <code className="rb-code">/api/status</code>.
-            </p>
-          )}
         </form>
+      </section>
+
+      <section className="rb-card">
+        <div className="rb-row" style={{ alignItems: "center" }}>
+          <h3 style={{ margin: 0 }}>Historial de rollbacks (últimos 10)</h3>
+          <button className="rb-btn rb-btn-ghost" onClick={fetchHistory} disabled={historyLoading}>
+            🔄
+          </button>
+        </div>
+
+        {historyLoading && <p className="rb-muted">Cargando historial…</p>}
+        {!historyLoading && history.length === 0 && (
+          <p className="rb-muted">Sin rollbacks registrados.</p>
+        )}
+        {!historyLoading && history.length > 0 && (
+          <div className="rb-history">
+            {history.map((h, i) => (
+              <div key={i} className={`rb-history-item ${h.ok ? "ok" : "fail"}`}>
+                <div className="rb-history-head">
+                  <span className={`rb-badge ${h.ok ? "ok" : "warn"}`}>
+                    {h.ok ? "OK" : "FAIL"}
+                  </span>
+                  <span className="rb-history-when">{humanNow(h.ts)}</span>
+                  {h.actor?.email && (
+                    <span className="rb-muted">· {h.actor.email}</span>
+                  )}
+                </div>
+                <div className="rb-history-body">
+                  {h.ok ? (
+                    <span>
+                      <code className="rb-code">{(h.slotBefore || "?").toUpperCase()}</code>
+                      {" → "}
+                      <code className="rb-code">{(h.switchedTo || "?").toUpperCase()}</code>
+                      {h.target === "lkg" && " (via LKG)"}
+                    </span>
+                  ) : (
+                    <span className="rb-muted">{h.error || h.message}</span>
+                  )}
+                </div>
+                {h.reason && <div className="rb-history-reason">"{h.reason}"</div>}
+              </div>
+            ))}
+          </div>
+        )}
       </section>
 
       <section className="rb-card rb-card-note">
@@ -382,11 +495,13 @@ export default function ApiRollbackPage() {
         <ul className="rb-ul">
           <li>
             Cambia el symlink de Nginx para apuntar a{" "}
-            <code className="rb-code">blue</code>, <code className="rb-code">green</code>, <code className="rb-code">legacy</code> o{" "}
-            <code className="rb-code">LKG</code> (slot marcado como estable).
+            <code className="rb-code">blue</code>, <code className="rb-code">green</code> o{" "}
+            <code className="rb-code">LKG</code> (último slot marcado como estable).
           </li>
           <li>Recarga Nginx (sin cortar conexiones).</li>
-          <li>No rebuild, no deploy: solo cambia el “camino” de producción en segundos.</li>
+          <li>Drena print-agents del slot viejo para que reconecten al nuevo.</li>
+          <li>Persiste el rollback en auditoría (quién, cuándo, motivo, from/to).</li>
+          <li>No rebuild, no deploy: solo cambia el "camino" de producción en segundos.</li>
         </ul>
       </section>
     </div>

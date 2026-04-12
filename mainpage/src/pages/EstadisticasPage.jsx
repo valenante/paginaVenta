@@ -10,6 +10,7 @@ import StatsTopProductos from "../components/Estadisticas/StatsTopProductos";
 import StatsPorMeses from "../components/Estadisticas/StatsPorMeses";
 import StatsPorHora from "../components/Estadisticas/StatsPorHora";
 import StatsListaProductos from "../components/Estadisticas/StatsListaProductos";
+import StatsPromedioDiaSemana from "../components/Estadisticas/StatsPromedioDiaSemana";
 import UpsellEstadisticasPro from "../components/Estadisticas/UpsellEstadisticasPro";
 
 import "../components/Estadisticas/EstadisticasFinal.css";
@@ -120,6 +121,7 @@ export default function EstadisticasPage({ type = "plato" }) {
     estadisticasPorHora,
     topProductos,
     horaPunta,
+    promedioDiaSemana,
   } = useEstadisticasCategoria(productosCategoria, { startDate, endDate });
 
   /* =====================================================
@@ -197,10 +199,19 @@ export default function EstadisticasPage({ type = "plato" }) {
                   totalIngresosCategoria={totalIngresosCategoria}
                 />
 
-                <StatsListaProductos
-                  productosConStats={productosConStats}
-                  loading={loadingStats}
-                />
+                <div className="estadisticas-2col">
+                  <div className="estadisticas-2col__izq">
+                    <StatsListaProductos
+                      productosConStats={productosConStats}
+                      loading={loadingStats}
+                    />
+                  </div>
+                  <div className="estadisticas-2col__der">
+                    {promedioDiaSemana && (
+                      <StatsPromedioDiaSemana promedioDiaSemana={promedioDiaSemana} />
+                    )}
+                  </div>
+                </div>
               </div>
             ) : (
               <UpsellEstadisticasPro fullscreen />

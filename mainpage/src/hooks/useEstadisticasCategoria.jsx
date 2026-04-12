@@ -15,6 +15,7 @@ export const useEstadisticasCategoria = (products, filters = {}) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [data, setData] = useState(null);
+  const [promediosDia, setPromediosDia] = useState(null);
   const controllerRef = useRef(null);
 
   // IDs de productos como string estable para deps
@@ -54,14 +55,15 @@ export const useEstadisticasCategoria = (products, filters = {}) => {
         }
       }
 
-      const res = await api.get("/reportes/estadisticas-categoria", {
-        params,
-        signal: controller.signal,
-      });
+      const [res, resPromedios] = await Promise.all([
+        api.get("/reportes/estadisticas-categoria", { params, signal: controller.signal }),
+        api.get("/reportes/promedios-dia-semana", { params: { productoIds }, signal: controller.signal }),
+      ]);
 
       if (controller.signal.aborted) return;
 
       setData(res.data || null);
+      setPromediosDia(resPromedios?.data?.data || resPromedios?.data || null);
     } catch (err) {
       if (err?.name === "CanceledError" || err?.code === "ERR_CANCELED") return;
       setError("No se pudieron cargar las estadísticas.");
@@ -132,6 +134,50 @@ export const useEstadisticasCategoria = (products, filters = {}) => {
 
   const estadisticasPorMes = useMemo(() => data?.porMes || [], [data]);
 
+  /* =====================================================
+   * Promedios por día de la semana
+   * MongoDB $dayOfWeek: 1=Dom, 2=Lun, 3=Mar, 4=Mié, 5=Jue, 6=Vie, 7=Sáb
+   * ===================================================== */
+  const promedioDiaSemana = useMemo(() => {
+    if (!promediosDia || !products) return null;
+
+    const porProductoYDia = promediosDia.porProductoYDia || [];
+    const diasActivos = promediosDia.diasActivosPorSemana || {};
+
+    // Agrupar por producto
+    const porProducto = {};
+    for (const row of porProductoYDia) {
+      const pid = String(row.productoId);
+      if (!porProducto[pid]) porProducto[pid] = {};
+      porProducto[pid][String(row.dia)] = row.totalCantidad;
+    }
+
+    const productosConPromedio = products.map((p) => {
+      const pid = String(p._id);
+      const diasData = porProducto[pid] || {};
+      const promedios = {}; // { "1": avg, ..., "7": avg }
+      let totalSemana = 0;
+      for (let dia = 1; dia <= 7; dia++) {
+        const total = diasData[String(dia)] || 0;
+        const denom = diasActivos[String(dia)] || 0;
+        const avg = denom > 0 ? total / denom : 0;
+        promedios[String(dia)] = avg;
+        totalSemana += avg;
+      }
+      return {
+        productoId: pid,
+        nombre: p.nombre,
+        promedios,
+        totalSemana,
+      };
+    });
+
+    return {
+      productos: productosConPromedio,
+      diasActivos,
+    };
+  }, [promediosDia, products]);
+
   return {
     loading,
     error,
@@ -142,5 +188,6 @@ export const useEstadisticasCategoria = (products, filters = {}) => {
     estadisticasPorHora,
     topProductos,
     horaPunta,
+    promedioDiaSemana,
   };
 };

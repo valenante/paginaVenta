@@ -2,10 +2,11 @@
 import React, { useState } from "react";
 import ExtrasPanel from "../components/Extras/ExtrasPanel";
 import CategoriasPanel from "../components/Categories/CategoriasPanel";
+import CostesPanel from "../components/Costes/CostesPanel";
 import "../styles/ProductsMenu.css";
 
 const ProductsPage = () => {
-  // 'extras' | 'carta' | null
+  // 'extras' | 'carta' | 'costes' | null
   const [selectedType, setSelectedType] = useState(null);
 
   /* =====================================================
@@ -17,6 +18,7 @@ const ProductsPage = () => {
     if (!selectedType) return "Gestor de productos";
     if (selectedType === "extras") return "Gestión de extras";
     if (selectedType === "carta") return "Gestión de carta";
+    if (selectedType === "costes") return "Gestión de costes";
     return "Gestor de productos";
   };
 
@@ -27,6 +29,8 @@ const ProductsPage = () => {
       return "Crea y organiza los extras y suplementos de tus productos.";
     if (selectedType === "carta")
       return "Gestiona categorías, platos y bebidas de tu carta. Arrastra para reordenar.";
+    if (selectedType === "costes")
+      return "Define el precio de coste de cada variante y revisa el margen de ganancia en vivo.";
     return "";
   };
 
@@ -78,6 +82,17 @@ const ProductsPage = () => {
                 Suplementos, salsas y añadidos.
               </span>
             </button>
+
+            <button
+              type="button"
+              onClick={() => setSelectedType("costes")}
+              className="products-type-btn--productos costes"
+            >
+              💰 Costes
+              <span className="products-type-desc--productos">
+                Precio de coste, margen y ganancia por producto.
+              </span>
+            </button>
           </div>
         </section>
       )}
@@ -85,11 +100,9 @@ const ProductsPage = () => {
       {/* ===== CONTENIDO ===== */}
       {selectedType && (
         <section className="products-content-card--productos">
-          {selectedType === "extras" ? (
-            <ExtrasPanel onBack={resetSelection} />
-          ) : (
-            <CategoriasPanel onBack={resetSelection} />
-          )}
+          {selectedType === "extras" && <ExtrasPanel onBack={resetSelection} />}
+          {selectedType === "carta" && <CategoriasPanel onBack={resetSelection} />}
+          {selectedType === "costes" && <CostesPanel onBack={resetSelection} />}
         </section>
       )}
     </div>

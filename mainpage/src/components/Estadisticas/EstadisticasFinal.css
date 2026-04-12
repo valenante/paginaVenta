@@ -394,3 +394,20 @@
 @media (max-width: 420px) {
   .stats-resumen-grid { grid-template-columns: 1fr; }
 }
+
+/* ── Grid 2 columnas: Detalle por producto + Promedios día de semana ── */
+.estadisticas-2col {
+  display: grid;
+  grid-template-columns: 4fr 6fr;
+  gap: 1.4rem;
+  margin-top: 2.4rem;
+  align-items: start;
+}
+.estadisticas-2col__izq > .statlist-container,
+.estadisticas-2col__der > .stats-promedio-dia {
+  margin-top: 0;
+}
+
+@media (max-width: 1100px) {
+  .estadisticas-2col { grid-template-columns: 1fr; }
+}

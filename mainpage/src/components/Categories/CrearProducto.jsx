@@ -48,10 +48,11 @@ const CrearProducto = ({ onClose, onCreated, initialTipo, cloneFrom }) => {
             clave: p.clave || "precioBase",
             label: p.label || "",
             precio: p.precio ?? 0,
+            coste: p.coste ?? 0,
             descripcion: p.descripcion || "",
             orden: p.orden ?? i,
           }))
-        : [{ clave: "precioBase", label: "Precio", precio: 0, orden: 0 }];
+        : [{ clave: "precioBase", label: "Precio", precio: 0, coste: 0, orden: 0 }];
       const trad = cloneFrom.traducciones && typeof cloneFrom.traducciones === "object" ? cloneFrom.traducciones : {};
 
       return {
@@ -90,7 +91,7 @@ const CrearProducto = ({ onClose, onCreated, initialTipo, cloneFrom }) => {
       aliases: [],
       aliasesString: "",
       estado: "habilitado",
-      precios: [{ clave: "precioBase", label: "Precio", precio: 0, orden: 0 }],
+      precios: [{ clave: "precioBase", label: "Precio", precio: 0, coste: 0, orden: 0 }],
       alergenos: [],
       traducciones: {
         en: { nombre: "", descripcion: "" },
@@ -205,7 +206,7 @@ const CrearProducto = ({ onClose, onCreated, initialTipo, cloneFrom }) => {
       ...prev,
       precios: [
         ...prev.precios,
-        { clave: "", label: "", precio: 0, orden: prev.precios.length },
+        { clave: "", label: "", precio: 0, coste: 0, orden: prev.precios.length },
       ],
     }));
   };
@@ -724,6 +725,19 @@ const CrearProducto = ({ onClose, onCreated, initialTipo, cloneFrom }) => {
                           min="0"
                           step="0.01"
                           required
+                        />
+                      </label>
+                      <label className="label--crear">
+                        Coste:
+                        <input
+                          type="number"
+                          value={entry.coste ?? 0}
+                          onChange={(e) => handlePrecioChange(idx, "coste", e.target.value)}
+                          className="input--crear"
+                          min="0"
+                          step="0.01"
+                          placeholder="0.00"
+                          title="Precio de compra por unidad de esta variante"
                         />
                       </label>
                       {formData.precios.length > 1 && (

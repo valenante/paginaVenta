@@ -129,6 +129,10 @@
   background: radial-gradient(circle at top left, rgba(52, 211, 153, 0.25), #020617 70%);
 }
 
+.products-type-btn--productos.costes {
+  background: radial-gradient(circle at top left, rgba(250, 204, 21, 0.3), #020617 70%);
+}
+
 .products-type-btn--productos:hover {
   transform: translateY(-2px);
   border-color: rgba(248, 250, 252, 0.95);

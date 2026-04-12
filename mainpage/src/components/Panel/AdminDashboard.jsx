@@ -1,5 +1,5 @@
 // src/components/Panel/AdminDashboard.jsx
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { useAdminDashboard } from "../../hooks/useAdminDashboard";
 import "./AdminDashboard.css";
 
@@ -11,8 +11,30 @@ const fmtHora = (d) => {
   } catch { return "--"; }
 };
 
+// Día operativo: corte 04:00 Madrid = 02:00 UTC
+// Si son las 00:00-02:00 UTC, pertenece al día operativo anterior
+function fechaOperativaHoy() {
+  const ahora = new Date();
+  const d = new Date(ahora);
+  if (ahora.getUTCHours() < 2) d.setUTCDate(d.getUTCDate() - 1);
+  return d.toISOString().slice(0, 10);
+}
+
+function fmtFechaLabel(fechaStr) {
+  try {
+    const [y, m, day] = fechaStr.split("-").map(Number);
+    const d = new Date(y, m - 1, day);
+    return d.toLocaleDateString("es-ES", { weekday: "long", day: "numeric", month: "long" });
+  } catch { return fechaStr; }
+}
+
 export default function AdminDashboard() {
-  const { loading, error, data, refresh } = useAdminDashboard();
+  const hoy = useMemo(() => fechaOperativaHoy(), []);
+  const [fechaSeleccionada, setFechaSeleccionada] = useState(hoy);
+  const esHoy = fechaSeleccionada === hoy;
+
+  // Siempre pasamos la fecha operativa al backend para garantizar filtro correcto
+  const { loading, error, data, refresh } = useAdminDashboard(fechaSeleccionada);
   const [modal, setModal] = useState(null); // "stock" | "reservas" | "eliminaciones" | null
   const [topTab, setTopTab] = useState("plato"); // "plato" | "bebida"
 
@@ -41,6 +63,32 @@ export default function AdminDashboard() {
 
   return (
     <div className="adm">
+      {/* ── Header con selector de fecha ── */}
+      <header className="adm__header">
+        <div className="adm__header-info">
+          <span className="adm__header-title">{fmtFechaLabel(fechaSeleccionada)}</span>
+          {esHoy ? (
+            <span className="adm__badge-hoy">HOY</span>
+          ) : (
+            <span className="adm__badge-past">Día histórico</span>
+          )}
+        </div>
+        <div className="adm__header-controls">
+          <input
+            type="date"
+            className="adm__date"
+            value={fechaSeleccionada}
+            max={hoy}
+            onChange={(e) => setFechaSeleccionada(e.target.value || hoy)}
+          />
+          {!esHoy && (
+            <button className="adm__btn-hoy" onClick={() => setFechaSeleccionada(hoy)}>
+              Hoy
+            </button>
+          )}
+        </div>
+      </header>
+
       {/* ── KPIs principales ── */}
       <div className="adm__kpis">
         <div className="adm__kpi adm__kpi--total">
@@ -51,10 +99,17 @@ export default function AdminDashboard() {
           <span className="adm__kpi-value">{fmt(caja?.cobrado)} €</span>
           <span className="adm__kpi-label">Cobrado</span>
         </div>
-        <div className="adm__kpi adm__kpi--mesas">
-          <span className="adm__kpi-value">{fmt(caja?.enMesasAbiertas)} €</span>
-          <span className="adm__kpi-label">{caja?.mesasAbiertas || 0} mesas abiertas</span>
-        </div>
+        {esHoy ? (
+          <div className="adm__kpi adm__kpi--mesas">
+            <span className="adm__kpi-value">{fmt(caja?.enMesasAbiertas)} €</span>
+            <span className="adm__kpi-label">{caja?.mesasAbiertas || 0} mesas abiertas</span>
+          </div>
+        ) : (
+          <div className="adm__kpi adm__kpi--mesas">
+            <span className="adm__kpi-value">{caja?.mesasCerradas ?? 0}</span>
+            <span className="adm__kpi-label">Mesas del día</span>
+          </div>
+        )}
         <div className="adm__kpi adm__kpi--comensales">
           <span className="adm__kpi-value">{resumen?.comensalesHoy ?? "--"}</span>
           <span className="adm__kpi-label">Comensales hoy</span>
@@ -71,21 +126,25 @@ export default function AdminDashboard() {
 
       {/* ── Tarjetas secundarias (clickables) ── */}
       <div className="adm__cards">
-        <button className="adm__card" onClick={() => setModal("reservas")}>
-          <span className="adm__card-icon">📅</span>
-          <span className="adm__card-value">{resumen?.reservasHoy ?? 0}</span>
-          <span className="adm__card-label">Reservas</span>
-        </button>
+        {esHoy && (
+          <button className="adm__card" onClick={() => setModal("reservas")}>
+            <span className="adm__card-icon">📅</span>
+            <span className="adm__card-value">{resumen?.reservasHoy ?? 0}</span>
+            <span className="adm__card-label">Reservas</span>
+          </button>
+        )}
         <div className="adm__card">
           <span className="adm__card-icon">🧾</span>
           <span className="adm__card-value">{resumen?.pedidosHoy ?? 0}</span>
           <span className="adm__card-label">Pedidos</span>
         </div>
-        <button className="adm__card" onClick={() => setModal("stock")}>
-          <span className="adm__card-icon">📦</span>
-          <span className="adm__card-value">{resumen?.stockBajo ?? 0}</span>
-          <span className="adm__card-label">Stock bajo</span>
-        </button>
+        {esHoy && (
+          <button className="adm__card" onClick={() => setModal("stock")}>
+            <span className="adm__card-icon">📦</span>
+            <span className="adm__card-value">{resumen?.stockBajo ?? 0}</span>
+            <span className="adm__card-label">Stock bajo</span>
+          </button>
+        )}
         <button className="adm__card" onClick={() => setModal("eliminaciones")}>
           <span className="adm__card-icon">✖</span>
           <span className="adm__card-value">{elimItems.length}</span>

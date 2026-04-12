@@ -1,6 +1,60 @@
 /* AdminDashboard.css */
 
 .adm { display: flex; flex-direction: column; gap: 20px; padding: 0 4px; }
+
+/* ── Header con selector de fecha ── */
+.adm__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  background: var(--dash-glass-bg);
+  border: 1px solid var(--dash-glass-border);
+  border-radius: var(--dash-radius-lg, 14px);
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.adm__header-info { display: flex; align-items: center; gap: 10px; }
+.adm__header-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--dash-text);
+  text-transform: capitalize;
+}
+.adm__badge-hoy, .adm__badge-past {
+  font-size: 0.62rem;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.adm__badge-hoy { background: rgba(34,197,94,0.2); color: #22c55e; }
+.adm__badge-past { background: rgba(139,92,246,0.2); color: #c4b5fd; }
+.adm__header-controls { display: flex; align-items: center; gap: 8px; }
+.adm__date {
+  background: var(--dash-glass-bg-hover, rgba(255,255,255,0.06));
+  border: 1px solid var(--dash-glass-border);
+  border-radius: 8px;
+  color: var(--dash-text);
+  padding: 6px 10px;
+  font-size: 0.82rem;
+  font-family: inherit;
+  color-scheme: dark;
+  cursor: pointer;
+}
+.adm__btn-hoy {
+  background: transparent;
+  border: 1px solid var(--dash-glass-border);
+  border-radius: 8px;
+  color: var(--dash-text);
+  padding: 6px 14px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+}
+.adm__btn-hoy:hover { background: var(--dash-glass-bg-hover, rgba(255,255,255,0.06)); }
 .adm-loading, .adm-error { text-align: center; padding: 40px 20px; color: var(--dash-text-soft); }
 .adm-error button { margin-top: 12px; padding: 8px 20px; border-radius: 8px; border: 1px solid var(--dash-glass-border); background: var(--dash-glass-bg); color: var(--dash-text); cursor: pointer; }
 

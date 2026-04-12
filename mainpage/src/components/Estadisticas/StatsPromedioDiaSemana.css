@@ -1,0 +1,138 @@
+/* =========================================================
+   PROMEDIOS POR DÍA DE LA SEMANA — estilo coherente con statlist
+   ========================================================= */
+
+.stats-promedio-dia {
+  padding: 1.8rem 2rem;
+  background: var(--dash-glass-bg);
+  border-radius: var(--dash-radius-lg);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 8px 26px rgba(0, 0, 0, 0.28);
+  animation: dashFadeIn 0.35s ease;
+}
+
+/* ===== HEADER ===== */
+.stats-promedio-dia__header { margin-bottom: 1.4rem; }
+
+.stats-promedio-dia__title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin: 0;
+  color: #ffffff;
+}
+
+.stats-promedio-dia__subtitle {
+  margin: 0.2rem 0 0;
+  font-size: 0.92rem;
+  opacity: 0.75;
+  color: #dfe3ea;
+}
+
+/* ===== TABLA ===== */
+.stats-promedio-dia__wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: var(--dash-radius-lg);
+  background: rgba(255, 255, 255, 0.045);
+  border: 1px solid var(--dash-glass-border);
+}
+
+.stats-promedio-dia__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+
+.stats-promedio-dia__th {
+  text-align: center;
+  padding: 0.9rem 0.7rem;
+  font-weight: 700;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--dash-text-soft);
+  background: rgba(255, 255, 255, 0.04);
+  border-bottom: 1px solid var(--dash-glass-border);
+}
+.stats-promedio-dia__th--prod {
+  text-align: left;
+  min-width: 150px;
+  padding-left: 1.2rem;
+}
+.stats-promedio-dia__th--total {
+  color: #6bdcff;
+  padding-right: 1.2rem;
+}
+.stats-promedio-dia__dias-activos {
+  display: block;
+  font-size: 0.62rem;
+  font-weight: 500;
+  color: var(--dash-text-muted, rgba(255,255,255,0.4));
+  margin-top: 2px;
+  text-transform: none;
+  letter-spacing: 0;
+  opacity: 0.85;
+}
+
+.stats-promedio-dia__td {
+  padding: 0.9rem 0.7rem;
+  text-align: center;
+  color: #ffffff;
+  font-variant-numeric: tabular-nums;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  transition: background 0.2s ease;
+}
+.stats-promedio-dia__td--prod {
+  text-align: left;
+  font-weight: 600;
+  padding-left: 1.2rem;
+  background: rgba(255, 255, 255, 0.02);
+}
+.stats-promedio-dia__td--total {
+  font-weight: 700;
+  color: #6bdcff;
+  background: rgba(107, 220, 255, 0.06);
+  padding-right: 1.2rem;
+}
+.stats-promedio-dia__td--footer {
+  background: rgba(255, 255, 255, 0.04);
+  border-top: 1px solid var(--dash-glass-border);
+  border-bottom: none;
+  font-size: 0.95rem;
+}
+
+.stats-promedio-dia__table tbody tr:hover td {
+  background-color: rgba(255, 255, 255, 0.03);
+}
+.stats-promedio-dia__table tbody tr:hover td.stats-promedio-dia__td--total {
+  background-color: rgba(107, 220, 255, 0.1);
+}
+
+/* ===== FOOTER EXTRA ===== */
+.stats-promedio-dia__footer {
+  margin: 0.8rem 0 0;
+  font-size: 0.78rem;
+  color: var(--dash-text-soft);
+  opacity: 0.75;
+}
+
+/* ===== EMPTY ===== */
+.stats-promedio-dia__empty {
+  margin: 0;
+  padding: 1.5rem 0;
+  text-align: center;
+  color: #dce3ed;
+  opacity: 0.85;
+  font-size: 1rem;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .stats-promedio-dia { padding: 1.4rem 1.5rem; }
+  .stats-promedio-dia__table { font-size: 0.82rem; }
+  .stats-promedio-dia__td, .stats-promedio-dia__th { padding: 0.7rem 0.5rem; }
+  .stats-promedio-dia__th--prod, .stats-promedio-dia__td--prod { padding-left: 0.9rem; min-width: 120px; }
+  .stats-promedio-dia__th--total, .stats-promedio-dia__td--total { padding-right: 0.9rem; }
+}

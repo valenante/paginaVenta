@@ -43,6 +43,7 @@ const normalizePrecios = (precios) => {
       clave: p.clave || "",
       label: p.label || "",
       precio: p.precio ?? 0,
+      coste: p.coste ?? 0,
       descripcion: p.descripcion || "",
       orden: p.orden ?? i,
     }));
@@ -251,7 +252,7 @@ const EditProduct = ({
       ...prev,
       precios: [
         ...prev.precios,
-        { clave: "", label: "", precio: 0, orden: prev.precios.length },
+        { clave: "", label: "", precio: 0, coste: 0, orden: prev.precios.length },
       ],
     }));
   };
@@ -341,6 +342,7 @@ const EditProduct = ({
       clave: p.clave || "precioBase",
       label: p.label || "",
       precio: toNumOrNull(p.precio) ?? 0,
+      coste: Math.max(0, toNumOrNull(p.coste) ?? 0),
       descripcion: p.descripcion || "",
       orden: p.orden ?? i,
     }));
@@ -743,6 +745,19 @@ const EditProduct = ({
                           min="0"
                           step="0.01"
                           required
+                        />
+                      </label>
+                      <label className="label--crear">
+                        Coste:
+                        <input
+                          type="number"
+                          value={entry.coste ?? 0}
+                          onChange={(e) => handlePrecioChange(idx, "coste", e.target.value)}
+                          className="input--crear"
+                          min="0"
+                          step="0.01"
+                          placeholder="0.00"
+                          title="Precio de compra por unidad de esta variante"
                         />
                       </label>
                       {formData.precios.length > 1 && (

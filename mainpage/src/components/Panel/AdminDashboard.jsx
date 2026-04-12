@@ -14,13 +14,17 @@ const fmtHora = (d) => {
 export default function AdminDashboard() {
   const { loading, error, data, refresh } = useAdminDashboard();
   const [modal, setModal] = useState(null); // "stock" | "reservas" | "eliminaciones" | null
+  const [topTab, setTopTab] = useState("plato"); // "plato" | "bebida"
 
   const { resumen, caja, topProductos, staff, eliminaciones, reservas } = data;
 
   const elimItems = Array.isArray(eliminaciones?.items) ? eliminaciones.items : Array.isArray(eliminaciones) ? eliminaciones : [];
   const reservasList = Array.isArray(reservas?.items) ? reservas.items : Array.isArray(reservas) ? reservas : [];
   const staffList = Array.isArray(staff?.items) ? staff.items : Array.isArray(staff) ? staff : [];
-  const topItems = topProductos?.items || topProductos || [];
+  const topItemsAll = topProductos?.items || topProductos || [];
+  const topItems = Array.isArray(topItemsAll)
+    ? topItemsAll.filter((p) => (p.tipo || "plato") === topTab).slice(0, 10)
+    : [];
 
   if (loading && !resumen) {
     return <div className="adm-loading">Cargando panel operativo...</div>;
@@ -54,6 +58,14 @@ export default function AdminDashboard() {
         <div className="adm__kpi adm__kpi--comensales">
           <span className="adm__kpi-value">{resumen?.comensalesHoy ?? "--"}</span>
           <span className="adm__kpi-label">Comensales hoy</span>
+        </div>
+        <div className="adm__kpi adm__kpi--ticket">
+          <span className="adm__kpi-value">{fmt(resumen?.ticketMedioMesa)} €</span>
+          <span className="adm__kpi-label">Ticket medio / mesa</span>
+        </div>
+        <div className="adm__kpi adm__kpi--ticket-com">
+          <span className="adm__kpi-value">{fmt(resumen?.ticketMedioComensal)} €</span>
+          <span className="adm__kpi-label">Ticket medio / comensal</span>
         </div>
       </div>
 
@@ -106,10 +118,26 @@ export default function AdminDashboard() {
         </section>
 
         <section className="adm__section">
-          <h3 className="adm__section-title">Top productos</h3>
+          <div className="adm__section-title">
+            <span>Top productos</span>
+            <div className="adm__tabs">
+              <button
+                className={`adm__tab ${topTab === "plato" ? "adm__tab--active" : ""}`}
+                onClick={() => setTopTab("plato")}
+              >
+                🍽 Platos
+              </button>
+              <button
+                className={`adm__tab ${topTab === "bebida" ? "adm__tab--active" : ""}`}
+                onClick={() => setTopTab("bebida")}
+              >
+                🍺 Bebidas
+              </button>
+            </div>
+          </div>
           <div className="adm__top">
-            {Array.isArray(topItems) && topItems.length > 0 ? (
-              topItems.slice(0, 10).map((p, i) => (
+            {topItems.length > 0 ? (
+              topItems.map((p, i) => (
                 <div key={i} className="adm__top-row">
                   <span className="adm__top-pos">{i + 1}</span>
                   <span className="adm__top-name">{p.nombre}</span>
@@ -118,7 +146,7 @@ export default function AdminDashboard() {
                 </div>
               ))
             ) : (
-              <p className="adm__empty">Sin datos</p>
+              <p className="adm__empty">Sin datos de {topTab === "plato" ? "platos" : "bebidas"}</p>
             )}
           </div>
         </section>

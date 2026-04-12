@@ -39,6 +39,8 @@
 .adm__kpi--cobrado { border-left: 3px solid #6a0dad; }
 .adm__kpi--mesas { border-left: 3px solid #f59e0b; }
 .adm__kpi--comensales { border-left: 3px solid #0ea5e9; }
+.adm__kpi--ticket { border-left: 3px solid #ec4899; }
+.adm__kpi--ticket-com { border-left: 3px solid #8b5cf6; }
 
 /* ── Tarjetas secundarias ── */
 .adm__cards {
@@ -97,6 +99,32 @@
   cursor: pointer;
   text-decoration: underline;
   font-family: inherit;
+}
+
+/* Tabs (platos/bebidas) */
+.adm__tabs {
+  display: flex;
+  gap: 4px;
+  background: rgba(255,255,255,0.04);
+  border-radius: 8px;
+  padding: 3px;
+}
+.adm__tab {
+  background: transparent;
+  border: none;
+  color: var(--dash-text-muted);
+  font-size: 0.74rem;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s, color 0.15s;
+}
+.adm__tab:hover { color: var(--dash-text); }
+.adm__tab--active {
+  background: var(--dash-glass-bg-hover, rgba(255,255,255,0.08));
+  color: var(--dash-text);
 }
 .adm__empty { color: var(--dash-text-muted); font-size: 0.8rem; text-align: center; padding: 12px 0; margin: 0; }
 

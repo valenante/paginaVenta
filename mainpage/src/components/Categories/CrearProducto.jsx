@@ -1,5 +1,5 @@
 // src/components/Categories/CrearProducto.jsx
-import React, { useState, useContext, useEffect, useMemo } from "react";
+import React, { useState, useContext, useEffect, useMemo, useRef } from "react";
 import PreciosHelpModal from "./PreciosHelpModal";
 import AdicionalesEditor from "./AdicionalesEditor";
 import CompuestosEditor from "./CompuestosEditor";
@@ -68,6 +68,14 @@ const CrearProducto = ({ onClose, onCreated, initialTipo, cloneFrom }) => {
         : [{ clave: "precioBase", label: "Precio", precio: 0, coste: 0, factorStock: 1, orden: 0 }];
       const trad = cloneFrom.traducciones && typeof cloneFrom.traducciones === "object" ? cloneFrom.traducciones : {};
 
+      // slaPorEstacion puede venir como Map de Mongoose o como objeto plano
+      const slaPorEstacionObj = cloneFrom.slaPorEstacion instanceof Map
+        ? Object.fromEntries(cloneFrom.slaPorEstacion)
+        : (cloneFrom.slaPorEstacion || {});
+      const cargaPorEstacionObj = cloneFrom.cargaPorEstacion instanceof Map
+        ? Object.fromEntries(cloneFrom.cargaPorEstacion)
+        : (cloneFrom.cargaPorEstacion || {});
+
       return {
         nombre: `Copia de ${cloneFrom.nombre || ""}`,
         descripcion: cloneFrom.descripcion || "",
@@ -76,8 +84,9 @@ const CrearProducto = ({ onClose, onCreated, initialTipo, cloneFrom }) => {
         seccion: cloneFrom.seccion || "",
         img: "", // no clonar imagen, el usuario sube una nueva si quiere
         estacion: cloneFrom.estacion || "",
-        aliases: [],
-        aliasesString: "",
+        // BUGFIX clonado: aliases sí se pueden copiar (antes quedaba []).
+        aliases: aliasesArr,
+        aliasesString: aliasesArr.join(", "),
         estado: cloneFrom.estado || "habilitado",
         precios: preciosArr,
         alergenos: alergenosArr,
@@ -93,6 +102,21 @@ const CrearProducto = ({ onClose, onCreated, initialTipo, cloneFrom }) => {
         stock: 0,
         controlStock: cloneFrom.controlStock ?? false,
         imprimirSiempre: cloneFrom.imprimirSiempre ?? false,
+        // BUGFIX clonado: campos del schema que antes no se copiaban
+        iva: cloneFrom.iva ?? 10,
+        puntosDeCoccion: Array.isArray(cloneFrom.puntosDeCoccion) ? cloneFrom.puntosDeCoccion : [],
+        tipoPlato: cloneFrom.tipoPlato || "compartir",
+        destacado: !!cloneFrom.destacado,
+        promocionado: !!cloneFrom.promocionado,
+        elegibleComidaPersonal: !!cloneFrom.elegibleComidaPersonal,
+        // SLA y carga por estación (si el plan los usa)
+        slaDefaultMinutos: cloneFrom.slaDefaultMinutos ?? null,
+        slaPorEstacion: slaPorEstacionObj,
+        cargaEstacion: cloneFrom.cargaEstacion ?? 1,
+        cargaPorEstacion: cargaPorEstacionObj,
+        tiempoExtraUnidadMin: cloneFrom.tiempoExtraUnidadMin ?? 0,
+        // sabor (croquetas multi-sabor, etc.)
+        sabor: Array.isArray(cloneFrom.sabor) ? cloneFrom.sabor : [],
       };
     }
 
@@ -182,7 +206,12 @@ const CrearProducto = ({ onClose, onCreated, initialTipo, cloneFrom }) => {
     return objects.map((c) => c.nombre).sort((a, b) => a.localeCompare(b, "es"));
   }, [formData.tipo, categoryObjectsByTipo]);
 
+  // BUGFIX clonado: limpiar sección/estación solo cuando el usuario CAMBIA tipo,
+  // no en el primer render. Al clonar, formData.tipo ya trae el valor correcto
+  // y este useEffect borraba la sección/estación recién copiadas del cloneFrom.
+  const tipoInicialRef = useRef(formData.tipo);
   useEffect(() => {
+    if (formData.tipo === tipoInicialRef.current) return; // primera vez, respetar clonado
     setFormData((prev) => ({
       ...prev,
       estacion: "",

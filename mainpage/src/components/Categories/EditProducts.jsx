@@ -703,155 +703,158 @@ const EditProduct = ({
 
               </div>
 
-              {/* === PRECIOS (array dinámico) === */}
-              {formData.tipo && (
-                <fieldset className="fieldset--crear fieldset--precios">
-                  <legend className="legend--crear">Precios</legend>
-                  <div className="precios-toolbar">
-                    <p className="help-text--crear" style={{ margin: 0 }}>
-                      Agrega tantas variantes como necesites (base, tapa, ración, copa, botella…).
-                      La primera entrada es la principal.
-                    </p>
-                    <button
-                      type="button"
-                      className="btn-ayuda--crear"
-                      onClick={() => setShowPreciosHelp(true)}
-                    >
-                      💡 Ayuda
-                    </button>
-                  </div>
-
-                  <datalist id="precio-suggestions-edit">
-                    {PRECIO_SUGGESTIONS.map((s) => (
-                      <option key={s} value={s} />
-                    ))}
-                  </datalist>
-
-                  {formData.precios.map((entry, idx) => (
-                    <div key={idx} className="precio-entry-row">
-                      <div className="precio-entry-header">
-                        <span className="precio-entry-title">
-                          Variante #{idx + 1}
-                          {entry.clave && (
-                            <span className="precio-entry-summary">
-                              · {capitalizeClave(entry.clave)}
-                            </span>
-                          )}
-                        </span>
-                        {formData.precios.length > 1 && (
-                          <button
-                            type="button"
-                            className="btn-icon--crear"
-                            onClick={() => removePrecio(idx)}
-                            title="Eliminar variante"
-                            aria-label="Eliminar variante"
-                          >
-                            ❌
-                          </button>
-                        )}
-                      </div>
-
-                      <div className="precio-entry-identity">
-                        <label className="label--crear">
-                          Clave
-                          <input
-                            type="text"
-                            list="precio-suggestions-edit"
-                            value={entry.clave}
-                            onChange={(e) => handlePrecioChange(idx, "clave", e.target.value)}
-                            className="input--crear"
-                            placeholder="precioBase"
-                            required
-                          />
-                        </label>
-                        <label className="label--crear">
-                          Detalle <span style={{ opacity: 0.5, textTransform: "none", letterSpacing: 0 }}>(opcional)</span>
-                          <input
-                            type="text"
-                            value={entry.descripcion || ""}
-                            onChange={(e) => handlePrecioChange(idx, "descripcion", e.target.value)}
-                            className="input--crear"
-                            placeholder="2 uds, 200g, 1/2 ración..."
-                            maxLength={100}
-                          />
-                        </label>
-                      </div>
-
-                      <div className="precio-entry-numbers">
-                        <label className="label--crear">
-                          Precio (€)
-                          <input
-                            type="number"
-                            value={entry.precio}
-                            onChange={(e) => handlePrecioChange(idx, "precio", e.target.value)}
-                            className="input--crear"
-                            min="0"
-                            step="0.01"
-                            required
-                          />
-                        </label>
-                        <label className="label--crear">
-                          Coste (€)
-                          <input
-                            type="number"
-                            value={entry.coste ?? 0}
-                            onChange={(e) => handlePrecioChange(idx, "coste", e.target.value)}
-                            className="input--crear"
-                            min="0"
-                            step="0.01"
-                            placeholder="0.00"
-                            title="Precio de compra por unidad de esta variante"
-                          />
-                        </label>
-                        <label className="label--crear">
-                          Factor stock
-                          <input
-                            type="number"
-                            value={entry.factorStock ?? 1}
-                            onChange={(e) => handlePrecioChange(idx, "factorStock", e.target.value)}
-                            className="input--crear"
-                            min="0"
-                            step="0.01"
-                            placeholder="1"
-                            title="Qué porción de stock consume esta variante. Botella entera = 1, Copa = 0.2 (5 copas/botella), Tapa = 0.5 (2 tapas/ración)"
-                          />
-                        </label>
-                      </div>
-                    </div>
-                  ))}
-
-                  <button
-                    type="button"
-                    className="boton--secundario"
-                    onClick={addPrecio}
-                  >
-                    + Añadir precio
-                  </button>
-
-                  <AdicionalesEditor
-                    adicionales={formData.adicionales || []}
-                    onChange={(next) =>
-                      setFormData((prev) => ({ ...prev, adicionales: next }))
-                    }
-                    productosDisponibles={productosDisponibles}
-                  />
-
-                  {/* v3 fase 4 — productos compuestos */}
-                  <CompuestosEditor
-                    componentes={formData.componentes || []}
-                    seleccionables={formData.seleccionables || []}
-                    onChangeComponentes={(next) =>
-                      setFormData((prev) => ({ ...prev, componentes: next }))
-                    }
-                    onChangeSeleccionables={(next) =>
-                      setFormData((prev) => ({ ...prev, seleccionables: next }))
-                    }
-                    productosDisponibles={productosDisponibles}
-                  />
-                </fieldset>
-              )}
             </section>
           </div>
+
+          {/* === PRECIOS + ADICIONALES + COMPUESTOS (full-width) === */}
+          {formData.tipo && (
+            <section className="form-section--crear form-section--full-crear">
+              <fieldset className="fieldset--crear fieldset--precios">
+                <legend className="legend--crear">Precios</legend>
+                <div className="precios-toolbar">
+                  <p className="help-text--crear" style={{ margin: 0 }}>
+                    Agrega tantas variantes como necesites (base, tapa, ración, copa, botella…).
+                    La primera entrada es la principal.
+                  </p>
+                  <button
+                    type="button"
+                    className="btn-ayuda--crear"
+                    onClick={() => setShowPreciosHelp(true)}
+                  >
+                    💡 Ayuda
+                  </button>
+                </div>
+
+                <datalist id="precio-suggestions-edit">
+                  {PRECIO_SUGGESTIONS.map((s) => (
+                    <option key={s} value={s} />
+                  ))}
+                </datalist>
+
+                {formData.precios.map((entry, idx) => (
+                  <div key={idx} className="precio-entry-row">
+                    <div className="precio-entry-header">
+                      <span className="precio-entry-title">
+                        Variante #{idx + 1}
+                        {entry.clave && (
+                          <span className="precio-entry-summary">
+                            · {capitalizeClave(entry.clave)}
+                          </span>
+                        )}
+                      </span>
+                      {formData.precios.length > 1 && (
+                        <button
+                          type="button"
+                          className="btn-icon--crear"
+                          onClick={() => removePrecio(idx)}
+                          title="Eliminar variante"
+                          aria-label="Eliminar variante"
+                        >
+                          ❌
+                        </button>
+                      )}
+                    </div>
+
+                    <div className="precio-entry-identity">
+                      <label className="label--crear">
+                        Clave
+                        <input
+                          type="text"
+                          list="precio-suggestions-edit"
+                          value={entry.clave}
+                          onChange={(e) => handlePrecioChange(idx, "clave", e.target.value)}
+                          className="input--crear"
+                          placeholder="precioBase"
+                          required
+                        />
+                      </label>
+                      <label className="label--crear">
+                        Detalle <span style={{ opacity: 0.5, textTransform: "none", letterSpacing: 0 }}>(opcional)</span>
+                        <input
+                          type="text"
+                          value={entry.descripcion || ""}
+                          onChange={(e) => handlePrecioChange(idx, "descripcion", e.target.value)}
+                          className="input--crear"
+                          placeholder="2 uds, 200g, 1/2 ración..."
+                          maxLength={100}
+                        />
+                      </label>
+                    </div>
+
+                    <div className="precio-entry-numbers">
+                      <label className="label--crear">
+                        Precio (€)
+                        <input
+                          type="number"
+                          value={entry.precio}
+                          onChange={(e) => handlePrecioChange(idx, "precio", e.target.value)}
+                          className="input--crear"
+                          min="0"
+                          step="0.01"
+                          required
+                        />
+                      </label>
+                      <label className="label--crear">
+                        Coste (€)
+                        <input
+                          type="number"
+                          value={entry.coste ?? 0}
+                          onChange={(e) => handlePrecioChange(idx, "coste", e.target.value)}
+                          className="input--crear"
+                          min="0"
+                          step="0.01"
+                          placeholder="0.00"
+                          title="Precio de compra por unidad de esta variante"
+                        />
+                      </label>
+                      <label className="label--crear">
+                        Factor stock
+                        <input
+                          type="number"
+                          value={entry.factorStock ?? 1}
+                          onChange={(e) => handlePrecioChange(idx, "factorStock", e.target.value)}
+                          className="input--crear"
+                          min="0"
+                          step="0.01"
+                          placeholder="1"
+                          title="Qué porción de stock consume esta variante. Botella entera = 1, Copa = 0.2 (5 copas/botella), Tapa = 0.5 (2 tapas/ración)"
+                        />
+                      </label>
+                    </div>
+                  </div>
+                ))}
+
+                <button
+                  type="button"
+                  className="boton--secundario"
+                  onClick={addPrecio}
+                >
+                  + Añadir precio
+                </button>
+
+                <AdicionalesEditor
+                  adicionales={formData.adicionales || []}
+                  onChange={(next) =>
+                    setFormData((prev) => ({ ...prev, adicionales: next }))
+                  }
+                  productosDisponibles={productosDisponibles}
+                />
+
+                {/* v3 fase 4 — productos compuestos */}
+                <CompuestosEditor
+                  componentes={formData.componentes || []}
+                  seleccionables={formData.seleccionables || []}
+                  onChangeComponentes={(next) =>
+                    setFormData((prev) => ({ ...prev, componentes: next }))
+                  }
+                  onChangeSeleccionables={(next) =>
+                    setFormData((prev) => ({ ...prev, seleccionables: next }))
+                  }
+                  productosDisponibles={productosDisponibles}
+                />
+              </fieldset>
+            </section>
+          )}
 
           {/* === BLOQUE INFERIOR: imagen + voz === */}
           <section className="form-section--crear">

@@ -1139,3 +1139,12 @@
   min-width: 0;
   overflow: hidden;
 }
+
+/* v3 stock-modelo-v2 — sección de precios/adicionales/compuestos full-width
+   Extraída del grid de 2 columnas para dar aire al contenido que ha crecido
+   (precios + adicionales con stock + compuestos). */
+.form-section--full-crear {
+  grid-column: 1 / -1;
+  width: 100%;
+  min-width: 0;
+}

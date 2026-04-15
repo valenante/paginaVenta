@@ -145,6 +145,15 @@ const CrearProducto = ({ onClose, onCreated, initialTipo, cloneFrom }) => {
     );
   }, [formData.tipo, secciones]);
 
+  // v3 stock-modelo-v2: cargar productos del catálogo si el contexto está vacío.
+  // Los editores de adicionales/compuestos necesitan la lista para el selector.
+  useEffect(() => {
+    if (typeof cargarProductos === "function" && (!productosDisponibles || productosDisponibles.length === 0)) {
+      cargarProductos();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   useEffect(() => {
     const loadIngredientes = async () => {
       try {

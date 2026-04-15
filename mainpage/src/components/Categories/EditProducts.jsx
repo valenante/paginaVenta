@@ -100,6 +100,16 @@ const EditProduct = ({
   const { user } = useAuth();
   const productosCtx = useContext(ProductosContext);
   const productosDisponibles = productosCtx?.productos || [];
+  const cargarProductosCatalogo = productosCtx?.cargarProductos;
+
+  // v3 stock-modelo-v2: asegurar que el catálogo esté cargado para los selectores
+  // de adicionales/compuestos (si el contexto aún no se pobló).
+  useEffect(() => {
+    if (typeof cargarProductosCatalogo === "function" && (!productosDisponibles || productosDisponibles.length === 0)) {
+      cargarProductosCatalogo();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   const isPlanEsencial = user?.plan === "esencial" || user?.plan === "tpv-esencial";
   const {
     dragging,

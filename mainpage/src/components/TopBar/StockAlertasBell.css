@@ -1,0 +1,220 @@
+/* StockAlertasBell.css — Fase 4 */
+
+.stockBell {
+  position: relative;
+  display: inline-block;
+}
+
+.stockBell-btn {
+  position: relative;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #e5e7eb;
+  border-radius: 8px;
+  padding: 6px 10px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.15s;
+}
+.stockBell-btn:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+.stockBell-btn.is-critica {
+  border-color: rgba(239, 68, 68, 0.45);
+  background: rgba(239, 68, 68, 0.08);
+  animation: bell-pulse 2s ease-in-out infinite;
+}
+.stockBell-btn.is-alta {
+  border-color: rgba(251, 191, 36, 0.35);
+  background: rgba(251, 191, 36, 0.05);
+}
+
+@keyframes bell-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+  50% { box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.15); }
+}
+
+.stockBell-icon {
+  font-size: 1.05rem;
+  line-height: 1;
+}
+
+.stockBell-badge {
+  background: #ef4444;
+  color: white;
+  font-weight: 700;
+  font-size: 0.72rem;
+  padding: 1px 6px;
+  border-radius: 10px;
+  min-width: 18px;
+  text-align: center;
+}
+.stockBell-btn.is-alta .stockBell-badge {
+  background: #f59e0b;
+}
+
+/* Popover */
+.stockBell-popover {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 360px;
+  max-width: 90vw;
+  background: rgba(15, 15, 28, 0.98);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  z-index: 2000;
+  overflow: hidden;
+  color: #e5e7eb;
+}
+
+.stockBell-head {
+  padding: 0.85rem 1rem;
+  background: rgba(106, 13, 173, 0.15);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+.stockBell-head h3 {
+  margin: 0;
+  font-size: 0.95rem;
+}
+.stockBell-sub {
+  display: block;
+  font-size: 0.72rem;
+  color: #9ca3af;
+  margin-top: 2px;
+}
+
+.stockBell-empty {
+  padding: 2rem 1rem;
+  text-align: center;
+  color: #9ca3af;
+  font-size: 0.85rem;
+}
+
+.stockBell-lista {
+  list-style: none;
+  margin: 0;
+  padding: 0.5rem;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.stockBell-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.55rem 0.7rem;
+  border-radius: 6px;
+  margin-bottom: 0.2rem;
+  background: rgba(255, 255, 255, 0.02);
+  border-left: 3px solid transparent;
+}
+.stockBell-item.sev-critica {
+  border-left-color: #ef4444;
+  background: rgba(239, 68, 68, 0.05);
+}
+.stockBell-item.sev-alta {
+  border-left-color: #f59e0b;
+  background: rgba(251, 191, 36, 0.04);
+}
+
+.stockBell-item-main {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+}
+.stockBell-item-nombre {
+  font-weight: 600;
+  font-size: 0.88rem;
+  color: #e5e7eb;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.stockBell-item-meta {
+  font-size: 0.72rem;
+  color: #9ca3af;
+  margin-top: 2px;
+}
+.stockBell-item-meta strong {
+  color: #fcd34d;
+  font-weight: 600;
+}
+.stockBell-item-prov {
+  color: #cbd5e1;
+}
+
+.stockBell-item-tags {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  align-items: flex-end;
+}
+.stockBell-tag {
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 3px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+.tag-critica {
+  background: rgba(239, 68, 68, 0.18);
+  color: #fca5a5;
+  border: 1px solid rgba(239, 68, 68, 0.35);
+}
+.tag-alta {
+  background: rgba(251, 191, 36, 0.12);
+  color: #fcd34d;
+  border: 1px solid rgba(251, 191, 36, 0.3);
+}
+
+.stockBell-mas {
+  padding: 0.5rem;
+  text-align: center;
+  color: #9ca3af;
+  font-size: 0.75rem;
+  font-style: italic;
+}
+
+/* Footer */
+.stockBell-foot {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(0, 0, 0, 0.2);
+}
+.stockBell-btn-ghost,
+.stockBell-btn-primary {
+  flex: 1;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.82rem;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.15s;
+}
+.stockBell-btn-ghost {
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.15);
+  color: #e5e7eb;
+}
+.stockBell-btn-ghost:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+.stockBell-btn-primary {
+  background: linear-gradient(135deg, #6a0dad, #8b5cf6);
+  color: white;
+  border: none;
+}
+.stockBell-btn-primary:hover {
+  filter: brightness(1.1);
+}

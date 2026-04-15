@@ -802,3 +802,125 @@ select.fin-input option {
 
   .fin-btn-primary { width: 100%; text-align: center; }
 }
+
+/* ─── Fase 3 — Top proveedores + facturas pendientes ─── */
+
+.fin-proveedores-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+
+.fin-card-bloque {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 1rem 1.1rem;
+}
+
+.fin-bloque-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+  flex-wrap: wrap;
+}
+.fin-bloque-head h3 {
+  margin: 0;
+  font-size: 0.95rem;
+  color: #e5e7eb;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.fin-bloque-sub {
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+.fin-alerta-badge {
+  background: rgba(239, 68, 68, 0.15);
+  color: #fca5a5;
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  font-size: 0.65rem;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-left: 0.4rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.fin-bloque-empty {
+  padding: 1.5rem 0.5rem;
+  text-align: center;
+  color: #9ca3af;
+  font-size: 0.85rem;
+}
+
+.fin-bloque-lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+.fin-bloque-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 0.6rem;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 6px;
+}
+.fin-bloque-item.is-vencida {
+  background: rgba(239, 68, 68, 0.05);
+  border-color: rgba(239, 68, 68, 0.2);
+}
+.fin-bloque-link {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  color: inherit;
+  text-decoration: none;
+  flex: 1;
+  min-width: 0;
+}
+.fin-bloque-link:hover .fin-bloque-nombre {
+  color: #a78bfa;
+}
+.fin-bloque-nombre {
+  font-weight: 600;
+  color: #e5e7eb;
+  font-size: 0.88rem;
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.fin-bloque-extra {
+  color: #9ca3af;
+  font-size: 0.75rem;
+  font-weight: 400;
+}
+.fin-bloque-meta {
+  font-size: 0.72rem;
+  color: #9ca3af;
+}
+.fin-bloque-monto {
+  font-size: 0.95rem;
+  color: #e5e7eb;
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .fin-proveedores-grid {
+    grid-template-columns: 1fr;
+  }
+}

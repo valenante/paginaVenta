@@ -1,11 +1,11 @@
 /*****************************************************
  * Proveedor Pedido Detalle – Alef UI
+ * Usa como base ProveedorDetallePage.css (importado).
+ * Este archivo añade pills con color por estado,
+ * tabla de líneas más moderna y bloque de totales destacado.
  *****************************************************/
 
-/* =========================
-   Grid layout
-========================= */
-
+/* ─── Grid principal ─────────────────────────────── */
 .provDet-grid {
   margin-top: var(--space-xl);
   display: grid;
@@ -13,14 +13,12 @@
   gap: var(--space-lg);
 }
 
-/* =========================
-   Cards
-========================= */
-
 .provDet-card {
   display: flex;
   flex-direction: column;
   gap: var(--space-md);
+  max-width: 100%;
+  overflow: hidden;
 }
 
 .provDet-card--full {
@@ -34,55 +32,96 @@
   color: var(--color-texto);
 }
 
-/* =========================
-   Estados
-========================= */
-
+/* ─── Estados vacíos / carga ─────────────────────── */
 .provDet-loading,
 .provDet-empty {
-  padding: 1rem;
+  padding: 2rem 1rem;
   text-align: center;
   font-size: var(--font-size-sm);
   color: var(--color-texto-suave);
 }
 
-/* =========================
-   Tabla
-========================= */
+/* ─── Pill de estado con color ────────────────────── */
+.provDet-pill.estado-borrador {
+  background: #f3f4f6;
+  color: #4b5563;
+  border-color: #d1d5db;
+}
+.provDet-pill.estado-enviado {
+  background: #dbeafe;
+  color: #1e40af;
+  border-color: #93c5fd;
+}
+.provDet-pill.estado-recibido {
+  background: var(--color-exito-suave, #d1fae5);
+  color: #166534;
+  border-color: #86efac;
+}
+.provDet-pill.estado-parcial {
+  background: var(--color-aviso-suave, #fef3c7);
+  color: #92400e;
+  border-color: #fcd34d;
+}
+.provDet-pill.estado-cancelado {
+  background: var(--color-error-suave, #fee2e2);
+  color: #b91c1c;
+  border-color: #fca5a5;
+}
 
+/* ─── Acciones del header: un poco más elegantes ─── */
+.provDet-actions .btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 600;
+}
+
+/* ─── Tabla de líneas ────────────────────────────── */
 .prov-tableWrap {
   width: 100%;
   overflow-x: auto;
+  border: 1px solid var(--color-borde-suave);
+  border-radius: var(--radius-md);
+  background: #ffffff;
 }
 
 .prov-table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 760px;
+  min-width: 720px;
   font-size: var(--font-size-sm);
 }
 
 .prov-table thead {
-  background: var(--color-fondo-claro);
-}
-
-.prov-table th,
-.prov-table td {
-  padding: 0.6rem 0.75rem;
-  border-bottom: 1px solid var(--color-borde-suave);
-  text-align: left;
-  white-space: nowrap;
+  background: var(--color-fondo-claro, #f5f7fb);
 }
 
 .prov-table th {
+  padding: 0.65rem 0.85rem;
+  border-bottom: 1px solid var(--color-borde-suave);
+  text-align: left;
   font-size: var(--font-size-xs);
   font-weight: 700;
   color: var(--color-texto-suave);
   text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.prov-table td {
+  padding: 0.65rem 0.85rem;
+  border-bottom: 1px solid var(--color-borde-suave);
+  text-align: left;
+  color: var(--color-texto);
+  font-variant-numeric: tabular-nums;
+}
+
+.prov-table tbody tr:last-child td {
+  border-bottom: none;
 }
 
 .prov-table tbody tr:hover {
-  background: rgba(96, 181, 255, 0.05);
+  background: rgba(96, 181, 255, 0.06);
 }
 
 .prov-name {
@@ -90,16 +129,14 @@
   color: var(--color-texto);
 }
 
-/* =========================
-   Totales
-========================= */
-
+/* ─── Totales destacados ─────────────────────────── */
 .provDet-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.4rem 0;
+  padding: 0.55rem 0;
   font-size: var(--font-size-sm);
+  color: var(--color-texto);
 }
 
 .provDet-row:not(:last-child) {
@@ -108,141 +145,144 @@
 
 .provDet-k {
   color: var(--color-texto-suave);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  font-weight: 600;
 }
 
 .provDet-v {
   font-weight: 600;
+  font-variant-numeric: tabular-nums;
 }
 
-/* =========================
-   Notas
-========================= */
+/* Última fila (Total) en grande */
+.provDet-row:last-child {
+  padding-top: 0.75rem;
+  margin-top: 0.25rem;
+  border-top: 2px solid var(--color-borde-suave);
+}
+.provDet-row:last-child .provDet-k {
+  color: var(--color-texto);
+  font-size: 0.95rem;
+}
+.provDet-row:last-child .provDet-v {
+  font-size: 1.25rem;
+  color: var(--color-primario-oscuro, #2f7ed8);
+}
 
+/* ─── Notas ──────────────────────────────────────── */
 .provDet-notes {
   margin: 0;
-  padding: 0.75rem;
+  padding: 0.85rem 1rem;
   font-size: var(--font-size-sm);
   font-family: var(--font-base);
-  background: var(--color-fondo-claro);
+  color: var(--color-texto);
+  background: var(--color-fondo-claro, #f5f7fb);
   border-radius: var(--radius-md);
   white-space: pre-wrap;
   border: 1px solid var(--color-borde-suave);
+  line-height: 1.5;
 }
 
-/* =========================
-   Responsive
-========================= */
+/* ─── Alerta error ───────────────────────────────── */
+.provDet-alert--error {
+  background: var(--color-error-suave, #fee2e2);
+  color: #b91c1c;
+  border-color: #fca5a5 !important;
+  font-weight: 600;
+}
+
+/* ═══════════════════════════════════════════════════
+   📱 Responsive
+   ═══════════════════════════════════════════════════ */
 
 @media (max-width: 900px) {
   .provDet-grid {
     grid-template-columns: 1fr;
   }
-
   .provDet-card--full {
     grid-column: 1;
   }
 }
 
 @media (max-width: 640px) {
-  .provDet-header {
-    flex-direction: column;
-    gap: var(--space-lg);
-  }
-
-  .provDet-actions {
-    width: 100%;
-  }
-
-  .provDet-actions .btn {
-    flex: 1;
-  }
-
-  .prov-table {
-    min-width: 640px;
-  }
-}
-
-/*****************************************************
- * FIX MÓVIL – Pedido Proveedor
- *****************************************************/
-
-/* =========================
-   Evitar overflow global
-========================= */
-
-.provDet-page {
-  overflow-x: hidden;
-}
-
-/* =========================
-   Ajuste section en móvil
-========================= */
-
-@media (max-width: 640px) {
-  .section {
-    padding-left: var(--space-md);
-    padding-right: var(--space-md);
-  }
-
-  .section--wide {
-    max-width: 100%;
-  }
-}
-
-/* =========================
-   Cards no pueden crecer más que viewport
-========================= */
-
-.provDet-card {
-  max-width: 100%;
-  overflow: hidden;
-}
-
-/* =========================
-   Header móvil
-========================= */
-
-@media (max-width: 640px) {
+  /* Header del pedido se apila */
   .provDet-header {
     flex-direction: column;
     align-items: stretch;
+    gap: var(--space-lg);
   }
-
   .provDet-headLeft {
     width: 100%;
   }
-
+  .provDet-headRight {
+    width: 100%;
+    min-width: 0;
+  }
   .provDet-actions {
     width: 100%;
-    display: flex;
     flex-direction: column;
     gap: var(--space-sm);
   }
-
   .provDet-actions .btn {
-    width: 80%;
+    width: 100%;
     justify-content: center;
   }
-}
 
-/* =========================
-   Tabla RESPONSIVE REAL
-========================= */
-
-@media (max-width: 640px) {
+  /* Tabla → cards verticales */
   .prov-tableWrap {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
+    overflow: visible;
+    background: transparent;
+    border: none;
   }
-
-  .prov-table {
-    min-width: 100%;
-    width: 100%;
-    font-size: var(--font-size-xs);
-  }
-
-  .prov-table th,
+  .prov-table,
+  .prov-table thead,
+  .prov-table tbody,
+  .prov-table tr,
   .prov-table td {
-    padding: 0.45rem 0.5rem;
+    display: block;
+    width: 100%;
+    min-width: 0;
+  }
+  .prov-table thead {
+    display: none;
+  }
+  .prov-table tr {
+    background: #ffffff;
+    border: 1px solid var(--color-borde-suave);
+    border-radius: var(--radius-md);
+    padding: 0.75rem 0.9rem;
+    margin-bottom: 0.6rem;
+  }
+  .prov-table tr:hover {
+    background: #ffffff;
+  }
+  .prov-table td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.3rem 0;
+    border: none;
+    gap: 0.75rem;
+    white-space: normal;
+  }
+  .prov-table td::before {
+    content: attr(data-label);
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--color-texto-suave);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    flex-shrink: 0;
+  }
+  .prov-table td:first-child {
+    justify-content: flex-start;
+    padding-bottom: 0.5rem;
+    margin-bottom: 0.4rem;
+    border-bottom: 1px dashed var(--color-borde-suave);
+  }
+  .prov-table td:first-child::before {
+    content: none;
   }
 }

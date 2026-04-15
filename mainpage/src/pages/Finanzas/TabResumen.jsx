@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import {
   ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
 } from "recharts";
@@ -99,6 +100,90 @@ export default function TabResumen({ periodo }) {
               <span className="fin-cortesias-desc">impacto en margen</span>
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* === Fase 3: Top proveedores + facturas pendientes === */}
+      <div className="fin-proveedores-grid">
+        {/* Top proveedores por gasto */}
+        <div className="fin-card-bloque">
+          <div className="fin-bloque-head">
+            <h3>🏭 Top proveedores (base imp.)</h3>
+            <span className="fin-bloque-sub">
+              {eur(dash.gastos.proveedoresPagado || 0)} pagado ·{" "}
+              {eur(dash.gastos.proveedoresPendiente || 0)} pendiente
+            </span>
+          </div>
+          {(dash.topProveedores || []).length === 0 ? (
+            <div className="fin-bloque-empty">
+              Sin gasto de proveedores en este periodo.
+            </div>
+          ) : (
+            <ul className="fin-bloque-lista">
+              {dash.topProveedores.map((p) => (
+                <li key={p.proveedorId} className="fin-bloque-item">
+                  <Link
+                    to={`/configuracion/proveedores/${p.proveedorId}`}
+                    className="fin-bloque-link"
+                  >
+                    <span className="fin-bloque-nombre">{p.nombre}</span>
+                    <span className="fin-bloque-meta">
+                      {p.facturas} factura{p.facturas === 1 ? "" : "s"}
+                    </span>
+                  </Link>
+                  <strong className="fin-bloque-monto">{eur(p.base)}</strong>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+
+        {/* Facturas pendientes / vencidas */}
+        <div className="fin-card-bloque">
+          <div className="fin-bloque-head">
+            <h3>
+              🧾 Facturas pendientes
+              {dash.facturasPendientes?.vencidas > 0 && (
+                <span className="fin-alerta-badge">
+                  {dash.facturasPendientes.vencidas} vencida
+                  {dash.facturasPendientes.vencidas === 1 ? "" : "s"}
+                </span>
+              )}
+            </h3>
+            <span className="fin-bloque-sub">
+              {dash.facturasPendientes?.count || 0} total ·{" "}
+              {eur(dash.facturasPendientes?.total || 0)}
+            </span>
+          </div>
+          {(dash.facturasPendientes?.proximas || []).length === 0 ? (
+            <div className="fin-bloque-empty">Todo pagado. 🎉</div>
+          ) : (
+            <ul className="fin-bloque-lista">
+              {dash.facturasPendientes.proximas.map((f) => (
+                <li
+                  key={f._id}
+                  className={`fin-bloque-item ${f.vencida ? "is-vencida" : ""}`}
+                >
+                  <Link
+                    to={`/configuracion/proveedores/${f.proveedorId}/facturas`}
+                    className="fin-bloque-link"
+                  >
+                    <span className="fin-bloque-nombre">
+                      {f.proveedorNombre}
+                      <small className="fin-bloque-extra">#{f.numeroFactura}</small>
+                    </span>
+                    <span className="fin-bloque-meta">
+                      Vence{" "}
+                      {f.fechaVencimiento
+                        ? new Date(f.fechaVencimiento).toLocaleDateString("es-ES")
+                        : "—"}
+                    </span>
+                  </Link>
+                  <strong className="fin-bloque-monto">{eur(f.total)}</strong>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
       </div>
 

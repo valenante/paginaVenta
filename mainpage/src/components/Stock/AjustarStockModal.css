@@ -1,77 +1,117 @@
-/* =========================================================
-   AJUSTAR STOCK — Solo estilos específicos del stepper/summary.
-   Base compartida: StockModalBase.css (stk-*)
-   ========================================================= */
+/* AjustarStockModal.css — overrides para stepper y summary sobre base alef* */
 
-/* Stepper row */
 .ajuste-stepRow {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 8px;
   flex-wrap: wrap;
 }
 
-/* Input central */
+.ajuste-pill {
+  padding: 0.55rem 0.85rem;
+  font-size: 0.95rem;
+  min-width: 52px;
+}
+.ajuste-pill--lg {
+  padding: 0.7rem 1rem;
+  font-size: 1.1rem;
+  min-width: 56px;
+}
+
 .ajuste-inputWrap {
-  position: relative;
-  display: flex;
+  display: inline-flex;
   align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--radius-md, 14px);
+  padding: 0.2rem 0.75rem;
 }
-
 .ajuste-input {
-  width: 110px;
+  width: 90px !important;
   text-align: center;
-  padding: 0.7rem 0.6rem;
-  border-radius: 14px;
-  background: rgba(255, 255, 255, 0.14);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  color: #fff;
-  font-size: 16px;
-  font-weight: 800;
-  outline: none;
+  background: transparent !important;
+  border: none !important;
+  padding: 0.5rem 0 !important;
+  font-size: 1.3rem !important;
+  font-weight: 700 !important;
 }
-
 .ajuste-input:focus {
-  border-color: rgba(255, 103, 0, 0.6);
-  box-shadow: 0 0 0 3px rgba(255, 103, 0, 0.22);
+  box-shadow: none !important;
 }
-
 .ajuste-unit {
-  position: absolute;
-  right: 10px;
-  font-size: 0.8rem;
-  font-weight: 700;
-  color: rgba(255, 255, 255, 0.75);
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.95rem;
+  font-weight: 600;
 }
 
-/* Summary grid */
 .ajuste-summary {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 10px;
+  margin-top: 4px;
 }
-
-@media (max-width: 520px) {
-  .ajuste-summary { grid-template-columns: 1fr; }
-}
-
 .ajuste-summary-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-md, 14px);
+  padding: 0.7rem 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
   text-align: center;
 }
-
+.ajuste-summary-label {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.6);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  font-weight: 600;
+}
 .ajuste-summary-value {
   font-size: 1.1rem;
-  font-weight: 800;
   color: #fff;
+  font-weight: 700;
 }
-
 .ajuste-diff-pos {
-  border-color: rgba(152, 255, 152, 0.5);
-  background: rgba(152, 255, 152, 0.08);
+  background: rgba(34, 197, 94, 0.15);
+  border-color: rgba(34, 197, 94, 0.35);
+}
+.ajuste-diff-pos .ajuste-summary-value {
+  color: #86efac;
+}
+.ajuste-diff-neg {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.35);
+}
+.ajuste-diff-neg .ajuste-summary-value {
+  color: #fca5a5;
 }
 
-.ajuste-diff-neg {
-  border-color: rgba(255, 107, 107, 0.5);
-  background: rgba(255, 107, 107, 0.08);
+.ajuste-input::-webkit-outer-spin-button,
+.ajuste-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.ajuste-input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+@media (max-width: 560px) {
+  .ajuste-stepRow {
+    gap: 5px;
+  }
+  .ajuste-pill {
+    padding: 0.45rem 0.7rem;
+    min-width: 44px;
+    font-size: 0.85rem;
+  }
+  .ajuste-input {
+    width: 70px !important;
+    font-size: 1.1rem !important;
+  }
+  .ajuste-summary {
+    grid-template-columns: 1fr;
+  }
 }

@@ -11,7 +11,7 @@ import {
 } from "recharts";
 import "./CajaIngresosChart.css";
 
-export default function CajaIngresosChart({ datosDiarios }) {
+export default function CajaIngresosChart({ datosDiarios, onDiaClick }) {
   // Fix #4: isMobile reactivo
   const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768);
 
@@ -28,6 +28,7 @@ export default function CajaIngresosChart({ datosDiarios }) {
         day: "2-digit",
         month: "short",
       }),
+      fechaISO: d.fecha,
       total: d.total,
     }));
   }, [datosDiarios, isMobile]);
@@ -39,13 +40,29 @@ export default function CajaIngresosChart({ datosDiarios }) {
         {isMobile ? (
           <span>Últimos 7 días</span>
         ) : (
-          <span>Evolución del periodo seleccionado</span>
+          <span>
+            Evolución del periodo seleccionado
+            {onDiaClick ? " · Pulsa un día para filtrar" : ""}
+          </span>
         )}
       </header>
 
       <div className="chart-wrapper">
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={data} margin={{ top: 5, right: 10, left: 10, bottom: 5 }}>
+          <AreaChart
+            data={data}
+            margin={{ top: 5, right: 10, left: 10, bottom: 5 }}
+            style={onDiaClick ? { cursor: "pointer" } : undefined}
+            onClick={(state) => {
+              if (!onDiaClick) return;
+              const payload = state?.activePayload?.[0]?.payload;
+              const label = state?.activeLabel;
+              const iso =
+                payload?.fechaISO ||
+                data.find((d) => d.fecha === label)?.fechaISO;
+              if (iso) onDiaClick(iso);
+            }}
+          >
             <defs>
               <linearGradient id="gradTotal" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor="#6a0dad" stopOpacity={0.25} />
@@ -97,7 +114,15 @@ export default function CajaIngresosChart({ datosDiarios }) {
               strokeWidth={3}
               fill="url(#gradTotal)"
               dot={isMobile ? false : { r: 5, fill: "#6a0dad", strokeWidth: 0 }}
-              activeDot={{ r: 6 }}
+              activeDot={{
+                r: 7,
+                style: onDiaClick ? { cursor: "pointer" } : undefined,
+                onClick: (_, e) => {
+                  if (!onDiaClick) return;
+                  const p = e?.payload;
+                  if (p?.fechaISO) onDiaClick(p.fechaISO);
+                },
+              }}
               animationDuration={600}
               animationEasing="ease-out"
             />

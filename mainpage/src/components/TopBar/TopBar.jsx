@@ -3,6 +3,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { useTenant } from "../../context/TenantContext";
 import logoAlef from "../../assets/imagenes/alef.png";
+import StockAlertasBell from "./StockAlertasBell.jsx";
 import "./TopBar.css";
 
 /* ADMIN_PANEL_ROLES eliminado — acceso al panel controlado por permisos granulares */
@@ -306,6 +307,11 @@ export default function TopBar() {
                     </button>
                   )}
                 </>
+              )}
+
+              {/* ALERTAS DE STOCK (Fase 4) — solo dueños de restaurante */}
+              {!isSuperadmin && isOwner && !esTienda && (
+                <StockAlertasBell />
               )}
 
               {/* AYUDA / SOPORTE */}

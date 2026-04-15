@@ -60,6 +60,15 @@ export function useFinanzasTendencia({ meses = 12 }) {
   );
 }
 
+// ─── Fase 3: analytics por proveedor ──────────────────────
+export function useFinanzasAnalyticsProveedor({ proveedorId, desde, hasta }) {
+  return useEndpoint(
+    `${BASE}/proveedores/${proveedorId}/analytics`,
+    { desde, hasta },
+    [proveedorId, desde, hasta]
+  );
+}
+
 // ─── Gastos fijos ─────────────────────────────────────────
 export function useGastosFijos() {
   const [data, setData] = useState(null);

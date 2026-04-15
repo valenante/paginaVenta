@@ -765,3 +765,44 @@
   .stock-grid { grid-template-columns: repeat(2, 1fr); }
   .stock-grid--productos { grid-template-columns: repeat(2, 1fr); }
 }
+
+/* ═════════════════════════════════════════════════════════
+   Fase 5 — Unificación Lotes ↔ Stock
+   ═════════════════════════════════════════════════════════ */
+
+/* Badge ámbar del tab (cuando solo hay próximos a caducar, no críticos) */
+.stock-tab-badge--amber {
+  background: rgba(251, 191, 36, 0.2);
+  color: #fcd34d;
+  border: 1px solid rgba(251, 191, 36, 0.4);
+}
+
+/* Badge de lote dentro de cada card de ingrediente/producto */
+.stock-lote-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 4px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: filter 0.15s, transform 0.12s;
+  align-self: flex-start;
+}
+.stock-lote-badge:hover {
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+}
+.stock-lote-badge--rojo {
+  background: rgba(239, 68, 68, 0.18);
+  color: #fca5a5;
+  border-color: rgba(239, 68, 68, 0.4);
+}
+.stock-lote-badge--amber {
+  background: rgba(251, 191, 36, 0.15);
+  color: #fcd34d;
+  border-color: rgba(251, 191, 36, 0.35);
+}

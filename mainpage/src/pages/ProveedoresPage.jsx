@@ -161,8 +161,16 @@ export default function ProveedoresPage() {
                 {loading ? "Cargando…" : "Refrescar"}
               </button>
 
-              <button
+              <Link
+                to="/configuracion/proveedores/hacer-pedido"
                 className="btn btn-primario"
+                title="Genera pedidos a partir de stock actual y objetivos"
+              >
+                🛒 Hacer pedido
+              </Link>
+
+              <button
+                className="btn btn-secundario"
                 type="button"
                 onClick={onCreate}
               >

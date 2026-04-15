@@ -1,304 +1,191 @@
-/* =========================================================
-   HISTORIAL MOVIMIENTOS — Card-row layout (sin scroll horizontal).
-   Base compartida: StockModalBase.css (stk-*)
-   ========================================================= */
+/* HistorialMovimientosModal.css — sobre base alef* (ModalBase oscuro) */
 
-/* Meta row */
-.historial-meta {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: 8px;
-  flex-wrap: wrap;
-}
-
-/* ================= FILTROS ================= */
+/* Filtros (chips) */
 .historial-filtros {
   display: flex;
   gap: 6px;
-  padding: 12px 16px;
   flex-wrap: wrap;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-  background: rgba(15, 12, 20, 0.35);
+  padding: 4px 0;
 }
 
 .historial-filtro-btn {
-  border: none;
+  padding: 0.38rem 0.75rem;
+  border-radius: var(--radius-pill, 999px);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 0.78rem;
+  font-weight: 600;
   cursor: pointer;
-  font-weight: 800;
-  border-radius: 999px;
-  padding: 0.4rem 0.7rem;
-  font-size: 0.8rem;
-  background: rgba(255, 255, 255, 0.10);
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  color: #fff;
-  transition: all 0.18s ease;
+  transition: all 0.15s;
 }
-
 .historial-filtro-btn:hover {
-  background: rgba(255, 255, 255, 0.16);
-  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.14);
 }
-
 .historial-filtro-btn.active {
-  background: linear-gradient(135deg, rgba(106, 13, 173, 0.4), rgba(255, 103, 0, 0.3));
-  border-color: rgba(255, 103, 0, 0.45);
-  box-shadow: 0 4px 12px rgba(255, 103, 0, 0.15);
+  background: linear-gradient(135deg, #6a0dad, #ff6700);
+  border-color: transparent;
+  color: #fff;
 }
 
-.historial-filtro-btn--green.active { background: rgba(74, 222, 128, 0.18); border-color: rgba(74, 222, 128, 0.4); }
-.historial-filtro-btn--red.active { background: rgba(248, 113, 113, 0.18); border-color: rgba(248, 113, 113, 0.4); }
-.historial-filtro-btn--blue.active { background: rgba(96, 165, 250, 0.18); border-color: rgba(96, 165, 250, 0.4); }
-.historial-filtro-btn--orange.active { background: rgba(251, 146, 60, 0.18); border-color: rgba(251, 146, 60, 0.4); }
-.historial-filtro-btn--purple.active { background: rgba(168, 139, 250, 0.18); border-color: rgba(168, 139, 250, 0.4); }
+/* Color accents por tipo cuando están activos */
+.historial-filtro-btn--green.active {
+  background: linear-gradient(135deg, #16a34a, #22c55e);
+}
+.historial-filtro-btn--red.active {
+  background: linear-gradient(135deg, #b91c1c, #ef4444);
+}
+.historial-filtro-btn--blue.active {
+  background: linear-gradient(135deg, #1d4ed8, #60a5fa);
+}
+.historial-filtro-btn--orange.active {
+  background: linear-gradient(135deg, #c2410c, #fb923c);
+}
+.historial-filtro-btn--purple.active {
+  background: linear-gradient(135deg, #6a0dad, #a855f7);
+}
 
-/* ================= LOADING / EMPTY / ERROR ================= */
+/* Estados */
 .historial-loading,
 .historial-empty {
-  padding: 2.5rem 16px;
+  padding: 2rem 1rem;
   text-align: center;
+  color: rgba(255, 255, 255, 0.6);
   font-size: 0.95rem;
-  color: rgba(229, 229, 229, 0.6);
 }
 
-.historial-error {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  padding: 1.5rem 16px;
-}
-
-.historial-error span {
-  font-size: 0.95rem;
-  color: #ff6b6b;
-}
-
-.historial-error button {
-  border: none;
-  cursor: pointer;
-  font-weight: 800;
-  border-radius: 999px;
-  padding: 0.45rem 0.8rem;
-  font-size: 0.8rem;
-  background: rgba(255, 107, 107, 0.12);
-  border: 1px solid rgba(255, 107, 107, 0.25);
-  color: #ff6b6b;
-  transition: all 0.18s ease;
-}
-
-.historial-error button:hover {
-  background: rgba(255, 107, 107, 0.22);
-}
-
-/* ================= ROW LIST (no table, no horizontal scroll) ================= */
+/* Lista */
 .historial-list {
   display: flex;
   flex-direction: column;
+  gap: 8px;
+  max-height: 55vh;
+  overflow-y: auto;
+  padding-right: 4px;
 }
 
 .historial-row {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 14px;
   align-items: center;
-  gap: 12px;
-  padding: 10px 16px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-  transition: background 0.12s;
+  padding: 0.7rem 0.9rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-md, 14px);
 }
 
-.historial-row:hover {
-  background: rgba(255, 255, 255, 0.03);
-}
-
-/* Left: tipo badge + fecha */
 .historial-row-left {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  min-width: 90px;
-  flex-shrink: 0;
+  min-width: 0;
+}
+
+.historial-tipo-badge {
+  display: inline-block;
+  align-self: flex-start;
+  padding: 3px 9px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+.historial-tipo--green {
+  background: rgba(34, 197, 94, 0.2);
+  color: #86efac;
+  border: 1px solid rgba(34, 197, 94, 0.35);
+}
+.historial-tipo--red {
+  background: rgba(239, 68, 68, 0.2);
+  color: #fca5a5;
+  border: 1px solid rgba(239, 68, 68, 0.35);
+}
+.historial-tipo--blue {
+  background: rgba(59, 130, 246, 0.2);
+  color: #93c5fd;
+  border: 1px solid rgba(59, 130, 246, 0.35);
+}
+.historial-tipo--orange {
+  background: rgba(251, 146, 60, 0.2);
+  color: #fdba74;
+  border: 1px solid rgba(251, 146, 60, 0.35);
+}
+.historial-tipo--purple {
+  background: rgba(168, 85, 247, 0.2);
+  color: #d8b4fe;
+  border: 1px solid rgba(168, 85, 247, 0.35);
 }
 
 .historial-row-fecha {
   font-size: 0.75rem;
-  color: rgba(229, 229, 229, 0.55);
-  white-space: nowrap;
+  color: rgba(255, 255, 255, 0.6);
 }
 
-/* Center: stock before → after + delta */
 .historial-row-stock {
   display: flex;
   align-items: center;
-  gap: 6px;
-  flex: 1;
-  min-width: 0;
+  gap: 8px;
   font-variant-numeric: tabular-nums;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 600;
+  font-size: 0.95rem;
 }
-
-.historial-row-before,
-.historial-row-after {
-  font-size: 0.9rem;
-  font-weight: 800;
-  color: #fff;
-}
-
 .historial-row-arrow {
-  font-size: 0.8rem;
-  color: rgba(229, 229, 229, 0.4);
+  color: rgba(255, 255, 255, 0.4);
 }
-
 .historial-row-delta {
-  font-size: 0.82rem;
-  font-weight: 800;
   padding: 2px 8px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: rgba(229, 229, 229, 0.7);
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.08);
 }
-
 .historial-row-delta.pos {
-  color: #98ff98;
-  background: rgba(152, 255, 152, 0.08);
-  border-color: rgba(152, 255, 152, 0.2);
+  background: rgba(34, 197, 94, 0.18);
+  color: #86efac;
 }
-
 .historial-row-delta.neg {
-  color: #ff6b6b;
-  background: rgba(255, 107, 107, 0.08);
-  border-color: rgba(255, 107, 107, 0.2);
+  background: rgba(239, 68, 68, 0.18);
+  color: #fca5a5;
 }
 
-/* Right: actor + ref */
 .historial-row-meta {
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
   gap: 2px;
-  flex-shrink: 0;
-  min-width: 0;
-  max-width: 140px;
+  text-align: right;
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.55);
+  max-width: 240px;
 }
-
 .historial-row-actor {
-  font-size: 0.78rem;
-  font-weight: 700;
-  color: rgba(229, 229, 229, 0.65);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 100%;
+  color: rgba(255, 255, 255, 0.75);
+  font-weight: 600;
 }
-
 .historial-row-ref {
-  font-size: 0.72rem;
-  color: rgba(229, 229, 229, 0.4);
+  font-style: italic;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 100%;
 }
 
-/* ===== Tipo badges ===== */
-.historial-tipo-badge {
-  display: inline-block;
-  padding: 3px 8px;
-  border-radius: 999px;
-  font-size: 0.72rem;
-  font-weight: 800;
-  white-space: nowrap;
-  background: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  color: #fff;
-  width: fit-content;
-}
-
-.historial-tipo--green { background: rgba(152, 255, 152, 0.12); border-color: rgba(152, 255, 152, 0.3); color: #98ff98; }
-.historial-tipo--red { background: rgba(255, 107, 107, 0.12); border-color: rgba(255, 107, 107, 0.3); color: #ff6b6b; }
-.historial-tipo--blue { background: rgba(96, 165, 250, 0.12); border-color: rgba(96, 165, 250, 0.3); color: #60a5fa; }
-.historial-tipo--orange { background: rgba(255, 145, 73, 0.12); border-color: rgba(255, 145, 73, 0.3); color: #ff9149; }
-.historial-tipo--purple { background: rgba(168, 139, 250, 0.12); border-color: rgba(168, 139, 250, 0.3); color: #a78bfa; }
-
-/* ================= PAGINATION ================= */
-.historial-pagination {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  padding: 12px 16px;
-  border-top: 1px solid rgba(255, 255, 255, 0.10);
-  background: rgba(15, 12, 20, 0.60);
-  backdrop-filter: blur(14px);
-  position: sticky;
-  bottom: 0;
-  padding-bottom: calc(12px + env(safe-area-inset-bottom));
-}
-
-.historial-pagination button {
-  border: none;
-  cursor: pointer;
-  font-weight: 800;
-  border-radius: 999px;
-  padding: 0.55rem 0.9rem;
+/* Info de paginación */
+.historial-page-info {
+  color: rgba(255, 255, 255, 0.7);
   font-size: 0.85rem;
-  background: rgba(255, 255, 255, 0.10);
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  color: #fff;
-  transition: all 0.18s ease;
+  font-weight: 600;
 }
 
-.historial-pagination button:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.16);
-  transform: translateY(-1px);
-}
-
-.historial-pagination button:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
-}
-
-.historial-pagination span {
-  font-size: 0.85rem;
-  font-weight: 800;
-  color: rgba(229, 229, 229, 0.7);
-}
-
-/* ================= RESPONSIVE ================= */
-@media (max-width: 640px) {
-  .historial-filtros {
-    padding: 10px 12px;
-    gap: 5px;
-  }
-
-  .historial-filtro-btn {
-    padding: 0.3rem 0.55rem;
-    font-size: 0.72rem;
-  }
-
+/* Mobile: colapsar fila */
+@media (max-width: 620px) {
   .historial-row {
-    flex-wrap: wrap;
-    gap: 8px;
-    padding: 10px 12px;
+    grid-template-columns: 1fr;
+    gap: 6px;
   }
-
-  .historial-row-left {
-    flex-direction: row;
-    align-items: center;
-    gap: 8px;
-    min-width: 0;
-    width: 100%;
-  }
-
-  .historial-row-stock {
-    flex: none;
-    width: 100%;
-  }
-
   .historial-row-meta {
-    flex-direction: row;
-    align-items: center;
-    gap: 8px;
+    text-align: left;
     max-width: 100%;
-    width: 100%;
   }
 }

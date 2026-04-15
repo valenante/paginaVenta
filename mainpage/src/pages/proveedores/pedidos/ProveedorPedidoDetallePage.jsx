@@ -5,7 +5,8 @@ import { useTenant } from "../../../context/TenantContext";
 import { useToast } from "../../../context/ToastContext";
 import ModalConfirmacion from "../../../components/Modal/ModalConfirmacion.jsx";
 import RecibirPedidoProveedorModal from "../../../components/Proveedores/RecibirPedidoProveedorModal.jsx";
-import "./ProveedorPedidoDetallePage.css";
+import "../../../styles/ProveedorDetallePage.css"; // layout base compartido (header, breadcrumbs, pills, cards)
+import "./ProveedorPedidoDetallePage.css"; // overrides específicos de pedido
 
 const ESTADO_LABEL = {
   borrador: "Borrador",
@@ -164,17 +165,17 @@ export default function ProveedorPedidoDetallePage() {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {pedido.lineas.map((l) => (
-                                            <tr key={l._id}>
+                                        {pedido.lineas.map((l, idx) => (
+                                            <tr key={l._id || idx}>
                                                 <td>
                                                     <div className="prov-name">{l.nombre}</div>
                                                 </td>
-                                                <td>{l.unidad || "—"}</td>
-                                                <td>{l.formato || "—"}</td>
-                                                <td>{l.cantidad}</td>
-                                                <td>{l.precioUnitario.toFixed(2)} €</td>
-                                                <td>{l.iva}%</td>
-                                                <td>
+                                                <td data-label="Unidad">{l.unidad || "—"}</td>
+                                                <td data-label="Formato">{l.formato || "—"}</td>
+                                                <td data-label="Cantidad">{l.cantidad}</td>
+                                                <td data-label="Precio">{l.precioUnitario.toFixed(2)} €</td>
+                                                <td data-label="IVA">{l.iva}%</td>
+                                                <td data-label="Total">
                                                     <b>{l.totalLinea.toFixed(2)} €</b>
                                                 </td>
                                             </tr>

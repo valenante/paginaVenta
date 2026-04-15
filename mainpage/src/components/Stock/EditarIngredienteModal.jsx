@@ -2,22 +2,19 @@
 import React, { useEffect, useMemo, useState } from "react";
 import api from "../../utils/api";
 import AlefSelect from "../AlefSelect/AlefSelect";
-import "./StockModalBase.css";
-import "./EditarIngredienteModal.css";
+import ModalBase from "../MapaEditor/ModalBase";
+import "../MapaEditor/ModalCrearMesa.css";
+import { toNum, clampMin } from "./stockHelpers";
 
-// ⚙️ Opciones
 const unidades = ["g", "kg", "ml", "l", "uds", "caja", "pack", "botella"];
 const tipos = [
   { label: "Ingrediente", value: "ingrediente" },
   { label: "Consumible", value: "consumible" },
 ];
 
-import { toNum, clampMin } from "./stockHelpers";
-
 function buildFormFromIngrediente(ing) {
   const tipoItem = ing?.tipoItem || "ingrediente";
   const esConsumible = tipoItem === "consumible";
-
   const consumoAutoSrc = ing?.consumoAuto || {};
   const enabled = Boolean(consumoAutoSrc.enabled);
 
@@ -41,27 +38,20 @@ function normalizeForm(form) {
   const tipoItem = String(form?.tipoItem || "ingrediente");
   const esConsumible = tipoItem === "consumible";
 
-  const stockMax = clampMin(toNum(form?.stockMax, 1), 1);
-  const stockMinimo = clampMin(toNum(form?.stockMinimo, 0), 0);
-  const stockCritico = clampMin(toNum(form?.stockCritico, 0), 0);
-
-  const nombre = String(form?.nombre || "").trim();
-  const unidad = String(form?.unidad || "g");
-
-  const enabled = Boolean(form?.consumoAuto?.enabled);
-  const cantidad = clampMin(toNum(form?.consumoAuto?.cantidad, 1), 0);
-  const cadaDias = clampMin(toNum(form?.consumoAuto?.cadaDias, 7), 1);
-
   return {
-    nombre,
-    unidad,
+    nombre: String(form?.nombre || "").trim(),
+    unidad: String(form?.unidad || "g"),
     tipoItem,
-    stockMax,
-    stockMinimo,
-    stockCritico,
+    stockMax: clampMin(toNum(form?.stockMax, 1), 1),
+    stockMinimo: clampMin(toNum(form?.stockMinimo, 0), 0),
+    stockCritico: clampMin(toNum(form?.stockCritico, 0), 0),
     archivado: Boolean(form?.archivado),
     consumoAuto: esConsumible
-      ? { enabled, cantidad, cadaDias }
+      ? {
+          enabled: Boolean(form?.consumoAuto?.enabled),
+          cantidad: clampMin(toNum(form?.consumoAuto?.cantidad, 1), 0),
+          cadaDias: clampMin(toNum(form?.consumoAuto?.cadaDias, 7), 1),
+        }
       : { enabled: false, cantidad: 0, cadaDias: 0 },
   };
 }
@@ -72,18 +62,15 @@ function shallowDiff(prev, next) {
     if (k === "consumoAuto") continue;
     if (prev[k] !== next[k]) out[k] = next[k];
   }
-
   const pAuto = prev.consumoAuto || {};
   const nAuto = next.consumoAuto || {};
   const autoChanged =
     pAuto.enabled !== nAuto.enabled ||
     pAuto.cantidad !== nAuto.cantidad ||
     pAuto.cadaDias !== nAuto.cadaDias;
-
   if (next.tipoItem === "consumible" && autoChanged) {
     out.consumoAuto = { ...nAuto };
   }
-
   return out;
 }
 
@@ -91,13 +78,11 @@ export default function EditarIngredienteModal({ ingrediente, onClose, onSave })
   const [form, setForm] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [confirmTipoChange, setConfirmTipoChange] = useState(null);
 
   const initialForm = useMemo(
     () => (ingrediente ? buildFormFromIngrediente(ingrediente) : null),
     [ingrediente]
   );
-
   const initialNorm = useMemo(
     () => (initialForm ? normalizeForm(initialForm) : null),
     [initialForm]
@@ -117,61 +102,25 @@ export default function EditarIngredienteModal({ ingrediente, onClose, onSave })
   }, [initialNorm, currentNorm]);
 
   const esConsumible = form?.tipoItem === "consumible";
-  const unidadChip = form?.unidad || "ud";
 
   const validar = () => {
     const f = currentNorm;
     if (!f) return "Formulario inválido.";
     if (f.nombre.length < 2) return "El nombre debe tener al menos 2 caracteres.";
-    if (!f.unidad.trim()) return "La unidad es obligatoria.";
-
     if (f.stockMinimo > f.stockMax)
-      return "El stock mínimo no puede ser mayor que el stock máximo.";
+      return "El mínimo no puede ser mayor que el máximo.";
     if (f.stockCritico > f.stockMinimo)
-      return "El stock crítico no puede ser mayor que el stock mínimo.";
-
+      return "El crítico no puede ser mayor que el mínimo.";
     if (f.tipoItem === "consumible" && f.consumoAuto.enabled) {
-      if (f.consumoAuto.cantidad <= 0) return "La cantidad por ciclo debe ser mayor a 0.";
-      if (f.consumoAuto.cadaDias < 1) return "La frecuencia debe ser al menos 1 día.";
+      if (f.consumoAuto.cantidad <= 0) return "Cantidad por ciclo > 0.";
+      if (f.consumoAuto.cadaDias < 1) return "Frecuencia mínima 1 día.";
     }
-
     return "";
   };
 
-  const onChangeTipo = (value) => {
-    setError("");
-
-    const prevTipo = form?.tipoItem;
-    if (prevTipo === "consumible" && value === "ingrediente") {
-      const estabaAuto = Boolean(form?.consumoAuto?.enabled);
-      if (estabaAuto) {
-        setConfirmTipoChange(value);
-        return;
-      }
-      setForm((p) => ({
-        ...p,
-        tipoItem: value,
-        consumoAuto: { ...p.consumoAuto, enabled: false },
-      }));
-      return;
-    }
-
-    setForm((p) => ({ ...p, tipoItem: value }));
-  };
-
-  const confirmarCambioTipo = () => {
-    if (!confirmTipoChange) return;
-    setForm((p) => ({
-      ...p,
-      tipoItem: confirmTipoChange,
-      consumoAuto: { ...p.consumoAuto, enabled: false },
-    }));
-    setConfirmTipoChange(null);
-  };
-
-  const guardar = async () => {
+  const guardar = async (e) => {
+    e?.preventDefault?.();
     if (!ingrediente?._id) return;
-
     setError("");
     const msg = validar();
     if (msg) return setError(msg);
@@ -179,10 +128,7 @@ export default function EditarIngredienteModal({ ingrediente, onClose, onSave })
 
     try {
       setLoading(true);
-
       const diff = shallowDiff(initialNorm, currentNorm);
-
-      // refuerzo coherencia consumoAuto si es consumible
       if (currentNorm.tipoItem === "consumible") {
         const pAuto = initialNorm.consumoAuto || {};
         const nAuto = currentNorm.consumoAuto || {};
@@ -192,344 +138,244 @@ export default function EditarIngredienteModal({ ingrediente, onClose, onSave })
           pAuto.cadaDias !== nAuto.cadaDias;
         if (autoChanged) diff.consumoAuto = { ...nAuto };
       }
-
       await api.put(`/stock/ingrediente/${ingrediente._id}`, diff);
-
       onSave?.();
       onClose?.();
-    } catch (e) {
-      const errMsg =
-        e.response?.data?.message ||
-        e.response?.data?.error ||
-        "Error actualizando el ítem.";
-      setError(String(errMsg));
+    } catch (err) {
+      setError(
+        err.response?.data?.message ||
+          err.response?.data?.error ||
+          "Error actualizando el ítem."
+      );
     } finally {
       setLoading(false);
     }
   };
 
-  // Atajos teclado: Esc cierra / Enter guarda
-  useEffect(() => {
-    if (!form) return;
-
-    const onKey = (e) => {
-      if (e.key === "Escape") onClose?.();
-      if (e.key === "Enter") {
-        if (e.target?.tagName?.toLowerCase() === "textarea") return;
-        if (!loading && hasChanges) guardar();
-      }
-    };
-
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [form, loading, hasChanges]);
-
   if (!form || !ingrediente) return null;
 
-  return (
-    <div
-      className="alef-modal-overlay stock-editar-overlay"
-      onClick={() => !loading && onClose?.()}
-    >
-      <div
-        className="alef-modal-content stk-modal"
-        onClick={(e) => e.stopPropagation()}
+  const footer = (
+    <div className="alefForm-actions">
+      <button
+        type="button"
+        className="alefBtn ghost"
+        onClick={onClose}
+        disabled={loading}
       >
-        {/* Header */}
-        <header className="stk-header">
-          <div className="stk-header-top">
-            <h3 className="stk-title">Editar ítem</h3>
-            <div className="stk-chip-row">
-              <span className="stk-chip">{unidadChip}</span>
-              <span className="stk-chip">
-                {form.tipoItem === "consumible" ? "Consumible" : "Ingrediente"}
+        Cancelar
+      </button>
+      <button
+        type="submit"
+        form="alefEditarIngredienteForm"
+        className="alefBtn primary"
+        disabled={loading || !hasChanges}
+      >
+        {loading ? "Guardando…" : "Guardar cambios"}
+      </button>
+    </div>
+  );
+
+  return (
+    <ModalBase
+      open={true}
+      title={`Editar · ${ingrediente.nombre}`}
+      subtitle="El stock actual se ajusta desde 'Ajustar stock' para mantener trazabilidad."
+      onClose={onClose}
+      footer={footer}
+      width={720}
+    >
+      <form
+        id="alefEditarIngredienteForm"
+        onSubmit={guardar}
+        className="alefForm"
+      >
+        <div className="alefForm-grid">
+          <label className="alefField">
+            <span className="alefField-label">Nombre</span>
+            <input
+              className="alefField-input"
+              value={form.nombre}
+              onChange={(e) => {
+                setError("");
+                setForm((p) => ({ ...p, nombre: e.target.value }));
+              }}
+              placeholder="Ej: Harina, Aceite…"
+              disabled={loading}
+              autoFocus
+            />
+          </label>
+
+          <label className="alefField">
+            <span className="alefField-label">Tipo</span>
+            <AlefSelect
+              label=""
+              value={form.tipoItem}
+              options={tipos}
+              onChange={(value) => {
+                setError("");
+                setForm((p) => ({ ...p, tipoItem: value }));
+              }}
+              placeholder="Selecciona tipo"
+            />
+          </label>
+
+          <label className="alefField">
+            <span className="alefField-label">Unidad</span>
+            <AlefSelect
+              label=""
+              value={form.unidad}
+              options={unidades}
+              onChange={(value) => {
+                setError("");
+                setForm((p) => ({ ...p, unidad: value }));
+              }}
+              placeholder="Selecciona unidad"
+            />
+          </label>
+
+          <label className="alefField">
+            <span className="alefField-label">Stock máximo</span>
+            <input
+              className="alefField-input"
+              type="number"
+              min="1"
+              step="1"
+              value={form.stockMax}
+              onChange={(e) => {
+                setError("");
+                setForm((p) => ({ ...p, stockMax: e.target.value }));
+              }}
+              disabled={loading}
+            />
+          </label>
+
+          <label className="alefField">
+            <span className="alefField-label">Stock mínimo</span>
+            <input
+              className="alefField-input"
+              type="number"
+              min="0"
+              step="1"
+              value={form.stockMinimo}
+              onChange={(e) => {
+                setError("");
+                setForm((p) => ({ ...p, stockMinimo: e.target.value }));
+              }}
+              disabled={loading}
+            />
+          </label>
+
+          <label className="alefField">
+            <span className="alefField-label">Stock crítico</span>
+            <input
+              className="alefField-input"
+              type="number"
+              min="0"
+              step="1"
+              value={form.stockCritico}
+              onChange={(e) => {
+                setError("");
+                setForm((p) => ({ ...p, stockCritico: e.target.value }));
+              }}
+              disabled={loading}
+            />
+          </label>
+        </div>
+
+        <div className="alefHint">
+          📦 Coherencia: <b>crítico ≤ mínimo ≤ máximo</b>. Stock actual:{" "}
+          <b>
+            {toNum(ingrediente.stockActual, 0)} {form.unidad}
+          </b>
+        </div>
+
+        {esConsumible && (
+          <>
+            <label className="alefField">
+              <span className="alefField-label">
+                <input
+                  type="checkbox"
+                  checked={form.consumoAuto.enabled}
+                  onChange={(e) =>
+                    setForm((p) => ({
+                      ...p,
+                      consumoAuto: {
+                        ...p.consumoAuto,
+                        enabled: e.target.checked,
+                      },
+                    }))
+                  }
+                  disabled={loading}
+                  style={{ marginRight: 8 }}
+                />
+                Activar consumo automático
               </span>
-            </div>
-          </div>
+            </label>
 
-          <p className="stk-subtitle">
-            Edita nombre, unidad, umbrales y consumo automático. El{" "}
-            <strong>stock actual</strong> se ajusta en "Ajustar stock" para mantener trazabilidad.
-          </p>
-
-          <div className="stk-item-card">
-            <span className="stk-item-name">{ingrediente.nombre}</span>
-            <span className="stk-item-meta">
-              Stock actual: <strong>{toNum(ingrediente.stockActual, 0)}</strong> {unidadChip} ·
-              Máx actual: <strong>{toNum(ingrediente.stockMax, 0)}</strong> {unidadChip}
-            </span>
-          </div>
-        </header>
-
-        {/* Body */}
-        <section className="stk-body">
-          <div className="stk-controls">
-            {/* Card: Datos */}
-            <div className="stk-card">
-              <div className="stk-card-title">Datos principales</div>
-
-              <div className="stk-grid">
-                <div className="stk-field">
-                  <label className="stk-label">Nombre</label>
+            {form.consumoAuto.enabled && (
+              <div className="alefForm-grid">
+                <label className="alefField">
+                  <span className="alefField-label">Unidades por ciclo</span>
                   <input
-                    className="stk-input"
-                    value={form.nombre}
-                    onChange={(e) => {
-                      setError("");
-                      setForm((p) => ({ ...p, nombre: e.target.value }));
-                    }}
-                    placeholder="Ej: Harina / Servilletas / Aceite"
-                    autoFocus
-                    disabled={loading}
-                  />
-                </div>
-
-                <div className="stk-field">
-                  <label className="stk-label">Tipo</label>
-                  <div className="stk-select-wrap">
-                    <AlefSelect
-                      label=""
-                      value={form.tipoItem}
-                      options={tipos}
-                      onChange={onChangeTipo}
-                      placeholder="Selecciona tipo"
-                    />
-                  </div>
-                </div>
-
-                <div className="stk-field">
-                  <label className="stk-label">Unidad</label>
-                  <div className="stk-select-wrap">
-                    <AlefSelect
-                      label=""
-                      value={form.unidad}
-                      options={unidades}
-                      onChange={(value) => {
-                        setError("");
-                        setForm((p) => ({ ...p, unidad: value }));
-                      }}
-                      placeholder="Selecciona unidad"
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Card: Umbrales */}
-            <div className="stk-card">
-              <div className="stk-cardTitle">📦 Stock y alertas</div>
-
-              <div className="stk-grid">
-                <div className="stk-field">
-                  <label className="stk-label">Stock máximo</label>
-                  <input
-                    className="stk-input"
+                    className="alefField-input"
                     type="number"
                     min="1"
                     step="1"
-                    value={form.stockMax}
-                    onChange={(e) => {
-                      setError("");
-                      setForm((p) => ({ ...p, stockMax: e.target.value }));
-                    }}
-                    onBlur={() =>
+                    value={form.consumoAuto.cantidad}
+                    onChange={(e) =>
                       setForm((p) => ({
                         ...p,
-                        stockMax: String(clampMin(toNum(p.stockMax, 1), 1)),
+                        consumoAuto: {
+                          ...p.consumoAuto,
+                          cantidad: e.target.value,
+                        },
                       }))
                     }
                     disabled={loading}
                   />
-                </div>
-
-                <div className="stk-field">
-                  <label className="stk-label">Stock mínimo</label>
-                  <input
-                    className="stk-input"
-                    type="number"
-                    min="0"
-                    step="1"
-                    value={form.stockMinimo}
-                    onChange={(e) => {
-                      setError("");
-                      setForm((p) => ({ ...p, stockMinimo: e.target.value }));
-                    }}
-                    onBlur={() =>
-                      setForm((p) => ({
-                        ...p,
-                        stockMinimo: String(clampMin(toNum(p.stockMinimo, 0), 0)),
-                      }))
-                    }
-                    disabled={loading}
-                  />
-                </div>
-
-                <div className="stk-field">
-                  <label className="stk-label">Stock crítico</label>
-                  <input
-                    className="stk-input"
-                    type="number"
-                    min="0"
-                    step="1"
-                    value={form.stockCritico}
-                    onChange={(e) => {
-                      setError("");
-                      setForm((p) => ({ ...p, stockCritico: e.target.value }));
-                    }}
-                    onBlur={() =>
-                      setForm((p) => ({
-                        ...p,
-                        stockCritico: String(clampMin(toNum(p.stockCritico, 0), 0)),
-                      }))
-                    }
-                    disabled={loading}
-                  />
-                </div>
-              </div>
-
-              <p className="stk-hint">
-                Coherencia: <strong>crítico ≤ mínimo ≤ máximo</strong>.
-              </p>
-            </div>
-
-            {/* Card: Consumo auto (si consumible) */}
-            {esConsumible && (
-              <div className="stk-card">
-                <div className="stk-cardTitle">⏳ Consumo automático</div>
-
-                <label className="stk-toggle">
-                  <input
-                    type="checkbox"
-                    checked={form.consumoAuto.enabled}
-                    onChange={(e) => {
-                      setError("");
-                      setForm((p) => ({
-                        ...p,
-                        consumoAuto: { ...p.consumoAuto, enabled: e.target.checked },
-                      }));
-                    }}
-                    className="stk-checkbox"
-                    disabled={loading}
-                  />
-                  Activar consumo automático
                 </label>
-
-                {form.consumoAuto.enabled && (
-                  <div className="stk-grid stk-grid--top">
-                    <div className="stk-field">
-                      <label className="stk-label">Unidades por ciclo</label>
-                      <input
-                        className="stk-input"
-                        type="number"
-                        min="1"
-                        step="1"
-                        value={form.consumoAuto.cantidad}
-                        onChange={(e) => {
-                          setError("");
-                          setForm((p) => ({
-                            ...p,
-                            consumoAuto: { ...p.consumoAuto, cantidad: e.target.value },
-                          }));
-                        }}
-                        onBlur={() =>
-                          setForm((p) => ({
-                            ...p,
-                            consumoAuto: {
-                              ...p.consumoAuto,
-                              cantidad: String(clampMin(toNum(p.consumoAuto.cantidad, 1), 1)),
-                            },
-                          }))
-                        }
-                        disabled={loading}
-                      />
-                    </div>
-
-                    <div className="stk-field">
-                      <label className="stk-label">Cada cuántos días</label>
-                      <input
-                        className="stk-input"
-                        type="number"
-                        min="1"
-                        step="1"
-                        value={form.consumoAuto.cadaDias}
-                        onChange={(e) => {
-                          setError("");
-                          setForm((p) => ({
-                            ...p,
-                            consumoAuto: { ...p.consumoAuto, cadaDias: e.target.value },
-                          }));
-                        }}
-                        onBlur={() =>
-                          setForm((p) => ({
-                            ...p,
-                            consumoAuto: {
-                              ...p.consumoAuto,
-                              cadaDias: String(clampMin(toNum(p.consumoAuto.cadaDias, 7), 1)),
-                            },
-                          }))
-                        }
-                        disabled={loading}
-                      />
-                    </div>
-                  </div>
-                )}
+                <label className="alefField">
+                  <span className="alefField-label">Cada cuántos días</span>
+                  <input
+                    className="alefField-input"
+                    type="number"
+                    min="1"
+                    step="1"
+                    value={form.consumoAuto.cadaDias}
+                    onChange={(e) =>
+                      setForm((p) => ({
+                        ...p,
+                        consumoAuto: {
+                          ...p.consumoAuto,
+                          cadaDias: e.target.value,
+                        },
+                      }))
+                    }
+                    disabled={loading}
+                  />
+                </label>
               </div>
             )}
+          </>
+        )}
 
-            {/* Card: Archivado */}
-            <div className="stk-card">
-              <div className="stk-cardTitle">🗄️ Estado</div>
+        <label className="alefField">
+          <span className="alefField-label">
+            <input
+              type="checkbox"
+              checked={form.archivado}
+              onChange={(e) =>
+                setForm((p) => ({ ...p, archivado: e.target.checked }))
+              }
+              disabled={loading}
+              style={{ marginRight: 8 }}
+            />
+            🗄️ Archivar ítem
+          </span>
+        </label>
 
-              <label className="stk-toggle">
-                <input
-                  type="checkbox"
-                  checked={form.archivado}
-                  onChange={(e) => {
-                    setError("");
-                    setForm((p) => ({ ...p, archivado: e.target.checked }));
-                  }}
-                  className="stk-checkbox"
-                  disabled={loading}
-                />
-                Archivar ítem
-              </label>
-
-              <p className="stk-hint">
-                Tip: <strong>Enter</strong> guarda · <strong>Esc</strong> cierra
-              </p>
-            </div>
-
-            {error && <div className="stk-error">{error}</div>}
-
-            {confirmTipoChange && (
-              <div className="stk-confirm">
-                <p>Cambiar a <strong>Ingrediente</strong> desactivará el consumo automático. ¿Continuar?</p>
-                <div className="stk-confirm-actions">
-                  <button onClick={() => setConfirmTipoChange(null)}>No, cancelar</button>
-                  <button onClick={confirmarCambioTipo}>Sí, cambiar</button>
-                </div>
-              </div>
-            )}
-          </div>
-        </section>
-
-        {/* Footer */}
-        <footer className="stk-footer">
-          <button type="button" className="stk-btn stk-btn--ghost" onClick={onClose} disabled={loading}>
-            Cancelar
-          </button>
-          <button
-            type="button"
-            className="stk-btn stk-btn--primary"
-            onClick={guardar}
-            disabled={loading || !hasChanges}
-            title={!hasChanges ? "No hay cambios para guardar" : ""}
-          >
-            {loading ? "Guardando…" : "Guardar cambios"}
-          </button>
-        </footer>
-      </div>
-    </div>
+        {error && <div className="alefError">{error}</div>}
+      </form>
+    </ModalBase>
   );
 }

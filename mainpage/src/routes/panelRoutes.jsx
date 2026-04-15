@@ -25,6 +25,7 @@ const ProveedorProductosTab = lazy(() => import("../pages/proveedores/tabs/Prove
 const ProveedorPedidosTab = lazy(() => import("../pages/proveedores/tabs/ProveedorPedidosTab.jsx"));
 const ProveedorFacturasTab = lazy(() => import("../pages/proveedores/tabs/ProveedorFacturasTab.jsx"));
 const ProveedorPedidoDetallePage = lazy(() => import("../pages/proveedores/pedidos/ProveedorPedidoDetallePage.jsx"));
+const HacerPedidoPage = lazy(() => import("../pages/proveedores/HacerPedidoPage.jsx"));
 
 /* Usuarios */
 const UsuariosPage = lazy(() => import("../components/Usuarios/UsuariosPage"));
@@ -81,6 +82,7 @@ export default function panelRoutes() {
 
       {/* Proveedores */}
       <Route path="/configuracion/proveedores" element={<UserLayout><ProveedoresPage /></UserLayout>} />
+      <Route path="/configuracion/proveedores/hacer-pedido" element={<UserLayout><HacerPedidoPage /></UserLayout>} />
       <Route path="/configuracion/proveedores/:proveedorId" element={<UserLayout><ProveedorDetalleLayout /></UserLayout>}>
         <Route index element={<ProveedorResumenTab />} />
         <Route path="productos" element={<ProveedorProductosTab />} />

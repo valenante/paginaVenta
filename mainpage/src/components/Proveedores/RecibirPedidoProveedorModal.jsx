@@ -23,6 +23,9 @@ export default function RecibirPedidoProveedorModal({
             lineaIndex: idx,
             cantidadPedida: l.cantidad,
             cantidadRecibida: l.cantidad,
+            precioUnitarioReal: "",
+            caducidad: "",
+            codigoLote: "",
             ingredienteId: l.ingredienteId || null,
             productoShopId: l.productoShopId || null,
             nombre: l.nombre,
@@ -33,10 +36,10 @@ export default function RecibirPedidoProveedorModal({
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState("");
 
-    const updateLinea = (idx, value) => {
+    const updateLineaCampo = (idx, campo, value) => {
         setLineas((ls) =>
             ls.map((l, i) =>
-                i === idx ? { ...l, cantidadRecibida: value } : l
+                i === idx ? { ...l, [campo]: value } : l
             )
         );
     };
@@ -51,12 +54,21 @@ export default function RecibirPedidoProveedorModal({
             await api.patch(
                 `/admin/proveedores/${proveedorId}/pedidos/${pedidoId}/recibir`,
                 {
-                    lineas: lineas.map((l) => ({
-                        lineaIndex: l.lineaIndex,
-                        cantidadRecibida: Number(l.cantidadRecibida || 0),
-                        ingredienteId: l.ingredienteId,
-                        productoShopId: l.productoShopId,
-                    })),
+                    lineas: lineas.map((l) => {
+                        const payload = {
+                            lineaIndex: l.lineaIndex,
+                            cantidadRecibida: Number(l.cantidadRecibida || 0),
+                            ingredienteId: l.ingredienteId,
+                            productoShopId: l.productoShopId,
+                        };
+                        // Fase 0/5: campos opcionales
+                        if (l.precioUnitarioReal !== "" && l.precioUnitarioReal != null) {
+                            payload.precioUnitarioReal = Number(l.precioUnitarioReal);
+                        }
+                        if (l.caducidad) payload.caducidad = l.caducidad;
+                        if (l.codigoLote) payload.codigoLote = l.codigoLote;
+                        return payload;
+                    }),
                 },
                 headersTenant
             );
@@ -112,14 +124,19 @@ export default function RecibirPedidoProveedorModal({
                                         <th>Producto</th>
                                         <th>Pedida</th>
                                         <th>Recibida</th>
-                                        <th>Unidad</th>
+                                        <th>Precio real (€)</th>
+                                        <th>Caducidad</th>
+                                        <th>Cód. lote</th>
                                     </tr>
                                 </thead>
 
                                 <tbody>
                                     {lineas.map((l, idx) => (
-                                        <tr key={l.lineaId}>
-                                            <td className="ppRec-name">{l.nombre}</td>
+                                        <tr key={idx}>
+                                            <td className="ppRec-name">
+                                                {l.nombre}
+                                                <div style={{ fontSize: "0.7rem", opacity: 0.6 }}>{l.unidad || ""}</div>
+                                            </td>
                                             <td>{l.cantidadPedida}</td>
                                             <td>
                                                 <input
@@ -128,11 +145,42 @@ export default function RecibirPedidoProveedorModal({
                                                     max={l.cantidadPedida}
                                                     value={l.cantidadRecibida}
                                                     onChange={(e) =>
-                                                        updateLinea(idx, Number(e.target.value))
+                                                        updateLineaCampo(idx, "cantidadRecibida", Number(e.target.value))
                                                     }
                                                 />
                                             </td>
-                                            <td>{l.unidad || "—"}</td>
+                                            <td>
+                                                <input
+                                                    type="number"
+                                                    min={0}
+                                                    step="0.01"
+                                                    placeholder="—"
+                                                    value={l.precioUnitarioReal}
+                                                    onChange={(e) =>
+                                                        updateLineaCampo(idx, "precioUnitarioReal", e.target.value)
+                                                    }
+                                                    title="Déjalo vacío si coincide con el pedido"
+                                                />
+                                            </td>
+                                            <td>
+                                                <input
+                                                    type="date"
+                                                    value={l.caducidad}
+                                                    onChange={(e) =>
+                                                        updateLineaCampo(idx, "caducidad", e.target.value)
+                                                    }
+                                                />
+                                            </td>
+                                            <td>
+                                                <input
+                                                    type="text"
+                                                    placeholder="—"
+                                                    value={l.codigoLote}
+                                                    onChange={(e) =>
+                                                        updateLineaCampo(idx, "codigoLote", e.target.value)
+                                                    }
+                                                />
+                                            </td>
                                         </tr>
                                     ))}
                                 </tbody>

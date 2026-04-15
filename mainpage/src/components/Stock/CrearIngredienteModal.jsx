@@ -2,29 +2,25 @@
 import React, { useMemo, useState } from "react";
 import api from "../../utils/api";
 import AlefSelect from "../AlefSelect/AlefSelect";
-import "./StockModalBase.css";
-import "./CrearIngredienteModal.css";
+import ModalBase from "../MapaEditor/ModalBase";
+import "../MapaEditor/ModalCrearMesa.css"; // trae clases .alef* compartidas
+import { toNum } from "./stockHelpers";
 
 const unidades = ["g", "kg", "ml", "l", "uds", "caja", "pack", "botella"];
-
 const tipos = [
   { label: "Ingrediente (para recetas)", value: "ingrediente" },
   { label: "Consumible (se consume solo)", value: "consumible" },
 ];
-
-import { toNum } from "./stockHelpers";
 
 export default function CrearIngredienteModal({ onClose, onSave }) {
   const [form, setForm] = useState({
     nombre: "",
     tipoItem: "ingrediente",
     unidad: "g",
-
     stockActual: 0,
     stockMinimo: 0,
     stockCritico: 0,
     stockMax: 100,
-
     consumoAutoEnabled: false,
     consumoAutoCantidad: 1,
     consumoAutoCadaDias: 7,
@@ -39,13 +35,12 @@ export default function CrearIngredienteModal({ onClose, onSave }) {
     const nombreOk = form.nombre.trim().length >= 2;
     const maxOk = toNum(form.stockMax, 0) > 0;
     if (!nombreOk || !maxOk) return false;
-
     if (esConsumible && form.consumoAutoEnabled) {
-      const cadaDiasOk = toNum(form.consumoAutoCadaDias, 0) >= 1;
-      const cantidadOk = toNum(form.consumoAutoCantidad, 0) > 0;
-      return cadaDiasOk && cantidadOk;
+      return (
+        toNum(form.consumoAutoCadaDias, 0) >= 1 &&
+        toNum(form.consumoAutoCantidad, 0) > 0
+      );
     }
-
     return true;
   }, [form, esConsumible]);
 
@@ -54,174 +49,236 @@ export default function CrearIngredienteModal({ onClose, onSave }) {
     setForm((p) => ({ ...p, [name]: value }));
   };
 
-  const setTipo = (value) => {
-    setForm((p) => ({
-      ...p,
-      tipoItem: value,
-      consumoAutoEnabled: value === "consumible" ? p.consumoAutoEnabled : false,
-    }));
-  };
-
-  const setUnidad = (value) => setForm((p) => ({ ...p, unidad: value }));
-
-  const crear = async () => {
+  const crear = async (e) => {
+    e?.preventDefault?.();
     setError("");
-
     if (!canSubmit) {
       setError("Revisa los campos obligatorios antes de crear el ítem.");
       return;
     }
-
     try {
       setLoading(true);
-
-      const payload = {
+      await api.post("/stock/ingrediente", {
         nombre: form.nombre.trim(),
         unidad: form.unidad,
         tipoItem: form.tipoItem,
-
         stockActual: toNum(form.stockActual, 0),
         stockMinimo: toNum(form.stockMinimo, 0),
         stockCritico: toNum(form.stockCritico, 0),
         stockMax: toNum(form.stockMax, 0),
-
         consumoAuto: {
           enabled: esConsumible && form.consumoAutoEnabled,
           cantidad: esConsumible ? toNum(form.consumoAutoCantidad, 1) : 0,
-          cadaDias: esConsumible ? Math.max(1, toNum(form.consumoAutoCadaDias, 7)) : 0,
+          cadaDias: esConsumible
+            ? Math.max(1, toNum(form.consumoAutoCadaDias, 7))
+            : 0,
         },
-      };
-
-      await api.post("/stock/ingrediente", payload);
-
+      });
       onSave?.();
       onClose?.();
     } catch (e) {
-      const msg =
+      setError(
         e.response?.data?.message ||
-        e.response?.data?.error ||
-        "Error creando el ítem.";
-
-      setError(msg);
+          e.response?.data?.error ||
+          "Error creando el ítem."
+      );
     } finally {
       setLoading(false);
     }
   };
 
+  const footer = (
+    <div className="alefForm-actions">
+      <button
+        type="button"
+        className="alefBtn ghost"
+        onClick={onClose}
+        disabled={loading}
+      >
+        Cancelar
+      </button>
+      <button
+        type="submit"
+        form="alefCrearIngredienteForm"
+        className="alefBtn primary"
+        disabled={loading || !canSubmit}
+      >
+        {loading ? "Guardando…" : "Crear ítem"}
+      </button>
+    </div>
+  );
+
   return (
-    <div className="alef-modal-overlay" onClick={onClose}>
-      <div className="alef-modal-content stk-modal" onClick={(e) => e.stopPropagation()}>
-        {/* Header */}
-        <header className="stk-header">
-          <h3 className="stk-title">Nuevo ítem de stock</h3>
-          <p className="stk-subtitle">
-            Crea un <strong>ingrediente</strong> (para recetas) o un{" "}
-            <strong>consumible</strong> (servilletas, bolsas, rollos de papel…).
-          </p>
-        </header>
+    <ModalBase
+      open={true}
+      title="Nuevo ítem de stock"
+      subtitle="Crea un ingrediente (para recetas) o un consumible (servilletas, bolsas…)."
+      onClose={onClose}
+      footer={footer}
+      width={720}
+    >
+      <form id="alefCrearIngredienteForm" onSubmit={crear} className="alefForm">
+        <div className="alefForm-grid">
+          <label className="alefField">
+            <span className="alefField-label">Nombre</span>
+            <input
+              className="alefField-input"
+              name="nombre"
+              value={form.nombre}
+              onChange={update}
+              placeholder="Ej: Harina, Servilletas…"
+              autoFocus
+              autoComplete="off"
+              required
+            />
+          </label>
 
-        {/* Body */}
-        <section className="stk-body">
-          <div className="stk-controls">
-            {/* Datos principales */}
-            <div className="stk-card">
-              <div className="stk-card-title">Datos principales</div>
-              <div className="stk-grid">
-                <div className="stk-field">
-                  <label className="stk-label">Nombre <span style={{ opacity: 0.6 }}>(obligatorio)</span></label>
-                  <input className="stk-input" name="nombre" value={form.nombre} onChange={update} placeholder="Ej: Harina / Servilletas" autoFocus autoComplete="off" />
-                </div>
-                <div className="stk-field">
-                  <label className="stk-label">Tipo</label>
-                  <div className="stk-select-wrap">
-                    <AlefSelect label="" value={form.tipoItem} options={tipos} onChange={setTipo} placeholder="Selecciona tipo" />
-                  </div>
-                </div>
-                <div className="stk-field">
-                  <label className="stk-label">Unidad</label>
-                  <div className="stk-select-wrap">
-                    <AlefSelect label="" value={form.unidad} options={unidades} onChange={setUnidad} placeholder="Selecciona unidad" />
-                  </div>
-                </div>
-              </div>
-            </div>
+          <label className="alefField">
+            <span className="alefField-label">Tipo</span>
+            <AlefSelect
+              label=""
+              value={form.tipoItem}
+              options={tipos}
+              onChange={(value) =>
+                setForm((p) => ({
+                  ...p,
+                  tipoItem: value,
+                  consumoAutoEnabled:
+                    value === "consumible" ? p.consumoAutoEnabled : false,
+                }))
+              }
+              placeholder="Selecciona tipo"
+            />
+          </label>
 
-            {/* Stock y alertas */}
-            <div className="stk-card">
-              <div className="stk-card-title">Stock y alertas</div>
-              <div className="stk-grid">
-                <div className="stk-field">
-                  <label className="stk-label">Stock inicial</label>
-                  <input className="stk-input" type="number" name="stockActual" min="0" step="1" value={form.stockActual} onChange={update} />
-                </div>
-                <div className="stk-field">
-                  <label className="stk-label">Stock mínimo</label>
-                  <input className="stk-input" type="number" name="stockMinimo" min="0" step="1" value={form.stockMinimo} onChange={update} />
-                </div>
-                <div className="stk-field">
-                  <label className="stk-label">Stock crítico</label>
-                  <input className="stk-input" type="number" name="stockCritico" min="0" step="1" value={form.stockCritico} onChange={update} />
-                </div>
-                <div className="stk-field">
-                  <label className="stk-label">Stock máximo <span style={{ opacity: 0.6 }}>(obligatorio)</span></label>
-                  <input className="stk-input" type="number" name="stockMax" min="1" step="1" value={form.stockMax} onChange={update} />
-                </div>
-              </div>
-              <p className="stk-hint">Coherencia: <strong>crítico ≤ mínimo ≤ máximo</strong>.</p>
-            </div>
+          <label className="alefField">
+            <span className="alefField-label">Unidad</span>
+            <AlefSelect
+              label=""
+              value={form.unidad}
+              options={unidades}
+              onChange={(value) => setForm((p) => ({ ...p, unidad: value }))}
+              placeholder="Selecciona unidad"
+            />
+          </label>
 
-            {/* Consumo automático */}
-            {esConsumible && (
-              <div className="stk-card">
-                <div className="stk-card-title">Consumo automático por tiempo</div>
-                <label className="stk-toggle">
+          <label className="alefField">
+            <span className="alefField-label">Stock inicial</span>
+            <input
+              className="alefField-input"
+              type="number"
+              name="stockActual"
+              min="0"
+              step="1"
+              value={form.stockActual}
+              onChange={update}
+            />
+          </label>
+
+          <label className="alefField">
+            <span className="alefField-label">Stock mínimo</span>
+            <input
+              className="alefField-input"
+              type="number"
+              name="stockMinimo"
+              min="0"
+              step="1"
+              value={form.stockMinimo}
+              onChange={update}
+            />
+          </label>
+
+          <label className="alefField">
+            <span className="alefField-label">Stock crítico</span>
+            <input
+              className="alefField-input"
+              type="number"
+              name="stockCritico"
+              min="0"
+              step="1"
+              value={form.stockCritico}
+              onChange={update}
+            />
+          </label>
+
+          <label className="alefField">
+            <span className="alefField-label">Stock máximo *</span>
+            <input
+              className="alefField-input"
+              type="number"
+              name="stockMax"
+              min="1"
+              step="1"
+              value={form.stockMax}
+              onChange={update}
+              required
+            />
+          </label>
+        </div>
+
+        <div className="alefHint">
+          📦 Coherencia: <b>crítico ≤ mínimo ≤ máximo</b>.
+        </div>
+
+        {esConsumible && (
+          <>
+            <label className="alefField">
+              <span className="alefField-label">
+                <input
+                  type="checkbox"
+                  checked={form.consumoAutoEnabled}
+                  onChange={(e) =>
+                    setForm((p) => ({
+                      ...p,
+                      consumoAutoEnabled: e.target.checked,
+                    }))
+                  }
+                  style={{ marginRight: 8 }}
+                />
+                Activar consumo automático por tiempo
+              </span>
+            </label>
+            {form.consumoAutoEnabled && (
+              <div className="alefForm-grid">
+                <label className="alefField">
+                  <span className="alefField-label">Unidades por ciclo</span>
                   <input
-                    type="checkbox"
-                    checked={form.consumoAutoEnabled}
-                    onChange={(e) => setForm((p) => ({ ...p, consumoAutoEnabled: e.target.checked }))}
-                    className="stk-checkbox"
+                    className="alefField-input"
+                    type="number"
+                    min="1"
+                    step="1"
+                    value={form.consumoAutoCantidad}
+                    onChange={(e) =>
+                      setForm((p) => ({
+                        ...p,
+                        consumoAutoCantidad: e.target.value,
+                      }))
+                    }
                   />
-                  Activar consumo automático
                 </label>
-
-                {form.consumoAutoEnabled && (
-                  <div className="stk-grid stk-grid--top">
-                    <div className="stk-field">
-                      <label className="stk-label">Unidades por ciclo</label>
-                      <input className="stk-input" type="number" min="1" step="1" value={form.consumoAutoCantidad} onChange={(e) => setForm((p) => ({ ...p, consumoAutoCantidad: e.target.value }))} placeholder="Ej: 1" />
-                    </div>
-                    <div className="stk-field">
-                      <label className="stk-label">Cada cuántos días</label>
-                      <input className="stk-input" type="number" min="1" step="1" value={form.consumoAutoCadaDias} onChange={(e) => setForm((p) => ({ ...p, consumoAutoCadaDias: e.target.value }))} placeholder="Ej: 7" />
-                    </div>
-                  </div>
-                )}
+                <label className="alefField">
+                  <span className="alefField-label">Cada cuántos días</span>
+                  <input
+                    className="alefField-input"
+                    type="number"
+                    min="1"
+                    step="1"
+                    value={form.consumoAutoCadaDias}
+                    onChange={(e) =>
+                      setForm((p) => ({
+                        ...p,
+                        consumoAutoCadaDias: e.target.value,
+                      }))
+                    }
+                  />
+                </label>
               </div>
             )}
+          </>
+        )}
 
-            {error && <div className="stk-error">{error}</div>}
-
-            <p className="stk-hint">
-              Tip: si configuras consumo automático, se generarán movimientos <strong>consumo_auto</strong> para trazabilidad.
-            </p>
-          </div>
-        </section>
-
-        {/* Footer */}
-        <footer className="stk-footer">
-          <button className="stk-btn stk-btn--ghost" onClick={onClose} disabled={loading}>
-            Cancelar
-          </button>
-          <button
-            className="stk-btn stk-btn--primary"
-            onClick={crear}
-            disabled={loading || !canSubmit}
-            title={!canSubmit ? "Completa los campos obligatorios" : ""}
-          >
-            {loading ? "Guardando…" : "Crear ítem"}
-          </button>
-        </footer>
-      </div>
-    </div>
+        {error && <div className="alefError">{error}</div>}
+      </form>
+    </ModalBase>
   );
 }

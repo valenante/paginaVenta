@@ -10,6 +10,7 @@ import UpsellStock from "../components/Stock/UpsellStock";
 import ModalConfirmacion from "../components/Modal/ModalConfirmacion.jsx";
 import EditarIngredienteModal from "../components/Stock/EditarIngredienteModal";
 import HistorialMovimientosModal from "../components/Stock/HistorialMovimientosModal";
+import LotesView from "../components/Stock/LotesView.jsx";
 import { formatStock } from "../utils/stockFormat";
 
 import "../styles/StockPage.css";
@@ -74,6 +75,51 @@ const StockPage = () => {
   const ingControllerRef = useRef(null);
   const prodControllerRef = useRef(null);
   const flashTimerRef = useRef(null);
+
+  // ── Lotes (unificación): resumen + mapa por item para indicadores en filas ──
+  const [lotesPorItem, setLotesPorItem] = useState(new Map()); // itemId → { proximos, caducados, total, proxMinDias }
+  const [lotesResumen, setLotesResumen] = useState({ proximos: 0, caducados: 0 });
+
+  const fetchLotesResumen = useCallback(async () => {
+    try {
+      const { data } = await api.get("/stock/lotes", {
+        params: { soloActivos: true },
+      });
+      const items = data?.items || [];
+      const map = new Map();
+      let proximos = 0;
+      let caducados = 0;
+      for (const l of items) {
+        const k = String(l.itemId);
+        if (!map.has(k)) {
+          map.set(k, { proximos: 0, caducados: 0, total: 0, proxMinDias: null });
+        }
+        const e = map.get(k);
+        e.total += 1;
+        if (l.estadoCaducidad === "proximo") {
+          e.proximos += 1;
+          proximos += 1;
+          if (e.proxMinDias == null || l.diasHastaCaducidad < e.proxMinDias) {
+            e.proxMinDias = l.diasHastaCaducidad;
+          }
+        }
+        if (l.estadoCaducidad === "caducado") {
+          e.caducados += 1;
+          caducados += 1;
+        }
+      }
+      setLotesPorItem(map);
+      setLotesResumen({ proximos, caducados });
+    } catch {
+      // silencioso: si no hay lotes o falla el feature, no contaminamos la UI
+      setLotesPorItem(new Map());
+      setLotesResumen({ proximos: 0, caducados: 0 });
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchLotesResumen();
+  }, [fetchLotesResumen]);
 
   // ── Counters for tab badges (fix #11: use total from server for ingredients) ──
   const ingCriticos = useMemo(
@@ -322,6 +368,22 @@ const StockPage = () => {
               Ingredientes
               {ingCriticos > 0 && <span className="stock-tab-badge stock-tab-badge--red">{ingCriticos}</span>}
             </button>
+            <button
+              className={`stock-tab ${tab === "lotes" ? "active" : ""}`}
+              onClick={() => setTab("lotes")}
+            >
+              🧪 Lotes
+              {lotesResumen.caducados > 0 && (
+                <span className="stock-tab-badge stock-tab-badge--red">
+                  {lotesResumen.caducados}
+                </span>
+              )}
+              {lotesResumen.caducados === 0 && lotesResumen.proximos > 0 && (
+                <span className="stock-tab-badge stock-tab-badge--amber">
+                  {lotesResumen.proximos}
+                </span>
+              )}
+            </button>
           </nav>
         )}
       </header>
@@ -423,6 +485,37 @@ const StockPage = () => {
                         {estado === "agotado" && "Agotado"}
                       </span>
                     </div>
+
+                    {/* Indicador de lotes (unificación Fase 5) */}
+                    {(() => {
+                      const info = lotesPorItem.get(String(prod._id));
+                      if (!info) return null;
+                      if (info.caducados > 0) {
+                        return (
+                          <button
+                            type="button"
+                            className="stock-lote-badge stock-lote-badge--rojo"
+                            onClick={() => setTab("lotes")}
+                            title="Ver en pestaña Lotes"
+                          >
+                            🧪 {info.caducados} lote{info.caducados === 1 ? "" : "s"} caducado{info.caducados === 1 ? "" : "s"}
+                          </button>
+                        );
+                      }
+                      if (info.proximos > 0) {
+                        return (
+                          <button
+                            type="button"
+                            className="stock-lote-badge stock-lote-badge--amber"
+                            onClick={() => setTab("lotes")}
+                            title="Ver en pestaña Lotes"
+                          >
+                            🧪 {info.proximos} lote{info.proximos === 1 ? "" : "s"} en {info.proxMinDias}d
+                          </button>
+                        );
+                      }
+                      return null;
+                    })()}
 
                     {/* progress bar */}
                     {prod.stockMax > 0 && (
@@ -694,6 +787,37 @@ const StockPage = () => {
                       </span>
                     </div>
 
+                    {/* Indicador de lotes (unificación Fase 5) */}
+                    {(() => {
+                      const info = lotesPorItem.get(String(ing._id));
+                      if (!info) return null;
+                      if (info.caducados > 0) {
+                        return (
+                          <button
+                            type="button"
+                            className="stock-lote-badge stock-lote-badge--rojo"
+                            onClick={() => setTab("lotes")}
+                            title="Ver en pestaña Lotes"
+                          >
+                            🧪 {info.caducados} lote{info.caducados === 1 ? "" : "s"} caducado{info.caducados === 1 ? "" : "s"}
+                          </button>
+                        );
+                      }
+                      if (info.proximos > 0) {
+                        return (
+                          <button
+                            type="button"
+                            className="stock-lote-badge stock-lote-badge--amber"
+                            onClick={() => setTab("lotes")}
+                            title="Ver en pestaña Lotes"
+                          >
+                            🧪 {info.proximos} lote{info.proximos === 1 ? "" : "s"} en {info.proxMinDias}d
+                          </button>
+                        );
+                      }
+                      return null;
+                    })()}
+
                     <div className="stock-bar">
                       <div
                         className="stock-bar-fill"
@@ -802,6 +926,13 @@ const StockPage = () => {
             />
           )}
         </>
+      )}
+
+      {/* ══════════════════════════════════════════════════
+          TAB: LOTES (unificado desde StockLotesPage)
+      ══════════════════════════════════════════════════ */}
+      {!isPlanEsencial && tab === "lotes" && (
+        <LotesView onChange={fetchLotesResumen} />
       )}
     </div>
   );

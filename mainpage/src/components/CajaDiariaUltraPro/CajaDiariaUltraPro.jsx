@@ -12,16 +12,28 @@ import DiasPeriodo from "./DiaDetalleModal/DiasPeriodo";
 import { toISODateKey, formatFechaUI } from "./cajaHelpers";
 import "./CajaDiariaUltraPro.css";
 
+const rangoPorDefecto = () => {
+  const hoy = new Date();
+  const inicio = new Date(hoy.getFullYear(), hoy.getMonth(), 1).toISOString().slice(0, 10);
+  const m = new Date();
+  m.setDate(m.getDate() + 1);
+  const fin = m.toISOString().slice(0, 10);
+  return { inicio, fin };
+};
+
 export default function CajaDiariaUltraPro() {
-  const [fechaInicio, setFechaInicio] = useState(() => {
-    const hoy = new Date();
-    return new Date(hoy.getFullYear(), hoy.getMonth(), 1).toISOString().slice(0, 10);
-  });
-  const [fechaFin, setFechaFin] = useState(() => {
-    const m = new Date();
-    m.setDate(m.getDate() + 1);
-    return m.toISOString().slice(0, 10);
-  });
+  const [fechaInicio, setFechaInicio] = useState(() => rangoPorDefecto().inicio);
+  const [fechaFin, setFechaFin] = useState(() => rangoPorDefecto().fin);
+
+  const rangoDefault = useMemo(() => rangoPorDefecto(), []);
+  const filtroActivo =
+    fechaInicio !== rangoDefault.inicio || fechaFin !== rangoDefault.fin;
+
+  const resetFiltros = () => {
+    const { inicio, fin } = rangoPorDefecto();
+    setFechaInicio(inicio);
+    setFechaFin(fin);
+  };
 
   const [datos, setDatos] = useState([]);
   const [error, setError] = useState(null);
@@ -84,13 +96,15 @@ export default function CajaDiariaUltraPro() {
           fecha: fechaKey,
           total: 0,
           numTickets: 0,
+          numComensales: 0,
           mensajeCierre: d.mensajeCierre || null,
         };
       }
 
       map[fechaKey].total += Number(d.total || 0);
-      // numTickets = mesas cerradas por día (viene repetido por hora, usar el máximo)
+      // numTickets y numComensales vienen repetidos por hora (mismo total del día), usar el máximo
       map[fechaKey].numTickets = Math.max(map[fechaKey].numTickets, Number(d.numTickets || 0));
+      map[fechaKey].numComensales = Math.max(map[fechaKey].numComensales, Number(d.numComensales || 0));
     });
 
     return Object.values(map)
@@ -110,6 +124,13 @@ export default function CajaDiariaUltraPro() {
   );
 
   const ticketMedio = totalTickets > 0 ? totalIngresos / totalTickets : 0;
+
+  const totalComensales = useMemo(
+    () => datosDiarios.reduce((acc, d) => acc + Number(d.numComensales || 0), 0),
+    [datosDiarios]
+  );
+
+  const ticketMedioComensal = totalComensales > 0 ? totalIngresos / totalComensales : 0;
 
   // Fix #7: no mostrar mejor/peor si es el mismo día
   const diaMasFuerte = datosDiarios.length
@@ -206,6 +227,17 @@ export default function CajaDiariaUltraPro() {
             {loading ? "Cargando..." : "Actualizar"}
           </button>
 
+          {filtroActivo && (
+            <button
+              className="reset-filtros-btn"
+              onClick={resetFiltros}
+              disabled={loading}
+              title="Volver al rango por defecto (mes actual)"
+            >
+              ✕ Quitar filtros
+            </button>
+          )}
+
           {!isPlanEsencial && (
             <>
               <button
@@ -241,7 +273,17 @@ export default function CajaDiariaUltraPro() {
 
       {/* Chart — siempre visible */}
       <div ref={chartSectionRef}>
-        <CajaIngresosChart datosDiarios={datosDiarios} />
+        <CajaIngresosChart
+          datosDiarios={datosDiarios}
+          onDiaClick={(fechaISO) => {
+            if (!fechaISO) return;
+            const dia = String(fechaISO).slice(0, 10);
+            // El backend amplía fin hasta las 04:00 del día siguiente,
+            // así que usar el mismo día captura un día operativo completo.
+            setFechaInicio(dia);
+            setFechaFin(dia);
+          }}
+        />
       </div>
 
       {/* Comparador de periodos */}
@@ -273,6 +315,16 @@ export default function CajaDiariaUltraPro() {
             <div className="kpi-card">
               <span>Ticket medio</span>
               <strong>{ticketMedio.toFixed(2)} €</strong>
+            </div>
+
+            <div className="kpi-card">
+              <span>Comensales</span>
+              <strong>{totalComensales}</strong>
+            </div>
+
+            <div className="kpi-card">
+              <span>Ticket medio / comensal</span>
+              <strong>{ticketMedioComensal.toFixed(2)} €</strong>
             </div>
 
             {diaMasFuerte && (

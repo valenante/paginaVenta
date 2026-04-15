@@ -1,8 +1,9 @@
 import React, { useEffect, useMemo, useState } from "react";
 import api from "../../utils/api";
 import { toNum, clampMin } from "./stockHelpers";
-import "./StockModalBase.css";
-import "./AjustarStockModal.css";
+import ModalBase from "../MapaEditor/ModalBase";
+import "../MapaEditor/ModalCrearMesa.css";
+import "./AjustarStockModal.css"; // overrides específicos (stepper, summary)
 
 const AjustarStockModal = ({ ingrediente, onClose, onSave }) => {
   const stockInicial = useMemo(
@@ -16,9 +17,18 @@ const AjustarStockModal = ({ ingrediente, onClose, onSave }) => {
 
   const unidad = ingrediente?.unidad || "";
 
-  const cantidadNum = useMemo(() => clampMin(toNum(cantidad, stockInicial), 0), [cantidad, stockInicial]);
-  const diferencia = useMemo(() => cantidadNum - stockInicial, [cantidadNum, stockInicial]);
-  const hasChanges = useMemo(() => cantidadNum !== stockInicial, [cantidadNum, stockInicial]);
+  const cantidadNum = useMemo(
+    () => clampMin(toNum(cantidad, stockInicial), 0),
+    [cantidad, stockInicial]
+  );
+  const diferencia = useMemo(
+    () => cantidadNum - stockInicial,
+    [cantidadNum, stockInicial]
+  );
+  const hasChanges = useMemo(
+    () => cantidadNum !== stockInicial,
+    [cantidadNum, stockInicial]
+  );
 
   const ajustar = (delta) => {
     setCantidad((prev) => {
@@ -30,7 +40,6 @@ const AjustarStockModal = ({ ingrediente, onClose, onSave }) => {
   const enviarAjuste = async () => {
     setError("");
     const nuevoStock = clampMin(toNum(cantidad, stockInicial), 0);
-
     try {
       setLoading(true);
       await api.post("/stock/ajustar", {
@@ -40,7 +49,10 @@ const AjustarStockModal = ({ ingrediente, onClose, onSave }) => {
       onSave?.();
       onClose?.();
     } catch (err) {
-      setError(err?.response?.data?.message || "No se pudo guardar el ajuste. Intenta de nuevo.");
+      setError(
+        err?.response?.data?.message ||
+          "No se pudo guardar el ajuste. Intenta de nuevo."
+      );
     } finally {
       setLoading(false);
     }
@@ -48,110 +60,159 @@ const AjustarStockModal = ({ ingrediente, onClose, onSave }) => {
 
   useEffect(() => {
     const onKey = (e) => {
-      if (e.key === "Escape") onClose?.();
-      if (e.key === "Enter" && !loading && hasChanges) enviarAjuste();
+      if (e.key === "Enter" && !loading && hasChanges) {
+        e.preventDefault();
+        enviarAjuste();
+      }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loading, hasChanges, cantidad]);
 
-  return (
-    <div className="alef-modal-overlay stock-ajuste-overlay" onClick={onClose}>
-      <div
-        className="alef-modal-content stk-modal"
-        onClick={(e) => e.stopPropagation()}
+  const footer = (
+    <div className="alefForm-actions">
+      <button
+        type="button"
+        className="alefBtn ghost"
+        onClick={onClose}
+        disabled={loading}
       >
-        {/* Header */}
-        <header className="stk-header">
-          <div className="stk-header-top">
-            <h3 className="stk-title">Ajustar stock</h3>
-            <span className="stk-chip">{unidad || "ud"}</span>
-          </div>
+        Cancelar
+      </button>
+      <button
+        type="button"
+        className="alefBtn primary"
+        onClick={enviarAjuste}
+        disabled={loading || !hasChanges}
+      >
+        {loading ? "Guardando…" : "Guardar ajuste"}
+      </button>
+    </div>
+  );
 
-          <p className="stk-subtitle">
-            Ajusta el stock real del ítem. Este cambio quedará registrado en{" "}
-            <strong>Movimientos de stock</strong> como ajuste manual.
-          </p>
+  return (
+    <ModalBase
+      open={true}
+      title={`Ajustar stock · ${ingrediente.nombre}`}
+      subtitle="Este cambio quedará registrado como ajuste manual en Movimientos de stock."
+      onClose={onClose}
+      footer={footer}
+      width={600}
+    >
+      <div className="alefForm">
+        <div className="alefHint">
+          📦 Stock actual: <b>{stockInicial}</b> {unidad}
+        </div>
 
-          <div className="stk-item-card">
-            <span className="stk-item-name">{ingrediente.nombre}</span>
-            <span className="stk-item-meta">
-              Stock actual: <strong>{stockInicial}</strong> {unidad}
-            </span>
-          </div>
-        </header>
-
-        {/* Body */}
-        <section className="stk-body">
-          <div className="stk-controls">
-            <div className="ajuste-stepRow">
-              <button type="button" className="stk-pill" onClick={() => ajustar(-10)} disabled={loading} title="Restar 10">−10</button>
-              <button type="button" className="stk-pill" onClick={() => ajustar(-5)} disabled={loading} title="Restar 5">−5</button>
-              <button type="button" className="stk-pill stk-pill--lg" onClick={() => ajustar(-1)} disabled={loading} title="Restar 1">−</button>
-
-              <div className="ajuste-inputWrap">
-                <input
-                  type="number"
-                  className="ajuste-input"
-                  value={cantidad}
-                  min="0"
-                  step="1"
-                  onChange={(e) => { setError(""); setCantidad(e.target.value); }}
-                  onBlur={() => setCantidad(String(clampMin(toNum(cantidad, stockInicial), 0)))}
-                  disabled={loading}
-                  autoFocus
-                />
-                <span className="ajuste-unit">{unidad}</span>
-              </div>
-
-              <button type="button" className="stk-pill stk-pill--lg" onClick={() => ajustar(1)} disabled={loading} title="Sumar 1">+</button>
-              <button type="button" className="stk-pill" onClick={() => ajustar(5)} disabled={loading} title="Sumar 5">+5</button>
-              <button type="button" className="stk-pill" onClick={() => ajustar(10)} disabled={loading} title="Sumar 10">+10</button>
-            </div>
-
-            {/* Summary */}
-            <div className="ajuste-summary">
-              <div className="stk-card ajuste-summary-card">
-                <span className="stk-item-meta">Antes</span>
-                <strong className="ajuste-summary-value">{stockInicial} {unidad}</strong>
-              </div>
-              <div className="stk-card ajuste-summary-card">
-                <span className="stk-item-meta">Después</span>
-                <strong className="ajuste-summary-value">{cantidadNum} {unidad}</strong>
-              </div>
-              <div className={`stk-card ajuste-summary-card ${diferencia === 0 ? "" : diferencia > 0 ? "ajuste-diff-pos" : "ajuste-diff-neg"}`}>
-                <span className="stk-item-meta">Variación</span>
-                <strong className="ajuste-summary-value">
-                  {diferencia > 0 ? `+${diferencia}` : `${diferencia}`} {unidad}
-                </strong>
-              </div>
-            </div>
-
-            <p className="stk-hint">
-              Tip: usa <strong>Enter</strong> para guardar y <strong>Esc</strong> para cerrar.
-            </p>
-
-            {error && <div className="stk-error">{error}</div>}
-          </div>
-        </section>
-
-        {/* Footer */}
-        <footer className="stk-footer">
-          <button type="button" className="stk-btn stk-btn--ghost" onClick={onClose} disabled={loading}>
-            Cancelar
+        <div className="ajuste-stepRow">
+          <button
+            type="button"
+            className="alefBtn ghost ajuste-pill"
+            onClick={() => ajustar(-10)}
+            disabled={loading}
+          >
+            −10
           </button>
           <button
-            className="stk-btn stk-btn--primary"
-            onClick={enviarAjuste}
-            disabled={loading || !hasChanges}
-            title={!hasChanges ? "No hay cambios para guardar" : ""}
+            type="button"
+            className="alefBtn ghost ajuste-pill"
+            onClick={() => ajustar(-5)}
+            disabled={loading}
           >
-            {loading ? "Guardando…" : "Guardar ajuste"}
+            −5
           </button>
-        </footer>
+          <button
+            type="button"
+            className="alefBtn ghost ajuste-pill ajuste-pill--lg"
+            onClick={() => ajustar(-1)}
+            disabled={loading}
+          >
+            −
+          </button>
+
+          <div className="ajuste-inputWrap">
+            <input
+              type="number"
+              className="alefField-input ajuste-input"
+              value={cantidad}
+              min="0"
+              step="1"
+              onChange={(e) => {
+                setError("");
+                setCantidad(e.target.value);
+              }}
+              onBlur={() =>
+                setCantidad(String(clampMin(toNum(cantidad, stockInicial), 0)))
+              }
+              disabled={loading}
+              autoFocus
+            />
+            <span className="ajuste-unit">{unidad}</span>
+          </div>
+
+          <button
+            type="button"
+            className="alefBtn ghost ajuste-pill ajuste-pill--lg"
+            onClick={() => ajustar(1)}
+            disabled={loading}
+          >
+            +
+          </button>
+          <button
+            type="button"
+            className="alefBtn ghost ajuste-pill"
+            onClick={() => ajustar(5)}
+            disabled={loading}
+          >
+            +5
+          </button>
+          <button
+            type="button"
+            className="alefBtn ghost ajuste-pill"
+            onClick={() => ajustar(10)}
+            disabled={loading}
+          >
+            +10
+          </button>
+        </div>
+
+        <div className="ajuste-summary">
+          <div className="ajuste-summary-card">
+            <span className="ajuste-summary-label">Antes</span>
+            <strong className="ajuste-summary-value">
+              {stockInicial} {unidad}
+            </strong>
+          </div>
+          <div className="ajuste-summary-card">
+            <span className="ajuste-summary-label">Después</span>
+            <strong className="ajuste-summary-value">
+              {cantidadNum} {unidad}
+            </strong>
+          </div>
+          <div
+            className={`ajuste-summary-card ${
+              diferencia === 0
+                ? ""
+                : diferencia > 0
+                ? "ajuste-diff-pos"
+                : "ajuste-diff-neg"
+            }`}
+          >
+            <span className="ajuste-summary-label">Variación</span>
+            <strong className="ajuste-summary-value">
+              {diferencia > 0 ? `+${diferencia}` : `${diferencia}`} {unidad}
+            </strong>
+          </div>
+        </div>
+
+        <div className="alefHint">
+          Tip: usa <b>Enter</b> para guardar y <b>Esc</b> para cerrar.
+        </div>
+
+        {error && <div className="alefError">{error}</div>}
       </div>
-    </div>
+    </ModalBase>
   );
 };
 

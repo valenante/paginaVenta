@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useMemo, useState, useRef } from "react";
 import PreciosHelpModal from "./PreciosHelpModal";
 import AdicionalesEditor from "./AdicionalesEditor";
+import CompuestosEditor from "./CompuestosEditor";
 import { ProductosContext } from "../../context/ProductosContext";
 
 const capitalizeClave = (s) => {
@@ -152,6 +153,10 @@ const EditProduct = ({
 
       // v2 stock-modelo-v2: adicionales es lista editable directamente
       adicionales: Array.isArray(product?.adicionales) ? product.adicionales : [],
+
+      // v3 fase 4 — productos compuestos
+      componentes: Array.isArray(product?.componentes) ? product.componentes : [],
+      seleccionables: Array.isArray(product?.seleccionables) ? product.seleccionables : [],
 
       // voz + alergias
       aliases: aliasesArr,
@@ -389,6 +394,9 @@ const EditProduct = ({
       aliases: formData.aliases,
       alergenos: formData.alergenos,
       receta: Array.isArray(formData.receta) ? formData.receta : [],
+      // v3 fase 4 — compuestos
+      componentes: Array.isArray(formData.componentes) ? formData.componentes : [],
+      seleccionables: Array.isArray(formData.seleccionables) ? formData.seleccionables : [],
       stock: Number(formData.stock) || 0,
       controlStock: !!formData.controlStock,
       imprimirSiempre: !!formData.imprimirSiempre,
@@ -824,6 +832,19 @@ const EditProduct = ({
                     adicionales={formData.adicionales || []}
                     onChange={(next) =>
                       setFormData((prev) => ({ ...prev, adicionales: next }))
+                    }
+                    productosDisponibles={productosDisponibles}
+                  />
+
+                  {/* v3 fase 4 — productos compuestos */}
+                  <CompuestosEditor
+                    componentes={formData.componentes || []}
+                    seleccionables={formData.seleccionables || []}
+                    onChangeComponentes={(next) =>
+                      setFormData((prev) => ({ ...prev, componentes: next }))
+                    }
+                    onChangeSeleccionables={(next) =>
+                      setFormData((prev) => ({ ...prev, seleccionables: next }))
                     }
                     productosDisponibles={productosDisponibles}
                   />

@@ -1092,3 +1092,50 @@
   color: #fff;
   box-shadow: 0 2px 12px rgba(168, 85, 247, 0.25);
 }
+
+/* ──────────────────────────────────────────────────────────────────────────
+   FIX overflow: inputs dentro de grids deben encoger con min-width:0.
+   Esto evita que los inputs "empujen" fuera del contenedor padre cuando
+   el grid-template-columns intenta compactar.
+   ────────────────────────────────────────────────────────────────────────── */
+.adicional-row--crear,
+.adicional-row__main--crear,
+.adicional-row__stock-panel--crear,
+.compuesto-row--crear,
+.compuesto-seleccionable--crear,
+.compuesto-seleccionable__head--crear,
+.compuesto-seleccionable__opciones--crear,
+.compuesto-opcion-row--crear {
+  min-width: 0;
+}
+
+.adicional-row--crear label,
+.compuesto-row--crear label,
+.compuesto-seleccionable__head--crear label,
+.compuesto-opcion-row--crear label,
+.adicional-row__stock-panel--crear label {
+  min-width: 0;
+  width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.adicional-row--crear input,
+.compuesto-row--crear input,
+.compuesto-seleccionable__head--crear input,
+.compuesto-opcion-row--crear input,
+.adicional-row__stock-panel--crear input {
+  width: 100%;
+  box-sizing: border-box;
+  min-width: 0;
+  max-width: 100%;
+}
+
+/* Asegurar que los fieldsets padre también encogen */
+.fieldset--crear,
+.fieldset--adicional {
+  min-width: 0;
+  overflow: hidden;
+}

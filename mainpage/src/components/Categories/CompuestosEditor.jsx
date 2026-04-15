@@ -120,10 +120,11 @@ export default function CompuestosEditor({
           const qKey = `comp-${idx}`;
           const vinculado = comp.productoId ? productoById.get(String(comp.productoId)) : null;
           const qVal = queries[qKey] ?? (vinculado?.nombre || "");
+          const escribioAlgo = qVal.trim().length > 0;
           return (
             <div key={idx} className="compuesto-row--crear">
               <label className="label--crear compuesto-row__label-small--crear">
-                Producto
+                🔍 Producto del catálogo
                 <input
                   list={`comp-opts-${idx}`}
                   value={qVal}
@@ -133,18 +134,30 @@ export default function CompuestosEditor({
                     const prod = resolveProductoByQuery(v);
                     patchComponente(idx, { productoId: prod?._id || null });
                   }}
-                  placeholder="Buscar producto…"
+                  placeholder={
+                    productosOrdenados.length === 0
+                      ? "No hay productos en el catálogo"
+                      : `Escribe para buscar entre ${productosOrdenados.length} productos…`
+                  }
                   className="input--crear"
-                  disabled={disabled}
+                  disabled={disabled || productosOrdenados.length === 0}
                 />
                 <datalist id={`comp-opts-${idx}`}>
                   {productosOrdenados.map((p) => (
                     <option key={String(p._id)} value={p.nombre} />
                   ))}
                 </datalist>
-                {vinculado && (
+                {vinculado ? (
                   <small className="adicional-row__feedback--crear is-ok">
-                    ✓ {vinculado.nombre}
+                    ✓ Vinculado a <strong>{vinculado.nombre}</strong>
+                  </small>
+                ) : escribioAlgo ? (
+                  <small className="adicional-row__feedback--crear is-err">
+                    ⚠ No se encontró ningún producto con ese nombre. Escribe el nombre exacto o elige de la lista desplegable.
+                  </small>
+                ) : (
+                  <small className="help-text--crear">
+                    Al enfocar el campo verás la lista de productos. Empieza a escribir para filtrarla.
                   </small>
                 )}
               </label>
@@ -302,10 +315,11 @@ export default function CompuestosEditor({
                   ? productoById.get(String(op.productoId))
                   : null;
                 const qVal = queries[qKey] ?? (vinc?.nombre || "");
+                const escribioAlgo = qVal.trim().length > 0;
                 return (
                   <div key={opIdx} className="compuesto-opcion-row--crear">
                     <label className="label--crear compuesto-row__label-small--crear">
-                      Producto opción
+                      🔍 Producto del catálogo
                       <input
                         list={`op-opts-${selIdx}-${opIdx}`}
                         value={qVal}
@@ -317,20 +331,28 @@ export default function CompuestosEditor({
                             productoId: prod?._id || null,
                           });
                         }}
-                        placeholder="Buscar producto…"
+                        placeholder={
+                          productosOrdenados.length === 0
+                            ? "No hay productos en el catálogo"
+                            : `Escribe para buscar entre ${productosOrdenados.length} productos…`
+                        }
                         className="input--crear"
-                        disabled={disabled}
+                        disabled={disabled || productosOrdenados.length === 0}
                       />
                       <datalist id={`op-opts-${selIdx}-${opIdx}`}>
                         {productosOrdenados.map((p) => (
                           <option key={String(p._id)} value={p.nombre} />
                         ))}
                       </datalist>
-                      {vinc && (
+                      {vinc ? (
                         <small className="adicional-row__feedback--crear is-ok">
-                          ✓ {vinc.nombre}
+                          ✓ <strong>{vinc.nombre}</strong>
                         </small>
-                      )}
+                      ) : escribioAlgo ? (
+                        <small className="adicional-row__feedback--crear is-err">
+                          ⚠ No se encontró. Escribe el nombre exacto.
+                        </small>
+                      ) : null}
                     </label>
 
                     <label className="label--crear compuesto-row__label-small--crear">

@@ -139,7 +139,7 @@ export default function AdicionalesEditor({
             {ad.consumeStock && (
               <div className="adicional-row__stock-panel--crear">
                 <label className="label--crear adicional-row__label-small--crear">
-                  Producto vinculado
+                  🔍 Producto del catálogo
                   <input
                     list={`adicional-productos-${idx}`}
                     value={rowQuery}
@@ -149,27 +149,34 @@ export default function AdicionalesEditor({
                       const prod = resolveProductoByQuery(v);
                       update(idx, { productoId: prod?._id || null });
                     }}
-                    placeholder="Buscar producto del catálogo…"
+                    placeholder={
+                      candidatos.length === 0
+                        ? "No hay productos en el catálogo"
+                        : `Escribe para buscar entre ${candidatos.length} productos…`
+                    }
                     className="input--crear"
-                    disabled={disabled}
+                    disabled={disabled || candidatos.length === 0}
                   />
                   <datalist id={`adicional-productos-${idx}`}>
                     {candidatos.map((p) => (
                       <option key={String(p._id)} value={p.nombre} />
                     ))}
                   </datalist>
-                  {linked && linkedProduct && (
+                  {linked && linkedProduct ? (
                     <small className="adicional-row__feedback--crear is-ok">
-                      ✓ Vinculado a: <strong>{linkedProduct.nombre}</strong>
+                      ✓ Vinculado a <strong>{linkedProduct.nombre}</strong>
                       {linkedProduct.controlStock ? " (stock directo)" : ""}
                       {Array.isArray(linkedProduct.receta) && linkedProduct.receta.length > 0
                         ? " (gestiona por receta)"
                         : ""}
                     </small>
-                  )}
-                  {!linked && rowQuery && (
+                  ) : rowQuery ? (
                     <small className="adicional-row__feedback--crear is-err">
-                      ⚠ No se encontró un producto con ese nombre. Selecciona uno de la lista.
+                      ⚠ No se encontró un producto con ese nombre. Escribe el nombre exacto o elige uno de la lista.
+                    </small>
+                  ) : (
+                    <small className="help-text--crear">
+                      Al enfocar el campo verás la lista. Empieza a escribir para filtrarla.
                     </small>
                   )}
                 </label>

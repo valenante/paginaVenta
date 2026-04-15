@@ -8,11 +8,12 @@
 // - Evita race conditions en fetch (AbortController)
 // - Sin “parpadeos”: actualiza estado local y revalida en background
 
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
 import api from "../../utils/api";
 import "./ExtrasPanel.css";
 import ModalConfirmacion from "../Modal/ModalConfirmacion";
 import AlertaMensaje from "../AlertaMensaje/AlertaMensaje"; // ajusta si tu ruta difiere
+import { ProductosContext } from "../../context/ProductosContext";
 
 const to2 = (n) => Number(Math.round(Number(n) * 100) / 100);
 
@@ -43,10 +44,49 @@ export default function ExtrasPanel({ onBack }) {
 
   const [alerta, setAlerta] = useState(null);
 
-  const [nuevoExtra, setNuevoExtra] = useState({ nombre: "", precio: "" });
+  // v2 stock-modelo-v2 fase 2: extras pueden vincularse a producto del catálogo
+  // para descontar stock al vender. Campos opt-in: productoId, cantidad, consumeStock.
+  const [nuevoExtra, setNuevoExtra] = useState({
+    nombre: "",
+    precio: "",
+    consumeStock: false,
+    productoId: null,
+    productoQuery: "",
+    cantidad: 1,
+  });
 
   const [editandoId, setEditandoId] = useState(null);
-  const [editValues, setEditValues] = useState({ nombre: "", precio: "" });
+  const [editValues, setEditValues] = useState({
+    nombre: "",
+    precio: "",
+    consumeStock: false,
+    productoId: null,
+    productoQuery: "",
+    cantidad: 1,
+  });
+
+  // Lista de productos del catálogo para el selector de vinculación
+  const productosCtx = useContext(ProductosContext);
+  const productosDisponibles = productosCtx?.productos || [];
+  const productosOrdenados = useMemo(
+    () => productosDisponibles.slice().sort((a, b) =>
+      String(a?.nombre || "").localeCompare(String(b?.nombre || ""), "es")
+    ),
+    [productosDisponibles]
+  );
+  const productoById = useMemo(() => {
+    const m = new Map();
+    for (const p of productosOrdenados) m.set(String(p._id), p);
+    return m;
+  }, [productosOrdenados]);
+
+  const resolveProductoByQuery = (query) => {
+    const q = String(query || "").trim().toLowerCase();
+    if (!q) return null;
+    const exact = productosOrdenados.find((p) => String(p.nombre).toLowerCase() === q);
+    if (exact) return exact;
+    return productosOrdenados.find((p) => String(p.nombre).toLowerCase().includes(q)) || null;
+  };
 
   const [mostrarModal, setMostrarModal] = useState(false);
   const [extraAEliminar, setExtraAEliminar] = useState(null);
@@ -107,19 +147,38 @@ export default function ExtrasPanel({ onBack }) {
   }, []);
 
   // ========= Helpers UI =========
-  const resetCreate = () => setNuevoExtra({ nombre: "", precio: "" });
+  const resetCreate = () => setNuevoExtra({
+    nombre: "",
+    precio: "",
+    consumeStock: false,
+    productoId: null,
+    productoQuery: "",
+    cantidad: 1,
+  });
 
   const iniciarEdicion = (extra) => {
+    const prodVinculado = extra.productoId ? productoById.get(String(extra.productoId)) : null;
     setEditandoId(extra._id);
     setEditValues({
       nombre: extra.nombre ?? "",
       precio: String(extra.precio ?? ""),
+      consumeStock: !!extra.consumeStock,
+      productoId: extra.productoId || null,
+      productoQuery: prodVinculado?.nombre || "",
+      cantidad: extra.cantidad ?? 1,
     });
   };
 
   const cancelarEdicion = () => {
     setEditandoId(null);
-    setEditValues({ nombre: "", precio: "" });
+    setEditValues({
+      nombre: "",
+      precio: "",
+      consumeStock: false,
+      productoId: null,
+      productoQuery: "",
+      cantidad: 1,
+    });
   };
 
   // ========= CREATE (optimistic) =========
@@ -140,6 +199,11 @@ export default function ExtrasPanel({ onBack }) {
 
     setSavingCreate(true);
 
+    // v2 campos de stock (opt-in)
+    const consumeStock = !!nuevoExtra.consumeStock;
+    const productoId = consumeStock ? nuevoExtra.productoId || null : null;
+    const cantidad = consumeStock ? Number(nuevoExtra.cantidad) || 1 : 1;
+
     // optimistic item (temporal)
     const tempId = `temp_${Date.now()}`;
     const optimistic = {
@@ -147,6 +211,9 @@ export default function ExtrasPanel({ onBack }) {
       nombre,
       precio,
       activo: true,
+      consumeStock,
+      productoId,
+      cantidad,
       createdAt: new Date().toISOString(),
       __optimistic: true,
     };
@@ -155,7 +222,13 @@ export default function ExtrasPanel({ onBack }) {
     resetCreate();
 
     try {
-      const res = await api.post("/extras", { nombre, precio });
+      const payload = { nombre, precio };
+      if (consumeStock && productoId) {
+        payload.consumeStock = true;
+        payload.productoId = productoId;
+        payload.cantidad = cantidad;
+      }
+      const res = await api.post("/extras", payload);
       const created = res.data?.extra || res.data;
 
       // reemplazar el temp por el real
@@ -203,6 +276,11 @@ export default function ExtrasPanel({ onBack }) {
 
     setSavingEdit(true);
 
+    // v2 campos de stock (opt-in)
+    const consumeStock = !!editValues.consumeStock;
+    const productoId = consumeStock ? editValues.productoId || null : null;
+    const cantidad = consumeStock ? Number(editValues.cantidad) || 1 : 1;
+
     // snapshot para rollback
     const prevSnapshot = extras;
 
@@ -210,15 +288,23 @@ export default function ExtrasPanel({ onBack }) {
     setExtras((prev) => {
       const arr = Array.isArray(prev) ? prev : [];
       return arr.map((x) =>
-        x._id === editandoId ? { ...x, nombre, precio } : x
+        x._id === editandoId
+          ? { ...x, nombre, precio, consumeStock, productoId, cantidad }
+          : x
       );
     });
 
     try {
-      const res = await api.put(`/extras/${editandoId}`, {
+      // Al editar, enviamos SIEMPRE los campos de stock para que se pueda desvincular
+      // un extra previamente vinculado (si el usuario desactiva el toggle).
+      const payload = {
         nombre,
         precio,
-      });
+        consumeStock,
+        productoId: consumeStock ? productoId : null,
+        cantidad: consumeStock ? cantidad : 1,
+      };
+      const res = await api.put(`/extras/${editandoId}`, payload);
       const updated = res.data?.extra || res.data;
 
       // asegurar estado final con respuesta backend
@@ -345,49 +431,156 @@ export default function ExtrasPanel({ onBack }) {
         {extrasVisibles.map((extra) => (
           <li key={extra._id} className="extras-item">
             {editandoId === extra._id ? (
-              <>
-                <input
-                  type="text"
-                  value={editValues.nombre}
-                  onChange={(e) =>
-                    setEditValues((p) => ({ ...p, nombre: e.target.value }))
-                  }
-                  disabled={savingEdit}
-                />
-                <input
-                  type="number"
-                  step="0.01"
-                  value={editValues.precio}
-                  onChange={(e) =>
-                    setEditValues((p) => ({ ...p, precio: e.target.value }))
-                  }
-                  disabled={savingEdit}
-                />
-
-                <div className="extras-acciones">
-                  <button
-                    className="btn-verde"
-                    type="button"
-                    onClick={guardarEdicion}
+              <div style={{ width: "100%" }}>
+                <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                  <input
+                    type="text"
+                    value={editValues.nombre}
+                    onChange={(e) =>
+                      setEditValues((p) => ({ ...p, nombre: e.target.value }))
+                    }
                     disabled={savingEdit}
-                  >
-                    {savingEdit ? "Guardando…" : "Guardar"}
-                  </button>
-
-                  <button
-                    className="btn-gris"
-                    type="button"
-                    onClick={cancelarEdicion}
+                  />
+                  <input
+                    type="number"
+                    step="0.01"
+                    value={editValues.precio}
+                    onChange={(e) =>
+                      setEditValues((p) => ({ ...p, precio: e.target.value }))
+                    }
                     disabled={savingEdit}
-                  >
-                    Cancelar
-                  </button>
+                  />
+
+                  <div className="extras-acciones">
+                    <button
+                      className="btn-verde"
+                      type="button"
+                      onClick={guardarEdicion}
+                      disabled={savingEdit}
+                    >
+                      {savingEdit ? "Guardando…" : "Guardar"}
+                    </button>
+
+                    <button
+                      className="btn-gris"
+                      type="button"
+                      onClick={cancelarEdicion}
+                      disabled={savingEdit}
+                    >
+                      Cancelar
+                    </button>
+                  </div>
                 </div>
-              </>
+
+                {/* v2 fase 2: vinculación a producto en edición */}
+                <label
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 8,
+                    fontSize: 13,
+                    marginTop: 8,
+                  }}
+                >
+                  <input
+                    type="checkbox"
+                    checked={!!editValues.consumeStock}
+                    onChange={(e) =>
+                      setEditValues((p) => ({
+                        ...p,
+                        consumeStock: e.target.checked,
+                      }))
+                    }
+                    disabled={savingEdit}
+                  />
+                  <span>
+                    <strong>Descuenta stock</strong> al vender
+                  </span>
+                </label>
+
+                {editValues.consumeStock && (
+                  <div
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns: "2fr 1fr",
+                      gap: 8,
+                      padding: 8,
+                      background: "#eef5ff",
+                      borderRadius: 4,
+                      marginTop: 6,
+                    }}
+                  >
+                    <label style={{ margin: 0, fontSize: 12 }}>
+                      Producto vinculado
+                      <input
+                        list={`extras-productos-edit-${extra._id}`}
+                        value={editValues.productoQuery || ""}
+                        onChange={(e) => {
+                          const v = e.target.value;
+                          const prod = resolveProductoByQuery(v);
+                          setEditValues((p) => ({
+                            ...p,
+                            productoQuery: v,
+                            productoId: prod?._id || null,
+                          }));
+                        }}
+                        placeholder="Buscar producto…"
+                        disabled={savingEdit}
+                        style={{ width: "100%" }}
+                      />
+                      <datalist id={`extras-productos-edit-${extra._id}`}>
+                        {productosOrdenados.map((p) => (
+                          <option key={String(p._id)} value={p.nombre} />
+                        ))}
+                      </datalist>
+                      {editValues.productoId ? (
+                        <small style={{ color: "#2a5" }}>
+                          ✓ <strong>{productoById.get(String(editValues.productoId))?.nombre}</strong>
+                        </small>
+                      ) : editValues.productoQuery ? (
+                        <small style={{ color: "#c22" }}>
+                          ⚠ No se encontró producto con ese nombre.
+                        </small>
+                      ) : null}
+                    </label>
+
+                    <label style={{ margin: 0, fontSize: 12 }}>
+                      Cantidad
+                      <input
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        value={editValues.cantidad ?? 1}
+                        onChange={(e) =>
+                          setEditValues((p) => ({
+                            ...p,
+                            cantidad: parseFloat(e.target.value) || 0,
+                          }))
+                        }
+                        disabled={savingEdit}
+                        style={{ width: "100%" }}
+                      />
+                    </label>
+                  </div>
+                )}
+              </div>
             ) : (
               <>
                 <span className="extra-info">
                   {extra.nombre} - {to2(extra.precio).toFixed(2)} €
+                  {extra.consumeStock && extra.productoId && (
+                    <small
+                      style={{
+                        marginLeft: 8,
+                        color: "#2a5",
+                        fontSize: 11,
+                        fontWeight: 600,
+                      }}
+                      title={`Vinculado a producto. Descuenta ${extra.cantidad || 1} por unidad vendida.`}
+                    >
+                      · stock
+                    </small>
+                  )}
                 </span>
 
                 <div className="extras-acciones">
@@ -421,7 +614,7 @@ export default function ExtrasPanel({ onBack }) {
 
         <input
           type="text"
-          placeholder="Nombre"
+          placeholder="Nombre (ej: Extra queso, Pan)"
           value={nuevoExtra.nombre}
           onChange={(e) =>
             setNuevoExtra((p) => ({ ...p, nombre: e.target.value }))
@@ -432,13 +625,106 @@ export default function ExtrasPanel({ onBack }) {
         <input
           type="number"
           step="0.01"
-          placeholder="Precio"
+          placeholder="Precio (€)"
           value={nuevoExtra.precio}
           onChange={(e) =>
             setNuevoExtra((p) => ({ ...p, precio: e.target.value }))
           }
           disabled={savingCreate}
         />
+
+        {/* v2 fase 2: vincular a producto para descontar stock */}
+        <label
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
+            fontSize: 13,
+            margin: "8px 0",
+          }}
+        >
+          <input
+            type="checkbox"
+            checked={!!nuevoExtra.consumeStock}
+            onChange={(e) =>
+              setNuevoExtra((p) => ({ ...p, consumeStock: e.target.checked }))
+            }
+            disabled={savingCreate}
+          />
+          <span>
+            <strong>Descuenta stock</strong> al vender (vincular a producto del catálogo)
+          </span>
+        </label>
+
+        {nuevoExtra.consumeStock && (
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "2fr 1fr",
+              gap: 8,
+              padding: 8,
+              background: "#eef5ff",
+              borderRadius: 4,
+              marginBottom: 8,
+            }}
+          >
+            <label style={{ margin: 0, fontSize: 12 }}>
+              Producto vinculado
+              <input
+                list="extras-productos-crear"
+                value={nuevoExtra.productoQuery || ""}
+                onChange={(e) => {
+                  const v = e.target.value;
+                  const prod = resolveProductoByQuery(v);
+                  setNuevoExtra((p) => ({
+                    ...p,
+                    productoQuery: v,
+                    productoId: prod?._id || null,
+                  }));
+                }}
+                placeholder="Buscar producto…"
+                disabled={savingCreate}
+                style={{ width: "100%" }}
+              />
+              <datalist id="extras-productos-crear">
+                {productosOrdenados.map((p) => (
+                  <option key={String(p._id)} value={p.nombre} />
+                ))}
+              </datalist>
+              {nuevoExtra.productoId ? (
+                <small style={{ color: "#2a5" }}>
+                  ✓ Vinculado a:{" "}
+                  <strong>{productoById.get(String(nuevoExtra.productoId))?.nombre}</strong>
+                </small>
+              ) : nuevoExtra.productoQuery ? (
+                <small style={{ color: "#c22" }}>
+                  ⚠ No se encontró producto con ese nombre.
+                </small>
+              ) : null}
+            </label>
+
+            <label style={{ margin: 0, fontSize: 12 }}>
+              Cantidad por unidad
+              <input
+                type="number"
+                min="0"
+                step="0.01"
+                value={nuevoExtra.cantidad ?? 1}
+                onChange={(e) =>
+                  setNuevoExtra((p) => ({
+                    ...p,
+                    cantidad: parseFloat(e.target.value) || 0,
+                  }))
+                }
+                disabled={savingCreate}
+                style={{ width: "100%" }}
+              />
+              <small style={{ color: "#666", fontSize: 11 }}>
+                Ej: "Extra queso" de 30g → pon 30.
+              </small>
+            </label>
+          </div>
+        )}
 
         <button
           type="button"

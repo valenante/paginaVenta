@@ -5,15 +5,7 @@
 //   (a) Legacy: solo nombre + precio → modificador de precio, NO toca stock.
 //   (b) Con stock (v2): vincula a un Producto del catálogo → descuenta stock al vender.
 //
-// Props:
-//   - adicionales: array de { nombre, precio, productoId?, cantidad?, consumeStock? }
-//   - onChange: (nuevoArray) => void
-//   - productosDisponibles: array de productos del catálogo (al menos { _id, nombre, controlStock, receta, precios })
-//
-// Diseño:
-//   - Lista con +/− para añadir/eliminar filas.
-//   - Cada fila: nombre, precio. Toggle "Descuenta stock" que despliega:
-//     selector de producto (datalist filtrable) + input cantidad.
+// Usa las clases del tema oscuro definidas en CrearProducto.css.
 
 import React, { useMemo, useState } from "react";
 
@@ -33,8 +25,6 @@ export default function AdicionalesEditor({
 }) {
   const [queryByRow, setQueryByRow] = useState({});
 
-  // Productos candidatos para vincular: los que gestionan stock (controlStock o receta).
-  // Si el usuario quiere vincular a algo sin stock, también se permite (ej. caso futuro).
   const candidatos = useMemo(
     () => (productosDisponibles || []).slice().sort((a, b) =>
       String(a?.nombre || "").localeCompare(String(b?.nombre || ""), "es")
@@ -53,14 +43,10 @@ export default function AdicionalesEditor({
     onChange(next);
   };
 
-  const add = () => {
-    const next = [...adicionales, defaultRow()];
-    onChange(next);
-  };
+  const add = () => onChange([...adicionales, defaultRow()]);
 
   const remove = (idx) => {
-    const next = adicionales.filter((_, i) => i !== idx);
-    onChange(next);
+    onChange(adicionales.filter((_, i) => i !== idx));
     setQueryByRow((q) => {
       const c = { ...q };
       delete c[idx];
@@ -71,10 +57,8 @@ export default function AdicionalesEditor({
   const resolveProductoByQuery = (query) => {
     const q = String(query || "").trim().toLowerCase();
     if (!q) return null;
-    // 1) Match exacto por nombre (datalist devuelve valor)
     const exact = candidatos.find((p) => String(p.nombre).toLowerCase() === q);
     if (exact) return exact;
-    // 2) Match parcial
     return candidatos.find((p) => String(p.nombre).toLowerCase().includes(q)) || null;
   };
 
@@ -82,13 +66,13 @@ export default function AdicionalesEditor({
     <fieldset className="fieldset--crear fieldset--adicional">
       <legend className="legend--crear">Adicionales / Extras</legend>
       <p className="help-text--crear">
-        Opciones que el cliente puede añadir al producto (ej: "Extra queso",
-        "Pan aparte"). Cada adicional puede ser <strong>solo precio</strong> (no afecta stock)
-        o estar <strong>vinculado a un producto del catálogo</strong> para descontar stock automáticamente.
+        Opciones que el cliente puede añadir al producto (ej: "Extra queso", "Pan aparte").
+        Cada adicional puede ser <strong>solo precio</strong> (no afecta stock) o estar
+        <strong> vinculado a un producto del catálogo</strong> para descontar stock automáticamente.
       </p>
 
       {adicionales.length === 0 && (
-        <p className="help-text--crear" style={{ fontStyle: "italic" }}>
+        <p className="adicional-editor__empty--crear">
           Este producto no tiene adicionales configurados.
         </p>
       )}
@@ -101,17 +85,10 @@ export default function AdicionalesEditor({
         return (
           <div
             key={idx}
-            className="adicional-row"
-            style={{
-              border: "1px solid #ddd",
-              borderRadius: 6,
-              padding: 10,
-              marginBottom: 10,
-              background: linked ? "#f7fbff" : "#fafafa",
-            }}
+            className={`adicional-row--crear ${linked ? "is-linked" : ""}`}
           >
-            <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr auto", gap: 8 }}>
-              <label className="label--crear" style={{ margin: 0 }}>
+            <div className="adicional-row__main--crear">
+              <label className="label--crear adicional-row__label-small--crear">
                 Nombre visible
                 <input
                   type="text"
@@ -123,7 +100,7 @@ export default function AdicionalesEditor({
                 />
               </label>
 
-              <label className="label--crear" style={{ margin: 0 }}>
+              <label className="label--crear adicional-row__label-small--crear">
                 Precio extra (€)
                 <input
                   type="number"
@@ -138,51 +115,30 @@ export default function AdicionalesEditor({
 
               <button
                 type="button"
-                className="boton--secundario"
+                className="adicional-row__btn-trash--crear"
                 onClick={() => remove(idx)}
                 disabled={disabled}
                 title="Quitar este adicional"
-                style={{ alignSelf: "end" }}
               >
                 🗑️
               </button>
             </div>
 
-            <div style={{ marginTop: 8 }}>
-              <label style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 13 }}>
-                <input
-                  type="checkbox"
-                  checked={!!ad.consumeStock}
-                  onChange={(e) => {
-                    const enabled = e.target.checked;
-                    if (!enabled) {
-                      // Desvincular: quitar productoId y consumeStock
-                      update(idx, { consumeStock: false });
-                    } else {
-                      update(idx, { consumeStock: true });
-                    }
-                  }}
-                  disabled={disabled}
-                />
-                <span>
-                  <strong>Descuenta stock</strong> al vender (vincular a producto del catálogo)
-                </span>
-              </label>
-            </div>
+            <label className="adicional-row__toggle--crear">
+              <input
+                type="checkbox"
+                checked={!!ad.consumeStock}
+                onChange={(e) => update(idx, { consumeStock: e.target.checked })}
+                disabled={disabled}
+              />
+              <span>
+                <strong>Descuenta stock</strong> al vender (vincular a producto del catálogo)
+              </span>
+            </label>
 
             {ad.consumeStock && (
-              <div
-                style={{
-                  marginTop: 8,
-                  padding: 8,
-                  background: "#eef5ff",
-                  borderRadius: 4,
-                  display: "grid",
-                  gridTemplateColumns: "2fr 1fr",
-                  gap: 8,
-                }}
-              >
-                <label className="label--crear" style={{ margin: 0 }}>
+              <div className="adicional-row__stock-panel--crear">
+                <label className="label--crear adicional-row__label-small--crear">
                   Producto vinculado
                   <input
                     list={`adicional-productos-${idx}`}
@@ -199,14 +155,11 @@ export default function AdicionalesEditor({
                   />
                   <datalist id={`adicional-productos-${idx}`}>
                     {candidatos.map((p) => (
-                      <option key={String(p._id)} value={p.nombre}>
-                        {p.controlStock ? " (stock directo)" : ""}
-                        {Array.isArray(p.receta) && p.receta.length > 0 ? " (receta)" : ""}
-                      </option>
+                      <option key={String(p._id)} value={p.nombre} />
                     ))}
                   </datalist>
                   {linked && linkedProduct && (
-                    <small style={{ color: "#2a5" }}>
+                    <small className="adicional-row__feedback--crear is-ok">
                       ✓ Vinculado a: <strong>{linkedProduct.nombre}</strong>
                       {linkedProduct.controlStock ? " (stock directo)" : ""}
                       {Array.isArray(linkedProduct.receta) && linkedProduct.receta.length > 0
@@ -215,13 +168,13 @@ export default function AdicionalesEditor({
                     </small>
                   )}
                   {!linked && rowQuery && (
-                    <small style={{ color: "#c22" }}>
+                    <small className="adicional-row__feedback--crear is-err">
                       ⚠ No se encontró un producto con ese nombre. Selecciona uno de la lista.
                     </small>
                   )}
                 </label>
 
-                <label className="label--crear" style={{ margin: 0 }}>
+                <label className="label--crear adicional-row__label-small--crear">
                   Cantidad por unidad
                   <input
                     type="number"
@@ -232,7 +185,7 @@ export default function AdicionalesEditor({
                     step="0.01"
                     disabled={disabled}
                   />
-                  <small style={{ color: "#666" }}>
+                  <small className="help-text--crear">
                     Ej: "Extra queso" de 30g → pon 30. "1 pan extra" → pon 1.
                   </small>
                 </label>

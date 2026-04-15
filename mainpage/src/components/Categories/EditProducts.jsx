@@ -1003,10 +1003,34 @@ const EditProduct = ({
                 const ing = ingredientesStock.find(
                   (i) => i._id === item.ingrediente
                 );
+                // v3 stock-modelo-v2 fase 3
+                const variantePill = item.clavePrecio
+                  ? (formData.precios || []).find((p) => p.clave === item.clavePrecio)
+                  : null;
                 return (
                   <div key={index} className="receta-item--crear">
                     <span className="receta-nombre--crear">
                       {ing?.nombre || "Ingrediente eliminado"}
+                      {(formData.precios || []).length > 1 && (
+                        <span
+                          style={{
+                            marginLeft: 6,
+                            padding: "1px 6px",
+                            borderRadius: 10,
+                            fontSize: 10,
+                            fontWeight: 600,
+                            background: item.clavePrecio ? "#cfe7ff" : "#d9f5dd",
+                            color: item.clavePrecio ? "#074a8a" : "#0b6a1d",
+                          }}
+                          title={
+                            item.clavePrecio
+                              ? `Solo se descuenta al vender la variante "${variantePill?.label || item.clavePrecio}"`
+                              : "Se descuenta al vender cualquier variante (× factorStock si aplica)"
+                          }
+                        >
+                          {item.clavePrecio ? (variantePill?.label || item.clavePrecio) : "Universal"}
+                        </span>
+                      )}
                     </span>
 
                     <strong className="receta-cant--crear">
@@ -1059,6 +1083,30 @@ const EditProduct = ({
                 }
               />
 
+              {/* v3 fase 3: selector de variante (solo con ≥2 variantes) */}
+              {(formData.precios || []).length > 1 && (
+                <label className="label--crear" style={{ margin: 0, fontSize: 12 }}>
+                  Aplica a
+                  <select
+                    className="input--crear"
+                    value={formData.nuevaClavePrecio || ""}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        nuevaClavePrecio: e.target.value,
+                      }))
+                    }
+                  >
+                    <option value="">Universal (todas)</option>
+                    {(formData.precios || []).map((p) => (
+                      <option key={p.clave} value={p.clave}>
+                        Solo {p.label || p.clave}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              )}
+
               <button
                 type="button"
                 className="boton--secundario"
@@ -1068,6 +1116,8 @@ const EditProduct = ({
                   const nuevaLinea = {
                     ingrediente: formData.nuevoIng,
                     cantidad: Number(formData.nuevaCantidad),
+                    // v3 fase 3
+                    clavePrecio: formData.nuevaClavePrecio || null,
                   };
 
                   setFormData((prev) => ({
@@ -1075,6 +1125,7 @@ const EditProduct = ({
                     receta: [...prev.receta, nuevaLinea],
                     nuevoIng: "",
                     nuevaCantidad: "",
+                    nuevaClavePrecio: "",
                   }));
                 }}
               >

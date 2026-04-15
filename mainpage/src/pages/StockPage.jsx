@@ -10,6 +10,7 @@ import UpsellStock from "../components/Stock/UpsellStock";
 import ModalConfirmacion from "../components/Modal/ModalConfirmacion.jsx";
 import EditarIngredienteModal from "../components/Stock/EditarIngredienteModal";
 import HistorialMovimientosModal from "../components/Stock/HistorialMovimientosModal";
+import { formatStock } from "../utils/stockFormat";
 
 import "../styles/StockPage.css";
 
@@ -439,7 +440,7 @@ const StockPage = () => {
                         <input
                           type="number"
                           min="0"
-                          step="1"
+                          step="0.01"
                           className="stock-prod-input"
                           value={prodEditing.stock}
                           onChange={(e) =>
@@ -452,11 +453,13 @@ const StockPage = () => {
                           autoFocus
                         />
                       ) : (
-                        <span className={`stock-prod-number ${estado}`}>
-                          {prod.stock ?? 0}
+                        <span className={`stock-prod-number ${estado}`} title={`${prod.stock ?? 0} unidades exactas`}>
+                          {formatStock(prod.stock ?? 0, prod.precios)}
                         </span>
                       )}
-                      <span className="stock-prod-unit">uds</span>
+                      {!(prod.precios || []).some((p) => Number(p?.factorStock) > 0 && Number(p.factorStock) < 1) && (
+                        <span className="stock-prod-unit">uds</span>
+                      )}
                       {prod.stockMax > 0 && (
                         <span className="max">max: {prod.stockMax}</span>
                       )}

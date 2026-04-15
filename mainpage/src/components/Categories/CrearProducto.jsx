@@ -1,5 +1,13 @@
 // src/components/Categories/CrearProducto.jsx
 import React, { useState, useContext, useEffect, useMemo } from "react";
+import PreciosHelpModal from "./PreciosHelpModal";
+
+const capitalizeClave = (s) => {
+  const v = String(s || "").trim();
+  if (!v) return "";
+  if (v === "precioBase") return "Precio";
+  return v.charAt(0).toUpperCase() + v.slice(1);
+};
 import { ProductosContext } from "../../context/ProductosContext";
 import { useCategorias } from "../../context/CategoriasContext";
 import { useAuth } from "../../context/AuthContext";
@@ -35,6 +43,7 @@ const CrearProducto = ({ onClose, onCreated, initialTipo, cloneFrom }) => {
   const [alerta, setAlerta] = useState(null);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [showPreciosHelp, setShowPreciosHelp] = useState(false);
 
   const isPlanEsencial =
     user?.plan === "esencial" || user?.plan === "tpv-esencial";
@@ -49,10 +58,11 @@ const CrearProducto = ({ onClose, onCreated, initialTipo, cloneFrom }) => {
             label: p.label || "",
             precio: p.precio ?? 0,
             coste: p.coste ?? 0,
+            factorStock: p.factorStock ?? 1,
             descripcion: p.descripcion || "",
             orden: p.orden ?? i,
           }))
-        : [{ clave: "precioBase", label: "Precio", precio: 0, coste: 0, orden: 0 }];
+        : [{ clave: "precioBase", label: "Precio", precio: 0, coste: 0, factorStock: 1, orden: 0 }];
       const trad = cloneFrom.traducciones && typeof cloneFrom.traducciones === "object" ? cloneFrom.traducciones : {};
 
       return {
@@ -91,7 +101,7 @@ const CrearProducto = ({ onClose, onCreated, initialTipo, cloneFrom }) => {
       aliases: [],
       aliasesString: "",
       estado: "habilitado",
-      precios: [{ clave: "precioBase", label: "Precio", precio: 0, coste: 0, orden: 0 }],
+      precios: [{ clave: "precioBase", label: "Precio", precio: 0, coste: 0, factorStock: 1, orden: 0 }],
       alergenos: [],
       traducciones: {
         en: { nombre: "", descripcion: "" },
@@ -206,7 +216,7 @@ const CrearProducto = ({ onClose, onCreated, initialTipo, cloneFrom }) => {
       ...prev,
       precios: [
         ...prev.precios,
-        { clave: "", label: "", precio: 0, coste: 0, orden: prev.precios.length },
+        { clave: "", label: "", precio: 0, coste: 0, factorStock: 1, orden: prev.precios.length },
       ],
     }));
   };
@@ -245,6 +255,12 @@ const CrearProducto = ({ onClose, onCreated, initialTipo, cloneFrom }) => {
     productData.stock = Number(productData.stock) || 0;
     productData.controlStock = !!productData.controlStock;
     productData.imprimirSiempre = !!productData.imprimirSiempre;
+
+    // Auto-derivar label desde la clave si está vacío
+    productData.precios = (productData.precios || []).map((p) => ({
+      ...p,
+      label: (p.label && p.label.trim()) ? p.label : capitalizeClave(p.clave || "precioBase"),
+    }));
 
     if (productData.tipo === "plato") {
       delete productData.conHielo;
@@ -666,13 +682,21 @@ const CrearProducto = ({ onClose, onCreated, initialTipo, cloneFrom }) => {
 
               {/* === PRECIOS (array dinámico) === */}
               {formData.tipo && (
-                <fieldset className="fieldset--crear">
+                <fieldset className="fieldset--crear fieldset--precios">
                   <legend className="legend--crear">Precios</legend>
-                  <p className="help-text--crear">
-                    Agrega tantas variantes de precio como necesites (base, tapa,
-                    ración, copa, botella, etc.). La primera entrada se considera el
-                    precio principal.
-                  </p>
+                  <div className="precios-toolbar">
+                    <p className="help-text--crear" style={{ margin: 0 }}>
+                      Agrega tantas variantes como necesites (base, tapa, ración, copa, botella…).
+                      La primera entrada es la principal.
+                    </p>
+                    <button
+                      type="button"
+                      className="btn-ayuda--crear"
+                      onClick={() => setShowPreciosHelp(true)}
+                    >
+                      💡 Ayuda
+                    </button>
+                  </div>
 
                   <datalist id="precio-suggestions">
                     {PRECIO_SUGGESTIONS.map((s) => (
@@ -682,75 +706,94 @@ const CrearProducto = ({ onClose, onCreated, initialTipo, cloneFrom }) => {
 
                   {formData.precios.map((entry, idx) => (
                     <div key={idx} className="precio-entry-row">
-                      <label className="label--crear">
-                        Clave:
-                        <input
-                          type="text"
-                          list="precio-suggestions"
-                          value={entry.clave}
-                          onChange={(e) => handlePrecioChange(idx, "clave", e.target.value)}
-                          className="input--crear"
-                          placeholder="precioBase"
-                          required
-                        />
-                      </label>
-                      <label className="label--crear">
-                        Etiqueta:
-                        <input
-                          type="text"
-                          value={entry.label}
-                          onChange={(e) => handlePrecioChange(idx, "label", e.target.value)}
-                          className="input--crear"
-                          placeholder="Precio"
-                        />
-                      </label>
-                      <label className="label--crear">
-                        Detalle:
-                        <input
-                          type="text"
-                          value={entry.descripcion || ""}
-                          onChange={(e) => handlePrecioChange(idx, "descripcion", e.target.value)}
-                          className="input--crear"
-                          placeholder="2 uds, 200g..."
-                          maxLength={100}
-                        />
-                      </label>
-                      <label className="label--crear">
-                        Precio:
-                        <input
-                          type="number"
-                          value={entry.precio}
-                          onChange={(e) => handlePrecioChange(idx, "precio", e.target.value)}
-                          className="input--crear"
-                          min="0"
-                          step="0.01"
-                          required
-                        />
-                      </label>
-                      <label className="label--crear">
-                        Coste:
-                        <input
-                          type="number"
-                          value={entry.coste ?? 0}
-                          onChange={(e) => handlePrecioChange(idx, "coste", e.target.value)}
-                          className="input--crear"
-                          min="0"
-                          step="0.01"
-                          placeholder="0.00"
-                          title="Precio de compra por unidad de esta variante"
-                        />
-                      </label>
-                      {formData.precios.length > 1 && (
-                        <button
-                          type="button"
-                          className="btn-icon--crear"
-                          onClick={() => removePrecio(idx)}
-                          title="Eliminar precio"
-                          aria-label="Eliminar precio"
-                        >
-                          ❌
-                        </button>
-                      )}
+                      <div className="precio-entry-header">
+                        <span className="precio-entry-title">
+                          Variante #{idx + 1}
+                          {entry.clave && (
+                            <span className="precio-entry-summary">
+                              · {capitalizeClave(entry.clave)}
+                            </span>
+                          )}
+                        </span>
+                        {formData.precios.length > 1 && (
+                          <button
+                            type="button"
+                            className="btn-icon--crear"
+                            onClick={() => removePrecio(idx)}
+                            title="Eliminar variante"
+                            aria-label="Eliminar variante"
+                          >
+                            ❌
+                          </button>
+                        )}
+                      </div>
+
+                      <div className="precio-entry-identity">
+                        <label className="label--crear">
+                          Clave
+                          <input
+                            type="text"
+                            list="precio-suggestions"
+                            value={entry.clave}
+                            onChange={(e) => handlePrecioChange(idx, "clave", e.target.value)}
+                            className="input--crear"
+                            placeholder="precioBase"
+                            required
+                          />
+                        </label>
+                        <label className="label--crear">
+                          Detalle <span style={{ opacity: 0.5, textTransform: "none", letterSpacing: 0 }}>(opcional)</span>
+                          <input
+                            type="text"
+                            value={entry.descripcion || ""}
+                            onChange={(e) => handlePrecioChange(idx, "descripcion", e.target.value)}
+                            className="input--crear"
+                            placeholder="2 uds, 200g, 1/2 ración..."
+                            maxLength={100}
+                          />
+                        </label>
+                      </div>
+
+                      <div className="precio-entry-numbers">
+                        <label className="label--crear">
+                          Precio (€)
+                          <input
+                            type="number"
+                            value={entry.precio}
+                            onChange={(e) => handlePrecioChange(idx, "precio", e.target.value)}
+                            className="input--crear"
+                            min="0"
+                            step="0.01"
+                            required
+                          />
+                        </label>
+                        <label className="label--crear">
+                          Coste (€)
+                          <input
+                            type="number"
+                            value={entry.coste ?? 0}
+                            onChange={(e) => handlePrecioChange(idx, "coste", e.target.value)}
+                            className="input--crear"
+                            min="0"
+                            step="0.01"
+                            placeholder="0.00"
+                            title="Precio de compra por unidad de esta variante"
+                          />
+                        </label>
+                        <label className="label--crear">
+                          Factor stock
+                          <input
+                            type="number"
+                            value={entry.factorStock ?? 1}
+                            onChange={(e) => handlePrecioChange(idx, "factorStock", e.target.value)}
+                            className="input--crear"
+                            min="0"
+                            step="0.01"
+                            placeholder="1"
+                            title="Qué porción de stock consume esta variante. Botella entera = 1, Copa = 0.2 (5 copas/botella), Tapa = 0.5 (2 tapas/ración)"
+                          />
+                        </label>
+                      </div>
                     </div>
                   ))}
 
@@ -1100,6 +1143,7 @@ const CrearProducto = ({ onClose, onCreated, initialTipo, cloneFrom }) => {
           </div>
         </form>
       </div>
+      <PreciosHelpModal open={showPreciosHelp} onClose={() => setShowPreciosHelp(false)} />
     </div>
   );
 };

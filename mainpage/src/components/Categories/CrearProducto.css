@@ -310,24 +310,241 @@
   transform: translateY(-0.5px);
 }
 
-/* === FILA DE PRECIO DINÁMICO === */
+/* ============================================================================
+   VARIANTE DE PRECIO — Card limpia con 2 filas (identidad + números)
+   ========================================================================== */
 .precio-entry-row {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) 90px auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  padding: 0.85rem 1rem 0.95rem;
+  background: radial-gradient(circle at top right, rgba(91, 33, 182, 0.18), transparent 60%),
+              rgba(15, 23, 42, 0.55);
+  border: 1px solid rgba(75, 85, 99, 0.7);
+  border-radius: 0.85rem;
+  margin-bottom: 0.55rem;
+  min-width: 0;
+  transition: border-color 0.16s ease, transform 0.06s ease;
+}
+
+.precio-entry-row:hover {
+  border-color: rgba(168, 85, 247, 0.45);
+}
+
+.precio-entry-row:focus-within {
+  border-color: rgba(168, 85, 247, 0.7);
+  box-shadow: 0 0 0 3px rgba(76, 29, 149, 0.25);
+}
+
+/* Cabecera de la card: índice + etiqueta resumen + ❌ */
+.precio-entry-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   gap: 0.5rem;
-  align-items: end;
+  margin-bottom: 0.1rem;
+}
+
+.precio-entry-title {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #c084fc;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.precio-entry-title .precio-entry-summary {
+  color: rgba(229, 231, 235, 0.55);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: none;
+  font-size: 0.78rem;
+}
+
+.precio-entry-row .btn-icon--crear {
+  flex-shrink: 0;
+}
+
+/* Fila de identidad: clave + detalle (la etiqueta se auto-deriva de la clave) */
+.precio-entry-identity {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr);
+  gap: 0.6rem;
   min-width: 0;
 }
 
-.precio-entry-row > * {
+/* Fila de números: precio + coste + factor */
+.precio-entry-numbers {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.6rem;
   min-width: 0;
 }
 
-@media (max-width: 600px) {
-  .precio-entry-row {
+.precio-entry-row .label--crear {
+  min-width: 0;
+}
+
+.precio-entry-row .input--crear {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+@media (max-width: 720px) {
+  .precio-entry-identity,
+  .precio-entry-numbers {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    gap: 0.4rem;
   }
+}
+
+@media (max-width: 480px) {
+  .precio-entry-identity,
+  .precio-entry-numbers {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ============================================================================
+   FIELDSET DE PRECIOS — hover propio + cabecera con ayuda
+   ========================================================================== */
+.fieldset--precios {
+  position: relative;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.fieldset--precios:hover {
+  border-color: rgba(168, 85, 247, 0.55);
+  box-shadow: 0 0 0 3px rgba(76, 29, 149, 0.18);
+}
+
+.precios-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-top: -0.25rem;
+}
+
+.btn-ayuda--crear {
+  border: 1px solid rgba(168, 85, 247, 0.45);
+  background: rgba(76, 29, 149, 0.15);
+  color: #c4b5fd;
+  padding: 0.32rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  transition: background 0.16s ease, transform 0.06s ease;
+}
+
+.btn-ayuda--crear:hover {
+  background: rgba(168, 85, 247, 0.28);
+  transform: translateY(-0.5px);
+}
+
+/* ===== MODAL DE AYUDA DE PRECIOS ===== */
+.precios-help-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.78);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  z-index: 1001;
+  animation: crearModalIn 0.18s ease-out;
+}
+
+.precios-help-modal {
+  width: 100%;
+  max-width: 620px;
+  max-height: 86vh;
+  overflow-y: auto;
+  background: radial-gradient(circle at top left, rgba(88, 28, 135, 0.35), transparent 60%),
+              rgba(15, 23, 42, 0.96);
+  border: 1px solid rgba(168, 85, 247, 0.4);
+  border-radius: 1rem;
+  padding: 1.5rem 1.7rem;
+  color: #e5e7eb;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.7);
+}
+
+.precios-help-modal h3 {
+  margin: 0 0 0.4rem;
+  color: #fff;
+  font-size: 1.15rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.precios-help-modal h4 {
+  margin: 1.1rem 0 0.35rem;
+  color: #c4b5fd;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.precios-help-modal p,
+.precios-help-modal li {
+  font-size: 0.88rem;
+  line-height: 1.55;
+  color: #cbd5e1;
+}
+
+.precios-help-modal ul { padding-left: 1.2rem; margin: 0.3rem 0; }
+.precios-help-modal code {
+  background: rgba(168, 85, 247, 0.18);
+  color: #ddd6fe;
+  padding: 0.05rem 0.4rem;
+  border-radius: 4px;
+  font-size: 0.82rem;
+}
+
+.precios-help-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0.5rem 0 0.3rem;
+  font-size: 0.85rem;
+}
+
+.precios-help-table th,
+.precios-help-table td {
+  padding: 0.45rem 0.6rem;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+  text-align: left;
+}
+
+.precios-help-table th {
+  color: #c4b5fd;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.precios-help-modal .help-close {
+  margin-top: 1.2rem;
+  width: 100%;
+  padding: 0.6rem;
+  border-radius: 999px;
+  border: none;
+  background: linear-gradient(90deg, #6a0dad, #ff6700);
+  color: #fff;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+  font-size: 0.85rem;
 }
 
 .fieldset--adicional {

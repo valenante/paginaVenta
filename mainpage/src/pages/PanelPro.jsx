@@ -25,6 +25,9 @@ import CortesiasPage from "../components/Cortesias/CortesiasPage";
 // ✅ Tiempos de cocina (SLA)
 import TiemposCocina from "./TiemposCocina/TiemposCocina";
 
+// ✅ Finanzas (dashboard de rentabilidad + gastos fijos)
+import FinanzasPage from "./Finanzas/FinanzasPage";
+
 // ✅ Tenant + Auth + Plan
 import { useTenant } from "../context/TenantContext";
 import { useAuth } from "../context/AuthContext.jsx";
@@ -41,6 +44,7 @@ const PANEL_BY_TIPO = {
     { key: "stock", label: "📦 Stock", permiso: "stock.manage", feature: "stock_basico", render: () => <StockPage /> },
     { key: "valoraciones", label: "⭐ Valoraciones", permiso: "valoraciones.manage", feature: "carta_valoraciones", render: () => <ValoracionesPanel /> },
     { key: "estadisticas", label: "📊 Estadísticas", permiso: "estadisticas.manage", render: () => <EstadisticasPage type="plato" /> },
+    { key: "finanzas", label: "💰 Finanzas", permiso: "finanzas.view", render: () => <FinanzasPage /> },
     { key: "cortesias", label: "🎁 Cortesias", permiso: "cortesias.view", render: () => <CortesiasPage /> },
     { key: "tiempos", label: "⏱️ Tiempos cocina", permiso: null, feature: "motor_adaptativo_cocina", render: () => <TiemposCocina /> },
   ],

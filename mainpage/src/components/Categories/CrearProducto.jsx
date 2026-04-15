@@ -1,6 +1,7 @@
 // src/components/Categories/CrearProducto.jsx
 import React, { useState, useContext, useEffect, useMemo } from "react";
 import PreciosHelpModal from "./PreciosHelpModal";
+import AdicionalesEditor from "./AdicionalesEditor";
 
 const capitalizeClave = (s) => {
   const v = String(s || "").trim();
@@ -26,6 +27,7 @@ const CrearProducto = ({ onClose, onCreated, initialTipo, cloneFrom }) => {
   const { user } = useAuth();
   const { showToast } = useToast();
   const cargarProductos = productosCtx?.cargarProductos;
+  const productosDisponibles = productosCtx?.productos || [];
 
   const {
     dragging,
@@ -805,36 +807,13 @@ const CrearProducto = ({ onClose, onCreated, initialTipo, cloneFrom }) => {
                     + Añadir precio
                   </button>
 
-                  <fieldset className="fieldset--crear fieldset--adicional">
-                    <legend className="legend--crear">Adicional (unidad extra)</legend>
-                    <p className="help-text--crear">
-                      Permite añadir una unidad extra del producto (por ejemplo: 1
-                      croqueta extra).
-                    </p>
-
-                    <label className="label--crear">
-                      Precio del adicional:
-                      <input
-                        type="number"
-                        value={formData.adicionales?.[0]?.precio || ""}
-                        onChange={(e) => {
-                          const nuevoPrecio = parseFloat(e.target.value);
-                          setFormData((prev) => ({
-                            ...prev,
-                            adicionales: [
-                              {
-                                nombre: "Unidad adicional",
-                                precio: nuevoPrecio || 0,
-                              },
-                            ],
-                          }));
-                        }}
-                        className="input--crear"
-                        min="0"
-                        step="0.01"
-                      />
-                    </label>
-                  </fieldset>
+                  <AdicionalesEditor
+                    adicionales={formData.adicionales || []}
+                    onChange={(next) =>
+                      setFormData((prev) => ({ ...prev, adicionales: next }))
+                    }
+                    productosDisponibles={productosDisponibles}
+                  />
                 </fieldset>
               )}
             </section>

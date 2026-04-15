@@ -1,5 +1,7 @@
-import React, { useEffect, useMemo, useState, useRef } from "react";
+import React, { useContext, useEffect, useMemo, useState, useRef } from "react";
 import PreciosHelpModal from "./PreciosHelpModal";
+import AdicionalesEditor from "./AdicionalesEditor";
+import { ProductosContext } from "../../context/ProductosContext";
 
 const capitalizeClave = (s) => {
   const v = String(s || "").trim();
@@ -95,6 +97,8 @@ const EditProduct = ({
   ingredientesStock = [],
 }) => {
   const { user } = useAuth();
+  const productosCtx = useContext(ProductosContext);
+  const productosDisponibles = productosCtx?.productos || [];
   const isPlanEsencial = user?.plan === "esencial" || user?.plan === "tpv-esencial";
   const {
     dragging,
@@ -146,10 +150,8 @@ const EditProduct = ({
 
       precios: normalizePrecios(product?.precios),
 
-      // adicional (unidad extra)
+      // v2 stock-modelo-v2: adicionales es lista editable directamente
       adicionales: Array.isArray(product?.adicionales) ? product.adicionales : [],
-      // para UI de input cómodo:
-      adicionalPrecioUI: safeStr(product?.adicionales?.[0]?.precio ?? ""),
 
       // voz + alergias
       aliases: aliasesArr,
@@ -369,11 +371,8 @@ const EditProduct = ({
       return;
     }
 
-    const adicionalPrecio = toNumOrNull(formData.adicionalPrecioUI);
-    const adicionales =
-      adicionalPrecio != null && adicionalPrecio > 0
-        ? [{ nombre: "Unidad adicional", precio: adicionalPrecio }]
-        : [];
+    // v2 stock-modelo-v2: adicionales es lista editable completa desde AdicionalesEditor
+    const adicionales = Array.isArray(formData.adicionales) ? formData.adicionales : [];
 
     const payload = {
       _id: product?._id,
@@ -821,29 +820,13 @@ const EditProduct = ({
                     + Añadir precio
                   </button>
 
-                  <fieldset className="fieldset--crear fieldset--adicional">
-                    <legend className="legend--crear">Adicional (unidad extra)</legend>
-                    <p className="help-text--crear">
-                      Permite añadir una unidad extra (ej: 1 croqueta extra).
-                    </p>
-
-                    <label className="label--crear">
-                      Precio del adicional:
-                      <input
-                        type="number"
-                        value={formData.adicionalPrecioUI}
-                        onChange={(e) =>
-                          setFormData((prev) => ({
-                            ...prev,
-                            adicionalPrecioUI: e.target.value,
-                          }))
-                        }
-                        className="input--crear"
-                        min="0"
-                        step="0.01"
-                      />
-                    </label>
-                  </fieldset>
+                  <AdicionalesEditor
+                    adicionales={formData.adicionales || []}
+                    onChange={(next) =>
+                      setFormData((prev) => ({ ...prev, adicionales: next }))
+                    }
+                    productosDisponibles={productosDisponibles}
+                  />
                 </fieldset>
               )}
             </section>

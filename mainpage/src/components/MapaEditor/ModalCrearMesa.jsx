@@ -59,8 +59,15 @@ export default function ModalCrearMesa({
     setErr("");
     setLoading(true);
     try {
+      // Numero ahora es String canónico. Acepta "12", "S1", "T2", "REC1".
+      const numeroCanonico = String(numero).trim().toUpperCase();
+      if (!/^[A-Z]{0,3}\d+$/.test(numeroCanonico)) {
+        setErr("Formato inválido. Usa dígitos (12) o letra+número (s1, t2, rec1).");
+        setLoading(false);
+        return;
+      }
       await api.post("/mesas", {
-        numero: Number(numero),
+        numero: numeroCanonico,
         zona,
         capacidad: capacidad === "" ? undefined : Number(capacidad),
         posicion: suggestedPos,
@@ -114,13 +121,16 @@ export default function ModalCrearMesa({
             <span className="alefField-label">Número</span>
             <input
               className="alefField-input"
-              type="number"
-              min="1"
+              type="text"
+              inputMode="text"
+              maxLength="10"
+              pattern="[A-Za-z]{0,3}\d+"
               value={numero}
               onChange={(e) => setNumero(e.target.value)}
               required
               autoFocus
-              placeholder="Ej: 12"
+              placeholder="Ej: 12, S1, T2, R1"
+              title="Solo dígitos o letra+número (s1, t2, rec1)"
             />
           </label>
 

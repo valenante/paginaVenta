@@ -21,16 +21,21 @@ export default function ModalEditarMesa({ mesa, mesas = [], onClose, onSave, onD
 
   const validar = () => {
     if (!numeroLimpio) return "El número de mesa es obligatorio.";
-    if (!/^\d+$/.test(numeroLimpio)) {
-      return "El número debe ser un valor numérico (por ejemplo: 12).";
+    // Acepta dígitos puros o 1-3 letras + dígitos. Ej: 12, s1, T2, rec1.
+    if (!/^[A-Za-z]{0,3}\d+$/.test(numeroLimpio)) {
+      return 'Formato inválido. Usa dígitos (12) o letra+número (s1, t2, rec1).';
     }
 
-    // Validar unicidad en frontend (contra lista de mesas conocidas)
-    const num = Number(numeroLimpio);
-    if (num !== mesa.numero) {
-      const duplicada = mesas.find((m) => m.numero === num && m._id !== mesa._id);
+    // Validar unicidad en frontend (contra lista de mesas conocidas).
+    // Ahora numero es String canónico en uppercase.
+    const numStr = numeroLimpio.toUpperCase();
+    const mesaNumNorm = String(mesa.numero || "").toUpperCase();
+    if (numStr !== mesaNumNorm) {
+      const duplicada = mesas.find(
+        (m) => String(m.numero).toUpperCase() === numStr && m._id !== mesa._id
+      );
       if (duplicada) {
-        return `Ya existe una mesa con el número ${num}.`;
+        return `Ya existe una mesa con el número ${numStr}.`;
       }
     }
 
@@ -49,7 +54,7 @@ export default function ModalEditarMesa({ mesa, mesas = [], onClose, onSave, onD
 
     try {
       await onSave?.({
-        numero: Number(numeroLimpio),
+        numero: numeroLimpio.toUpperCase(),
         zona,
       });
       // onSave cierra el modal si tiene éxito (desde MapaEditor)

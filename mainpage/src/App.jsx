@@ -45,18 +45,7 @@ import "./styles/config-common.css";
 function LandingPage() {
   const location = useLocation();
 
-  useEffect(() => {
-    const porHash = location.hash === "#packs";
-    const params = new URLSearchParams(location.search);
-    const seleccionarPlan = params.get("seleccionarPlan");
-
-    if (porHash || seleccionarPlan === "1") {
-      const el = document.getElementById("packs");
-      if (el) {
-        el.scrollIntoView({ behavior: "smooth", block: "start" });
-      }
-    }
-  }, [location]);
+  useEffect(() => {}, [location]);
 
   return (
     <div className="main-grid">
@@ -66,7 +55,7 @@ function LandingPage() {
       <Funcionamiento />
       <Features />
       <Comparativa />
-      <Packs />
+      {/* <Packs /> */}
       <FAQ />
       <Contact />
       <Footer />

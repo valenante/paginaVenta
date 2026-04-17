@@ -175,13 +175,13 @@ export default function TopBar() {
                 Iniciar sesion
               </Link>
 
-              <a
+              {/* <a
                 href="#packs"
                 onClick={cerrarMenu}
                 className="TopBar-btn cta"
               >
                 Probar Alef
-              </a>
+              </a> */}
             </>
           ) : (
             <>

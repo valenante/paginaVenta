@@ -103,6 +103,9 @@ export const useEstadisticasCategoria = (products, filters = {}) => {
         ...p,
         totalCantidad: stats?.totalCantidad || 0,
         totalIngresos: stats?.totalIngresos || 0,
+        ingresosBase: stats?.ingresosBase ?? null,
+        ingresosAdicionales: stats?.ingresosAdicionales ?? 0,
+        tieneDesglose: !!stats?.tieneDesglose,
       };
     });
   }, [data, products]);

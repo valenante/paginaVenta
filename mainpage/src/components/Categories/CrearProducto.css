@@ -1133,11 +1133,19 @@
   max-width: 100%;
 }
 
-/* Asegurar que los fieldsets padre también encogen */
+/* Asegurar que los fieldsets padre encogen sin colapsar contenido.
+   NUNCA usar overflow:hidden en <fieldset> — HTML spec hace que el
+   <legend> se muestre pero todo el contenido se colapsa a 0. */
 .fieldset--crear,
 .fieldset--adicional {
   min-width: 0;
-  overflow: hidden;
+}
+.fieldset--crear > .input--crear,
+.fieldset--adicional > .input--crear,
+.fieldset--crear input,
+.fieldset--crear select {
+  min-width: 0;
+  max-width: 100%;
 }
 
 /* v3 stock-modelo-v2 — sección de precios/adicionales/compuestos full-width

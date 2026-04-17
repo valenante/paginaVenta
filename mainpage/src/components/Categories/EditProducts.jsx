@@ -384,6 +384,7 @@ const EditProduct = ({
       factorStock: Math.max(0, toNumOrNull(p.factorStock) ?? 1),
       descripcion: p.descripcion || "",
       orden: p.orden ?? i,
+      visibleCarta: p.visibleCarta ?? true,
     }));
 
     const tienePrecio = preciosArr.some((p) => (toNumOrNull(p.precio) ?? 0) > 0);

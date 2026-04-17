@@ -19,24 +19,23 @@ export const ConfigProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchConfig = async () => {
-      if (!tenantId || !tenant) {
-        // No bajar loading — el tenant aún no ha cargado.
-        // Cuando TenantContext resuelva, este effect se re-ejecutará.
-        return;
-      }
+    if (!tenantId || !tenant) return;
 
+    const controller = new AbortController();
+    let cancelled = false;
+
+    const fetchConfig = async () => {
       try {
         setLoading(true);
 
-        // 🔥 ENDPOINT SEGÚN TIPO DE NEGOCIO
         const endpoint =
           tipoNegocio === "shop"
             ? "/shop/configuracion"
             : "/configuracion";
-        const { data } = await api.get(endpoint);
+        const { data } = await api.get(endpoint, { signal: controller.signal });
 
-        // Backend puede devolver { config, planFeatures } o solo config
+        if (cancelled) return;
+
         const cfg =
           data?.config && typeof data.config === "object"
             ? data.config
@@ -44,13 +43,11 @@ export const ConfigProvider = ({ children }) => {
 
         setConfig(cfg);
 
-        // 🔑 Features del plan (si vienen)
         const feats =
           Array.isArray(cfg?.planFeatures) ? cfg.planFeatures : [];
 
         setPlanFeatures(feats);
 
-        // 🎨 Colores base (branding)
         if (cfg?.colores) {
           Object.entries(cfg.colores).forEach(([key, value]) => {
             document.documentElement.style.setProperty(
@@ -60,6 +57,7 @@ export const ConfigProvider = ({ children }) => {
           });
         }
       } catch (err) {
+        if (cancelled || err?.name === "CanceledError" || err?.code === "ERR_CANCELED") return;
         console.error(
           `❌ [ConfigContext] Error cargando configuración (${tipoNegocio}):`,
           err
@@ -67,11 +65,16 @@ export const ConfigProvider = ({ children }) => {
         setConfig(null);
         setPlanFeatures([]);
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     };
 
     fetchConfig();
+
+    return () => {
+      cancelled = true;
+      controller.abort();
+    };
   }, [tenantId, tenant, tipoNegocio]);
 
   // 🎨 Aplica estilos avanzados (tema, fuentes, etc.)

@@ -10,6 +10,13 @@ const capitalizeClave = (s) => {
   if (v === "precioBase") return "Precio";
   return v.charAt(0).toUpperCase() + v.slice(1);
 };
+
+// Auto-genera clave slug canónica desde el label visible (sin acentos, lowercase, underscores)
+const slugifyClave = (s) =>
+  String(s || "").trim().toLowerCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "_")
+    .replace(/^_|_$/g, "") || "precioBase";
 import { ProductosContext } from "../../context/ProductosContext";
 import { useCategorias } from "../../context/CategoriasContext";
 import { useAuth } from "../../context/AuthContext";
@@ -254,6 +261,10 @@ const CrearProducto = ({ onClose, onCreated, initialTipo, cloneFrom }) => {
     setFormData((prev) => {
       const next = [...prev.precios];
       next[index] = { ...next[index], [field]: value };
+      // Auto-generar clave slug cuando el usuario cambia el label
+      if (field === "label") {
+        next[index].clave = slugifyClave(value);
+      }
       return { ...prev, precios: next };
     });
   };
@@ -303,9 +314,10 @@ const CrearProducto = ({ onClose, onCreated, initialTipo, cloneFrom }) => {
     productData.controlStock = !!productData.controlStock;
     productData.imprimirSiempre = !!productData.imprimirSiempre;
 
-    // Auto-derivar label desde la clave si está vacío
+    // Auto-derivar clave slug desde label + label desde clave (fallbacks cruzados)
     productData.precios = (productData.precios || []).map((p) => ({
       ...p,
+      clave: (p.clave && p.clave.trim()) ? p.clave : slugifyClave(p.label || "precioBase"),
       label: (p.label && p.label.trim()) ? p.label : capitalizeClave(p.clave || "precioBase"),
     }));
 
@@ -760,9 +772,9 @@ const CrearProducto = ({ onClose, onCreated, initialTipo, cloneFrom }) => {
                     <div className="precio-entry-header">
                       <span className="precio-entry-title">
                         Variante #{idx + 1}
-                        {entry.clave && (
+                        {(entry.label || entry.clave) && (
                           <span className="precio-entry-summary">
-                            · {capitalizeClave(entry.clave)}
+                            · {entry.label || capitalizeClave(entry.clave)}
                           </span>
                         )}
                       </span>
@@ -781,14 +793,14 @@ const CrearProducto = ({ onClose, onCreated, initialTipo, cloneFrom }) => {
 
                     <div className="precio-entry-identity">
                       <label className="label--crear">
-                        Clave
+                        Nombre variante
                         <input
                           type="text"
                           list="precio-suggestions"
-                          value={entry.clave}
-                          onChange={(e) => handlePrecioChange(idx, "clave", e.target.value)}
+                          value={entry.label || ""}
+                          onChange={(e) => handlePrecioChange(idx, "label", e.target.value)}
                           className="input--crear"
-                          placeholder="precioBase"
+                          placeholder="Tapa, Ración, Copa, Botella…"
                           required
                         />
                       </label>
@@ -802,6 +814,14 @@ const CrearProducto = ({ onClose, onCreated, initialTipo, cloneFrom }) => {
                           placeholder="2 uds, 200g, 1/2 ración..."
                           maxLength={100}
                         />
+                      </label>
+                      <label className="label--crear toggle-carta-label">
+                        <input
+                          type="checkbox"
+                          checked={entry.visibleCarta !== false}
+                          onChange={(e) => handlePrecioChange(idx, "visibleCarta", e.target.checked)}
+                        />
+                        Visible en carta
                       </label>
                     </div>
 

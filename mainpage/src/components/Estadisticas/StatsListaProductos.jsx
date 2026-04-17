@@ -35,6 +35,11 @@ const StatsListaProductos = ({ productosConStats, loading }) => {
                   <strong className="statlist-value statlist-money">
                     {(p.totalIngresos ?? 0).toFixed(2)} €
                   </strong>
+                  {p.tieneDesglose && p.ingresosAdicionales > 0 && (
+                    <span className="statlist-desglose">
+                      {(p.ingresosBase ?? 0).toFixed(2)} € base + {(p.ingresosAdicionales ?? 0).toFixed(2)} € adicionales
+                    </span>
+                  )}
                 </div>
               </div>
             </li>

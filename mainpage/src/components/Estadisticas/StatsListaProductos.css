@@ -109,3 +109,13 @@
   .statlist-item { padding: 1rem 1.2rem; }
   .statlist-stats-row { flex-direction: column; gap: 0.8rem; }
 }
+
+/* Desglose base + adicionales */
+.statlist-desglose {
+  display: block;
+  font-size: 0.72rem;
+  color: rgba(229, 231, 235, 0.6);
+  font-weight: 400;
+  margin-top: 2px;
+  font-style: italic;
+}

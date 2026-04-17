@@ -27,6 +27,11 @@ const StatsTopProductos = ({ topProductos, totalIngresosCategoria }) => {
                 <span className="toppro-item-name">{p.nombre}</span>
                 <span className="toppro-item-meta">
                   {p.totalCantidad} uds · {p.totalIngresos.toFixed(2)} €
+                  {p.tieneDesglose && p.ingresosAdicionales > 0 && (
+                    <span className="toppro-desglose">
+                      ({(p.ingresosBase ?? 0).toFixed(2)} € + {(p.ingresosAdicionales ?? 0).toFixed(2)} € adic.)
+                    </span>
+                  )}
                 </span>
               </div>
 

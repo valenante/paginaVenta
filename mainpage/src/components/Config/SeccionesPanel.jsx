@@ -17,7 +17,7 @@ function normalizeErr(err) {
 }
 
 export default function SeccionesPanel({
-  isPlanEsencial,
+  isPlanEsencial = false,
   onAlert,
   disabled = false,
 }) {

@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useConfig } from "../context/ConfigContext.jsx";
 import { useTenant } from "../context/TenantContext";
 import { useAuth } from "../context/AuthContext.jsx";
+import { useFeaturesPlan } from "../context/FeaturesPlanContext";
 import { Link } from "react-router-dom";
 import LoadingScreen from "../components/LoadingScreen/LoadingScreen";
 import "../styles/DashboardPage.css";
@@ -12,8 +13,8 @@ export default function DashboardPage() {
   const { tenant } = useTenant();
   const tipoNegocio = tenant?.tipoNegocio || "restaurante";
 
-  const isPlanEsencial =
-    user?.plan === "esencial" || user?.plan === "tpv-esencial";
+  const { hasFeature } = useFeaturesPlan();
+  const tieneReservas = hasFeature("reservas_online");
 
   const labelNegocio = tipoNegocio === "shop" ? "shop" : "restaurante";
   const labelArticulo = tipoNegocio === "shop" ? "la shop" : "el restaurante";
@@ -98,24 +99,20 @@ export default function DashboardPage() {
           </Link>
         )}
 
-        {tipoNegocio === "restaurante" && !isPlanEsencial && (
-          <>
-            {canAccessModule("productos") && (
-              <Link to="/configuracion/carta" className="dashboard-tile card">
-                <div className="dashboard-tile-icon">📋</div>
-                <h2>Carta</h2>
-                <p>Gestiona la carta digital, alérgenos, platos, bebidas y visibilidad.</p>
-              </Link>
-            )}
+        {tipoNegocio === "restaurante" && canAccessModule("productos") && (
+          <Link to="/configuracion/carta" className="dashboard-tile card">
+            <div className="dashboard-tile-icon">📋</div>
+            <h2>Carta</h2>
+            <p>Gestiona la carta digital, alérgenos, platos, bebidas y visibilidad.</p>
+          </Link>
+        )}
 
-            {canAccessModule("reservas") && (
-              <Link to="/configuracion/reservas" className="dashboard-tile card">
-                <div className="dashboard-tile-icon">📅</div>
-                <h2>Reservas</h2>
-                <p>Administra días disponibles, capacidad y solicitudes de reservas.</p>
-              </Link>
-            )}
-          </>
+        {tipoNegocio === "restaurante" && tieneReservas && canAccessModule("reservas") && (
+          <Link to="/configuracion/reservas" className="dashboard-tile card">
+            <div className="dashboard-tile-icon">📅</div>
+            <h2>Reservas</h2>
+            <p>Administra días disponibles, capacidad y solicitudes de reservas.</p>
+          </Link>
         )}
 
         {canAccessModule("proveedores") && (

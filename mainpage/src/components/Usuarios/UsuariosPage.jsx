@@ -3,6 +3,7 @@ import React, { useCallback, useState } from "react";
 import { useUsuarios } from "./useUsuarios";
 import { useAuth } from "../../context/AuthContext";
 import { useTenant } from "../../context/TenantContext";
+import { useFeaturesPlan } from "../../context/FeaturesPlanContext";
 
 import UpsellEstadisticasUsuarios from "../Usuarios/UpsellEstadisticasUsuarios";
 import UsuarioCreateForm from "./UsuarioCreateForm.jsx";
@@ -49,9 +50,8 @@ export default function UsuariosPage() {
 
   const tipoNegocio = tenant?.tipoNegocio || "restaurante";
 
-  const isPlanEsencial =
-    tipoNegocio === "restaurante" &&
-    (user?.plan === "esencial" || user?.plan === "tpv-esencial");
+  const { hasFeature } = useFeaturesPlan();
+  const isPlanEsencial = !hasFeature("motor_adaptativo_cocina");
 
   const showOk = (mensaje) => setAlerta({ tipo: "exito", mensaje });
 

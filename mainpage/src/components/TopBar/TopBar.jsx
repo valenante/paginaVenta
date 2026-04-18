@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext.jsx";
+import { useFeaturesPlan } from "../../context/FeaturesPlanContext";
 import { useTenant } from "../../context/TenantContext";
 import logoAlef from "../../assets/imagenes/alef.png";
 import StockAlertasBell from "./StockAlertasBell.jsx";
@@ -25,8 +26,8 @@ export default function TopBar() {
 
   const isActive = (path) => location.pathname.startsWith(path);
 
-  const isPlanEsencial =
-    user?.plan === "esencial" || user?.plan === "tpv-esencial";
+  const { hasFeature } = useFeaturesPlan();
+  const isPlanEsencial = !hasFeature("carta_online");
 
   const isDev = import.meta.env.DEV;
 

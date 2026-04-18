@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import { useConfig } from "../context/ConfigContext.jsx";
 import { useAuth } from "../context/AuthContext.jsx";
+import { useFeaturesPlan } from "../context/FeaturesPlanContext";
 import api from "../utils/api";
 import "../styles/RestauranteConfigPage.css";
 import ModalConfirmacion from "../components/Modal/ModalConfirmacion.jsx";
@@ -33,7 +34,8 @@ export default function RestauranteConfigPage() {
     user?.role === "admin_restaurante" ||
     user?.role === "admin_shop";
 
-  const isPlanEsencial = user?.plan === "esencial" || user?.plan === "tpv-esencial";
+  const { hasFeature } = useFeaturesPlan();
+  const isPlanEsencial = !hasFeature("motor_adaptativo_cocina");
 
   const [form, setForm] = useState({
     branding: {},

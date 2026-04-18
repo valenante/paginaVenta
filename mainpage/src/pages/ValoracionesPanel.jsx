@@ -1,7 +1,8 @@
 // src/pages/ValoracionesPanel.jsx
 import React, { useEffect, useState } from "react";
 import api from "../utils/api";
-import { useAuth } from "../context/AuthContext";              // 👈 NUEVO
+import { useAuth } from "../context/AuthContext";
+import { useFeaturesPlan } from "../context/FeaturesPlanContext";
 import UpsellValoraciones from "../components/Valoraciones/UpsellValoraciones"; // 👈 NUEVO
 import "../styles/ValoracionesPanel.css";
 
@@ -40,10 +41,10 @@ export default function ValoracionesPanel() {
   const [detalleLoading, setDetalleLoading] = useState(false);
   const [valoracionesDetalle, setValoracionesDetalle] = useState([]);
 
-  // 🔐 Plan del usuario
+  // 🔐 Feature gate
   const { user } = useAuth();
-  const isPlanEsencial =
-    user?.plan === "esencial" || user?.plan === "tpv-esencial";
+  const { hasFeature } = useFeaturesPlan();
+  const isPlanEsencial = !hasFeature("carta_valoraciones");
 
   // ========= MÉTRICAS GLOBALES =========
   const totalValoraciones = resumen.reduce(

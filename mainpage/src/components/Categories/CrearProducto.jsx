@@ -20,6 +20,7 @@ const slugifyClave = (s) =>
 import { ProductosContext } from "../../context/ProductosContext";
 import { useCategorias } from "../../context/CategoriasContext";
 import { useAuth } from "../../context/AuthContext";
+import { useFeaturesPlan } from "../../context/FeaturesPlanContext";
 import { useToast } from "../../context/ToastContext";
 import { useImageUpload } from "../../hooks/useImageUpload";
 import AlefSelect from "../AlefSelect/AlefSelect";
@@ -55,8 +56,8 @@ const CrearProducto = ({ onClose, onCreated, initialTipo, cloneFrom }) => {
   const [uploading, setUploading] = useState(false);
   const [showPreciosHelp, setShowPreciosHelp] = useState(false);
 
-  const isPlanEsencial =
-    user?.plan === "esencial" || user?.plan === "tpv-esencial";
+  const { hasFeature } = useFeaturesPlan();
+  const isPlanEsencial = !hasFeature("motor_adaptativo_cocina");
 
   const [formData, setFormData] = useState(() => {
     if (cloneFrom) {

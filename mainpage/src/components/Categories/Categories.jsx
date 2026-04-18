@@ -3,6 +3,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import { useCategorias } from "../../context/CategoriasContext";
 import * as logger from "../../utils/logger";
 import { useAuth } from "../../context/AuthContext";
+import { useFeaturesPlan } from "../../context/FeaturesPlanContext";
 
 import EditProduct from "./EditProducts";
 import CrearProducto from "./CrearProducto";
@@ -21,7 +22,8 @@ const Categories = ({ category, tipo }) => {
   const [productoAEliminar, setProductoAEliminar] = useState(null);
   const [productoReceta, setProductoReceta] = useState(null);
   const { user } = useAuth();
-  const isPlanEsencial = user?.plan === "esencial" || user?.plan === "tpv-esencial";
+  const { hasFeature } = useFeaturesPlan();
+  const isPlanEsencial = !hasFeature("stock_avanzado");
 
   const { productsByKey, fetchProducts, updateProduct, deleteProduct, fetchCategories } = useCategorias();
 

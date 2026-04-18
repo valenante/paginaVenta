@@ -2,6 +2,7 @@
 import React, { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import api from "../utils/api";
 import { useAuth } from "../context/AuthContext";
+import { useFeaturesPlan } from "../context/FeaturesPlanContext";
 import { useToast } from "../context/ToastContext";
 
 import AjustarStockModal from "../components/Stock/AjustarStockModal";
@@ -41,8 +42,8 @@ const getEstadoProd = (p) => {
 const StockPage = () => {
   const { user } = useAuth();
   const { showToast } = useToast();
-  const isPlanEsencial =
-    user?.plan === "esencial" || user?.plan === "tpv-esencial";
+  const { hasFeature } = useFeaturesPlan();
+  const isPlanEsencial = !hasFeature("stock_avanzado");
 
   // ── Tab ──
   const [tab, setTab] = useState("productos");

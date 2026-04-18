@@ -3,6 +3,7 @@ import html2canvas from "html2canvas";
 import { obtenerCajasPorRango } from "./ObtenerCajasPorRango";
 import UpsellEstadisticasPro from "../../components/Estadisticas/UpsellEstadisticasPro";
 import { useAuth } from "../../context/AuthContext.jsx";
+import { useFeaturesPlan } from "../../context/FeaturesPlanContext";
 import { generarPDFCaja } from "./pdfs/pdfCajaUltraPro";
 import { useTenant } from "../../context/TenantContext";
 import HeatmapSemana from "./HeatMapSemana";
@@ -47,10 +48,9 @@ export default function CajaDiariaUltraPro() {
 
   const { user } = useAuth();
   const { tenant } = useTenant();
+  const { hasFeature } = useFeaturesPlan();
   const tipoNegocio = tenant?.tipoNegocio || "restaurante";
-  const isPlanEsencial =
-    tipoNegocio === "restaurante" &&
-    (user?.plan === "esencial" || user?.plan === "tpv-esencial");
+  const isPlanEsencial = !hasFeature("estadisticas_avanzadas");
 
   // Fix #1 + #2: cargarDatos estable con AbortController
   const cargarDatos = useCallback(async () => {

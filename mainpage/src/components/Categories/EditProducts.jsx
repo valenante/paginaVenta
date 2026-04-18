@@ -21,6 +21,7 @@ import AlefSelect from "../AlefSelect/AlefSelect";
 import { useImageUpload } from "../../hooks/useImageUpload";
 import { useCategorias } from "../../context/CategoriasContext";
 import { useAuth } from "../../context/AuthContext";
+import { useFeaturesPlan } from "../../context/FeaturesPlanContext";
 import AlertaMensaje from "../AlertaMensaje/AlertaMensaje";
 
 import "./CrearProducto.css";
@@ -116,7 +117,8 @@ const EditProduct = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  const isPlanEsencial = user?.plan === "esencial" || user?.plan === "tpv-esencial";
+  const { hasFeature } = useFeaturesPlan();
+  const isPlanEsencial = !hasFeature("motor_adaptativo_cocina");
   const {
     dragging,
     onDragOver: handleDragOver,

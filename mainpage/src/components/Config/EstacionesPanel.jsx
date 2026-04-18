@@ -16,7 +16,7 @@ function normalizeErr(err) {
 }
 
 export default function EstacionesPanel({
-  isPlanEsencial,
+  isPlanEsencial = false,
   onAlert,
   disabled = false,
 }) {

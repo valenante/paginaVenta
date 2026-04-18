@@ -37,6 +37,7 @@ export default function AdminDashboard() {
   const { loading, error, data, refresh } = useAdminDashboard(fechaSeleccionada);
   const [modal, setModal] = useState(null); // "stock" | "reservas" | "eliminaciones" | null
   const [topTab, setTopTab] = useState("plato"); // "plato" | "bebida"
+  const [topSort, setTopSort] = useState("cantidad"); // "cantidad" | "importe"
 
   const { resumen, caja, topProductos, staff, eliminaciones, reservas } = data;
 
@@ -45,7 +46,13 @@ export default function AdminDashboard() {
   const staffList = Array.isArray(staff?.items) ? staff.items : Array.isArray(staff) ? staff : [];
   const topItemsAll = topProductos?.items || topProductos || [];
   const topItems = Array.isArray(topItemsAll)
-    ? topItemsAll.filter((p) => (p.tipo || "plato") === topTab).slice(0, 10)
+    ? topItemsAll
+        .filter((p) => (p.tipo || "plato") === topTab)
+        .sort((a, b) => topSort === "importe"
+          ? (b.ingresos || b.total || 0) - (a.ingresos || a.total || 0)
+          : (b.cantidad || 0) - (a.cantidad || 0)
+        )
+        .slice(0, 10)
     : [];
 
   if (loading && !resumen) {
@@ -199,6 +206,19 @@ export default function AdminDashboard() {
                 onClick={() => setTopTab("bebida")}
               >
                 🍺 Bebidas
+              </button>
+              <span className="adm__tabs-sep">|</span>
+              <button
+                className={`adm__tab ${topSort === "cantidad" ? "adm__tab--active" : ""}`}
+                onClick={() => setTopSort("cantidad")}
+              >
+                Cantidad
+              </button>
+              <button
+                className={`adm__tab ${topSort === "importe" ? "adm__tab--active" : ""}`}
+                onClick={() => setTopSort("importe")}
+              >
+                Importe
               </button>
             </div>
           </div>

@@ -924,3 +924,132 @@ select.fin-input option {
     grid-template-columns: 1fr;
   }
 }
+
+/* ===== Header actions ===== */
+.finanzas-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* ===== Botón ayuda ===== */
+.fin-help-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--dash-glass-border, rgba(255, 255, 255, 0.12));
+  background: var(--dash-glass-bg, rgba(255, 255, 255, 0.06));
+  color: var(--dash-text-soft, rgba(255, 255, 255, 0.7));
+  font-size: 1rem;
+  font-weight: 900;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition: background 0.15s, transform 0.15s;
+  flex-shrink: 0;
+}
+
+.fin-help-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  transform: translateY(-1px);
+}
+
+/* ===== Modal ayuda (glass pro) ===== */
+.fin-help-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: 16px;
+}
+
+.fin-help-modal {
+  width: min(94vw, 620px);
+  max-height: 85vh;
+  overflow-y: auto;
+  border-radius: 20px;
+  padding: 24px 22px;
+  position: relative;
+  color: var(--dash-text, rgba(255, 255, 255, 0.92));
+  background:
+    radial-gradient(900px 220px at 20% 0%, rgba(255, 255, 255, 0.10), transparent 60%),
+    var(--dash-glass-bg, rgba(255, 255, 255, 0.06));
+  border: 1px solid var(--dash-glass-border, rgba(255, 255, 255, 0.14));
+  box-shadow: 0 28px 70px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  animation: dashFadeIn 0.18s ease-out;
+}
+
+.fin-help-modal::-webkit-scrollbar { width: 6px; }
+.fin-help-modal::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.12); border-radius: 999px; }
+
+.fin-help-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--dash-text, rgba(255, 255, 255, 0.9));
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 900;
+  display: grid;
+  place-items: center;
+  transition: background 0.15s;
+}
+
+.fin-help-close:hover { background: rgba(255, 255, 255, 0.14); }
+
+.fin-help-title {
+  margin: 0 0 20px 0;
+  font-size: 1.25rem;
+  font-weight: 800;
+  padding-right: 40px;
+}
+
+.fin-help-body {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.fin-help-section h4 {
+  margin: 0 0 6px 0;
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.fin-help-section p {
+  margin: 0 0 6px 0;
+  font-size: 0.88rem;
+  line-height: 1.45;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.fin-help-section p strong {
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.fin-help-example {
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: rgba(59, 130, 246, 0.08);
+  border: 1px solid rgba(59, 130, 246, 0.18);
+  color: rgba(147, 197, 253, 0.95);
+  font-size: 0.85rem;
+  font-style: italic;
+}
+
+@media (max-width: 600px) {
+  .fin-help-modal { padding: 18px 16px; border-radius: 16px; }
+  .fin-help-title { font-size: 1.1rem; }
+}

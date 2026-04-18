@@ -11,7 +11,7 @@ import {
 } from "recharts";
 import "./CajaIngresosChart.css";
 
-export default function CajaIngresosChart({ datosDiarios, onDiaClick }) {
+export default function CajaIngresosChart({ datosDiarios, onDiaClick, diaSeleccionado }) {
   // Fix #4: isMobile reactivo
   const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768);
 
@@ -42,7 +42,7 @@ export default function CajaIngresosChart({ datosDiarios, onDiaClick }) {
         ) : (
           <span>
             Evolución del periodo seleccionado
-            {onDiaClick ? " · Pulsa un día para filtrar" : ""}
+            {onDiaClick ? " · Pulsa un día para ver detalle" : ""}
           </span>
         )}
       </header>
@@ -113,7 +113,21 @@ export default function CajaIngresosChart({ datosDiarios, onDiaClick }) {
               stroke="#6a0dad"
               strokeWidth={3}
               fill="url(#gradTotal)"
-              dot={isMobile ? false : { r: 5, fill: "#6a0dad", strokeWidth: 0 }}
+              dot={isMobile ? false : (props) => {
+                const { cx, cy, payload } = props;
+                const selected = diaSeleccionado && payload?.fechaISO === diaSeleccionado;
+                return (
+                  <circle
+                    key={payload?.fechaISO}
+                    cx={cx} cy={cy}
+                    r={selected ? 8 : 5}
+                    fill={selected ? "#f59e0b" : "#6a0dad"}
+                    stroke={selected ? "#fff" : "none"}
+                    strokeWidth={selected ? 2 : 0}
+                    style={onDiaClick ? { cursor: "pointer" } : undefined}
+                  />
+                );
+              }}
               activeDot={{
                 r: 7,
                 style: onDiaClick ? { cursor: "pointer" } : undefined,

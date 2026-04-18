@@ -34,12 +34,14 @@ export default function CajaDiariaUltraPro() {
     const { inicio, fin } = rangoPorDefecto();
     setFechaInicio(inicio);
     setFechaFin(fin);
+    setDiaSeleccionado(null);
   };
 
   const [datos, setDatos] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [generandoPDF, setGenerandoPDF] = useState(false);
+  const [diaSeleccionado, setDiaSeleccionado] = useState(null);
   const [comparando, setComparando] = useState(false);
 
   const chartSectionRef = useRef(null);
@@ -283,16 +285,90 @@ export default function CajaDiariaUltraPro() {
       <div ref={chartSectionRef}>
         <CajaIngresosChart
           datosDiarios={datosDiarios}
+          diaSeleccionado={diaSeleccionado}
           onDiaClick={(fechaISO) => {
             if (!fechaISO) return;
             const dia = String(fechaISO).slice(0, 10);
-            // El backend amplía fin hasta las 04:00 del día siguiente,
-            // así que usar el mismo día captura un día operativo completo.
-            setFechaInicio(dia);
-            setFechaFin(dia);
+            setDiaSeleccionado((prev) => prev === dia ? null : dia);
           }}
         />
       </div>
+
+      {/* KPIs del día seleccionado */}
+      {diaSeleccionado && (() => {
+        const diaData = datosDiarios.find((d) => d.fecha === diaSeleccionado);
+        if (!diaData) return null;
+
+        const numDias = datosDiarios.length || 1;
+        const avgIngresos = totalIngresos / numDias;
+        const avgTickets = totalTickets / numDias;
+        const avgComensales = totalComensales / numDias;
+        const avgTicketMedio = ticketMedio;
+        const avgDuracion = duracionMediaMin;
+
+        const pctDiff = (val, avg) => {
+          if (!avg || avg === 0) return null;
+          return Math.round(((val - avg) / avg) * 100);
+        };
+
+        const diffBadge = (val, avg, suffix = "") => {
+          const diff = pctDiff(val, avg);
+          if (diff == null) return null;
+          const color = diff > 0 ? "#22c55e" : diff < 0 ? "#ef4444" : "#94a3b8";
+          const sign = diff > 0 ? "+" : "";
+          return <span style={{ color, fontSize: "0.78rem", fontWeight: 700, marginLeft: 6 }}>{sign}{diff}% vs media{suffix}</span>;
+        };
+
+        const diaTicketMedioMesa = diaData.numTickets > 0 ? diaData.total / diaData.numTickets : 0;
+        const diaTicketMedioComensal = diaData.numComensales > 0 ? diaData.total / diaData.numComensales : 0;
+        const avgTicketMedioComensal = totalComensales > 0 ? totalIngresos / totalComensales : 0;
+        const fechaLabel = new Date(diaData.fecha).toLocaleDateString("es-ES", { weekday: "long", day: "numeric", month: "short" });
+
+        const fmtDuracion = (min) => min >= 60
+          ? `${Math.floor(min / 60)}h ${min % 60}m`
+          : `${min} min`;
+
+        return (
+          <section className="caja-ultra-kpi caja-ultra-kpi--dia">
+            <div className="kpi-card-dia-header">
+              <strong>{fechaLabel}</strong>
+              <button className="kpi-card-dia-close" onClick={() => setDiaSeleccionado(null)}>✕</button>
+            </div>
+            <div className="kpi-card">
+              <span>Ingresos</span>
+              <strong>{diaData.total.toFixed(2)} €</strong>
+              {diffBadge(diaData.total, avgIngresos)}
+            </div>
+            <div className="kpi-card">
+              <span>Tickets</span>
+              <strong>{diaData.numTickets}</strong>
+              {diffBadge(diaData.numTickets, avgTickets)}
+            </div>
+            <div className="kpi-card">
+              <span>Ticket medio / mesa</span>
+              <strong>{diaTicketMedioMesa.toFixed(2)} €</strong>
+              {diffBadge(diaTicketMedioMesa, avgTicketMedio)}
+            </div>
+            <div className="kpi-card">
+              <span>Comensales</span>
+              <strong>{diaData.numComensales}</strong>
+              {diffBadge(diaData.numComensales, avgComensales)}
+            </div>
+            <div className="kpi-card">
+              <span>Ticket medio / comensal</span>
+              <strong>{diaTicketMedioComensal.toFixed(2)} €</strong>
+              {diffBadge(diaTicketMedioComensal, avgTicketMedioComensal)}
+            </div>
+            {diaData.avgDuracionMin != null && diaData.avgDuracionMin > 0 && (
+              <div className="kpi-card">
+                <span>Tiempo medio / mesa</span>
+                <strong>{fmtDuracion(diaData.avgDuracionMin)}</strong>
+                {avgDuracion && diffBadge(diaData.avgDuracionMin, avgDuracion)}
+              </div>
+            )}
+          </section>
+        );
+      })()}
 
       {/* Comparador de periodos */}
       {comparando && !isPlanEsencial && (
@@ -321,7 +397,7 @@ export default function CajaDiariaUltraPro() {
             </div>
 
             <div className="kpi-card">
-              <span>Ticket medio</span>
+              <span>Ticket medio / mesa</span>
               <strong>{ticketMedio.toFixed(2)} €</strong>
             </div>
 

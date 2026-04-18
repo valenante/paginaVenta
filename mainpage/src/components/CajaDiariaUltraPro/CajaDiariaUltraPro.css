@@ -229,6 +229,46 @@
   box-shadow: 0 0 12px rgba(255, 103, 0, 0.55);
 }
 
+/* ── KPIs día seleccionado ── */
+.caja-ultra-kpi--dia {
+  margin-top: 0.8rem;
+  padding: 1rem;
+  border-radius: var(--radius-md);
+  background: rgba(245, 158, 11, 0.04);
+  border: 1px solid rgba(245, 158, 11, 0.18);
+}
+
+.kpi-card-dia-header {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.4rem;
+  text-transform: capitalize;
+}
+
+.kpi-card-dia-header strong {
+  font-size: 1rem;
+  color: #f59e0b;
+}
+
+.kpi-card-dia-close {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.8rem;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
+
+.kpi-card-dia-close:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
 /* ===============================
    LISTADO
    =============================== */

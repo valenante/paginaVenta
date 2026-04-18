@@ -1,0 +1,159 @@
+/* =========================================================
+   MATRIZ BCG — Ingeniería de menú
+   ========================================================= */
+
+.bcg-container {
+  animation: dashFadeIn 0.35s ease;
+}
+
+.bcg-header {
+  margin-bottom: 1.4rem;
+}
+
+.bcg-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin: 0;
+  color: #fff;
+}
+
+.bcg-subtitle {
+  margin: 0.2rem 0 0;
+  font-size: 0.88rem;
+  opacity: 0.7;
+  color: #dfe3ea;
+  max-width: 600px;
+}
+
+/* Chart */
+.bcg-chart-wrap {
+  padding: 1.4rem 1.6rem;
+  background: var(--dash-glass-bg);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--dash-radius-lg);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 8px 26px rgba(0, 0, 0, 0.28);
+  margin-bottom: 1.2rem;
+}
+
+/* Leyenda */
+.bcg-legend {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 1.2rem;
+  padding: 10px 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.bcg-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.bcg-legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.bcg-legend-label {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+/* Cuadrantes */
+.bcg-cuadrantes {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+
+@media (max-width: 768px) {
+  .bcg-cuadrantes { grid-template-columns: 1fr; }
+}
+
+.bcg-cuadrante {
+  padding: 1.2rem 1.4rem;
+  background: var(--dash-glass-bg);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 3px solid;
+  border-radius: var(--dash-radius-lg);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 8px 26px rgba(0, 0, 0, 0.28);
+}
+
+.bcg-cuadrante-title {
+  margin: 0 0 4px 0;
+  font-size: 1rem;
+  font-weight: 800;
+  color: #fff;
+}
+
+.bcg-cuadrante-count {
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 0.85rem;
+}
+
+.bcg-cuadrante-desc {
+  margin: 0 0 10px 0;
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.5);
+  line-height: 1.35;
+}
+
+.bcg-cuadrante-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.bcg-cuadrante-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  font-size: 0.85rem;
+}
+
+.bcg-cuadrante-item:last-child { border-bottom: none; }
+
+.bcg-cuadrante-name {
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.bcg-cuadrante-meta {
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.5);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.bcg-cuadrante-more {
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.35);
+  font-style: italic;
+  padding-top: 4px;
+}
+
+/* States */
+.bcg-loading, .bcg-error, .bcg-empty {
+  padding: 2rem;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: 700;
+  font-size: 0.92rem;
+}
+
+.bcg-error { color: #ef4444; }

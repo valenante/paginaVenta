@@ -15,10 +15,12 @@ import StatsPorHora from "../components/Estadisticas/StatsPorHora";
 import StatsListaProductos from "../components/Estadisticas/StatsListaProductos";
 import StatsPromedioDiaSemana from "../components/Estadisticas/StatsPromedioDiaSemana";
 import UpsellEstadisticasPro from "../components/Estadisticas/UpsellEstadisticasPro";
+import StatsMatrizBCG from "../components/Estadisticas/StatsMatrizBCG";
 
 import "../components/Estadisticas/EstadisticasFinal.css";
 
 export default function EstadisticasPage({ type = "plato" }) {
+  const [vista, setVista] = useState("ventas"); // "ventas" | "matriz"
   const {
     categoriesByTipo,
     productsByKey,
@@ -173,9 +175,38 @@ export default function EstadisticasPage({ type = "plato" }) {
   /* =====================================================
    * 9) Render
    * ===================================================== */
+  const periodoMatriz = useMemo(() => {
+    const fmt = (d) => {
+      if (!d) return null;
+      const dd = d instanceof Date ? d : new Date(d);
+      return `${dd.getFullYear()}-${String(dd.getMonth() + 1).padStart(2, "0")}-${String(dd.getDate()).padStart(2, "0")}`;
+    };
+    return { desde: fmt(startDate), hasta: fmt(endDate) };
+  }, [startDate, endDate]);
+
   return (
     <div className="estadisticas-root">
       <div className="estadisticas-page">
+        {/* Tabs principales */}
+        <div className="stats-vista-tabs">
+          <button
+            className={`stats-vista-tab ${vista === "ventas" ? "stats-vista-tab--active" : ""}`}
+            onClick={() => setVista("ventas")}
+          >
+            Ventas
+          </button>
+          <button
+            className={`stats-vista-tab ${vista === "matriz" ? "stats-vista-tab--active" : ""}`}
+            onClick={() => setVista("matriz")}
+          >
+            Matriz carta
+          </button>
+        </div>
+
+        {vista === "matriz" ? (
+          <StatsMatrizBCG periodo={periodoMatriz} />
+        ) : (
+        <>
         <StatsFilterBar
           tipo={tipo}
           onChangeTipo={handleChangeTipo}
@@ -250,6 +281,8 @@ export default function EstadisticasPage({ type = "plato" }) {
               <UpsellEstadisticasPro fullscreen />
             )}
           </>
+        )}
+        </>
         )}
       </div>
     </div>

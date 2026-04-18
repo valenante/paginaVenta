@@ -87,6 +87,7 @@ export default function RestauranteConfigPage() {
       temaShop: normalizarTemaShop(config.temaShop),
       slaMesas: config.slaMesas || form.slaMesas,
       capacidadEstaciones: config.capacidadEstaciones || form.capacidadEstaciones,
+      diaOperativo: config.diaOperativo || { horaCorte: "04:00" },
     };
 
     setForm((prev) => ({ ...prev, ...nextForm }));
@@ -101,6 +102,7 @@ export default function RestauranteConfigPage() {
       temaShop: nextForm.temaShop,
       slaMesas: nextForm.slaMesas,
       capacidadEstaciones: nextForm.capacidadEstaciones,
+      diaOperativo: nextForm.diaOperativo,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [config]);
@@ -118,6 +120,7 @@ export default function RestauranteConfigPage() {
         temaShop: obj.temaShop,
         slaMesas: obj.slaMesas,
         capacidadEstaciones: obj.capacidadEstaciones,
+        diaOperativo: obj.diaOperativo,
       });
       return compare(form) !== initialRef.current;
     } catch {
@@ -154,6 +157,7 @@ export default function RestauranteConfigPage() {
         temaShop: form.temaShop,
         slaMesas: form.slaMesas,
         capacidadEstaciones: form.capacidadEstaciones,
+        diaOperativo: form.diaOperativo,
       };
 
       const { data: draft } = await api.post("/admin/config/versions", {
@@ -341,6 +345,36 @@ export default function RestauranteConfigPage() {
             esTienda={esTienda}
             onUploadLogo={handleFileUpload}
           />
+
+          {/* === DÍA OPERATIVO === */}
+          {esRestaurante && (
+            <section className="config-card card">
+              <header className="config-card-header">
+                <div>
+                  <h2>Día operativo</h2>
+                  <p className="config-card-subtitle">
+                    Hora a la que empieza un nuevo día de negocio. Las ventas después de medianoche
+                    pero antes de esta hora cuentan como el día anterior.
+                  </p>
+                </div>
+              </header>
+              <div className="config-field">
+                <label htmlFor="horaCorte">Hora de corte</label>
+                <input
+                  id="horaCorte"
+                  type="time"
+                  value={form.diaOperativo?.horaCorte || "04:00"}
+                  style={{ maxWidth: 160 }}
+                  onChange={(e) =>
+                    setForm((prev) => ({
+                      ...prev,
+                      diaOperativo: { ...prev.diaOperativo, horaCorte: e.target.value },
+                    }))
+                  }
+                />
+              </div>
+            </section>
+          )}
 
           {/* === APARIENCIA === */}
           {esRestaurante && (

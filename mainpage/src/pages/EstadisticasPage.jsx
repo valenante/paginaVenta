@@ -3,6 +3,9 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useCategorias } from "../context/CategoriasContext";
 import { useFeaturesPlan } from "../context/FeaturesPlanContext";
 import { useEstadisticasCategoria } from "../hooks/useEstadisticasCategoria";
+import api from "../utils/api";
+
+const TODAS = "__todas__";
 
 import StatsFilterBar from "../components/Estadisticas/StatsFilterBar";
 import StatsResumenCategoria from "../components/Estadisticas/StatsResumenCategoria";
@@ -34,6 +37,7 @@ export default function EstadisticasPage({ type = "plato" }) {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
+  const [todosProductos, setTodosProductos] = useState([]);
 
   const isPro = hasFeature("estadisticas_avanzadas");
 
@@ -54,11 +58,23 @@ export default function EstadisticasPage({ type = "plato" }) {
    * ===================================================== */
   const categorias = categoriesByTipo[tipo] || [];
 
-  const categoriasNormalizadas = useMemo(() => {
+  const categoriasReales = useMemo(() => {
     return categorias
       .filter((c) => typeof c === "string" && c.trim().length > 0)
       .sort((a, b) => a.localeCompare(b));
   }, [categorias]);
+
+  // Para el selector: incluir "Todas" + las reales
+  const categoriasNormalizadas = useMemo(() => {
+    return categoriasReales.length > 0 ? [TODAS, ...categoriasReales] : categoriasReales;
+  }, [categoriasReales]);
+
+  // Para el AlefSelect: mapear TODAS a un label legible
+  const categoriasSelect = useMemo(() => {
+    return categoriasNormalizadas.map((c) =>
+      c === TODAS ? { value: TODAS, label: "Todas las categorías" } : c
+    );
+  }, [categoriasNormalizadas]);
 
   /* =====================================================
    * 2) Cargar categorías al cambiar tipo
@@ -73,13 +89,13 @@ export default function EstadisticasPage({ type = "plato" }) {
   }, [tipo, fetchCategories]);
 
   /* =====================================================
-   * 3) Autoselect de categoría
+   * 3) Autoselect de categoría (empieza por "Todas")
    * ===================================================== */
   useEffect(() => {
     if (selectedCategory) return;
     if (userChangedCategoryRef.current) return;
     if (categoriasNormalizadas.length === 0) return;
-    setSelectedCategory(categoriasNormalizadas[0]);
+    setSelectedCategory(TODAS);
   }, [categoriasNormalizadas, selectedCategory]);
 
   /* =====================================================
@@ -97,6 +113,21 @@ export default function EstadisticasPage({ type = "plato" }) {
    * ===================================================== */
   useEffect(() => {
     if (!tipo || !selectedCategory) return;
+
+    if (selectedCategory === TODAS) {
+      // Cargar todos los productos del tipo
+      let cancelled = false;
+      const controller = new AbortController();
+      api.get("/productos", { params: { tipo, limit: 500 }, signal: controller.signal })
+        .then((res) => {
+          if (!cancelled) setTodosProductos(Array.isArray(res.data) ? res.data : []);
+        })
+        .catch((err) => {
+          if (!cancelled && err?.name !== "CanceledError") setTodosProductos([]);
+        });
+      return () => { cancelled = true; controller.abort(); };
+    }
+
     fetchProducts({ tipo, categoria: selectedCategory });
   }, [tipo, selectedCategory, fetchProducts]);
 
@@ -105,9 +136,10 @@ export default function EstadisticasPage({ type = "plato" }) {
    * ===================================================== */
   const productosCategoria = useMemo(() => {
     if (!tipo || !selectedCategory) return [];
+    if (selectedCategory === TODAS) return todosProductos;
     const key = `${tipo}::${selectedCategory}`;
     return productsByKey[key] || [];
-  }, [tipo, selectedCategory, productsByKey]);
+  }, [tipo, selectedCategory, productsByKey, todosProductos]);
 
   /* =====================================================
    * 7) Estadísticas — server-side via /reportes/estadisticas-categoria
@@ -147,7 +179,7 @@ export default function EstadisticasPage({ type = "plato" }) {
         <StatsFilterBar
           tipo={tipo}
           onChangeTipo={handleChangeTipo}
-          categories={categoriasNormalizadas}
+          categories={categoriasSelect}
           selectedCategory={selectedCategory}
           onChangeCategory={handleChangeCategory}
           startDate={startDate}
@@ -179,7 +211,7 @@ export default function EstadisticasPage({ type = "plato" }) {
         {selectedCategory && !loading.categories && (
           <>
             <StatsResumenCategoria
-              category={selectedCategory}
+              category={selectedCategory === TODAS ? (tipo === "plato" ? "TODOS LOS PLATOS" : "TODAS LAS BEBIDAS") : selectedCategory}
               resumenCategoria={resumenCategoria}
               fechaTexto={fechaTexto}
               horaPunta={horaPunta}
@@ -197,6 +229,7 @@ export default function EstadisticasPage({ type = "plato" }) {
                 <StatsTopProductos
                   topProductos={topProductos}
                   totalIngresosCategoria={totalIngresosCategoria}
+                  productosConStats={productosConStats}
                 />
 
                 <div className="estadisticas-2col">

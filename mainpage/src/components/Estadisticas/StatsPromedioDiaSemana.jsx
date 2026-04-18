@@ -1,6 +1,6 @@
 // src/components/Estadisticas/StatsPromedioDiaSemana.jsx
 // Tabla de promedio de ventas por producto y día de la semana.
-import React, { useMemo } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import "./StatsPromedioDiaSemana.css";
 
 // Orden visual de días (Lun-Dom), mapeado a keys MongoDB $dayOfWeek
@@ -21,9 +21,14 @@ const fmt = (n) => {
   return v % 1 === 0 ? String(v) : v.toFixed(1);
 };
 
+const PROM_PER_PAGE = 15;
+
 export default function StatsPromedioDiaSemana({ promedioDiaSemana }) {
   const productos = promedioDiaSemana?.productos || [];
   const diasActivos = promedioDiaSemana?.diasActivos || {};
+  const [page, setPage] = useState(1);
+
+  useEffect(() => { setPage(1); }, [promedioDiaSemana]);
 
   const totalesPorDia = useMemo(() => {
     const tot = {};
@@ -100,6 +105,7 @@ export default function StatsPromedioDiaSemana({ promedioDiaSemana }) {
             {productos
               .slice()
               .sort((a, b) => b.totalSemana - a.totalSemana)
+              .slice((page - 1) * PROM_PER_PAGE, page * PROM_PER_PAGE)
               .map((p) => (
                 <tr key={p.productoId}>
                   <td className="stats-promedio-dia__td stats-promedio-dia__td--prod">{p.nombre}</td>
@@ -140,6 +146,32 @@ export default function StatsPromedioDiaSemana({ promedioDiaSemana }) {
           </tfoot>
         </table>
       </div>
+
+      {(() => {
+        const totalPages = Math.ceil(productos.length / PROM_PER_PAGE);
+        if (totalPages <= 1) return null;
+        return (
+          <div className="statlist-pagination" style={{ marginTop: "12px" }}>
+            <button
+              className="statlist-pagination__btn"
+              disabled={page <= 1}
+              onClick={() => setPage((p) => p - 1)}
+            >
+              ← Anterior
+            </button>
+            <span className="statlist-pagination__info">
+              {page} / {totalPages}
+            </span>
+            <button
+              className="statlist-pagination__btn"
+              disabled={page >= totalPages}
+              onClick={() => setPage((p) => p + 1)}
+            >
+              Siguiente →
+            </button>
+          </div>
+        );
+      })()}
 
       <p className="stats-promedio-dia__footer">
         <span>

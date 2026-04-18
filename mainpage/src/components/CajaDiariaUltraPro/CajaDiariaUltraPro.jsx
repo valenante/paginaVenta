@@ -97,6 +97,7 @@ export default function CajaDiariaUltraPro() {
           total: 0,
           numTickets: 0,
           numComensales: 0,
+          avgDuracionMin: null,
           mensajeCierre: d.mensajeCierre || null,
         };
       }
@@ -105,6 +106,7 @@ export default function CajaDiariaUltraPro() {
       // numTickets y numComensales vienen repetidos por hora (mismo total del día), usar el máximo
       map[fechaKey].numTickets = Math.max(map[fechaKey].numTickets, Number(d.numTickets || 0));
       map[fechaKey].numComensales = Math.max(map[fechaKey].numComensales, Number(d.numComensales || 0));
+      if (d.avgDuracionMin != null) map[fechaKey].avgDuracionMin = Number(d.avgDuracionMin);
     });
 
     return Object.values(map)
@@ -131,6 +133,12 @@ export default function CajaDiariaUltraPro() {
   );
 
   const ticketMedioComensal = totalComensales > 0 ? totalIngresos / totalComensales : 0;
+
+  const duracionMediaMin = useMemo(() => {
+    const conDuracion = datosDiarios.filter((d) => d.avgDuracionMin != null && d.avgDuracionMin > 0);
+    if (!conDuracion.length) return null;
+    return Math.round(conDuracion.reduce((acc, d) => acc + d.avgDuracionMin, 0) / conDuracion.length);
+  }, [datosDiarios]);
 
   // Fix #7: no mostrar mejor/peor si es el mismo día
   const diaMasFuerte = datosDiarios.length
@@ -341,6 +349,17 @@ export default function CajaDiariaUltraPro() {
                 <span>Peor día</span>
                 <strong>{formatFechaUI(diaMasDebil.fecha)}</strong>
                 <small>{diaMasDebil.total.toFixed(2)} €</small>
+              </div>
+            )}
+
+            {duracionMediaMin != null && (
+              <div className="kpi-card">
+                <span>Tiempo medio / mesa</span>
+                <strong>
+                  {duracionMediaMin >= 60
+                    ? `${Math.floor(duracionMediaMin / 60)}h ${duracionMediaMin % 60}m`
+                    : `${duracionMediaMin} min`}
+                </strong>
               </div>
             )}
           </section>

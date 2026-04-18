@@ -115,9 +115,10 @@ export default function FacturasPage() {
     if (filtroAnio) p.set("year", filtroAnio);
     if (estado) p.set("estado", estado);
     if (includeAnulaciones) p.set("includeAnulaciones", "1");
+    if (filtroTipoCliente) p.set("tipoCliente", filtroTipoCliente);
 
     return p.toString();
-  }, [pagina, debouncedBusqueda, fechaInicio, fechaFin, filtroAnio, estado, includeAnulaciones]);
+  }, [pagina, debouncedBusqueda, fechaInicio, fechaFin, filtroAnio, estado, includeAnulaciones, filtroTipoCliente]);
 
   const exportQueryString = useMemo(() => {
     const p = new URLSearchParams();
@@ -432,16 +433,8 @@ export default function FacturasPage() {
     }
   };
 
-  // Filtro cliente-side: consumidor final vs nominativa
-  const facturasFiltradas = useMemo(() => {
-    if (!filtroTipoCliente) return facturas;
-    return facturas.filter((f) => {
-      const tieneNIF = !!f.clienteNIF && f.clienteNIF.trim() !== "";
-      if (filtroTipoCliente === "nominativa") return tieneNIF;
-      if (filtroTipoCliente === "consumidor_final") return !tieneNIF;
-      return true;
-    });
-  }, [facturas, filtroTipoCliente]);
+  // Filtro tipoCliente ahora es server-side (via queryString)
+  const facturasFiltradas = facturas;
 
   const limpiarFiltros = () => {
     setFiltroAnio("");
@@ -543,7 +536,7 @@ export default function FacturasPage() {
               type="text"
               value={busqueda}
               onChange={(e) => setBusqueda(e.target.value)}
-              placeholder="Nº factura, hash, NIF..."
+              placeholder="Nº factura, cliente, NIF, hash..."
             />
           </div>
 

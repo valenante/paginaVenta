@@ -17,7 +17,45 @@
 }
 
 /* ===== HEADER ===== */
-.toppro-header { margin-bottom: 1.4rem; }
+.toppro-header {
+  margin-bottom: 1.4rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+/* ===== TOGGLE IMPORTE / CANTIDAD ===== */
+.toppro-toggle {
+  display: flex;
+  gap: 4px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: 10px;
+  padding: 3px;
+  flex-shrink: 0;
+}
+
+.toppro-toggle-btn {
+  padding: 5px 12px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.toppro-toggle-btn:hover {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.toppro-toggle-btn--active {
+  background: var(--color-primario, rgba(255, 255, 255, 0.14));
+  color: #fff;
+}
 
 .toppro-title {
   font-size: 1.3rem;

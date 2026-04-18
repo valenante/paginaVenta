@@ -61,8 +61,21 @@
 /* ── KPIs principales ── */
 .adm__kpis {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  grid-template-columns: repeat(4, 1fr);
   gap: 14px;
+}
+.adm__kpis > :last-child:nth-child(4n + 1) {
+  grid-column: 1 / -1;
+}
+@media (max-width: 900px) {
+  .adm__kpis { grid-template-columns: repeat(3, 1fr); }
+  .adm__kpis > :last-child:nth-child(4n + 1) { grid-column: auto; }
+  .adm__kpis > :last-child:nth-child(3n + 1) { grid-column: 1 / -1; }
+}
+@media (max-width: 600px) {
+  .adm__kpis { grid-template-columns: repeat(2, 1fr); }
+  .adm__kpis > :last-child:nth-child(3n + 1) { grid-column: auto; }
+  .adm__kpis > :last-child:nth-child(2n + 1) { grid-column: 1 / -1; }
 }
 .adm__kpi {
   background: var(--dash-glass-bg);
@@ -95,6 +108,10 @@
 .adm__kpi--comensales { border-left: 3px solid #0ea5e9; }
 .adm__kpi--ticket { border-left: 3px solid #ec4899; }
 .adm__kpi--ticket-com { border-left: 3px solid #8b5cf6; }
+.adm__kpi--pedidos { border-left: 3px solid #f97316; }
+.adm__kpi--cancelados { border-left: 3px solid #ef4444; cursor: pointer; }
+.adm__kpi--cancelados:hover { background: rgba(239, 68, 68, 0.08); }
+.adm__kpi--duracion { border-left: 3px solid #06b6d4; }
 
 /* ── Tarjetas secundarias ── */
 .adm__cards {

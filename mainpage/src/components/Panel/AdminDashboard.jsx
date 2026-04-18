@@ -122,6 +122,24 @@ export default function AdminDashboard() {
           <span className="adm__kpi-value">{fmt(resumen?.ticketMedioComensal)} €</span>
           <span className="adm__kpi-label">Ticket medio / comensal</span>
         </div>
+        <div className="adm__kpi adm__kpi--pedidos">
+          <span className="adm__kpi-value">{resumen?.pedidosHoy ?? 0}</span>
+          <span className="adm__kpi-label">Pedidos</span>
+        </div>
+        <button className="adm__kpi adm__kpi--cancelados" onClick={() => setModal("eliminaciones")}>
+          <span className="adm__kpi-value">{elimItems.length}</span>
+          <span className="adm__kpi-label">Cancelados</span>
+        </button>
+        {resumen?.duracionMediaMin != null && (
+          <div className="adm__kpi adm__kpi--duracion">
+            <span className="adm__kpi-value">
+              {resumen.duracionMediaMin >= 60
+                ? `${Math.floor(resumen.duracionMediaMin / 60)}h ${resumen.duracionMediaMin % 60}m`
+                : `${resumen.duracionMediaMin} min`}
+            </span>
+            <span className="adm__kpi-label">Tiempo medio / mesa</span>
+          </div>
+        )}
       </div>
 
       {/* ── Tarjetas secundarias (clickables) ── */}
@@ -133,11 +151,6 @@ export default function AdminDashboard() {
             <span className="adm__card-label">Reservas</span>
           </button>
         )}
-        <div className="adm__card">
-          <span className="adm__card-icon">🧾</span>
-          <span className="adm__card-value">{resumen?.pedidosHoy ?? 0}</span>
-          <span className="adm__card-label">Pedidos</span>
-        </div>
         {esHoy && (
           <button className="adm__card" onClick={() => setModal("stock")}>
             <span className="adm__card-icon">📦</span>
@@ -145,11 +158,6 @@ export default function AdminDashboard() {
             <span className="adm__card-label">Stock bajo</span>
           </button>
         )}
-        <button className="adm__card" onClick={() => setModal("eliminaciones")}>
-          <span className="adm__card-icon">✖</span>
-          <span className="adm__card-value">{elimItems.length}</span>
-          <span className="adm__card-label">Cancelados</span>
-        </button>
       </div>
 
       {/* ── Desglose + Top productos (2 columnas) ── */}

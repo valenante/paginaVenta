@@ -464,11 +464,14 @@ export default function CajaDiariaUltraPro() {
             )}
           </section>
 
-          <DiasPeriodo dias={variaciones} />
+          {/* Días + Heatmap — 50/50 */}
+          <div className="caja-ultra-row">
+            <DiasPeriodo dias={variaciones} />
 
-          {/* Heatmap — ref para captura PDF */}
-          <div ref={heatmapSectionRef}>
-            <HeatmapSemana datos={datos} />
+            {/* Heatmap — ref para captura PDF */}
+            <div ref={heatmapSectionRef}>
+              <HeatmapSemana datos={datos} />
+            </div>
           </div>
         </>
       )}

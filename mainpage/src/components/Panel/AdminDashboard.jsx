@@ -239,106 +239,106 @@ export default function AdminDashboard() {
         </section>
       </div>
 
-      {/* ── Ticket por comensales ── */}
-      {resumen?.ticketPorComensales?.length > 0 && (
-        <section className="adm__section">
-          <h3 className="adm__section-title">Ticket por comensales</h3>
-          <div className="adm__staff">
-            <div className="adm__staff-head">
-              <span>Comensales</span>
-              <span>Mesas</span>
-              <span>Ticket / mesa</span>
-              <span>Ticket / persona</span>
-            </div>
-            {resumen.ticketPorComensales.map((b) => (
-              <div key={b.rango} className="adm__staff-row">
-                <span className="adm__staff-name">{b.rango}</span>
-                <span>{b.mesas}</span>
-                <span className="adm__staff-amt">{fmt(b.ticketMedioMesa)} €</span>
-                <span className="adm__staff-amt">{fmt(b.ticketMedioComensal)} €</span>
+      {/* ── Fila: Ticket por comensales + Camareros ── */}
+      <div className="adm__row adm__row--half">
+        {resumen?.ticketPorComensales?.length > 0 && (
+          <section className="adm__section">
+            <h3 className="adm__section-title">Ticket por comensales</h3>
+            <div className="adm__staff">
+              <div className="adm__staff-head">
+                <span>Comensales</span>
+                <span>Mesas</span>
+                <span>Ticket / mesa</span>
+                <span>Ticket / persona</span>
               </div>
-            ))}
-          </div>
-        </section>
-      )}
-
-      {/* ── Camareros hoy ── */}
-      <section className="adm__section">
-        <h3 className="adm__section-title">Camareros hoy</h3>
-        {staffList.length > 0 ? (
-          <div className="adm__staff">
-            <div className="adm__staff-head">
-              <span>Nombre</span>
-              <span>Pedidos</span>
-              <span>Productos</span>
-              <span>Importe</span>
+              {resumen.ticketPorComensales.map((b) => (
+                <div key={b.rango} className="adm__staff-row">
+                  <span className="adm__staff-name">{b.rango}</span>
+                  <span>{b.mesas}</span>
+                  <span className="adm__staff-amt">{fmt(b.ticketMedioMesa)} €</span>
+                  <span className="adm__staff-amt">{fmt(b.ticketMedioComensal)} €</span>
+                </div>
+              ))}
             </div>
-            {staffList.map((s, i) => (
-              <div key={i} className="adm__staff-row">
-                <span className="adm__staff-name">{s.nombre}</span>
-                <span>{s.totalPedidos}</span>
-                <span>{s.totalProductos}</span>
-                <span className="adm__staff-amt">{fmt(s.totalImporte)} €</span>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <p className="adm__empty">Sin actividad de camareros hoy</p>
+          </section>
         )}
-      </section>
 
-      {/* ── Rotación de mesas ── */}
-      {resumen?.rotacionMesas?.length > 0 && (
         <section className="adm__section">
-          <div className="adm__section-title">
-            <span>Rotación de mesas</span>
-          </div>
-          <div className="adm__staff">
-            <div className="adm__staff-head">
-              <span>Mesa</span>
-              <span>Rotaciones</span>
-              <span>Ingresos</span>
-              <span>Ticket medio</span>
-              <span>Tiempo medio</span>
-            </div>
-            {resumen.rotacionMesas.slice(0, 10).map((m) => (
-              <div key={m.numero} className="adm__staff-row">
-                <span className="adm__staff-name">Mesa {m.numero}</span>
-                <span>{m.rotaciones}</span>
-                <span className="adm__staff-amt">{fmt(m.totalVentas)} €</span>
-                <span>{fmt(m.ticketMedio)} €</span>
-                <span>{m.duracionMediaMin ? `${m.duracionMediaMin} min` : "—"}</span>
+          <h3 className="adm__section-title">Camareros hoy</h3>
+          {staffList.length > 0 ? (
+            <div className="adm__staff">
+              <div className="adm__staff-head">
+                <span>Nombre</span>
+                <span>Pedidos</span>
+                <span>Productos</span>
+                <span>Importe</span>
               </div>
-            ))}
-          </div>
-        </section>
-      )}
-
-      {/* ── Últimas cancelaciones ── */}
-      <section className="adm__section">
-        <h3 className="adm__section-title">
-          Últimas cancelaciones
-          {elimItems.length > 0 && (
-            <button className="adm__section-link" onClick={() => setModal("eliminaciones")}>
-              Ver todas ({elimItems.length})
-            </button>
+              {staffList.map((s, i) => (
+                <div key={i} className="adm__staff-row">
+                  <span className="adm__staff-name">{s.nombre}</span>
+                  <span>{s.totalPedidos}</span>
+                  <span>{s.totalProductos}</span>
+                  <span className="adm__staff-amt">{fmt(s.totalImporte)} €</span>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="adm__empty">Sin actividad de camareros hoy</p>
           )}
-        </h3>
-        {elimItems.length > 0 ? (
-          <div className="adm__elim">
-            {elimItems.slice(0, 5).map((e, i) => (
-              <div key={i} className="adm__elim-row">
-                <span className="adm__elim-name">{e.producto?.nombre || "Producto"}</span>
-                <span className="adm__elim-mesa">Mesa {e.mesa?.numero ?? "--"}</span>
-                <span className="adm__elim-who">{e.nombreUsuario || "--"}</span>
-                <span className="adm__elim-time">{fmtHora(e.fecha)}</span>
+        </section>
+      </div>
+
+      {/* ── Fila: Rotación de mesas + Cancelaciones ── */}
+      <div className="adm__row adm__row--half">
+        {resumen?.rotacionMesas?.length > 0 && (
+          <section className="adm__section">
+            <h3 className="adm__section-title">Rotación de mesas</h3>
+            <div className="adm__staff">
+              <div className="adm__staff-head adm__staff-head--5col">
+                <span>Mesa</span>
+                <span>Rot.</span>
+                <span>Ingresos</span>
+                <span>Ticket</span>
+                <span>Tiempo</span>
               </div>
-            ))}
-          </div>
-        ) : (
-          <p className="adm__empty">Sin cancelaciones hoy</p>
+              {resumen.rotacionMesas.slice(0, 10).map((m) => (
+                <div key={m.numero} className="adm__staff-row adm__staff-row--5col">
+                  <span className="adm__staff-name">Mesa {m.numero}</span>
+                  <span>{m.rotaciones}</span>
+                  <span className="adm__staff-amt">{fmt(m.totalVentas)} €</span>
+                  <span>{fmt(m.ticketMedio)} €</span>
+                  <span>{m.duracionMediaMin ? `${m.duracionMediaMin}m` : "—"}</span>
+                </div>
+              ))}
+            </div>
+          </section>
         )}
-      </section>
+
+        <section className="adm__section">
+          <h3 className="adm__section-title">
+            Últimas cancelaciones
+            {elimItems.length > 0 && (
+              <button className="adm__section-link" onClick={() => setModal("eliminaciones")}>
+                Ver todas ({elimItems.length})
+              </button>
+            )}
+          </h3>
+          {elimItems.length > 0 ? (
+            <div className="adm__elim">
+              {elimItems.slice(0, 5).map((e, i) => (
+                <div key={i} className="adm__elim-row">
+                  <span className="adm__elim-name">{e.producto?.nombre || "Producto"}</span>
+                  <span className="adm__elim-mesa">Mesa {e.mesa?.numero ?? "--"}</span>
+                  <span className="adm__elim-who">{e.nombreUsuario || "--"}</span>
+                  <span className="adm__elim-time">{fmtHora(e.fecha)}</span>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="adm__empty">Sin cancelaciones hoy</p>
+          )}
+        </section>
+      </div>
 
       {/* ── MODALES ── */}
       {modal === "stock" && (

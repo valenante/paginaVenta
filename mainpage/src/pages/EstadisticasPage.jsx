@@ -252,11 +252,6 @@ export default function EstadisticasPage({ type = "plato" }) {
 
             {isPro ? (
               <div className="stats-pro-section">
-                <div className="stats-pro-grid">
-                  <StatsPorMeses data={estadisticasPorMes} />
-                  <StatsPorHora data={estadisticasPorHora} />
-                </div>
-
                 <StatsTopProductos
                   topProductos={topProductos}
                   totalIngresosCategoria={totalIngresosCategoria}
@@ -274,6 +269,15 @@ export default function EstadisticasPage({ type = "plato" }) {
                     {promedioDiaSemana && (
                       <StatsPromedioDiaSemana promedioDiaSemana={promedioDiaSemana} />
                     )}
+                  </div>
+                </div>
+
+                <div className="estadisticas-2col">
+                  <div className="estadisticas-2col__izq">
+                    <StatsPorMeses data={estadisticasPorMes} />
+                  </div>
+                  <div className="estadisticas-2col__der">
+                    <StatsPorHora data={estadisticasPorHora} />
                   </div>
                 </div>
               </div>

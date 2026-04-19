@@ -145,6 +145,12 @@
   grid-template-columns: 1fr 2fr;
   gap: 16px;
 }
+.adm__row--half {
+  grid-template-columns: 1fr 1fr;
+}
+@media (max-width: 900px) {
+  .adm__row, .adm__row--half { grid-template-columns: 1fr; }
+}
 
 /* ── Secciones ── */
 .adm__section {
@@ -260,6 +266,9 @@
 .adm__staff-row:nth-child(odd) { background: rgba(255,255,255,0.03); border-radius: 6px; }
 .adm__staff-name { font-weight: 600; color: var(--dash-text); }
 .adm__staff-amt { text-align: right; font-weight: 600; color: var(--dash-text); }
+.adm__staff-head--5col, .adm__staff-row--5col {
+  grid-template-columns: 1fr 40px 70px 60px 50px;
+}
 
 /* ── Eliminaciones ── */
 .adm__elim { display: flex; flex-direction: column; gap: 2px; }

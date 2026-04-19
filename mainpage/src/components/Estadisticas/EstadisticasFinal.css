@@ -398,9 +398,9 @@
 /* ── Grid 2 columnas: Detalle por producto + Promedios día de semana ── */
 .estadisticas-2col {
   display: grid;
-  grid-template-columns: 4fr 6fr;
+  grid-template-columns: 1fr 1fr;
   gap: 1.4rem;
-  margin-top: 2.4rem;
+  margin-top: 1.4rem;
   align-items: start;
 }
 .estadisticas-2col__izq > .statlist-container,

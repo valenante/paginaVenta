@@ -1,6 +1,6 @@
 // src/components/Estadisticas/StatsMatrizBCG.jsx
 // Matriz BCG (Ingeniería de menú) — scatter plot con 4 cuadrantes
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, useCallback } from "react";
 import {
   ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, ReferenceLine, Cell, Legend,
@@ -36,6 +36,42 @@ function mediana(arr) {
   return sorted.length % 2 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
 }
 
+const BCG_PER_PAGE = 10;
+
+function CuadranteCard({ qKey, q, items }) {
+  const [page, setPage] = useState(1);
+  const sorted = useMemo(() => [...items].sort((a, b) => b.revenue - a.revenue), [items]);
+  const totalPages = Math.ceil(sorted.length / BCG_PER_PAGE);
+  const paginated = sorted.slice((page - 1) * BCG_PER_PAGE, page * BCG_PER_PAGE);
+
+  return (
+    <div className="bcg-cuadrante" style={{ borderTopColor: q.color }}>
+      <h4 className="bcg-cuadrante-title">
+        {q.emoji} {q.label} <span className="bcg-cuadrante-count">({items.length})</span>
+      </h4>
+      <p className="bcg-cuadrante-desc">{q.desc}</p>
+      <ul className="bcg-cuadrante-list">
+        {paginated.map((p, i) => (
+          <li key={p.productoId || p.nombre} className="bcg-cuadrante-item">
+            <span className="bcg-cuadrante-rank">{(page - 1) * BCG_PER_PAGE + i + 1}.</span>
+            <span className="bcg-cuadrante-name">{p.nombre}</span>
+            <span className="bcg-cuadrante-meta">
+              {p.unidades} uds · {p.revenue?.toFixed(0)}€ · {p.margenPct?.toFixed(0)}%
+            </span>
+          </li>
+        ))}
+      </ul>
+      {totalPages > 1 && (
+        <div className="bcg-cuadrante-pag">
+          <button disabled={page <= 1} onClick={() => setPage((p) => p - 1)}>←</button>
+          <span>{page}/{totalPages}</span>
+          <button disabled={page >= totalPages} onClick={() => setPage((p) => p + 1)}>→</button>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function StatsMatrizBCG({ periodo }) {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -49,18 +85,36 @@ export default function StatsMatrizBCG({ periodo }) {
       setLoading(true);
       setError(null);
       try {
-        const params = { pageSize: 500, sortBy: "revenue" };
-        if (periodo?.desde) params.desde = periodo.desde;
-        if (periodo?.hasta) params.hasta = periodo.hasta;
+        const hoy = new Date();
+        const haceUnAno = new Date(hoy);
+        haceUnAno.setFullYear(haceUnAno.getFullYear() - 1);
+        const fmt = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 
-        const res = await api.get("/admin/finanzas/productos-rentabilidad", {
-          params,
-          signal: controller.signal,
-        });
-        if (cancelled) return;
+        const baseParams = {
+          pageSize: 200,
+          sortBy: "revenue",
+          desde: periodo?.desde || fmt(haceUnAno),
+          hasta: periodo?.hasta || fmt(hoy),
+        };
 
-        const items = res.data?.items || res.data || [];
-        setData(Array.isArray(items) ? items.filter((p) => p.unidades > 0) : []);
+        // Paginar hasta traer todos
+        let allItems = [];
+        let page = 1;
+        let hasMore = true;
+        while (hasMore) {
+          const res = await api.get("/admin/finanzas/productos-rentabilidad", {
+            params: { ...baseParams, page },
+            signal: controller.signal,
+          });
+          if (cancelled) return;
+          const items = res.data?.items || res.data || [];
+          const arr = Array.isArray(items) ? items : [];
+          allItems = [...allItems, ...arr];
+          hasMore = arr.length >= 200;
+          page++;
+        }
+
+        setData(allItems.filter((p) => p.unidades > 0));
       } catch (err) {
         if (cancelled || err?.name === "CanceledError") return;
         setError("No se pudieron cargar los datos de rentabilidad.");
@@ -181,30 +235,7 @@ export default function StatsMatrizBCG({ periodo }) {
         {Object.entries(CUADRANTES).map(([key, q]) => {
           const items = resumen[key];
           if (!items.length) return null;
-          return (
-            <div key={key} className="bcg-cuadrante" style={{ borderTopColor: q.color }}>
-              <h4 className="bcg-cuadrante-title">
-                {q.emoji} {q.label} <span className="bcg-cuadrante-count">({items.length})</span>
-              </h4>
-              <p className="bcg-cuadrante-desc">{q.desc}</p>
-              <ul className="bcg-cuadrante-list">
-                {items
-                  .sort((a, b) => b.revenue - a.revenue)
-                  .slice(0, 10)
-                  .map((p) => (
-                    <li key={p.productoId || p.nombre} className="bcg-cuadrante-item">
-                      <span className="bcg-cuadrante-name">{p.nombre}</span>
-                      <span className="bcg-cuadrante-meta">
-                        {p.unidades} uds · {p.revenue?.toFixed(0)}€ · {p.margenPct?.toFixed(0)}%
-                      </span>
-                    </li>
-                  ))}
-                {items.length > 10 && (
-                  <li className="bcg-cuadrante-more">y {items.length - 10} más</li>
-                )}
-              </ul>
-            </div>
-          );
+          return <CuadranteCard key={key} qKey={key} q={q} items={items} />;
         })}
       </div>
     </div>

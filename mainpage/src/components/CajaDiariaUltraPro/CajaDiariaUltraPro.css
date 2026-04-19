@@ -189,9 +189,21 @@
 .caja-ultra-kpi {
   margin-top: 1rem;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 1.2rem;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
 }
+.caja-ultra-kpi > :last-child:nth-child(4n + 1) { grid-column: 1 / -1; }
+@media (max-width: 900px) { .caja-ultra-kpi { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 600px) { .caja-ultra-kpi { grid-template-columns: repeat(2, 1fr); } }
+
+/* Días + Heatmap lado a lado */
+.caja-ultra-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.2rem;
+  margin-top: 1.2rem;
+}
+@media (max-width: 900px) { .caja-ultra-row { grid-template-columns: 1fr; } }
 
 .kpi-card {
   background: rgba(255, 255, 255, 0.05);

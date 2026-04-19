@@ -119,25 +119,70 @@
 
 .bcg-cuadrante-item {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 6px 0;
+  gap: 6px;
+  padding: 5px 0;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  font-size: 0.85rem;
+  font-size: 0.82rem;
 }
 
 .bcg-cuadrante-item:last-child { border-bottom: none; }
 
+.bcg-cuadrante-rank {
+  min-width: 22px;
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.35);
+  font-size: 0.78rem;
+  font-variant-numeric: tabular-nums;
+}
+
 .bcg-cuadrante-name {
   font-weight: 700;
   color: rgba(255, 255, 255, 0.9);
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .bcg-cuadrante-meta {
-  font-size: 0.78rem;
+  font-size: 0.75rem;
   color: rgba(255, 255, 255, 0.5);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* Paginación cuadrante */
+.bcg-cuadrante-pag {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.bcg-cuadrante-pag button {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.82rem;
+  cursor: pointer;
+}
+
+.bcg-cuadrante-pag button:hover:not(:disabled) { background: rgba(255, 255, 255, 0.1); }
+.bcg-cuadrante-pag button:disabled { opacity: 0.3; cursor: not-allowed; }
+
+.bcg-cuadrante-pag span {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.5);
+  font-variant-numeric: tabular-nums;
 }
 
 .bcg-cuadrante-more {

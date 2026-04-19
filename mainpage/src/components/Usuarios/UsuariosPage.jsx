@@ -6,6 +6,7 @@ import { useTenant } from "../../context/TenantContext";
 import { useFeaturesPlan } from "../../context/FeaturesPlanContext";
 
 import UpsellEstadisticasUsuarios from "../Usuarios/UpsellEstadisticasUsuarios";
+import EquipoDashboard from "./EquipoDashboard";
 import UsuarioCreateForm from "./UsuarioCreateForm.jsx";
 import UsuariosTable from "./UsuariosTable.jsx";
 import UsuarioEditModal from "./UsuarioEditModal.jsx";
@@ -215,6 +216,9 @@ export default function UsuariosPage() {
           <UpsellEstadisticasUsuarios />
         </div>
       )}
+
+      {/* Dashboard equipo */}
+      {!isPlanEsencial && <EquipoDashboard />}
 
       {/* Modal crear */}
       {showCreate && (

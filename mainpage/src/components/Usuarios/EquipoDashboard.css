@@ -1,0 +1,154 @@
+/* =========================================================
+   EQUIPO DASHBOARD — Rendimiento camareros
+   ========================================================= */
+
+.equipo-dashboard {
+  margin-top: 2rem;
+  padding: 1.8rem 2rem;
+  background: var(--dash-glass-bg, rgba(255, 255, 255, 0.04));
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--dash-radius-lg, 16px);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 8px 26px rgba(0, 0, 0, 0.28);
+}
+
+.equipo-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 1.4rem;
+}
+
+.equipo-title {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--color-texto, #fff);
+}
+
+.equipo-subtitle {
+  margin: 0.2rem 0 0;
+  font-size: 0.85rem;
+  color: var(--color-texto-suave, rgba(255, 255, 255, 0.6));
+}
+
+.equipo-periodos {
+  display: flex;
+  gap: 4px;
+  padding: 3px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+}
+
+.equipo-periodo-btn {
+  padding: 5px 14px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.equipo-periodo-btn:hover { color: rgba(255, 255, 255, 0.8); }
+
+.equipo-periodo-btn--active {
+  background: var(--color-primario, rgba(255, 255, 255, 0.12));
+  color: #fff;
+}
+
+/* Tabla */
+.equipo-table-wrap {
+  overflow-x: auto;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.equipo-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.equipo-table th {
+  padding: 10px 12px;
+  text-align: left;
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: rgba(255, 255, 255, 0.45);
+  background: rgba(255, 255, 255, 0.03);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  white-space: nowrap;
+}
+
+.equipo-table td {
+  padding: 10px 12px;
+  color: var(--color-texto, rgba(255, 255, 255, 0.85));
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  font-variant-numeric: tabular-nums;
+}
+
+.equipo-table tr:last-child td { border-bottom: none; }
+.equipo-table tr:hover td { background: rgba(255, 255, 255, 0.03); }
+
+.equipo-rank {
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.35);
+  width: 30px;
+}
+
+.equipo-nombre { font-weight: 800; }
+
+.equipo-importe { font-weight: 700; }
+
+.equipo-cancel { color: #ef4444; font-weight: 700; }
+
+.equipo-row--alerta td { background: rgba(239, 68, 68, 0.04); }
+
+/* Badge comparación */
+.equipo-badge {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  margin-left: 4px;
+}
+
+/* Insights */
+.equipo-insights {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.equipo-insight {
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: rgba(59, 130, 246, 0.06);
+  border: 1px solid rgba(59, 130, 246, 0.15);
+  color: rgba(147, 197, 253, 0.95);
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+/* States */
+.equipo-loading, .equipo-empty {
+  padding: 2rem;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.5);
+  font-weight: 700;
+}
+
+@media (max-width: 768px) {
+  .equipo-dashboard { padding: 1.2rem 1rem; }
+  .equipo-header { flex-direction: column; }
+  .equipo-table { font-size: 0.78rem; }
+  .equipo-table th, .equipo-table td { padding: 8px 8px; }
+}

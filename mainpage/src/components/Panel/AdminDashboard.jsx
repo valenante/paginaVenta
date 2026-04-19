@@ -239,6 +239,29 @@ export default function AdminDashboard() {
         </section>
       </div>
 
+      {/* ── Ticket por comensales ── */}
+      {resumen?.ticketPorComensales?.length > 0 && (
+        <section className="adm__section">
+          <h3 className="adm__section-title">Ticket por comensales</h3>
+          <div className="adm__staff">
+            <div className="adm__staff-head">
+              <span>Comensales</span>
+              <span>Mesas</span>
+              <span>Ticket / mesa</span>
+              <span>Ticket / persona</span>
+            </div>
+            {resumen.ticketPorComensales.map((b) => (
+              <div key={b.rango} className="adm__staff-row">
+                <span className="adm__staff-name">{b.rango}</span>
+                <span>{b.mesas}</span>
+                <span className="adm__staff-amt">{fmt(b.ticketMedioMesa)} €</span>
+                <span className="adm__staff-amt">{fmt(b.ticketMedioComensal)} €</span>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
       {/* ── Camareros hoy ── */}
       <section className="adm__section">
         <h3 className="adm__section-title">Camareros hoy</h3>
@@ -263,6 +286,33 @@ export default function AdminDashboard() {
           <p className="adm__empty">Sin actividad de camareros hoy</p>
         )}
       </section>
+
+      {/* ── Rotación de mesas ── */}
+      {resumen?.rotacionMesas?.length > 0 && (
+        <section className="adm__section">
+          <div className="adm__section-title">
+            <span>Rotación de mesas</span>
+          </div>
+          <div className="adm__staff">
+            <div className="adm__staff-head">
+              <span>Mesa</span>
+              <span>Rotaciones</span>
+              <span>Ingresos</span>
+              <span>Ticket medio</span>
+              <span>Tiempo medio</span>
+            </div>
+            {resumen.rotacionMesas.slice(0, 10).map((m) => (
+              <div key={m.numero} className="adm__staff-row">
+                <span className="adm__staff-name">Mesa {m.numero}</span>
+                <span>{m.rotaciones}</span>
+                <span className="adm__staff-amt">{fmt(m.totalVentas)} €</span>
+                <span>{fmt(m.ticketMedio)} €</span>
+                <span>{m.duracionMediaMin ? `${m.duracionMediaMin} min` : "—"}</span>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* ── Últimas cancelaciones ── */}
       <section className="adm__section">

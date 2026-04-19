@@ -142,6 +142,22 @@ export default function CajaDiariaUltraPro() {
     return Math.round(conDuracion.reduce((acc, d) => acc + d.avgDuracionMin, 0) / conDuracion.length);
   }, [datosDiarios]);
 
+  // Proyección de mes
+  const proyeccion = useMemo(() => {
+    if (datosDiarios.length < 2) return null;
+    const now = new Date();
+    const diasEnMes = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+    const diasTranscurridos = datosDiarios.length;
+    const mediadiaria = totalIngresos / diasTranscurridos;
+    const proyectado = mediadiaria * diasEnMes;
+    return {
+      diasTranscurridos,
+      diasEnMes,
+      mediaDiaria: mediadiaria,
+      proyectado,
+    };
+  }, [datosDiarios, totalIngresos]);
+
   // Fix #7: no mostrar mejor/peor si es el mismo día
   const diaMasFuerte = datosDiarios.length
     ? datosDiarios.reduce((a, b) => (a.total > b.total ? a : b))
@@ -436,6 +452,14 @@ export default function CajaDiariaUltraPro() {
                     ? `${Math.floor(duracionMediaMin / 60)}h ${duracionMediaMin % 60}m`
                     : `${duracionMediaMin} min`}
                 </strong>
+              </div>
+            )}
+
+            {proyeccion && (
+              <div className="kpi-card highlight">
+                <span>Proyección mes</span>
+                <strong>{proyeccion.proyectado.toFixed(0)} €</strong>
+                <small>{proyeccion.diasTranscurridos} de {proyeccion.diasEnMes} días · media {proyeccion.mediaDiaria.toFixed(0)} €/día</small>
               </div>
             )}
           </section>

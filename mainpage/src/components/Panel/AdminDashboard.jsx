@@ -2,7 +2,7 @@
 import React, { useState, useMemo } from "react";
 import { useAdminDashboard } from "../../hooks/useAdminDashboard";
 import { ComparativaCard, RatioTipoCard, VentasPorHoraCard } from "./AnalyticsFase2";
-import { CorrelacionCard, AlertasCard, ProyeccionCard } from "./AnalyticsFase3";
+import { CorrelacionCard, AlertasCard } from "./AnalyticsFase3";
 import "./AdminDashboard.css";
 
 const fmt = (v) => Number(v || 0).toFixed(2);
@@ -350,10 +350,7 @@ export default function AdminDashboard() {
       <VentasPorHoraCard fecha={fechaSeleccionada} />
 
       {/* ── ANALYTICS FASE 3 ── */}
-      <div className="adm__analytics-grid">
-        <AlertasCard />
-        <ProyeccionCard />
-      </div>
+      <AlertasCard />
       <CorrelacionCard />
 
       {/* ── MODALES ── */}

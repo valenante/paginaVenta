@@ -63,8 +63,10 @@ export default function DiasPeriodo({ dias }) {
               </button>
             </div>
 
-            {/* Detalle auditoría caja */}
-            <DetalleCajaDia fecha={d.fecha} />
+            {/* Detalle auditoría caja — fuera del grid, full-width */}
+            <div className="dia-detalle-wrap">
+              <DetalleCajaDia fecha={d.fecha} />
+            </div>
           </li>
         ))}
       </ul>

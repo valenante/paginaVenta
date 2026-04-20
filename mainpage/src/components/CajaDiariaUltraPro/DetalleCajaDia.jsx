@@ -75,8 +75,9 @@ export default function DetalleCajaDia({ fecha, autoOpen = false, onClose }) {
                   <span className="dcj__time">{fmtHora(data.caja.fechaApertura)}</span>
                 </div>
                 <div className="dcj__header-item">
-                  <span className="dcj__label">Cerrada</span>
-                  <strong>{data.caja.estado === "cerrada" ? fmtHora(data.caja.fechaCierre) : "Abierta"}</strong>
+                  <span className="dcj__label">Cerrada por</span>
+                  <strong>{data.caja.cierrePorNombre || "—"}</strong>
+                  <span className="dcj__time">{data.caja.estado === "cerrada" ? fmtHora(data.caja.fechaCierre) : "Abierta"}</span>
                 </div>
                 {data.caja.mensajeCierre && (
                   <div className="dcj__header-item dcj__header-item--note">

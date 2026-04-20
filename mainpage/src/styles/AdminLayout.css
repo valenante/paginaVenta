@@ -91,6 +91,30 @@
 
 .admin-sidebar nav a.menu-logout { display: none; }
 
+/* ===== SIDEBAR BADGE (incidents) ===== */
+.sidebar-badge {
+  margin-left: auto;
+  font-size: 11px;
+  font-weight: 700;
+  min-width: 20px;
+  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  padding: 0 6px;
+  line-height: 1;
+}
+.sidebar-badge--danger {
+  background: #ef4444;
+  color: #fff;
+  animation: badge-pulse 2s ease-in-out infinite;
+}
+@keyframes badge-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
 /* ===== LOGOUT BTN (desktop) ===== */
 
 .logout-btn {

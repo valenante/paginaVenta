@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import { Outlet, NavLink, Navigate, useNavigate } from "react-router-dom";
 import { useAuth } from "../../../context/AuthContext.jsx";
 import "../../../styles/AdminLayout.css";
@@ -15,6 +15,7 @@ import {
   FiDownload,
   FiMenu,
   FiX,
+  FiAlertTriangle,
 } from "react-icons/fi";
 import api from "../../../utils/api";
 
@@ -22,7 +23,23 @@ export default function AdminLayout() {
   const { user, isSuperadmin, loading } = useAuth();
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [incidents, setIncidents] = useState(0);
   const sidebarRef = useRef(null);
+
+  // Poll incidents count every 60s for sidebar badge
+  const fetchIncidents = useCallback(async () => {
+    try {
+      const { data } = await api.get("/admin/superadminMonitor/overview");
+      setIncidents(data?.data?.counts?.openTotal || data?.counts?.openTotal || 0);
+    } catch { /* silent */ }
+  }, []);
+
+  useEffect(() => {
+    if (!user || !isSuperadmin) return;
+    fetchIncidents();
+    const iv = setInterval(fetchIncidents, 60_000);
+    return () => clearInterval(iv);
+  }, [user, isSuperadmin, fetchIncidents]);
 
   if (loading) return <div className="admin-loading">Cargando...</div>;
   if (!user || !isSuperadmin) return <Navigate to="/" replace />;
@@ -81,8 +98,9 @@ export default function AdminLayout() {
           <NavLink to="/superadmin/planes" onClick={closeMenu}>
             <FiUsers /> Planes
           </NavLink>
-          <NavLink to="/superadmin/monitor" onClick={closeMenu}>
+          <NavLink to="/superadmin/monitor" onClick={closeMenu} className={({ isActive }) => isActive ? "active" : ""}>
             <FiActivity /> Estado del sistema
+            {incidents > 0 && <span className="sidebar-badge sidebar-badge--danger">{incidents}</span>}
           </NavLink>
           <NavLink to="/superadmin/rollback" onClick={closeMenu}>
             <FiRefreshCcw /> Rollback API

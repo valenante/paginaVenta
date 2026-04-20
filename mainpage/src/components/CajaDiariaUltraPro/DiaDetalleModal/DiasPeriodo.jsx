@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import DiaDetalleModal from "./DiaDetalleModal";
+import DetalleCajaDia from "../DetalleCajaDia";
 import { formatFechaUI } from "../cajaHelpers";
 import "./DiasPeriodo.css";
 
@@ -61,6 +62,9 @@ export default function DiasPeriodo({ dias }) {
                 Ver más
               </button>
             </div>
+
+            {/* Detalle auditoría caja */}
+            <DetalleCajaDia fecha={d.fecha} />
           </li>
         ))}
       </ul>

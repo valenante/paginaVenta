@@ -49,12 +49,30 @@
 .af3-corr-add__input::placeholder { color: rgba(255,255,255,0.2); }
 
 .af3-corr-list { display: flex; flex-direction: column; gap: 3px; }
+.af3-corr-list--loading { text-align: center; padding: 1rem; opacity: 0.4; font-size: 13px; }
 .af3-corr-row {
-  display: grid; grid-template-columns: 1fr 80px 70px 24px;
+  display: grid; grid-template-columns: 32px 1fr 80px 70px 24px;
   align-items: center; gap: 8px;
   padding: 8px 10px; border-radius: 8px;
   background: rgba(255,255,255,0.02); transition: background 0.1s;
 }
+.af3-corr-rank {
+  font-size: 12px; font-weight: 700; color: #a855f7; opacity: 0.6; text-align: center;
+}
+.af3-corr-row:nth-child(1) .af3-corr-rank { color: #fbbf24; opacity: 1; font-size: 14px; }
+.af3-corr-row:nth-child(2) .af3-corr-rank { color: #9ca3af; opacity: 0.9; }
+.af3-corr-row:nth-child(3) .af3-corr-rank { color: #cd7f32; opacity: 0.9; }
+
+/* Paginación correlación */
+.af3-corr-pagination {
+  display: flex; align-items: center; justify-content: center; gap: 0.75rem;
+  margin-top: 0.75rem; font-size: 12px; opacity: 0.6;
+}
+.af3-corr-pagination button {
+  background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+  color: #e5e7eb; padding: 4px 12px; border-radius: 5px; cursor: pointer; font-size: 13px;
+}
+.af3-corr-pagination button:disabled { opacity: 0.25; cursor: not-allowed; }
 .af3-corr-row:hover { background: rgba(255,255,255,0.05); }
 .af3-corr-pair { display: flex; align-items: center; gap: 6px; }
 .af3-corr-name { font-size: 13px; color: #e5e7eb; }

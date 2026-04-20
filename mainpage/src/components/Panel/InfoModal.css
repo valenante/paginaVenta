@@ -1,0 +1,31 @@
+/* InfoModal.css */
+.info-btn {
+  background: none; border: none; cursor: pointer; color: rgba(255,255,255,0.3);
+  padding: 2px; display: inline-flex; align-items: center; transition: color 0.15s;
+}
+.info-btn:hover { color: rgba(255,255,255,0.7); }
+.info-btn svg { width: 16px; height: 16px; }
+
+.info-overlay {
+  position: fixed; inset: 0; z-index: 9999;
+  background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
+  display: flex; align-items: center; justify-content: center;
+}
+.info-modal {
+  width: 480px; max-width: 92vw; max-height: 80vh; overflow-y: auto;
+  background: #1a1a2e; border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 14px; padding: 1.5rem;
+}
+.info-modal__head {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 1rem;
+}
+.info-modal__head h3 { font-size: 1.1rem; color: #fff; margin: 0; }
+.info-modal__close { background: none; border: none; color: #9ca3af; cursor: pointer; font-size: 18px; }
+.info-modal__body { font-size: 14px; color: #cbd5e1; line-height: 1.6; }
+.info-modal__body h4 { color: #fff; font-size: 14px; margin: 1rem 0 0.25rem 0; }
+.info-modal__body p { margin: 0 0 0.5rem 0; }
+.info-modal__body ul { margin: 0.25rem 0 0.5rem 1rem; padding: 0; }
+.info-modal__body li { margin-bottom: 4px; }
+.info-modal__body strong { color: #e5e7eb; }
+.info-modal__body code { background: rgba(255,255,255,0.08); padding: 1px 6px; border-radius: 3px; font-size: 13px; }

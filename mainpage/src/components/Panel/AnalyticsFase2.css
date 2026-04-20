@@ -11,6 +11,7 @@
 .af2-card--loading { opacity: 0.5; text-align: center; padding: 2rem; font-size: 13px; }
 .af2-card__head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem; }
 .af2-card__head h3 { font-size: 1rem; color: #fff; margin: 0; }
+.af2-card__actions { display: flex; align-items: center; gap: 6px; }
 .af2-card__sub { font-size: 12px; opacity: 0.35; }
 
 /* ── 1. Comparativa ───────── */

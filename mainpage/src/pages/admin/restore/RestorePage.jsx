@@ -606,7 +606,7 @@ El sistema está preparado para operación real SaaS.
         <div className="restore-kpis">
           <div className="restore-kpi">
             <span className="kpi-label">Snapshots</span>
-            <span className="kpi-value">  {statusLoading ? "..." : backupStatus?.snapshotsCount ?? "—"}</span>
+            <span className="kpi-value">{statusLoading ? "..." : (backupStatus?.snapshotsCount || snapshots.length || "—")}</span>
           </div>
 
           <div className="restore-kpi">

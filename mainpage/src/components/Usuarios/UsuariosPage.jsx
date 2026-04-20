@@ -17,6 +17,7 @@ import UsuarioPermisosModal from "./UsuarioPermisosModal.jsx";
 import AlertaMensaje from "../AlertaMensaje/AlertaMensaje";
 import ErrorToast from "../common/ErrorToast.jsx";
 
+import UsuariosEliminados from "./UsuariosEliminados";
 import "./UsuariosPage.css";
 
 export default function UsuariosPage() {
@@ -216,6 +217,9 @@ export default function UsuariosPage() {
           <UpsellEstadisticasUsuarios />
         </div>
       )}
+
+      {/* Usuarios eliminados */}
+      <UsuariosEliminados onRestored={cargarUsuarios} />
 
       {/* Dashboard equipo */}
       {!isPlanEsencial && <EquipoDashboard />}

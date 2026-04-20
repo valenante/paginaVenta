@@ -2,7 +2,7 @@
 // Modal portal con detalle de auditoría de caja: quién abrió/cerró, movimientos, arqueo.
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import { FiFileText, FiX } from "react-icons/fi";
+import { FiX } from "react-icons/fi";
 import api from "../../utils/api";
 import "./DetalleCajaDia.css";
 
@@ -24,10 +24,14 @@ const TIPO_LABEL = {
   reversa: "Reversa",
 };
 
-export default function DetalleCajaDia({ fecha }) {
-  const [open, setOpen] = useState(false);
+export default function DetalleCajaDia({ fecha, autoOpen = false, onClose }) {
+  const [open, setOpen] = useState(autoOpen);
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => { if (autoOpen) setOpen(true); }, [autoOpen]);
+
+  const close = () => { setOpen(false); if (onClose) onClose(); };
 
   useEffect(() => {
     if (!open || !fecha) return;
@@ -40,21 +44,20 @@ export default function DetalleCajaDia({ fecha }) {
     return () => { m = false; };
   }, [open, fecha]);
 
-  // ESC cierra
   useEffect(() => {
     if (!open) return;
     document.body.style.overflow = "hidden";
-    const onKey = (e) => { if (e.key === "Escape") setOpen(false); };
+    const onKey = (e) => { if (e.key === "Escape") close(); };
     window.addEventListener("keydown", onKey);
     return () => { document.body.style.overflow = ""; window.removeEventListener("keydown", onKey); };
   }, [open]);
 
   const modal = open ? createPortal(
-    <div className="dcj-overlay" onClick={() => setOpen(false)}>
+    <div className="dcj-overlay" onClick={close}>
       <div className="dcj-modal" onClick={e => e.stopPropagation()}>
         <div className="dcj-modal__head">
           <h2>Detalle de caja — {fecha}</h2>
-          <button className="dcj-modal__close" onClick={() => setOpen(false)}><FiX /></button>
+          <button className="dcj-modal__close" onClick={close}><FiX /></button>
         </div>
 
         <div className="dcj-modal__body">
@@ -148,12 +151,6 @@ export default function DetalleCajaDia({ fecha }) {
     document.body
   ) : null;
 
-  return (
-    <>
-      <button className="dcj__trigger" onClick={() => setOpen(true)} type="button" title="Ver detalle de caja">
-        <FiFileText />
-      </button>
-      {modal}
-    </>
-  );
+  if (!autoOpen && !open) return null;
+  return modal;
 }

@@ -68,27 +68,6 @@ const HeatmapSemana = ({ datos = [] }) => {
     };
   }, [mapa]);
 
-  // Insights para desktop
-  const insights = useMemo(() => {
-    const allCells = [];
-    Object.entries(mapa).forEach(([dia, horasDia]) => {
-      Object.entries(horasDia).forEach(([hora, total]) => {
-        allCells.push({ dia: Number(dia), hora: Number(hora), total });
-      });
-    });
-    allCells.sort((a, b) => b.total - a.total);
-
-    // Total por día
-    const porDia = {};
-    allCells.forEach(c => { porDia[c.dia] = (porDia[c.dia] || 0) + c.total; });
-    const mejorDia = Object.entries(porDia).sort((a, b) => b[1] - a[1])[0];
-
-    const top3 = allCells.slice(0, 3);
-    const totalGeneral = allCells.reduce((s, c) => s + c.total, 0);
-
-    return { top3, mejorDia, totalGeneral };
-  }, [mapa]);
-
   const renderGrid = useCallback(
     (extraClass = "") => (
       <div className={`heatmap-grid ${extraClass}`}>
@@ -110,25 +89,20 @@ const HeatmapSemana = ({ datos = [] }) => {
             {diasSemana.map((_, diaIndex) => {
               const valor = mapa[diaIndex]?.[hora] || 0;
               const intensidad = maxValor > 0 ? valor / maxValor : 0;
-              const showValue = intensidad > 0.15 && valor > 0;
 
               return (
                 <div
                   key={`${diaIndex}-${hora}`}
-                  className={`heatmap-cell ${intensidad > 0.7 ? "heatmap-cell--hot" : ""}`}
+                  className="heatmap-cell"
                   style={{
-                    backgroundColor: intensidad > 0.6
-                      ? `rgba(255, 103, 0, ${0.3 + intensidad * 0.5})`
-                      : `rgba(106, 13, 173, ${0.08 + intensidad * 0.9})`,
+                    backgroundColor: `rgba(106, 13, 173, ${0.08 + intensidad * 0.9})`,
                     boxShadow:
                       intensidad > 0.8
                         ? "0 0 8px rgba(255, 103, 0, 0.4)"
                         : "none",
                   }}
                   title={`${diasSemana[diaIndex]} ${hora}:00 — ${valor.toFixed(2)} €`}
-                >
-                  {showValue && <span className="heatmap-cell-value">{Math.round(valor)}</span>}
-                </div>
+                />
               );
             })}
           </React.Fragment>
@@ -195,36 +169,7 @@ const HeatmapSemana = ({ datos = [] }) => {
         /* ===============================
            🖥️ DESKTOP — GRID COMPLETO
          =============================== */
-        <>
-          {renderGrid("")}
-          {insights.top3.length > 0 && (
-            <div className="heatmap-insights">
-              <div className="heatmap-insights__item">
-                <span className="heatmap-insights__icon">🔥</span>
-                <div>
-                  <strong>Hora punta</strong>
-                  <span>{diasSemana[insights.top3[0].dia]} {insights.top3[0].hora}:00 — {insights.top3[0].total.toFixed(0)}€</span>
-                </div>
-              </div>
-              {insights.mejorDia && (
-                <div className="heatmap-insights__item">
-                  <span className="heatmap-insights__icon">📅</span>
-                  <div>
-                    <strong>Mejor día</strong>
-                    <span>{diasSemana[Number(insights.mejorDia[0])]} — {Number(insights.mejorDia[1]).toFixed(0)}€</span>
-                  </div>
-                </div>
-              )}
-              <div className="heatmap-insights__item">
-                <span className="heatmap-insights__icon">📊</span>
-                <div>
-                  <strong>Top 3 franjas</strong>
-                  <span>{insights.top3.map(h => `${diasSemana[h.dia]} ${h.hora}h`).join(" · ")}</span>
-                </div>
-              </div>
-            </div>
-          )}
-        </>
+        renderGrid("")
       )}
     </section>
   );

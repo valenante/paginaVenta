@@ -92,43 +92,10 @@
     0 0 4px rgba(106, 13, 173, 0.8);
 }
 
-/* ===== VALORES DENTRO DE CELDAS ===== */
-.heatmap-cell-value {
-  font-size: 9px;
-  font-weight: 700;
-  color: rgba(255,255,255,0.9);
-  text-align: center;
-  line-height: 22px;
-  display: block;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
-}
-.heatmap-cell--hot .heatmap-cell-value { color: #fff; }
-
 /* ===== TOOLTIP NATIVO ===== */
 .heatmap-cell[title] {
   pointer-events: auto;
 }
-
-/* ===== INSIGHTS ===== */
-.heatmap-insights {
-  display: flex;
-  gap: 1.5rem;
-  margin-top: 1.25rem;
-  padding-top: 1rem;
-  border-top: 1px solid rgba(255,255,255,0.06);
-  flex-wrap: wrap;
-}
-.heatmap-insights__item {
-  display: flex;
-  align-items: flex-start;
-  gap: 8px;
-  flex: 1;
-  min-width: 180px;
-}
-.heatmap-insights__icon { font-size: 1.2rem; }
-.heatmap-insights__item div { display: flex; flex-direction: column; gap: 2px; }
-.heatmap-insights__item strong { font-size: 12px; color: #fff; opacity: 0.8; }
-.heatmap-insights__item span { font-size: 13px; opacity: 0.55; }
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 700px) {

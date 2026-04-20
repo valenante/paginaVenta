@@ -52,7 +52,10 @@ export default function TenantDetailPage() {
 
   const impersonate = async () => {
     try {
-      await api.post(`/admin/superadmin/impersonar/${slug}`, { reasonCategory: "soporte" });
+      await api.post(`/admin/superadmin/impersonar/${slug}`, {
+        reasonCategory: "soporte",
+        reasonText: `Acceso superadmin al tenant ${slug} desde panel AlefAdmin`,
+      });
       window.open(`https://${slug}-tpv.softalef.com`, "_blank");
     } catch (e) {
       alert(`Error: ${e?.response?.data?.message || e.message}`);

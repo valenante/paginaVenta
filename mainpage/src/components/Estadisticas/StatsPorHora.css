@@ -11,6 +11,9 @@
   border: 1px solid rgba(255, 255, 255, 0.12);
   box-shadow: var(--dash-shadow);
   animation: dashFadeIn 0.3s ease;
+  overflow: hidden;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 /* ===== HEADER ===== */
@@ -103,6 +106,10 @@
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
-  .statshora-row { grid-template-columns: 50px 1fr auto; gap: 0.6rem; }
-  .statshora-container { padding: 1.2rem 1.3rem; }
+  .statshora-container { padding: 1rem; max-width: 100%; overflow: hidden; box-sizing: border-box; }
+  .statshora-row { grid-template-columns: 42px 1fr auto; gap: 0.4rem; }
+  .statshora-hour { font-size: 0.78rem; }
+  .statshora-money { font-size: 0.78rem; }
+  .statshora-units { font-size: 0.7rem; }
+  .statshora-list { gap: 0.6rem; }
 }

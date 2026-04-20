@@ -1,6 +1,6 @@
 /* AdminDashboard.css */
 
-.adm { display: flex; flex-direction: column; gap: 20px; padding: 0 4px; }
+.adm { display: flex; flex-direction: column; gap: 20px; padding: 0 4px; overflow-x: hidden; max-width: 100%; box-sizing: border-box; }
 
 /* ── Header con selector de fecha ── */
 .adm__header {

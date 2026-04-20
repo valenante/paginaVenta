@@ -130,9 +130,10 @@
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
-  .stats-promedio-dia { padding: 1.4rem 1.5rem; }
-  .stats-promedio-dia__table { font-size: 0.82rem; }
-  .stats-promedio-dia__td, .stats-promedio-dia__th { padding: 0.7rem 0.5rem; }
-  .stats-promedio-dia__th--prod, .stats-promedio-dia__td--prod { padding-left: 0.9rem; min-width: 120px; }
-  .stats-promedio-dia__th--total, .stats-promedio-dia__td--total { padding-right: 0.9rem; }
+  .stats-promedio-dia { padding: 1rem; max-width: 100%; overflow: hidden; box-sizing: border-box; }
+  .stats-promedio-dia__wrap { max-width: 100%; }
+  .stats-promedio-dia__table { font-size: 0.75rem; }
+  .stats-promedio-dia__td, .stats-promedio-dia__th { padding: 0.5rem 0.35rem; }
+  .stats-promedio-dia__th--prod, .stats-promedio-dia__td--prod { padding-left: 0.5rem; min-width: 90px; }
+  .stats-promedio-dia__th--total, .stats-promedio-dia__td--total { padding-right: 0.5rem; }
 }

@@ -139,10 +139,15 @@
 
   .dias-periodo-list {
     max-height: 220px;
+    overflow-x: hidden;
   }
 
   .dia-item {
-    grid-template-columns: 1fr auto;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
   }
 
   /* Ocultamos desktop */
@@ -153,5 +158,10 @@
   /* Mostramos mobile */
   .dia-mobile {
     display: block;
+  }
+
+  .caja-ultra-lista {
+    overflow-x: hidden;
+    max-width: 100%;
   }
 }

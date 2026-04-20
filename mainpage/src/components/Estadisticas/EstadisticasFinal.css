@@ -8,11 +8,19 @@
   min-height: 100vh;
   padding: 2.5rem 1.5rem 4rem;
   background: radial-gradient(circle at top right, #1a1a2f 0, #0c0c17 85%);
+  overflow-x: hidden;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
   color: var(--dash-text);
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
   animation: dashFadeIn 0.3s ease;
+}
+.estadisticas-page > * {
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 /* ===== BARRA DE FILTROS ===== */
@@ -230,6 +238,8 @@
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .stats-pro-grid {
@@ -402,6 +412,12 @@
   gap: 1.4rem;
   margin-top: 1.4rem;
   align-items: start;
+  overflow: hidden;
+}
+.estadisticas-2col__izq,
+.estadisticas-2col__der {
+  min-width: 0;
+  overflow: hidden;
 }
 .estadisticas-2col__izq > .statlist-container,
 .estadisticas-2col__der > .stats-promedio-dia {

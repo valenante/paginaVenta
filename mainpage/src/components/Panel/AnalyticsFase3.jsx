@@ -131,7 +131,7 @@ export function CorrelacionCard() {
               const maxConf = Math.max(c.confianzaAB, c.confianzaBA);
               const barW = Math.max(8, Math.min(100, maxConf));
               return (
-                <div key={c.rank} className="af3-corr-row">
+                <div key={c.rank} className="af3-corr-row" data-stats={`${c.vecesJuntos}× · ${maxConf}%`}>
                   <span className="af3-corr-rank">#{c.rank}</span>
                   <div className="af3-corr-pair">
                     <span className="af3-corr-name af3-corr-name--click" onClick={() => setSelectedProd(selectedProd === c.productoA ? "" : c.productoA)}>{c.productoA}</span>

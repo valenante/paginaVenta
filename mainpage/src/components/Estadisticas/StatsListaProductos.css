@@ -1,9 +1,7 @@
 /* =========================================================
-   LISTA DE PRODUCTOS — Específico
-   Base: dashboard-common.css
+   LISTA DE PRODUCTOS — Mismo patrón que StatsTopProductos
    ========================================================= */
 
-/* ===== CONTENEDOR ===== */
 .statlist-container {
   margin-top: 2.4rem;
   padding: 1.8rem 2rem;
@@ -14,153 +12,78 @@
   -webkit-backdrop-filter: blur(12px);
   box-shadow: 0 8px 26px rgba(0, 0, 0, 0.28);
   animation: dashFadeIn 0.35s ease;
+  overflow: hidden;
 }
 
-/* ===== HEADER ===== */
 .statlist-header { margin-bottom: 1.4rem; }
+.statlist-title { font-size: 1.3rem; font-weight: 700; margin: 0; color: #fff; }
+.statlist-subtitle { margin: 0.2rem 0 0; font-size: 0.92rem; opacity: 0.75; color: #dfe3ea; }
 
-.statlist-title {
-  font-size: 1.3rem;
-  font-weight: 700;
-  margin: 0;
-  color: #ffffff;
-}
+.statlist-list { list-style: none; margin: 0; padding: 0; }
 
-.statlist-subtitle {
-  margin: 0.2rem 0 0;
-  font-size: 0.92rem;
-  opacity: 0.75;
-  color: #dfe3ea;
-}
-
-/* ===== LISTA ===== */
-.statlist-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  gap: 0.6rem;
-}
-
-/* ===== ITEM ===== */
+/* Item — misma estructura que toppro-item */
 .statlist-item {
-  padding: 0.7rem 1rem;
-  background: rgba(255, 255, 255, 0.045);
-  border-radius: 10px;
-  border: 1px solid var(--dash-glass-border);
-  transition: all 0.2s ease;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+.statlist-item:last-child { border-bottom: none; }
+
+.statlist-item-header {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  gap: 1rem;
+  align-items: center;
+  margin-bottom: 0.2rem;
 }
 
-.statlist-item:hover {
-  transform: translateY(-1px);
-  background: var(--dash-glass-bg-hover);
-}
+.statlist-item-name { font-size: 0.9rem; font-weight: 600; color: #fff; }
 
-/* ===== NOMBRE ===== */
-.statlist-item-header { margin-bottom: 0; }
-
-.statlist-item-name {
-  font-size: 0.88rem;
-  font-weight: 700;
-  color: #ffffff;
-}
-
-/* ===== FILA DE ESTADISTICAS ===== */
 .statlist-stats-row {
   display: flex;
   gap: 1.2rem;
-  flex-wrap: nowrap;
-  flex-shrink: 0;
-}
-
-.statlist-stat {
-  display: flex;
-  flex-direction: column;
-  gap: 0.1rem;
-  text-align: right;
-}
-
-.statlist-label {
-  font-size: 0.65rem;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
+  font-size: 0.85rem;
+  opacity: 0.8;
   color: var(--dash-text-soft);
-  opacity: 0.7;
 }
 
-.statlist-value {
-  font-size: 0.9rem;
-  font-weight: 700;
-  color: #ffffff;
-}
-
+.statlist-stat { display: flex; flex-direction: column; gap: 0.1rem; }
+.statlist-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--dash-text-soft); opacity: 0.7; }
+.statlist-value { font-size: 0.85rem; font-weight: 700; color: #fff; }
 .statlist-money { color: #6bdcff; }
 
-/* ===== EMPTY STATE ===== */
-.statlist-empty {
-  text-align: center;
-  padding: 1.5rem 0;
-  font-size: 1rem;
-  color: #dce3ed;
-  opacity: 0.85;
-}
-
-/* ===== RESPONSIVE ===== */
-@media (max-width: 768px) {
-  .statlist-container { padding: 1.4rem 1.5rem; }
-  .statlist-item { padding: 1rem 1.2rem; }
-  .statlist-stats-row { flex-direction: column; gap: 0.8rem; }
-}
-
-/* Desglose base + adicionales */
 .statlist-desglose {
   display: block;
   font-size: 0.72rem;
-  color: rgba(229, 231, 235, 0.6);
+  color: rgba(229, 231, 235, 0.55);
   font-weight: 400;
-  margin-top: 2px;
   font-style: italic;
 }
 
-/* Paginación (compartida con StatsPromedioDiaSemana) */
-.statlist-pagination {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 14px;
-  margin-top: 16px;
-  padding-top: 12px;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+.statlist-empty { text-align: center; padding: 1.5rem 0; font-size: 1rem; color: #dce3ed; opacity: 0.85; }
+
+/* Responsive — misma lógica que toppro */
+@media (max-width: 768px) {
+  .statlist-container { padding: 1.4rem 1.5rem; }
+  .statlist-item-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.2rem;
+  }
 }
 
+/* Paginación */
+.statlist-pagination {
+  display: flex; align-items: center; justify-content: center;
+  gap: 14px; margin-top: 16px; padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
 .statlist-pagination__btn {
-  padding: 6px 14px;
-  border-radius: 10px;
+  padding: 6px 14px; border-radius: 10px;
   border: 1px solid rgba(255, 255, 255, 0.12);
   background: rgba(255, 255, 255, 0.06);
   color: rgba(255, 255, 255, 0.8);
-  font-size: 0.82rem;
-  font-weight: 700;
-  cursor: pointer;
+  font-size: 0.82rem; font-weight: 700; cursor: pointer;
   transition: background 0.15s;
 }
-
-.statlist-pagination__btn:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.12);
-}
-
-.statlist-pagination__btn:disabled {
-  opacity: 0.35;
-  cursor: not-allowed;
-}
-
-.statlist-pagination__info {
-  font-size: 0.85rem;
-  font-weight: 800;
-  color: rgba(255, 255, 255, 0.6);
-  font-variant-numeric: tabular-nums;
-}
+.statlist-pagination__btn:hover:not(:disabled) { background: rgba(255, 255, 255, 0.12); }
+.statlist-pagination__btn:disabled { opacity: 0.35; cursor: not-allowed; }
+.statlist-pagination__info { font-size: 0.85rem; font-weight: 800; color: rgba(255, 255, 255, 0.6); font-variant-numeric: tabular-nums; }

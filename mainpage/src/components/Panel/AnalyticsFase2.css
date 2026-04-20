@@ -6,8 +6,11 @@
   border: 1px solid rgba(255,255,255,0.06);
   border-radius: 12px;
   padding: 1.25rem;
+  overflow: hidden;
+  max-width: 100%;
+  box-sizing: border-box;
 }
-.af2-card--wide { grid-column: 1 / -1; }
+.af2-card--wide { grid-column: 1 / -1; overflow-x: auto; }
 .af2-card--loading { opacity: 0.5; text-align: center; padding: 2rem; font-size: 13px; }
 .af2-card__head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem; }
 .af2-card__head h3 { font-size: 1rem; color: #fff; margin: 0; }
@@ -89,3 +92,13 @@
 }
 .af2-hour-value { font-size: 12px; font-weight: 600; color: #fff; text-align: right; }
 .af2-hour-mesas { font-size: 11px; opacity: 0.3; }
+
+@media (max-width: 480px) {
+  .af2-hour-row { grid-template-columns: 40px 1fr 55px; gap: 4px; }
+  .af2-hour-mesas { display: none; }
+  .af2-hour-value { font-size: 11px; }
+  .af2-hour-label { font-size: 10px; }
+  .af2-comparativa-grid { grid-template-columns: repeat(2, 1fr); gap: 0.5rem; }
+  .af2-kpi__value { font-size: 0.95rem; }
+  .af2-ratio-details { flex-direction: column; gap: 0.25rem; }
+}

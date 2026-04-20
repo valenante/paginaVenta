@@ -115,6 +115,32 @@
 .qa-btn--emergency:hover { background: rgba(239,68,68,0.2); }
 .qa-emergency-results { display: flex; gap: 1rem; margin-top: 4px; min-height: 18px; }
 
+/* ===== TENANT HEALTH CARDS ===== */
+.th-cards {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;
+}
+@media (max-width: 768px) { .th-cards { grid-template-columns: 1fr; } }
+.th-card {
+  background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 12px; padding: 1.25rem;
+}
+.th-card--warn { border-color: rgba(251,191,36,0.25); }
+.th-card h4 {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 14px; margin: 0 0 0.75rem 0; color: #fff; opacity: 0.8;
+}
+.th-list { display: flex; flex-direction: column; gap: 2px; }
+.th-row {
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 8px; border-radius: 6px; cursor: pointer;
+  font-size: 13px; transition: background 0.1s;
+}
+.th-row:hover { background: rgba(255,255,255,0.06); }
+.th-name { flex: 1; color: #e5e7eb; font-weight: 500; }
+.th-plan { font-size: 11px; opacity: 0.35; }
+.th-mrr { font-weight: 700; color: #4ade80; min-width: 55px; text-align: right; }
+.th-days { font-weight: 700; color: #fbbf24; min-width: 40px; text-align: right; }
+
 .admin-dashboard > * {
   max-width: 1240px;
   width: 100%;

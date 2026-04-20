@@ -18,6 +18,7 @@ import {
   FiAlertTriangle,
 } from "react-icons/fi";
 import api from "../../../utils/api";
+import CommandPalette from "./components/CommandPalette";
 
 export default function AdminLayout() {
   const { user, isSuperadmin, loading } = useAuth();
@@ -149,6 +150,9 @@ export default function AdminLayout() {
           <FiLogOut /> Cerrar sesión
         </button>
       </aside>
+
+      {/* Command Palette (CMD+K) */}
+      <CommandPalette />
 
       {/* Content */}
       <main className="admin-content">

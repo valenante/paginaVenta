@@ -8,6 +8,7 @@ import TenantTable from "./components/TenantTable";
 import ChartsSection from "./components/ChartsSection";
 import ChurnSection from "./components/ChurnSection";
 import QuickActions from "./components/QuickActions";
+import TenantHealthCards from "./components/TenantHealthCards";
 import api from "../../../utils/api";
 
 function HeroMetrics({ billingData, incidents, deploy }) {
@@ -108,6 +109,7 @@ export default function AdminDashboard() {
       )}
 
       <StatsCards tenants={filtered} />
+      <TenantHealthCards tenants={filtered} />
       <QuickActions />
       <ChurnSection />
       <ChartsSection tenants={filtered} billingData={billingData} />

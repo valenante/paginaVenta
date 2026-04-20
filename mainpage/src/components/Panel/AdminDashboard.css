@@ -384,3 +384,14 @@
   .adm__elim-row { grid-template-columns: 1fr 60px 60px; }
   .adm__elim-who { display: none; }
 }
+
+/* ── Analytics Fase 2 grid ── */
+.adm__analytics-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+@media (max-width: 768px) {
+  .adm__analytics-grid { grid-template-columns: 1fr; }
+}

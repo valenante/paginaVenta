@@ -26,11 +26,13 @@ export default function AdminLayout() {
   const [incidents, setIncidents] = useState(0);
   const sidebarRef = useRef(null);
 
-  // Poll incidents count every 60s for sidebar badge
+  // Poll incidents count every 60s for sidebar badge + tab title
   const fetchIncidents = useCallback(async () => {
     try {
       const { data } = await api.get("/admin/superadminMonitor/overview");
-      setIncidents(data?.data?.counts?.openTotal || data?.counts?.openTotal || 0);
+      const count = data?.data?.counts?.openTotal || data?.counts?.openTotal || 0;
+      setIncidents(count);
+      document.title = count > 0 ? `(${count}) AlefAdmin` : "AlefAdmin";
     } catch { /* silent */ }
   }, []);
 

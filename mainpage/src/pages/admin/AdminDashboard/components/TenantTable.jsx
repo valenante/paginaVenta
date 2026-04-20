@@ -1,5 +1,6 @@
 // src/pages/admin/AdminDashboard/components/TenantTable.jsx
 import { useMemo, useRef, useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   FiTrash2, FiEye, FiEdit2, FiLogIn, FiCoffee, FiShoppingBag,
   FiMoreVertical, FiChevronLeft, FiChevronRight,
@@ -116,6 +117,7 @@ function ActionsDropdown({ children }) {
 /* ── Main Component ──────────────────────────────────── */
 
 export default function TenantTable({ tenants, onRefresh, loading, page, setPage, totalPages, total }) {
+  const navigate = useNavigate();
   const [selected, setSelected] = useState(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [loadingImpersonar, setLoadingImpersonar] = useState(false);
@@ -316,7 +318,7 @@ export default function TenantTable({ tenants, onRefresh, loading, page, setPage
               const slug = t.slug || t.tenantId;
               return (
                 <tr className="tenant-table__row" key={t._id}>
-                  <td>
+                  <td className="tenant-table__cell--name" onClick={() => navigate(`/superadmin/tenants/${slug}`)} style={{ cursor: "pointer" }}>
                     <span className="tenant-table__nameText">{t.nombre}</span>
                     <span className="tenant-table__slug">{slug}</span>
                   </td>

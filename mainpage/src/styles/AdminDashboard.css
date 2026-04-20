@@ -95,6 +95,26 @@
 .qa-result--ok { color: #4ade80; }
 .qa-result--err { color: #f87171; }
 
+.quick-actions__subtitle {
+  font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em;
+  opacity: 0.4; margin: 1.25rem 0 0.75rem 0; font-weight: 600;
+}
+.qa-emergency-row {
+  display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;
+}
+.qa-input {
+  background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12);
+  color: #e5e7eb; padding: 8px 12px; border-radius: 6px; font-size: 13px;
+  min-width: 200px; flex: 1;
+}
+.qa-input::placeholder { color: rgba(255,255,255,0.25); }
+.qa-btn--emergency {
+  background: rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.25);
+  color: #f87171; flex-direction: row; padding: 8px 14px;
+}
+.qa-btn--emergency:hover { background: rgba(239,68,68,0.2); }
+.qa-emergency-results { display: flex; gap: 1rem; margin-top: 4px; min-height: 18px; }
+
 .admin-dashboard > * {
   max-width: 1240px;
   width: 100%;

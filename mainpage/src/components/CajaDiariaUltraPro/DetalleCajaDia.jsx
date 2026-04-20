@@ -1,7 +1,8 @@
 // src/components/CajaDiariaUltraPro/DetalleCajaDia.jsx
-// Panel expandible con detalle de auditoría de una caja: quién abrió/cerró, movimientos, arqueo.
+// Modal portal con detalle de auditoría de caja: quién abrió/cerró, movimientos, arqueo.
 import { useEffect, useState } from "react";
-import { FiChevronDown, FiChevronUp } from "react-icons/fi";
+import { createPortal } from "react-dom";
+import { FiFileText, FiX } from "react-icons/fi";
 import api from "../../utils/api";
 import "./DetalleCajaDia.css";
 
@@ -39,15 +40,24 @@ export default function DetalleCajaDia({ fecha }) {
     return () => { m = false; };
   }, [open, fecha]);
 
-  return (
-    <div className="dcj">
-      <button className="dcj__toggle" onClick={() => setOpen(v => !v)} type="button">
-        {open ? <FiChevronUp /> : <FiChevronDown />}
-        <span>{open ? "Ocultar detalle" : "Ver detalle caja"}</span>
-      </button>
+  // ESC cierra
+  useEffect(() => {
+    if (!open) return;
+    document.body.style.overflow = "hidden";
+    const onKey = (e) => { if (e.key === "Escape") setOpen(false); };
+    window.addEventListener("keydown", onKey);
+    return () => { document.body.style.overflow = ""; window.removeEventListener("keydown", onKey); };
+  }, [open]);
 
-      {open && (
-        <div className="dcj__body">
+  const modal = open ? createPortal(
+    <div className="dcj-overlay" onClick={() => setOpen(false)}>
+      <div className="dcj-modal" onClick={e => e.stopPropagation()}>
+        <div className="dcj-modal__head">
+          <h2>Detalle de caja — {fecha}</h2>
+          <button className="dcj-modal__close" onClick={() => setOpen(false)}><FiX /></button>
+        </div>
+
+        <div className="dcj-modal__body">
           {loading ? (
             <p className="dcj__loading">Cargando...</p>
           ) : !data?.found ? (
@@ -133,7 +143,17 @@ export default function DetalleCajaDia({ fecha }) {
             </>
           )}
         </div>
-      )}
-    </div>
+      </div>
+    </div>,
+    document.body
+  ) : null;
+
+  return (
+    <>
+      <button className="dcj__trigger" onClick={() => setOpen(true)} type="button" title="Ver detalle de caja">
+        <FiFileText />
+      </button>
+      {modal}
+    </>
   );
 }

@@ -68,8 +68,12 @@ export default function AdminDashboard() {
   const emExec = async (key, fn) => {
     setEmLoading(p => ({ ...p, [key]: true }));
     setEmResult(p => ({ ...p, [key]: null }));
-    try { setEmResult(p => ({ ...p, [key]: { ok: true, msg: await fn() } })); }
-    catch (e) { setEmResult(p => ({ ...p, [key]: { ok: false, msg: e?.response?.data?.message || e.message } })); }
+    try {
+      const msg = await fn();
+      setEmResult(p => ({ ...p, [key]: { ok: true, msg } }));
+    } catch (e) {
+      setEmResult(p => ({ ...p, [key]: { ok: false, msg: e?.response?.data?.message || e.message } }));
+    }
     setEmLoading(p => ({ ...p, [key]: false }));
   };
 

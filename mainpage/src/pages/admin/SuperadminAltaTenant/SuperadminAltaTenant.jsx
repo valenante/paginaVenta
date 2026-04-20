@@ -1,374 +1,238 @@
+// src/pages/admin/SuperadminAltaTenant/SuperadminAltaTenant.jsx
+// Alta rápida de tenant desde panel superadmin — flujo simplificado y coherente
 import { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { FiArrowLeft, FiArrowRight, FiCheck, FiLoader } from "react-icons/fi";
 import api from "../../../utils/api";
+import "./SuperadminAlta.css";
 
-// ✅ reusa los pasos del registro real
-import Paso1DatosRestaurante from "../../../components/Registro/Paso1DatosRestaurante.jsx";
-import Paso2ConfiguracionBasica from "../../../components/Registro/Paso2ConfiguracionBasica.jsx";
-import Paso3ServiciosExtras from "../../../components/Registro/Paso3ServiciosExtras.jsx";
-import PanelPrecio from "../../../components/Registro/PanelPrecio.jsx";
-
-// ✅ paso 4 admin (nuevo)
-import Paso4Provision from "./Paso4Provision.jsx";
-
-import "../../../styles/Registro.css";
-
-function calcPrecio(precioBasePlan, servicios) {
-  const mensual =
-    (Number(precioBasePlan) || 0) +
-    (servicios.vozCocina ? 10 : 0) +
-    (servicios.vozComandas ? 10 : 0);
-
-  const PRECIO_TPV_NUEVO = 550;
-  const PRECIO_INSTALACION_TPV_PROPIO = 120;
-
-  const PRECIO_TABLET = 180;
-  const PRECIO_PANTALLA_PRO = 450;
-
-  const PRECIO_IMPRESORA = 150;
-  const PRECIO_PDA = 180;
-
-  const PRECIO_FORMACION = 120;
-  const PRECIO_FOTOGRAFIA = 120;
-  const PRECIO_CARGA_PRODUCTOS = 80;
-  const PRECIO_MESAS_QR = 80;
-
-  const unico =
-    (servicios.tpvOpcion === "nuevo"
-      ? (Number(servicios.tpvNuevo) || 0) * PRECIO_TPV_NUEVO
-      : servicios.instalacionTpvPropio
-        ? PRECIO_INSTALACION_TPV_PROPIO
-        : 0) +
-    (Number(servicios.pantallas) || 0) *
-      (servicios.pantallaTipo === "pro" ? PRECIO_PANTALLA_PRO : PRECIO_TABLET) +
-    (Number(servicios.impresoras) || 0) * PRECIO_IMPRESORA +
-    (Number(servicios.pda) || 0) * PRECIO_PDA +
-    (servicios.cargaProductos ? PRECIO_CARGA_PRODUCTOS : 0) +
-    (servicios.mesasQr ? PRECIO_MESAS_QR : 0) +
-    (servicios.formacion ? PRECIO_FORMACION : 0) +
-    (servicios.fotografia ? PRECIO_FOTOGRAFIA : 0);
-
-  return {
-    mensual,
-    unico,
-    totalPrimerMes: mensual + unico,
-  };
-}
+/* ── Precios actualizados (coherentes con pricing v3.2) ── */
+const PLAN_SETUP = {
+  "alef-shop": 199,
+  "tpv-esencial": 349,
+  "tpv-premium": 549,
+};
 
 export default function SuperadminAltaTenant() {
+  const navigate = useNavigate();
   const [paso, setPaso] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [successMsg, setSuccessMsg] = useState("");
+  const [success, setSuccess] = useState("");
 
-  // mensual | anual
-  const [periodo, setPeriodo] = useState("mensual");
-
-  // planes
+  // Planes desde API
   const [planes, setPlanes] = useState([]);
-  const [planSeleccionado, setPlanSeleccionado] = useState(null);
-  const [precioBasePlan, setPrecioBasePlan] = useState(0);
-
-  // estados: iguales al registro real
-  const [tenant, setTenant] = useState({
-    nombre: "",
-    email: "",
-    plan: "",
-    tipoNegocio: null,
-  });
-
-  const [admin, setAdmin] = useState({
-    name: "",
-    email: "",
-  });
-
-  const [config, setConfig] = useState({
-    // básicos (y luego Paso2 añade configKeys del plan)
-    permitePedidosComida: true,
-    permitePedidosBebida: true,
-    stockHabilitado: true,
-    colores: { principal: "#6A0DAD", secundario: "#FF6700" },
-    informacionRestaurante: { telefono: "", direccion: "" },
-  });
-
-  const [servicios, setServicios] = useState({
-    vozCocina: false,
-    vozComandas: false,
-
-    cargaProductos: false,
-    mesasQr: false,
-    mesasQrCantidad: "",
-    cartaAdjuntos: [],
-    mesasAdjuntos: [],
-
-    tpvOpcion: "propio",
-    instalacionTpvPropio: true,
-    tpvNuevo: 0,
-
-    impresoras: 0,
-
-    pantallaTipo: "tablet",
-    pantallas: 0,
-
-    pda: 0,
-    scanner: 0,
-
-    fotografia: false,
-    formacion: false,
-    formacionPersonas: "",
-  });
-
-  const [precio, setPrecio] = useState({ mensual: 0, unico: 0, totalPrimerMes: 0 });
-
-  const isShop = useMemo(() => {
-    const t = (planSeleccionado?.tipoNegocio || "").toLowerCase();
-    if (t) return t === "shop";
-    return (tenant.tipoNegocio || "").toLowerCase() === "shop";
-  }, [planSeleccionado, tenant.tipoNegocio]);
-
-  const STEPS = useMemo(
-    () => [
-      { id: 1, label: isShop ? "Datos de la tienda" : "Datos del restaurante" },
-      { id: 2, label: "Configuración inicial" },
-      { id: 3, label: isShop ? "Servicios y herramientas" : "Servicios y hardware" },
-      { id: 4, label: "Resumen y provisión" },
-    ],
-    [isShop]
-  );
-
-  // cargar planes
   useEffect(() => {
     (async () => {
       try {
-        // usa el mismo endpoint que el registro real
         const { data } = await api.get("/admin/superadminPlans/publicPlans");
         setPlanes(Array.isArray(data) ? data : []);
-      } catch {
-        // plans load failed — will show empty list
-      }
+      } catch { /* silent */ }
     })();
   }, []);
 
-  // cuando cambia tenant.plan → planSeleccionado
+  // Form state
+  const [form, setForm] = useState({
+    plan: "",
+    nombre: "",
+    email: "",
+    adminName: "",
+    tipoNegocio: "restaurante",
+    periodo: "mensual",
+  });
+
+  const set = (key, val) => setForm(p => ({ ...p, [key]: val }));
+
+  const planObj = useMemo(() => planes.find(p => p.slug === form.plan) || null, [planes, form.plan]);
+  const isShop = (planObj?.tipoNegocio || form.tipoNegocio) === "shop";
+  const mensual = Number(planObj?.precioMensual || 0);
+  const setup = PLAN_SETUP[form.plan] || 0;
+  const totalPrimerMes = mensual + setup;
+
+  // Sync tipoNegocio cuando cambia plan
   useEffect(() => {
-    if (!tenant.plan) return;
-    const p = planes.find((x) => x.slug === tenant.plan);
-    setPlanSeleccionado(p || null);
-    setPrecioBasePlan(Number(p?.precioMensual || 0));
+    if (planObj?.tipoNegocio) set("tipoNegocio", planObj.tipoNegocio);
+  }, [planObj]);
 
-    const tipoNegocio =
-      (p?.tipoNegocio || "").toLowerCase() ||
-      (tenant.plan.includes("shop") ? "shop" : "restaurante");
+  // Validación por paso
+  const erroresPaso1 = () => {
+    if (!form.plan) return "Selecciona un plan";
+    if (!form.nombre.trim()) return "Nombre del negocio obligatorio";
+    if (!form.email.trim() || !form.email.includes("@")) return "Email válido obligatorio";
+    if (!form.adminName.trim()) return "Nombre del administrador obligatorio";
+    return null;
+  };
 
-    setTenant((prev) => ({ ...prev, tipoNegocio }));
+  const siguiente = () => {
+    const err = erroresPaso1();
+    if (err) { setError(err); return; }
+    setError("");
+    setPaso(2);
+  };
 
-    // ✅ inicializa configKeys del plan en true por defecto (si no existían)
-    if (p?.features?.length) {
-      setConfig((prev) => {
-        const next = { ...prev };
-        for (const f of p.features) {
-          if (f?.configKey && typeof next[f.configKey] === "undefined") {
-            next[f.configKey] = true;
-          }
-        }
-        return next;
-      });
-    }
-  }, [tenant.plan, planes]);
-
-  // recalcular precio
-  useEffect(() => {
-    setPrecio(calcPrecio(precioBasePlan, servicios));
-  }, [precioBasePlan, servicios]);
-
-  // submit final: precheckout + provision
+  // Provisionar
   const handleProvision = async () => {
     setLoading(true);
     setError("");
-    setSuccessMsg("");
+    setSuccess("");
 
     try {
-      if (!tenant.nombre || !tenant.email || !tenant.plan) {
-        throw new Error("MISSING_TENANT_FIELDS");
-      }
-      if (!admin.name || !admin.email) {
-        throw new Error("MISSING_ADMIN_FIELDS");
-      }
-
-      const prePayload = {
+      // 1. Precheckout
+      const preRes = await api.post("/superadmin/onboarding/precheckout", {
         tenant: {
-          nombre: tenant.nombre,
-          email: (tenant.email || "").toLowerCase(),
-          plan: tenant.plan,
-          tipoNegocio: tenant.tipoNegocio || (isShop ? "shop" : "restaurante"),
+          nombre: form.nombre.trim(),
+          email: form.email.trim().toLowerCase(),
+          plan: form.plan,
+          tipoNegocio: form.tipoNegocio,
         },
         admin: {
-          name: admin.name,
-          email: (admin.email || "").toLowerCase(),
+          name: form.adminName.trim(),
+          email: form.email.trim().toLowerCase(),
         },
-        config,
-        servicios,
-        precio,
-        ciclo: periodo.toUpperCase(), // "MENSUAL" | "ANUAL" (si lo guardas en PreCheckout)
-        colores: config.colores,
-      };
+        plan: form.plan,
+        config: {},
+        servicios: {},
+        precio: { mensual, unico: setup, totalPrimerMes },
+        ciclo: form.periodo.toUpperCase(),
+      });
 
-      const preRes = await api.post("/superadmin/onboarding/precheckout", prePayload);
-      const precheckoutId = preRes.data?.precheckoutId;
-      if (!precheckoutId) throw new Error("NO_PRECHECKOUT_ID");
+      const precheckoutId = preRes.data?.precheckoutId || preRes.data?.data?.precheckoutId;
+      if (!precheckoutId) throw new Error("No se recibió precheckoutId");
 
+      // 2. Provision
       const provRes = await api.post("/superadmin/onboarding/provision", { precheckoutId });
+      const d = provRes.data?.data || provRes.data;
 
-      setSuccessMsg("✅ Entorno creado y provisionado.");
-      // opcional: te devuelve passwordSetupUrl para copiar
-      if (provRes.data?.passwordSetupUrl) {
-        setSuccessMsg(
-          `✅ Entorno provisionado. Link set-password: ${provRes.data.passwordSetupUrl}`
-        );
+      if (d?.passwordSetupUrl) {
+        setSuccess(`Tenant creado. Link set-password: ${d.passwordSetupUrl}`);
+      } else {
+        setSuccess(`Tenant ${d?.tenantSlug || form.nombre} creado correctamente.`);
       }
     } catch (err) {
-      setError(err?.response?.data?.message || err?.message || "Error al provisionar.");
+      setError(err?.response?.data?.message || err?.message || "Error al provisionar");
     } finally {
       setLoading(false);
     }
   };
 
-  const pasos = [
-    // Paso 1: mismo Paso1 del registro + select de plan arriba (admin-only)
-    <section className="section section--wide" key="p1">
-      <div className="card" style={{ marginBottom: 12, padding: 16 }}>
-        <h3 style={{ margin: 0 }}>📦 Plan</h3>
-        <p style={{ marginTop: 6 }} className="text-suave">
-          En el registro público el plan se elige antes. Aquí lo eliges como superadmin.
-        </p>
-
-        <label style={{ display: "block", marginTop: 10 }}>
-          <span className="text-suave">Selecciona plan</span>
-          <select
-            style={{ width: "100%", marginTop: 6 }}
-            value={tenant.plan}
-            onChange={(e) => setTenant((p) => ({ ...p, plan: e.target.value }))}
-            required
-          >
-            <option value="">— Selecciona —</option>
-            {planes.map((p) => (
-              <option key={p._id} value={p.slug}>
-                {p.nombre} — {p.precioMensual}€/mes
-              </option>
-            ))}
-          </select>
-        </label>
-      </div>
-
-      <Paso1DatosRestaurante
-        tenant={tenant}
-        setTenant={setTenant}
-        admin={admin}
-        setAdmin={setAdmin}
-        isShop={isShop}
-      />
-    </section>,
-
-    <Paso2ConfiguracionBasica
-      key="p2"
-      config={config}
-      setConfig={setConfig}
-      plan={planSeleccionado}
-      isShop={isShop}
-    />,
-
-    <Paso3ServiciosExtras
-      key="p3"
-      servicios={servicios}
-      setServicios={setServicios}
-      isShop={isShop}
-    />,
-
-    <Paso4Provision
-      key="p4"
-      tenant={tenant}
-      admin={admin}
-      config={config}
-      servicios={servicios}
-      precio={precio}
-      precioBasePlan={precioBasePlan}
-      plan={planSeleccionado}
-      periodo={periodo}
-      setPeriodo={setPeriodo}
-      isShop={isShop}
-      loading={loading}
-      onProvision={handleProvision}
-      successMsg={successMsg}
-    />,
-  ];
-
-  const stepActual = STEPS.find((s) => s.id === paso);
-
   return (
-    <main className="registro-avanzado registro-page">
-      <div className="registro-shell">
-        <div className="registro-main card">
-          <header className="registro-header">
-            <div>
-              <p className="registro-kicker">Alta superadmin</p>
-              <h1 className="registro-title">Crear y provisionar un nuevo tenant</h1>
-              <p className="registro-subtitle">
-                Mismas opciones que el registro real, pero sin pago (provisión manual).
-              </p>
-            </div>
-          </header>
+    <div className="sa-alta">
+      <button className="sa-alta__back" onClick={() => navigate("/superadmin")}>
+        <FiArrowLeft /> Volver
+      </button>
 
-          <div className="registro-stepper">
-            {STEPS.map((step, index) => {
-              const isActive = paso === step.id;
-              const isDone = paso > step.id;
-              return (
-                <div className="registro-step" key={step.id}>
-                  <div className={`registro-step-circle ${isActive ? "active" : ""} ${isDone ? "done" : ""}`}>
-                    {isDone ? "✓" : step.id}
-                  </div>
-                  <span className={`registro-step-label ${isActive ? "active" : ""}`}>{step.label}</span>
-                  {index < STEPS.length - 1 && <div className="registro-step-line" />}
-                </div>
-              );
-            })}
-          </div>
+      <h1 className="sa-alta__title">Alta de nuevo negocio</h1>
+      <p className="sa-alta__sub">Provisión directa sin pago. Se envía email con link de contraseña.</p>
 
-          <p className="registro-step-counter">
-            Paso {paso} de {STEPS.length}: <span>{stepActual?.label}</span>
-          </p>
-
-          <div className="registro-step-content">{pasos[paso - 1]}</div>
-
-          <div className="registro-nav">
-            {paso > 1 && (
-              <button
-                type="button"
-                className="registro-btn registro-btn-secundario"
-                onClick={() => setPaso(paso - 1)}
-                disabled={loading}
-              >
-                Anterior
-              </button>
-            )}
-            {paso < STEPS.length && (
-              <button
-                type="button"
-                className="registro-btn registro-btn btn-primario "
-                onClick={() => setPaso(paso + 1)}
-                disabled={loading}
-              >
-                Siguiente
-              </button>
-            )}
-          </div>
-
-          {error && <p className="registro-error">{error}</p>}
+      {/* Stepper */}
+      <div className="sa-stepper">
+        <div className={`sa-step ${paso >= 1 ? "sa-step--active" : ""} ${paso > 1 ? "sa-step--done" : ""}`}>
+          <span className="sa-step__num">{paso > 1 ? <FiCheck /> : "1"}</span>
+          <span className="sa-step__label">Datos</span>
         </div>
-
-        <div className="registro-side">
-          <PanelPrecio precio={precio} periodo={periodo} />
+        <div className="sa-step__line" />
+        <div className={`sa-step ${paso >= 2 ? "sa-step--active" : ""}`}>
+          <span className="sa-step__num">2</span>
+          <span className="sa-step__label">Confirmar</span>
         </div>
       </div>
-    </main>
+
+      {/* PASO 1: Datos */}
+      {paso === 1 && (
+        <div className="sa-form">
+          <div className="sa-field">
+            <label>Plan</label>
+            <select value={form.plan} onChange={e => set("plan", e.target.value)}>
+              <option value="">— Selecciona plan —</option>
+              {planes.map(p => (
+                <option key={p._id} value={p.slug}>
+                  {p.nombre} — {p.precioMensual}€/mes {p.tipoNegocio === "shop" ? "(Shop)" : ""}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {planObj && (
+            <div className="sa-plan-info">
+              <strong>{planObj.nombre}</strong> — {mensual}€/mes
+              {planObj.features?.length > 0 && (
+                <ul>{planObj.features.slice(0, 6).map((f, i) => <li key={i}>{f.nombre || f}</li>)}</ul>
+              )}
+            </div>
+          )}
+
+          <div className="sa-field">
+            <label>Nombre del {isShop ? "negocio" : "restaurante"}</label>
+            <input value={form.nombre} onChange={e => set("nombre", e.target.value)} placeholder="Ej. Zabor Feten" />
+          </div>
+
+          <div className="sa-field">
+            <label>Email (admin + contacto)</label>
+            <input type="email" value={form.email} onChange={e => set("email", e.target.value)} placeholder="admin@restaurante.com" />
+          </div>
+
+          <div className="sa-field">
+            <label>Nombre del administrador</label>
+            <input value={form.adminName} onChange={e => set("adminName", e.target.value)} placeholder="Ej. Manuel García" />
+          </div>
+
+          <button className="sa-btn sa-btn--primary" onClick={siguiente}>
+            Siguiente <FiArrowRight />
+          </button>
+        </div>
+      )}
+
+      {/* PASO 2: Confirmar y provisionar */}
+      {paso === 2 && (
+        <div className="sa-confirm">
+          <div className="sa-summary">
+            <h3>Resumen</h3>
+            <div className="sa-summary__grid">
+              <div><span className="sa-label">Negocio</span><span>{form.nombre}</span></div>
+              <div><span className="sa-label">Email</span><span>{form.email}</span></div>
+              <div><span className="sa-label">Admin</span><span>{form.adminName}</span></div>
+              <div><span className="sa-label">Plan</span><span>{planObj?.nombre || form.plan}</span></div>
+              <div><span className="sa-label">Tipo</span><span>{isShop ? "Shop" : "Restaurante"}</span></div>
+            </div>
+          </div>
+
+          <div className="sa-pricing">
+            <h3>Coste</h3>
+            <div className="sa-pricing__row">
+              <span>Suscripción mensual</span>
+              <strong>{mensual.toFixed(2)}€/mes</strong>
+            </div>
+            <div className="sa-pricing__row">
+              <span>Alta y configuración</span>
+              <strong>{setup.toFixed(2)}€</strong>
+            </div>
+            <div className="sa-pricing__row sa-pricing__row--total">
+              <span>Total primer mes</span>
+              <strong>{totalPrimerMes.toFixed(2)}€</strong>
+            </div>
+            <p className="sa-pricing__note">Sin permanencia. Provisión sin cobro — facturación manual posterior.</p>
+          </div>
+
+          <div className="sa-confirm__actions">
+            <button className="sa-btn sa-btn--ghost" onClick={() => setPaso(1)} disabled={loading}>
+              <FiArrowLeft /> Volver
+            </button>
+            <button className="sa-btn sa-btn--primary" onClick={handleProvision} disabled={loading}>
+              {loading ? <><FiLoader className="sa-spin" /> Provisionando...</> : <><FiCheck /> Crear y provisionar</>}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {error && <div className="sa-msg sa-msg--error">{error}</div>}
+      {success && (
+        <div className="sa-msg sa-msg--success">
+          {success}
+          <button className="sa-btn sa-btn--ghost" onClick={() => navigate("/superadmin")} style={{ marginTop: 8 }}>
+            Volver al dashboard
+          </button>
+        </div>
+      )}
+    </div>
   );
 }

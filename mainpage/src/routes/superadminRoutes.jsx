@@ -16,6 +16,7 @@ const SuperadminExportsPage = lazy(() => import("../pages/admin/exports/Superadm
 const MigrationsPage = lazy(() => import("../pages/admin/AdminDashboard/migrations/MigrationsPage.jsx"));
 const MigrationsTenantPage = lazy(() => import("../pages/admin/AdminDashboard/migrations/MigrationsTenantPage.jsx"));
 const TenantsPage = lazy(() => import("../pages/admin/tenants/TenantsPage"));
+const TenantDetailPage = lazy(() => import("../pages/admin/tenants/TenantDetailPage"));
 const SuperadminAltaTenant = lazy(() => import("../pages/admin/SuperadminAltaTenant/SuperadminAltaTenant.jsx"));
 const ChangelogAdmin = lazy(() => import("../pages/admin/ChangelogAdmin"));
 
@@ -25,6 +26,7 @@ export default function superadminRoutes() {
       <Route index element={<AdminDashboard />} />
       <Route path="tenants" element={<TenantsPage />} />
       <Route path="tenants/nuevo" element={<SuperadminAltaTenant />} />
+      <Route path="tenants/:slug" element={<TenantDetailPage />} />
       <Route path="planes" element={<PlanesAdmin />} />
       <Route path="billing" element={<BillingPage />} />
       <Route path="logs" element={<LogsPage />} />

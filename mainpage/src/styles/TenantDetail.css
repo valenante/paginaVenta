@@ -1,0 +1,65 @@
+/* TenantDetail.css */
+.tenant-detail {
+  padding: 1.5rem;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.td-loading { padding: 3rem; text-align: center; opacity: 0.5; }
+.td-topbar { display: flex; justify-content: space-between; margin-bottom: 1.5rem; }
+.td-back, .td-refresh {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+  color: #e5e7eb; padding: 8px 14px; border-radius: 8px; cursor: pointer;
+  font-size: 14px; font-weight: 600; transition: all 0.15s;
+}
+.td-back:hover, .td-refresh:hover { background: rgba(255,255,255,0.12); }
+
+.td-header { margin-bottom: 1.5rem; }
+.td-header h1 { font-size: 1.75rem; margin: 0 0 0.5rem 0; color: #fff; }
+.td-header__badges { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.td-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+@media (max-width: 768px) { .td-grid { grid-template-columns: 1fr; } }
+
+.td-card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+  padding: 1.25rem;
+}
+.td-card h3 {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 1rem; margin: 0 0 1rem 0; color: #fff; opacity: 0.9;
+}
+
+.td-info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+.td-label { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.4; margin-bottom: 2px; }
+.td-value { font-size: 14px; color: #e5e7eb; word-break: break-all; }
+.td-value--error { color: #f87171; font-size: 12px; }
+
+.td-actions {
+  display: flex; gap: 0.75rem; flex-wrap: wrap;
+}
+.td-action-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+  color: #e5e7eb; padding: 10px 18px; border-radius: 8px; cursor: pointer;
+  font-size: 14px; font-weight: 600; transition: all 0.15s;
+}
+.td-action-btn:hover { background: rgba(255,255,255,0.12); }
+.td-action-btn--primary {
+  background: linear-gradient(135deg, rgba(106,13,173,0.4), rgba(255,103,0,0.3));
+  border-color: rgba(168,85,247,0.3);
+}
+.td-action-btn--primary:hover {
+  background: linear-gradient(135deg, rgba(106,13,173,0.6), rgba(255,103,0,0.45));
+}

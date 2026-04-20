@@ -3,6 +3,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { FiChevronLeft, FiChevronRight, FiRefreshCw, FiSearch, FiFilter } from "react-icons/fi";
 import api from "../../../utils/api";
 import AdminMonitorJobs from "./AdminMonitorJobs";
+import IncidentsPanel from "./IncidentsPanel";
 import "./AdminMonitor.css";
 
 const PAGE_SIZE = 10;
@@ -218,6 +219,9 @@ export default function AdminMonitorPage() {
 
       {/* ── Jobs ───────────── */}
       <AdminMonitorJobs q={q} onlyBad={onlyDown} />
+
+      {/* ── Incidentes ──────── */}
+      <IncidentsPanel />
 
       {/* ── HTTP por tenant ── */}
       <section className="m-section">

@@ -152,7 +152,7 @@ export function VentasPorHoraCard({ fecha }) {
           const pct = maxVentas > 0 ? Math.max(2, (h.ventas / maxVentas) * 100) : 0;
           const isHot = h.ventas === maxVentas;
           return (
-            <div key={h.hora} className="af2-hour-row" title={`${h.mesas} mesas · ${h.comensales} comensales`}>
+            <div key={h.hora} className="af2-hour-row" title={`${h.items} productos vendidos`}>
               <span className="af2-hour-label">{h.label}</span>
               <div className="af2-hour-bar-wrap">
                 <div
@@ -161,7 +161,7 @@ export function VentasPorHoraCard({ fecha }) {
                 />
               </div>
               <span className="af2-hour-value">{money(h.ventas)}€</span>
-              <span className="af2-hour-mesas">{h.mesas}m</span>
+              <span className="af2-hour-mesas">{h.items}u</span>
             </div>
           );
         })}

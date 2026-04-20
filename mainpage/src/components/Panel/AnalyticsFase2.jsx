@@ -116,83 +116,55 @@ export function RatioTipoCard({ fecha }) {
 }
 
 /* ═══════════════════════════════════════
-   3. HEATMAP SEMANAL
+   3. VENTAS POR HORA DEL DÍA
    ═══════════════════════════════════════ */
-export function HeatmapSemanalCard() {
+export function VentasPorHoraCard({ fecha }) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let m = true;
     setLoading(true);
-    api.get("/dashboard/heatmap-semanal")
+    api.get("/dashboard/ventas-hora", { params: { fecha } })
       .then(({ data: d }) => { if (m) setData(d?.data || d); })
       .catch(() => {})
       .finally(() => { if (m) setLoading(false); });
     return () => { m = false; };
-  }, []);
+  }, [fecha]);
 
-  if (loading) return <div className="af2-card af2-card--loading">Cargando heatmap...</div>;
-  if (!data?.matrix) return null;
+  if (loading) return <div className="af2-card af2-card--loading">Cargando franjas...</div>;
+  if (!data?.horas?.length) return null;
 
-  const { matrix, dias, porDia, horaPunta, maxVentas, desde, hasta } = data;
-
-  // Filtrar solo horas con actividad (11:00 - 02:00 típico restaurante)
-  const activeHours = matrix.filter(row => {
-    for (let d = 0; d < 7; d++) if (row.dias[d].ventas > 0) return true;
-    return false;
-  });
-
-  const intensity = (v) => {
-    if (!v || maxVentas === 0) return 0;
-    return Math.min(1, v / maxVentas);
-  };
+  const { horas, maxVentas, horaPunta, franjas } = data;
 
   return (
     <div className="af2-card af2-card--wide">
       <div className="af2-card__head">
-        <h3>Mapa de calor semanal</h3>
-        <span className="af2-card__sub">{desde} → {hasta} · Hora punta: {horaPunta}</span>
+        <h3>Ventas por hora</h3>
+        <span className="af2-card__sub">
+          Hora punta: <strong>{horaPunta}</strong>
+          {franjas && <> · Mediodía {franjas.mediodia.pct}% · Noche {franjas.noche.pct}%</>}
+        </span>
       </div>
 
-      <div className="af2-heatmap-wrap">
-        <table className="af2-heatmap">
-          <thead>
-            <tr>
-              <th></th>
-              {dias.map(d => <th key={d}>{d}</th>)}
-            </tr>
-          </thead>
-          <tbody>
-            {activeHours.map(row => (
-              <tr key={row.hora}>
-                <td className="af2-heatmap__label">{row.label}</td>
-                {Array.from({ length: 7 }, (_, d) => {
-                  const cell = row.dias[d];
-                  const alpha = intensity(cell.ventas);
-                  return (
-                    <td key={d} className="af2-heatmap__cell" title={`${money(cell.ventas)}€ · ${cell.mesas} mesas · ${cell.comensales} com.`}>
-                      <div className="af2-heatmap__dot" style={{ backgroundColor: `rgba(168, 85, 247, ${Math.max(0.05, alpha)})` }}>
-                        {cell.ventas > 0 ? <span>{Math.round(cell.ventas)}</span> : null}
-                      </div>
-                    </td>
-                  );
-                })}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      {/* Resumen por día */}
-      <div className="af2-heatmap-summary">
-        {porDia.map(d => (
-          <div key={d.label} className="af2-day-stat">
-            <strong>{d.label}</strong>
-            <span>{money(d.ventas)}€</span>
-            <span className="af2-day-stat__sub">{d.mesas} mesas</span>
-          </div>
-        ))}
+      <div className="af2-hours">
+        {horas.map(h => {
+          const pct = maxVentas > 0 ? Math.max(2, (h.ventas / maxVentas) * 100) : 0;
+          const isHot = h.ventas === maxVentas;
+          return (
+            <div key={h.hora} className="af2-hour-row" title={`${h.mesas} mesas · ${h.comensales} comensales`}>
+              <span className="af2-hour-label">{h.label}</span>
+              <div className="af2-hour-bar-wrap">
+                <div
+                  className={`af2-hour-bar ${isHot ? "af2-hour-bar--hot" : ""}`}
+                  style={{ width: `${pct}%` }}
+                />
+              </div>
+              <span className="af2-hour-value">{money(h.ventas)}€</span>
+              <span className="af2-hour-mesas">{h.mesas}m</span>
+            </div>
+          );
+        })}
       </div>
     </div>
   );

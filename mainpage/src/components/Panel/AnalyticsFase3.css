@@ -15,20 +15,6 @@
 .af3-card__actions { display: flex; align-items: center; gap: 6px; }
 .af3-empty { text-align: center; opacity: 0.4; padding: 1.5rem 0; font-size: 13px; }
 
-/* Controles correlación */
-.af3-corr-controls {
-  display: flex; gap: 1rem; align-items: center; margin-bottom: 0.75rem;
-  flex-wrap: wrap;
-}
-.af3-toggle { display: flex; align-items: center; gap: 6px; font-size: 13px; cursor: pointer; opacity: 0.7; }
-.af3-toggle input { cursor: pointer; }
-.af3-corr-min {
-  display: flex; align-items: center; gap: 4px; font-size: 12px; opacity: 0.6;
-}
-.af3-corr-min select {
-  background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
-  color: #e5e7eb; padding: 3px 6px; border-radius: 4px; font-size: 12px;
-}
 .af3-badge {
   background: rgba(239,68,68,0.2); color: #f87171; padding: 2px 10px;
   border-radius: 10px; font-size: 12px; font-weight: 700;
@@ -36,22 +22,58 @@
 .af3-ok-msg { text-align: center; opacity: 0.5; padding: 1rem 0; font-size: 14px; }
 
 /* ── Correlación ──────── */
-.af3-corr-list { display: flex; flex-direction: column; gap: 4px; }
+.af3-corr-controls { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.5rem; }
+.af3-corr-select {
+  background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+  color: #e5e7eb; padding: 6px 10px; border-radius: 6px; font-size: 12px;
+}
+
+.af3-corr-excluidos {
+  display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+  margin-bottom: 0.75rem; padding: 8px 10px; border-radius: 8px;
+  background: rgba(255,255,255,0.02); min-height: 36px;
+}
+.af3-corr-excluidos__label { font-size: 11px; opacity: 0.4; font-weight: 600; text-transform: uppercase; }
+.af3-corr-excluidos__empty { font-size: 12px; opacity: 0.25; }
+.af3-corr-tag {
+  background: rgba(239,68,68,0.12); color: #f87171; padding: 2px 8px;
+  border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer;
+  transition: background 0.1s;
+}
+.af3-corr-tag:hover { background: rgba(239,68,68,0.25); }
+.af3-corr-add { display: inline-flex; }
+.af3-corr-add__input {
+  background: none; border: none; border-bottom: 1px solid rgba(255,255,255,0.1);
+  color: #e5e7eb; padding: 2px 4px; font-size: 12px; width: 80px; outline: none;
+}
+.af3-corr-add__input::placeholder { color: rgba(255,255,255,0.2); }
+
+.af3-corr-list { display: flex; flex-direction: column; gap: 3px; }
 .af3-corr-row {
-  display: flex; justify-content: space-between; align-items: center;
+  display: grid; grid-template-columns: 1fr 80px 70px 24px;
+  align-items: center; gap: 8px;
   padding: 8px 10px; border-radius: 8px;
   background: rgba(255,255,255,0.02); transition: background 0.1s;
 }
-.af3-corr-row:hover { background: rgba(255,255,255,0.06); }
-.af3-corr-pair { display: flex; align-items: center; gap: 6px; flex: 1; }
+.af3-corr-row:hover { background: rgba(255,255,255,0.05); }
+.af3-corr-pair { display: flex; align-items: center; gap: 6px; }
 .af3-corr-name { font-size: 13px; color: #e5e7eb; }
+.af3-corr-name--click { cursor: pointer; border-bottom: 1px dotted rgba(255,255,255,0.15); }
+.af3-corr-name--click:hover { color: #a855f7; }
 .af3-corr-plus { font-size: 11px; opacity: 0.3; font-weight: 700; }
-.af3-corr-stats { display: flex; gap: 10px; align-items: center; }
+.af3-corr-bar-wrap { height: 6px; background: rgba(255,255,255,0.04); border-radius: 3px; overflow: hidden; }
+.af3-corr-bar { height: 100%; border-radius: 3px; background: linear-gradient(90deg, rgba(168,85,247,0.5), rgba(255,103,0,0.4)); }
+.af3-corr-stats { display: flex; gap: 6px; align-items: center; }
 .af3-corr-count { font-size: 12px; font-weight: 700; color: #a855f7; }
 .af3-corr-pct {
   font-size: 11px; background: rgba(168,85,247,0.15); color: #c084fc;
-  padding: 2px 8px; border-radius: 4px; font-weight: 600;
+  padding: 2px 6px; border-radius: 4px; font-weight: 600;
 }
+.af3-corr-exclude-btn {
+  background: none; border: none; color: rgba(255,255,255,0.15); cursor: pointer;
+  font-size: 14px; padding: 0; transition: color 0.1s;
+}
+.af3-corr-exclude-btn:hover { color: #f87171; }
 
 /* ── Alertas ──────────── */
 .af3-alertas-list { display: flex; flex-direction: column; gap: 6px; }

@@ -10,14 +10,22 @@ const money = (n) => Number(n || 0).toLocaleString("es-ES", { minimumFractionDig
 /* ═══════════════════════════════════════
    1. CORRELACIÓN DE PRODUCTOS
    ═══════════════════════════════════════ */
-// Productos genéricos que se piden con todo — filtrar por defecto
-const GENERICOS = ["pan", "agua", "regañas", "pan de ajo", "bread"];
+const STORAGE_KEY = "alef_corr_excluidos";
+function loadExcluidos() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"); } catch { return []; }
+}
+function saveExcluidos(list) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+}
 
 export function CorrelacionCard() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [hideGenericos, setHideGenericos] = useState(true);
+  const [excluidos, setExcluidos] = useState(() => loadExcluidos());
   const [minVeces, setMinVeces] = useState(3);
+  const [sortBy, setSortBy] = useState("veces"); // veces | confianza
+  const [addExcluir, setAddExcluir] = useState("");
+  const [selectedProd, setSelectedProd] = useState(null); // click en producto → ver sus pares
 
   useEffect(() => {
     let m = true;
@@ -28,17 +36,43 @@ export function CorrelacionCard() {
     return () => { m = false; };
   }, []);
 
+  // Guardar excluidos en localStorage
+  useEffect(() => { saveExcluidos(excluidos); }, [excluidos]);
+
+  const addToExcluidos = (nombre) => {
+    const low = nombre.toLowerCase().trim();
+    if (low && !excluidos.includes(low)) setExcluidos(prev => [...prev, low]);
+  };
+  const removeFromExcluidos = (nombre) => setExcluidos(prev => prev.filter(e => e !== nombre));
+
+  // Todos los productos únicos (para el filtro por producto)
+  const allProducts = useMemo(() => {
+    if (!data?.correlaciones) return [];
+    const set = new Set();
+    data.correlaciones.forEach(c => { set.add(c.productoA); set.add(c.productoB); });
+    return [...set].sort();
+  }, [data]);
+
   const filtered = useMemo(() => {
     if (!data?.correlaciones) return [];
-    return data.correlaciones
+    let items = data.correlaciones
       .filter(c => c.vecesJuntos >= minVeces)
       .filter(c => {
-        if (!hideGenericos) return true;
         const aLow = c.productoA.toLowerCase();
         const bLow = c.productoB.toLowerCase();
-        return !GENERICOS.some(g => aLow.includes(g) || bLow.includes(g));
+        return !excluidos.some(e => aLow.includes(e) || bLow.includes(e));
       });
-  }, [data, hideGenericos, minVeces]);
+
+    if (selectedProd) {
+      items = items.filter(c => c.productoA === selectedProd || c.productoB === selectedProd);
+    }
+
+    if (sortBy === "confianza") {
+      items = [...items].sort((a, b) => Math.max(b.confianzaAB, b.confianzaBA) - Math.max(a.confianzaAB, a.confianzaBA));
+    }
+
+    return items;
+  }, [data, excluidos, minVeces, sortBy, selectedProd]);
 
   if (loading) return <div className="af3-card af3-card--loading">Cargando correlaciones...</div>;
   if (!data?.correlaciones?.length) return null;
@@ -52,53 +86,80 @@ export function CorrelacionCard() {
             <h4>Qué muestra</h4>
             <p>Pares de productos que aparecen juntos frecuentemente en el mismo pedido.</p>
             <h4>Cómo se calcula</h4>
-            <p>Analiza todos los pedidos de las últimas 4 semanas. Para cada par de productos que aparecen en el mismo pedido, cuenta cuántas veces coinciden. El <code>%</code> indica la confianza: si un cliente pide el producto A, ese % de las veces también pide el B.</p>
+            <p>Analiza todos los pedidos de las últimas 4 semanas. El <code>×</code> indica cuántas veces aparecen juntos. El <code>%</code> es la confianza: si un cliente pide A, ese % también pide B.</p>
             <h4>Para qué sirve</h4>
             <ul>
               <li>Sugerir upselling: "¿Le pongo un Protos Roble con el Solomillo?"</li>
               <li>Diseñar combos o menús basados en datos reales</li>
               <li>Optimizar la carta digital con sugerencias automáticas</li>
             </ul>
+            <h4>Filtros</h4>
+            <p>Excluye productos genéricos (pan, agua) que se piden con todo. Puedes añadir y quitar productos de la lista de excluidos. Se guarda en tu navegador.</p>
           </InfoButton>
         </div>
       </div>
 
+      {/* Controles */}
       <div className="af3-corr-controls">
-        <label className="af3-toggle">
-          <input type="checkbox" checked={hideGenericos} onChange={e => setHideGenericos(e.target.checked)} />
-          <span>Ocultar genéricos (pan, agua...)</span>
-        </label>
-        <label className="af3-corr-min">
-          Mín.
-          <select value={minVeces} onChange={e => setMinVeces(Number(e.target.value))}>
-            <option value={2}>2×</option>
-            <option value={3}>3×</option>
-            <option value={5}>5×</option>
-            <option value={10}>10×</option>
-          </select>
-        </label>
+        <select className="af3-corr-select" value={selectedProd || ""} onChange={e => setSelectedProd(e.target.value || null)}>
+          <option value="">Todos los productos</option>
+          {allProducts.map(p => <option key={p} value={p}>{p}</option>)}
+        </select>
+        <select className="af3-corr-select" value={sortBy} onChange={e => setSortBy(e.target.value)}>
+          <option value="veces">Ordenar: más frecuentes</option>
+          <option value="confianza">Ordenar: mayor confianza</option>
+        </select>
+        <select className="af3-corr-select" value={minVeces} onChange={e => setMinVeces(Number(e.target.value))}>
+          <option value={2}>Mín. 2×</option>
+          <option value={3}>Mín. 3×</option>
+          <option value={5}>Mín. 5×</option>
+          <option value={10}>Mín. 10×</option>
+        </select>
       </div>
 
+      {/* Excluidos */}
+      <div className="af3-corr-excluidos">
+        <span className="af3-corr-excluidos__label">Excluidos:</span>
+        {excluidos.length === 0 && <span className="af3-corr-excluidos__empty">ninguno</span>}
+        {excluidos.map(e => (
+          <span key={e} className="af3-corr-tag" onClick={() => removeFromExcluidos(e)} title="Click para quitar">
+            {e} ×
+          </span>
+        ))}
+        <form className="af3-corr-add" onSubmit={ev => { ev.preventDefault(); if (addExcluir.trim()) { addToExcluidos(addExcluir); setAddExcluir(""); } }}>
+          <input placeholder="Añadir..." value={addExcluir} onChange={e => setAddExcluir(e.target.value)} className="af3-corr-add__input" />
+        </form>
+      </div>
+
+      {/* Lista */}
       {filtered.length === 0 ? (
-        <p className="af3-empty">Sin correlaciones con estos filtros. Prueba a bajar el mínimo o desactivar el filtro de genéricos.</p>
+        <p className="af3-empty">Sin correlaciones con estos filtros.</p>
       ) : (
         <div className="af3-corr-list">
-          {filtered.slice(0, 10).map((c, i) => (
-            <div key={i} className="af3-corr-row">
-              <div className="af3-corr-pair">
-                <span className="af3-corr-name">{c.productoA}</span>
-                <span className="af3-corr-plus">+</span>
-                <span className="af3-corr-name">{c.productoB}</span>
+          {filtered.slice(0, 15).map((c, i) => {
+            const maxConf = Math.max(c.confianzaAB, c.confianzaBA);
+            const barW = Math.max(8, Math.min(100, maxConf));
+            return (
+              <div key={i} className="af3-corr-row">
+                <div className="af3-corr-pair">
+                  <span className="af3-corr-name af3-corr-name--click" onClick={() => setSelectedProd(selectedProd === c.productoA ? null : c.productoA)}>{c.productoA}</span>
+                  <span className="af3-corr-plus">+</span>
+                  <span className="af3-corr-name af3-corr-name--click" onClick={() => setSelectedProd(selectedProd === c.productoB ? null : c.productoB)}>{c.productoB}</span>
+                </div>
+                <div className="af3-corr-bar-wrap">
+                  <div className="af3-corr-bar" style={{ width: `${barW}%` }} />
+                </div>
+                <div className="af3-corr-stats">
+                  <span className="af3-corr-count">{c.vecesJuntos}×</span>
+                  <span className="af3-corr-pct">{maxConf}%</span>
+                </div>
+                <button className="af3-corr-exclude-btn" onClick={() => addToExcluidos(c.productoA)} title={`Excluir ${c.productoA}`}>×</button>
               </div>
-              <div className="af3-corr-stats">
-                <span className="af3-corr-count">{c.vecesJuntos}×</span>
-                <span className="af3-corr-pct">{c.confianzaAB}%</span>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
-      <p className="af3-card__tip">{data.totalPedidos} pedidos analizados · últimas 4 semanas</p>
+      <p className="af3-card__tip">{data.totalPedidos} pedidos · {selectedProd ? `filtrado: ${selectedProd}` : "últimas 4 semanas"}</p>
     </div>
   );
 }

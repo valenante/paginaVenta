@@ -52,7 +52,7 @@ export default function TenantDetailPage() {
 
   const impersonate = async () => {
     try {
-      await api.post(`/admin/superadmin/impersonar/${slug}`);
+      await api.post(`/admin/superadmin/impersonar/${slug}`, { reasonCategory: "soporte" });
       window.open(`https://${slug}-tpv.softalef.com`, "_blank");
     } catch (e) {
       alert(`Error: ${e?.response?.data?.message || e.message}`);

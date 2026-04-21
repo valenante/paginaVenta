@@ -158,6 +158,8 @@
   border: 1px solid var(--dash-glass-border);
   border-radius: var(--dash-radius-lg, 14px);
   padding: 16px;
+  overflow: hidden;
+  min-width: 0;
 }
 .adm__section-title {
   font-size: 0.85rem;
@@ -228,7 +230,7 @@
 }
 
 /* ── Top productos ── */
-.adm__top { display: flex; flex-direction: column; gap: 4px; }
+.adm__top { display: flex; flex-direction: column; gap: 4px; min-width: 0; overflow: hidden; }
 .adm__top-row {
   display: grid;
   grid-template-columns: 24px 1fr 50px 70px;
@@ -246,7 +248,7 @@
 .adm__top-amt { text-align: right; font-weight: 600; color: var(--dash-text); }
 
 /* ── Staff ── */
-.adm__staff { display: flex; flex-direction: column; }
+.adm__staff { display: flex; flex-direction: column; min-width: 0; overflow: hidden; }
 .adm__staff-head, .adm__staff-row {
   display: grid;
   grid-template-columns: 1fr 80px 80px 90px;
@@ -376,13 +378,25 @@
   .adm__kpis { grid-template-columns: repeat(2, 1fr); }
   .adm__cards { grid-template-columns: repeat(2, 1fr); }
   .adm__row { grid-template-columns: 1fr; }
-  .adm__staff-head, .adm__staff-row { grid-template-columns: 1fr 60px 60px 70px; font-size: 0.75rem; }
+  .adm__staff-head, .adm__staff-row { grid-template-columns: 1fr 50px 50px 65px; font-size: 0.75rem; gap: 4px; }
+  .adm__staff-head--5col, .adm__staff-row--5col { grid-template-columns: 1fr 32px 58px 50px 42px; }
+  .adm__section-title { flex-wrap: wrap; gap: 8px; }
+  .adm__tabs { flex-wrap: wrap; }
+  .adm__top-row { grid-template-columns: 20px 1fr 40px 62px; gap: 4px; font-size: 0.78rem; }
+  .adm__elim-row { grid-template-columns: 1fr 60px 60px 50px; font-size: 0.75rem; }
 }
 @media (max-width: 480px) {
   .adm__kpis { grid-template-columns: 1fr; }
   .adm__cards { grid-template-columns: repeat(2, 1fr); }
-  .adm__elim-row { grid-template-columns: 1fr 60px 60px; }
+  .adm__staff-head, .adm__staff-row { grid-template-columns: 1fr 42px 42px 58px; font-size: 0.72rem; gap: 2px; padding: 6px 4px; }
+  .adm__staff-head--5col, .adm__staff-row--5col { grid-template-columns: 1fr 28px 52px 44px 38px; font-size: 0.72rem; }
+  .adm__top-row { grid-template-columns: 18px 1fr 36px 56px; gap: 2px; font-size: 0.75rem; }
+  .adm__elim-row { grid-template-columns: 1fr 52px 48px; font-size: 0.72rem; }
   .adm__elim-who { display: none; }
+  .adm__section { padding: 12px 10px; }
+  .adm__section-title { font-size: 0.8rem; }
+  .adm__tabs { gap: 2px; padding: 2px; }
+  .adm__tab { padding: 4px 8px; font-size: 0.68rem; }
 }
 
 /* ── Analytics Fase 2 grid ── */

@@ -19,6 +19,15 @@ const fmtFecha = (v) => {
   } catch { return "—"; }
 };
 
+const ESTADOS_LABEL = {
+  pendiente: "Pendiente",
+  confirmada: "Confirmada",
+  "auto-confirmada": "Auto-confirmada",
+  rechazada: "Rechazada",
+  completada: "Completada",
+  "no-show": "No-show",
+};
+
 export default function ReservasConfigPage() {
   const [reservas, setReservas] = useState([]);
   const [fecha, setFecha] = useState("");
@@ -28,8 +37,14 @@ export default function ReservasConfigPage() {
   const [modal, setModal] = useState(null);
   const [showAjustes, setShowAjustes] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [flags, setFlags] = useState(null);
 
   const reservasHabilitadas = useFeature("reservas.habilitadas", true);
+
+  // Cargar flags de configuración
+  useEffect(() => {
+    api.get("/reservas/config").then(({ data }) => setFlags(data?.reservas || null)).catch(() => {});
+  }, []);
 
   const cargarReservas = useCallback(async () => {
     try {
@@ -84,6 +99,28 @@ export default function ReservasConfigPage() {
     });
   }, [cargarReservas]);
 
+  const checkinReserva = useCallback(async (id) => {
+    try {
+      setError(null);
+      await api.put(`/reservas/${id}/checkin`);
+      setAlerta({ tipo: "exito", mensaje: "Check-in realizado." });
+      cargarReservas();
+    } catch (err) {
+      setError({ ...normalizeApiError(err), retryFn: () => checkinReserva(id) });
+    }
+  }, [cargarReservas]);
+
+  const marcarNoShow = useCallback(async (id) => {
+    try {
+      setError(null);
+      await api.put(`/reservas/${id}/noshow`);
+      setAlerta({ tipo: "exito", mensaje: "Reserva marcada como no-show." });
+      cargarReservas();
+    } catch (err) {
+      setError({ ...normalizeApiError(err), retryFn: () => marcarNoShow(id) });
+    }
+  }, [cargarReservas]);
+
   if (!reservasHabilitadas) {
     return (
       <section className="cfg-page section section--wide">
@@ -110,7 +147,19 @@ export default function ReservasConfigPage() {
       );
     }
     if (r.estado === "confirmada" || r.estado === "auto-confirmada") {
-      return <button className="btn btn-secundario cfg-btn-compact" onClick={() => abrirCancelarReserva(r._id)}>Cancelar</button>;
+      return (
+        <div className="cfg-actions">
+          <button className="btn btn-primario cfg-btn-compact" onClick={() => checkinReserva(r._id)}>Check-in</button>
+          <button className="btn btn-secundario cfg-btn-compact" onClick={() => marcarNoShow(r._id)}>No-show</button>
+          <button className="btn btn-ghost cfg-btn-compact" onClick={() => abrirCancelarReserva(r._id)}>Cancelar</button>
+        </div>
+      );
+    }
+    if (r.estado === "completada") {
+      return <span className="badge rc-estado rc-estado--completada">Llegaron</span>;
+    }
+    if (r.estado === "no-show") {
+      return <span className="badge rc-estado rc-estado--no-show">No vino</span>;
     }
     return <span className="text-suave">—</span>;
   };
@@ -166,6 +215,52 @@ export default function ReservasConfigPage() {
             </div>
           </section>
 
+          {/* Ajustes generales (flags) */}
+          {flags && (
+            <section className="card config-card">
+              <div className="config-card-header">
+                <div>
+                  <h2>Ajustes del sistema</h2>
+                  <p className="config-card-subtitle">Configura el comportamiento de las reservas.</p>
+                </div>
+              </div>
+              <div className="rc-flags">
+                <div className="rc-flag">
+                  <span className="rc-flag-label">Auto-confirmar reservas</span>
+                  <span className="rc-flag-value">{flags.autoConfirmar ? `Si (hasta ${flags.autoConfirmarMaxPersonas || "sin limite"} personas)` : "No"}</span>
+                </div>
+                <div className="rc-flag">
+                  <span className="rc-flag-label">Limite por dia</span>
+                  <span className="rc-flag-value">{flags.limitePorDia > 0 ? `${flags.limitePorDia} reservas` : "Sin limite"}</span>
+                </div>
+                <div className="rc-flag">
+                  <span className="rc-flag-label">Multiples reservas mismo dia</span>
+                  <span className="rc-flag-value">{flags.permitirMultiplesReservasMismoDia ? "Permitido" : "No permitido"}</span>
+                </div>
+                <div className="rc-flag">
+                  <span className="rc-flag-label">Asignar mesa automatica</span>
+                  <span className="rc-flag-value">{flags.asignarMesaAutomatica ? "Activo" : "Desactivado"}</span>
+                </div>
+                <div className="rc-flag">
+                  <span className="rc-flag-label">Email al cliente</span>
+                  <span className="rc-flag-value">{flags.emailCliente ? "Activo" : "Desactivado"}</span>
+                </div>
+                <div className="rc-flag">
+                  <span className="rc-flag-label">Email al restaurante</span>
+                  <span className="rc-flag-value">{flags.emailRestaurante ? "Activo" : "Desactivado"}</span>
+                </div>
+                <div className="rc-flag">
+                  <span className="rc-flag-label">Duracion estimada</span>
+                  <span className="rc-flag-value">{flags.duracionReservaMin} min</span>
+                </div>
+                <div className="rc-flag">
+                  <span className="rc-flag-label">No-show automatico</span>
+                  <span className="rc-flag-value">{flags.marcarNoShowAutoMin > 0 ? `${flags.marcarNoShowAutoMin} min tras la hora` : "Manual"}</span>
+                </div>
+              </div>
+            </section>
+          )}
+
           {/* Filters */}
           <section className="card config-card">
             <div className="config-card-header">
@@ -186,6 +281,8 @@ export default function ReservasConfigPage() {
                   <option value="pendiente">Pendientes</option>
                   <option value="confirmada">Confirmadas</option>
                   <option value="auto-confirmada">Auto-confirmadas</option>
+                  <option value="completada">Completadas</option>
+                  <option value="no-show">No-show</option>
                   <option value="rechazada">Rechazadas</option>
                 </select>
               </div>
@@ -213,9 +310,8 @@ export default function ReservasConfigPage() {
                         <th>Cliente</th>
                         <th>Pers.</th>
                         <th>Reserva para</th>
+                        <th>Mesa</th>
                         <th>Teléfono</th>
-                        <th>Email</th>
-                        <th>Creada</th>
                         <th>Estado</th>
                         <th>Acciones</th>
                       </tr>
@@ -226,10 +322,9 @@ export default function ReservasConfigPage() {
                           <td><strong>{r.nombre}</strong></td>
                           <td>{r.personas}</td>
                           <td>{fmtFecha(r.hora)}</td>
+                          <td>{r.mesaAsignada || "—"}</td>
                           <td>{r.telefono}</td>
-                          <td>{r.email}</td>
-                          <td>{fmtFecha(r.creadaEn || r.createdAt)}</td>
-                          <td><span className={`badge rc-estado rc-estado--${r.estado}`}>{r.estado}</span></td>
+                          <td><span className={`badge rc-estado rc-estado--${r.estado}`}>{ESTADOS_LABEL[r.estado] || r.estado}</span></td>
                           <td>{renderActions(r)}</td>
                         </tr>
                       ))}

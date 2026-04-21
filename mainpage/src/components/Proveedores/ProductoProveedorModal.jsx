@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import api from "../../utils/api";
 import { useTenant } from "../../context/TenantContext";
@@ -31,6 +31,55 @@ const detectTipoAsociacion = (prod) => {
   if (prod?.productoId) return "producto";
   return "producto"; // default para nuevos
 };
+
+function SearchSelect({ options, value, onChange, placeholder = "Buscar…" }) {
+  const [query, setQuery] = useState("");
+  const [open, setOpen] = useState(false);
+  const wrapRef = useRef(null);
+
+  const selected = options.find((o) => o.value === value);
+  const filtered = query
+    ? options.filter((o) => o.label.toLowerCase().includes(query.toLowerCase()))
+    : options;
+
+  useEffect(() => {
+    const handler = (e) => {
+      if (wrapRef.current && !wrapRef.current.contains(e.target)) setOpen(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  return (
+    <div className="ppSearch" ref={wrapRef}>
+      <input
+        className="ppSearch-input"
+        type="text"
+        placeholder={selected ? selected.label : placeholder}
+        value={open ? query : selected ? selected.label : ""}
+        onFocus={() => { setOpen(true); setQuery(""); }}
+        onChange={(e) => setQuery(e.target.value)}
+      />
+      {value && (
+        <button type="button" className="ppSearch-clear" onClick={() => { onChange(""); setQuery(""); }}>✕</button>
+      )}
+      {open && (
+        <ul className="ppSearch-list">
+          {filtered.length === 0 && <li className="ppSearch-empty">Sin resultados</li>}
+          {filtered.map((o) => (
+            <li
+              key={o.value}
+              className={`ppSearch-item ${o.value === value ? "ppSearch-item--selected" : ""}`}
+              onMouseDown={() => { onChange(o.value); setOpen(false); setQuery(""); }}
+            >
+              {o.label}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
 
 export default function ProductoProveedorModal({
   mode = "create",
@@ -245,34 +294,30 @@ export default function ProductoProveedorModal({
                   {tipoAsociacion === "ingrediente" && (
                     <div className="ppModal-field ppModal-field--full">
                       <label>Ingrediente *</label>
-                      <select
+                      <SearchSelect
+                        placeholder="Buscar ingrediente…"
                         value={form.ingredienteId}
-                        onChange={(e) => set("ingredienteId", e.target.value)}
-                      >
-                        <option value="">Selecciona ingrediente…</option>
-                        {ingredientes.map((i) => (
-                          <option key={i._id} value={i._id}>
-                            {i.nombre} ({i.stockActual ?? 0} {i.unidad})
-                          </option>
-                        ))}
-                      </select>
+                        onChange={(v) => set("ingredienteId", v)}
+                        options={ingredientes.map((i) => ({
+                          value: i._id,
+                          label: `${i.nombre} (${i.stockActual ?? 0} ${i.unidad})`,
+                        }))}
+                      />
                     </div>
                   )}
 
                   {tipoAsociacion === "producto" && (
                     <div className="ppModal-field ppModal-field--full">
                       <label>Producto *</label>
-                      <select
+                      <SearchSelect
+                        placeholder="Buscar producto…"
                         value={form.productoId}
-                        onChange={(e) => set("productoId", e.target.value)}
-                      >
-                        <option value="">Selecciona producto…</option>
-                        {productosStock.map((p) => (
-                          <option key={p._id} value={p._id}>
-                            {p.nombre} {p.controlStock ? `(${p.stock ?? 0} uds)` : ""}
-                          </option>
-                        ))}
-                      </select>
+                        onChange={(v) => set("productoId", v)}
+                        options={productosStock.map((p) => ({
+                          value: p._id,
+                          label: `${p.nombre}${p.controlStock ? ` (${p.stock ?? 0} uds)` : ""}`,
+                        }))}
+                      />
                     </div>
                   )}
                 </>
@@ -282,17 +327,15 @@ export default function ProductoProveedorModal({
               {isShop && (
                 <div className="ppModal-field ppModal-field--full">
                   <label>Producto de tienda asociado *</label>
-                  <select
+                  <SearchSelect
+                    placeholder="Buscar producto…"
                     value={form.productoShopId}
-                    onChange={(e) => set("productoShopId", e.target.value)}
-                  >
-                    <option value="">Selecciona producto…</option>
-                    {productosShop.map((p) => (
-                      <option key={p._id} value={p._id}>
-                        {p.nombre}
-                      </option>
-                    ))}
-                  </select>
+                    onChange={(v) => set("productoShopId", v)}
+                    options={productosShop.map((p) => ({
+                      value: p._id,
+                      label: p.nombre,
+                    }))}
+                  />
                 </div>
               )}
 

@@ -95,20 +95,19 @@ export default function ReservasAjustesPage({ onClose }) {
     setSavingAjustes(true);
     setAlerta(null);
     try {
-      const keys = [
-        ["reservas.autoConfirmar", ajustes.autoConfirmar],
-        ["reservas.autoConfirmarMaxPersonas", Number(ajustes.autoConfirmarMaxPersonas) || 4],
-        ["reservas.limitePorDia", Number(ajustes.limitePorDia) || 0],
-        ["reservas.permitirMultiplesReservasMismoDia", !!ajustes.permitirMultiplesReservasMismoDia],
-        ["reservas.asignarMesaAutomatica", !!ajustes.asignarMesaAutomatica],
-        ["reservas.emailCliente", ajustes.emailCliente],
-        ["reservas.emailRestaurante", ajustes.emailRestaurante],
-        ["reservas.duracionReservaMin", Number(ajustes.duracionReservaMin) || 90],
-        ["reservas.marcarNoShowAutoMin", Number(ajustes.marcarNoShowAutoMin) || 0],
-      ];
-      for (const [key, value] of keys) {
-        await api.put("/admin/features-plan/update", { key, value });
-      }
+      const payload = {
+        autoConfirmar: !!ajustes.autoConfirmar,
+        autoConfirmarMaxPersonas: Number(ajustes.autoConfirmarMaxPersonas) || 4,
+        limitePorDia: Number(ajustes.limitePorDia) || 0,
+        permitirMultiplesReservasMismoDia: !!ajustes.permitirMultiplesReservasMismoDia,
+        asignarMesaAutomatica: !!ajustes.asignarMesaAutomatica,
+        emailCliente: !!ajustes.emailCliente,
+        emailRestaurante: !!ajustes.emailRestaurante,
+        duracionReservaMin: Number(ajustes.duracionReservaMin) || 90,
+        marcarNoShowAutoMin: Number(ajustes.marcarNoShowAutoMin) || 0,
+        habilitadas: true,
+      };
+      await api.put("/admin/features-plan/update", { key: "reservas", value: payload });
       setAlerta({ tipo: "exito", mensaje: "Ajustes guardados correctamente." });
     } catch {
       setAlerta({ tipo: "error", mensaje: "No se pudieron guardar los ajustes." });

@@ -34,48 +34,39 @@ const detectTipoAsociacion = (prod) => {
 
 function SearchSelect({ options, value, onChange, placeholder = "Buscar…" }) {
   const [query, setQuery] = useState("");
-  const [open, setOpen] = useState(false);
-  const wrapRef = useRef(null);
 
   const selected = options.find((o) => o.value === value);
-  const filtered = query
+  const filtered = query.trim()
     ? options.filter((o) => o.label.toLowerCase().includes(query.toLowerCase()))
-    : options;
-
-  useEffect(() => {
-    const handler = (e) => {
-      if (wrapRef.current && !wrapRef.current.contains(e.target)) setOpen(false);
-    };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
-  }, []);
+    : [];
 
   return (
-    <div className="ppSearch" ref={wrapRef}>
-      <input
-        className="ppSearch-input"
-        type="text"
-        placeholder={selected ? selected.label : placeholder}
-        value={open ? query : selected ? selected.label : ""}
-        onFocus={() => { setOpen(true); setQuery(""); }}
-        onChange={(e) => setQuery(e.target.value)}
-      />
-      {value && (
-        <button type="button" className="ppSearch-clear" onClick={() => { onChange(""); setQuery(""); }}>✕</button>
-      )}
-      {open && (
-        <ul className="ppSearch-list">
-          {filtered.length === 0 && <li className="ppSearch-empty">Sin resultados</li>}
-          {filtered.map((o) => (
-            <li
-              key={o.value}
-              className={`ppSearch-item ${o.value === value ? "ppSearch-item--selected" : ""}`}
-              onMouseDown={() => { onChange(o.value); setOpen(false); setQuery(""); }}
-            >
-              {o.label}
-            </li>
-          ))}
-        </ul>
+    <div className="ppSearch">
+      {selected ? (
+        <div className="ppSearch-selected">
+          <span>{selected.label}</span>
+          <button type="button" className="ppSearch-clear" onClick={() => { onChange(""); setQuery(""); }}>✕</button>
+        </div>
+      ) : (
+        <>
+          <input
+            className="ppSearch-input"
+            type="text"
+            placeholder={placeholder}
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+          />
+          {query.trim() && (
+            <ul className="ppSearch-results">
+              {filtered.length === 0 && <li className="ppSearch-empty">Sin resultados para "{query}"</li>}
+              {filtered.slice(0, 20).map((o) => (
+                <li key={o.value} className="ppSearch-item" onClick={() => { onChange(o.value); setQuery(""); }}>
+                  {o.label}
+                </li>
+              ))}
+            </ul>
+          )}
+        </>
       )}
     </div>
   );

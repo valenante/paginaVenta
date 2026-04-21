@@ -11,34 +11,6 @@
 .rc-estado--completada { background: rgba(59, 130, 246, 0.12); color: #1d4ed8; }
 .rc-estado--no-show { background: rgba(168, 85, 247, 0.12); color: #7c3aed; }
 
-/* ===== Flags grid ===== */
-.rc-flags {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: var(--space-sm, 0.5rem);
-}
-
-.rc-flag {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.6rem 0.8rem;
-  border-radius: var(--radius-sm, 6px);
-  background: var(--color-fondo-claro, #f9fafb);
-  border: 1px solid var(--color-borde-suave, #e5e7eb);
-}
-
-.rc-flag-label {
-  font-size: var(--font-size-sm, 0.875rem);
-  font-weight: 600;
-  color: var(--color-texto, #1f2937);
-}
-
-.rc-flag-value {
-  font-size: var(--font-size-sm, 0.875rem);
-  color: var(--color-texto-suave, #6b7280);
-  font-weight: 500;
-}
 
 /* ===== Mobile cards ===== */
 .rc-mcards {

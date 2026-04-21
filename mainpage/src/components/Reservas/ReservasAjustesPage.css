@@ -212,6 +212,21 @@
   cursor: pointer;
 }
 
+/* ===== Ajustes grid ===== */
+.ra-ajustes-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.ra-ajustes-grid .mnr-field {
+  max-width: 360px;
+}
+
+.ra-ajustes-grid .mnr-field input[type="number"] {
+  max-width: 120px;
+}
+
 /* ===== Responsive ===== */
 @media (max-width: 768px) {
   .ra-dialog {

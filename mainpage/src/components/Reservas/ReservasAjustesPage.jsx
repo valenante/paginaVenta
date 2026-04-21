@@ -59,9 +59,63 @@ export default function ReservasAjustesPage({ onClose }) {
   const [loadingEspecial, setLoadingEspecial] = useState(false);
   const [savingGeneral, setSavingGeneral] = useState(false);
   const [savingEspecial, setSavingEspecial] = useState(false);
+  const [savingAjustes, setSavingAjustes] = useState(false);
+
+  // Ajustes generales de comportamiento
+  const [ajustes, setAjustes] = useState({
+    autoConfirmar: true,
+    autoConfirmarMaxPersonas: 4,
+    limitePorDia: 0,
+    permitirMultiplesReservasMismoDia: false,
+    asignarMesaAutomatica: false,
+    emailCliente: true,
+    emailRestaurante: true,
+    duracionReservaMin: 90,
+    marcarNoShowAutoMin: 0,
+  });
+  const [ajustesLoaded, setAjustesLoaded] = useState(false);
 
   const fechaISO = useMemo(() => toISODate(fechaSeleccionada), [fechaSeleccionada]);
   const busy = loading || savingGeneral || savingEspecial;
+
+  // Cargar ajustes de comportamiento
+  useEffect(() => {
+    api.get("/reservas/config")
+      .then(({ data }) => {
+        const r = data?.reservas || {};
+        setAjustes((prev) => ({ ...prev, ...r }));
+        setAjustesLoaded(true);
+      })
+      .catch(() => setAjustesLoaded(true));
+  }, []);
+
+  const setAjuste = (key, val) => setAjustes((prev) => ({ ...prev, [key]: val }));
+
+  const guardarAjustes = async () => {
+    setSavingAjustes(true);
+    setAlerta(null);
+    try {
+      const keys = [
+        ["reservas.autoConfirmar", ajustes.autoConfirmar],
+        ["reservas.autoConfirmarMaxPersonas", Number(ajustes.autoConfirmarMaxPersonas) || 4],
+        ["reservas.limitePorDia", Number(ajustes.limitePorDia) || 0],
+        ["reservas.permitirMultiplesReservasMismoDia", !!ajustes.permitirMultiplesReservasMismoDia],
+        ["reservas.asignarMesaAutomatica", !!ajustes.asignarMesaAutomatica],
+        ["reservas.emailCliente", ajustes.emailCliente],
+        ["reservas.emailRestaurante", ajustes.emailRestaurante],
+        ["reservas.duracionReservaMin", Number(ajustes.duracionReservaMin) || 90],
+        ["reservas.marcarNoShowAutoMin", Number(ajustes.marcarNoShowAutoMin) || 0],
+      ];
+      for (const [key, value] of keys) {
+        await api.put("/admin/features-plan/update", { key, value });
+      }
+      setAlerta({ tipo: "exito", mensaje: "Ajustes guardados correctamente." });
+    } catch {
+      setAlerta({ tipo: "error", mensaje: "No se pudieron guardar los ajustes." });
+    } finally {
+      setSavingAjustes(false);
+    }
+  };
 
   // ESC para cerrar
   useEffect(() => {
@@ -239,6 +293,89 @@ export default function ReservasAjustesPage({ onClose }) {
         <div className="mnr-form ra-body">
           {alerta && (
             <AlertaMensaje tipo={alerta.tipo} mensaje={alerta.mensaje} onClose={() => setAlerta(null)} />
+          )}
+
+          {/* Comportamiento general */}
+          {ajustesLoaded && (
+            <div className="ra-section">
+              <div className="ra-section-header">
+                <h3 className="ra-section-title">Comportamiento</h3>
+                <p className="mnr-subtitle text-suave">Como se gestionan las reservas que llegan.</p>
+              </div>
+
+              <div className="ra-ajustes-grid">
+                <label className="ra-toggle">
+                  <input type="checkbox" checked={ajustes.autoConfirmar} onChange={(e) => setAjuste("autoConfirmar", e.target.checked)} />
+                  <span>Confirmar reservas solas (sin intervenir)</span>
+                </label>
+
+                {ajustes.autoConfirmar && (
+                  <div className="mnr-field">
+                    <label>Hasta cuantas personas se confirma sola</label>
+                    <input type="number" min="0" value={ajustes.autoConfirmarMaxPersonas} onChange={(e) => setAjuste("autoConfirmarMaxPersonas", e.target.value)} />
+                    <small className="text-suave">0 = cualquier grupo, sin importar el tamano</small>
+                  </div>
+                )}
+
+                <div className="mnr-field">
+                  <label>Maximo de reservas por dia</label>
+                  <input type="number" min="0" value={ajustes.limitePorDia} onChange={(e) => setAjuste("limitePorDia", e.target.value)} />
+                  <small className="text-suave">0 = sin limite</small>
+                </div>
+
+                <label className="ra-toggle">
+                  <input type="checkbox" checked={ajustes.permitirMultiplesReservasMismoDia} onChange={(e) => setAjuste("permitirMultiplesReservasMismoDia", e.target.checked)} />
+                  <span>Permitir que el mismo cliente reserve varias veces en un dia</span>
+                </label>
+
+                <label className="ra-toggle">
+                  <input type="checkbox" checked={ajustes.asignarMesaAutomatica} onChange={(e) => setAjuste("asignarMesaAutomatica", e.target.checked)} />
+                  <span>Asignar mesa libre al confirmar la reserva</span>
+                </label>
+
+                <div className="mnr-field">
+                  <label>Tiempo estimado de cada reserva (minutos)</label>
+                  <input type="number" min="15" step="15" value={ajustes.duracionReservaMin} onChange={(e) => setAjuste("duracionReservaMin", e.target.value)} />
+                  <small className="text-suave">Se usa para calcular disponibilidad de mesas</small>
+                </div>
+              </div>
+
+              <div className="ra-ajustes-grid" style={{ marginTop: "1rem" }}>
+                <div className="ra-section-header" style={{ gridColumn: "1 / -1" }}>
+                  <h3 className="ra-section-title">Notificaciones</h3>
+                  <p className="mnr-subtitle text-suave">Quien recibe correo cuando hay una reserva nueva.</p>
+                </div>
+
+                <label className="ra-toggle">
+                  <input type="checkbox" checked={ajustes.emailCliente} onChange={(e) => setAjuste("emailCliente", e.target.checked)} />
+                  <span>Enviar correo al cliente</span>
+                </label>
+
+                <label className="ra-toggle">
+                  <input type="checkbox" checked={ajustes.emailRestaurante} onChange={(e) => setAjuste("emailRestaurante", e.target.checked)} />
+                  <span>Enviar correo al restaurante</span>
+                </label>
+              </div>
+
+              <div className="ra-ajustes-grid" style={{ marginTop: "1rem" }}>
+                <div className="ra-section-header" style={{ gridColumn: "1 / -1" }}>
+                  <h3 className="ra-section-title">Cuando el cliente no viene</h3>
+                  <p className="mnr-subtitle text-suave">Si pasa un tiempo y no llega, se marca automaticamente.</p>
+                </div>
+
+                <div className="mnr-field">
+                  <label>Marcar como "no vino" despues de (minutos)</label>
+                  <input type="number" min="0" step="5" value={ajustes.marcarNoShowAutoMin} onChange={(e) => setAjuste("marcarNoShowAutoMin", e.target.value)} />
+                  <small className="text-suave">0 = solo manual (tu decides)</small>
+                </div>
+              </div>
+
+              <footer className="mnr-actions ra-actions-single">
+                <button type="button" className="btn btn-primario mnr-btn" onClick={guardarAjustes} disabled={savingAjustes}>
+                  {savingAjustes ? "Guardando..." : "Guardar ajustes"}
+                </button>
+              </footer>
+            </div>
           )}
 
           {/* Día de referencia */}

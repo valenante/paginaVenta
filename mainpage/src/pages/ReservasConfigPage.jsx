@@ -37,14 +37,7 @@ export default function ReservasConfigPage() {
   const [modal, setModal] = useState(null);
   const [showAjustes, setShowAjustes] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [flags, setFlags] = useState(null);
-
   const reservasHabilitadas = useFeature("reservas.habilitadas", true);
-
-  // Cargar flags de configuración
-  useEffect(() => {
-    api.get("/reservas/config").then(({ data }) => setFlags(data?.reservas || null)).catch(() => {});
-  }, []);
 
   const cargarReservas = useCallback(async () => {
     try {
@@ -214,52 +207,6 @@ export default function ReservasConfigPage() {
               </article>
             </div>
           </section>
-
-          {/* Ajustes generales (flags) */}
-          {flags && (
-            <section className="card config-card">
-              <div className="config-card-header">
-                <div>
-                  <h2>Ajustes del sistema</h2>
-                  <p className="config-card-subtitle">Configura el comportamiento de las reservas.</p>
-                </div>
-              </div>
-              <div className="rc-flags">
-                <div className="rc-flag">
-                  <span className="rc-flag-label">Auto-confirmar reservas</span>
-                  <span className="rc-flag-value">{flags.autoConfirmar ? `Si (hasta ${flags.autoConfirmarMaxPersonas || "sin limite"} personas)` : "No"}</span>
-                </div>
-                <div className="rc-flag">
-                  <span className="rc-flag-label">Limite por dia</span>
-                  <span className="rc-flag-value">{flags.limitePorDia > 0 ? `${flags.limitePorDia} reservas` : "Sin limite"}</span>
-                </div>
-                <div className="rc-flag">
-                  <span className="rc-flag-label">Multiples reservas mismo dia</span>
-                  <span className="rc-flag-value">{flags.permitirMultiplesReservasMismoDia ? "Permitido" : "No permitido"}</span>
-                </div>
-                <div className="rc-flag">
-                  <span className="rc-flag-label">Asignar mesa automatica</span>
-                  <span className="rc-flag-value">{flags.asignarMesaAutomatica ? "Activo" : "Desactivado"}</span>
-                </div>
-                <div className="rc-flag">
-                  <span className="rc-flag-label">Email al cliente</span>
-                  <span className="rc-flag-value">{flags.emailCliente ? "Activo" : "Desactivado"}</span>
-                </div>
-                <div className="rc-flag">
-                  <span className="rc-flag-label">Email al restaurante</span>
-                  <span className="rc-flag-value">{flags.emailRestaurante ? "Activo" : "Desactivado"}</span>
-                </div>
-                <div className="rc-flag">
-                  <span className="rc-flag-label">Duracion estimada</span>
-                  <span className="rc-flag-value">{flags.duracionReservaMin} min</span>
-                </div>
-                <div className="rc-flag">
-                  <span className="rc-flag-label">No-show automatico</span>
-                  <span className="rc-flag-value">{flags.marcarNoShowAutoMin > 0 ? `${flags.marcarNoShowAutoMin} min tras la hora` : "Manual"}</span>
-                </div>
-              </div>
-            </section>
-          )}
 
           {/* Filters */}
           <section className="card config-card">

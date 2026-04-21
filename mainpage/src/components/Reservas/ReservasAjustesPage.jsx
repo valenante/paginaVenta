@@ -107,7 +107,7 @@ export default function ReservasAjustesPage({ onClose }) {
         marcarNoShowAutoMin: Number(ajustes.marcarNoShowAutoMin) || 0,
         habilitadas: true,
       };
-      await api.put("/admin/features-plan/update", { key: "reservas", value: payload });
+      await api.put("/reservas/config", payload);
       setAlerta({ tipo: "exito", mensaje: "Ajustes guardados correctamente." });
     } catch {
       setAlerta({ tipo: "error", mensaje: "No se pudieron guardar los ajustes." });

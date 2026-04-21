@@ -109,8 +109,9 @@ export default function ReservasAjustesPage({ onClose }) {
       };
       await api.put("/reservas/config", payload);
       setAlerta({ tipo: "exito", mensaje: "Ajustes guardados correctamente." });
-    } catch {
-      setAlerta({ tipo: "error", mensaje: "No se pudieron guardar los ajustes." });
+    } catch (err) {
+      console.error("guardarAjustes error:", err?.response?.status, err?.response?.data, err?.message);
+      setAlerta({ tipo: "error", mensaje: err?.response?.data?.message || "No se pudieron guardar los ajustes." });
     } finally {
       setSavingAjustes(false);
     }

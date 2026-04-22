@@ -76,7 +76,8 @@ export default function ProveedorProductosTab() {
                   <th>Nombre</th>
                   <th>Unidad</th>
                   <th>Formato</th>
-                  <th>Precio</th>
+                  <th>Precio (sin IVA)</th>
+                  <th>Precio (con IVA)</th>
                   <th>IVA</th>
                   <th>Estado</th>
                   <th className="t-right">Acciones</th>
@@ -89,6 +90,7 @@ export default function ProveedorProductosTab() {
                     <td>{p.unidad || "—"}</td>
                     <td>{p.formato || "—"}</td>
                     <td>{Number(p.precioBase).toFixed(2)} €</td>
+                    <td>{(Number(p.precioBase) * (1 + (Number(p.iva) || 0) / 100)).toFixed(2)} €</td>
                     <td>{p.iva}%</td>
                     <td>
                       <span className={`prov-pill ${p.activo === false ? "is-off" : ""}`}>
@@ -150,8 +152,12 @@ export default function ProveedorProductosTab() {
                     <span className="v">{p.formato || "—"}</span>
                   </div>
                   <div>
-                    <span className="k">Precio</span>
+                    <span className="k">Sin IVA</span>
                     <span className="v">{Number(p.precioBase).toFixed(2)} €</span>
+                  </div>
+                  <div>
+                    <span className="k">Con IVA</span>
+                    <span className="v">{(Number(p.precioBase) * (1 + (Number(p.iva) || 0) / 100)).toFixed(2)} €</span>
                   </div>
                   <div>
                     <span className="k">IVA</span>

@@ -114,19 +114,52 @@ export default function ProductoProveedorModal({
   const preciosProducto = productoAsociado?.precios || [];
   const tieneMultiPrecios = preciosProducto.length > 1;
 
-  const setFactorPrecio = (clave, factor) => {
-    setForm((prev) => {
-      const arr = [...(prev.factoresPorPrecio || [])];
-      const idx = arr.findIndex((f) => f.clave === clave);
-      if (idx >= 0) arr[idx] = { clave, factor: Number(factor) || 0 };
-      else arr.push({ clave, factor: Number(factor) || 0 });
-      return { ...prev, factoresPorPrecio: arr };
-    });
+  // Unidad base: la que el proveedor entrega (botella, racion, pieza, etc.)
+  const [unidadBase, setUnidadBase] = useState(() => {
+    // Intentar detectar de factoresPorPrecio existentes
+    const fps = producto?.factoresPorPrecio || [];
+    if (fps.length && preciosProducto.length > 1) {
+      // La unidad base es la que tiene factor = factorConversion (o la mayor)
+      const sorted = [...fps].sort((a, b) => a.factor - b.factor);
+      return sorted[0]?.clave || preciosProducto[0]?.clave || "";
+    }
+    return "";
+  });
+
+  // Ratio: cuantas unidades del tipo "pequeño" salen de una "grande"
+  const [ratios, setRatios] = useState(() => {
+    const fps = producto?.factoresPorPrecio || [];
+    const fc = producto?.factorConversion || 1;
+    const map = {};
+    for (const fp of fps) {
+      // ratio = factor / factorConversion (cuantas de este tipo por unidad base)
+      if (fc > 0 && fp.factor > fc) map[fp.clave] = Math.round(fp.factor / fc);
+    }
+    return map;
+  });
+
+  const setRatio = (clave, val) => setRatios((prev) => ({ ...prev, [clave]: Number(val) || 0 }));
+
+  // Calcular factoresPorPrecio a partir de unidadBase + ratios + factorConversion
+  const buildFactoresPorPrecio = () => {
+    if (!tieneMultiPrecios || !unidadBase) return [];
+    const fc = Number(form.factorConversion) || 1;
+    return preciosProducto.map((p) => {
+      if (p.clave === unidadBase) return { clave: p.clave, factor: fc };
+      const ratio = ratios[p.clave] || 0;
+      return { clave: p.clave, factor: fc * ratio };
+    }).filter((f) => f.factor > 0);
   };
 
-  const getFactorPrecio = (clave) => {
-    const f = (form.factoresPorPrecio || []).find((fp) => fp.clave === clave);
-    return f?.factor ?? "";
+  // Coste por tipo
+  const getCostePorTipo = (clave) => {
+    const fc = Number(form.factorConversion) || 1;
+    const precio = Number(form.precio) || 0;
+    if (precio <= 0) return null;
+    if (clave === unidadBase) return precio / fc;
+    const ratio = ratios[clave] || 0;
+    if (ratio <= 0) return null;
+    return precio / (fc * ratio);
   };
 
   /* =========================
@@ -207,7 +240,7 @@ export default function ProductoProveedorModal({
         iva: Number(form.iva),
         activo: !!form.activo,
         factorConversion: Number(form.factorConversion),
-        factoresPorPrecio: (form.factoresPorPrecio || []).filter((f) => f.clave && f.factor > 0),
+        factoresPorPrecio: tieneMultiPrecios ? buildFactoresPorPrecio() : [],
 
         // Asociaciones: solo una activa
         ingredienteId: isRest && tipoAsociacion === "ingrediente" ? form.ingredienteId : null,
@@ -391,37 +424,70 @@ export default function ProductoProveedorModal({
                 </small>
               </div>
 
-              {/* Factores por tipo de precio (si el producto tiene copa/botella/etc) */}
+              {/* Multi-precio: unidad base + ratios */}
               {tieneMultiPrecios && (
-                <div className="ppModal-field ppModal-field--full">
-                  <label>Factor por tipo de precio</label>
-                  <small className="ppModal-help" style={{ marginBottom: "0.5rem" }}>
-                    Este producto se vende con varios precios. Indica cuantas unidades de cada tipo salen del formato que compras.
-                  </small>
-                  <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
-                    {preciosProducto.map((p) => (
-                      <div key={p.clave} style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                        <span style={{ minWidth: 100, fontSize: "0.85rem", fontWeight: 600 }}>
-                          {p.label || p.clave} ({p.precio}€)
-                        </span>
-                        <input
-                          type="number"
-                          min="0"
-                          step="any"
-                          placeholder="Factor"
-                          value={getFactorPrecio(p.clave)}
-                          onChange={(e) => setFactorPrecio(p.clave, e.target.value)}
-                          style={{ width: 90 }}
-                        />
-                        {getFactorPrecio(p.clave) > 0 && (
-                          <span style={{ fontSize: "0.78rem", color: "#6b7280" }}>
-                            = {(Number(form.precio) / Number(getFactorPrecio(p.clave))).toFixed(2)}€/ud
-                          </span>
-                        )}
-                      </div>
-                    ))}
+                <>
+                  <div className="ppModal-field ppModal-field--full">
+                    <label>Este producto se vende de varias formas. ¿Cual es la unidad que compras?</label>
+                    <div className="ppModal-tipo-toggle">
+                      {preciosProducto.map((p) => (
+                        <button
+                          key={p.clave}
+                          type="button"
+                          className={`ppModal-tipo-btn ${unidadBase === p.clave ? "active" : ""}`}
+                          onClick={() => setUnidadBase(p.clave)}
+                        >
+                          {p.label || p.clave}
+                        </button>
+                      ))}
+                    </div>
+                    {unidadBase && (
+                      <small className="ppModal-help">
+                        Compras por <b>{preciosProducto.find(p => p.clave === unidadBase)?.label || unidadBase}</b>.
+                        El formato trae <b>{form.factorConversion || "?"}</b> unidades.
+                      </small>
+                    )}
                   </div>
-                </div>
+
+                  {unidadBase && preciosProducto.filter(p => p.clave !== unidadBase).map((p) => (
+                    <div className="ppModal-field" key={p.clave}>
+                      <label>¿Cuantas {(p.label || p.clave).toLowerCase()}s salen de 1 {(preciosProducto.find(pr => pr.clave === unidadBase)?.label || unidadBase).toLowerCase()}?</label>
+                      <input
+                        type="number"
+                        min="0"
+                        step="1"
+                        value={ratios[p.clave] || ""}
+                        onChange={(e) => setRatio(p.clave, e.target.value)}
+                        placeholder="Ej: 5"
+                      />
+                    </div>
+                  ))}
+
+                  {/* Resumen de costes calculados */}
+                  {unidadBase && Number(form.precio) > 0 && Number(form.factorConversion) > 0 && (
+                    <div className="ppModal-field ppModal-field--full">
+                      <label>Coste calculado</label>
+                      <div style={{ display: "flex", flexDirection: "column", gap: "0.35rem" }}>
+                        {preciosProducto.map((p) => {
+                          const coste = getCostePorTipo(p.clave);
+                          if (coste == null) return null;
+                          const margen = p.precio > 0 ? ((p.precio - coste) / p.precio * 100) : 0;
+                          const margenColor = margen < 0 ? "#ef4444" : margen < 40 ? "#f59e0b" : "#16a34a";
+                          return (
+                            <div key={p.clave} style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "0.85rem" }}>
+                              <span style={{ fontWeight: 700, minWidth: 80 }}>{p.label || p.clave}</span>
+                              <span>{coste.toFixed(2)}€ coste</span>
+                              <span style={{ color: "#9ca3af" }}>→</span>
+                              <span>venta {p.precio}€</span>
+                              <span style={{ color: "#9ca3af" }}>→</span>
+                              <span style={{ fontWeight: 700, color: margenColor }}>margen {margen.toFixed(0)}%</span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+                </>
               )}
 
               <div className="ppModal-field">

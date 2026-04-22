@@ -47,6 +47,13 @@ export default function HacerPedidoPage() {
 
   // Cantidades editadas por el usuario (por itemKey)
   const [cantidades, setCantidades] = useState({});
+  // Grupos expandidos (por proveedorId o "__sin_proveedor__")
+  const [expandidos, setExpandidos] = useState(new Set());
+  const toggleGrupo = (id) => setExpandidos((prev) => {
+    const next = new Set(prev);
+    if (next.has(id)) next.delete(id); else next.add(id);
+    return next;
+  });
   const itemKey = (it) => `${it.itemType}:${it.itemId}`;
 
   // Sincronizar soloBajos → URL
@@ -600,10 +607,14 @@ export default function HacerPedidoPage() {
                 No hay items candidatos. Ajusta filtros o configura stock objetivo.
               </div>
             ) : (
-              grupos.map((g) => (
-                <div key={g.proveedorId || "sin"} className="hp-grupo">
-                  <header className="hp-grupo-head">
+              grupos.map((g) => {
+                const gKey = g.proveedorId || "__sin_proveedor__";
+                const isOpen = expandidos.has(gKey);
+                return (
+                <div key={gKey} className="hp-grupo">
+                  <header className="hp-grupo-head" onClick={() => toggleGrupo(gKey)} style={{ cursor: "pointer", userSelect: "none" }}>
                     <h3>
+                      <span style={{ display: "inline-block", width: 18, fontSize: "0.8rem", transition: "transform 0.15s", transform: isOpen ? "rotate(90deg)" : "rotate(0deg)" }}>▸</span>
                       {g.nombre}
                       {!g.proveedorId && (
                         <span className="hp-alerta hp-alerta--rojo">
@@ -616,7 +627,7 @@ export default function HacerPedidoPage() {
                     </span>
                   </header>
 
-                  <div className="hp-tabla-wrap">
+                  {isOpen && <div className="hp-tabla-wrap">
                     <table className="hp-tabla">
                       <thead>
                         <tr>
@@ -752,9 +763,10 @@ export default function HacerPedidoPage() {
                         })}
                       </tbody>
                     </table>
-                  </div>
+                  </div>}
                 </div>
-              ))
+                );
+              })
             )}
           </section>
         </div>

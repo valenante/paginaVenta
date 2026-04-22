@@ -108,15 +108,14 @@ export default function AdminDashboard() {
           <span className="adm__kpi-value">{fmt(caja?.cobrado)} €</span>
           <span className="adm__kpi-label">Cobrado</span>
         </div>
-        {esHoy ? (
+        <div className="adm__kpi adm__kpi--mesas">
+          <span className="adm__kpi-value">{(caja?.mesasCerradas ?? 0) + (caja?.mesasAbiertas ?? 0)}</span>
+          <span className="adm__kpi-label">Mesas del día{esHoy && caja?.mesasAbiertas > 0 ? ` (${caja.mesasAbiertas} abiertas)` : ""}</span>
+        </div>
+        {esHoy && caja?.mesasAbiertas > 0 && (
           <div className="adm__kpi adm__kpi--mesas">
             <span className="adm__kpi-value">{fmt(caja?.enMesasAbiertas)} €</span>
-            <span className="adm__kpi-label">{caja?.mesasAbiertas || 0} mesas abiertas</span>
-          </div>
-        ) : (
-          <div className="adm__kpi adm__kpi--mesas">
-            <span className="adm__kpi-value">{caja?.mesasCerradas ?? 0}</span>
-            <span className="adm__kpi-label">Mesas del día</span>
+            <span className="adm__kpi-label">En mesas abiertas</span>
           </div>
         )}
         <div className="adm__kpi adm__kpi--comensales">

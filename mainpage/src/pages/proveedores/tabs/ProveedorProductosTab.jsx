@@ -107,6 +107,14 @@ export default function ProveedorProductosTab() {
                         </button>
                         <button
                           className="btn btn-secundario"
+                          onClick={() =>
+                            setModalProducto({ mode: "create", producto: { ...p, _id: undefined, nombre: `${p.nombre} (copia)` } })
+                          }
+                        >
+                          Clonar
+                        </button>
+                        <button
+                          className="btn btn-secundario"
                           onClick={() => setModalDelete(p)}
                         >
                           Eliminar
@@ -157,6 +165,14 @@ export default function ProveedorProductosTab() {
                     onClick={() => setModalProducto({ mode: "edit", producto: p })}
                   >
                     Editar
+                  </button>
+                  <button
+                    className="btn btn-secundario"
+                    onClick={() =>
+                      setModalProducto({ mode: "create", producto: { ...p, _id: undefined, nombre: `${p.nombre} (copia)` } })
+                    }
+                  >
+                    Clonar
                   </button>
                   <button
                     className="btn btn-secundario"

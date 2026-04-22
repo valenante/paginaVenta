@@ -114,29 +114,32 @@ export default function ProductoProveedorModal({
   const preciosProducto = productoAsociado?.precios || [];
   const tieneMultiPrecios = preciosProducto.length > 1;
 
-  // Unidad base: la que el proveedor entrega (botella, racion, pieza, etc.)
-  const [unidadBase, setUnidadBase] = useState(() => {
-    // Intentar detectar de factoresPorPrecio existentes
-    const fps = producto?.factoresPorPrecio || [];
-    if (fps.length && preciosProducto.length > 1) {
-      // La unidad base es la que tiene factor = factorConversion (o la mayor)
-      const sorted = [...fps].sort((a, b) => a.factor - b.factor);
-      return sorted[0]?.clave || preciosProducto[0]?.clave || "";
-    }
-    return "";
-  });
+  // Unidad base y ratios — se restauran cuando productosStock se cargan
+  const [unidadBase, setUnidadBase] = useState("");
+  const [ratios, setRatios] = useState({});
+  const [multiPrecioRestored, setMultiPrecioRestored] = useState(false);
 
-  // Ratio: cuantas unidades del tipo "pequeño" salen de una "grande"
-  const [ratios, setRatios] = useState(() => {
-    const fps = producto?.factoresPorPrecio || [];
-    const fc = producto?.factorConversion || 1;
-    const map = {};
-    for (const fp of fps) {
-      // ratio = factor / factorConversion (cuantas de este tipo por unidad base)
-      if (fc > 0 && fp.factor > fc) map[fp.clave] = Math.round(fp.factor / fc);
+  // Restaurar unidadBase y ratios desde factoresPorPrecio guardados
+  useEffect(() => {
+    if (multiPrecioRestored || !tieneMultiPrecios) return;
+    const fps = producto?.factoresPorPrecio || form.factoresPorPrecio || [];
+    const fc = Number(producto?.factorConversion || form.factorConversion) || 1;
+    if (!fps.length) return;
+
+    // La unidad base es la que tiene factor == fc (el factor general)
+    const base = fps.find(f => Math.abs(f.factor - fc) < 0.01);
+    if (base) {
+      setUnidadBase(base.clave);
+      const newRatios = {};
+      for (const fp of fps) {
+        if (fp.clave !== base.clave && fc > 0) {
+          newRatios[fp.clave] = Math.round(fp.factor / fc);
+        }
+      }
+      setRatios(newRatios);
     }
-    return map;
-  });
+    setMultiPrecioRestored(true);
+  }, [tieneMultiPrecios, producto, form.factoresPorPrecio, form.factorConversion, multiPrecioRestored]);
 
   const setRatio = (clave, val) => setRatios((prev) => ({ ...prev, [clave]: Number(val) || 0 }));
 

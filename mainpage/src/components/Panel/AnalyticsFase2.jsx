@@ -28,14 +28,19 @@ export function ComparativaCard({ fecha }) {
   if (loading) return <div className="af2-card af2-card--loading">Cargando comparativa...</div>;
   if (!data?.actual) return null;
 
-  const { actual, deltas, fechaAnterior } = data;
+  const { actual, anterior, deltas, fechaAnterior } = data;
+  const diff = (a, b, isMoney) => {
+    const d = (a || 0) - (b || 0);
+    if (d === 0) return "";
+    return isMoney ? `${d > 0 ? "+" : ""}${money(d)}€` : `${d > 0 ? "+" : ""}${d}`;
+  };
   const items = [
-    { label: "Ventas", value: `${money(actual.ventas)}€`, delta: deltas.ventas },
-    { label: "Mesas", value: actual.mesas, delta: deltas.mesas },
-    { label: "Comensales", value: actual.comensales, delta: deltas.comensales },
-    { label: "Ticket/mesa", value: `${money(actual.ticketMedioMesa)}€`, delta: deltas.ticketMedioMesa },
-    { label: "Ticket/com.", value: `${money(actual.ticketMedioComensal)}€`, delta: deltas.ticketMedioComensal },
-    { label: "Pedidos", value: actual.pedidos, delta: deltas.pedidos },
+    { label: "Ventas", value: `${money(actual.ventas)}€`, delta: deltas.ventas, abs: diff(actual.ventas, anterior?.ventas, true) },
+    { label: "Mesas", value: actual.mesas, delta: deltas.mesas, abs: diff(actual.mesas, anterior?.mesas) },
+    { label: "Comensales", value: actual.comensales, delta: deltas.comensales, abs: diff(actual.comensales, anterior?.comensales) },
+    { label: "Ticket/mesa", value: `${money(actual.ticketMedioMesa)}€`, delta: deltas.ticketMedioMesa, abs: diff(actual.ticketMedioMesa, anterior?.ticketMedioMesa, true) },
+    { label: "Ticket/com.", value: `${money(actual.ticketMedioComensal)}€`, delta: deltas.ticketMedioComensal, abs: diff(actual.ticketMedioComensal, anterior?.ticketMedioComensal, true) },
+    { label: "Pedidos", value: actual.pedidos, delta: deltas.pedidos, abs: diff(actual.pedidos, anterior?.pedidos) },
   ];
 
   return (
@@ -59,7 +64,7 @@ export function ComparativaCard({ fecha }) {
           <div key={it.label} className="af2-kpi">
             <span className="af2-kpi__label">{it.label}</span>
             <span className="af2-kpi__value">{it.value}</span>
-            <span className={`af2-kpi__delta ${it.delta > 0 ? "af2-kpi__delta--up" : it.delta < 0 ? "af2-kpi__delta--down" : ""}`}>{pct(it.delta)}</span>
+            <span className={`af2-kpi__delta ${it.delta > 0 ? "af2-kpi__delta--up" : it.delta < 0 ? "af2-kpi__delta--down" : ""}`}>{pct(it.delta)}{it.abs ? ` (${it.abs})` : ""}</span>
           </div>
         ))}
       </div>

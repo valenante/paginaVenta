@@ -327,12 +327,14 @@ export default function CajaDiariaUltraPro() {
           return Math.round(((val - avg) / avg) * 100);
         };
 
-        const diffBadge = (val, avg, suffix = "") => {
+        const diffBadge = (val, avg, suffix = "", isMoney = false) => {
           const diff = pctDiff(val, avg);
           if (diff == null) return null;
+          const abs = val - avg;
           const color = diff > 0 ? "#22c55e" : diff < 0 ? "#ef4444" : "#94a3b8";
           const sign = diff > 0 ? "+" : "";
-          return <span style={{ color, fontSize: "0.78rem", fontWeight: 700, marginLeft: 6 }}>{sign}{diff}% vs media{suffix}</span>;
+          const absStr = isMoney ? `${sign}${abs.toFixed(2)}€` : `${sign}${Math.round(abs)}`;
+          return <span style={{ color, fontSize: "0.78rem", fontWeight: 700, marginLeft: 6 }}>{sign}{diff}% ({absStr}) vs media{suffix}</span>;
         };
 
         const diaTicketMedioMesa = diaData.numTickets > 0 ? diaData.total / diaData.numTickets : 0;
@@ -353,7 +355,7 @@ export default function CajaDiariaUltraPro() {
             <div className="kpi-card">
               <span>Ingresos</span>
               <strong>{diaData.total.toFixed(2)} €</strong>
-              {diffBadge(diaData.total, avgIngresos)}
+              {diffBadge(diaData.total, avgIngresos, "", true)}
             </div>
             <div className="kpi-card">
               <span>Tickets</span>
@@ -363,7 +365,7 @@ export default function CajaDiariaUltraPro() {
             <div className="kpi-card">
               <span>Ticket medio / mesa</span>
               <strong>{diaTicketMedioMesa.toFixed(2)} €</strong>
-              {diffBadge(diaTicketMedioMesa, avgTicketMedio)}
+              {diffBadge(diaTicketMedioMesa, avgTicketMedio, "", true)}
             </div>
             <div className="kpi-card">
               <span>Comensales</span>
@@ -373,7 +375,7 @@ export default function CajaDiariaUltraPro() {
             <div className="kpi-card">
               <span>Ticket medio / comensal</span>
               <strong>{diaTicketMedioComensal.toFixed(2)} €</strong>
-              {diffBadge(diaTicketMedioComensal, avgTicketMedioComensal)}
+              {diffBadge(diaTicketMedioComensal, avgTicketMedioComensal, "", true)}
             </div>
             {diaData.avgDuracionMin != null && diaData.avgDuracionMin > 0 && (
               <div className="kpi-card">

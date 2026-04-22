@@ -141,30 +141,41 @@ export default function ComparacionPeriodos({ periodoA, tipoNegocio }) {
     return rows;
   }, [diariosA, diariosB]);
 
+  const absDiff = (a, b, isMoney) => {
+    const d = a - b;
+    if (d === 0) return "";
+    const sign = d > 0 ? "+" : "";
+    return isMoney ? `${sign}${d.toFixed(2)}€` : `${sign}${Math.round(d)}`;
+  };
+
   const kpis = [
     {
       label: "Ingresos",
       a: `${kpiA.ingresos.toFixed(2)} €`,
       b: `${kpiB.ingresos.toFixed(2)} €`,
       delta: pctDelta(kpiA.ingresos, kpiB.ingresos),
+      abs: absDiff(kpiA.ingresos, kpiB.ingresos, true),
     },
     {
       label: "Tickets",
       a: String(kpiA.tickets),
       b: String(kpiB.tickets),
       delta: pctDelta(kpiA.tickets, kpiB.tickets),
+      abs: absDiff(kpiA.tickets, kpiB.tickets),
     },
     {
       label: "Ticket medio",
       a: `${kpiA.ticketMedio.toFixed(2)} €`,
       b: `${kpiB.ticketMedio.toFixed(2)} €`,
       delta: pctDelta(kpiA.ticketMedio, kpiB.ticketMedio),
+      abs: absDiff(kpiA.ticketMedio, kpiB.ticketMedio, true),
     },
     {
       label: "Media diaria",
       a: `${kpiA.mediaDiaria.toFixed(2)} €`,
       b: `${kpiB.mediaDiaria.toFixed(2)} €`,
       delta: pctDelta(kpiA.mediaDiaria, kpiB.mediaDiaria),
+      abs: absDiff(kpiA.mediaDiaria, kpiB.mediaDiaria, true),
     },
   ];
 
@@ -218,7 +229,7 @@ export default function ComparacionPeriodos({ periodoA, tipoNegocio }) {
             <div className="comp-kpi-val comp-kpi-val-a">{k.a}</div>
             <div className="comp-kpi-val comp-kpi-val-b">{loadingB ? "—" : k.b}</div>
             <div className={`comp-kpi-delta ${deltaClass(k.delta)}`}>
-              {loadingB ? "—" : formatDelta(k.delta)}
+              {loadingB ? "—" : `${formatDelta(k.delta)}${k.abs ? ` (${k.abs})` : ""}`}
             </div>
           </React.Fragment>
         ))}

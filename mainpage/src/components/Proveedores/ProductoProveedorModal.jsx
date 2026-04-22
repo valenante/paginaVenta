@@ -90,6 +90,7 @@ export default function ProductoProveedorModal({
     productoId: producto?.productoId || "",
     productoShopId: producto?.productoShopId || "",
     factorConversion: producto?.factorConversion ?? 1,
+    factoresPorPrecio: producto?.factoresPorPrecio || [],
   }));
 
   const [tipoAsociacion, setTipoAsociacion] = useState(() =>
@@ -107,6 +108,26 @@ export default function ProductoProveedorModal({
   const isShop = tenant?.tipoNegocio === "shop";
 
   const set = (k, v) => setForm((s) => ({ ...s, [k]: v }));
+
+  // Precios del producto asociado (para factores por precio)
+  const productoAsociado = productosStock.find((p) => p._id === form.productoId);
+  const preciosProducto = productoAsociado?.precios || [];
+  const tieneMultiPrecios = preciosProducto.length > 1;
+
+  const setFactorPrecio = (clave, factor) => {
+    setForm((prev) => {
+      const arr = [...(prev.factoresPorPrecio || [])];
+      const idx = arr.findIndex((f) => f.clave === clave);
+      if (idx >= 0) arr[idx] = { clave, factor: Number(factor) || 0 };
+      else arr.push({ clave, factor: Number(factor) || 0 });
+      return { ...prev, factoresPorPrecio: arr };
+    });
+  };
+
+  const getFactorPrecio = (clave) => {
+    const f = (form.factoresPorPrecio || []).find((fp) => fp.clave === clave);
+    return f?.factor ?? "";
+  };
 
   /* =========================
      Cargar opciones según negocio
@@ -186,6 +207,7 @@ export default function ProductoProveedorModal({
         iva: Number(form.iva),
         activo: !!form.activo,
         factorConversion: Number(form.factorConversion),
+        factoresPorPrecio: (form.factoresPorPrecio || []).filter((f) => f.clave && f.factor > 0),
 
         // Asociaciones: solo una activa
         ingredienteId: isRest && tipoAsociacion === "ingrediente" ? form.ingredienteId : null,
@@ -368,6 +390,39 @@ export default function ProductoProveedorModal({
                   Ej: si una caja contiene 50 unidades, escribe <b>50</b>
                 </small>
               </div>
+
+              {/* Factores por tipo de precio (si el producto tiene copa/botella/etc) */}
+              {tieneMultiPrecios && (
+                <div className="ppModal-field ppModal-field--full">
+                  <label>Factor por tipo de precio</label>
+                  <small className="ppModal-help" style={{ marginBottom: "0.5rem" }}>
+                    Este producto se vende con varios precios. Indica cuantas unidades de cada tipo salen del formato que compras.
+                  </small>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
+                    {preciosProducto.map((p) => (
+                      <div key={p.clave} style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                        <span style={{ minWidth: 100, fontSize: "0.85rem", fontWeight: 600 }}>
+                          {p.label || p.clave} ({p.precio}€)
+                        </span>
+                        <input
+                          type="number"
+                          min="0"
+                          step="any"
+                          placeholder="Factor"
+                          value={getFactorPrecio(p.clave)}
+                          onChange={(e) => setFactorPrecio(p.clave, e.target.value)}
+                          style={{ width: 90 }}
+                        />
+                        {getFactorPrecio(p.clave) > 0 && (
+                          <span style={{ fontSize: "0.78rem", color: "#6b7280" }}>
+                            = {(Number(form.precio) / Number(getFactorPrecio(p.clave))).toFixed(2)}€/ud
+                          </span>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               <div className="ppModal-field">
                 <label>Precio *</label>

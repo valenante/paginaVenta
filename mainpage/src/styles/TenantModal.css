@@ -336,3 +336,35 @@
   grid-template-columns: 1fr 1fr;
   gap: 0.6rem;
 }
+
+/* ── OTA Progress ──────────────── */
+.ota-progress {
+  margin-top: 0.8rem;
+  padding: 0.8rem 1rem;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+.ota-progress--running { background: rgba(59,130,246,0.1); border-color: rgba(59,130,246,0.3); }
+.ota-progress--success { background: rgba(34,197,94,0.1); border-color: rgba(34,197,94,0.3); }
+.ota-progress--failed, .ota-progress--timeout { background: rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.3); }
+.ota-progress__header { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: #e2e8f0; }
+.ota-progress__spinner { animation: otaSpin 1.2s linear infinite; display: inline-block; }
+@keyframes otaSpin { to { transform: rotate(360deg); } }
+.ota-progress__bar-wrap { margin-top: 0.5rem; }
+.ota-progress__bar {
+  height: 4px; border-radius: 2px; background: rgba(59,130,246,0.3); overflow: hidden; position: relative;
+}
+.ota-progress__bar::after {
+  content: ""; position: absolute; top: 0; left: -40%; width: 40%; height: 100%;
+  background: #3b82f6; border-radius: 2px;
+  animation: otaBar 1.5s ease-in-out infinite;
+}
+@keyframes otaBar { to { left: 100%; } }
+.ota-progress__text { font-size: 0.75rem; color: #94a3b8; margin-top: 4px; display: block; }
+.ota-progress__msg { font-size: 0.8rem; color: #cbd5e1; margin: 0.4rem 0 0; }
+.ota-progress__close {
+  margin-top: 0.5rem; padding: 4px 14px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.06); color: #e2e8f0; font-size: 0.75rem; cursor: pointer;
+}
+.ota-progress__close:hover { background: rgba(255,255,255,0.12);
+}

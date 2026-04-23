@@ -41,10 +41,46 @@ export default function TenantModal({ tenant, onClose }) {
   const [releases, setReleases] = useState([]);
   const [selectedReleaseId, setSelectedReleaseId] = useState("");
   const rollbackTimerRef = useRef(null);
-  // Cleanup timer on unmount
+  const pollRef = useRef(null);
+  const [otaProgress, setOtaProgress] = useState(null); // { action, status, startedAt, error }
+
+  // Cleanup timers on unmount
   useEffect(() => {
-    return () => clearTimeout(rollbackTimerRef.current);
+    return () => { clearTimeout(rollbackTimerRef.current); clearInterval(pollRef.current); };
   }, []);
+
+  // Poll agent status while OTA is running
+  const startPolling = (action) => {
+    setOtaProgress({ action, status: "running", startedAt: Date.now(), error: null });
+    clearInterval(pollRef.current);
+    pollRef.current = setInterval(async () => {
+      try {
+        const { data } = await api.get(`/admin/tenant/${tenant._id}/agente/status`);
+        const update = data?.update;
+        if (update?.status === "success") {
+          setOtaProgress((p) => ({ ...p, status: "success" }));
+          clearInterval(pollRef.current);
+          setLoading(false);
+        } else if (update?.status === "failed") {
+          setOtaProgress((p) => ({ ...p, status: "failed", error: update?.error || "Error desconocido" }));
+          clearInterval(pollRef.current);
+          setLoading(false);
+        }
+        // else still running — keep polling
+      } catch {
+        // SSH/connection error — keep trying
+      }
+    }, 3000);
+
+    // Timeout after 2 minutes
+    setTimeout(() => {
+      if (otaProgress?.status === "running") {
+        clearInterval(pollRef.current);
+        setOtaProgress((p) => p?.status === "running" ? { ...p, status: "timeout", error: "Tiempo agotado. Verifica manualmente." } : p);
+        setLoading(false);
+      }
+    }, 120000);
+  };
 
   // =========================
   // Sync tenant
@@ -142,60 +178,39 @@ export default function TenantModal({ tenant, onClose }) {
   };
 
   const actualizarAgente = async () => {
-  if (!tenant?._id) return;
+    if (!tenant?._id) return;
 
-  try {
-    setLoading(true);
-    setAlerta({ tipo: "info", mensaje: "Actualizando agente..." });
+    try {
+      setLoading(true);
+      const rel = releases.find((r) => r.releaseId === selectedReleaseId);
 
-    const rel = releases.find((r) => r.releaseId === selectedReleaseId);
+      if (!rel?.url || !rel?.sha256) {
+        setAlerta({ tipo: "error", mensaje: "No hay una release valida seleccionada" });
+        setLoading(false);
+        return;
+      }
 
-    if (!rel?.url || !rel?.sha256) {
-      setAlerta({ tipo: "error", mensaje: "No hay una release válida seleccionada" });
-      return;
+      await api.post(`/admin/tenant/${tenant._id}/actualizar-agente`, {
+        releaseUrl: rel.url,
+        sha256: rel.sha256,
+        version: rel.releaseId || rel.version,
+      });
+
+      startPolling("update");
+    } catch (err) {
+      const msg = err?.response?.data?.message || err?.response?.data?.error || err.message || "Error desconocido";
+      setAlerta({ tipo: "error", mensaje: msg });
+      setLoading(false);
     }
+  };
 
-    const { data } = await api.post(`/admin/tenant/${tenant._id}/actualizar-agente`, {
-      url: rel.url,
-      sha256: rel.sha256,
-      releaseId: rel.releaseId,
-    });
-
-    setAlerta({ tipo: "success", mensaje: data?.message || "Actualización iniciada" });
-  } catch (err) {
-    const msg =
-      err?.response?.data?.error ||
-      err?.response?.data?.detalle ||
-      err.message ||
-      "Error desconocido";
-    setAlerta({ tipo: "error", mensaje: msg });
-  } finally {
-    setLoading(false);
-  }
-};
-
-  // ✅ NUEVO: Rollback agente (previous -> current)
   const rollbackAgente = async () => {
     if (!tenant?._id) return;
 
     try {
       setLoading(true);
-      setAlerta({ tipo: "info", mensaje: "↩️ Iniciando rollback del agente..." });
-
-      const { data } = await api.post(`/admin/tenant/${tenant._id}/rollback-agente`);
-
-      setAlerta({
-        tipo: "success",
-        mensaje: data?.message
-          ? `${data.message}${data?.rollbackId ? ` [${data.rollbackId}]` : ""}`
-          : "Rollback iniciado",
-      });
-
-      // refrescar estado/versión tras unos segundos
-      clearTimeout(rollbackTimerRef.current);
-      rollbackTimerRef.current = setTimeout(() => {
-        verificarConexion();
-      }, 1200);
+      await api.post(`/admin/tenant/${tenant._id}/rollback-agente`);
+      startPolling("rollback");
     } catch (err) {
       const msg =
         err?.response?.data?.error ||
@@ -384,16 +399,43 @@ export default function TenantModal({ tenant, onClose }) {
               🔄 Actualizar agente
             </button>
 
-            {/* ✅ BOTÓN ROLLBACK */}
             <button
               className="btn-rollback-agente"
               onClick={rollbackAgente}
               disabled={estado !== "online" || loading}
-              title="Vuelve a la versión anterior (previous)"
+              title="Vuelve a la version anterior (previous)"
             >
               ↩️ Rollback agente
             </button>
           </div>
+
+          {/* OTA Progress */}
+          {otaProgress && (
+            <div className={`ota-progress ota-progress--${otaProgress.status}`}>
+              <div className="ota-progress__header">
+                <strong>{otaProgress.action === "update" ? "Actualizando" : "Rollback"}</strong>
+                {otaProgress.status === "running" && <span className="ota-progress__spinner">⏳</span>}
+                {otaProgress.status === "success" && <span className="ota-progress__icon">✅</span>}
+                {otaProgress.status === "failed" && <span className="ota-progress__icon">❌</span>}
+                {otaProgress.status === "timeout" && <span className="ota-progress__icon">⏰</span>}
+              </div>
+              {otaProgress.status === "running" && (
+                <div className="ota-progress__bar-wrap">
+                  <div className="ota-progress__bar" />
+                  <span className="ota-progress__text">Descargando, verificando y reiniciando servicio...</span>
+                </div>
+              )}
+              {otaProgress.status === "success" && (
+                <p className="ota-progress__msg">Completado. El agente se ha reiniciado con la nueva version.</p>
+              )}
+              {(otaProgress.status === "failed" || otaProgress.status === "timeout") && (
+                <p className="ota-progress__msg">{otaProgress.error}</p>
+              )}
+              {otaProgress.status !== "running" && (
+                <button className="ota-progress__close" onClick={() => { setOtaProgress(null); verificarConexion(); }}>Cerrar</button>
+              )}
+            </div>
+          )}
         </div>
 
         <div className="impresora-buttons">

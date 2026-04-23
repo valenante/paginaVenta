@@ -17,7 +17,16 @@ const UpsellEstadisticasPro = () => {
         Habla con tu gestor o con el equipo de Alef para añadirlo a tu plan.
       </p>
 
-      <button className="upsellpro-btn">Me interesa</button>
+      <button
+        className="upsellpro-btn"
+        onClick={() => window.open(
+          "https://wa.me/34624163497?text=" +
+          encodeURIComponent("Hola, me interesa activar funcionalidades Premium en mi plan Alef."),
+          "_blank"
+        )}
+      >
+        Me interesa
+      </button>
     </section>
   );
 };

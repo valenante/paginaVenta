@@ -3,11 +3,13 @@ import React, { useState } from "react";
 import ExtrasPanel from "../components/Extras/ExtrasPanel";
 import CategoriasPanel from "../components/Categories/CategoriasPanel";
 import CostesPanel from "../components/Costes/CostesPanel";
+import { useFeature } from "../Hooks/useFeature";
 import "../styles/ProductsMenu.css";
 
 const ProductsPage = () => {
   // 'extras' | 'carta' | 'costes' | null
   const [selectedType, setSelectedType] = useState(null);
+  const hasCostes = useFeature("finanzas_view");
 
   /* =====================================================
      Helpers UI
@@ -83,16 +85,30 @@ const ProductsPage = () => {
               </span>
             </button>
 
-            <button
-              type="button"
-              onClick={() => setSelectedType("costes")}
-              className="products-type-btn--productos costes"
-            >
-              💰 Costes
-              <span className="products-type-desc--productos">
-                Precio de coste, margen y ganancia por producto.
-              </span>
-            </button>
+            {hasCostes ? (
+              <button
+                type="button"
+                onClick={() => setSelectedType("costes")}
+                className="products-type-btn--productos costes"
+              >
+                💰 Costes
+                <span className="products-type-desc--productos">
+                  Precio de coste, margen y ganancia por producto.
+                </span>
+              </button>
+            ) : (
+              <button
+                type="button"
+                className="products-type-btn--productos costes"
+                style={{ opacity: 0.5, cursor: "not-allowed" }}
+                onClick={() => window.open("https://wa.me/34624163497?text=" + encodeURIComponent("Hola, me interesa activar el módulo de Costes en Alef."), "_blank")}
+              >
+                🔒 Costes
+                <span className="products-type-desc--productos">
+                  Disponible en el plan Premium.
+                </span>
+              </button>
+            )}
           </div>
         </section>
       )}

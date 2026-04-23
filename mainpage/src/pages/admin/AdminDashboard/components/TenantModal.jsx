@@ -58,8 +58,15 @@ export default function TenantModal({ tenant, onClose }) {
         const { data } = await api.get(`/admin/tenant/${tenant._id}/agente/status`);
         const update = data?.update;
         if (update?.status === "success") {
-          setOtaProgress((p) => ({ ...p, status: "success" }));
           clearInterval(pollRef.current);
+          // OTA done — restart the service externally via SSH
+          setOtaProgress((p) => ({ ...p, status: "restarting" }));
+          try {
+            await api.post(`/admin/tenant/${tenant._id}/restart-agente`);
+            setOtaProgress((p) => ({ ...p, status: "success" }));
+          } catch {
+            setOtaProgress((p) => ({ ...p, status: "success", error: "Actualizado pero reinicio manual necesario" }));
+          }
           setLoading(false);
         } else if (update?.status === "failed") {
           setOtaProgress((p) => ({ ...p, status: "failed", error: update?.error || "Error desconocido" }));
@@ -414,7 +421,7 @@ export default function TenantModal({ tenant, onClose }) {
             <div className={`ota-progress ota-progress--${otaProgress.status}`}>
               <div className="ota-progress__header">
                 <strong>{otaProgress.action === "update" ? "Actualizando" : "Rollback"}</strong>
-                {otaProgress.status === "running" && <span className="ota-progress__spinner">⏳</span>}
+                {(otaProgress.status === "running" || otaProgress.status === "restarting") && <span className="ota-progress__spinner">⏳</span>}
                 {otaProgress.status === "success" && <span className="ota-progress__icon">✅</span>}
                 {otaProgress.status === "failed" && <span className="ota-progress__icon">❌</span>}
                 {otaProgress.status === "timeout" && <span className="ota-progress__icon">⏰</span>}
@@ -422,16 +429,25 @@ export default function TenantModal({ tenant, onClose }) {
               {otaProgress.status === "running" && (
                 <div className="ota-progress__bar-wrap">
                   <div className="ota-progress__bar" />
-                  <span className="ota-progress__text">Descargando, verificando y reiniciando servicio...</span>
+                  <span className="ota-progress__text">Descargando y verificando...</span>
+                </div>
+              )}
+              {otaProgress.status === "restarting" && (
+                <div className="ota-progress__bar-wrap">
+                  <div className="ota-progress__bar" />
+                  <span className="ota-progress__text">Reiniciando servicio...</span>
                 </div>
               )}
               {otaProgress.status === "success" && (
-                <p className="ota-progress__msg">Completado. El agente se ha reiniciado con la nueva version.</p>
+                <p className="ota-progress__msg">
+                  Completado. El agente se ha reiniciado con la nueva version.
+                  {otaProgress.error && <><br/><small>{otaProgress.error}</small></>}
+                </p>
               )}
               {(otaProgress.status === "failed" || otaProgress.status === "timeout") && (
                 <p className="ota-progress__msg">{otaProgress.error}</p>
               )}
-              {otaProgress.status !== "running" && (
+              {otaProgress.status !== "running" && otaProgress.status !== "restarting" && (
                 <button className="ota-progress__close" onClick={() => { setOtaProgress(null); verificarConexion(); }}>Cerrar</button>
               )}
             </div>

@@ -15,7 +15,10 @@ export default function UpsellEstadisticasUsuarios() {
         Esta funcionalidad está disponible solo en el <strong>Plan Pro</strong>.
       </p>
 
-      <button className="upsellusers-btn">
+      <button
+        className="upsellusers-btn"
+        onClick={() => window.open("https://wa.me/34624163497?text=" + encodeURIComponent("Hola, me interesa activar las Estadísticas avanzadas en Alef."), "_blank")}
+      >
         Quiero activar estadísticas avanzadas
       </button>
     </div>

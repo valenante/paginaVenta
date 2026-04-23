@@ -1,8 +1,10 @@
 // src/components/Panel/AdminDashboard.jsx
 import React, { useState, useMemo } from "react";
 import { useAdminDashboard } from "../../hooks/useAdminDashboard";
+import { useFeature } from "../../Hooks/useFeature";
 import { ComparativaCard, RatioTipoCard, VentasPorHoraCard } from "./AnalyticsFase2";
 import { CorrelacionCard, AlertasCard } from "./AnalyticsFase3";
+import UpsellEstadisticasPro from "../Estadisticas/UpsellEstadisticasPro";
 import "./AdminDashboard.css";
 
 const fmt = (v) => Number(v || 0).toFixed(2);
@@ -34,6 +36,7 @@ export default function AdminDashboard() {
   const hoy = useMemo(() => fechaOperativaHoy(), []);
   const [fechaSeleccionada, setFechaSeleccionada] = useState(hoy);
   const esHoy = fechaSeleccionada === hoy;
+  const isPremium = useFeature("estadisticas_avanzadas");
 
   // Siempre pasamos la fecha operativa al backend para garantizar filtro correcto
   const { loading, error, data, refresh } = useAdminDashboard(fechaSeleccionada);
@@ -341,16 +344,20 @@ export default function AdminDashboard() {
         </section>
       </div>
 
-      {/* ── ANALYTICS FASE 2 ── */}
-      <div className="adm__analytics-grid">
-        <ComparativaCard fecha={fechaSeleccionada} />
-        <RatioTipoCard fecha={fechaSeleccionada} />
-      </div>
-      <VentasPorHoraCard fecha={fechaSeleccionada} />
-
-      {/* ── ANALYTICS FASE 3 ── */}
-      <AlertasCard />
-      <CorrelacionCard />
+      {/* ── ANALYTICS (Premium) ── */}
+      {isPremium ? (
+        <>
+          <div className="adm__analytics-grid">
+            <ComparativaCard fecha={fechaSeleccionada} />
+            <RatioTipoCard fecha={fechaSeleccionada} />
+          </div>
+          <VentasPorHoraCard fecha={fechaSeleccionada} />
+          <AlertasCard />
+          <CorrelacionCard />
+        </>
+      ) : (
+        <UpsellEstadisticasPro />
+      )}
 
       {/* ── MODALES ── */}
       {modal === "stock" && (

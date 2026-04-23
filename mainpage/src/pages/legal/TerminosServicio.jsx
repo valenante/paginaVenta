@@ -3,7 +3,7 @@ import LegalLayout from "./LegalLayout";
 export default function TerminosServicio() {
   return (
     <LegalLayout title="Condiciones Generales del Servicio">
-      <p><em>Ultima actualizacion: 6 de abril de 2026</em></p>
+      <p><em>Ultima actualizacion: 23 de abril de 2026</em></p>
 
       <h2>1. Identificacion del prestador</h2>
       <ul>
@@ -23,7 +23,7 @@ export default function TerminosServicio() {
 
       <h2>4. Planes, precios y facturacion</h2>
       <p>Alef ofrece distintos planes de suscripcion publicados en softalef.com. Los precios no incluyen IVA salvo indicacion expresa. La suscripcion se cobra de forma recurrente (mensual o anual) a traves de Stripe.</p>
-      <p>Alef puede modificar los precios con un preaviso de 30 dias por email. Si un cobro falla, el titular dispone de 3 dias para actualizar su metodo de pago antes de que la cuenta sea suspendida.</p>
+      <p>Alef puede modificar los precios con un preaviso de 30 dias por email. Si un cobro falla, el titular dispone de 15 dias para actualizar su metodo de pago antes de que la cuenta sea suspendida.</p>
 
       <h2>5. Cancelacion y reembolsos</h2>
       <p>El titular puede cancelar su suscripcion en cualquier momento desde su panel de facturacion o contactando a contacto@softalef.com. La cancelacion tiene efecto al final del periodo ya pagado. No se realizan reembolsos proporcionales.</p>
@@ -46,7 +46,7 @@ export default function TerminosServicio() {
       <p>La responsabilidad total de Alef no excedera el importe pagado por el titular en los 12 meses anteriores al evento. Alef no sera responsable de perdida de ingresos, errores en la configuracion del titular, ni incidencias en hardware de terceros.</p>
 
       <h2>11. Modificaciones</h2>
-      <p>Alef puede modificar estas condiciones notificando al titular por email con 15 dias de antelacion.</p>
+      <p>Alef puede modificar estas condiciones notificando al titular por email con 30 dias de antelacion. Si el titular no esta de acuerdo, podra resolver el contrato sin penalizacion antes de la entrada en vigor de los cambios.</p>
 
       <h2>12. Ley aplicable</h2>
       <p>Estas condiciones se rigen por la legislacion espanola.</p>

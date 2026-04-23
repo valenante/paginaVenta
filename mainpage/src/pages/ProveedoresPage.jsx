@@ -3,17 +3,24 @@ import React, { useEffect, useMemo, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import api from "../utils/api";
 import { useTenant } from "../context/TenantContext";
+import { useFeaturesPlan } from "../context/FeaturesPlanContext";
 import ModalConfirmacion from "../components/Modal/ModalConfirmacion.jsx";
 import ProveedorModal from "../components/Proveedores/ProveedorModal.jsx";
 import ErrorToast from "../components/common/ErrorToast.jsx";
 import { normalizeApiError } from "../utils/normalizeApiError.js";
 import AlertaMensaje from "../components/AlertaMensaje/AlertaMensaje.jsx";
+import UpsellStock from "../components/Stock/UpsellStock.jsx";
 import "../styles/ProveedoresPage.css";
 
 const PAGE_SIZE_DEFAULT = 12;
 
 export default function ProveedoresPage() {
   const { tenantId } = useTenant();
+  const { hasFeature } = useFeaturesPlan();
+
+  if (!hasFeature("finanzas_view")) {
+    return <UpsellStock />;
+  }
 
   const [items, setItems] = useState([]);
   const [total, setTotal] = useState(0);

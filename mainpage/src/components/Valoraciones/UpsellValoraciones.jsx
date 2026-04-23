@@ -18,7 +18,10 @@ export default function UpsellValoraciones() {
         Mejora tu plan para desbloquear estadísticas detalladas de opiniones.
       </p>
 
-      <button className="upsell-valoraciones-btn">
+      <button
+        className="upsell-valoraciones-btn"
+        onClick={() => window.open("https://wa.me/34624163497?text=" + encodeURIComponent("Hola, me interesa activar el módulo de Valoraciones en Alef."), "_blank")}
+      >
         Mejorar plan
       </button>
     </div>

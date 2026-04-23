@@ -115,7 +115,7 @@ export default function DashboardPage() {
           </Link>
         )}
 
-        {canAccessModule("proveedores") && (
+        {canAccessModule("proveedores") && hasFeature("finanzas_view") && (
           <Link to="/configuracion/proveedores" className="dashboard-tile card">
             <div className="dashboard-tile-icon">🚚</div>
             <h2>Proveedores</h2>

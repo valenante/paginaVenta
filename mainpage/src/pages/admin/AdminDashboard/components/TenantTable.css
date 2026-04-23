@@ -367,3 +367,17 @@
   white-space: nowrap;
 }
 .admin-dashboard__retry:hover { background: rgba(239,68,68,0.25); }
+
+/* ── Print Status Badges ────────────── */
+.print-badge-wrap { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.print-badge {
+  display: inline-block; padding: 2px 8px; border-radius: 10px;
+  font-size: 0.65rem; font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase;
+}
+.print-badge--online { background: rgba(34,197,94,0.18); color: #16a34a; }
+.print-badge--offline { background: rgba(239,68,68,0.14); color: #dc2626; }
+.print-badge--unknown { background: rgba(148,163,184,0.14); color: #94a3b8; }
+.print-job-tag {
+  font-size: 0.68rem; color: var(--dash-text-muted, #94a3b8); white-space: nowrap;
+}
+.print-job-tag--fail { color: #ef4444; font-weight: 700; }

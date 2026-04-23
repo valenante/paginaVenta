@@ -116,6 +116,36 @@ function ActionsDropdown({ children }) {
 
 /* ── Main Component ──────────────────────────────────── */
 
+function PrintBadge({ info }) {
+  if (!info) return <span className="print-badge print-badge--unknown">—</span>;
+  const online = info.agente === "online";
+  const job = info.lastJob;
+
+  const jobLabel = job
+    ? `${job.kind} · ${job.status === "printed" ? "OK" : job.status === "failed" ? "FAIL" : job.status}`
+    : null;
+
+  const jobTime = job?.createdAt
+    ? (() => {
+        const h = Math.floor((Date.now() - new Date(job.createdAt).getTime()) / 3600000);
+        return h < 1 ? "<1h" : h < 24 ? `${h}h` : `${Math.floor(h / 24)}d`;
+      })()
+    : null;
+
+  return (
+    <div className="print-badge-wrap">
+      <span className={`print-badge ${online ? "print-badge--online" : "print-badge--offline"}`}>
+        {online ? "ON" : "OFF"}
+      </span>
+      {jobLabel && (
+        <span className={`print-job-tag ${job.status === "failed" ? "print-job-tag--fail" : ""}`} title={job.lastError || ""}>
+          {jobLabel} · {jobTime}
+        </span>
+      )}
+    </div>
+  );
+}
+
 export default function TenantTable({ tenants, onRefresh, loading, page, setPage, totalPages, total }) {
   const navigate = useNavigate();
   const [selected, setSelected] = useState(null);
@@ -126,6 +156,18 @@ export default function TenantTable({ tenants, onRefresh, loading, page, setPage
   const [estadoTarget, setEstadoTarget] = useState(null);
   const [planTarget, setPlanTarget] = useState(null);
   const [alerta, setAlerta] = useState(null);
+  const [printStatus, setPrintStatus] = useState({});
+
+  // Cargar estado de impresión
+  useEffect(() => {
+    api.get("/admin/superadmin/tenants/print-status")
+      .then(({ data }) => {
+        const map = {};
+        for (const item of data?.items || []) map[item.slug] = item;
+        setPrintStatus(map);
+      })
+      .catch(() => {});
+  }, [tenants]);
 
   const showAlert = (tipo, mensaje) => setAlerta({ tipo, mensaje });
   const normalizeErr = (err) =>
@@ -309,6 +351,7 @@ export default function TenantTable({ tenants, onRefresh, loading, page, setPage
               <th>Estado</th>
               <th>Creación</th>
               <th>Último acceso</th>
+              <th>Impresión</th>
               <th className="tenant-table__thActions">Acciones</th>
             </tr>
           </thead>
@@ -334,6 +377,7 @@ export default function TenantTable({ tenants, onRefresh, loading, page, setPage
                   <td className="tenant-table__date">
                     {(() => { const ll = formatLastLogin(t.lastLogin); return <span className={ll.cls}>{ll.text}</span>; })()}
                   </td>
+                  <td><PrintBadge info={printStatus[slug]} /></td>
                   <td className="tenant-table__cell--actions">{renderActions(t, slug, false)}</td>
                 </tr>
               );
@@ -364,6 +408,7 @@ export default function TenantTable({ tenants, onRefresh, loading, page, setPage
                 <span className="tenant-plan-badge">{t.plan}</span>
                 <span className={`estado-tag estado-${t.estado}`}>{t.estado}</span>
                 {(() => { const ll = formatLastLogin(t.lastLogin); return <span className={`last-login-badge ${ll.cls}`}>{ll.text}</span>; })()}
+                <PrintBadge info={printStatus[slug]} />
               </div>
             </div>
           );

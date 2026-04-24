@@ -280,6 +280,32 @@
   }
 }
 
+/* ===== MFA CODE INPUT ===== */
+
+.login-mfa-input {
+  font-size: 1.8rem;
+  letter-spacing: 0.5em;
+  text-align: center;
+  font-weight: 700;
+  padding: 0.8rem 1rem;
+  font-family: monospace;
+}
+
+@media (max-width: 600px) {
+  .login-mfa-input {
+    font-size: 1.4rem;
+    letter-spacing: 0.35em;
+    padding: 0.7rem 0.6rem;
+  }
+}
+
+@media (max-width: 380px) {
+  .login-mfa-input {
+    font-size: 1.2rem;
+    letter-spacing: 0.25em;
+  }
+}
+
 /* ====================================================================== */
 /* 🔐 FORGOT PASSWORD — Estilo Premium Alef (mismo diseño que Login)      */
 /* ====================================================================== */

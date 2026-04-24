@@ -280,32 +280,32 @@ export default function TenantTable({ tenants, onRefresh, loading, page, setPage
 
   /* ── Action buttons (shared between desktop and mobile) ─── */
 
-  const renderActions = (t, slug, isMobile = false) => {
-    const cls = isMobile ? "actions-dropdown__item" : "tenant-actions__btn";
-    const dangerCls = isMobile ? "actions-dropdown__item actions-dropdown__item--danger" : "tenant-actions__btn tenant-actions__btn--danger";
+  const renderActions = (t, slug) => {
+    const cls = "actions-dropdown__item";
+    const dangerCls = "actions-dropdown__item actions-dropdown__item--danger";
 
     const buttons = (
       <>
         <button type="button" className={cls} onClick={() => setSelected(t)} title="Ver detalles">
-          <FiEye /> {isMobile && <span>Ver</span>}
+          <FiEye /> <span>Ver</span>
         </button>
         <button type="button" className={cls} onClick={() => setPlanTarget(t)} title="Editar plan">
-          <FiEdit2 /> {isMobile && <span>Plan</span>}
+          <FiEdit2 /> <span>Plan</span>
         </button>
         <button type="button" className={cls} onClick={() => abrirImpersonacion(t)}
           disabled={loadingImpersonar || !slug} title={`Entrar (${getEnvForTenant(slug).toUpperCase()})`}>
-          <FiLogIn /> {isMobile && <span>Entrar</span>}
+          <FiLogIn /> <span>Entrar</span>
         </button>
         <button type="button" className={cls} onClick={() => setEstadoTarget(t)} title="Cambiar estado">
-          {t.estado === "suspendido" ? <>&#128275;</> : <>&#128274;</>} {isMobile && <span>Estado</span>}
+          {t.estado === "suspendido" ? <>&#128275;</> : <>&#128274;</>} <span>Estado</span>
         </button>
         <button type="button" className={dangerCls} onClick={() => setDeleteTarget(t)} title="Eliminar">
-          <FiTrash2 /> {isMobile && <span>Eliminar</span>}
+          <FiTrash2 /> <span>Eliminar</span>
         </button>
       </>
     );
 
-    return isMobile ? <ActionsDropdown>{buttons}</ActionsDropdown> : <div className="tenant-actions">{buttons}</div>;
+    return <ActionsDropdown>{buttons}</ActionsDropdown>;
   };
 
   /* ── Empty state ─────────────────────── */
@@ -378,7 +378,7 @@ export default function TenantTable({ tenants, onRefresh, loading, page, setPage
                     {(() => { const ll = formatLastLogin(t.lastLogin); return <span className={ll.cls}>{ll.text}</span>; })()}
                   </td>
                   <td><PrintBadge info={printStatus[slug]} /></td>
-                  <td className="tenant-table__cell--actions">{renderActions(t, slug, false)}</td>
+                  <td className="tenant-table__cell--actions">{renderActions(t, slug)}</td>
                 </tr>
               );
             })}
@@ -398,7 +398,7 @@ export default function TenantTable({ tenants, onRefresh, loading, page, setPage
                   <span className="tenant-card__name">{t.nombre}</span>
                   <span className="tenant-card__slug">{slug}</span>
                 </div>
-                {renderActions(t, slug, true)}
+                {renderActions(t, slug)}
               </div>
               <div className="tenant-card__tags">
                 <span className={`tenant-type tenant-type--${tipo}`}>

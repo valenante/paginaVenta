@@ -44,7 +44,7 @@ const PANEL_BY_TIPO = {
     { key: "stock", label: "📦 Stock", permiso: "stock.manage", feature: "stock_basico", render: () => <StockPage /> },
     { key: "valoraciones", label: "⭐ Valoraciones", permiso: "valoraciones.manage", feature: "carta_valoraciones", render: () => <ValoracionesPanel /> },
     { key: "estadisticas", label: "📊 Estadísticas", permiso: "estadisticas.manage", feature: "estadisticas_avanzadas", render: () => <EstadisticasPage type="plato" /> },
-    { key: "finanzas", label: "💰 Finanzas", permiso: "finanzas.view", render: () => <FinanzasPage /> },
+    { key: "finanzas", label: "💰 Finanzas", permiso: "finanzas.view", feature: "finanzas_view", render: () => <FinanzasPage /> },
     { key: "cortesias", label: "🎁 Cortesias", permiso: "cortesias.view", feature: "reporting_avanzado", render: () => <CortesiasPage /> },
     { key: "tiempos", label: "⏱️ Tiempos cocina", permiso: null, feature: "motor_adaptativo_cocina", render: () => <TiemposCocina /> },
   ],

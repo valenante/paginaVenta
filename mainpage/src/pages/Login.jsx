@@ -181,7 +181,7 @@ export default function Login() {
                   autoComplete="one-time-code"
                   autoFocus
                   required
-                  style={{ fontSize: "1.5rem", letterSpacing: "0.5em", textAlign: "center" }}
+                  className="login-mfa-input"
                 />
               </div>
 

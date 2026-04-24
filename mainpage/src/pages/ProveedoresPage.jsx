@@ -9,7 +9,7 @@ import ProveedorModal from "../components/Proveedores/ProveedorModal.jsx";
 import ErrorToast from "../components/common/ErrorToast.jsx";
 import { normalizeApiError } from "../utils/normalizeApiError.js";
 import AlertaMensaje from "../components/AlertaMensaje/AlertaMensaje.jsx";
-import UpsellStock from "../components/Stock/UpsellStock.jsx";
+import UpgradeBanner from "../components/UpgradeBanner/UpgradeBanner";
 import "../styles/ProveedoresPage.css";
 
 const PAGE_SIZE_DEFAULT = 12;
@@ -19,7 +19,16 @@ export default function ProveedoresPage() {
   const { hasFeature } = useFeaturesPlan();
 
   if (!hasFeature("finanzas_view")) {
-    return <UpsellStock />;
+    return (
+      <div style={{ padding: "2rem" }}>
+        <UpgradeBanner
+          title="Gestión de proveedores"
+          message="Gestiona proveedores, productos, pedidos y costes con el plan Premium."
+          cta="Activar Proveedores"
+          waText="Hola, me interesa activar el módulo de Proveedores en Alef."
+        />
+      </div>
+    );
   }
 
   const [items, setItems] = useState([]);

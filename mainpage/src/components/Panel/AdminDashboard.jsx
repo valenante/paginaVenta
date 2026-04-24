@@ -243,7 +243,8 @@ export default function AdminDashboard() {
         </section>
       </div>
 
-      {/* ── Fila: Ticket por comensales + Camareros ── */}
+      {/* ── Fila: Ticket por comensales + Camareros (Premium) ── */}
+      {isPremium && (
       <div className="adm__row adm__row--half">
         {resumen?.ticketPorComensales?.length > 0 && (
           <section className="adm__section">
@@ -291,10 +292,11 @@ export default function AdminDashboard() {
           )}
         </section>
       </div>
+      )}
 
-      {/* ── Fila: Rotación de mesas + Cancelaciones ── */}
-      <div className="adm__row adm__row--half">
-        {resumen?.rotacionMesas?.length > 0 && (
+      {/* ── Rotación de mesas (Premium) ── */}
+      {isPremium && resumen?.rotacionMesas?.length > 0 && (
+        <div className="adm__row adm__row--half">
           <section className="adm__section">
             <h3 className="adm__section-title">Rotación de mesas</h3>
             <div className="adm__staff">
@@ -316,8 +318,11 @@ export default function AdminDashboard() {
               ))}
             </div>
           </section>
-        )}
+        </div>
+      )}
 
+      {/* ── Cancelaciones (todos los planes) ── */}
+      <div className="adm__row adm__row--half">
         <section className="adm__section">
           <h3 className="adm__section-title">
             Últimas cancelaciones

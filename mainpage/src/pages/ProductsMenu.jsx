@@ -4,6 +4,7 @@ import ExtrasPanel from "../components/Extras/ExtrasPanel";
 import CategoriasPanel from "../components/Categories/CategoriasPanel";
 import CostesPanel from "../components/Costes/CostesPanel";
 import { useFeature } from "../Hooks/useFeature";
+import UpgradeBanner from "../components/UpgradeBanner/UpgradeBanner";
 import "../styles/ProductsMenu.css";
 
 const ProductsPage = () => {
@@ -97,17 +98,14 @@ const ProductsPage = () => {
                 </span>
               </button>
             ) : (
-              <button
-                type="button"
-                className="products-type-btn--productos costes"
-                style={{ opacity: 0.5, cursor: "not-allowed" }}
-                onClick={() => window.open("https://wa.me/34624163497?text=" + encodeURIComponent("Hola, me interesa activar el módulo de Costes en Alef."), "_blank")}
-              >
-                🔒 Costes
-                <span className="products-type-desc--productos">
-                  Disponible en el plan Premium.
-                </span>
-              </button>
+              <div className="products-type-btn--productos costes products-type-btn--locked">
+                <span>🔒 Costes</span>
+                <UpgradeBanner
+                  message="Precio de coste, margen y ganancia por producto."
+                  cta="Activar Costes"
+                  waText="Hola, me interesa activar el módulo de Costes en Alef."
+                />
+              </div>
             )}
           </div>
         </section>

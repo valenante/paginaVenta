@@ -199,7 +199,7 @@ const Categories = ({ category, tipo }) => {
                           className="boton-receta--categories disabled"
                           type="button"
                           disabled
-                          title="Disponible solo en el plan Profesional"
+                          title="Disponible solo en el plan Premium"
                           style={{
                             opacity: 0.45,
                             cursor: "not-allowed",

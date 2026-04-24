@@ -1037,7 +1037,7 @@ const EditProduct = ({
               🧪 Receta y control de stock
               {isPlanEsencial && (
                 <span style={{ marginLeft: 8, fontSize: "14px", color: "#ff6700" }}>
-                  🔒 Solo en plan Profesional
+                  🔒 Solo en plan Premium
                 </span>
               )}
             </legend>
@@ -1198,7 +1198,7 @@ const EditProduct = ({
                 }}
               >
                 Para gestionar recetas completas, mejora tu plan a{" "}
-                <strong>Profesional</strong>.
+                <strong>Premium</strong>.
               </p>
             )}
           </fieldset>

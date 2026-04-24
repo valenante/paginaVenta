@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo, useRef, useCallback } from "react"
 import html2canvas from "html2canvas";
 import { obtenerCajasPorRango } from "./ObtenerCajasPorRango";
 import UpsellEstadisticasPro from "../../components/Estadisticas/UpsellEstadisticasPro";
+import UpgradeBanner from "../UpgradeBanner/UpgradeBanner";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { useFeaturesPlan } from "../../context/FeaturesPlanContext";
 import { generarPDFCaja } from "./pdfs/pdfCajaUltraPro";
@@ -310,8 +311,22 @@ export default function CajaDiariaUltraPro() {
         />
       </div>
 
-      {/* KPIs del día seleccionado */}
-      {diaSeleccionado && (() => {
+      {/* KPIs del día seleccionado — Premium only, Esencial sees upsell */}
+      {diaSeleccionado && isPlanEsencial && (
+        <section className="caja-ultra-kpi caja-ultra-kpi--dia">
+          <div className="kpi-card-dia-header">
+            <strong>Análisis por día</strong>
+            <button className="kpi-card-dia-close" onClick={() => setDiaSeleccionado(null)}>✕</button>
+          </div>
+          <UpgradeBanner
+            title="Compara y analiza cada día"
+            message="Analiza tendencias, compara con la media y detecta patrones con el plan Premium."
+            cta="Quiero comparar días"
+            waText="Hola, me interesa activar las comparativas de caja en Alef."
+          />
+        </section>
+      )}
+      {diaSeleccionado && !isPlanEsencial && (() => {
         const diaData = datosDiarios.find((d) => d.fecha === diaSeleccionado);
         if (!diaData) return null;
 

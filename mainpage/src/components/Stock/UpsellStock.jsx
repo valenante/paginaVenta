@@ -4,7 +4,7 @@ import "./UpsellStock.css";
 export default function UpsellStock() {
   return (
     <div className="upsellstock-container">
-      <h2 className="upsellstock-title">🔒 Función disponible en el plan Profesional</h2>
+      <h2 className="upsellstock-title">🔒 Función disponible en el plan Premium</h2>
 
       <p className="upsellstock-text">
         La gestión avanzada de stock permite controlar ingredientes, cantidades mínimas,

@@ -411,39 +411,47 @@ export default function CajaDiariaUltraPro() {
         />
       )}
 
-      {/* Plan esencial: upsell */}
-      {isPlanEsencial && <UpsellEstadisticasPro />}
+      {/* KPIs del periodo — visibles para todos */}
+      <section className="caja-ultra-kpi">
+        <div className="kpi-card">
+          <span>Ingresos totales</span>
+          <strong>{totalIngresos.toFixed(2)} €</strong>
+        </div>
+        <div className="kpi-card">
+          <span>Total tickets</span>
+          <strong>{totalTickets}</strong>
+        </div>
+        <div className="kpi-card">
+          <span>Ticket medio / mesa</span>
+          <strong>{ticketMedio.toFixed(2)} €</strong>
+        </div>
+        <div className="kpi-card">
+          <span>Comensales</span>
+          <strong>{totalComensales}</strong>
+        </div>
+        <div className="kpi-card">
+          <span>Ticket medio / comensal</span>
+          <strong>{ticketMedioComensal.toFixed(2)} €</strong>
+        </div>
+        {duracionMediaMin != null && (
+          <div className="kpi-card">
+            <span>Tiempo medio / mesa</span>
+            <strong>
+              {duracionMediaMin >= 60
+                ? `${Math.floor(duracionMediaMin / 60)}h ${duracionMediaMin % 60}m`
+                : `${duracionMediaMin} min`}
+            </strong>
+          </div>
+        )}
+      </section>
 
-      {/* Plan pro: todo lo demás */}
-      {!isPlanEsencial && (
+      {/* Días del periodo — visible para todos (auditoría) */}
+      <DiasPeriodo dias={variaciones} />
+
+      {/* Premium: KPIs avanzados + heatmap */}
+      {!isPlanEsencial ? (
         <>
-          {/* KPIs */}
           <section className="caja-ultra-kpi">
-            <div className="kpi-card">
-              <span>Ingresos totales</span>
-              <strong>{totalIngresos.toFixed(2)} €</strong>
-            </div>
-
-            <div className="kpi-card">
-              <span>Total tickets</span>
-              <strong>{totalTickets}</strong>
-            </div>
-
-            <div className="kpi-card">
-              <span>Ticket medio / mesa</span>
-              <strong>{ticketMedio.toFixed(2)} €</strong>
-            </div>
-
-            <div className="kpi-card">
-              <span>Comensales</span>
-              <strong>{totalComensales}</strong>
-            </div>
-
-            <div className="kpi-card">
-              <span>Ticket medio / comensal</span>
-              <strong>{ticketMedioComensal.toFixed(2)} €</strong>
-            </div>
-
             {diaMasFuerte && (
               <div className="kpi-card highlight">
                 <span>Mejor día</span>
@@ -451,8 +459,6 @@ export default function CajaDiariaUltraPro() {
                 <small>{diaMasFuerte.total.toFixed(2)} €</small>
               </div>
             )}
-
-            {/* Fix #7: solo si hay >1 día y es diferente del mejor */}
             {diaMasDebil && diaMasDebil.fecha !== diaMasFuerte?.fecha && (
               <div className="kpi-card worst">
                 <span>Peor día</span>
@@ -460,18 +466,6 @@ export default function CajaDiariaUltraPro() {
                 <small>{diaMasDebil.total.toFixed(2)} €</small>
               </div>
             )}
-
-            {duracionMediaMin != null && (
-              <div className="kpi-card">
-                <span>Tiempo medio / mesa</span>
-                <strong>
-                  {duracionMediaMin >= 60
-                    ? `${Math.floor(duracionMediaMin / 60)}h ${duracionMediaMin % 60}m`
-                    : `${duracionMediaMin} min`}
-                </strong>
-              </div>
-            )}
-
             {proyeccion && (
               <div className="kpi-card highlight">
                 <span>Proyección mes</span>
@@ -481,16 +475,12 @@ export default function CajaDiariaUltraPro() {
             )}
           </section>
 
-          {/* Días + Heatmap — 50/50 */}
-          <div className="caja-ultra-row">
-            <DiasPeriodo dias={variaciones} />
-
-            {/* Heatmap — ref para captura PDF */}
-            <div ref={heatmapSectionRef}>
-              <HeatmapSemana datos={datos} />
-            </div>
+          <div ref={heatmapSectionRef}>
+            <HeatmapSemana datos={datos} />
           </div>
         </>
+      ) : (
+        <UpsellEstadisticasPro />
       )}
     </div>
   );

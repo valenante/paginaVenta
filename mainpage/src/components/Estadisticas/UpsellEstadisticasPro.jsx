@@ -20,7 +20,7 @@ const UpsellEstadisticasPro = () => {
       <button
         className="upsellpro-btn"
         onClick={() => window.open(
-          "https://wa.me/34624163497?text=" +
+          "https://wa.me/34623754328?text=" +
           encodeURIComponent("Hola, me interesa activar funcionalidades Premium en mi plan Alef."),
           "_blank"
         )}

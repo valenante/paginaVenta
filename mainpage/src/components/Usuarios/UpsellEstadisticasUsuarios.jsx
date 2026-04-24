@@ -17,7 +17,7 @@ export default function UpsellEstadisticasUsuarios() {
 
       <button
         className="upsellusers-btn"
-        onClick={() => window.open("https://wa.me/34624163497?text=" + encodeURIComponent("Hola, me interesa activar las Estadísticas avanzadas en Alef."), "_blank")}
+        onClick={() => window.open("https://wa.me/34623754328?text=" + encodeURIComponent("Hola, me interesa activar las Estadísticas avanzadas en Alef."), "_blank")}
       >
         Quiero activar estadísticas avanzadas
       </button>

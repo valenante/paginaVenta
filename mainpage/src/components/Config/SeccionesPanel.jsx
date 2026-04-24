@@ -179,7 +179,7 @@ export default function SeccionesPanel({
           title="Límite de secciones alcanzado"
           message="El plan Esencial incluye 1 sección. Pasa a Premium para crear secciones ilimitadas."
           cta="Desbloquear secciones"
-          waText="Hola, me interesa activar secciones ilimitadas en Alef."
+          waText="Hola, soy de {nombre}. Me interesa activar secciones ilimitadas en Alef."
         />
       )}
 

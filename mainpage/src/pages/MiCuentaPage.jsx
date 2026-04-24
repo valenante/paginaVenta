@@ -461,8 +461,8 @@ export default function MiCuentaPage() {
                 <button
                   className="btn btn-secundario"
                   onClick={() => window.open(
-                    "https://wa.me/34624163497?text=" +
-                    encodeURIComponent("Hola, me interesa mejorar mi plan a Premium en Alef."),
+                    "https://wa.me/34623754328?text=" +
+                    encodeURIComponent(`Hola, soy de ${config?.informacionRestaurante?.nombre || "mi restaurante"}. Me interesa mejorar a Premium en Alef.`),
                     "_blank"
                   )}
                 >

@@ -25,7 +25,7 @@ export default function ProveedoresPage() {
           title="Gestión de proveedores"
           message="Gestiona proveedores, productos, pedidos y costes con el plan Premium."
           cta="Activar Proveedores"
-          waText="Hola, me interesa activar el módulo de Proveedores en Alef."
+          waText="Hola, soy de {nombre}. Me interesa activar el módulo de Proveedores en Alef."
         />
       </div>
     );

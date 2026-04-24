@@ -17,7 +17,7 @@ export default function UpsellStock() {
 
       <button
         className="upsellstock-btn"
-        onClick={() => window.open("https://wa.me/34624163497?text=" + encodeURIComponent("Hola, me interesa activar el módulo de Stock avanzado en Alef."), "_blank")}
+        onClick={() => window.open("https://wa.me/34623754328?text=" + encodeURIComponent("Hola, me interesa activar el módulo de Stock avanzado en Alef."), "_blank")}
       >
         Mejorar plan
       </button>

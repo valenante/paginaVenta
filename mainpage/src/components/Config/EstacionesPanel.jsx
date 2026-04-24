@@ -205,7 +205,7 @@ export default function EstacionesPanel({
           title="Límite de estaciones alcanzado"
           message="El plan Esencial incluye 1 estación. Pasa a Premium para estaciones ilimitadas."
           cta="Desbloquear estaciones"
-          waText="Hola, me interesa activar estaciones ilimitadas en Alef."
+          waText="Hola, soy de {nombre}. Me interesa activar estaciones ilimitadas en Alef."
         />
       )}
 

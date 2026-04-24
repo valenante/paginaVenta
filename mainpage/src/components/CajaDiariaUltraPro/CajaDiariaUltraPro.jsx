@@ -322,7 +322,7 @@ export default function CajaDiariaUltraPro() {
             title="Compara y analiza cada día"
             message="Analiza tendencias, compara con la media y detecta patrones con el plan Premium."
             cta="Quiero comparar días"
-            waText="Hola, me interesa activar las comparativas de caja en Alef."
+            waText="Hola, soy de {nombre}. Me interesa activar las comparativas de caja en Alef."
           />
         </section>
       )}

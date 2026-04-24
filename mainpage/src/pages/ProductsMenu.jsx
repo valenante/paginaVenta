@@ -103,7 +103,7 @@ const ProductsPage = () => {
                 <UpgradeBanner
                   message="Precio de coste, margen y ganancia por producto."
                   cta="Activar Costes"
-                  waText="Hola, me interesa activar el módulo de Costes en Alef."
+                  waText="Hola, soy de {nombre}. Me interesa activar el módulo de Costes en Alef."
                 />
               </div>
             )}

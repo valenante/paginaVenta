@@ -1,4 +1,11 @@
 
+.Hero {
+  background:
+    radial-gradient(circle at top left, #60b5ff20 0, #0b1020 60%),
+    radial-gradient(circle at bottom right, #ff914930 0, #0b1020 70%);
+  color: #fff;
+}
+
 .Hero-inner {
   display: grid;
   grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);

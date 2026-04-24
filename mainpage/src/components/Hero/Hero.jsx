@@ -6,7 +6,7 @@ import facturaImg from "../../assets/imagenes/facturacion.png";
 
 const Hero = () => {
   return (
-    <section className="Hero section bg-fondo-claro reveal" id="verifactu">
+    <section className="Hero section reveal" id="verifactu">
       <div className="Hero-inner section--wide">
         <div className="Hero-texto">
           <div className="Hero-badge">

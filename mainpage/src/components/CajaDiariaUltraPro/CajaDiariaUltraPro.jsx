@@ -411,39 +411,45 @@ export default function CajaDiariaUltraPro() {
         />
       )}
 
-      {/* KPIs del periodo — visibles para todos */}
+      {/* KPI básico — visible para todos */}
       <section className="caja-ultra-kpi">
         <div className="kpi-card">
           <span>Ingresos totales</span>
           <strong>{totalIngresos.toFixed(2)} €</strong>
         </div>
-        <div className="kpi-card">
-          <span>Total tickets</span>
-          <strong>{totalTickets}</strong>
-        </div>
-        <div className="kpi-card">
-          <span>Ticket medio / mesa</span>
-          <strong>{ticketMedio.toFixed(2)} €</strong>
-        </div>
-        <div className="kpi-card">
-          <span>Comensales</span>
-          <strong>{totalComensales}</strong>
-        </div>
-        <div className="kpi-card">
-          <span>Ticket medio / comensal</span>
-          <strong>{ticketMedioComensal.toFixed(2)} €</strong>
-        </div>
-        {duracionMediaMin != null && (
-          <div className="kpi-card">
-            <span>Tiempo medio / mesa</span>
-            <strong>
-              {duracionMediaMin >= 60
-                ? `${Math.floor(duracionMediaMin / 60)}h ${duracionMediaMin % 60}m`
-                : `${duracionMediaMin} min`}
-            </strong>
-          </div>
-        )}
       </section>
+
+      {/* KPIs detallados — solo Premium */}
+      {!isPlanEsencial && (
+        <section className="caja-ultra-kpi">
+          <div className="kpi-card">
+            <span>Total tickets</span>
+            <strong>{totalTickets}</strong>
+          </div>
+          <div className="kpi-card">
+            <span>Ticket medio / mesa</span>
+            <strong>{ticketMedio.toFixed(2)} €</strong>
+          </div>
+          <div className="kpi-card">
+            <span>Comensales</span>
+            <strong>{totalComensales}</strong>
+          </div>
+          <div className="kpi-card">
+            <span>Ticket medio / comensal</span>
+            <strong>{ticketMedioComensal.toFixed(2)} €</strong>
+          </div>
+          {duracionMediaMin != null && (
+            <div className="kpi-card">
+              <span>Tiempo medio / mesa</span>
+              <strong>
+                {duracionMediaMin >= 60
+                  ? `${Math.floor(duracionMediaMin / 60)}h ${duracionMediaMin % 60}m`
+                  : `${duracionMediaMin} min`}
+              </strong>
+            </div>
+          )}
+        </section>
+      )}
 
       {/* Días del periodo — visible para todos (auditoría) */}
       <DiasPeriodo dias={variaciones} />

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import api from "../../utils/api";
 import BorrarConReasignacionModal from "./BorrarConReasignacionModal";
+import UpgradeBanner from "../UpgradeBanner/UpgradeBanner";
 import "./EstacionesPanel.css";
 import "./EstacionesModal.css";
 
@@ -38,10 +39,9 @@ export default function EstacionesPanel({
   const [editando, setEditando] = useState(null);
   // (modal anterior reemplazado por BorrarConReasignacionModal)
 
-  const puedeGestionar = useMemo(
-    () => !disabled && !isPlanEsencial,
-    [disabled, isPlanEsencial]
-  );
+  const MAX_ESTACIONES_ESENCIAL = 1;
+  const limitReached = isPlanEsencial && estaciones.length >= MAX_ESTACIONES_ESENCIAL;
+  const puedeGestionar = !disabled;
 
   // ============================
   // Cargar
@@ -200,13 +200,16 @@ export default function EstacionesPanel({
         </p>
       </header>
 
-      {isPlanEsencial ? (
-        <p className="config-empty">
-          Las estaciones no están disponibles en el plan esencial.
-        </p>
-      ) : (
-        <>
-          {/* CREAR */}
+      {limitReached && (
+        <UpgradeBanner
+          title="Límite de estaciones alcanzado"
+          message="El plan Esencial incluye 1 estación. Pasa a Premium para estaciones ilimitadas."
+          cta="Desbloquear estaciones"
+          waText="Hola, me interesa activar estaciones ilimitadas en Alef."
+        />
+      )}
+
+      {!limitReached && (
           <div className="config-field config-field--stacked">
             <label>Nueva estación</label>
             <input
@@ -327,6 +330,7 @@ export default function EstacionesPanel({
               Crear estación
             </button>
           </div>
+      )}
 
           <div className="config-sep" />
 
@@ -373,8 +377,6 @@ export default function EstacionesPanel({
               </li>
             ))}
           </ul>
-        </>
-      )}
 
       {/* ===== MODAL EDITAR ===== */}
       {editando && (

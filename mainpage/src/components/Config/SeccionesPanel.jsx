@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import api from "../../utils/api";
 import BorrarConReasignacionModal from "./BorrarConReasignacionModal";
+import UpgradeBanner from "../UpgradeBanner/UpgradeBanner";
 import "./SeccionesPanel.css";
 import "./SeccionesModal.css";
 
@@ -35,10 +36,9 @@ export default function SeccionesPanel({
   const [editando, setEditando] = useState(null);
   // (modal anterior reemplazado por BorrarConReasignacionModal)
 
-  const puedeGestionar = useMemo(
-    () => !disabled && !isPlanEsencial,
-    [disabled, isPlanEsencial]
-  );
+  const MAX_SECCIONES_ESENCIAL = 1;
+  const limitReached = isPlanEsencial && secciones.length >= MAX_SECCIONES_ESENCIAL;
+  const puedeGestionar = !disabled;
 
   // ============================
   // Cargar secciones
@@ -174,14 +174,17 @@ export default function SeccionesPanel({
         </p>
       </header>
 
-      {isPlanEsencial ? (
-        <div className="config-empty">
-          <p>Las secciones no están disponibles en el plan esencial.</p>
-        </div>
-      ) : (
-        <>
-          {/* NUEVA */}
-          <div className="config-field config-field--stacked">
+      {limitReached && (
+        <UpgradeBanner
+          title="Límite de secciones alcanzado"
+          message="El plan Esencial incluye 1 sección. Pasa a Premium para crear secciones ilimitadas."
+          cta="Desbloquear secciones"
+          waText="Hola, me interesa activar secciones ilimitadas en Alef."
+        />
+      )}
+
+      {!limitReached && (
+        <div className="config-field config-field--stacked">
             <label>Nueva sección</label>
 
             <input
@@ -243,7 +246,8 @@ export default function SeccionesPanel({
             >
               Crear sección
             </button>
-          </div>
+        </div>
+      )}
 
           {/* LISTA */}
           <div className="config-sep" />
@@ -300,8 +304,6 @@ export default function SeccionesPanel({
               </li>
             ))}
           </ul>
-        </>
-      )}
 
       {/* ===== MODAL EDITAR ===== */}
       {editando && (

@@ -34,6 +34,9 @@ import publicRoutes from "./routes/publicRoutes.jsx";
 import panelRoutes from "./routes/panelRoutes.jsx";
 import superadminRoutes from "./routes/superadminRoutes.jsx";
 
+/* ── Hooks ── */
+import useGoogleAnalytics from "./Hooks/useGoogleAnalytics.js";
+
 /* ── Styles ── */
 import "./index.css";
 import "./styles/dashboard-common.css";
@@ -51,11 +54,10 @@ function LandingPage() {
     <div className="main-grid">
       <TopBar />
       <Introduccion />
-      <Hero />
-      <Funcionamiento />
       <Features />
+      <Funcionamiento />
       <Comparativa />
-      {/* <Packs /> */}
+      <Hero />
       <FAQ />
       <Contact />
       <Footer />
@@ -159,6 +161,9 @@ const TENANT_BLOCKED_MESSAGES = {
 function AppRoutes() {
   const { tenantError, tenantErrorCode, clearTenant } = useTenant();
   const navigate = useNavigate();
+
+  /* GA4 — tracks pageviews on route change (only if analytics consent) */
+  useGoogleAnalytics();
 
   // Tenant bloqueado → redirigir a login con mensaje
   useEffect(() => {

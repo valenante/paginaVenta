@@ -12,7 +12,7 @@ export default function GuiaVerifactu() {
         <strong> HAC/1177/2024</strong> que la desarrolla.
       </p>
       <p>
-        En resumen: a partir de <strong>julio de 2026</strong>, todo negocio de hosteleria que emita
+        En resumen: a partir de <strong>julio de 2027</strong>, todo negocio de hosteleria que emita
         facturas o tickets debe hacerlo con un software que cumpla ciertos requisitos tecnicos.
         Ya no vale un programa cualquiera ni una caja registradora antigua.
       </p>
@@ -90,7 +90,7 @@ export default function GuiaVerifactu() {
         La cadena empieza desde tu primera factura en Alef. Esto es normal y la ley lo contempla.</p>
 
       <h2>¿Cuando entra en vigor?</h2>
-      <p>El plazo para que los negocios usen software certificado es <strong>julio de 2026</strong>.
+      <p>El plazo para que los negocios usen software certificado es <strong>julio de 2027</strong>.
         La AEAT aun no ha activado la recepcion automatica de registros (VERI*FACTU en tiempo real),
         pero cuando lo haga, Alef ya esta preparado para enviarlos.</p>
 

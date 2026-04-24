@@ -29,23 +29,24 @@ const Introduccion = () => {
             </div>
 
             <h1 className="Introduccion-titulo">
-              Tus camareros toman comandas en segundos.
-              Cocina no se equivoca. Caja siempre cuadra.
+              Tu sala mas rapida.
+              Tu cocina sin errores.
+              Tu caja siempre cuadra.
             </h1>
 
             <p className="Introduccion-subtitulo">
-              Alef agiliza tu sala, coordina cocina y barra en tiempo real
-              y te da el control completo de tu negocio. Sin instalar nada,
-              funciona en cualquier dispositivo con navegador.
+              Alef es el TPV web que agiliza tu servicio, coordina cocina y barra
+              en tiempo real y te da control total de tu negocio.
+              Sin instalar nada. Funciona en cualquier dispositivo.
             </p>
 
             <div className="Introduccion-highlights">
-              <span>🔎 Buscador inteligente de productos al tomar comanda</span>
-              <span>🧾 Tickets por seccion con notas, orden y mensajes a cocina</span>
-              <span>👨‍🍳 Pantallas de cocina y barra con marcado en tiempo real</span>
+              <span>🔎 Comanda completa en 3 toques con buscador inteligente</span>
+              <span>👨‍🍳 Cocina ve el pedido al instante y marca listo cuando sale</span>
+              <span>🧾 Tickets claros por seccion con notas y orden de salida</span>
               <span>📲 Carta digital QR en 3 idiomas con pedidos y reservas</span>
-              <span>✅ Facturacion encadenada y preparada para VERI*FACTU</span>
               <span>📊 Estadisticas, stock, caja diaria y gestion completa</span>
+              <span>✅ Facturacion legal preparada para VERI*FACTU</span>
             </div>
 
             <div className="Introduccion-botones">
@@ -54,25 +55,25 @@ const Introduccion = () => {
               </a>
 
               <a href="#contacto" className="Introduccion-boton secundario">
-                Pedir demo de 10 min
+                Ver demo en 10 minutos
               </a>
             </div>
 
             <div className="Introduccion-metricas">
               <div>
                 <strong>3 toques</strong>
-                <span>para una comanda completa</span>
+                <span>comanda completa</span>
               </div>
               <div>
                 <strong>0 errores</strong>
-                <span>tickets claros por seccion</span>
+                <span>cocina recibe todo claro</span>
               </div>
               <div>
                 <strong>59€/mes</strong>
-                <span>todo incluido, sin permanencia</span>
+                <span>sin permanencia</span>
               </div>
               <div>
-                <strong>1 minuto</strong>
+                <strong>1 dia</strong>
                 <span>para estar operativo</span>
               </div>
             </div>
@@ -82,7 +83,6 @@ const Introduccion = () => {
         {/* ======= COLUMNA VISUAL ======= */}
         <div className="Introduccion-right">
           <div className="hero-orbit">
-            {/* Pills flotantes alrededor */}
             <div className="hero-pill pill-voz">
               🗣️ Comandas por voz en horas pico
             </div>
@@ -93,19 +93,18 @@ const Introduccion = () => {
               📲 Tu carta QR en 3 idiomas con reservas
             </div>
 
-            {/* Stack principal de pantallas */}
             <div className="hero-stack">
               <div className="hero-glow" />
 
               <img
                 src={letrasalefsinfondo}
-                alt="Plataforma Alef – Restaurante y Shop"
+                alt="Plataforma Alef"
                 className="hero-img hero-main"
               />
 
               <img
                 src={cartaMain}
-                alt="Alef en móvil, tablet y TPV"
+                alt="Alef en movil, tablet y TPV"
                 className="hero-img hero-secondary"
               />
             </div>

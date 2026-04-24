@@ -57,7 +57,14 @@
   text-decoration: underline;
 }
 
-/* BOTÓN */
+/* BOTONES WRAPPER */
+.alef-cookie__buttons {
+  display: flex;
+  gap: var(--space-sm);
+  flex-shrink: 0;
+}
+
+/* BOTÓN BASE */
 .alef-cookie__button {
   flex-shrink: 0;
 
@@ -86,12 +93,29 @@
   box-shadow: 0 18px 45px rgba(15, 23, 42, 0.35);
 }
 
+/* SECONDARY – "Solo necesarias" */
+.alef-cookie__button--secondary {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: var(--color-texto-invertido);
+  box-shadow: none;
+}
+
+.alef-cookie__button--secondary:hover {
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: none;
+}
+
 /* MOBILE */
 @media (max-width: 640px) {
   .alef-cookie__content {
     flex-direction: column;
     align-items: stretch;
     text-align: center;
+  }
+
+  .alef-cookie__buttons {
+    flex-direction: column;
   }
 
   .alef-cookie__button {

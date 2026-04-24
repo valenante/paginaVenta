@@ -28,7 +28,15 @@ const preguntas = [
   },
   {
     q: "¿Que es VERI*FACTU y me afecta?",
-    a: "Es el nuevo sistema de facturacion electronica de la Agencia Tributaria (Ley 11/2021). A partir de julio 2026, todos los negocios de hosteleria deben emitir facturas con software certificado. Alef ya esta preparado — no tienes que hacer nada extra.",
+    a: "Es el nuevo sistema de facturacion electronica de la Agencia Tributaria (Ley 11/2021). A partir de julio 2027, todos los negocios de hosteleria deben emitir facturas con software certificado. El plazo se aplazó un año (Real Decreto-Ley 15/2025). Alef ya esta preparado — no tienes que hacer nada extra.",
+  },
+  {
+    q: "¿Necesito pantallas en cocina?",
+    a: "No. Alef funciona con pantallas de cocina y barra, pero tambien funciona solo con impresora. Tu decides el flujo: pantalla, tickets impresos o ambos. Se adapta a como trabajes.",
+  },
+  {
+    q: "¿Puedo pedir funciones a medida para mi negocio?",
+    a: "Si. Si tu restaurante necesita algo especifico — un flujo diferente, integracion con otro sistema, un modulo nuevo — lo desarrollamos a medida. Habla con nosotros y te decimos plazo y coste. Al ser un equipo cercano, respondemos rapido y sin burocracia — no vas a esperar meses en un ticket de soporte.",
   },
   {
     q: "¿Puedo probarlo antes de pagar?",

@@ -6,31 +6,33 @@ import "./Features.css";
 const principales = [
   {
     icono: "🧾",
-    titulo: "Comandas en 3 toques",
+    titulo: "Tus camareros atienden mas mesas",
     descripcion:
-      "Buscador inteligente de productos, notas por plato, orden de salida y mensajes a cocina. El camarero no pierde tiempo y cocina recibe todo claro.",
+      "Comanda completa en 3 toques con buscador inteligente. Notas por plato, orden de salida y mensajes a cocina. Menos tiempo por mesa, mas mesas atendidas por servicio.",
   },
   {
     icono: "👨‍🍳",
-    titulo: "Cocina y barra coordinadas en tiempo real",
+    titulo: "Los platos salen mas rapido y sin errores",
     descripcion:
-      "Cada seccion ve solo lo suyo en pantalla. El cocinero marca listo, salta un ticket automatico al camarero. Cero confusion, maximo ritmo.",
+      "Cocina y barra ven solo lo suyo en pantalla. El cocinero marca listo y salta ticket al camarero. Los platos llegan calientes y en orden. Cero confusion.",
   },
   {
-    icono: "✅",
-    titulo: "Cumple con Hacienda sin pensar",
+    icono: "💰",
+    titulo: "Tu caja cuadra siempre",
     descripcion:
-      "Facturacion encadenada con hash antifraude, registro de cada emision y preparado para VERI*FACTU. Tu trabajas, Alef se encarga de la ley.",
+      "Cada venta queda registrada. Cierres automaticos, control de descuadres y facturacion legal preparada para VERI*FACTU (obligatorio julio 2027). Tu trabajas, Alef se encarga.",
   },
 ];
 
 const secundarias = [
-  { icono: "📲", texto: "Carta digital QR en 3 idiomas con reservas y valoraciones" },
+  { icono: "📲", texto: "Carta digital QR en 3 idiomas con pedidos, reservas y valoraciones" },
   { icono: "💳", texto: "Caja diaria con cierres automaticos y control de descuadres" },
   { icono: "📦", texto: "Stock con alertas de minimos y gestion de proveedores" },
-  { icono: "📈", texto: "Estadisticas de ventas, productos top y horas fuertes" },
-  { icono: "🗣️", texto: "Voz inteligente para comandas y acciones en horas pico" },
+  { icono: "📈", texto: "Estadisticas de ventas, productos estrella y horas punta" },
+  { icono: "🗣️", texto: "Comandas por voz para horas de maximo ritmo" },
   { icono: "🖥️", texto: "Funciona en PC, tablet y movil — sin instalar nada" },
+  { icono: "🖨️", texto: "Funciona con o sin pantallas de cocina — tu decides el flujo" },
+  { icono: "🔧", texto: "Desarrollo a medida: adaptamos Alef a las necesidades de tu negocio" },
 ];
 
 const Features = () => {

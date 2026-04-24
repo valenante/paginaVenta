@@ -18,7 +18,9 @@ import { normalizeApiError } from "../utils/normalizeApiError.js";
 const PLAN_LABELS = {
   "tpv-premium": "TPV Premium",
   "tpv-avanzado": "TPV Avanzado",
-  esencial: "Esencial",
+  "tpv-esencial": "TPV Esencial",
+  esencial: "TPV Esencial",
+  gratis: "Prueba",
 };
 
 const VERIFACTU_FECHAS = {
@@ -454,6 +456,19 @@ export default function MiCuentaPage() {
               >
                 Gestionar facturación
               </button>
+
+              {rawPlan !== "tpv-premium" && (
+                <button
+                  className="btn btn-secundario"
+                  onClick={() => window.open(
+                    "https://wa.me/34624163497?text=" +
+                    encodeURIComponent("Hola, me interesa mejorar mi plan a Premium en Alef."),
+                    "_blank"
+                  )}
+                >
+                  Mejorar a Premium
+                </button>
+              )}
             </div>
 
             <p className="micuenta-note">

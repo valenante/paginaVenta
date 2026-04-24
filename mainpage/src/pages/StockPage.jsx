@@ -43,7 +43,7 @@ const StockPage = () => {
   const { user } = useAuth();
   const { showToast } = useToast();
   const { hasFeature } = useFeaturesPlan();
-  const isPlanEsencial = !hasFeature("stock_avanzado");
+  const hasStockAvanzado = hasFeature("stock_avanzado");
 
   // ── Tab ──
   const [tab, setTab] = useState("productos");
@@ -353,47 +353,49 @@ const StockPage = () => {
         </div>
 
         {/* ── TABS ── */}
-        {!isPlanEsencial && (
-          <nav className="stock-tabs">
-            <button
-              className={`stock-tab ${tab === "productos" ? "active" : ""}`}
-              onClick={() => setTab("productos")}
-            >
-              Stock directo
-              {prodAlertas > 0 && <span className="stock-tab-badge stock-tab-badge--red">{prodAlertas}</span>}
-            </button>
-            <button
-              className={`stock-tab ${tab === "ingredientes" ? "active" : ""}`}
-              onClick={() => setTab("ingredientes")}
-            >
-              Ingredientes
-              {ingCriticos > 0 && <span className="stock-tab-badge stock-tab-badge--red">{ingCriticos}</span>}
-            </button>
-            <button
-              className={`stock-tab ${tab === "lotes" ? "active" : ""}`}
-              onClick={() => setTab("lotes")}
-            >
-              🧪 Lotes
-              {lotesResumen.caducados > 0 && (
-                <span className="stock-tab-badge stock-tab-badge--red">
-                  {lotesResumen.caducados}
-                </span>
-              )}
-              {lotesResumen.caducados === 0 && lotesResumen.proximos > 0 && (
-                <span className="stock-tab-badge stock-tab-badge--amber">
-                  {lotesResumen.proximos}
-                </span>
-              )}
-            </button>
-          </nav>
-        )}
+        <nav className="stock-tabs">
+          <button
+            className={`stock-tab ${tab === "productos" ? "active" : ""}`}
+            onClick={() => setTab("productos")}
+          >
+            Stock directo
+            {prodAlertas > 0 && <span className="stock-tab-badge stock-tab-badge--red">{prodAlertas}</span>}
+          </button>
+          {hasStockAvanzado && (
+            <>
+              <button
+                className={`stock-tab ${tab === "ingredientes" ? "active" : ""}`}
+                onClick={() => setTab("ingredientes")}
+              >
+                Ingredientes
+                {ingCriticos > 0 && <span className="stock-tab-badge stock-tab-badge--red">{ingCriticos}</span>}
+              </button>
+              <button
+                className={`stock-tab ${tab === "lotes" ? "active" : ""}`}
+                onClick={() => setTab("lotes")}
+              >
+                🧪 Lotes
+                {lotesResumen.caducados > 0 && (
+                  <span className="stock-tab-badge stock-tab-badge--red">
+                    {lotesResumen.caducados}
+                  </span>
+                )}
+                {lotesResumen.caducados === 0 && lotesResumen.proximos > 0 && (
+                  <span className="stock-tab-badge stock-tab-badge--amber">
+                    {lotesResumen.proximos}
+                  </span>
+                )}
+              </button>
+            </>
+          )}
+        </nav>
       </header>
 
       {/* ── FLASH ── */}
       {flash && <div className="stock-flash">{flash}</div>}
 
       {/* ── UPSELL ── */}
-      {isPlanEsencial && (
+      {!hasStockAvanzado && (
         <div className="stock-upsell-wrapper">
           <UpsellStock />
         </div>
@@ -402,7 +404,7 @@ const StockPage = () => {
       {/* ================================================================
          TAB: PRODUCTOS CON STOCK DIRECTO
       ================================================================ */}
-      {!isPlanEsencial && tab === "productos" && (
+      {tab === "productos" && (
         <>
           {/* toolbar */}
           <div className="stock-toolbar">
@@ -694,7 +696,7 @@ const StockPage = () => {
       {/* ================================================================
          TAB: INGREDIENTES
       ================================================================ */}
-      {!isPlanEsencial && tab === "ingredientes" && (
+      {hasStockAvanzado && tab === "ingredientes" && (
         <>
           {/* toolbar */}
           <div className="stock-toolbar">
@@ -932,7 +934,7 @@ const StockPage = () => {
       {/* ══════════════════════════════════════════════════
           TAB: LOTES (unificado desde StockLotesPage)
       ══════════════════════════════════════════════════ */}
-      {!isPlanEsencial && tab === "lotes" && (
+      {hasStockAvanzado && tab === "lotes" && (
         <LotesView onChange={fetchLotesResumen} />
       )}
     </div>

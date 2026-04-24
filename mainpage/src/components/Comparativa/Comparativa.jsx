@@ -13,7 +13,7 @@ const filas = [
   { feature: "Funciona en cualquier dispositivo", alef: true, tpv: false, papel: true },
   { feature: "Sin instalacion", alef: true, tpv: false, papel: true },
   { feature: "Voz inteligente", alef: true, tpv: false, papel: false },
-  { feature: "Coste mensual", alef: "59€", tpv: "50-200€ + licencia", papel: "0€" },
+  { feature: "Coste mensual", alef: "59€ + IVA", tpv: "50-200€ + licencia", papel: "0€" },
 ];
 
 function renderCell(val) {

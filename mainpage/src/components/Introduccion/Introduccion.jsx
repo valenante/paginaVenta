@@ -51,7 +51,7 @@ const Introduccion = () => {
 
             <div className="Introduccion-botones">
               <a href="#packs" className="Introduccion-boton principal">
-                Ver planes desde 59€/mes
+                Ver planes desde 59€/mes + IVA
               </a>
 
               <a href="#contacto" className="Introduccion-boton secundario">
@@ -70,7 +70,7 @@ const Introduccion = () => {
               </div>
               <div>
                 <strong>59€/mes</strong>
-                <span>sin permanencia</span>
+                <span>+ IVA · sin permanencia</span>
               </div>
               <div>
                 <strong>1 dia</strong>

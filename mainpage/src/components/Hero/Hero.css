@@ -1,9 +1,10 @@
 
 .Hero {
+  padding: 5rem 0;
   background:
     radial-gradient(circle at top left, #60b5ff20 0, #0b1020 60%),
     radial-gradient(circle at bottom right, #ff914930 0, #0b1020 70%);
-  color: #fff;
+  color: #e2e8f0;
 }
 
 .Hero-inner {
@@ -11,6 +12,9 @@
   grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
   gap: 3rem;
   align-items: center;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 var(--space-lg, 1.5rem);
 }
 
 /* Columna texto */
@@ -24,26 +28,27 @@
   align-items: center;
   padding: 0.25rem 0.8rem;
   border-radius: var(--radius-pill);
-  font-size: var(--font-size-xs);
+  font-size: 0.75rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  background: var(--color-primario-suave);
-  color: var(--color-primario-oscuro);
+  background: rgba(96, 181, 255, 0.15);
+  color: #60b5ff;
   margin-bottom: 0.9rem;
 }
 
 .Hero-titulo {
-  font-size: var(--font-size-2xl);
+  font-size: 2rem;
+  font-weight: 800;
   line-height: 1.15;
   margin: 0 0 0.9rem;
-  color: var(--color-texto);
+  color: #fff;
 }
 
 .Hero-parrafo {
-  font-size: var(--font-size-md);
+  font-size: 1rem;
   line-height: 1.6;
-  color: var(--color-texto-suave);
+  color: rgba(226, 232, 240, 0.8);
   margin: 0 0 1rem;
 }
 
@@ -51,8 +56,8 @@
   list-style: none;
   padding: 0;
   margin: 0 0 1.2rem;
-  font-size: var(--font-size-sm);
-  color: var(--color-texto);
+  font-size: 0.9rem;
+  color: rgba(226, 232, 240, 0.9);
 }
 
 .Hero-lista li {
@@ -60,11 +65,11 @@
 }
 
 .Hero-aviso {
-  font-size: var(--font-size-sm);
-  color: var(--color-texto-suave);
-  background: #fff;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--color-borde-suave);
+  font-size: 0.9rem;
+  color: #e2e8f0;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  border: 1px solid rgba(148, 163, 184, 0.2);
   padding: 0.8rem 1rem;
   margin-bottom: 1.3rem;
 }
@@ -78,14 +83,9 @@
   align-items: center;
 }
 
-.Hero-boton {
-  /* Usa las clases globales: btn btn-primario  ya la tienes en index.css */
-  text-decoration: none;
-}
-
 .Hero-link {
-  font-size: var(--font-size-sm);
-  color: var(--color-primario-oscuro);
+  font-size: 0.9rem;
+  color: #60b5ff;
   text-decoration: none;
   font-weight: 500;
 }
@@ -102,10 +102,10 @@
 }
 
 .Hero-card {
-  background: #ffffff;
+  background: rgba(255, 255, 255, 0.05);
   border-radius: 24px;
-  box-shadow: var(--shadow-suave);
-  border: 1px solid var(--color-borde-suave);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(148, 163, 184, 0.15);
   overflow: hidden;
   max-width: 420px;
   width: 100%;
@@ -124,21 +124,21 @@
   justify-content: flex-start;
   gap: 0.5rem;
   padding: 0.7rem 0.9rem 0.9rem;
-  background: #f9fafb;
+  background: rgba(0, 0, 0, 0.2);
 }
 
 .Hero-chip {
-  font-size: var(--font-size-xs);
+  font-size: 0.75rem;
   padding: 0.25rem 0.7rem;
-  border-radius: var(--radius-pill);
-  background: var(--color-primario-suave);
-  color: var(--color-primario-oscuro);
+  border-radius: 999px;
+  background: rgba(96, 181, 255, 0.15);
+  color: #60b5ff;
   font-weight: 600;
 }
 
 .Hero-chip--verde {
-  background: var(--color-exito-suave);
-  color: var(--color-exito);
+  background: rgba(74, 222, 128, 0.15);
+  color: #4ade80;
 }
 
 /* Responsive */
@@ -151,5 +151,9 @@
 
   .Hero-visual {
     order: -1;
+  }
+
+  .Hero {
+    padding: 3rem 0;
   }
 }

@@ -101,6 +101,11 @@ export function AuthProvider({ children }) {
     async ({ email, password }) => {
       const loginRes = await api.post("/auth/login", { email, password });
 
+      // MFA required — return the MFA data without setting user
+      if (loginRes?.data?.mfaRequired) {
+        return { mfaRequired: true, mfaUserId: loginRes.data.mfaUserId, mfaEmail: loginRes.data.mfaEmail };
+      }
+
       const maybeUser = loginRes?.data?.user;
       if (maybeUser) {
         applyUser(maybeUser);
@@ -110,6 +115,16 @@ export function AuthProvider({ children }) {
       const meRes = await api.get("/auth/me/me");
       const u = meRes?.data?.user;
       applyUser(u);
+      return u;
+    },
+    [applyUser]
+  );
+
+  const verifyMfa = useCallback(
+    async ({ userId, code }) => {
+      const res = await api.post("/auth/mfa/verify", { userId, code });
+      const u = res?.data?.user;
+      if (u) applyUser(u);
       return u;
     },
     [applyUser]
@@ -182,6 +197,7 @@ export function AuthProvider({ children }) {
         loading,
         bootError,
         login,
+        verifyMfa,
         logout,
         setUser: applyUser,
         bootstrap,

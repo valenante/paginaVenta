@@ -8,7 +8,7 @@ import { normalizeApiError } from "../utils/normalizeApiError";
 
 export default function Login() {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login, verifyMfa } = useAuth();
 
   const [form, setForm] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
@@ -17,7 +17,12 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [blockedMsg, setBlockedMsg] = useState(null);
 
-  // Leer mensaje de tenant bloqueado (si viene redirigido)
+  // MFA state
+  const [mfaStep, setMfaStep] = useState(false);
+  const [mfaUserId, setMfaUserId] = useState(null);
+  const [mfaEmail, setMfaEmail] = useState("");
+  const [mfaCode, setMfaCode] = useState("");
+
   useEffect(() => {
     try {
       const raw = sessionStorage.getItem("tenantBlockedMsg");
@@ -45,7 +50,6 @@ export default function Login() {
       : `https://panel.${import.meta.env.VITE_MAIN_DOMAIN}`;
 
     const base = isLocalhost ? baseLocal : baseProd;
-
     return `${base}/pro`;
   };
 
@@ -55,6 +59,36 @@ export default function Login() {
     return () => clearInterval(t);
   }, [cooldown]);
 
+  const handleLoginSuccess = (user) => {
+    if (user?.role === "superadmin") {
+      navigate("/superadmin", { replace: true });
+      return;
+    }
+
+    const tenantSlug = resolveTenantSlug(user);
+    if (!tenantSlug) {
+      setUiError({
+        code: "TENANT_REQUIRED",
+        message: "No se encontró el restaurante asignado.",
+        requestId: "—",
+        action: "CONTACT_SUPPORT",
+        kind: "client",
+        canRetry: false,
+      });
+      return;
+    }
+
+    const isLocalhost = window.location.hostname === "localhost";
+    const targetUrl = redirectByRole({ user, tenantSlug, isLocalhost });
+
+    if (isLocalhost) {
+      navigate(`/${tenantSlug}/pro`, { replace: true });
+      return;
+    }
+
+    window.location.href = targetUrl;
+  };
+
   const doLogin = async () => {
     if (loading || cooldown > 0) return;
 
@@ -62,35 +96,17 @@ export default function Login() {
     setUiError(null);
 
     try {
-      const user = await login(form);
+      const result = await login(form);
 
-      if (user?.role === "superadmin") {
-        navigate("/superadmin", { replace: true });
+      // MFA required — show code input
+      if (result?.mfaRequired) {
+        setMfaStep(true);
+        setMfaUserId(result.mfaUserId);
+        setMfaEmail(result.mfaEmail);
         return;
       }
 
-      const tenantSlug = resolveTenantSlug(user);
-      if (!tenantSlug) {
-        setUiError({
-          code: "TENANT_REQUIRED",
-          message: "No se encontró el restaurante asignado.",
-          requestId: "—",
-          action: "CONTACT_SUPPORT",
-          kind: "client",
-          canRetry: false,
-        });
-        return;
-      }
-
-      const isLocalhost = window.location.hostname === "localhost";
-      const targetUrl = redirectByRole({ user, tenantSlug, isLocalhost });
-
-      if (isLocalhost) {
-        navigate(`/${tenantSlug}/pro`, { replace: true });
-        return;
-      }
-
-      window.location.href = targetUrl;
+      handleLoginSuccess(result);
     } catch (err) {
       const normalized = normalizeApiError(err);
       setUiError(normalized);
@@ -103,13 +119,109 @@ export default function Login() {
     }
   };
 
+  const doVerifyMfa = async () => {
+    if (loading || !mfaCode.trim()) return;
+
+    setLoading(true);
+    setUiError(null);
+
+    try {
+      const user = await verifyMfa({ userId: mfaUserId, code: mfaCode.trim() });
+      handleLoginSuccess(user);
+    } catch (err) {
+      const normalized = normalizeApiError(err);
+      setUiError(normalized);
+      setMfaCode("");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    doLogin();
+    if (mfaStep) {
+      doVerifyMfa();
+    } else {
+      doLogin();
+    }
   };
 
   const canRetry = !!uiError?.canRetry && cooldown === 0 && !loading;
 
+  // MFA step UI
+  if (mfaStep) {
+    return (
+      <main className="login-page">
+        <div className="login-shell">
+          <section className="login-info">
+            <span className="login-kicker">Panel Alef</span>
+            <h1 className="login-hero-title">Verificación de seguridad</h1>
+            <p className="login-hero-subtitle">
+              Hemos enviado un código de verificación a tu email para proteger tu cuenta de administrador.
+            </p>
+          </section>
+
+          <section className="login-card card">
+            <h2 className="login-title">Introduce el código</h2>
+            <p className="login-subtitle">
+              Enviado a <strong>{mfaEmail}</strong>. Expira en 5 minutos.
+            </p>
+
+            <form className="login-form" onSubmit={handleSubmit}>
+              <div className="login-field">
+                <label htmlFor="mfa-code">Código de verificación</label>
+                <input
+                  id="mfa-code"
+                  type="text"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  maxLength={6}
+                  value={mfaCode}
+                  onChange={(e) => setMfaCode(e.target.value.replace(/\D/g, ""))}
+                  autoComplete="one-time-code"
+                  autoFocus
+                  required
+                  style={{ fontSize: "1.5rem", letterSpacing: "0.5em", textAlign: "center" }}
+                />
+              </div>
+
+              {uiError && (
+                <ErrorToast
+                  error={uiError}
+                  onRetry={canRetry ? doVerifyMfa : null}
+                  onClose={() => setUiError(null)}
+                  autoHideMs={0}
+                />
+              )}
+
+              <button
+                type="submit"
+                className="btn btn-primario"
+                disabled={loading || mfaCode.length < 6}
+              >
+                {loading ? "Verificando..." : "Verificar"}
+              </button>
+
+              <button
+                type="button"
+                className="login-forgot"
+                onClick={() => {
+                  setMfaStep(false);
+                  setMfaCode("");
+                  setMfaUserId(null);
+                  setUiError(null);
+                }}
+              >
+                Volver al login
+              </button>
+            </form>
+          </section>
+        </div>
+      </main>
+    );
+  }
+
+  // Normal login UI
   return (
     <main className="login-page">
       <div className="login-shell">

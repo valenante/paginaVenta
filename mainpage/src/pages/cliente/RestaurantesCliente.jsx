@@ -3,6 +3,7 @@ import { Link, Navigate } from "react-router-dom";
 import { useClienteAuth } from "../../context/ClienteAuthContext";
 import { getRestaurantesLoyalty, getMiLoyaltyPerfil } from "../../services/loyaltyService";
 import ClienteLayout from "./ClienteLayout";
+import RestaurantLogo from "./RestaurantLogo";
 import "./cliente.css";
 
 export default function RestaurantesCliente() {
@@ -87,19 +88,22 @@ export default function RestaurantesCliente() {
                   to={`/cliente/restaurante/${r.slug}`}
                   className="cliente-restaurante-card cliente-restaurante-card--link"
                 >
-                  <div className="cliente-restaurante-card__head">
-                    <div className="cliente-restaurante-card__nombre">{r.nombre}</div>
+                  <div className="cliente-restaurante-card__top">
+                    <RestaurantLogo nombre={r.nombre} logoUrl={r.logoUrl} size={48} />
+                    <div className="cliente-restaurante-card__top-info">
+                      <div className="cliente-restaurante-card__nombre">{r.nombre}</div>
+                      {(r.direccion || r.ciudad) && (
+                        <div className="cliente-restaurante-card__loc">
+                          {r.direccion}{r.direccion && r.ciudad ? " · " : ""}{r.ciudad}
+                        </div>
+                      )}
+                    </div>
                     {saldo > 0 && (
                       <span className="cliente-restaurante-card__pin" aria-label={`${saldo} puntos`}>
                         {saldo} pts
                       </span>
                     )}
                   </div>
-                  {(r.direccion || r.ciudad) && (
-                    <div className="cliente-restaurante-card__loc">
-                      {r.direccion}{r.direccion && r.ciudad ? " · " : ""}{r.ciudad}
-                    </div>
-                  )}
                   <div className="cliente-restaurante-card__cta">Ver recompensas →</div>
                 </Link>
               );

@@ -24,6 +24,7 @@ export default function ClienteLayout({ children, hero = null, narrow = false })
   const navItems = cliente ? [
     { to: "/cliente/perfil", label: "Mi cuenta" },
     { to: "/cliente/restaurantes", label: "Restaurantes" },
+    { to: "/cliente/configuracion", label: "Configuración" },
   ] : [];
 
   return (

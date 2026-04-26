@@ -3,6 +3,7 @@ import { Navigate, Link } from "react-router-dom";
 import { useClienteAuth } from "../../context/ClienteAuthContext";
 import { getMiLoyaltyPerfil, getMiHistorialLoyalty } from "../../services/loyaltyService";
 import ClienteLayout from "./ClienteLayout";
+import RestaurantLogo from "./RestaurantLogo";
 import { tipoMovimiento, fechaRelativa, etiquetaMovimiento } from "./historial-helpers";
 import "./cliente.css";
 
@@ -124,16 +125,19 @@ export default function PerfilCliente() {
                 className={`cliente-restaurante-card ${tenantSeleccionado === t.slug ? "is-active" : ""}`}
                 onClick={() => setTenantSeleccionado(t.slug)}
               >
-                <div className="cliente-restaurante-card__head">
-                  <div className="cliente-restaurante-card__nombre">{t.nombre}</div>
-                  {tenantSeleccionado === t.slug && <span className="cliente-restaurante-card__pin">●</span>}
+                <div className="cliente-restaurante-card__top">
+                  <RestaurantLogo nombre={t.nombre} logoUrl={t.logoUrl} size={48} />
+                  <div className="cliente-restaurante-card__top-info">
+                    <div className="cliente-restaurante-card__nombre">{t.nombre}</div>
+                    <div className="cliente-restaurante-card__visita">
+                      Última visita: {t.lastVisit ? new Date(t.lastVisit).toLocaleDateString("es") : "—"}
+                    </div>
+                  </div>
+                  {tenantSeleccionado === t.slug && <span className="cliente-restaurante-card__pin">Activo</span>}
                 </div>
                 <div className="cliente-restaurante-card__puntos">
                   <span className="cliente-restaurante-card__puntos-num">{t.puntos.toLocaleString("es")}</span>
                   <span className="cliente-restaurante-card__puntos-label">pts</span>
-                </div>
-                <div className="cliente-restaurante-card__visita">
-                  Última visita: {t.lastVisit ? new Date(t.lastVisit).toLocaleDateString("es") : "—"}
                 </div>
                 <Link
                   to={`/cliente/restaurante/${t.slug}`}

@@ -660,6 +660,31 @@
   gap: 8px;
 }
 
+.cliente-restaurante-card__top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 6px;
+}
+
+.cliente-restaurante-card__top-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.cliente-restaurante-card__top-info .cliente-restaurante-card__nombre {
+  margin-bottom: 2px;
+}
+
+.cli-rest-logo {
+  display: inline-block;
+}
+
+.cli-rest-logo--img {
+  border: 1px solid var(--cli-border);
+  background: #fff;
+}
+
 .cliente-restaurante-card__nombre {
   font-weight: 700;
   font-size: 1.05rem;
@@ -1162,4 +1187,144 @@
 .cliente-check a {
   color: var(--cli-primary-dark);
   text-decoration: underline;
+}
+
+/* ─────────── CUENTA CLIENTE (config) ─────────── */
+
+.cli-cuenta-tabs {
+  display: flex;
+  gap: 4px;
+  background: var(--cli-card);
+  border: 1px solid var(--cli-border);
+  border-radius: 12px;
+  padding: 6px;
+  margin-bottom: 18px;
+  overflow-x: auto;
+}
+
+.cli-cuenta-tab {
+  flex: 1;
+  min-width: 110px;
+  background: transparent;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--cli-text-soft);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s;
+  font-family: inherit;
+}
+
+.cli-cuenta-tab:hover {
+  background: var(--cli-primary-soft);
+  color: var(--cli-primary-dark);
+}
+
+.cli-cuenta-tab.is-active {
+  background: var(--cli-primary);
+  color: #fff;
+}
+
+.cli-cuenta-card {
+  background: var(--cli-card);
+  border: 1px solid var(--cli-border);
+  border-radius: var(--cli-radius);
+  padding: 28px 30px;
+  box-shadow: var(--cli-shadow-sm);
+}
+
+.cli-cuenta-h2 {
+  margin: 0 0 4px;
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.cli-cuenta-h2--danger {
+  color: var(--cli-error);
+}
+
+.cli-cuenta-help {
+  margin: 0 0 20px;
+  color: var(--cli-text-soft);
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+.cli-cuenta-help a {
+  color: var(--cli-primary-dark);
+  text-decoration: underline;
+}
+
+.cli-cuenta-footer {
+  margin-top: 8px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.cliente-field input:disabled {
+  background: var(--cli-bg);
+  color: var(--cli-text-mute);
+  cursor: not-allowed;
+}
+
+.cli-cuenta-warning {
+  background: var(--cli-warn-bg);
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  border-radius: var(--cli-radius-sm);
+  padding: 14px 16px;
+  margin-bottom: 16px;
+  color: var(--cli-warn);
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+.cli-cuenta-warning strong {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 0.95rem;
+}
+
+.cli-cuenta-warning ul {
+  margin: 6px 0 0 18px;
+  padding: 0;
+}
+
+.cli-cuenta-warning li {
+  margin-bottom: 4px;
+}
+
+.cli-cuenta-btn-danger {
+  background: var(--cli-error);
+  color: #fff;
+  border: none;
+  padding: 11px 20px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.92rem;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s, transform 0.1s;
+}
+
+.cli-cuenta-btn-danger:hover:not(:disabled) {
+  background: #991b1b;
+  transform: translateY(-1px);
+}
+
+.cli-cuenta-btn-danger:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.cliente-field code {
+  background: var(--cli-bg);
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-family: monospace;
+  color: var(--cli-error);
 }

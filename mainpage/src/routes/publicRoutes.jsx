@@ -11,6 +11,7 @@ const PerfilCliente = lazy(() => import("../pages/cliente/PerfilCliente.jsx"));
 const RestaurantesCliente = lazy(() => import("../pages/cliente/RestaurantesCliente.jsx"));
 const DetalleRestauranteCliente = lazy(() => import("../pages/cliente/DetalleRestauranteCliente.jsx"));
 const RecuperarPasswordCliente = lazy(() => import("../pages/cliente/RecuperarPasswordCliente.jsx"));
+const CuentaCliente = lazy(() => import("../pages/cliente/CuentaCliente.jsx"));
 const RegistroSuccess = lazy(() => import("../pages/RegistroSuccess.jsx"));
 const ForgotPassword = lazy(() => import("../components/ForgotPassword/ForgotPassword"));
 const ResetPassword = lazy(() => import("../components/ForgotPassword/ResetPassword"));
@@ -43,6 +44,7 @@ export default function publicRoutes(HomeEntry) {
       <Route path="/cliente/perfil" element={<PerfilCliente />} />
       <Route path="/cliente/restaurantes" element={<RestaurantesCliente />} />
       <Route path="/cliente/restaurante/:slug" element={<DetalleRestauranteCliente />} />
+      <Route path="/cliente/configuracion" element={<CuentaCliente />} />
       <Route path="/registro/success" element={<RegistroSuccess />} />
       <Route path="/registro/cancel" element={<RegistroSuccess />} />
       <Route path="/pago/exito" element={<RegistroSuccess />} />

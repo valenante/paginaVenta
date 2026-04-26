@@ -1,7 +1,7 @@
 /* ── Tiempos de cocina card ── */
 /* Usa af3-card como base (importada globalmente). Aquí solo extensiones. */
 
-.tc-card {
+.tsc-card {
   background: rgba(255,255,255,0.03);
   border: 1px solid rgba(255,255,255,0.06);
   border-radius: 12px;
@@ -11,7 +11,7 @@
   box-sizing: border-box;
 }
 
-.tc-card__head {
+.tsc-card__head {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -20,14 +20,14 @@
   margin-bottom: 1rem;
 }
 
-.tc-card__head h3 {
+.tsc-card__head h3 {
   font-size: 1rem;
   color: #fff;
   font-weight: 700;
   margin: 0;
 }
 
-.tc-card__link {
+.tsc-card__link {
   background: none;
   border: 1px solid rgba(255,255,255,0.12);
   color: rgba(255,255,255,0.5);
@@ -37,12 +37,12 @@
   cursor: pointer;
   transition: all 0.15s;
 }
-.tc-card__link:hover {
+.tsc-card__link:hover {
   background: rgba(255,255,255,0.06);
   color: #fff;
 }
 
-.tc-card__empty {
+.tsc-card__empty {
   text-align: center;
   opacity: 0.4;
   padding: 1.5rem 0;
@@ -50,7 +50,7 @@
 }
 
 /* Tabs toggle */
-.tc-tabs {
+.tsc-tabs {
   display: flex;
   gap: 0;
   border-radius: 10px;
@@ -61,7 +61,7 @@
   width: fit-content;
 }
 
-.tc-tabs__btn {
+.tsc-tabs__btn {
   padding: 5px 14px;
   font-size: 0.75rem;
   font-weight: 600;
@@ -72,29 +72,29 @@
   transition: all 0.15s;
 }
 
-.tc-tabs__btn:not(:last-child) {
+.tsc-tabs__btn:not(:last-child) {
   border-right: 1px solid rgba(255,255,255,0.08);
 }
 
-.tc-tabs__btn:hover:not(.tc-tabs__btn--active) {
+.tsc-tabs__btn:hover:not(.tsc-tabs__btn--active) {
   background: rgba(255,255,255,0.06);
   color: rgba(255,255,255,0.8);
 }
 
-.tc-tabs__btn--active {
+.tsc-tabs__btn--active {
   background: rgba(99, 102, 241, 0.15);
   color: #fff;
 }
 
 /* KPIs row */
-.tc-kpis {
+.tsc-kpis {
   display: flex;
   align-items: center;
   gap: 8px;
   margin-bottom: 1rem;
 }
 
-.tc-kpi {
+.tsc-kpi {
   flex: 1;
   text-align: center;
   padding: 12px 8px;
@@ -103,7 +103,7 @@
   border: 1px solid rgba(255,255,255,0.06);
 }
 
-.tc-kpi--arrow {
+.tsc-kpi--arrow {
   flex: 0 0 auto;
   background: none;
   border: none;
@@ -112,12 +112,12 @@
   padding: 0;
 }
 
-.tc-kpi--total {
+.tsc-kpi--total {
   background: rgba(99, 102, 241, 0.08);
   border-color: rgba(99, 102, 241, 0.18);
 }
 
-.tc-kpi__label {
+.tsc-kpi__label {
   display: block;
   font-size: 0.65rem;
   font-weight: 600;
@@ -127,14 +127,14 @@
   margin-bottom: 4px;
 }
 
-.tc-kpi__value {
+.tsc-kpi__value {
   display: block;
   font-size: 1.2rem;
   font-weight: 800;
   color: #fff;
 }
 
-.tc-kpi__sub {
+.tsc-kpi__sub {
   display: block;
   font-size: 0.65rem;
   color: rgba(255,255,255,0.3);
@@ -142,14 +142,14 @@
 }
 
 /* Solo apertura→pedido (pantalla OFF) */
-.tc-kpis--solo {
+.tsc-kpis--solo {
   justify-content: center;
 }
-.tc-kpis--solo .tc-kpi {
+.tsc-kpis--solo .tsc-kpi {
   flex: 0 1 260px;
 }
 
-.tc-card__hint {
+.tsc-card__hint {
   font-size: 12px;
   opacity: 0.4;
   text-align: center;
@@ -158,11 +158,11 @@
 }
 
 /* Distribution bars */
-.tc-dist {
+.tsc-dist {
   margin-top: 0.25rem;
 }
 
-.tc-dist__label {
+.tsc-dist__label {
   font-size: 12px;
   opacity: 0.4;
   margin-bottom: 8px;
@@ -170,14 +170,14 @@
   font-style: italic;
 }
 
-.tc-dist__bars {
+.tsc-dist__bars {
   display: flex;
   gap: 6px;
   align-items: flex-end;
   height: 72px;
 }
 
-.tc-dist__bar-group {
+.tsc-dist__bar-group {
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -185,7 +185,7 @@
   gap: 2px;
 }
 
-.tc-dist__bar-wrap {
+.tsc-dist__bar-wrap {
   width: 100%;
   height: 44px;
   display: flex;
@@ -193,7 +193,7 @@
   justify-content: center;
 }
 
-.tc-dist__bar {
+.tsc-dist__bar {
   width: 100%;
   max-width: 36px;
   border-radius: 3px 3px 0 0;
@@ -201,38 +201,38 @@
   transition: height 0.3s ease;
 }
 
-.tc-dist__bar--warn {
+.tsc-dist__bar--warn {
   background: rgba(239, 68, 68, 0.45);
 }
 
-.tc-dist__count {
+.tsc-dist__count {
   font-size: 12px;
   font-weight: 700;
   color: #fff;
 }
 
-.tc-dist__range {
+.tsc-dist__range {
   font-size: 11px;
   opacity: 0.35;
 }
 
 /* Mobile */
 @media (max-width: 700px) {
-  .tc-kpis {
+  .tsc-kpis {
     flex-wrap: wrap;
   }
-  .tc-kpi {
+  .tsc-kpi {
     flex: 1 1 40%;
     min-width: 0;
   }
-  .tc-kpi--arrow {
+  .tsc-kpi--arrow {
     flex: 0 0 20px;
     font-size: 0.9rem;
   }
-  .tc-kpi__value {
+  .tsc-kpi__value {
     font-size: 1rem;
   }
-  .tc-tabs__btn {
+  .tsc-tabs__btn {
     padding: 5px 10px;
     font-size: 0.7rem;
   }

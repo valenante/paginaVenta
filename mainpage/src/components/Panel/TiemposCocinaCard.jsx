@@ -38,22 +38,22 @@ export default function TiemposCocinaCard({
   const labelItem = tab === "bebidas" ? "1ª bebida" : tab === "platos" ? "1er plato" : "1er item";
 
   return (
-    <div className="tc-card">
-      <div className="tc-card__head">
+    <div className="tsc-card">
+      <div className="tsc-card__head">
         <h3>Tiempos de servicio</h3>
         {onVerPares && (
-          <button className="tc-card__link" onClick={onVerPares}>
+          <button className="tsc-card__link" onClick={onVerPares}>
             Ver pares de productos →
           </button>
         )}
       </div>
 
       {/* Toggle */}
-      <div className="tc-tabs">
+      <div className="tsc-tabs">
         {TABS.map(t => (
           <button
             key={t.key}
-            className={`tc-tabs__btn ${tab === t.key ? "tc-tabs__btn--active" : ""}`}
+            className={`tsc-tabs__btn ${tab === t.key ? "tsc-tabs__btn--active" : ""}`}
             onClick={() => setTab(t.key)}
           >
             {t.label}
@@ -62,58 +62,58 @@ export default function TiemposCocinaCard({
       </div>
 
       {!tc ? (
-        <p className="tc-card__empty">Sin datos de {tab === "bebidas" ? "bebidas" : tab === "platos" ? "platos" : "tiempos"} hoy</p>
+        <p className="tsc-card__empty">Sin datos de {tab === "bebidas" ? "bebidas" : tab === "platos" ? "platos" : "tiempos"} hoy</p>
       ) : (
         <>
           {/* KPIs */}
-          <div className={`tc-kpis ${!mostrarTListo ? "tc-kpis--solo" : ""}`}>
-            <div className={`tc-kpi ${!mostrarTListo ? "tc-kpi--total" : ""}`}>
-              <span className="tc-kpi__label">Apertura → Pedido</span>
-              <span className="tc-kpi__value">{fmtMin(tc.medianaAperturaPedido)}</span>
-              <span className="tc-kpi__sub">mediana · {fmtMin(tc.promedioAperturaPedido)} avg</span>
+          <div className={`tsc-kpis ${!mostrarTListo ? "tsc-kpis--solo" : ""}`}>
+            <div className={`tsc-kpi ${!mostrarTListo ? "tsc-kpi--total" : ""}`}>
+              <span className="tsc-kpi__label">Apertura → Pedido</span>
+              <span className="tsc-kpi__value">{fmtMin(tc.medianaAperturaPedido)}</span>
+              <span className="tsc-kpi__sub">mediana · {fmtMin(tc.promedioAperturaPedido)} avg</span>
             </div>
 
             {mostrarTListo && (
               <>
-                <div className="tc-kpi tc-kpi--arrow">→</div>
-                <div className="tc-kpi">
-                  <span className="tc-kpi__label">Pedido → {labelItem}</span>
-                  <span className="tc-kpi__value">{fmtMin(tc.medianaPedidoPlato)}</span>
-                  <span className="tc-kpi__sub">mediana · {fmtMin(tc.promedioPedidoPlato)} avg</span>
+                <div className="tsc-kpi tsc-kpi--arrow">→</div>
+                <div className="tsc-kpi">
+                  <span className="tsc-kpi__label">Pedido → {labelItem}</span>
+                  <span className="tsc-kpi__value">{fmtMin(tc.medianaPedidoPlato)}</span>
+                  <span className="tsc-kpi__sub">mediana · {fmtMin(tc.promedioPedidoPlato)} avg</span>
                 </div>
-                <div className="tc-kpi tc-kpi--arrow">=</div>
-                <div className="tc-kpi tc-kpi--total">
-                  <span className="tc-kpi__label">Apertura → {labelItem}</span>
-                  <span className="tc-kpi__value">{fmtMin(tc.medianaAperturaPlato)}</span>
-                  <span className="tc-kpi__sub">mediana · {fmtMin(tc.promedioAperturaPlato)} avg</span>
+                <div className="tsc-kpi tsc-kpi--arrow">=</div>
+                <div className="tsc-kpi tsc-kpi--total">
+                  <span className="tsc-kpi__label">Apertura → {labelItem}</span>
+                  <span className="tsc-kpi__value">{fmtMin(tc.medianaAperturaPlato)}</span>
+                  <span className="tsc-kpi__sub">mediana · {fmtMin(tc.promedioAperturaPlato)} avg</span>
                 </div>
               </>
             )}
           </div>
 
           {!mostrarTListo && (
-            <p className="tc-card__hint">
+            <p className="tsc-card__hint">
               La pantalla de {tab === "bebidas" ? "barra" : tab === "platos" ? "cocina" : "cocina/barra"} está desactivada — no hay datos de cuándo se sirve.
             </p>
           )}
 
           {/* Distribución — solo si tListo es fiable */}
           {mostrarTListo && tc.distribucion && (
-            <div className="tc-dist">
-              <span className="tc-dist__label">Distribución ({tc.mesas} mesas)</span>
-              <div className="tc-dist__bars">
+            <div className="tsc-dist">
+              <span className="tsc-dist__label">Distribución ({tc.mesas} mesas)</span>
+              <div className="tsc-dist__bars">
                 {Object.entries(tc.distribucion).map(([rango, count]) => {
                   const pct = tc.mesas > 0 ? (count / tc.mesas) * 100 : 0;
                   return (
-                    <div key={rango} className="tc-dist__bar-group">
-                      <div className="tc-dist__bar-wrap">
+                    <div key={rango} className="tsc-dist__bar-group">
+                      <div className="tsc-dist__bar-wrap">
                         <div
-                          className={`tc-dist__bar ${rango === "20+" ? "tc-dist__bar--warn" : ""}`}
+                          className={`tsc-dist__bar ${rango === "20+" ? "tsc-dist__bar--warn" : ""}`}
                           style={{ height: `${Math.max(4, pct)}%` }}
                         />
                       </div>
-                      <span className="tc-dist__count">{count}</span>
-                      <span className="tc-dist__range">{rango}</span>
+                      <span className="tsc-dist__count">{count}</span>
+                      <span className="tsc-dist__range">{rango}</span>
                     </div>
                   );
                 })}

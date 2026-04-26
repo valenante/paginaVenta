@@ -294,9 +294,9 @@ export default function AdminDashboard() {
       </div>
       )}
 
-      {/* ── Rotación de mesas (Premium) ── */}
-      {isPremium && resumen?.rotacionMesas?.length > 0 && (
-        <div className="adm__row adm__row--half">
+      {/* ── Rotación de mesas + Cancelaciones (side by side) ── */}
+      <div className="adm__row adm__row--half">
+        {isPremium && resumen?.rotacionMesas?.length > 0 && (
           <section className="adm__section">
             <h3 className="adm__section-title">Rotación de mesas</h3>
             <div className="adm__staff">
@@ -318,11 +318,8 @@ export default function AdminDashboard() {
               ))}
             </div>
           </section>
-        </div>
-      )}
+        )}
 
-      {/* ── Cancelaciones (todos los planes) ── */}
-      <div className="adm__row adm__row--half">
         <section className="adm__section">
           <h3 className="adm__section-title">
             Últimas cancelaciones

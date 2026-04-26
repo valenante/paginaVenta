@@ -1272,6 +1272,26 @@
   cursor: not-allowed;
 }
 
+/* ─────────── Acciones rápidas (carta + reserva) ─────────── */
+
+.cli-acciones-rest {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.cli-acciones-rest .cliente-btn {
+  flex: 1;
+  min-width: 200px;
+  padding: 12px 22px;
+  font-size: 0.95rem;
+}
+
+@media (max-width: 480px) {
+  .cli-acciones-rest .cliente-btn { flex: 1 1 100%; }
+}
+
 .cli-cuenta-warning {
   background: var(--cli-warn-bg);
   border: 1px solid rgba(245, 158, 11, 0.4);

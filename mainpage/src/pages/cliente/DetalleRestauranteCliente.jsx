@@ -91,9 +91,45 @@ export default function DetalleRestauranteCliente() {
     </section>
   );
 
+  // URLs cross-app a la carta del cliente: pre-rellenamos los datos del cliente
+  // logueado para que no tenga que escribir nombre/email/teléfono al reservar.
+  const cartaBase = (import.meta.env.VITE_CARTA_BASE_URL || "").replace(/\/$/, "");
+  const cartaUrl = cartaBase ? `${cartaBase}/${slug}/carta` : null;
+  const reservasParams = new URLSearchParams({
+    nombre: cliente?.nombre || "",
+    email: cliente?.email || "",
+    telefono: cliente?.telefono || "",
+  }).toString();
+  const reservasUrl = cartaBase ? `${cartaBase}/${slug}/reservas?${reservasParams}` : null;
+
   return (
     <ClienteLayout hero={hero}>
       <Link to="/cliente/restaurantes" className="cliente-back">← Volver a Restaurantes</Link>
+
+      {(cartaUrl || reservasUrl) && (
+        <div className="cli-acciones-rest">
+          {cartaUrl && (
+            <a
+              href={cartaUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="cliente-btn cliente-btn--primary"
+            >
+              📋 Ver carta digital
+            </a>
+          )}
+          {reservasUrl && (
+            <a
+              href={reservasUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="cliente-btn cliente-btn--accent"
+            >
+              📅 Reservar mesa
+            </a>
+          )}
+        </div>
+      )}
 
       {!loyalty.activo && (
         <div className="cliente-alert cliente-alert--warn" style={{ marginBottom: "1.5rem" }}>

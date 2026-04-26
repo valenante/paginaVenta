@@ -3,7 +3,7 @@
   background: var(--surface-card, rgba(255,255,255,0.04));
   border: 1px solid var(--border, rgba(255,255,255,0.10));
   border-radius: 16px;
-  padding: 24px 28px;
+  padding: 28px 32px 32px;
 }
 
 .tc-card__head {
@@ -211,7 +211,7 @@
 /* Mobile */
 @media (max-width: 700px) {
   .tc-card {
-    padding: 16px 16px;
+    padding: 20px 20px 24px;
   }
   .tc-kpis {
     flex-wrap: wrap;

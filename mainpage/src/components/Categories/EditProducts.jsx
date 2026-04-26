@@ -2,6 +2,8 @@ import React, { useContext, useEffect, useMemo, useState, useRef } from "react";
 import PreciosHelpModal from "./PreciosHelpModal";
 import AdicionalesEditor from "./AdicionalesEditor";
 import CompuestosEditor from "./CompuestosEditor";
+import AlergenosSelector from "./AlergenosSelector";
+import { sanearAlergenos } from "../../constants/alergenos";
 import { ProductosContext } from "../../context/ProductosContext";
 
 const capitalizeClave = (s) => {
@@ -147,7 +149,7 @@ const EditProduct = ({
   // =========================
   const initial = useMemo(() => {
     const aliasesArr = Array.isArray(product?.aliases) ? product.aliases : [];
-    const alergenosArr = Array.isArray(product?.alergenos) ? product.alergenos : [];
+    const saneados = sanearAlergenos(product?.alergenos, product?.alergenosTrazas);
 
     // receta
     const recetaArr = Array.isArray(product?.receta) ? product.receta : [];
@@ -179,7 +181,9 @@ const EditProduct = ({
       // voz + alergias
       aliases: aliasesArr,
       aliasesString: aliasesArr.join(", "),
-      alergenos: alergenosArr,
+      alergenos: saneados.alergenos,
+      alergenosTrazas: saneados.alergenosTrazas,
+      alergenosRaros: saneados.raros,
 
       // imagen
       img: safeStr(product?.img || product?.imagen || ""), // compat
@@ -328,13 +332,8 @@ const EditProduct = ({
     }));
   };
 
-  const onChangeAlergenos = (value) => {
-    const arr = value
-      .split(",")
-      .map((a) => a.trim().toLowerCase())
-      .filter(Boolean);
-
-    setFormData((prev) => ({ ...prev, alergenos: arr }));
+  const onChangeAlergenos = ({ alergenos, alergenosTrazas }) => {
+    setFormData((prev) => ({ ...prev, alergenos, alergenosTrazas }));
   };
 
   const manejarCambioArchivo = async (e) => {
@@ -416,6 +415,7 @@ const EditProduct = ({
       adicionales,
       aliases: formData.aliases,
       alergenos: formData.alergenos,
+      alergenosTrazas: formData.alergenosTrazas || [],
       receta: Array.isArray(formData.receta) ? formData.receta : [],
       // v3 fase 4 — compuestos
       componentes: Array.isArray(formData.componentes) ? formData.componentes : [],
@@ -490,30 +490,24 @@ const EditProduct = ({
                     value={formData.descripcion}
                     onChange={handleChange}
                     className="textarea--crear"
-                    required
                   />
                   <p className="help-text--crear">
                     Descripción visible para el cliente en la carta digital.
                   </p>
                 </label>
 
-                {/* === ALÉRGENOS (no mezclado con VOZ) === */}
+                {/* === ALÉRGENOS === */}
                 <h4 className="subtitulo--crear">⚠️ Alérgenos</h4>
                 <p className="help-text--crear">
-                  Se muestra al cliente en la carta digital y ayuda a cocina a
-                  identificar riesgos.
+                  Marca <strong>Contiene</strong> si el alérgeno está en el plato y{" "}
+                  <strong>Puede contener</strong> si hay riesgo de contaminación cruzada en cocina.
                 </p>
-
-                <label className="label--editar">
-                  Alérgenos (separados por comas):
-                  <input
-                    type="text"
-                    value={formData.alergenos?.join(", ") || ""}
-                    onChange={(e) => onChangeAlergenos(e.target.value)}
-                    className="input--editar"
-                    placeholder="Ej: gluten, lactosa, huevo"
-                  />
-                </label>
+                <AlergenosSelector
+                  alergenos={formData.alergenos || []}
+                  alergenosTrazas={formData.alergenosTrazas || []}
+                  raros={formData.alergenosRaros || []}
+                  onChange={onChangeAlergenos}
+                />
 
                 {/* === BLOQUE TRADUCCIONES === */}
                 <h4 className="subtitulo--crear">🌍 Traducciones para la carta</h4>

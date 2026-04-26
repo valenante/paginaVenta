@@ -3,6 +3,8 @@ import React, { useState, useContext, useEffect, useMemo, useRef } from "react";
 import PreciosHelpModal from "./PreciosHelpModal";
 import AdicionalesEditor from "./AdicionalesEditor";
 import CompuestosEditor from "./CompuestosEditor";
+import AlergenosSelector from "./AlergenosSelector";
+import { sanearAlergenos } from "../../constants/alergenos";
 
 const capitalizeClave = (s) => {
   const v = String(s || "").trim();
@@ -62,7 +64,10 @@ const CrearProducto = ({ onClose, onCreated, initialTipo, cloneFrom }) => {
   const [formData, setFormData] = useState(() => {
     if (cloneFrom) {
       const aliasesArr = Array.isArray(cloneFrom.aliases) ? cloneFrom.aliases : [];
-      const alergenosArr = Array.isArray(cloneFrom.alergenos) ? cloneFrom.alergenos : [];
+      const saneadosClone = sanearAlergenos(cloneFrom.alergenos, cloneFrom.alergenosTrazas);
+      const alergenosArr = saneadosClone.alergenos;
+      const alergenosTrazasArr = saneadosClone.alergenosTrazas;
+      const alergenosRarosClone = saneadosClone.raros;
       const preciosArr = Array.isArray(cloneFrom.precios)
         ? cloneFrom.precios.map((p, i) => ({
             clave: p.clave || "precioBase",
@@ -98,6 +103,8 @@ const CrearProducto = ({ onClose, onCreated, initialTipo, cloneFrom }) => {
         estado: cloneFrom.estado || "habilitado",
         precios: preciosArr,
         alergenos: alergenosArr,
+        alergenosTrazas: alergenosTrazasArr,
+        alergenosRaros: alergenosRarosClone,
         adicionales: Array.isArray(cloneFrom.adicionales) ? cloneFrom.adicionales : [],
         traducciones: {
           en: { nombre: trad?.en?.nombre || "", descripcion: trad?.en?.descripcion || "" },
@@ -141,6 +148,8 @@ const CrearProducto = ({ onClose, onCreated, initialTipo, cloneFrom }) => {
       estado: "habilitado",
       precios: [{ clave: "precioBase", label: "Precio", precio: 0, coste: 0, factorStock: 1, orden: 0 }],
       alergenos: [],
+      alergenosTrazas: [],
+      alergenosRaros: [],
       traducciones: {
         en: { nombre: "", descripcion: "" },
         fr: { nombre: "", descripcion: "" },
@@ -314,6 +323,7 @@ const CrearProducto = ({ onClose, onCreated, initialTipo, cloneFrom }) => {
     productData.stock = Number(productData.stock) || 0;
     productData.controlStock = !!productData.controlStock;
     productData.imprimirSiempre = !!productData.imprimirSiempre;
+    delete productData.alergenosRaros; // solo UI local
 
     // Auto-derivar clave slug desde label + label desde clave (fallbacks cruzados)
     productData.precios = (productData.precios || []).map((p) => ({
@@ -451,7 +461,6 @@ const CrearProducto = ({ onClose, onCreated, initialTipo, cloneFrom }) => {
                     value={formData.descripcion}
                     onChange={handleChange}
                     className="textarea--crear"
-                    required
                   />
                   <p className="help-text--crear">
                     Descripción visible para el cliente en la carta digital. Úsala
@@ -460,29 +469,20 @@ const CrearProducto = ({ onClose, onCreated, initialTipo, cloneFrom }) => {
                   </p>
                 </label>
 
-                {/* === ALÉRGENOS (no mezclado con VOZ) === */}
+                {/* === ALÉRGENOS === */}
                 <h4 className="subtitulo--crear">⚠️ Alérgenos</h4>
                 <p className="help-text--crear">
-                  Se muestra al cliente en la carta digital y ayuda a cocina a
-                  identificar riesgos.
+                  Marca <strong>Contiene</strong> si el alérgeno está en el plato y{" "}
+                  <strong>Puede contener</strong> si hay riesgo de contaminación cruzada en cocina.
                 </p>
-                <label className="label--editar">
-                  Alérgenos (separados por comas):
-                  <input
-                    type="text"
-                    name="alergenos"
-                    value={formData.alergenos?.join(", ") || ""}
-                    onChange={(e) => {
-                      const value = e.target.value
-                        .split(",")
-                        .map((a) => a.trim().toLowerCase())
-                        .filter(Boolean);
-                      setFormData((prev) => ({ ...prev, alergenos: value }));
-                    }}
-                    className="input--editar"
-                    placeholder="Ej: gluten, lactosa, huevo"
-                  />
-                </label>
+                <AlergenosSelector
+                  alergenos={formData.alergenos || []}
+                  alergenosTrazas={formData.alergenosTrazas || []}
+                  raros={formData.alergenosRaros || []}
+                  onChange={({ alergenos, alergenosTrazas }) =>
+                    setFormData((prev) => ({ ...prev, alergenos, alergenosTrazas }))
+                  }
+                />
 
                 {/* === BLOQUE TRADUCCIONES === */}
                 <h4 className="subtitulo--crear">🌍 Traducciones para la carta</h4>

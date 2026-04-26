@@ -69,7 +69,7 @@ export default function TiemposCocinaCard({
             <div className={`tsc-kpi ${!mostrarTListo ? "tsc-kpi--total" : ""}`}>
               <span className="tsc-kpi__label">Apertura → Pedido</span>
               <span className="tsc-kpi__value">{fmtMin(tc.medianaAperturaPedido)}</span>
-              <span className="tsc-kpi__sub">mediana · {fmtMin(tc.promedioAperturaPedido)} avg</span>
+              <span className="tsc-kpi__sub">media · {fmtMin(tc.promedioAperturaPedido)} avg</span>
             </div>
 
             {mostrarTListo && (
@@ -78,13 +78,13 @@ export default function TiemposCocinaCard({
                 <div className="tsc-kpi">
                   <span className="tsc-kpi__label">Pedido → {labelItem}</span>
                   <span className="tsc-kpi__value">{fmtMin(tc.medianaPedidoPlato)}</span>
-                  <span className="tsc-kpi__sub">mediana · {fmtMin(tc.promedioPedidoPlato)} avg</span>
+                  <span className="tsc-kpi__sub">media · {fmtMin(tc.promedioPedidoPlato)} avg</span>
                 </div>
                 <div className="tsc-kpi tsc-kpi--arrow">=</div>
                 <div className="tsc-kpi tsc-kpi--total">
                   <span className="tsc-kpi__label">Apertura → {labelItem}</span>
                   <span className="tsc-kpi__value">{fmtMin(tc.medianaAperturaPlato)}</span>
-                  <span className="tsc-kpi__sub">mediana · {fmtMin(tc.promedioAperturaPlato)} avg</span>
+                  <span className="tsc-kpi__sub">media · {fmtMin(tc.promedioAperturaPlato)} avg</span>
                 </div>
               </>
             )}

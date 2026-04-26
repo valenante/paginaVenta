@@ -1,44 +1,52 @@
 /* ── Tiempos de cocina card ── */
+/* Usa af3-card como base (importada globalmente). Aquí solo extensiones. */
+
 .tc-card {
-  background: var(--surface-card, rgba(255,255,255,0.04));
-  border: 1px solid var(--border, rgba(255,255,255,0.10));
-  border-radius: 16px;
-  padding: 28px 32px 32px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 12px;
+  padding: 1.25rem;
+  overflow: hidden;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .tc-card__head {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 14px;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
 }
 
 .tc-card__head h3 {
   font-size: 1rem;
+  color: #fff;
   font-weight: 700;
   margin: 0;
 }
 
 .tc-card__link {
   background: none;
-  border: 1px solid var(--border, rgba(255,255,255,0.12));
-  color: var(--text-secondary, rgba(255,255,255,0.6));
-  font-size: 0.78rem;
-  padding: 5px 12px;
+  border: 1px solid rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.5);
+  font-size: 0.75rem;
+  padding: 4px 10px;
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.15s;
 }
 .tc-card__link:hover {
   background: rgba(255,255,255,0.06);
-  color: var(--text-primary, #fff);
+  color: #fff;
 }
 
 .tc-card__empty {
-  color: var(--text-secondary, rgba(255,255,255,0.5));
-  font-size: 0.88rem;
   text-align: center;
-  padding: 24px 0;
+  opacity: 0.4;
+  padding: 1.5rem 0;
+  font-size: 13px;
 }
 
 /* Tabs toggle */
@@ -49,13 +57,13 @@
   overflow: hidden;
   border: 1px solid rgba(255,255,255,0.12);
   background: rgba(255,255,255,0.03);
-  margin-bottom: 18px;
+  margin-bottom: 1rem;
   width: fit-content;
 }
 
 .tc-tabs__btn {
-  padding: 6px 16px;
-  font-size: 0.78rem;
+  padding: 5px 14px;
+  font-size: 0.75rem;
   font-weight: 600;
   border: none;
   background: transparent;
@@ -83,14 +91,14 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: 20px;
+  margin-bottom: 1rem;
 }
 
 .tc-kpi {
   flex: 1;
   text-align: center;
-  padding: 14px 10px;
-  border-radius: 12px;
+  padding: 12px 8px;
+  border-radius: 10px;
   background: rgba(255,255,255,0.03);
   border: 1px solid rgba(255,255,255,0.06);
 }
@@ -99,37 +107,37 @@
   flex: 0 0 auto;
   background: none;
   border: none;
-  font-size: 1.1rem;
-  color: var(--text-secondary, rgba(255,255,255,0.35));
-  padding: 0 2px;
+  font-size: 1rem;
+  color: rgba(255,255,255,0.25);
+  padding: 0;
 }
 
 .tc-kpi--total {
   background: rgba(99, 102, 241, 0.08);
-  border-color: rgba(99, 102, 241, 0.2);
+  border-color: rgba(99, 102, 241, 0.18);
 }
 
 .tc-kpi__label {
   display: block;
-  font-size: 0.7rem;
+  font-size: 0.65rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  color: var(--text-secondary, rgba(255,255,255,0.5));
+  color: rgba(255,255,255,0.45);
   margin-bottom: 4px;
 }
 
 .tc-kpi__value {
   display: block;
-  font-size: 1.3rem;
+  font-size: 1.2rem;
   font-weight: 800;
-  color: var(--text-primary, #fff);
+  color: #fff;
 }
 
 .tc-kpi__sub {
   display: block;
-  font-size: 0.68rem;
-  color: var(--text-secondary, rgba(255,255,255,0.4));
+  font-size: 0.65rem;
+  color: rgba(255,255,255,0.3);
   margin-top: 2px;
 }
 
@@ -138,35 +146,35 @@
   justify-content: center;
 }
 .tc-kpis--solo .tc-kpi {
-  flex: 0 1 280px;
+  flex: 0 1 260px;
 }
 
 .tc-card__hint {
-  font-size: 0.78rem;
-  color: var(--text-secondary, rgba(255,255,255,0.4));
+  font-size: 12px;
+  opacity: 0.4;
   text-align: center;
-  padding: 4px 0 8px;
+  padding: 0 0 0.5rem;
   font-style: italic;
 }
 
 /* Distribution bars */
 .tc-dist {
-  margin-top: 4px;
+  margin-top: 0.25rem;
 }
 
 .tc-dist__label {
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: var(--text-secondary, rgba(255,255,255,0.5));
+  font-size: 12px;
+  opacity: 0.4;
   margin-bottom: 8px;
   display: block;
+  font-style: italic;
 }
 
 .tc-dist__bars {
   display: flex;
   gap: 6px;
   align-items: flex-end;
-  height: 80px;
+  height: 72px;
 }
 
 .tc-dist__bar-group {
@@ -174,12 +182,12 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 3px;
+  gap: 2px;
 }
 
 .tc-dist__bar-wrap {
   width: 100%;
-  height: 50px;
+  height: 44px;
   display: flex;
   align-items: flex-end;
   justify-content: center;
@@ -187,32 +195,29 @@
 
 .tc-dist__bar {
   width: 100%;
-  max-width: 40px;
-  border-radius: 4px 4px 0 0;
-  background: rgba(99, 102, 241, 0.5);
+  max-width: 36px;
+  border-radius: 3px 3px 0 0;
+  background: rgba(99, 102, 241, 0.45);
   transition: height 0.3s ease;
 }
 
 .tc-dist__bar--warn {
-  background: rgba(239, 68, 68, 0.5);
+  background: rgba(239, 68, 68, 0.45);
 }
 
 .tc-dist__count {
-  font-size: 0.75rem;
+  font-size: 12px;
   font-weight: 700;
-  color: var(--text-primary, #fff);
+  color: #fff;
 }
 
 .tc-dist__range {
-  font-size: 0.65rem;
-  color: var(--text-secondary, rgba(255,255,255,0.4));
+  font-size: 11px;
+  opacity: 0.35;
 }
 
 /* Mobile */
 @media (max-width: 700px) {
-  .tc-card {
-    padding: 20px 20px 24px;
-  }
   .tc-kpis {
     flex-wrap: wrap;
   }
@@ -225,10 +230,10 @@
     font-size: 0.9rem;
   }
   .tc-kpi__value {
-    font-size: 1.1rem;
+    font-size: 1rem;
   }
   .tc-tabs__btn {
-    padding: 6px 10px;
-    font-size: 0.72rem;
+    padding: 5px 10px;
+    font-size: 0.7rem;
   }
 }

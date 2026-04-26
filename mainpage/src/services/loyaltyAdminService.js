@@ -14,3 +14,13 @@ export async function updateLoyaltyConfig(patch) {
   const res = await api.put("/loyalty/config", patch);
   return unwrap(res)?.config;
 }
+
+export async function getLoyaltyStats() {
+  const res = await api.get("/loyalty/stats");
+  return unwrap(res)?.stats;
+}
+
+export async function getLoyaltyClientes({ search = "", page = 1, limit = 20 } = {}) {
+  const res = await api.get("/loyalty/clientes", { params: { search, page, limit } });
+  return unwrap(res);
+}

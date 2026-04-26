@@ -168,6 +168,12 @@ export default function DashboardPage() {
           </Link>
         )}
 
+        <Link to="/configuracion/loyalty" className="dashboard-tile card">
+          <div className="dashboard-tile-icon">💳</div>
+          <h2>Programa de fidelización</h2>
+          <p>Activa el programa de puntos, configura recompensas y consulta cómo lo usan tus clientes.</p>
+        </Link>
+
         {/* 4) Usuario (siempre visible) */}
         <Link to="/perfil" className="dashboard-tile card">
           <div className="dashboard-tile-icon">👤</div>

@@ -16,6 +16,7 @@ const ConfigImpresionPage = lazy(() => import("../pages/ConfigImpresionPage"));
 const ConfigImpresionShopPage = lazy(() => import("../pages/ConfigImpresionShopPage"));
 const PrintCenterPage = lazy(() => import("../pages/PrintCenterPage.jsx"));
 const ExportsPage = lazy(() => import("../pages/ExportsPage.jsx"));
+const LoyaltyConfigPage = lazy(() => import("../pages/LoyaltyConfigPage.jsx"));
 
 /* Proveedores */
 const ProveedoresPage = lazy(() => import("../pages/ProveedoresPage"));
@@ -79,6 +80,7 @@ export default function panelRoutes() {
       <Route path="/configuracion/impresion/centro" element={<UserLayout><PrintCenterPage /></UserLayout>} />
       <Route path="/configuracion/impresion-shop" element={<UserLayout><ConfigImpresionShopPage /></UserLayout>} />
       <Route path="/configuracion/exports" element={<UserLayout><ExportsPage /></UserLayout>} />
+      <Route path="/configuracion/loyalty" element={<UserLayout><LoyaltyConfigPage /></UserLayout>} />
 
       {/* Proveedores */}
       <Route path="/configuracion/proveedores" element={<UserLayout><ProveedoresPage /></UserLayout>} />

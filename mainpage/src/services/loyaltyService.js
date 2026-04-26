@@ -18,3 +18,8 @@ export async function getRestaurantesLoyalty() {
   const res = await clienteApi.get("/cliente/loyalty/restaurantes");
   return unwrap(res);
 }
+
+export async function getDetalleRestauranteCliente(slug) {
+  const res = await clienteApi.get(`/cliente/loyalty/restaurante/${encodeURIComponent(slug)}`);
+  return unwrap(res);
+}

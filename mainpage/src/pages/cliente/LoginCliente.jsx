@@ -1,14 +1,17 @@
 import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, Navigate } from "react-router-dom";
 import { useClienteAuth } from "../../context/ClienteAuthContext";
+import ClienteLayout from "./ClienteLayout";
 import "./cliente.css";
 
 export default function LoginCliente() {
-  const { login } = useClienteAuth();
+  const { login, isAuthenticated, loading } = useClienteAuth();
   const navigate = useNavigate();
   const [form, setForm] = useState({ email: "", password: "" });
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(null);
+
+  if (!loading && isAuthenticated) return <Navigate to="/cliente/perfil" replace />;
 
   const onChange = (e) => setForm((f) => ({ ...f, [e.target.name]: e.target.value }));
 
@@ -20,56 +23,73 @@ export default function LoginCliente() {
       await login(form);
       navigate("/cliente/perfil");
     } catch (err) {
-      const msg = err?.response?.data?.message || "Email o contraseña incorrectos.";
-      setError(msg);
+      setError(err?.response?.data?.message || "Email o contraseña incorrectos.");
     } finally {
       setSubmitting(false);
     }
   };
 
   return (
-    <div className="cliente-auth">
-      <div className="cliente-auth__card">
-        <h1 className="cliente-auth__title">Inicia sesión</h1>
-        <p className="cliente-auth__subtitle">Accede a tu perfil y consulta tus puntos.</p>
+    <ClienteLayout narrow>
+      <div className="cliente-auth-grid cliente-auth-grid--login">
+        <aside className="cliente-auth-hero">
+          <h2>Tu cuenta <span>ALEF</span></h2>
+          <p>
+            Consulta tus puntos, restaurantes vinculados y recompensas disponibles
+            desde una única cuenta.
+          </p>
+          <div className="cliente-auth-hero__stat">
+            <strong>+30 restaurantes</strong>
+            <span>Crece cada mes con nuevos locales que aceptan ALEF</span>
+          </div>
+        </aside>
 
-        <form onSubmit={onSubmit} className="cliente-auth__form">
-          <label>
-            Email
-            <input
-              name="email"
-              type="email"
-              value={form.email}
-              onChange={onChange}
-              required
-              autoComplete="email"
-              inputMode="email"
-            />
-          </label>
+        <div className="cliente-auth-card">
+          <header className="cliente-auth-card__header">
+            <h1>Iniciar sesión</h1>
+            <p>Bienvenido de nuevo.</p>
+          </header>
 
-          <label>
-            Contraseña
-            <input
-              name="password"
-              type="password"
-              value={form.password}
-              onChange={onChange}
-              required
-              autoComplete="current-password"
-            />
-          </label>
+          <form onSubmit={onSubmit} className="cliente-auth-form">
+            <div className="cliente-field">
+              <label>Email</label>
+              <input
+                name="email" type="email" required
+                autoComplete="email" inputMode="email"
+                value={form.email}
+                onChange={onChange}
+                placeholder="tu@email.com"
+                autoFocus
+              />
+            </div>
 
-          {error && <div className="cliente-auth__error">{error}</div>}
+            <div className="cliente-field">
+              <label>
+                Contraseña
+                <Link to="/cliente/recuperar" className="cliente-field__link">
+                  ¿La olvidaste?
+                </Link>
+              </label>
+              <input
+                name="password" type="password" required
+                autoComplete="current-password"
+                value={form.password}
+                onChange={onChange}
+              />
+            </div>
 
-          <button type="submit" className="cliente-auth__submit" disabled={submitting}>
-            {submitting ? "Entrando…" : "Entrar"}
-          </button>
-        </form>
+            {error && <div className="cliente-alert cliente-alert--error">{error}</div>}
 
-        <p className="cliente-auth__alt">
-          ¿No tienes cuenta? <Link to="/cliente/registro">Crea una</Link>
-        </p>
+            <button type="submit" className="cliente-btn cliente-btn--primary" disabled={submitting}>
+              {submitting ? "Entrando…" : "Entrar"}
+            </button>
+          </form>
+
+          <p className="cliente-auth-card__alt">
+            ¿No tienes cuenta? <Link to="/cliente/registro">Crea una en 30 segundos</Link>
+          </p>
+        </div>
       </div>
-    </div>
+    </ClienteLayout>
   );
 }

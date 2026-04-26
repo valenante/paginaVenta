@@ -3,6 +3,7 @@ import { Link, useParams, Navigate } from "react-router-dom";
 import { useClienteAuth } from "../../context/ClienteAuthContext";
 import { getDetalleRestauranteCliente, getMiHistorialLoyalty } from "../../services/loyaltyService";
 import ClienteLayout from "./ClienteLayout";
+import RestaurantLogo from "./RestaurantLogo";
 import { tipoMovimiento, fechaRelativa, etiquetaMovimiento } from "./historial-helpers";
 import "./cliente.css";
 
@@ -67,7 +68,7 @@ export default function DetalleRestauranteCliente() {
     <section className="cli-hero">
       <div className="cli-hero__inner">
         <div className="cli-hero__user">
-          <div className="cli-hero__avatar">{restaurante.nombre?.[0]?.toUpperCase() || "·"}</div>
+          <RestaurantLogo nombre={restaurante.nombre} logoUrl={restaurante.logoUrl} size={64} />
           <div>
             <span className="cli-hero__welcome">Restaurante Alef</span>
             <h1>{restaurante.nombre}</h1>

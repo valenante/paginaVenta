@@ -3,12 +3,13 @@ import React, { useState } from "react";
 import ExtrasPanel from "../components/Extras/ExtrasPanel";
 import CategoriasPanel from "../components/Categories/CategoriasPanel";
 import CostesPanel from "../components/Costes/CostesPanel";
+import IvaPanel from "../components/Iva/IvaPanel";
 import { useFeature } from "../Hooks/useFeature";
 import UpgradeBanner from "../components/UpgradeBanner/UpgradeBanner";
 import "../styles/ProductsMenu.css";
 
 const ProductsPage = () => {
-  // 'extras' | 'carta' | 'costes' | null
+  // 'extras' | 'carta' | 'costes' | 'iva' | null
   const [selectedType, setSelectedType] = useState(null);
   const hasCostes = useFeature("finanzas_view");
 
@@ -22,6 +23,7 @@ const ProductsPage = () => {
     if (selectedType === "extras") return "Gestión de extras";
     if (selectedType === "carta") return "Gestión de carta";
     if (selectedType === "costes") return "Gestión de costes";
+    if (selectedType === "iva") return "Gestión de IVA";
     return "Gestor de productos";
   };
 
@@ -34,6 +36,8 @@ const ProductsPage = () => {
       return "Gestiona categorías, platos y bebidas de tu carta. Arrastra para reordenar.";
     if (selectedType === "costes")
       return "Define el precio de coste de cada variante y revisa el margen de ganancia en vivo.";
+    if (selectedType === "iva")
+      return "Asigna el tipo de IVA por categoría. Obligatorio para facturación VeriFactu.";
     return "";
   };
 
@@ -86,6 +90,17 @@ const ProductsPage = () => {
               </span>
             </button>
 
+            <button
+              type="button"
+              onClick={() => setSelectedType("iva")}
+              className="products-type-btn--productos iva"
+            >
+              🧾 IVA
+              <span className="products-type-desc--productos">
+                Tipo impositivo por categoría. Obligatorio para VeriFactu.
+              </span>
+            </button>
+
             {hasCostes ? (
               <button
                 type="button"
@@ -117,6 +132,7 @@ const ProductsPage = () => {
           {selectedType === "extras" && <ExtrasPanel onBack={resetSelection} />}
           {selectedType === "carta" && <CategoriasPanel onBack={resetSelection} />}
           {selectedType === "costes" && <CostesPanel onBack={resetSelection} />}
+          {selectedType === "iva" && <IvaPanel />}
         </section>
       )}
     </div>

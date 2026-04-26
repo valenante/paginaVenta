@@ -356,7 +356,12 @@ export default function AdminDashboard() {
           </div>
           <VentasPorHoraCard fecha={fechaSeleccionada} />
           <AlertasCard />
-          <TiemposCocinaCard tiemposCocina={resumen?.tiemposCocina} onVerPares={() => setModal("correlacion")} />
+          <TiemposCocinaCard
+            tiemposCocina={resumen?.tiemposCocina}
+            tiemposCocinaPlatos={resumen?.tiemposCocinaPlatos}
+            tiemposCocinaBebidas={resumen?.tiemposCocinaBebidas}
+            onVerPares={() => setModal("correlacion")}
+          />
         </>
       ) : (
         <UpsellEstadisticasPro />

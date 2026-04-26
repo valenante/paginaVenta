@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import "./TiemposCocinaCard.css";
 
 const fmtMin = (v) => {
@@ -7,8 +7,20 @@ const fmtMin = (v) => {
   return n < 1 ? "<1 min" : `${Math.round(n)} min`;
 };
 
-export default function TiemposCocinaCard({ tiemposCocina, onVerPares }) {
-  const tc = tiemposCocina;
+const TABS = [
+  { key: "todo", label: "Todo" },
+  { key: "platos", label: "🍽 Platos" },
+  { key: "bebidas", label: "🍺 Bebidas" },
+];
+
+export default function TiemposCocinaCard({ tiemposCocina, tiemposCocinaPlatos, tiemposCocinaBebidas, onVerPares }) {
+  const [tab, setTab] = useState("todo");
+
+  const tc = tab === "platos" ? tiemposCocinaPlatos
+    : tab === "bebidas" ? tiemposCocinaBebidas
+    : tiemposCocina;
+
+  const labelItem = tab === "bebidas" ? "1ª bebida" : tab === "platos" ? "1er plato" : "1er item";
 
   return (
     <div className="tc-card">
@@ -21,8 +33,21 @@ export default function TiemposCocinaCard({ tiemposCocina, onVerPares }) {
         )}
       </div>
 
+      {/* Toggle */}
+      <div className="tc-tabs">
+        {TABS.map(t => (
+          <button
+            key={t.key}
+            className={`tc-tabs__btn ${tab === t.key ? "tc-tabs__btn--active" : ""}`}
+            onClick={() => setTab(t.key)}
+          >
+            {t.label}
+          </button>
+        ))}
+      </div>
+
       {!tc ? (
-        <p className="tc-card__empty">Sin datos de tiempos hoy</p>
+        <p className="tc-card__empty">Sin datos de {tab === "bebidas" ? "bebidas" : tab === "platos" ? "platos" : "tiempos"} hoy</p>
       ) : (
         <>
           {/* KPIs principales */}
@@ -34,13 +59,13 @@ export default function TiemposCocinaCard({ tiemposCocina, onVerPares }) {
             </div>
             <div className="tc-kpi tc-kpi--arrow">→</div>
             <div className="tc-kpi">
-              <span className="tc-kpi__label">Pedido → 1er plato</span>
+              <span className="tc-kpi__label">Pedido → {labelItem}</span>
               <span className="tc-kpi__value">{fmtMin(tc.medianaPedidoPlato)}</span>
               <span className="tc-kpi__sub">mediana · {fmtMin(tc.promedioPedidoPlato)} avg</span>
             </div>
             <div className="tc-kpi tc-kpi--arrow">=</div>
             <div className="tc-kpi tc-kpi--total">
-              <span className="tc-kpi__label">Apertura → 1er plato</span>
+              <span className="tc-kpi__label">Apertura → {labelItem}</span>
               <span className="tc-kpi__value">{fmtMin(tc.medianaAperturaPlato)}</span>
               <span className="tc-kpi__sub">mediana · {fmtMin(tc.promedioAperturaPlato)} avg</span>
             </div>

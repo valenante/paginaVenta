@@ -13,12 +13,27 @@ const TABS = [
   { key: "bebidas", label: "🍺 Bebidas" },
 ];
 
-export default function TiemposCocinaCard({ tiemposCocina, tiemposCocinaPlatos, tiemposCocinaBebidas, onVerPares }) {
+export default function TiemposCocinaCard({
+  tiemposCocina, tiemposCocinaPlatos, tiemposCocinaBebidas,
+  pantallaCocinaActiva, pantallaBarraActiva, onVerPares,
+}) {
   const [tab, setTab] = useState("todo");
 
   const tc = tab === "platos" ? tiemposCocinaPlatos
     : tab === "bebidas" ? tiemposCocinaBebidas
     : tiemposCocina;
+
+  // Si la pantalla de la estación está OFF, tListo no es fiable
+  // (se marca automáticamente al cerrar mesa, no cuando realmente sale)
+  const pantallaActiva = tab === "platos" ? pantallaCocinaActiva
+    : tab === "bebidas" ? pantallaBarraActiva
+    : (pantallaCocinaActiva && pantallaBarraActiva); // "todo" necesita ambas para mostrar tListo combinado
+
+  // En "todo", si al menos una está activa, mostramos los datos de tListo
+  // porque el "primer item" probablemente viene de la estación activa
+  const mostrarTListo = tab === "todo"
+    ? (pantallaCocinaActiva || pantallaBarraActiva)
+    : pantallaActiva;
 
   const labelItem = tab === "bebidas" ? "1ª bebida" : tab === "platos" ? "1er plato" : "1er item";
 
@@ -50,29 +65,40 @@ export default function TiemposCocinaCard({ tiemposCocina, tiemposCocinaPlatos, 
         <p className="tc-card__empty">Sin datos de {tab === "bebidas" ? "bebidas" : tab === "platos" ? "platos" : "tiempos"} hoy</p>
       ) : (
         <>
-          {/* KPIs principales */}
-          <div className="tc-kpis">
-            <div className="tc-kpi">
+          {/* KPIs */}
+          <div className={`tc-kpis ${!mostrarTListo ? "tc-kpis--solo" : ""}`}>
+            <div className={`tc-kpi ${!mostrarTListo ? "tc-kpi--total" : ""}`}>
               <span className="tc-kpi__label">Apertura → Pedido</span>
               <span className="tc-kpi__value">{fmtMin(tc.medianaAperturaPedido)}</span>
               <span className="tc-kpi__sub">mediana · {fmtMin(tc.promedioAperturaPedido)} avg</span>
             </div>
-            <div className="tc-kpi tc-kpi--arrow">→</div>
-            <div className="tc-kpi">
-              <span className="tc-kpi__label">Pedido → {labelItem}</span>
-              <span className="tc-kpi__value">{fmtMin(tc.medianaPedidoPlato)}</span>
-              <span className="tc-kpi__sub">mediana · {fmtMin(tc.promedioPedidoPlato)} avg</span>
-            </div>
-            <div className="tc-kpi tc-kpi--arrow">=</div>
-            <div className="tc-kpi tc-kpi--total">
-              <span className="tc-kpi__label">Apertura → {labelItem}</span>
-              <span className="tc-kpi__value">{fmtMin(tc.medianaAperturaPlato)}</span>
-              <span className="tc-kpi__sub">mediana · {fmtMin(tc.promedioAperturaPlato)} avg</span>
-            </div>
+
+            {mostrarTListo && (
+              <>
+                <div className="tc-kpi tc-kpi--arrow">→</div>
+                <div className="tc-kpi">
+                  <span className="tc-kpi__label">Pedido → {labelItem}</span>
+                  <span className="tc-kpi__value">{fmtMin(tc.medianaPedidoPlato)}</span>
+                  <span className="tc-kpi__sub">mediana · {fmtMin(tc.promedioPedidoPlato)} avg</span>
+                </div>
+                <div className="tc-kpi tc-kpi--arrow">=</div>
+                <div className="tc-kpi tc-kpi--total">
+                  <span className="tc-kpi__label">Apertura → {labelItem}</span>
+                  <span className="tc-kpi__value">{fmtMin(tc.medianaAperturaPlato)}</span>
+                  <span className="tc-kpi__sub">mediana · {fmtMin(tc.promedioAperturaPlato)} avg</span>
+                </div>
+              </>
+            )}
           </div>
 
-          {/* Distribución */}
-          {tc.distribucion && (
+          {!mostrarTListo && (
+            <p className="tc-card__hint">
+              La pantalla de {tab === "bebidas" ? "barra" : tab === "platos" ? "cocina" : "cocina/barra"} está desactivada — no hay datos de cuándo se sirve.
+            </p>
+          )}
+
+          {/* Distribución — solo si tListo es fiable */}
+          {mostrarTListo && tc.distribucion && (
             <div className="tc-dist">
               <span className="tc-dist__label">Distribución ({tc.mesas} mesas)</span>
               <div className="tc-dist__bars">

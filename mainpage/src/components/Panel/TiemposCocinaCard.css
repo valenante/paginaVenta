@@ -133,6 +133,22 @@
   margin-top: 2px;
 }
 
+/* Solo apertura→pedido (pantalla OFF) */
+.tc-kpis--solo {
+  justify-content: center;
+}
+.tc-kpis--solo .tc-kpi {
+  flex: 0 1 280px;
+}
+
+.tc-card__hint {
+  font-size: 0.78rem;
+  color: var(--text-secondary, rgba(255,255,255,0.4));
+  text-align: center;
+  padding: 4px 0 8px;
+  font-style: italic;
+}
+
 /* Distribution bars */
 .tc-dist {
   margin-top: 4px;

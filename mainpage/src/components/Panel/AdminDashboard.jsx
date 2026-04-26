@@ -360,6 +360,8 @@ export default function AdminDashboard() {
             tiemposCocina={resumen?.tiemposCocina}
             tiemposCocinaPlatos={resumen?.tiemposCocinaPlatos}
             tiemposCocinaBebidas={resumen?.tiemposCocinaBebidas}
+            pantallaCocinaActiva={resumen?.pantallaCocinaActiva}
+            pantallaBarraActiva={resumen?.pantallaBarraActiva}
             onVerPares={() => setModal("correlacion")}
           />
         </>

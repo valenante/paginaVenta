@@ -1288,6 +1288,28 @@
   font-size: 0.95rem;
 }
 
+/* ─────────── Pager historial ─────────── */
+
+.cli-historial-pager {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+.cli-historial-pager__info {
+  font-size: 0.88rem;
+  color: var(--cli-text-soft);
+}
+
+.cli-historial-pager__info strong { color: var(--cli-text); }
+
+@media (max-width: 480px) {
+  .cli-historial-pager .cliente-btn { flex: 1 1 calc(50% - 12px); min-width: 0; }
+}
+
 @media (max-width: 480px) {
   .cli-acciones-rest .cliente-btn { flex: 1 1 100%; }
 }

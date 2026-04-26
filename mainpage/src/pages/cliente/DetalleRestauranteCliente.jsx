@@ -11,29 +11,44 @@ const fmtMoney = (n) => `${Number(n || 0).toFixed(2).replace(".", ",")} €`;
 
 const DIA_LABEL = ["D", "L", "M", "X", "J", "V", "S"];
 
+const HISTORIAL_PAGE_SIZE = 10;
+
 export default function DetalleRestauranteCliente() {
   const { slug } = useParams();
   const { cliente, loading: loadingAuth } = useClienteAuth();
   const [data, setData] = useState(null);
   const [historial, setHistorial] = useState(null);
+  const [page, setPage] = useState(1);
+  const [loadingHist, setLoadingHist] = useState(false);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // Carga inicial del detalle (no se recarga al paginar)
   useEffect(() => {
     if (loadingAuth || !cliente) return;
     (async () => {
       try {
-        const [det, hist] = await Promise.all([
-          getDetalleRestauranteCliente(slug),
-          getMiHistorialLoyalty({ tenantSlug: slug, limit: 10 }),
-        ]);
+        const det = await getDetalleRestauranteCliente(slug);
         setData(det);
-        setHistorial(hist);
       } catch (err) {
         setError(err?.response?.data?.message || "No se pudo cargar el restaurante.");
       } finally { setLoading(false); }
     })();
   }, [slug, cliente, loadingAuth]);
+
+  // Carga del historial — separada para que cambie con la paginación
+  useEffect(() => {
+    if (loadingAuth || !cliente) return;
+    setLoadingHist(true);
+    (async () => {
+      try {
+        const hist = await getMiHistorialLoyalty({ tenantSlug: slug, page, limit: HISTORIAL_PAGE_SIZE });
+        setHistorial(hist);
+      } catch {
+        setHistorial({ items: [], total: 0 });
+      } finally { setLoadingHist(false); }
+    })();
+  }, [slug, cliente, loadingAuth, page]);
 
   if (!loadingAuth && !cliente) return <Navigate to="/cliente/login" replace />;
 
@@ -93,43 +108,60 @@ export default function DetalleRestauranteCliente() {
 
   // URLs cross-app a la carta del cliente: pre-rellenamos los datos del cliente
   // logueado para que no tenga que escribir nombre/email/teléfono al reservar.
-  const cartaBase = (import.meta.env.VITE_CARTA_BASE_URL || "").replace(/\/$/, "");
-  const cartaUrl = cartaBase ? `${cartaBase}/${slug}/carta` : null;
+  // Fallback dev: localhost:5174 si la env var no está definida.
+  const cartaBase = (import.meta.env.VITE_CARTA_BASE_URL || "http://localhost:5174").replace(/\/$/, "");
+  const cartaUrl = `${cartaBase}/${slug}/carta`;
   const reservasParams = new URLSearchParams({
     nombre: cliente?.nombre || "",
     email: cliente?.email || "",
     telefono: cliente?.telefono || "",
   }).toString();
-  const reservasUrl = cartaBase ? `${cartaBase}/${slug}/reservas?${reservasParams}` : null;
+  const reservasUrl = `${cartaBase}/${slug}/reservas?${reservasParams}`;
+
+  // Cómo llegar: si tenemos dirección y/o ciudad, abrimos Google Maps.
+  // Construye una query searcheable con todos los datos disponibles.
+  const direccionFull = [restaurante.direccion, restaurante.ciudad, restaurante.nombre]
+    .filter(Boolean)
+    .join(", ");
+  const mapsUrl = direccionFull
+    ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(direccionFull)}`
+    : null;
+
+  const totalPaginas = Math.max(1, Math.ceil((historial?.total || 0) / HISTORIAL_PAGE_SIZE));
 
   return (
     <ClienteLayout hero={hero}>
       <Link to="/cliente/restaurantes" className="cliente-back">← Volver a Restaurantes</Link>
 
-      {(cartaUrl || reservasUrl) && (
-        <div className="cli-acciones-rest">
-          {cartaUrl && (
-            <a
-              href={cartaUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="cliente-btn cliente-btn--primary"
-            >
-              📋 Ver carta digital
-            </a>
-          )}
-          {reservasUrl && (
-            <a
-              href={reservasUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="cliente-btn cliente-btn--accent"
-            >
-              📅 Reservar mesa
-            </a>
-          )}
-        </div>
-      )}
+      <div className="cli-acciones-rest">
+        <a
+          href={cartaUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="cliente-btn cliente-btn--primary"
+        >
+          📋 Ver carta digital
+        </a>
+        <a
+          href={reservasUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="cliente-btn cliente-btn--accent"
+        >
+          📅 Reservar mesa
+        </a>
+        {mapsUrl && (
+          <a
+            href={mapsUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="cliente-btn cliente-btn--ghost"
+            title={direccionFull}
+          >
+            📍 Cómo llegar
+          </a>
+        )}
+      </div>
 
       {!loyalty.activo && (
         <div className="cliente-alert cliente-alert--warn" style={{ marginBottom: "1.5rem" }}>
@@ -228,40 +260,72 @@ export default function DetalleRestauranteCliente() {
         <div className="cliente-section__header">
           <div>
             <h2>📜 Tu historial aquí</h2>
-            <p className="cliente-section__sub">Movimientos en {restaurante.nombre}.</p>
+            <p className="cliente-section__sub">
+              Movimientos en {restaurante.nombre}
+              {historial?.total ? ` · ${historial.total} ${historial.total === 1 ? "movimiento" : "movimientos"}` : ""}.
+            </p>
           </div>
         </div>
-        {!historial?.items?.length ? (
+
+        {loadingHist ? (
+          <div className="cliente-skel cliente-skel--list" />
+        ) : !historial?.items?.length ? (
           <div className="cliente-empty cliente-empty--small">
             <p>Sin movimientos todavía. Dile al camarero tu email en tu próxima visita.</p>
           </div>
         ) : (
-          <ol className="cliente-historial">
-            {historial.items.map((m) => {
-              const tipo = tipoMovimiento(m.tipo);
-              const positivo = m.puntos >= 0;
-              return (
-                <li key={m._id} className={`cliente-mov cliente-mov--${tipo.key}`}>
-                  <div className={`cliente-mov__icon cliente-mov__icon--${tipo.key}`} aria-hidden="true">
-                    {tipo.icon}
-                  </div>
-                  <div className="cliente-mov__body">
-                    <div className="cliente-mov__title">
-                      <strong>{tipo.label}</strong>
-                      {etiquetaMovimiento(m) && (
-                        <span className="cliente-mov__nota"> · {etiquetaMovimiento(m)}</span>
-                      )}
+          <>
+            <ol className="cliente-historial">
+              {historial.items.map((m) => {
+                const tipo = tipoMovimiento(m.tipo);
+                const positivo = m.puntos >= 0;
+                return (
+                  <li key={m._id} className={`cliente-mov cliente-mov--${tipo.key}`}>
+                    <div className={`cliente-mov__icon cliente-mov__icon--${tipo.key}`} aria-hidden="true">
+                      {tipo.icon}
                     </div>
-                    <div className="cliente-mov__fecha">{fechaRelativa(m.createdAt)}</div>
-                  </div>
-                  <div className={`cliente-mov__pts ${positivo ? "is-pos" : "is-neg"}`}>
-                    {positivo ? "+" : ""}{m.puntos.toLocaleString("es")}
-                    <span> pts</span>
-                  </div>
-                </li>
-              );
-            })}
-          </ol>
+                    <div className="cliente-mov__body">
+                      <div className="cliente-mov__title">
+                        <strong>{tipo.label}</strong>
+                        {etiquetaMovimiento(m) && (
+                          <span className="cliente-mov__nota"> · {etiquetaMovimiento(m)}</span>
+                        )}
+                      </div>
+                      <div className="cliente-mov__fecha">{fechaRelativa(m.createdAt)}</div>
+                    </div>
+                    <div className={`cliente-mov__pts ${positivo ? "is-pos" : "is-neg"}`}>
+                      {positivo ? "+" : ""}{m.puntos.toLocaleString("es")}
+                      <span> pts</span>
+                    </div>
+                  </li>
+                );
+              })}
+            </ol>
+
+            {totalPaginas > 1 && (
+              <div className="cli-historial-pager">
+                <button
+                  type="button"
+                  className="cliente-btn cliente-btn--ghost"
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  disabled={page <= 1 || loadingHist}
+                >
+                  ← Anterior
+                </button>
+                <span className="cli-historial-pager__info">
+                  Página <strong>{page}</strong> de <strong>{totalPaginas}</strong>
+                </span>
+                <button
+                  type="button"
+                  className="cliente-btn cliente-btn--ghost"
+                  onClick={() => setPage((p) => Math.min(totalPaginas, p + 1))}
+                  disabled={page >= totalPaginas || loadingHist}
+                >
+                  Siguiente →
+                </button>
+              </div>
+            )}
+          </>
         )}
       </section>
     </ClienteLayout>

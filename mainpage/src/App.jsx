@@ -28,6 +28,7 @@ import { ProductosProvider } from "./context/ProductosContext.jsx";
 import { SocketProvider } from "./utils/socket.jsx";
 import { CategoriasProvider } from "./context/CategoriasContext";
 import { ShopCategoriasProvider } from "./context/ShopCategoriasContext";
+import { ClienteAuthProvider } from "./context/ClienteAuthContext.jsx";
 
 /* ── Route modules ── */
 import publicRoutes from "./routes/publicRoutes.jsx";
@@ -205,13 +206,15 @@ export default function App() {
         <CategoriasProvider>
           <ShopCategoriasProvider>
             <ProductosProvider>
-              <CookieBanner />
-              <WhatsAppFloatingGate />
-              <ErrorBoundary>
-                <Suspense fallback={<LoadingScreen />}>
-                  <AppRoutes />
-                </Suspense>
-              </ErrorBoundary>
+              <ClienteAuthProvider>
+                <CookieBanner />
+                <WhatsAppFloatingGate />
+                <ErrorBoundary>
+                  <Suspense fallback={<LoadingScreen />}>
+                    <AppRoutes />
+                  </Suspense>
+                </ErrorBoundary>
+              </ClienteAuthProvider>
             </ProductosProvider>
           </ShopCategoriasProvider>
         </CategoriasProvider>

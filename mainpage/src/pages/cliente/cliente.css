@@ -1,0 +1,328 @@
+/* ========================================================
+   Páginas del cliente final del programa de fidelización ALEF
+   ======================================================== */
+
+.cliente-auth {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+  background: #f7f6f3;
+}
+
+.cliente-auth__card {
+  width: 100%;
+  max-width: 460px;
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  padding: 32px 28px;
+}
+
+.cliente-auth__title {
+  margin: 0 0 6px 0;
+  font-size: 1.5rem;
+  color: #9B1C1C;
+  font-weight: 700;
+}
+
+.cliente-auth__subtitle {
+  margin: 0 0 22px 0;
+  color: #4a4a4a;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.cliente-auth__form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.cliente-auth__form label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.85rem;
+  color: #2d2d2d;
+  font-weight: 500;
+}
+
+.cliente-auth__form input[type="text"],
+.cliente-auth__form input[type="email"],
+.cliente-auth__form input[type="tel"],
+.cliente-auth__form input[type="password"] {
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: inherit;
+  background: #fff;
+  transition: border-color 0.15s;
+}
+
+.cliente-auth__form input:focus {
+  outline: none;
+  border-color: #9B1C1C;
+  box-shadow: 0 0 0 2px rgba(155, 28, 28, 0.12);
+}
+
+.cliente-auth__hint {
+  font-weight: 400;
+  color: #888;
+  font-size: 0.78rem;
+}
+
+.cliente-auth__checkbox {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 0.85rem;
+  color: #4a4a4a;
+}
+
+.cliente-auth__checkbox input {
+  margin-top: 3px;
+  accent-color: #9B1C1C;
+}
+
+.cliente-auth__checkbox a {
+  color: #9B1C1C;
+  text-decoration: underline;
+}
+
+.cliente-auth__error {
+  background: #fef2f2;
+  border: 1px solid rgba(155, 28, 28, 0.3);
+  color: #7E1616;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+
+.cliente-auth__submit {
+  background: linear-gradient(135deg, #9B1C1C, #5B1010);
+  color: #fff;
+  border: none;
+  padding: 12px 0;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: 0.3px;
+  box-shadow: 0 4px 12px rgba(155, 28, 28, 0.22);
+  transition: transform 0.1s, box-shadow 0.2s;
+}
+
+.cliente-auth__submit:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(155, 28, 28, 0.32);
+}
+
+.cliente-auth__submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.cliente-auth__alt {
+  margin-top: 18px;
+  text-align: center;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.cliente-auth__alt a {
+  color: #9B1C1C;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+/* ========================================================
+   Perfil cliente
+   ======================================================== */
+
+.cliente-perfil {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 32px 20px 60px;
+  font-family: 'Inter', sans-serif;
+  color: #2d2d2d;
+}
+
+.cliente-perfil__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 28px;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.cliente-perfil__header h1 {
+  margin: 0;
+  font-size: 1.6rem;
+  color: #9B1C1C;
+}
+
+.cliente-perfil__email {
+  margin: 4px 0 0;
+  color: #777;
+  font-size: 0.9rem;
+}
+
+.cliente-perfil__logout {
+  background: transparent;
+  border: 1px solid #ccc;
+  color: #555;
+  padding: 6px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.cliente-perfil__logout:hover {
+  background: #f1f1f1;
+  border-color: #999;
+}
+
+.cliente-perfil__total {
+  background: linear-gradient(135deg, #9B1C1C, #5B1010);
+  color: #fff;
+  border-radius: 16px;
+  padding: 28px 24px;
+  text-align: center;
+  margin-bottom: 36px;
+  box-shadow: 0 8px 22px rgba(155, 28, 28, 0.25);
+}
+
+.cliente-perfil__total-num {
+  font-size: 3rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.cliente-perfil__total-label {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.85rem;
+  margin-top: 6px;
+  opacity: 0.9;
+}
+
+.cliente-perfil h2 {
+  margin: 0 0 14px;
+  font-size: 1.05rem;
+  color: #2d2d2d;
+}
+
+.cliente-perfil__vacio {
+  background: #fff;
+  border: 1px dashed #ccc;
+  border-radius: 10px;
+  padding: 18px;
+  color: #666;
+  text-align: center;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.cliente-perfil__tenants {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+.cliente-perfil__tenant {
+  background: #fff;
+  border: 1px solid #e2e2e2;
+  border-radius: 12px;
+  padding: 16px;
+  cursor: pointer;
+  transition: border-color 0.15s, transform 0.1s;
+}
+
+.cliente-perfil__tenant:hover {
+  border-color: #9B1C1C;
+}
+
+.cliente-perfil__tenant.is-active {
+  border-color: #9B1C1C;
+  box-shadow: 0 0 0 2px rgba(155, 28, 28, 0.18);
+}
+
+.cliente-perfil__tenant-nombre {
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.cliente-perfil__tenant-puntos {
+  color: #9B1C1C;
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin: 4px 0;
+}
+
+.cliente-perfil__tenant-fecha {
+  font-size: 0.78rem;
+  color: #888;
+}
+
+.cliente-perfil__historial {
+  margin-top: 36px;
+}
+
+.cliente-perfil__historial ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.cliente-perfil__movimiento {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-rows: auto auto;
+  column-gap: 12px;
+  padding: 12px 14px;
+  background: #fff;
+  border: 1px solid #ececec;
+  border-radius: 10px;
+  margin-bottom: 8px;
+}
+
+.cliente-perfil__movimiento .puntos-positivos {
+  color: #16a34a;
+  font-weight: 700;
+}
+
+.cliente-perfil__movimiento .puntos-negativos {
+  color: #dc2626;
+  font-weight: 700;
+}
+
+.cliente-perfil__nota {
+  color: #777;
+  font-weight: 400;
+}
+
+.cliente-perfil__fecha {
+  grid-column: 1 / -1;
+  font-size: 0.75rem;
+  color: #999;
+  margin-top: 2px;
+}
+
+.cliente-perfil__footer {
+  margin-top: 40px;
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+.cliente-perfil__footer a {
+  color: #9B1C1C;
+  text-decoration: none;
+}

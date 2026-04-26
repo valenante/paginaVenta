@@ -3,6 +3,11 @@ import { Route, Navigate } from "react-router-dom";
 
 const Login = lazy(() => import("../pages/Login"));
 const Registro = lazy(() => import("../pages/Registro"));
+
+// Programa de fidelización ALEF — cliente final
+const RegistroCliente = lazy(() => import("../pages/cliente/RegistroCliente.jsx"));
+const LoginCliente = lazy(() => import("../pages/cliente/LoginCliente.jsx"));
+const PerfilCliente = lazy(() => import("../pages/cliente/PerfilCliente.jsx"));
 const RegistroSuccess = lazy(() => import("../pages/RegistroSuccess.jsx"));
 const ForgotPassword = lazy(() => import("../components/ForgotPassword/ForgotPassword"));
 const ResetPassword = lazy(() => import("../components/ForgotPassword/ResetPassword"));
@@ -26,6 +31,11 @@ export default function publicRoutes(HomeEntry) {
       {/* AUTH */}
       <Route path="/login" element={<Login />} />
       <Route path="/registro" element={<Registro />} />
+
+      {/* PROGRAMA DE FIDELIZACIÓN ALEF — cliente final */}
+      <Route path="/cliente/registro" element={<RegistroCliente />} />
+      <Route path="/cliente/login" element={<LoginCliente />} />
+      <Route path="/cliente/perfil" element={<PerfilCliente />} />
       <Route path="/registro/success" element={<RegistroSuccess />} />
       <Route path="/registro/cancel" element={<RegistroSuccess />} />
       <Route path="/pago/exito" element={<RegistroSuccess />} />

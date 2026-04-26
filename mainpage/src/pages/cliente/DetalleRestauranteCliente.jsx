@@ -63,37 +63,36 @@ export default function DetalleRestauranteCliente() {
 
   const { restaurante, loyalty, saldo } = data;
 
+  const hero = (
+    <section className="cli-hero">
+      <div className="cli-hero__inner">
+        <div className="cli-hero__user">
+          <div className="cli-hero__avatar">{restaurante.nombre?.[0]?.toUpperCase() || "·"}</div>
+          <div>
+            <span className="cli-hero__welcome">Restaurante Alef</span>
+            <h1>{restaurante.nombre}</h1>
+            {(restaurante.direccion || restaurante.ciudad) && (
+              <p className="cli-hero__email">
+                {restaurante.direccion}{restaurante.direccion && restaurante.ciudad ? " · " : ""}{restaurante.ciudad}
+              </p>
+            )}
+          </div>
+        </div>
+        <div className="cli-hero__saldo-box">
+          <div className="cli-hero__saldo-num">{saldo.toLocaleString("es")}</div>
+          <div className="cli-hero__saldo-label">tus puntos aquí</div>
+          <div className="cli-hero__saldo-sub">
+            {loyalty.puntosPorEuro} pts por €
+            {loyalty.minimoParaCanjear > 0 && ` · Mín. canjeo: ${loyalty.minimoParaCanjear}`}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+
   return (
-    <ClienteLayout>
-      <Link to="/cliente/restaurantes" className="cliente-back">← Restaurantes</Link>
-
-      {/* HERO */}
-      <section className="cliente-hero cliente-hero--rest">
-        <div className="cliente-hero__top">
-          <div className="cliente-hero__user">
-            <div className="cliente-hero__avatar cliente-hero__avatar--rest">
-              {restaurante.nombre?.[0]?.toUpperCase() || "·"}
-            </div>
-            <div>
-              <h1>{restaurante.nombre}</h1>
-              {(restaurante.direccion || restaurante.ciudad) && (
-                <p className="cliente-hero__email">
-                  {restaurante.direccion}{restaurante.direccion && restaurante.ciudad ? " · " : ""}{restaurante.ciudad}
-                </p>
-              )}
-            </div>
-          </div>
-        </div>
-
-        <div className="cliente-hero__saldo">
-          <div className="cliente-hero__saldo-num">{saldo.toLocaleString("es")}</div>
-          <div className="cliente-hero__saldo-label">tus puntos aquí</div>
-          <div className="cliente-hero__saldo-sub">
-            Ratio: {loyalty.puntosPorEuro} pts por euro
-            {loyalty.minimoParaCanjear > 0 && ` · Mínimo para canjear: ${loyalty.minimoParaCanjear} pts`}
-          </div>
-        </div>
-      </section>
+    <ClienteLayout hero={hero}>
+      <Link to="/cliente/restaurantes" className="cliente-back">← Volver a Restaurantes</Link>
 
       {!loyalty.activo && (
         <div className="cliente-alert cliente-alert--warn" style={{ marginBottom: "1.5rem" }}>

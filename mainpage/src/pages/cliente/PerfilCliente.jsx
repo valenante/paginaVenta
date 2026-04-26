@@ -61,31 +61,32 @@ export default function PerfilCliente() {
   const tenants = perfilLoyalty?.tenants || [];
   const tenantActivo = tenants.find((t) => t.slug === tenantSeleccionado);
 
-  return (
-    <ClienteLayout>
-      {/* HERO */}
-      <section className="cliente-hero">
-        <div className="cliente-hero__top">
-          <div className="cliente-hero__user">
-            <div className="cliente-hero__avatar">{cliente.nombre?.[0]?.toUpperCase() || "·"}</div>
-            <div>
-              <h1>Hola, {cliente.nombre.split(" ")[0]}</h1>
-              <p className="cliente-hero__email">{cliente.email}</p>
-            </div>
+  const hero = (
+    <section className="cli-hero">
+      <div className="cli-hero__inner">
+        <div className="cli-hero__user">
+          <div className="cli-hero__avatar">{cliente.nombre?.[0]?.toUpperCase() || "·"}</div>
+          <div>
+            <span className="cli-hero__welcome">Bienvenido</span>
+            <h1>Hola, {cliente.nombre.split(" ")[0]}</h1>
+            <p className="cli-hero__email">{cliente.email}</p>
           </div>
         </div>
-
-        <div className="cliente-hero__saldo">
-          <div className="cliente-hero__saldo-num">{totalPuntos.toLocaleString("es")}</div>
-          <div className="cliente-hero__saldo-label">puntos totales</div>
+        <div className="cli-hero__saldo-box">
+          <div className="cli-hero__saldo-num">{totalPuntos.toLocaleString("es")}</div>
+          <div className="cli-hero__saldo-label">puntos acumulados</div>
           {tenants.length > 0 && (
-            <div className="cliente-hero__saldo-sub">
-              en {tenants.length} {tenants.length === 1 ? "restaurante" : "restaurantes"}
+            <div className="cli-hero__saldo-sub">
+              en {tenants.length} {tenants.length === 1 ? "restaurante Alef" : "restaurantes Alef"}
             </div>
           )}
         </div>
-      </section>
+      </div>
+    </section>
+  );
 
+  return (
+    <ClienteLayout hero={hero}>
       {error && <div className="cliente-alert cliente-alert--error" style={{ marginBottom: "1.5rem" }}>{error}</div>}
 
       {/* RESTAURANTES */}

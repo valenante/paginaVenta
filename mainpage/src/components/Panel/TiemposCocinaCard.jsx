@@ -8,7 +8,6 @@ const fmtMin = (v) => {
 };
 
 const TABS = [
-  { key: "todo", label: "Todo" },
   { key: "platos", label: "🍽 Platos" },
   { key: "bebidas", label: "🍺 Bebidas" },
 ];
@@ -17,7 +16,7 @@ export default function TiemposCocinaCard({
   tiemposCocina, tiemposCocinaPlatos, tiemposCocinaBebidas,
   pantallaCocinaActiva, pantallaBarraActiva, onVerPares,
 }) {
-  const [tab, setTab] = useState("todo");
+  const [tab, setTab] = useState("platos");
 
   const tc = tab === "platos" ? tiemposCocinaPlatos
     : tab === "bebidas" ? tiemposCocinaBebidas

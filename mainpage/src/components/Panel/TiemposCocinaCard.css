@@ -149,6 +149,13 @@
   flex: 0 1 260px;
 }
 
+.tsc-card__tip {
+  font-size: 12px;
+  opacity: 0.4;
+  margin: 0.5rem 0 0 0;
+  font-style: italic;
+}
+
 .tsc-card__hint {
   font-size: 12px;
   opacity: 0.4;

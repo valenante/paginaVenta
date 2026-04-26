@@ -97,28 +97,8 @@ export default function TiemposCocinaCard({
             </p>
           )}
 
-          {/* Distribución — solo si tListo es fiable */}
-          {mostrarTListo && tc.distribucion && (
-            <div className="tsc-dist">
-              <span className="tsc-dist__label">Distribución ({tc.mesas} mesas)</span>
-              <div className="tsc-dist__bars">
-                {Object.entries(tc.distribucion).map(([rango, count]) => {
-                  const pct = tc.mesas > 0 ? (count / tc.mesas) * 100 : 0;
-                  return (
-                    <div key={rango} className="tsc-dist__bar-group">
-                      <div className="tsc-dist__bar-wrap">
-                        <div
-                          className={`tsc-dist__bar ${rango === "20+" ? "tsc-dist__bar--warn" : ""}`}
-                          style={{ height: `${Math.max(4, pct)}%` }}
-                        />
-                      </div>
-                      <span className="tsc-dist__count">{count}</span>
-                      <span className="tsc-dist__range">{rango}</span>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
+          {tc.mesas > 0 && (
+            <p className="tsc-card__tip">{tc.mesas} mesas analizadas</p>
           )}
         </>
       )}

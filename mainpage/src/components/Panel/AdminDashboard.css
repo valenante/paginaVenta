@@ -311,6 +311,7 @@
   flex-direction: column;
 }
 .adm__modal--wide { max-width: 640px; }
+.adm__modal--correlacion { max-width: 800px; width: 95vw; max-height: 90vh; }
 .adm__modal-header {
   display: flex;
   justify-content: space-between;

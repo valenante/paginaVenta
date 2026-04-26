@@ -4,6 +4,7 @@ import { useAdminDashboard } from "../../hooks/useAdminDashboard";
 import { useFeature } from "../../Hooks/useFeature";
 import { ComparativaCard, RatioTipoCard, VentasPorHoraCard } from "./AnalyticsFase2";
 import { CorrelacionCard, AlertasCard } from "./AnalyticsFase3";
+import TiemposCocinaCard from "./TiemposCocinaCard";
 import UpsellEstadisticasPro from "../Estadisticas/UpsellEstadisticasPro";
 import "./AdminDashboard.css";
 
@@ -355,13 +356,27 @@ export default function AdminDashboard() {
           </div>
           <VentasPorHoraCard fecha={fechaSeleccionada} />
           <AlertasCard />
-          <CorrelacionCard />
+          <TiemposCocinaCard tiemposCocina={resumen?.tiemposCocina} onVerPares={() => setModal("correlacion")} />
         </>
       ) : (
         <UpsellEstadisticasPro />
       )}
 
       {/* ── MODALES ── */}
+      {modal === "correlacion" && (
+        <div className="adm__overlay" onClick={() => setModal(null)}>
+          <div className="adm__modal adm__modal--correlacion" onClick={(e) => e.stopPropagation()}>
+            <header className="adm__modal-header">
+              <h3>Productos que se piden juntos</h3>
+              <button onClick={() => setModal(null)}>✕</button>
+            </header>
+            <div className="adm__modal-body">
+              <CorrelacionCard />
+            </div>
+          </div>
+        </div>
+      )}
+
       {modal === "stock" && (
         <div className="adm__overlay" onClick={() => setModal(null)}>
           <div className="adm__modal" onClick={(e) => e.stopPropagation()}>

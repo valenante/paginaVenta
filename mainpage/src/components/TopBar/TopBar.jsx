@@ -131,6 +131,13 @@ export default function TopBar() {
           </span>
         </button>
 
+        {/* Campana alertas stock — siempre visible, fuera del dropdown */}
+        {user && !isSuperadmin && isOwner && !esTienda && (
+          <div className="TopBar-bell-fixed">
+            <StockAlertasBell />
+          </div>
+        )}
+
         {/* Hamburguesa */}
         <button
           type="button"
@@ -329,11 +336,6 @@ export default function TopBar() {
                     Soporte
                   </Link>
                 </>
-              )}
-
-              {/* ALERTAS DE STOCK — al lado de cerrar sesión */}
-              {!isSuperadmin && isOwner && !esTienda && (
-                <StockAlertasBell />
               )}
 
               <button

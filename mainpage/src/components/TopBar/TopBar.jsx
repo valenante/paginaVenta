@@ -310,11 +310,6 @@ export default function TopBar() {
                 </>
               )}
 
-              {/* ALERTAS DE STOCK (Fase 4) — solo dueños de restaurante */}
-              {!isSuperadmin && isOwner && !esTienda && (
-                <StockAlertasBell />
-              )}
-
               {/* AYUDA / SOPORTE */}
               {!isSuperadmin && isOwner && (
                 <>
@@ -334,6 +329,11 @@ export default function TopBar() {
                     Soporte
                   </Link>
                 </>
+              )}
+
+              {/* ALERTAS DE STOCK — al lado de cerrar sesión */}
+              {!isSuperadmin && isOwner && !esTienda && (
+                <StockAlertasBell />
               )}
 
               <button

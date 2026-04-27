@@ -135,19 +135,12 @@ export default function StockAlertasBell() {
           )}
 
           <footer className="stockBell-foot">
-            <Link
-              to="/configuracion/stock"
-              className="stockBell-btn-ghost"
-              onClick={() => setAbierto(false)}
-            >
-              Ver stock
-            </Link>
             <button
               type="button"
-              className="stockBell-btn-primary"
-              onClick={irAHacerPedido}
+              className="stockBell-btn-ghost"
+              onClick={() => { setAbierto(false); navigate("/pro"); }}
             >
-              🛒 Hacer pedido
+              Cerrar
             </button>
           </footer>
         </div>

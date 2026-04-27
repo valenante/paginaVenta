@@ -30,7 +30,7 @@ export default function IvaPanel() {
     setLoading(true);
     try {
       const { data } = await api.get("/productos/iva-resumen");
-      const items = Array.isArray(data?.data) ? data.data : Array.isArray(data) ? data : [];
+      const items = Array.isArray(data) ? data : Array.isArray(data?.data) ? data.data : [];
       setResumen(items);
     } catch { setResumen([]); }
     setLoading(false);

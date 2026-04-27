@@ -9,6 +9,7 @@ export default function LoginCliente() {
   const navigate = useNavigate();
   const [form, setForm] = useState({ email: "", password: "" });
   const [submitting, setSubmitting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState(null);
 
   if (!loading && isAuthenticated) return <Navigate to="/cliente/perfil" replace />;
@@ -30,66 +31,93 @@ export default function LoginCliente() {
   };
 
   return (
-    <ClienteLayout narrow>
-      <div className="cliente-auth-grid cliente-auth-grid--login">
-        <aside className="cliente-auth-hero">
-          <h2>Tu cuenta <span>ALEF</span></h2>
-          <p>
-            Consulta tus puntos, restaurantes vinculados y recompensas disponibles
-            desde una única cuenta.
-          </p>
-          <div className="cliente-auth-hero__stat">
-            <strong>+30 restaurantes</strong>
-            <span>Crece cada mes con nuevos locales que aceptan ALEF</span>
-          </div>
-        </aside>
+    <ClienteLayout>
+      <main className="cli-login-page">
+        <div className="cli-login-shell">
+          <section className="cli-login-info">
+            <span className="cli-login-kicker">Alef Club</span>
+            <h1 className="cli-login-hero-title">
+              Tu programa de fidelidad <span>en cada visita</span>
+            </h1>
+            <p className="cli-login-hero-subtitle">
+              Una sola cuenta para todos los restaurantes Alef. Acumula puntos al
+              cobrar tu mesa y canjea recompensas cuando tú quieras.
+            </p>
+            <ul className="cli-login-bullets">
+              <li>Puntos automáticos al cerrar cada mesa.</li>
+              <li>Canjea descuentos, productos gratis y más.</li>
+              <li>Tu saldo te acompaña en cada restaurante Alef.</li>
+            </ul>
+          </section>
 
-        <div className="cliente-auth-card">
-          <header className="cliente-auth-card__header">
-            <h1>Iniciar sesión</h1>
-            <p>Bienvenido de nuevo.</p>
-          </header>
+          <section className="cli-login-card">
+            <h2 className="cli-login-title">Iniciar sesión en Alef Club</h2>
+            <p className="cli-login-subtitle">
+              Bienvenido de nuevo. Continúa donde lo dejaste.
+            </p>
 
-          <form onSubmit={onSubmit} className="cliente-auth-form">
-            <div className="cliente-field">
-              <label>Email</label>
-              <input
-                name="email" type="email" required
-                autoComplete="email" inputMode="email"
-                value={form.email}
-                onChange={onChange}
-                placeholder="tu@email.com"
-                autoFocus
-              />
-            </div>
+            <form className="cli-login-form" onSubmit={onSubmit}>
+              <div className="cli-login-field">
+                <label htmlFor="cli-login-email">Correo electrónico</label>
+                <input
+                  id="cli-login-email"
+                  name="email"
+                  type="email"
+                  value={form.email}
+                  onChange={onChange}
+                  autoComplete="email"
+                  inputMode="email"
+                  required
+                  autoFocus
+                />
+              </div>
 
-            <div className="cliente-field">
-              <label>
-                Contraseña
-                <Link to="/cliente/recuperar" className="cliente-field__link">
-                  ¿La olvidaste?
-                </Link>
-              </label>
-              <input
-                name="password" type="password" required
-                autoComplete="current-password"
-                value={form.password}
-                onChange={onChange}
-              />
-            </div>
+              <div className="cli-login-field cli-login-field-password">
+                <label htmlFor="cli-login-password">Contraseña</label>
+                <div className="cli-login-password-wrapper">
+                  <input
+                    id="cli-login-password"
+                    name="password"
+                    type={showPassword ? "text" : "password"}
+                    value={form.password}
+                    onChange={onChange}
+                    autoComplete="current-password"
+                    required
+                  />
+                  <button
+                    type="button"
+                    className="cli-login-toggle-password"
+                    onClick={() => setShowPassword((p) => !p)}
+                  >
+                    {showPassword ? "Ocultar" : "Ver"}
+                  </button>
+                </div>
+              </div>
 
-            {error && <div className="cliente-alert cliente-alert--error">{error}</div>}
+              {error && <div className="cli-login-error" role="alert">{error}</div>}
 
-            <button type="submit" className="cliente-btn cliente-btn--primary" disabled={submitting}>
-              {submitting ? "Entrando…" : "Entrar"}
-            </button>
-          </form>
+              <button
+                type="submit"
+                className="cli-login-btn"
+                disabled={submitting}
+              >
+                {submitting ? "Entrando…" : "Entrar"}
+              </button>
 
-          <p className="cliente-auth-card__alt">
-            ¿No tienes cuenta? <Link to="/cliente/registro">Crea una en 30 segundos</Link>
-          </p>
+              <Link to="/cliente/recuperar" className="cli-login-forgot">
+                ¿Olvidaste tu contraseña?
+              </Link>
+            </form>
+
+            <p className="cli-login-footer-cta">
+              ¿No tienes cuenta?{" "}
+              <Link to="/cliente/registro" className="cli-login-link">
+                Crea una en 30 segundos
+              </Link>
+            </p>
+          </section>
         </div>
-      </div>
+      </main>
     </ClienteLayout>
   );
 }

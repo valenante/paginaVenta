@@ -1,54 +1,81 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams, Navigate } from "react-router-dom";
 import { useClienteAuth } from "../../context/ClienteAuthContext";
-import { getDetalleRestauranteCliente, getMiHistorialLoyalty } from "../../services/loyaltyService";
+import {
+  getDetalleRestauranteCliente,
+  getResumenRestauranteCliente,
+  getVisitasRestauranteCliente,
+} from "../../services/loyaltyService";
 import ClienteLayout from "./ClienteLayout";
 import RestaurantLogo from "./RestaurantLogo";
-import { tipoMovimiento, fechaRelativa, etiquetaMovimiento } from "./historial-helpers";
+import {
+  HeaderKPIs,
+  ProximaRecompensaBanner,
+  TarjetaCliente,
+  TimelineVisitas,
+} from "./ExpedienteRestaurante";
 import "./cliente.css";
 
 const fmtMoney = (n) => `${Number(n || 0).toFixed(2).replace(".", ",")} €`;
-
 const DIA_LABEL = ["D", "L", "M", "X", "J", "V", "S"];
-
-const HISTORIAL_PAGE_SIZE = 10;
+const VISITAS_PAGE_SIZE = 10;
 
 export default function DetalleRestauranteCliente() {
   const { slug } = useParams();
   const { cliente, loading: loadingAuth } = useClienteAuth();
   const [data, setData] = useState(null);
-  const [historial, setHistorial] = useState(null);
-  const [page, setPage] = useState(1);
-  const [loadingHist, setLoadingHist] = useState(false);
+  const [resumen, setResumen] = useState(null);
+  const [visitas, setVisitas] = useState({ items: [], total: 0 });
+  const [visitasPage, setVisitasPage] = useState(1);
+  const [loadingVisitas, setLoadingVisitas] = useState(false);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Carga inicial del detalle (no se recarga al paginar)
+  // Carga inicial: detalle + resumen en paralelo
   useEffect(() => {
     if (loadingAuth || !cliente) return;
     (async () => {
       try {
-        const det = await getDetalleRestauranteCliente(slug);
+        const [det, res] = await Promise.all([
+          getDetalleRestauranteCliente(slug),
+          getResumenRestauranteCliente(slug).catch(() => null),
+        ]);
         setData(det);
+        setResumen(res);
       } catch (err) {
         setError(err?.response?.data?.message || "No se pudo cargar el restaurante.");
       } finally { setLoading(false); }
     })();
   }, [slug, cliente, loadingAuth]);
 
-  // Carga del historial — separada para que cambie con la paginación
+  // Primera página de visitas (timeline) cuando hay al menos una
   useEffect(() => {
-    if (loadingAuth || !cliente) return;
-    setLoadingHist(true);
+    if (loadingAuth || !cliente || !resumen || resumen.stats?.visitas === 0) return;
+    setLoadingVisitas(true);
     (async () => {
       try {
-        const hist = await getMiHistorialLoyalty({ tenantSlug: slug, page, limit: HISTORIAL_PAGE_SIZE });
-        setHistorial(hist);
+        const data = await getVisitasRestauranteCliente(slug, { page: 1, limit: VISITAS_PAGE_SIZE });
+        setVisitas({ items: data.items || [], total: data.total || 0 });
+        setVisitasPage(1);
       } catch {
-        setHistorial({ items: [], total: 0 });
-      } finally { setLoadingHist(false); }
+        setVisitas({ items: [], total: 0 });
+      } finally { setLoadingVisitas(false); }
     })();
-  }, [slug, cliente, loadingAuth, page]);
+  }, [slug, cliente, loadingAuth, resumen]);
+
+  const cargarMasVisitas = async () => {
+    if (loadingVisitas) return;
+    setLoadingVisitas(true);
+    try {
+      const next = visitasPage + 1;
+      const data = await getVisitasRestauranteCliente(slug, { page: next, limit: VISITAS_PAGE_SIZE });
+      setVisitas((prev) => ({
+        items: [...prev.items, ...(data.items || [])],
+        total: data.total || prev.total,
+      }));
+      setVisitasPage(next);
+    } finally { setLoadingVisitas(false); }
+  };
 
   if (!loadingAuth && !cliente) return <Navigate to="/cliente/login" replace />;
 
@@ -79,19 +106,22 @@ export default function DetalleRestauranteCliente() {
 
   const { restaurante, loyalty, saldo } = data;
 
+  // Hero rediseñado: logo + nombre + dirección a la izquierda; saldo grande a la derecha;
+  // KPIs inline debajo del nombre; barra de progreso integrada bajo el saldo.
   const hero = (
-    <section className="cli-hero">
+    <section className="cli-hero cli-hero--rest">
       <div className="cli-hero__inner">
         <div className="cli-hero__user">
-          <RestaurantLogo nombre={restaurante.nombre} logoUrl={restaurante.logoUrl} size={64} />
-          <div>
+          <RestaurantLogo nombre={restaurante.nombre} logoUrl={restaurante.logoUrl} size={72} />
+          <div className="cli-hero__main">
             <span className="cli-hero__welcome">Restaurante Alef</span>
             <h1>{restaurante.nombre}</h1>
             {(restaurante.direccion || restaurante.ciudad) && (
               <p className="cli-hero__email">
-                {restaurante.direccion}{restaurante.direccion && restaurante.ciudad ? " · " : ""}{restaurante.ciudad}
+                📍 {restaurante.direccion}{restaurante.direccion && restaurante.ciudad ? " · " : ""}{restaurante.ciudad}
               </p>
             )}
+            <HeaderKPIs stats={resumen?.stats} />
           </div>
         </div>
         <div className="cli-hero__saldo-box">
@@ -106,9 +136,8 @@ export default function DetalleRestauranteCliente() {
     </section>
   );
 
-  // URLs cross-app a la carta del cliente: pre-rellenamos los datos del cliente
-  // logueado para que no tenga que escribir nombre/email/teléfono al reservar.
-  // Fallback dev: localhost:5174 si la env var no está definida.
+  // URLs cross-app a la carta del cliente. Pre-rellenamos los datos del cliente
+  // en reservas para que no tenga que escribirlos.
   const cartaBase = (import.meta.env.VITE_CARTA_BASE_URL || "http://localhost:5174").replace(/\/$/, "");
   const cartaUrl = `${cartaBase}/${slug}/carta`;
   const reservasParams = new URLSearchParams({
@@ -118,8 +147,6 @@ export default function DetalleRestauranteCliente() {
   }).toString();
   const reservasUrl = `${cartaBase}/${slug}/reservas?${reservasParams}`;
 
-  // Cómo llegar: si tenemos dirección y/o ciudad, abrimos Google Maps.
-  // Construye una query searcheable con todos los datos disponibles.
   const direccionFull = [restaurante.direccion, restaurante.ciudad, restaurante.nombre]
     .filter(Boolean)
     .join(", ");
@@ -127,7 +154,9 @@ export default function DetalleRestauranteCliente() {
     ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(direccionFull)}`
     : null;
 
-  const totalPaginas = Math.max(1, Math.ceil((historial?.total || 0) / HISTORIAL_PAGE_SIZE));
+  const tieneVisitas = (resumen?.stats?.visitas || 0) > 0;
+  const tieneRecompensas = (loyalty.recompensas || []).length > 0;
+  const tieneMultiplicadores = (loyalty.multiplicadores || []).length > 0;
 
   return (
     <ClienteLayout hero={hero}>
@@ -169,8 +198,69 @@ export default function DetalleRestauranteCliente() {
         </div>
       )}
 
-      {/* MULTIPLICADORES ACTIVOS */}
-      {loyalty.multiplicadores?.length > 0 && (
+      {/* Próxima recompensa: banner ancho con progreso. Aparece solo si hay una alcanzable. */}
+      {resumen?.proximaRecompensa && (
+        <ProximaRecompensaBanner proxima={resumen.proximaRecompensa} saldo={saldo} />
+      )}
+
+      {/* Expediente del cliente: última visita + favoritos en grid 2 cols (1 col en mobile) */}
+      {tieneVisitas ? (
+        <section className="cliente-section">
+          <TarjetaCliente resumen={resumen} />
+        </section>
+      ) : (
+        <section className="cliente-section">
+          <div className="cliente-empty cliente-empty--small">
+            <p>Aún no has visitado este restaurante. Cuando vayas y te identifiques al cobrar, aquí verás tus visitas, productos favoritos y más.</p>
+          </div>
+        </section>
+      )}
+
+      {/* Recompensas disponibles: solo se renderiza si el restaurante tiene catálogo */}
+      {tieneRecompensas && (
+        <section className="cliente-section">
+          <div className="cliente-section__header">
+            <div>
+              <h2>🎁 Recompensas</h2>
+              <p className="cliente-section__sub">
+                Pide al camarero canjear cuando hayas decidido. El descuento se aplica al cobrar.
+              </p>
+            </div>
+          </div>
+          <ul className="cliente-recompensas">
+            {loyalty.recompensas.map((r) => (
+              <li key={r._id} className={`cliente-recompensa ${r.puedoCanjear ? "is-canjeable" : ""}`}>
+                <div className="cliente-recompensa__main">
+                  <div className="cliente-recompensa__nombre">{r.nombre}</div>
+                  {r.descripcion && <div className="cliente-recompensa__desc">{r.descripcion}</div>}
+                  <div className="cliente-recompensa__valor">
+                    {r.tipo === "descuento_pct"
+                      ? `${r.valor}% de descuento`
+                      : r.tipo === "producto_gratis"
+                      ? `Producto gratis (≈ ${fmtMoney(r.valor)})`
+                      : `${fmtMoney(r.valor)} de descuento`}
+                  </div>
+                </div>
+                <div className="cliente-recompensa__side">
+                  <div className="cliente-recompensa__coste">
+                    <strong>{r.coste}</strong> pts
+                  </div>
+                  {r.puedoCanjear ? (
+                    <span className="cliente-recompensa__chip cliente-recompensa__chip--ok">✓ Puedes canjear</span>
+                  ) : (
+                    <span className="cliente-recompensa__chip">
+                      Te faltan <strong>{Math.max(0, r.coste - saldo)}</strong> pts
+                    </span>
+                  )}
+                </div>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {/* Multiplicadores: solo si el restaurante tiene franjas configuradas */}
+      {tieneMultiplicadores && (
         <section className="cliente-section">
           <div className="cliente-section__header">
             <div>
@@ -206,128 +296,17 @@ export default function DetalleRestauranteCliente() {
         </section>
       )}
 
-      {/* RECOMPENSAS */}
-      <section className="cliente-section">
-        <div className="cliente-section__header">
-          <div>
-            <h2>🎁 Recompensas disponibles</h2>
-            <p className="cliente-section__sub">
-              Pide al camarero canjear cuando hayas decidido. El descuento se aplica
-              automáticamente al cobrar.
-            </p>
-          </div>
-        </div>
-
-        {loyalty.recompensas.length === 0 ? (
-          <div className="cliente-empty cliente-empty--small">
-            <p>Este restaurante aún no tiene recompensas configuradas.</p>
-          </div>
-        ) : (
-          <ul className="cliente-recompensas">
-            {loyalty.recompensas.map((r) => (
-              <li key={r._id} className={`cliente-recompensa ${r.puedoCanjear ? "is-canjeable" : ""}`}>
-                <div className="cliente-recompensa__main">
-                  <div className="cliente-recompensa__nombre">{r.nombre}</div>
-                  {r.descripcion && <div className="cliente-recompensa__desc">{r.descripcion}</div>}
-                  <div className="cliente-recompensa__valor">
-                    {r.tipo === "descuento_pct"
-                      ? `${r.valor}% de descuento`
-                      : r.tipo === "producto_gratis"
-                      ? `Producto gratis (≈ ${fmtMoney(r.valor)})`
-                      : `${fmtMoney(r.valor)} de descuento`}
-                  </div>
-                </div>
-                <div className="cliente-recompensa__side">
-                  <div className="cliente-recompensa__coste">
-                    <strong>{r.coste}</strong> pts
-                  </div>
-                  {r.puedoCanjear ? (
-                    <span className="cliente-recompensa__chip cliente-recompensa__chip--ok">✓ Puedes canjear</span>
-                  ) : (
-                    <span className="cliente-recompensa__chip">
-                      Te faltan <strong>{Math.max(0, r.coste - saldo)}</strong> pts
-                    </span>
-                  )}
-                </div>
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
-
-      {/* HISTORIAL EN ESTE RESTAURANTE */}
-      <section className="cliente-section">
-        <div className="cliente-section__header">
-          <div>
-            <h2>📜 Tu historial aquí</h2>
-            <p className="cliente-section__sub">
-              Movimientos en {restaurante.nombre}
-              {historial?.total ? ` · ${historial.total} ${historial.total === 1 ? "movimiento" : "movimientos"}` : ""}.
-            </p>
-          </div>
-        </div>
-
-        {loadingHist ? (
-          <div className="cliente-skel cliente-skel--list" />
-        ) : !historial?.items?.length ? (
-          <div className="cliente-empty cliente-empty--small">
-            <p>Sin movimientos todavía. Dile al camarero tu email en tu próxima visita.</p>
-          </div>
-        ) : (
-          <>
-            <ol className="cliente-historial">
-              {historial.items.map((m) => {
-                const tipo = tipoMovimiento(m.tipo);
-                const positivo = m.puntos >= 0;
-                return (
-                  <li key={m._id} className={`cliente-mov cliente-mov--${tipo.key}`}>
-                    <div className={`cliente-mov__icon cliente-mov__icon--${tipo.key}`} aria-hidden="true">
-                      {tipo.icon}
-                    </div>
-                    <div className="cliente-mov__body">
-                      <div className="cliente-mov__title">
-                        <strong>{tipo.label}</strong>
-                        {etiquetaMovimiento(m) && (
-                          <span className="cliente-mov__nota"> · {etiquetaMovimiento(m)}</span>
-                        )}
-                      </div>
-                      <div className="cliente-mov__fecha">{fechaRelativa(m.createdAt)}</div>
-                    </div>
-                    <div className={`cliente-mov__pts ${positivo ? "is-pos" : "is-neg"}`}>
-                      {positivo ? "+" : ""}{m.puntos.toLocaleString("es")}
-                      <span> pts</span>
-                    </div>
-                  </li>
-                );
-              })}
-            </ol>
-
-            {totalPaginas > 1 && (
-              <div className="cli-historial-pager">
-                <button
-                  type="button"
-                  className="cliente-btn cliente-btn--ghost"
-                  onClick={() => setPage((p) => Math.max(1, p - 1))}
-                  disabled={page <= 1 || loadingHist}
-                >
-                  ← Anterior
-                </button>
-                <span className="cli-historial-pager__info">
-                  Página <strong>{page}</strong> de <strong>{totalPaginas}</strong>
-                </span>
-                <button
-                  type="button"
-                  className="cliente-btn cliente-btn--ghost"
-                  onClick={() => setPage((p) => Math.min(totalPaginas, p + 1))}
-                  disabled={page >= totalPaginas || loadingHist}
-                >
-                  Siguiente →
-                </button>
-              </div>
-            )}
-          </>
-        )}
-      </section>
+      {/* Timeline completo de visitas. Es el único histórico — ya no duplicamos
+          los movimientos de puntos: los puntos van como chip dentro de cada fila. */}
+      {tieneVisitas && (
+        <TimelineVisitas
+          items={visitas.items}
+          total={visitas.total}
+          loading={loadingVisitas}
+          hasMore={visitas.items.length < visitas.total}
+          onLoadMore={cargarMasVisitas}
+        />
+      )}
     </ClienteLayout>
   );
 }

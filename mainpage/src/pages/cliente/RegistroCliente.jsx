@@ -35,93 +35,109 @@ export default function RegistroCliente() {
   };
 
   return (
-    <ClienteLayout narrow>
-      <div className="cliente-auth-grid">
-        <aside className="cliente-auth-hero">
-          <h2>Únete al programa de fidelización <span>ALEF</span></h2>
-          <p>
-            Acumula puntos cada vez que comes en un restaurante con Alef y canjéalos
-            por descuentos y recompensas. Una sola cuenta, todos los restaurantes.
-          </p>
-          <ul className="cliente-auth-hero__bullets">
-            <li><span>✓</span> Puntos automáticos en cada visita</li>
-            <li><span>✓</span> Canjea descuentos al cobrar</li>
-            <li><span>✓</span> Sin tarjetas físicas: tu email basta</li>
-            <li><span>✓</span> Tus datos seguros y exportables</li>
-          </ul>
-        </aside>
+    <ClienteLayout>
+      <main className="cli-login-page">
+        <div className="cli-login-shell">
+          <section className="cli-login-info">
+            <span className="cli-login-kicker">Alef Club</span>
+            <h1 className="cli-login-hero-title">
+              Únete al programa <span>de fidelidad</span>
+            </h1>
+            <p className="cli-login-hero-subtitle">
+              Acumula puntos cada vez que comes en un restaurante con Alef y canjéalos
+              por descuentos y recompensas. Una sola cuenta, todos los restaurantes.
+            </p>
+            <ul className="cli-login-bullets">
+              <li>Puntos automáticos en cada visita.</li>
+              <li>Canjea descuentos y productos gratis.</li>
+              <li>Sin tarjetas físicas: tu email basta.</li>
+              <li>Tus datos seguros y exportables (RGPD).</li>
+            </ul>
+          </section>
 
-        <div className="cliente-auth-card">
-          <header className="cliente-auth-card__header">
-            <h1>Crear cuenta</h1>
-            <p>Solo unos datos y empezarás a sumar puntos.</p>
-          </header>
+          <section className="cli-login-card">
+            <h2 className="cli-login-title">Crear cuenta</h2>
+            <p className="cli-login-subtitle">
+              Solo unos datos y empezarás a sumar puntos.
+            </p>
 
-          <form onSubmit={onSubmit} className="cliente-auth-form">
-            <div className="cliente-field">
-              <label>Nombre completo</label>
-              <input
-                name="nombre" type="text" required maxLength={200}
-                autoComplete="name"
-                value={form.nombre}
-                onChange={onChange}
-                placeholder="Ej: María García"
-              />
-            </div>
+            <form onSubmit={onSubmit} className="cli-login-form">
+              <div className="cli-login-field">
+                <label htmlFor="cli-reg-nombre">Nombre completo</label>
+                <input
+                  id="cli-reg-nombre"
+                  name="nombre" type="text" required maxLength={200}
+                  autoComplete="name"
+                  value={form.nombre}
+                  onChange={onChange}
+                  placeholder="Ej: María García"
+                />
+              </div>
 
-            <div className="cliente-field">
-              <label>Email</label>
-              <input
-                name="email" type="email" required
-                autoComplete="email" inputMode="email"
-                value={form.email}
-                onChange={onChange}
-                placeholder="tu@email.com"
-              />
-            </div>
+              <div className="cli-login-field">
+                <label htmlFor="cli-reg-email">Correo electrónico</label>
+                <input
+                  id="cli-reg-email"
+                  name="email" type="email" required
+                  autoComplete="email" inputMode="email"
+                  value={form.email}
+                  onChange={onChange}
+                  placeholder="tu@email.com"
+                />
+              </div>
 
-            <div className="cliente-field">
-              <label>Teléfono <span className="cliente-field__optional">opcional</span></label>
-              <input
-                name="telefono" type="tel"
-                autoComplete="tel" inputMode="tel"
-                value={form.telefono}
-                onChange={onChange}
-                placeholder="+34 600 000 000"
-              />
-              <p className="cliente-field__help">El camarero podrá identificarte rápido en el restaurante.</p>
-            </div>
+              <div className="cli-login-field">
+                <label htmlFor="cli-reg-tel">
+                  Teléfono <span className="cli-login-field__optional">opcional</span>
+                </label>
+                <input
+                  id="cli-reg-tel"
+                  name="telefono" type="tel"
+                  autoComplete="tel" inputMode="tel"
+                  value={form.telefono}
+                  onChange={onChange}
+                  placeholder="+34 600 000 000"
+                />
+                <p className="cli-login-field__help">
+                  El camarero podrá identificarte rápido en el restaurante.
+                </p>
+              </div>
 
-            <div className="cliente-field">
-              <label>Contraseña</label>
-              <input
-                name="password" type="password" required minLength={8}
-                autoComplete="new-password"
-                value={form.password}
-                onChange={onChange}
-              />
-              <PasswordMeter password={form.password} />
-            </div>
+              <div className="cli-login-field">
+                <label htmlFor="cli-reg-pwd">Contraseña</label>
+                <input
+                  id="cli-reg-pwd"
+                  name="password" type="password" required minLength={8}
+                  autoComplete="new-password"
+                  value={form.password}
+                  onChange={onChange}
+                />
+                <PasswordMeter password={form.password} />
+              </div>
 
-            <label className="cliente-check">
-              <input type="checkbox" checked={acepto} onChange={(e) => setAcepto(e.target.checked)} />
-              <span>
-                Acepto los <Link to="/terminos">términos</Link> y la <Link to="/privacidad">política de privacidad</Link>.
-              </span>
-            </label>
+              <label className="cli-login-check">
+                <input type="checkbox" checked={acepto} onChange={(e) => setAcepto(e.target.checked)} />
+                <span>
+                  Acepto los <Link to="/terminos">términos</Link> y la <Link to="/privacidad">política de privacidad</Link>.
+                </span>
+              </label>
 
-            {error && <div className="cliente-alert cliente-alert--error">{error}</div>}
+              {error && <div className="cli-login-error" role="alert">{error}</div>}
 
-            <button type="submit" className="cliente-btn cliente-btn--primary" disabled={submitting}>
-              {submitting ? "Creando cuenta…" : "Crear mi cuenta ALEF"}
-            </button>
-          </form>
+              <button type="submit" className="cli-login-btn" disabled={submitting}>
+                {submitting ? "Creando cuenta…" : "Crear mi cuenta Alef"}
+              </button>
+            </form>
 
-          <p className="cliente-auth-card__alt">
-            ¿Ya tienes cuenta? <Link to="/cliente/login">Inicia sesión</Link>
-          </p>
+            <p className="cli-login-footer-cta">
+              ¿Ya tienes cuenta?{" "}
+              <Link to="/cliente/login" className="cli-login-link">
+                Inicia sesión
+              </Link>
+            </p>
+          </section>
         </div>
-      </div>
+      </main>
     </ClienteLayout>
   );
 }

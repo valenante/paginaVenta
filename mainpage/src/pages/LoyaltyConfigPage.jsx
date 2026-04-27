@@ -1,11 +1,16 @@
-import React, { useEffect, useState, useCallback, useMemo } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import {
   getLoyaltyConfig,
   updateLoyaltyConfig,
   getLoyaltyStats,
   getLoyaltyClientes,
+  listarAnuncios,
+  crearAnuncio,
+  actualizarAnuncio,
+  eliminarAnuncio,
 } from "../services/loyaltyAdminService";
+import ClienteLoyaltyDrawer from "./ClienteLoyaltyDrawer";
 import "./LoyaltyConfigPage.css";
 
 /* =====================================================
@@ -32,8 +37,16 @@ const TABS = [
   { id: "config", label: "Configuración" },
   { id: "recompensas", label: "Recompensas" },
   { id: "multiplicadores", label: "Multiplicadores" },
+  { id: "anuncios", label: "Anuncios" },
   { id: "clientes", label: "Clientes" },
   { id: "metricas", label: "Métricas" },
+];
+
+const TIPOS_ANUNCIO = [
+  { value: "promo",   label: "Promoción", icon: "🎉" },
+  { value: "evento",  label: "Evento",    icon: "🎤" },
+  { value: "novedad", label: "Novedad",   icon: "✨" },
+  { value: "aviso",   label: "Aviso",     icon: "⚠️" },
 ];
 
 const fmtMoney = (n) => `${Number(n || 0).toFixed(2).replace(".", ",")} €`;
@@ -53,8 +66,8 @@ export default function LoyaltyConfigPage() {
   const [tab, setTab] = useState("config");
   const [editingRecompensa, setEditingRecompensa] = useState(null);
   const [editingMultiplicador, setEditingMultiplicador] = useState(null);
-
-  /* ---------- Carga inicial ---------- */
+  const [editingAnuncio, setEditingAnuncio] = useState(null);
+  const [anunciosReloadKey, setAnunciosReloadKey] = useState(0);
 
   const cargarConfig = useCallback(async () => {
     setLoading(true);
@@ -70,15 +83,10 @@ export default function LoyaltyConfigPage() {
   }, []);
 
   const cargarStats = useCallback(async () => {
-    try {
-      const s = await getLoyaltyStats();
-      setStats(s);
-    } catch { /* silencioso */ }
+    try { setStats(await getLoyaltyStats()); } catch { /* silencioso */ }
   }, []);
 
   useEffect(() => { cargarConfig(); cargarStats(); }, [cargarConfig, cargarStats]);
-
-  /* ---------- Guardar ---------- */
 
   const guardar = async (patch, mensaje) => {
     setSaving(true);
@@ -89,7 +97,6 @@ export default function LoyaltyConfigPage() {
       setConfig(updated);
       setSuccess(mensaje || "Cambios guardados.");
       setTimeout(() => setSuccess(null), 2500);
-      // recargar stats si cambió algo de "activo"
       if ("activo" in patch) cargarStats();
     } catch (err) {
       setError(err?.response?.data?.message || "No se pudo guardar.");
@@ -98,16 +105,12 @@ export default function LoyaltyConfigPage() {
     }
   };
 
-  /* ---------- Recompensas ---------- */
-
   const onSaveRecompensa = (r) => {
     const recompensas = [...(config.recompensas || [])];
     if (r._id) {
       const idx = recompensas.findIndex((x) => String(x._id) === String(r._id));
       if (idx >= 0) recompensas[idx] = r;
-    } else {
-      recompensas.push(r);
-    }
+    } else recompensas.push(r);
     guardar({ recompensas }, "Recompensa guardada.");
     setEditingRecompensa(null);
   };
@@ -125,16 +128,12 @@ export default function LoyaltyConfigPage() {
     guardar({ recompensas });
   };
 
-  /* ---------- Multiplicadores ---------- */
-
   const onSaveMultiplicador = (m) => {
     const multiplicadores = [...(config.multiplicadores || [])];
     if (m._id) {
       const idx = multiplicadores.findIndex((x) => String(x._id) === String(m._id));
       if (idx >= 0) multiplicadores[idx] = m;
-    } else {
-      multiplicadores.push(m);
-    }
+    } else multiplicadores.push(m);
     guardar({ multiplicadores }, "Multiplicador guardado.");
     setEditingMultiplicador(null);
   };
@@ -152,108 +151,111 @@ export default function LoyaltyConfigPage() {
     guardar({ multiplicadores });
   };
 
-  /* ---------- Render ---------- */
-
   if (loading) {
     return (
-      <div className="lc">
-        <div className="lc__loading">Cargando…</div>
-      </div>
+      <main className="loyalty-config-page cfg-page section section--wide">
+        <div className="cfg-loading">Cargando configuración…</div>
+      </main>
     );
   }
 
   return (
-    <div className="lc">
+    <main className="loyalty-config-page cfg-page section section--wide">
       {/* HEADER */}
-      <header className="lc__header">
-        <Link to="/dashboard" className="lc__back">← Volver al panel</Link>
-        <div className="lc__title-row">
-          <div>
-            <h1 className="lc__title">
-              <span className="lc__title-icon" aria-hidden="true">💳</span>
-              Programa de fidelización
-            </h1>
-            <p className="lc__subtitle">
-              Sistema de puntos para premiar a los clientes habituales de tu restaurante.
-              Configúralo a tu medida y consulta los resultados en tiempo real.
-            </p>
-          </div>
-          <span className={`lc__estado-badge ${config?.activo ? "is-on" : "is-off"}`}>
+      <header className="cfg-header">
+        <div>
+          <Link to="/dashboard" className="loyalty-back">← Volver al panel</Link>
+          <h1>💳 Programa de fidelización</h1>
+          <p className="text-suave">
+            Sistema de puntos para premiar a tus clientes habituales. Configura las
+            reglas, las recompensas y consulta los resultados en tiempo real.
+          </p>
+        </div>
+        <div className="cfg-header-status">
+          <span className={`badge ${config?.activo ? "badge-exito" : "badge-aviso"}`}>
             {config?.activo ? "● Activo" : "○ Inactivo"}
           </span>
         </div>
       </header>
 
-      {/* AVISOS */}
-      {error && <div className="lc__toast lc__toast--error">{error}</div>}
-      {success && <div className="lc__toast lc__toast--success">{success}</div>}
+      {/* TOASTS */}
+      {error && (
+        <div className="cfg-status-box danger" role="alert" style={{ marginBottom: "var(--space-md)" }}>
+          {error}
+        </div>
+      )}
+      {success && (
+        <div className="cfg-status-box ok" role="status" style={{ marginBottom: "var(--space-md)" }}>
+          {success}
+        </div>
+      )}
 
       {/* TABS */}
-      <nav className="lc__tabs" role="tablist">
+      <div className="loyalty-tabs" role="tablist">
         {TABS.map((t) => (
           <button
             key={t.id}
             type="button"
-            className={`lc__tab ${tab === t.id ? "is-active" : ""}`}
-            onClick={() => setTab(t.id)}
             role="tab"
             aria-selected={tab === t.id}
+            className={`loyalty-tab ${tab === t.id ? "is-active" : ""}`}
+            onClick={() => setTab(t.id)}
           >
             {t.label}
           </button>
         ))}
-      </nav>
+      </div>
 
       {/* CONTENIDO */}
-      <main className="lc__content">
-        {tab === "config" && (
-          <ConfigTab
-            config={config}
-            saving={saving}
-            onSave={guardar}
-            setConfig={setConfig}
-          />
-        )}
+      {tab === "config" && (
+        <ConfigTab config={config} setConfig={setConfig} saving={saving} onSave={guardar} />
+      )}
 
-        {tab === "recompensas" && (
-          <RecompensasTab
-            recompensas={config?.recompensas || []}
-            onAdd={() => setEditingRecompensa({
-              nombre: "",
-              descripcion: "",
-              coste: 100,
-              tipo: "descuento_fijo",
-              valor: 5,
-              activo: true,
-              stock: null,
-            })}
-            onEdit={setEditingRecompensa}
-            onDelete={onDeleteRecompensa}
-            onToggle={onToggleRecompensa}
-          />
-        )}
+      {tab === "recompensas" && (
+        <RecompensasTab
+          recompensas={config?.recompensas || []}
+          onAdd={() => setEditingRecompensa({
+            nombre: "", descripcion: "", coste: 100,
+            tipo: "descuento_fijo", valor: 5, activo: true, stock: null,
+          })}
+          onEdit={setEditingRecompensa}
+          onDelete={onDeleteRecompensa}
+          onToggle={onToggleRecompensa}
+        />
+      )}
 
-        {tab === "multiplicadores" && (
-          <MultiplicadoresTab
-            multiplicadores={config?.multiplicadores || []}
-            onAdd={() => setEditingMultiplicador({
-              nombre: "",
-              factor: 2,
-              horaInicio: "09:00",
-              horaFin: "13:00",
-              diasSemana: [1, 2, 3, 4, 5],
-              activo: true,
-            })}
-            onEdit={setEditingMultiplicador}
-            onDelete={onDeleteMultiplicador}
-            onToggle={onToggleMultiplicador}
-          />
-        )}
+      {tab === "multiplicadores" && (
+        <MultiplicadoresTab
+          multiplicadores={config?.multiplicadores || []}
+          onAdd={() => setEditingMultiplicador({
+            nombre: "", factor: 2,
+            horaInicio: "09:00", horaFin: "13:00",
+            diasSemana: [1, 2, 3, 4, 5], activo: true,
+          })}
+          onEdit={setEditingMultiplicador}
+          onDelete={onDeleteMultiplicador}
+          onToggle={onToggleMultiplicador}
+        />
+      )}
 
-        {tab === "clientes" && <ClientesTab />}
-
-        {tab === "metricas" && <MetricasTab stats={stats} onReload={cargarStats} />}
-      </main>
+      {tab === "anuncios" && (
+        <AnunciosTab
+          reloadKey={anunciosReloadKey}
+          onAdd={() => setEditingAnuncio({
+            titulo: "",
+            mensaje: "",
+            tipo: "novedad",
+            destacado: false,
+            activo: true,
+            fechaInicio: "",
+            fechaFin: "",
+          })}
+          onEdit={setEditingAnuncio}
+          onDeleted={() => setAnunciosReloadKey((k) => k + 1)}
+        />
+      )}
+      {tab === "clientes" && <ClientesTab />}
+      {tab === "metricas" && <MetricasTab stats={stats} onReload={cargarStats} />}
 
       {/* MODALES */}
       {editingRecompensa && (
@@ -270,179 +272,226 @@ export default function LoyaltyConfigPage() {
           onSave={onSaveMultiplicador}
         />
       )}
-    </div>
+      {editingAnuncio && (
+        <AnuncioModal
+          anuncio={editingAnuncio}
+          onClose={() => setEditingAnuncio(null)}
+          onSaved={() => {
+            setEditingAnuncio(null);
+            setAnunciosReloadKey((k) => k + 1);
+          }}
+        />
+      )}
+    </main>
   );
 }
 
 /* =====================================================
-   Tab: Configuración
+   Tabs de contenido
 ===================================================== */
 
-function ConfigTab({ config, saving, onSave, setConfig }) {
+function ConfigTab({ config, setConfig, saving, onSave }) {
   return (
-    <div className="lc__cards">
-      <Card
-        title="Estado del programa"
-        hint="Cuando está apagado, no se acumulan ni se canjean puntos. Los clientes vinculados a mesas se mantienen pero el cierre no genera movimientos."
-      >
-        <div className="lc__toggle-row">
-          <label className="lc__switch">
+    <>
+      <section className="card config-card">
+        <div className="config-card-header">
+          <div>
+            <h2>Estado del programa</h2>
+            <p className="config-card-subtitle">
+              Cuando está apagado no se acumulan ni se canjean puntos. Los clientes vinculados a mesas
+              se mantienen pero el cierre no genera movimientos.
+            </p>
+          </div>
+        </div>
+
+        <div className="loyalty-toggle-row">
+          <label className="loyalty-switch">
             <input
               type="checkbox"
               checked={!!config.activo}
               onChange={(e) => onSave({ activo: e.target.checked })}
               disabled={saving}
             />
-            <span className="lc__switch-track">
-              <span className="lc__switch-thumb" />
+            <span className="loyalty-switch-track">
+              <span className="loyalty-switch-thumb" />
             </span>
-            <span className="lc__switch-label">{config.activo ? "Activo" : "Inactivo"}</span>
+            <span className="loyalty-switch-label">{config.activo ? "Activo" : "Inactivo"}</span>
           </label>
         </div>
-      </Card>
+      </section>
 
-      <Card
-        title="Reglas básicas"
-        hint="Define cuántos puntos suma cada euro consumido y cuándo el cliente puede canjear sus puntos."
-      >
-        <div className="lc__field-grid">
-          <Field
-            label="Puntos por euro"
-            help="Recomendado: 10 (10 € = 100 pts)"
-          >
-            <NumberInput
-              value={config.puntosPorEuro ?? 10}
-              min={0}
-              onChange={(v) => setConfig((c) => ({ ...c, puntosPorEuro: v }))}
-              onCommit={(v) => onSave({ puntosPorEuro: v })}
-              disabled={saving}
-            />
-          </Field>
-
-          <Field
-            label="Mínimo para canjear"
-            help="Saldo mínimo antes de poder canjear cualquier recompensa"
-          >
-            <NumberInput
-              value={config.minimoParaCanjear ?? 0}
-              min={0}
-              onChange={(v) => setConfig((c) => ({ ...c, minimoParaCanjear: v }))}
-              onCommit={(v) => onSave({ minimoParaCanjear: v })}
-              disabled={saving}
-            />
-          </Field>
-
-          <Field
-            label="Caducidad de puntos (días)"
-            help="0 = sin caducidad. La caducidad se aplica vía cron en producción."
-          >
-            <NumberInput
-              value={config.caducidadDias ?? 0}
-              min={0}
-              onChange={(v) => setConfig((c) => ({ ...c, caducidadDias: v }))}
-              onCommit={(v) => onSave({ caducidadDias: v })}
-              disabled={saving}
-            />
-          </Field>
+      <section className="card config-card">
+        <div className="config-card-header">
+          <div>
+            <h2>Reglas básicas</h2>
+            <p className="config-card-subtitle">
+              Define cuántos puntos suma cada euro consumido y cuándo el cliente puede canjear.
+            </p>
+          </div>
         </div>
-      </Card>
-    </div>
+
+        <div className="cfg-form-grid">
+          <div className="config-field">
+            <label>Puntos por euro</label>
+            <input
+              type="number"
+              min="0"
+              step="1"
+              value={config.puntosPorEuro ?? 10}
+              onChange={(e) => setConfig((c) => ({ ...c, puntosPorEuro: Number(e.target.value) }))}
+              onBlur={(e) => onSave({ puntosPorEuro: Number(e.target.value) })}
+              disabled={saving}
+            />
+            <p className="cfg-help">Recomendado: 10 (10 € = 100 pts)</p>
+          </div>
+
+          <div className="config-field">
+            <label>Mínimo para canjear</label>
+            <input
+              type="number"
+              min="0"
+              step="1"
+              value={config.minimoParaCanjear ?? 0}
+              onChange={(e) => setConfig((c) => ({ ...c, minimoParaCanjear: Number(e.target.value) }))}
+              onBlur={(e) => onSave({ minimoParaCanjear: Number(e.target.value) })}
+              disabled={saving}
+            />
+            <p className="cfg-help">Saldo mínimo antes de poder canjear cualquier recompensa.</p>
+          </div>
+
+          <div className="config-field">
+            <label>Caducidad de puntos (días)</label>
+            <input
+              type="number"
+              min="0"
+              step="1"
+              value={config.caducidadDias ?? 0}
+              onChange={(e) => setConfig((c) => ({ ...c, caducidadDias: Number(e.target.value) }))}
+              onBlur={(e) => onSave({ caducidadDias: Number(e.target.value) })}
+              disabled={saving}
+            />
+            <p className="cfg-help">0 = sin caducidad. La caducidad se aplica vía cron en producción.</p>
+          </div>
+        </div>
+      </section>
+    </>
   );
 }
-
-/* =====================================================
-   Tab: Recompensas
-===================================================== */
 
 function RecompensasTab({ recompensas, onAdd, onEdit, onDelete, onToggle }) {
-  if (recompensas.length === 0) {
-    return (
-      <Card>
-        <Empty
-          icon="🎁"
-          title="Sin recompensas configuradas"
-          description="Crea la primera para que tus clientes tengan algo que canjear con sus puntos."
-          action={<button className="lc__btn lc__btn--primary" onClick={onAdd}>+ Crear recompensa</button>}
-        />
-      </Card>
-    );
-  }
-
   return (
-    <Card
-      title="Catálogo de recompensas"
-      hint="Lo que el cliente puede canjear. Las inactivas no aparecen al camarero al canjear."
-      action={<button className="lc__btn lc__btn--primary" onClick={onAdd}>+ Añadir</button>}
-    >
-      <div className="lc__table-wrap">
-        <table className="lc__table">
-          <thead>
-            <tr>
-              <th>Recompensa</th>
-              <th>Coste</th>
-              <th>Tipo</th>
-              <th>Valor</th>
-              <th>Stock</th>
-              <th>Estado</th>
-              <th aria-label="Acciones"></th>
-            </tr>
-          </thead>
-          <tbody>
-            {recompensas.map((r) => {
-              const tipoInfo = TIPOS_RECOMPENSA.find((t) => t.value === r.tipo);
-              return (
-                <tr key={r._id || r.nombre} className={!r.activo ? "is-off" : ""}>
-                  <td>
-                    <div className="lc__table-main">{r.nombre}</div>
-                    {r.descripcion && <div className="lc__table-sub">{r.descripcion}</div>}
-                  </td>
-                  <td><strong>{r.coste}</strong> pts</td>
-                  <td>{tipoInfo?.label || r.tipo}</td>
-                  <td>{r.tipo === "descuento_pct" ? `${r.valor}%` : `${r.valor} €`}</td>
-                  <td>{r.stock === null || r.stock === undefined ? "Ilimitado" : r.stock}</td>
-                  <td>
-                    <button
-                      type="button"
-                      className={`lc__chip-toggle ${r.activo ? "is-on" : "is-off"}`}
-                      onClick={() => onToggle(r._id, !r.activo)}
-                    >
-                      {r.activo ? "Activa" : "Inactiva"}
-                    </button>
-                  </td>
-                  <td className="lc__table-actions">
-                    <button type="button" className="lc__btn-row" onClick={() => onEdit(r)}>Editar</button>
-                    <button type="button" className="lc__btn-row lc__btn-row--del" onClick={() => onDelete(r._id)}>Eliminar</button>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+    <section className="card config-card">
+      <div className="config-card-header">
+        <div>
+          <h2>Catálogo de recompensas</h2>
+          <p className="config-card-subtitle">
+            Lo que el cliente puede canjear con sus puntos. Las inactivas no aparecen al canjear.
+          </p>
+        </div>
+        <div>
+          <button className="btn btn-primario" type="button" onClick={onAdd}>
+            ➕ Añadir recompensa
+          </button>
+        </div>
       </div>
-    </Card>
+
+      {recompensas.length === 0 ? (
+        <div className="cfg-empty">
+          <strong>Sin recompensas configuradas.</strong>
+          <p className="text-suave" style={{ margin: "0.4rem 0 1rem" }}>
+            Crea la primera para que tus clientes tengan algo que canjear.
+          </p>
+          <button className="btn btn-primario" type="button" onClick={onAdd}>
+            ➕ Crear recompensa
+          </button>
+        </div>
+      ) : (
+        <div className="cfg-table-scroll">
+          <table className="cfg-table">
+            <thead>
+              <tr>
+                <th>Recompensa</th>
+                <th>Coste</th>
+                <th>Tipo</th>
+                <th>Valor</th>
+                <th>Stock</th>
+                <th>Estado</th>
+                <th aria-label="Acciones"></th>
+              </tr>
+            </thead>
+            <tbody>
+              {recompensas.map((r) => {
+                const tipoInfo = TIPOS_RECOMPENSA.find((t) => t.value === r.tipo);
+                return (
+                  <tr key={r._id || r.nombre} className={!r.activo ? "is-off" : ""}>
+                    <td data-label="Recompensa">
+                      <div><strong>{r.nombre}</strong></div>
+                      {r.descripcion && (
+                        <div className="text-suave" style={{ fontSize: "0.78rem", marginTop: 2 }}>
+                          {r.descripcion}
+                        </div>
+                      )}
+                    </td>
+                    <td data-label="Coste"><strong>{r.coste}</strong> pts</td>
+                    <td data-label="Tipo">{tipoInfo?.label || r.tipo}</td>
+                    <td data-label="Valor">{r.tipo === "descuento_pct" ? `${r.valor}%` : `${r.valor} €`}</td>
+                    <td data-label="Stock">{r.stock === null || r.stock === undefined ? "Ilimitado" : r.stock}</td>
+                    <td data-label="Estado">
+                      <button
+                        type="button"
+                        className={`badge ${r.activo ? "badge-exito" : "badge-aviso"} loyalty-chip-toggle`}
+                        onClick={() => onToggle(r._id, !r.activo)}
+                      >
+                        {r.activo ? "Activa" : "Inactiva"}
+                      </button>
+                    </td>
+                    <td className="loyalty-row-actions cfg-td-actions">
+                      <button type="button" className="btn btn-secundario btn-sm" onClick={() => onEdit(r)}>
+                        Editar
+                      </button>
+                      <button type="button" className="btn btn-secundario btn-sm loyalty-btn-del" onClick={() => onDelete(r._id)}>
+                        Eliminar
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </section>
   );
 }
-
-/* =====================================================
-   Tab: Multiplicadores horarios
-===================================================== */
 
 function MultiplicadoresTab({ multiplicadores, onAdd, onEdit, onDelete, onToggle }) {
   return (
-    <Card
-      title="Multiplicadores horarios"
-      hint="Multiplica los puntos en franjas concretas (ej: x2 las mañanas para mover gente en horas valle). Si una mesa cierra dentro de un multiplicador activo, sus puntos se multiplican."
-      action={<button className="lc__btn lc__btn--primary" onClick={onAdd}>+ Añadir</button>}
-    >
+    <section className="card config-card">
+      <div className="config-card-header">
+        <div>
+          <h2>Multiplicadores horarios</h2>
+          <p className="config-card-subtitle">
+            Multiplica los puntos en franjas concretas (ej: x2 las mañanas para mover gente en horas valle).
+            Si una mesa cierra dentro de un multiplicador activo, sus puntos se multiplican.
+          </p>
+        </div>
+        <div>
+          <button className="btn btn-primario" type="button" onClick={onAdd}>
+            ➕ Añadir multiplicador
+          </button>
+        </div>
+      </div>
+
       {multiplicadores.length === 0 ? (
-        <Empty
-          icon="⏱️"
-          title="Sin multiplicadores configurados"
-          description="Sin multiplicadores, todos los clientes acumulan al ratio base."
-        />
+        <div className="cfg-empty">
+          <strong>Sin multiplicadores configurados.</strong>
+          <p className="text-suave" style={{ margin: "0.4rem 0 0" }}>
+            Sin multiplicadores, todos los clientes acumulan al ratio base.
+          </p>
+        </div>
       ) : (
-        <div className="lc__table-wrap">
-          <table className="lc__table">
+        <div className="cfg-table-scroll">
+          <table className="cfg-table">
             <thead>
               <tr>
                 <th>Nombre</th>
@@ -456,33 +505,37 @@ function MultiplicadoresTab({ multiplicadores, onAdd, onEdit, onDelete, onToggle
             <tbody>
               {multiplicadores.map((m) => (
                 <tr key={m._id || m.nombre} className={!m.activo ? "is-off" : ""}>
-                  <td><strong>{m.nombre}</strong></td>
-                  <td><span className="lc__factor">×{m.factor}</span></td>
-                  <td>{m.horaInicio} – {m.horaFin}</td>
-                  <td>
-                    <div className="lc__dias">
+                  <td data-label="Nombre"><strong>{m.nombre}</strong></td>
+                  <td data-label="Factor"><span className="loyalty-factor">×{m.factor}</span></td>
+                  <td data-label="Franja">{m.horaInicio} – {m.horaFin}</td>
+                  <td data-label="Días">
+                    <div className="loyalty-dias">
                       {DIAS_SEMANA.map((d) => (
                         <span
                           key={d.value}
-                          className={`lc__dia ${(m.diasSemana || []).includes(d.value) ? "is-on" : ""}`}
+                          className={`loyalty-dia ${(m.diasSemana || []).includes(d.value) ? "is-on" : ""}`}
                         >
                           {d.label}
                         </span>
                       ))}
                     </div>
                   </td>
-                  <td>
+                  <td data-label="Estado">
                     <button
                       type="button"
-                      className={`lc__chip-toggle ${m.activo ? "is-on" : "is-off"}`}
+                      className={`badge ${m.activo ? "badge-exito" : "badge-aviso"} loyalty-chip-toggle`}
                       onClick={() => onToggle(m._id, !m.activo)}
                     >
                       {m.activo ? "Activo" : "Inactivo"}
                     </button>
                   </td>
-                  <td className="lc__table-actions">
-                    <button type="button" className="lc__btn-row" onClick={() => onEdit(m)}>Editar</button>
-                    <button type="button" className="lc__btn-row lc__btn-row--del" onClick={() => onDelete(m._id)}>Eliminar</button>
+                  <td className="loyalty-row-actions cfg-td-actions">
+                    <button type="button" className="btn btn-secundario btn-sm" onClick={() => onEdit(m)}>
+                      Editar
+                    </button>
+                    <button type="button" className="btn btn-secundario btn-sm loyalty-btn-del" onClick={() => onDelete(m._id)}>
+                      Eliminar
+                    </button>
                   </td>
                 </tr>
               ))}
@@ -490,19 +543,16 @@ function MultiplicadoresTab({ multiplicadores, onAdd, onEdit, onDelete, onToggle
           </table>
         </div>
       )}
-    </Card>
+    </section>
   );
 }
-
-/* =====================================================
-   Tab: Clientes
-===================================================== */
 
 function ClientesTab() {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [data, setData] = useState({ items: [], total: 0 });
   const [loading, setLoading] = useState(false);
+  const [clienteAbierto, setClienteAbierto] = useState(null);
 
   const cargar = useCallback(async () => {
     setLoading(true);
@@ -516,36 +566,61 @@ function ClientesTab() {
 
   const totalPaginas = Math.max(1, Math.ceil((data.total || 0) / 20));
 
+  // Recencia: días desde la última visita. Sirve para el badge en la tabla.
+  const diasDesde = (iso) => {
+    if (!iso) return null;
+    return Math.max(0, Math.floor((Date.now() - new Date(iso).getTime()) / 86400000));
+  };
+  const recenciaBadge = (iso) => {
+    const d = diasDesde(iso);
+    if (d === null) return null;
+    if (d === 0) return <span className="loyalty-pill loyalty-pill--ok">Hoy</span>;
+    if (d === 1) return <span className="loyalty-pill loyalty-pill--ok">Ayer</span>;
+    if (d <= 30) return <span className="loyalty-pill loyalty-pill--info">Hace {d}d</span>;
+    return <span className="loyalty-pill loyalty-pill--warn">Hace {d}d</span>;
+  };
+
   return (
-    <Card
-      title="Clientes con puntos"
-      hint="Personas registradas en el programa con saldo en tu restaurante."
-    >
-      <div className="lc__search">
-        <input
-          type="search"
-          placeholder="Buscar por nombre, email o teléfono…"
-          value={search}
-          onChange={(e) => { setPage(1); setSearch(e.target.value); }}
-          className="lc__search-input"
-        />
-        <span className="lc__search-count">{data.total || 0} clientes</span>
+    <section className="card config-card">
+      <div className="config-card-header">
+        <div>
+          <h2>Clientes con puntos</h2>
+          <p className="config-card-subtitle">
+            Personas registradas en el programa con saldo en tu restaurante. Toca una fila para ver el detalle completo.
+          </p>
+        </div>
+        <div>
+          <span className="badge badge-exito">{data.total} cliente{data.total === 1 ? "" : "s"}</span>
+        </div>
+      </div>
+
+      <div className="cfg-form-grid">
+        <div className="config-field">
+          <label>Buscar cliente</label>
+          <input
+            type="search"
+            placeholder="Buscar por nombre, email o teléfono…"
+            value={search}
+            onChange={(e) => { setPage(1); setSearch(e.target.value); }}
+          />
+        </div>
       </div>
 
       {loading ? (
-        <div className="lc__loading-mini">Cargando…</div>
+        <div className="cfg-loading">Cargando clientes…</div>
       ) : data.items.length === 0 ? (
-        <Empty
-          icon="👥"
-          title="Sin clientes todavía"
-          description={search
-            ? "Ningún cliente coincide con esa búsqueda."
-            : "Cuando vincules clientes a mesas y cierres con consumo, aparecerán aquí."}
-        />
+        <div className="cfg-empty">
+          <strong>Sin clientes todavía.</strong>
+          <p className="text-suave" style={{ margin: "0.4rem 0 0" }}>
+            {search
+              ? "Ningún cliente coincide con esa búsqueda."
+              : "Cuando vincules clientes a mesas y cierres con consumo, aparecerán aquí."}
+          </p>
+        </div>
       ) : (
         <>
-          <div className="lc__table-wrap">
-            <table className="lc__table">
+          <div className="cfg-table-scroll" style={{ marginTop: "var(--space-md)" }}>
+            <table className="cfg-table cfg-table--clickable">
               <thead>
                 <tr>
                   <th>Cliente</th>
@@ -553,24 +628,33 @@ function ClientesTab() {
                   <th>Puntos</th>
                   <th>Primera visita</th>
                   <th>Última visita</th>
+                  <th></th>
                 </tr>
               </thead>
               <tbody>
                 {data.items.map((c) => (
-                  <tr key={c._id}>
-                    <td>
-                      <div className="lc__table-main">{c.nombre}</div>
+                  <tr
+                    key={c._id}
+                    onClick={() => setClienteAbierto(c._id)}
+                    style={{ cursor: "pointer" }}
+                  >
+                    <td data-label="Cliente">
+                      <div><strong>{c.nombre}</strong></div>
                       {c.estado !== "activo" && (
-                        <span className="lc__chip-toggle is-off">Bloqueado</span>
+                        <span className="badge badge-error" style={{ marginTop: 4 }}>Bloqueado</span>
                       )}
                     </td>
-                    <td>
-                      <div className="lc__table-sub">{c.email}</div>
-                      {c.telefono && <div className="lc__table-sub">{c.telefono}</div>}
+                    <td data-label="Contacto">
+                      <div>{c.email}</div>
+                      {c.telefono && <div className="text-suave" style={{ fontSize: "0.8rem" }}>{c.telefono}</div>}
                     </td>
-                    <td><strong className="lc__puntos">{c.puntos}</strong> pts</td>
-                    <td>{fmtDate(c.firstVisit)}</td>
-                    <td>{fmtDate(c.lastVisit)}</td>
+                    <td data-label="Puntos"><strong className="loyalty-puntos">{c.puntos}</strong> pts</td>
+                    <td data-label="Primera visita">{fmtDate(c.firstVisit)}</td>
+                    <td data-label="Última visita">
+                      <div>{fmtDate(c.lastVisit)}</div>
+                      <div style={{ marginTop: 4 }}>{recenciaBadge(c.lastVisit)}</div>
+                    </td>
+                    <td className="text-suave cli-row-arrow" aria-hidden="true">›</td>
                   </tr>
                 ))}
               </tbody>
@@ -578,19 +662,19 @@ function ClientesTab() {
           </div>
 
           {totalPaginas > 1 && (
-            <div className="lc__pag">
+            <div className="cfg-pager" style={{ marginTop: "var(--space-md)" }}>
               <button
                 type="button"
-                className="lc__btn lc__btn--ghost"
+                className="btn btn-secundario"
                 disabled={page <= 1}
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
               >
                 ← Anterior
               </button>
-              <span>Página {page} de {totalPaginas}</span>
+              <span className="text-suave">Página {page} de {totalPaginas}</span>
               <button
                 type="button"
-                className="lc__btn lc__btn--ghost"
+                className="btn btn-secundario"
                 disabled={page >= totalPaginas}
                 onClick={() => setPage((p) => Math.min(totalPaginas, p + 1))}
               >
@@ -600,25 +684,29 @@ function ClientesTab() {
           )}
         </>
       )}
-    </Card>
+
+      {clienteAbierto && (
+        <ClienteLoyaltyDrawer
+          clienteId={clienteAbierto}
+          onClose={() => setClienteAbierto(null)}
+        />
+      )}
+    </section>
   );
 }
-
-/* =====================================================
-   Tab: Métricas
-===================================================== */
 
 function MetricasTab({ stats, onReload }) {
   if (!stats) {
     return (
-      <Card>
-        <Empty
-          icon="📊"
-          title="Aún no hay datos"
-          description="Las métricas aparecerán cuando empiecen a haber clientes vinculados y mesas cerradas."
-          action={<button className="lc__btn lc__btn--ghost" onClick={onReload}>Recargar</button>}
-        />
-      </Card>
+      <section className="card config-card">
+        <div className="cfg-empty">
+          <strong>Aún no hay datos.</strong>
+          <p className="text-suave" style={{ margin: "0.4rem 0 1rem" }}>
+            Las métricas aparecerán cuando empiecen a haber clientes vinculados y mesas cerradas.
+          </p>
+          <button className="btn btn-secundario" type="button" onClick={onReload}>Recargar</button>
+        </div>
+      </section>
     );
   }
 
@@ -627,121 +715,118 @@ function MetricasTab({ stats, onReload }) {
     : null;
 
   return (
-    <div className="lc__cards">
-      <div className="lc__kpis">
-        <Kpi label="Clientes activos" value={stats.clientesActivos} hint="Con saldo > 0 en tu restaurante" />
-        <Kpi label="Puntos emitidos" value={stats.puntosEmitidos} hint="Desde el inicio del programa" />
-        <Kpi label="Puntos canjeados" value={stats.puntosCanjeados} hint={`${stats.canjeosCount} canjeos`} />
-        <Kpi label="Ratio de canjeo" value={`${stats.ratioCanjeo}%`} hint="Canjeados / emitidos" tone={stats.ratioCanjeo > 30 ? "good" : ""} />
-        <Kpi label="Descuento total aplicado" value={fmtMoney(stats.descuentoTotalAplicado)} hint="Coste real del programa" tone="warn" />
-      </div>
-
-      <Card
-        title="Mesas con loyalty vs sin loyalty"
-        hint="Compara el ticket medio cuando el cliente está vinculado al programa frente al resto."
-      >
-        <div className="lc__compare">
-          <div className="lc__compare-col">
-            <div className="lc__compare-label">Con loyalty</div>
-            <div className="lc__compare-num">{fmtMoney(stats.ticketMedioLoyalty)}</div>
-            <div className="lc__compare-sub">{stats.mesasConLoyalty} mesas</div>
+    <>
+      <section className="card config-card">
+        <div className="config-card-header">
+          <div>
+            <h2>Indicadores del programa</h2>
+            <p className="config-card-subtitle">
+              Métricas agregadas desde que activaste el programa de fidelización.
+            </p>
           </div>
-          <div className="lc__compare-vs">vs</div>
-          <div className="lc__compare-col">
-            <div className="lc__compare-label">Sin loyalty</div>
-            <div className="lc__compare-num">{fmtMoney(stats.ticketMedioSinLoyalty)}</div>
-            <div className="lc__compare-sub">{stats.mesasSinLoyalty} mesas</div>
+        </div>
+
+        <div className="cfg-stats">
+          <article className="cfg-stat">
+            <span className="cfg-stat__label">Clientes activos</span>
+            <strong>{stats.clientesActivos}</strong>
+          </article>
+          <article className="cfg-stat">
+            <span className="cfg-stat__label">Puntos emitidos</span>
+            <strong>{stats.puntosEmitidos}</strong>
+          </article>
+          <article className="cfg-stat">
+            <span className="cfg-stat__label">Puntos canjeados</span>
+            <strong>{stats.puntosCanjeados}</strong>
+          </article>
+          <article className="cfg-stat">
+            <span className="cfg-stat__label">Ratio canjeo</span>
+            <strong>{stats.ratioCanjeo}%</strong>
+          </article>
+          <article className="cfg-stat">
+            <span className="cfg-stat__label">Descuento aplicado</span>
+            <strong>{fmtMoney(stats.descuentoTotalAplicado)}</strong>
+          </article>
+          <article className="cfg-stat">
+            <span className="cfg-stat__label">Canjeos realizados</span>
+            <strong>{stats.canjeosCount}</strong>
+          </article>
+        </div>
+      </section>
+
+      <section className="card config-card">
+        <div className="config-card-header">
+          <div>
+            <h2>Mesas con loyalty vs sin loyalty</h2>
+            <p className="config-card-subtitle">
+              Compara el ticket medio cuando el cliente está vinculado al programa frente al resto.
+            </p>
+          </div>
+        </div>
+
+        <div className="loyalty-compare">
+          <div className="loyalty-compare-col">
+            <div className="loyalty-compare-label">Con loyalty</div>
+            <div className="loyalty-compare-num">{fmtMoney(stats.ticketMedioLoyalty)}</div>
+            <div className="text-suave loyalty-compare-sub">{stats.mesasConLoyalty} mesas</div>
+          </div>
+          <div className="loyalty-compare-vs">vs</div>
+          <div className="loyalty-compare-col">
+            <div className="loyalty-compare-label">Sin loyalty</div>
+            <div className="loyalty-compare-num">{fmtMoney(stats.ticketMedioSinLoyalty)}</div>
+            <div className="text-suave loyalty-compare-sub">{stats.mesasSinLoyalty} mesas</div>
           </div>
         </div>
         {upliftPct !== null && (
-          <div className={`lc__uplift ${upliftPct >= 0 ? "is-good" : "is-bad"}`}>
+          <div className={`loyalty-uplift ${upliftPct >= 0 ? "is-good" : "is-bad"}`}>
             {upliftPct >= 0 ? "▲" : "▼"} {Math.abs(upliftPct).toFixed(1)}% de diferencia
           </div>
         )}
-      </Card>
-    </div>
+      </section>
+    </>
   );
 }
 
 /* =====================================================
-   Componentes auxiliares
+   Modales
 ===================================================== */
 
-function Card({ title, hint, action, children }) {
-  return (
-    <section className="lc__card">
-      {(title || action) && (
-        <header className="lc__card-header">
-          <div>
-            {title && <h2 className="lc__card-title">{title}</h2>}
-            {hint && <p className="lc__card-hint">{hint}</p>}
-          </div>
-          {action && <div className="lc__card-action">{action}</div>}
-        </header>
-      )}
-      <div className="lc__card-body">{children}</div>
-    </section>
-  );
-}
-
-function Field({ label, help, children }) {
-  return (
-    <label className="lc__field">
-      <span className="lc__field-label">{label}</span>
-      {children}
-      {help && <span className="lc__field-help">{help}</span>}
-    </label>
-  );
-}
-
-function NumberInput({ value, onChange, onCommit, min, disabled }) {
-  return (
-    <input
-      type="number"
-      className="lc__num"
-      value={value ?? 0}
-      min={min}
-      step="1"
-      onChange={(e) => onChange(Number(e.target.value))}
-      onBlur={(e) => onCommit?.(Number(e.target.value))}
-      disabled={disabled}
-    />
-  );
-}
-
-function Empty({ icon, title, description, action }) {
-  return (
-    <div className="lc__empty">
-      {icon && <div className="lc__empty-icon">{icon}</div>}
-      {title && <h3>{title}</h3>}
-      {description && <p>{description}</p>}
-      {action && <div className="lc__empty-action">{action}</div>}
-    </div>
-  );
-}
-
-function Kpi({ label, value, hint, tone }) {
-  return (
-    <div className={`lc__kpi ${tone ? `lc__kpi--${tone}` : ""}`}>
-      <div className="lc__kpi-label">{label}</div>
-      <div className="lc__kpi-value">{value}</div>
-      {hint && <div className="lc__kpi-hint">{hint}</div>}
-    </div>
-  );
-}
-
-/* =====================================================
-   Modal: Recompensa
-===================================================== */
-
-function RecompensaModal({ recompensa, onClose, onSave }) {
-  const [r, setR] = useState({ ...recompensa, stock: recompensa.stock ?? null });
-
+function ModalShell({ title, onClose, children }) {
   useEffect(() => {
     const onKey = (e) => { if (e.key === "Escape") onClose(); };
     window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      document.body.style.overflow = prev;
+    };
   }, [onClose]);
+
+  return (
+    <div className="loyalty-modal-overlay" onClick={onClose}>
+      <div className="loyalty-modal card" onClick={(e) => e.stopPropagation()}>
+        <header className="loyalty-modal-header">
+          <h3>{title}</h3>
+          <button type="button" className="loyalty-modal-close" onClick={onClose} aria-label="Cerrar">×</button>
+        </header>
+        <div className="loyalty-modal-body">{children}</div>
+      </div>
+    </div>
+  );
+}
+
+function ModalFooter({ onClose, submitLabel }) {
+  return (
+    <footer className="loyalty-modal-footer">
+      <button type="button" className="btn btn-secundario" onClick={onClose}>Cancelar</button>
+      <button type="submit" className="btn btn-primario">{submitLabel}</button>
+    </footer>
+  );
+}
+
+function RecompensaModal({ recompensa, onClose, onSave }) {
+  const [r, setR] = useState({ ...recompensa, stock: recompensa.stock ?? null });
 
   const submit = (e) => {
     e.preventDefault();
@@ -758,82 +843,70 @@ function RecompensaModal({ recompensa, onClose, onSave }) {
 
   return (
     <ModalShell title={r._id ? "Editar recompensa" : "Nueva recompensa"} onClose={onClose}>
-      <form onSubmit={submit} className="lc__form">
-        <Field label="Nombre">
+      <form onSubmit={submit}>
+        <div className="config-field" style={{ marginBottom: "var(--space-md)" }}>
+          <label>Nombre</label>
           <input
             type="text"
-            className="lc__input"
             value={r.nombre}
             onChange={(e) => setR({ ...r, nombre: e.target.value })}
             required
             maxLength={100}
             placeholder="Ej: Café gratis"
           />
-        </Field>
+        </div>
 
-        <Field label="Descripción" help="Lo verá el camarero al canjear (opcional).">
+        <div className="config-field" style={{ marginBottom: "var(--space-md)" }}>
+          <label>Descripción</label>
           <input
             type="text"
-            className="lc__input"
             value={r.descripcion || ""}
             onChange={(e) => setR({ ...r, descripcion: e.target.value })}
             maxLength={300}
+            placeholder="(opcional, lo ve el camarero al canjear)"
           />
-        </Field>
+        </div>
 
-        <div className="lc__form-grid">
-          <Field label="Coste (pts)">
+        <div className="cfg-form-grid">
+          <div className="config-field">
+            <label>Coste (pts)</label>
             <input
-              type="number"
-              className="lc__input"
-              min="1"
-              step="1"
+              type="number" min="1" step="1" required
               value={r.coste}
               onChange={(e) => setR({ ...r, coste: e.target.value })}
-              required
             />
-          </Field>
-
-          <Field label="Tipo">
-            <select
-              className="lc__input"
-              value={r.tipo}
-              onChange={(e) => setR({ ...r, tipo: e.target.value })}
-            >
+          </div>
+          <div className="config-field">
+            <label>Tipo</label>
+            <select value={r.tipo} onChange={(e) => setR({ ...r, tipo: e.target.value })}>
               {TIPOS_RECOMPENSA.map((t) => (
                 <option key={t.value} value={t.value}>{t.label}</option>
               ))}
             </select>
-          </Field>
-
-          <Field label={r.tipo === "descuento_pct" ? "Porcentaje" : "Valor (€)"}>
+          </div>
+          <div className="config-field">
+            <label>{r.tipo === "descuento_pct" ? "Porcentaje" : "Valor (€)"}</label>
             <input
-              type="number"
-              className="lc__input"
-              min="0"
-              step="0.01"
+              type="number" min="0" step="0.01" required
               value={r.valor}
               onChange={(e) => setR({ ...r, valor: e.target.value })}
-              required
             />
-          </Field>
-
-          <Field label="Stock" help="Vacío = ilimitado.">
+          </div>
+          <div className="config-field">
+            <label>Stock</label>
             <input
-              type="number"
-              className="lc__input"
-              min="0"
-              step="1"
+              type="number" min="0" step="1"
               value={r.stock ?? ""}
               onChange={(e) => setR({ ...r, stock: e.target.value === "" ? null : e.target.value })}
               placeholder="Ilimitado"
             />
-          </Field>
+            <p className="cfg-help">Vacío = ilimitado.</p>
+          </div>
         </div>
 
-        {tipoActual?.hint && <p className="lc__form-hint">{tipoActual.hint}</p>}
+        {tipoActual?.hint && <p className="cfg-help" style={{ marginTop: "var(--space-sm)" }}>{tipoActual.hint}</p>}
 
-        <label className="lc__check">
+        <label className="loyalty-check" style={{ marginTop: "var(--space-md)" }}>
           <input
             type="checkbox"
             checked={!!r.activo}
@@ -848,18 +921,8 @@ function RecompensaModal({ recompensa, onClose, onSave }) {
   );
 }
 
-/* =====================================================
-   Modal: Multiplicador
-===================================================== */
-
 function MultiplicadorModal({ multiplicador, onClose, onSave }) {
   const [m, setM] = useState({ ...multiplicador });
-
-  useEffect(() => {
-    const onKey = (e) => { if (e.key === "Escape") onClose(); };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [onClose]);
 
   const toggleDia = (d) => {
     const set = new Set(m.diasSemana || []);
@@ -869,79 +932,69 @@ function MultiplicadorModal({ multiplicador, onClose, onSave }) {
 
   const submit = (e) => {
     e.preventDefault();
-    if (!m.nombre.trim()) return;
-    if (!(m.diasSemana || []).length) return;
-    onSave({
-      ...m,
-      factor: Math.max(1, Number(m.factor) || 1),
-    });
+    if (!m.nombre.trim() || !(m.diasSemana || []).length) return;
+    onSave({ ...m, factor: Math.max(1, Number(m.factor) || 1) });
   };
 
   return (
     <ModalShell title={m._id ? "Editar multiplicador" : "Nuevo multiplicador"} onClose={onClose}>
-      <form onSubmit={submit} className="lc__form">
-        <Field label="Nombre" help="Identificativo, lo verás en la tabla.">
+      <form onSubmit={submit}>
+        <div className="config-field" style={{ marginBottom: "var(--space-md)" }}>
+          <label>Nombre</label>
           <input
-            type="text"
-            className="lc__input"
+            type="text" required maxLength={80}
             value={m.nombre}
             onChange={(e) => setM({ ...m, nombre: e.target.value })}
-            required
-            maxLength={80}
             placeholder="Ej: Mañanas dobles"
           />
-        </Field>
-
-        <div className="lc__form-grid">
-          <Field label="Factor multiplicador" help="Multiplica los puntos por este número en la franja.">
-            <input
-              type="number"
-              className="lc__input"
-              min="1"
-              step="0.5"
-              value={m.factor}
-              onChange={(e) => setM({ ...m, factor: e.target.value })}
-              required
-            />
-          </Field>
-
-          <Field label="Hora inicio">
-            <input
-              type="time"
-              className="lc__input"
-              value={m.horaInicio}
-              onChange={(e) => setM({ ...m, horaInicio: e.target.value })}
-              required
-            />
-          </Field>
-
-          <Field label="Hora fin">
-            <input
-              type="time"
-              className="lc__input"
-              value={m.horaFin}
-              onChange={(e) => setM({ ...m, horaFin: e.target.value })}
-              required
-            />
-          </Field>
+          <p className="cfg-help">Identificativo, lo verás en la tabla.</p>
         </div>
 
-        <Field label="Días de la semana">
-          <div className="lc__dias lc__dias--editable">
+        <div className="cfg-form-grid">
+          <div className="config-field">
+            <label>Factor multiplicador</label>
+            <input
+              type="number" min="1" step="0.5" required
+              value={m.factor}
+              onChange={(e) => setM({ ...m, factor: e.target.value })}
+            />
+            <p className="cfg-help">Multiplica los puntos por este número en la franja.</p>
+          </div>
+          <div className="config-field">
+            <label>Hora inicio</label>
+            <input
+              type="time" required
+              value={m.horaInicio}
+              onChange={(e) => setM({ ...m, horaInicio: e.target.value })}
+            />
+          </div>
+          <div className="config-field">
+            <label>Hora fin</label>
+            <input
+              type="time" required
+              value={m.horaFin}
+              onChange={(e) => setM({ ...m, horaFin: e.target.value })}
+            />
+          </div>
+        </div>
+
+        <div className="config-field" style={{ marginTop: "var(--space-md)" }}>
+          <label>Días de la semana</label>
+          <div className="loyalty-dias loyalty-dias--editable">
             {DIAS_SEMANA.map((d) => (
               <button
                 key={d.value}
                 type="button"
-                className={`lc__dia ${(m.diasSemana || []).includes(d.value) ? "is-on" : ""}`}
+                className={`loyalty-dia ${(m.diasSemana || []).includes(d.value) ? "is-on" : ""}`}
                 onClick={() => toggleDia(d.value)}
               >
                 {d.label}
               </button>
             ))}
           </div>
-        </Field>
+        </div>
 
-        <label className="lc__check">
+        <label className="loyalty-check" style={{ marginTop: "var(--space-md)" }}>
           <input
             type="checkbox"
             checked={!!m.activo}
@@ -957,28 +1010,292 @@ function MultiplicadorModal({ multiplicador, onClose, onSave }) {
 }
 
 /* =====================================================
-   Modal shell + footer
+   Tab: Anuncios
 ===================================================== */
 
-function ModalShell({ title, onClose, children }) {
+function AnunciosTab({ reloadKey, onAdd, onEdit, onDeleted }) {
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    let alive = true;
+    setLoading(true);
+    listarAnuncios()
+      .then((arr) => { if (alive) { setItems(arr); setError(null); } })
+      .catch((err) => { if (alive) setError(err?.response?.data?.message || "Error cargando anuncios."); })
+      .finally(() => { if (alive) setLoading(false); });
+    return () => { alive = false; };
+  }, [reloadKey]);
+
+  const handleDelete = async (id) => {
+    if (!window.confirm("¿Eliminar este anuncio? Los clientes dejarán de verlo inmediatamente.")) return;
+    try {
+      await eliminarAnuncio(id);
+      onDeleted?.();
+    } catch (err) {
+      alert(err?.response?.data?.message || "No se pudo eliminar.");
+    }
+  };
+
+  const handleToggleActivo = async (a, activo) => {
+    try {
+      await actualizarAnuncio(a._id, { activo });
+      onDeleted?.(); // recargamos
+    } catch (err) {
+      alert(err?.response?.data?.message || "No se pudo actualizar.");
+    }
+  };
+
+  const ahora = new Date();
+
   return (
-    <div className="lc__modal-overlay" onClick={onClose}>
-      <div className="lc__modal" onClick={(e) => e.stopPropagation()}>
-        <header className="lc__modal-header">
-          <h3>{title}</h3>
-          <button type="button" className="lc__modal-close" onClick={onClose} aria-label="Cerrar">×</button>
-        </header>
-        <div className="lc__modal-body">{children}</div>
+    <section className="card config-card">
+      <div className="config-card-header">
+        <div>
+          <h2>Tablón de anuncios</h2>
+          <p className="config-card-subtitle">
+            Comunica promociones, eventos, novedades de carta o avisos a tus clientes
+            registrados en ALEF. Aparecen en la app cliente del restaurante.
+          </p>
+        </div>
+        <div>
+          <button className="btn btn-primario" type="button" onClick={onAdd}>
+            ➕ Nuevo anuncio
+          </button>
+        </div>
       </div>
-    </div>
+
+      {error && <div className="cfg-status-box danger" style={{ marginBottom: "var(--space-md)" }}>{error}</div>}
+
+      {loading ? (
+        <div className="cfg-loading">Cargando anuncios…</div>
+      ) : items.length === 0 ? (
+        <div className="cfg-empty">
+          <strong>Sin anuncios todavía.</strong>
+          <p className="text-suave" style={{ margin: "0.4rem 0 1rem" }}>
+            Crea el primero para empezar a comunicarte con tus clientes ALEF. Puedes
+            programar fechas para que se publique solo durante un periodo.
+          </p>
+          <button className="btn btn-primario" type="button" onClick={onAdd}>
+            ➕ Crear primer anuncio
+          </button>
+        </div>
+      ) : (
+        <div className="cfg-table-scroll">
+          <table className="cfg-table">
+            <thead>
+              <tr>
+                <th></th>
+                <th>Título</th>
+                <th>Tipo</th>
+                <th>Vigencia</th>
+                <th>Estado</th>
+                <th aria-label="Acciones"></th>
+              </tr>
+            </thead>
+            <tbody>
+              {items.map((a) => {
+                const tipoInfo = TIPOS_ANUNCIO.find((t) => t.value === a.tipo);
+                const inicio = a.fechaInicio ? new Date(a.fechaInicio) : null;
+                const fin = a.fechaFin ? new Date(a.fechaFin) : null;
+                const yaCaducado = fin && fin < ahora;
+                const aunNoEmpezo = inicio && inicio > ahora;
+                const vigente = a.activo && !yaCaducado && !aunNoEmpezo;
+
+                return (
+                  <tr key={a._id} className={!vigente ? "is-off" : ""}>
+                    <td className="cfg-td-icon" style={{ width: 32, fontSize: "1.3rem", textAlign: "center" }}>
+                      {tipoInfo?.icon || "•"}
+                    </td>
+                    <td data-label="Título">
+                      <div>
+                        <strong>{a.titulo}</strong>
+                        {a.destacado && (
+                          <span className="badge" style={{ marginLeft: 8, background: "rgba(255, 145, 73, 0.16)", color: "#e86f1c" }}>
+                            ⭐ Destacado
+                          </span>
+                        )}
+                      </div>
+                      {a.mensaje && (
+                        <div className="text-suave" style={{ fontSize: "0.78rem", marginTop: 2 }}>
+                          {a.mensaje.length > 100 ? a.mensaje.slice(0, 100) + "…" : a.mensaje}
+                        </div>
+                      )}
+                    </td>
+                    <td data-label="Tipo">{tipoInfo?.label || a.tipo}</td>
+                    <td data-label="Vigencia" style={{ fontSize: "0.85rem" }}>
+                      {!inicio && !fin && <span className="text-suave">Indefinida</span>}
+                      {inicio && <div>Desde: {inicio.toLocaleDateString("es")}</div>}
+                      {fin && <div>Hasta: {fin.toLocaleDateString("es")}</div>}
+                      {yaCaducado && <span style={{ color: "#b91c1c" }}>· Caducado</span>}
+                      {aunNoEmpezo && <span style={{ color: "#b45309" }}>· Pendiente</span>}
+                    </td>
+                    <td data-label="Estado">
+                      <button
+                        type="button"
+                        className={`badge ${a.activo ? "badge-exito" : "badge-aviso"} loyalty-chip-toggle`}
+                        onClick={() => handleToggleActivo(a, !a.activo)}
+                      >
+                        {a.activo ? "Activo" : "Inactivo"}
+                      </button>
+                    </td>
+                    <td className="loyalty-row-actions cfg-td-actions">
+                      <button type="button" className="btn btn-secundario btn-sm" onClick={() => onEdit(a)}>
+                        Editar
+                      </button>
+                      <button type="button" className="btn btn-secundario btn-sm loyalty-btn-del" onClick={() => handleDelete(a._id)}>
+                        Eliminar
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </section>
   );
 }
 
-function ModalFooter({ onClose, submitLabel }) {
+function AnuncioModal({ anuncio, onClose, onSaved }) {
+  const isEdit = !!anuncio._id;
+  const [form, setForm] = useState({
+    titulo: anuncio.titulo || "",
+    mensaje: anuncio.mensaje || "",
+    tipo: anuncio.tipo || "novedad",
+    destacado: !!anuncio.destacado,
+    activo: anuncio.activo !== false,
+    fechaInicio: anuncio.fechaInicio ? toDateInput(anuncio.fechaInicio) : "",
+    fechaFin: anuncio.fechaFin ? toDateInput(anuncio.fechaFin) : "",
+  });
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState(null);
+
+  const onChange = (k, v) => setForm((f) => ({ ...f, [k]: v }));
+
+  const submit = async (e) => {
+    e.preventDefault();
+    setError(null);
+    if (!form.titulo.trim()) return setError("Título requerido.");
+    if (form.fechaInicio && form.fechaFin && new Date(form.fechaInicio) > new Date(form.fechaFin)) {
+      return setError("La fecha de inicio no puede ser posterior a la fecha fin.");
+    }
+    setSaving(true);
+    try {
+      const payload = {
+        ...form,
+        fechaInicio: form.fechaInicio || null,
+        fechaFin: form.fechaFin || null,
+      };
+      if (isEdit) await actualizarAnuncio(anuncio._id, payload);
+      else await crearAnuncio(payload);
+      onSaved?.();
+    } catch (err) {
+      setError(err?.response?.data?.message || "No se pudo guardar el anuncio.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
   return (
-    <footer className="lc__modal-footer">
-      <button type="button" className="lc__btn lc__btn--ghost" onClick={onClose}>Cancelar</button>
-      <button type="submit" className="lc__btn lc__btn--primary">{submitLabel}</button>
-    </footer>
+    <ModalShell title={isEdit ? "Editar anuncio" : "Nuevo anuncio"} onClose={onClose}>
+      <form onSubmit={submit}>
+        <div className="config-field" style={{ marginBottom: "var(--space-md)" }}>
+          <label>Título</label>
+          <input
+            type="text"
+            value={form.titulo}
+            onChange={(e) => onChange("titulo", e.target.value)}
+            required
+            maxLength={120}
+            placeholder="Ej: Lunes 2x1 en hamburguesas"
+            autoFocus
+          />
+        </div>
+
+        <div className="config-field" style={{ marginBottom: "var(--space-md)" }}>
+          <label>Mensaje <span className="cfg-help" style={{ fontWeight: 400 }}>(opcional, máx. 500 caracteres)</span></label>
+          <textarea
+            value={form.mensaje}
+            onChange={(e) => onChange("mensaje", e.target.value)}
+            maxLength={500}
+            rows={4}
+            placeholder="Detalla la promoción, condiciones, horario..."
+            style={{ resize: "vertical" }}
+          />
+          <p className="cfg-help">{form.mensaje.length}/500 caracteres</p>
+        </div>
+
+        <div className="cfg-form-grid">
+          <div className="config-field">
+            <label>Tipo</label>
+            <select value={form.tipo} onChange={(e) => onChange("tipo", e.target.value)}>
+              {TIPOS_ANUNCIO.map((t) => (
+                <option key={t.value} value={t.value}>
+                  {t.icon} {t.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="config-field">
+            <label>Fecha inicio <span style={{ fontWeight: 400, color: "var(--color-texto-suave)" }}>(opcional)</span></label>
+            <input
+              type="date"
+              value={form.fechaInicio}
+              onChange={(e) => onChange("fechaInicio", e.target.value)}
+            />
+          </div>
+
+          <div className="config-field">
+            <label>Fecha fin <span style={{ fontWeight: 400, color: "var(--color-texto-suave)" }}>(opcional)</span></label>
+            <input
+              type="date"
+              value={form.fechaFin}
+              onChange={(e) => onChange("fechaFin", e.target.value)}
+            />
+          </div>
+        </div>
+
+        <p className="cfg-help" style={{ marginTop: "var(--space-sm)" }}>
+          Sin fecha fin, el anuncio se mantendrá visible hasta que lo desactives manualmente.
+        </p>
+
+        <label className="loyalty-check" style={{ marginTop: "var(--space-md)" }}>
+          <input
+            type="checkbox"
+            checked={form.destacado}
+            onChange={(e) => onChange("destacado", e.target.checked)}
+          />
+          <span>⭐ Destacado (aparece más arriba y con badge en la lista de restaurantes)</span>
+        </label>
+
+        <label className="loyalty-check" style={{ marginTop: "var(--space-sm)" }}>
+          <input
+            type="checkbox"
+            checked={form.activo}
+            onChange={(e) => onChange("activo", e.target.checked)}
+          />
+          <span>Activo (visible para los clientes)</span>
+        </label>
+
+        {error && <div className="cfg-status-box danger" style={{ marginTop: "var(--space-md)" }}>{error}</div>}
+
+        <ModalFooter onClose={onClose} submitLabel={saving ? "Guardando…" : "Guardar anuncio"} />
+      </form>
+    </ModalShell>
   );
+}
+
+function toDateInput(v) {
+  try {
+    const d = new Date(v);
+    if (isNaN(d.getTime())) return "";
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${y}-${m}-${day}`;
+  } catch { return ""; }
 }

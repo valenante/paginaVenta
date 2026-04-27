@@ -70,6 +70,7 @@ function DatosTab({ cliente, onSaved }) {
   const [form, setForm] = useState({
     nombre: cliente.nombre || "",
     telefono: cliente.telefono || "",
+    alergias: cliente.alergias || "",
   });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
@@ -86,6 +87,7 @@ function DatosTab({ cliente, onSaved }) {
       await actualizarPerfil({
         nombre: form.nombre.trim(),
         telefono: form.telefono.trim(),
+        alergias: form.alergias.trim(),
       });
       await onSaved?.();
       setSuccess("Datos actualizados correctamente.");
@@ -137,6 +139,24 @@ function DatosTab({ cliente, onSaved }) {
         />
         <p className="cliente-field__help">
           El camarero te identifica más rápido en el restaurante si tienes teléfono.
+        </p>
+      </div>
+
+      <div className="cliente-field">
+        <label>
+          Alergias e intolerancias
+          <span className="cliente-field__optional">opcional</span>
+        </label>
+        <textarea
+          name="alergias"
+          value={form.alergias}
+          onChange={onChange}
+          rows={3}
+          maxLength={500}
+          placeholder="Ej: alérgico al gluten y los frutos secos"
+        />
+        <p className="cliente-field__help">
+          Se autocompletará al entrar a la mesa, así cocina lo tiene a mano sin que tengas que reescribirlo cada vez.
         </p>
       </div>
 

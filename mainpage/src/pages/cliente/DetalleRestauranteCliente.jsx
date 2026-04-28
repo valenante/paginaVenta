@@ -138,14 +138,17 @@ export default function DetalleRestauranteCliente() {
 
   // URLs cross-app a la carta del cliente. Pre-rellenamos los datos del cliente
   // en reservas para que no tenga que escribirlos.
-  const cartaBase = (import.meta.env.VITE_CARTA_BASE_URL || "http://localhost:5174").replace(/\/$/, "");
-  const cartaUrl = `${cartaBase}/${slug}/carta`;
+  const isDev = import.meta.env.DEV;
+  const cartaBase = isDev
+    ? `http://localhost:5175/${slug}`
+    : `https://${slug}-carta.${import.meta.env.VITE_MAIN_DOMAIN || "softalef.com"}`;
+  const cartaUrl = `${cartaBase}/carta`;
   const reservasParams = new URLSearchParams({
     nombre: cliente?.nombre || "",
     email: cliente?.email || "",
     telefono: cliente?.telefono || "",
   }).toString();
-  const reservasUrl = `${cartaBase}/${slug}/reservas?${reservasParams}`;
+  const reservasUrl = `${cartaBase}/reservas?${reservasParams}`;
 
   const direccionFull = [restaurante.direccion, restaurante.ciudad, restaurante.nombre]
     .filter(Boolean)

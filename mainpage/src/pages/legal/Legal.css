@@ -88,3 +88,32 @@
 .legal-footer a:hover {
   text-decoration: underline;
 }
+
+/* Table for subencargados */
+.legal-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+  font-size: 0.9rem;
+}
+.legal-table th,
+.legal-table td {
+  padding: 0.6rem 0.8rem;
+  border: 1px solid rgba(255,255,255,0.1);
+  text-align: left;
+  vertical-align: top;
+}
+.legal-table th {
+  background: rgba(255,255,255,0.05);
+  font-weight: 700;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+.legal-table tr:hover {
+  background: rgba(255,255,255,0.02);
+}
+@media (max-width: 600px) {
+  .legal-table { font-size: 0.78rem; }
+  .legal-table th, .legal-table td { padding: 0.4rem 0.5rem; }
+}

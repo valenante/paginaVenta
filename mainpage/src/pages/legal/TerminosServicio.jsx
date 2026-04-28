@@ -3,7 +3,7 @@ import LegalLayout from "./LegalLayout";
 export default function TerminosServicio() {
   return (
     <LegalLayout title="Condiciones Generales del Servicio">
-      <p><em>Ultima actualizacion: 23 de abril de 2026</em></p>
+      <p><em>Ultima actualizacion: 28 de abril de 2026</em></p>
 
       <h2>1. Identificacion del prestador</h2>
       <ul>
@@ -37,21 +37,44 @@ export default function TerminosServicio() {
 
       <h2>8. Datos y privacidad</h2>
       <p>El tratamiento de datos se rige por la <a href="/privacidad">Politica de Privacidad</a>. El titular es responsable del tratamiento de los datos de sus clientes. Alef actua como encargado del tratamiento conforme al <a href="/dpa">Acuerdo de Procesamiento de Datos</a>.</p>
-      <p>Los datos de cada tenant se almacenan en una base de datos aislada en la Union Europea.</p>
+      <p>Los datos de cada tenant se almacenan en una base de datos aislada en la Union Europea. La lista de subencargados del tratamiento esta disponible en <a href="/subencargados">softalef.com/subencargados</a>.</p>
 
-      <h2>9. Propiedad intelectual</h2>
+      <h2>9. Datos agregados y analitica</h2>
+      <p>Alef puede utilizar datos anonimizados y agregados, de los que no sea posible identificar al titular ni a sus clientes, para los siguientes fines:</p>
+      <ul>
+        <li>Mejorar y optimizar el Servicio (rendimiento, fiabilidad, funcionalidades).</li>
+        <li>Generar estadisticas sectoriales agregadas (tiempos de servicio medios, productos mas demandados por zona, tendencias de consumo).</li>
+        <li>Entrenar y calibrar los modelos predictivos internos (motor de tiempos de cocina, estimaciones de stock, sugerencias de producto).</li>
+      </ul>
+      <p>En ningun caso se comparten datos individuales de un tenant con otro. Los datos agregados no permiten la reidentificacion del titular ni de sus comensales.</p>
+
+      <h2>10. Continuidad del servicio, backups y recuperacion</h2>
+      <p>Alef mantiene las siguientes medidas de continuidad operativa:</p>
+      <ul>
+        <li><strong>Backups automaticos:</strong> copias diarias de la base de datos con retencion minima de 14 dias, mas copias continuas gestionadas por el proveedor de base de datos (MongoDB Atlas).</li>
+        <li><strong>Copias de infraestructura:</strong> snapshots horarios de la configuracion del servidor con retencion de al menos 100 copias.</li>
+        <li><strong>Despliegue sin interrupcion:</strong> arquitectura blue/green que permite actualizaciones y rollback sin tiempo de caida.</li>
+        <li><strong>Objetivo de recuperacion (RPO):</strong> perdida maxima de datos estimada en 1 hora para infraestructura, 24 horas para datos de negocio (complementado con backup continuo de Atlas).</li>
+        <li><strong>Tiempo de recuperacion (RTO):</strong> restauracion estimada en menos de 5 minutos para la base de datos, menos de 30 segundos para el servidor de aplicacion.</li>
+        <li><strong>Verificacion:</strong> Alef realiza simulacros periodicos de restauracion para validar la integridad de las copias de seguridad.</li>
+      </ul>
+      <p>Estos objetivos son estimaciones basadas en mediciones reales y no constituyen una garantia absoluta. Alef no sera responsable de perdidas derivadas de fallos en servicios de terceros (proveedor de base de datos, hosting, DNS) fuera de su control directo.</p>
+
+      <h2>11. Propiedad intelectual y de datos</h2>
       <p>Alef, su codigo, marca y logotipos son propiedad del prestador. El titular conserva la propiedad sobre sus datos y contenido. El titular concede a Alef una licencia limitada para procesar dicho contenido con el fin de prestar el Servicio.</p>
+      <p>Las configuraciones del tenant (productos, precios, categorias, recetas, mapa de mesas) son propiedad del titular. Alef ofrece exportacion de datos en formatos estandar (CSV, JSON) a peticion del titular o a traves del panel de gestion.</p>
 
-      <h2>10. Limitacion de responsabilidad</h2>
-      <p>La responsabilidad total de Alef no excedera el importe pagado por el titular en los 12 meses anteriores al evento. Alef no sera responsable de perdida de ingresos, errores en la configuracion del titular, ni incidencias en hardware de terceros.</p>
+      <h2>12. Limitacion de responsabilidad</h2>
+      <p>La responsabilidad total de Alef no excedera el importe pagado por el titular en los 12 meses anteriores al evento. Quedan excluidas de esta limitacion las responsabilidades derivadas de dolo o negligencia grave, asi como las obligaciones en materia de proteccion de datos personales.</p>
+      <p>Alef no sera responsable de perdida de ingresos, errores en la configuracion del titular, ni incidencias en hardware o servicios de terceros.</p>
 
-      <h2>11. Modificaciones</h2>
+      <h2>13. Modificaciones</h2>
       <p>Alef puede modificar estas condiciones notificando al titular por email con 30 dias de antelacion. Si el titular no esta de acuerdo, podra resolver el contrato sin penalizacion antes de la entrada en vigor de los cambios.</p>
 
-      <h2>12. Ley aplicable</h2>
+      <h2>14. Ley aplicable</h2>
       <p>Estas condiciones se rigen por la legislacion espanola.</p>
 
-      <h2>13. Contacto</h2>
+      <h2>15. Contacto</h2>
       <p>contacto@softalef.com</p>
     </LegalLayout>
   );

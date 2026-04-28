@@ -17,6 +17,7 @@ export default function Footer() {
           <Link to="/terminos">Condiciones</Link>
           <Link to="/privacidad">Privacidad</Link>
           <Link to="/dpa">DPA</Link>
+          <Link to="/subencargados">Subencargados</Link>
           <Link to="/aviso-legal">Aviso legal</Link>
           <Link to="/cookies">Cookies</Link>
         </nav>

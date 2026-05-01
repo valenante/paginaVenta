@@ -373,6 +373,81 @@ export default function RestauranteConfigPage() {
                   }
                 />
               </div>
+
+              {/* ── Turnos de servicio ── */}
+              <div className="config-field" style={{ marginTop: 16 }}>
+                <label>Turnos de servicio</label>
+                <p className="config-hint">Define franjas horarias para filtrar las estadísticas del panel operativo.</p>
+
+                {(form.diaOperativo?.turnos || []).map((turno, i) => (
+                  <div key={turno.id || i} className="seccion-item" style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
+                    <input
+                      type="text"
+                      placeholder="Nombre"
+                      value={turno.nombre}
+                      style={{ flex: 1, maxWidth: 120 }}
+                      onChange={(e) => {
+                        const nombre = e.target.value;
+                        const id = nombre.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "") || turno.id;
+                        const updated = [...(form.diaOperativo?.turnos || [])];
+                        updated[i] = { ...updated[i], nombre, id };
+                        setForm((prev) => ({ ...prev, diaOperativo: { ...prev.diaOperativo, turnos: updated } }));
+                      }}
+                    />
+                    <input
+                      type="time"
+                      value={turno.horaInicio}
+                      style={{ maxWidth: 100 }}
+                      onChange={(e) => {
+                        const updated = [...(form.diaOperativo?.turnos || [])];
+                        updated[i] = { ...updated[i], horaInicio: e.target.value };
+                        setForm((prev) => ({ ...prev, diaOperativo: { ...prev.diaOperativo, turnos: updated } }));
+                      }}
+                    />
+                    <span>—</span>
+                    <input
+                      type="time"
+                      value={turno.horaFin}
+                      style={{ maxWidth: 100 }}
+                      onChange={(e) => {
+                        const updated = [...(form.diaOperativo?.turnos || [])];
+                        updated[i] = { ...updated[i], horaFin: e.target.value };
+                        setForm((prev) => ({ ...prev, diaOperativo: { ...prev.diaOperativo, turnos: updated } }));
+                      }}
+                    />
+                    <button
+                      type="button"
+                      className="btn-danger-sm"
+                      onClick={() => {
+                        const updated = (form.diaOperativo?.turnos || []).filter((_, j) => j !== i);
+                        setForm((prev) => ({ ...prev, diaOperativo: { ...prev.diaOperativo, turnos: updated } }));
+                      }}
+                    >
+                      ❌
+                    </button>
+                  </div>
+                ))}
+
+                {(form.diaOperativo?.turnos || []).length < 5 && (
+                  <button
+                    type="button"
+                    className="btn-crear-seccion"
+                    onClick={() => {
+                      const turnos = form.diaOperativo?.turnos || [];
+                      const id = `turno_${Date.now()}`;
+                      setForm((prev) => ({
+                        ...prev,
+                        diaOperativo: {
+                          ...prev.diaOperativo,
+                          turnos: [...turnos, { id, nombre: "", horaInicio: "12:00", horaFin: "17:00", color: "#6366f1" }],
+                        },
+                      }));
+                    }}
+                  >
+                    + Añadir turno
+                  </button>
+                )}
+              </div>
             </section>
           )}
 

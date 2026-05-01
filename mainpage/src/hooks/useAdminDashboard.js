@@ -2,7 +2,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import api from "../utils/api";
 
-export function useAdminDashboard(fecha = null) {
+export function useAdminDashboard(fecha = null, turno = null) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [data, setData] = useState({
@@ -25,8 +25,9 @@ export function useAdminDashboard(fecha = null) {
     setLoading(true);
     setError(null);
 
-    const q = fecha ? `?fecha=${encodeURIComponent(fecha)}` : "";
-    const qLimit = fecha ? `&fecha=${encodeURIComponent(fecha)}` : "";
+    const turnoParam = turno ? `&turno=${encodeURIComponent(turno)}` : "";
+    const q = fecha ? `?fecha=${encodeURIComponent(fecha)}${turnoParam}` : turno ? `?turno=${encodeURIComponent(turno)}` : "";
+    const qLimit = fecha ? `&fecha=${encodeURIComponent(fecha)}${turnoParam}` : turnoParam;
 
     try {
       const [resumenRes, cajaRes, topRes, staffRes, elimRes, reservasRes] = await Promise.allSettled([
@@ -63,7 +64,7 @@ export function useAdminDashboard(fecha = null) {
     } finally {
       if (!signal.aborted) setLoading(false);
     }
-  }, [fecha]);
+  }, [fecha, turno]);
 
   useEffect(() => {
     fetchAll();

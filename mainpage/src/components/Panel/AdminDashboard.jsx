@@ -2,6 +2,7 @@
 import React, { useState, useMemo } from "react";
 import { useAdminDashboard } from "../../hooks/useAdminDashboard";
 import { useFeature } from "../../Hooks/useFeature";
+import { useConfig } from "../../context/ConfigContext";
 import { ComparativaCard, RatioTipoCard, VentasPorHoraCard } from "./AnalyticsFase2";
 import { CorrelacionCard, AlertasCard } from "./AnalyticsFase3";
 import TiemposCocinaCard from "./TiemposCocinaCard";
@@ -36,11 +37,14 @@ function fmtFechaLabel(fechaStr) {
 export default function AdminDashboard() {
   const hoy = useMemo(() => fechaOperativaHoy(), []);
   const [fechaSeleccionada, setFechaSeleccionada] = useState(hoy);
+  const [turnoSeleccionado, setTurnoSeleccionado] = useState(null);
   const esHoy = fechaSeleccionada === hoy;
   const isPremium = useFeature("estadisticas_avanzadas");
+  const { config } = useConfig();
+  const turnos = config?.diaOperativo?.turnos || [];
 
   // Siempre pasamos la fecha operativa al backend para garantizar filtro correcto
-  const { loading, error, data, refresh } = useAdminDashboard(fechaSeleccionada);
+  const { loading, error, data, refresh } = useAdminDashboard(fechaSeleccionada, turnoSeleccionado);
   const [modal, setModal] = useState(null); // "stock" | "reservas" | "eliminaciones" | null
   const [topTab, setTopTab] = useState("plato"); // "plato" | "bebida"
   const [topSort, setTopSort] = useState("cantidad"); // "cantidad" | "importe"
@@ -94,6 +98,20 @@ export default function AdminDashboard() {
             max={hoy}
             onChange={(e) => setFechaSeleccionada(e.target.value || hoy)}
           />
+          {turnos.length > 0 && (
+            <select
+              className="adm__date"
+              value={turnoSeleccionado || ""}
+              onChange={(e) => setTurnoSeleccionado(e.target.value || null)}
+            >
+              <option value="">Todo el día</option>
+              {turnos.map((t) => (
+                <option key={t.id} value={t.id}>
+                  {t.nombre} ({t.horaInicio}–{t.horaFin})
+                </option>
+              ))}
+            </select>
+          )}
           {!esHoy && (
             <button className="adm__btn-hoy" onClick={() => setFechaSeleccionada(hoy)}>
               Hoy

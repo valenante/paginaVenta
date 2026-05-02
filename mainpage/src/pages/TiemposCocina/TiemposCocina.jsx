@@ -3,6 +3,7 @@ import api from "../../utils/api";
 import AlertaMensaje from "../../components/AlertaMensaje/AlertaMensaje";
 import EtaPerfiles from "./EtaPerfiles";
 import EtaSimulador from "./EtaSimulador";
+import EtaAnalisis from "./EtaAnalisis";
 import "./TiemposCocina.v2.css";
 
 const num = (v, fb) => { const n = Number(v); return Number.isFinite(n) && n > 0 ? n : fb; };
@@ -220,6 +221,7 @@ export default function TiemposCocina() {
               <button className={mode === "sim" ? "tc-mode--on" : ""} onClick={() => setMode("sim")}>Simulador</button>
               <button className={mode === "alertas" ? "tc-mode--on" : ""} onClick={() => setMode("alertas")}>Alertas</button>
               <button className={mode === "aprendizaje" ? "tc-mode--on" : ""} onClick={() => setMode("aprendizaje")}>Aprendizaje</button>
+              <button className={mode === "analisis" ? "tc-mode--on" : ""} onClick={() => setMode("analisis")}>Análisis</button>
             </div>
           </div>
         </div>
@@ -441,6 +443,11 @@ export default function TiemposCocina() {
       {mode === "aprendizaje" && (
         <EtaPerfiles perfiles={perfiles} onRefresh={refreshPerfiles} />
       )}
+
+      {/* ══════════════════════════════════════
+          ANÁLISIS
+         ══════════════════════════════════════ */}
+      {mode === "analisis" && <EtaAnalisis />}
 
       {/* ══════════════════════════════════════
           MODAL AYUDA

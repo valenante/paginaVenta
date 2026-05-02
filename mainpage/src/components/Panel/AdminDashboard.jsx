@@ -373,7 +373,6 @@ export default function AdminDashboard() {
             <RatioTipoCard fecha={fechaSeleccionada} />
           </div>
           <VentasPorHoraCard fecha={fechaSeleccionada} />
-          <AlertasCard />
           <TiemposCocinaCard
             tiemposCocina={resumen?.tiemposCocina}
             tiemposCocinaPlatos={resumen?.tiemposCocinaPlatos}

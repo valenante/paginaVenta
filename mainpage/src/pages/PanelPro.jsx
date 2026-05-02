@@ -9,7 +9,7 @@ import CajaDiaria from "../components/CajaDiariaUltraPro/CajaDiariaUltraPro";
 import MapaEditor from "./MapaEditor";
 import ProductsMenu from "./ProductsMenu";
 import StockPage from "./StockPage";
-import ValoracionesPanel from "./ValoracionesPanel";
+// import ValoracionesPanel from "./ValoracionesPanel"; // eliminado — nadie lo usa
 
 // ✅ Tienda
 import VentasPageShop from "./VentasPageShop";
@@ -28,6 +28,9 @@ import TiemposCocina from "./TiemposCocina/TiemposCocina";
 // ✅ Finanzas (dashboard de rentabilidad + gastos fijos)
 import FinanzasPage from "./Finanzas/FinanzasPage";
 
+// ✅ Replay del día
+import DayReplay from "./DayReplay/DayReplay";
+
 // ✅ Tenant + Auth + Plan
 import { useTenant } from "../context/TenantContext";
 import { useAuth } from "../context/AuthContext.jsx";
@@ -42,11 +45,12 @@ const PANEL_BY_TIPO = {
     { key: "productos", label: "🧾 Carta y productos", permiso: "productos.manage", render: () => <ProductsMenu /> },
     { key: "caja", label: "💶 Caja diaria", permiso: "caja.manage", render: () => <CajaDiaria /> },
     { key: "stock", label: "📦 Stock", permiso: "stock.manage", feature: "stock_basico", render: () => <StockPage /> },
-    { key: "valoraciones", label: "⭐ Valoraciones", permiso: "valoraciones.manage", feature: "carta_valoraciones", render: () => <ValoracionesPanel /> },
+    // Valoraciones eliminado — sin uso real
     { key: "estadisticas", label: "📊 Estadísticas", permiso: "estadisticas.manage", feature: "estadisticas_avanzadas", render: () => <EstadisticasPage type="plato" /> },
     { key: "finanzas", label: "💰 Finanzas", permiso: "finanzas.view", feature: "finanzas_view", render: () => <FinanzasPage /> },
-    { key: "cortesias", label: "🎁 Cortesias", permiso: "cortesias.view", feature: "reporting_avanzado", render: () => <CortesiasPage /> },
     { key: "tiempos", label: "⏱️ Tiempos cocina", permiso: null, feature: "motor_adaptativo_cocina", render: () => <TiemposCocina /> },
+    { key: "replay", label: "🔄 Replay del día", permiso: "caja.view", render: () => <DayReplay /> },
+    { key: "cortesias", label: "🎁 Cortesias", permiso: "cortesias.view", feature: "reporting_avanzado", render: () => <CortesiasPage /> },
   ],
 
   shop: [

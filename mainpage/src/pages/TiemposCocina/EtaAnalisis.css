@@ -208,6 +208,14 @@
 .ka-modal__close:hover { background: rgba(255,255,255,0.12); color: #fff; }
 .ka-modal__body { padding: 0.8rem 1.2rem 1.2rem; overflow-y: auto; flex: 1; }
 .ka-modal__station { margin-bottom: 0.3rem; }
+.ka-modal--wide { width: min(800px, 95vw); max-height: 90vh; }
+.ka-clickable {
+  cursor: pointer; color: #c4a7ff;
+  background: rgba(139,92,246,0.1); padding: 0.15rem 0.5rem;
+  border-radius: 6px; border: 1px solid rgba(139,92,246,0.2);
+  transition: all 150ms;
+}
+.ka-clickable:hover { background: rgba(139,92,246,0.25); border-color: rgba(139,92,246,0.4); color: #e2d6ff; }
 
 /* ── Loading / Empty ── */
 .ka-loading { text-align: center; padding: 3rem 1rem; color: #64748b; font-size: 0.9rem; }

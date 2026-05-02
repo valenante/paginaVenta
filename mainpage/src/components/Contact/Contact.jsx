@@ -1,4 +1,5 @@
 import React, { useCallback, useMemo, useState } from "react";
+import { trackEvent } from "../../utils/trackEvent";
 import "./Contact.css";
 
 const WHATSAPP_NUMBER = "34623754328"; // sin +, formato internacional
@@ -49,6 +50,7 @@ const Contact = () => {
 
       // 1) Abrimos WhatsApp (principal)
       try {
+        trackEvent("lead_form_submit", { negocio: negocio || "sin nombre" });
         openWhatsApp(`${subject}\n\n${body}`);
         setSentOk(true);
         form.reset();
@@ -76,7 +78,7 @@ const Contact = () => {
           </p>
 
           <div className="Contact-channels">
-            <a href={`mailto:${CONTACT_EMAIL}`} className="Contact-channel">
+            <a href={`mailto:${CONTACT_EMAIL}`} className="Contact-channel" onClick={() => trackEvent("click_email", { location: "contact" })}>
               <div className="Contact-channel-icon">✉️</div>
               <div>
                 <span className="Contact-channel-label">Correo electrónico</span>
@@ -89,6 +91,7 @@ const Contact = () => {
               target="_blank"
               rel="noreferrer"
               className="Contact-channel"
+              onClick={() => trackEvent("click_whatsapp", { location: "contact" })}
             >
               <div className="Contact-channel-icon whatsapp">💬</div>
               <div>

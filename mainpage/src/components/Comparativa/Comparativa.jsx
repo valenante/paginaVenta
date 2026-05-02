@@ -1,4 +1,5 @@
 import React from "react";
+import { trackEvent } from "../../utils/trackEvent";
 import "./Comparativa.css";
 
 const filas = [
@@ -59,7 +60,7 @@ export default function Comparativa() {
         </div>
 
         <div className="Comp-cta">
-          <a href="#packs" className="btn btn-primario">
+          <a href="#packs" className="btn btn-primario" onClick={() => trackEvent("click_cta", { location: "comparativa", label: "empezar_con_alef" })}>
             Empezar con Alef
           </a>
         </div>

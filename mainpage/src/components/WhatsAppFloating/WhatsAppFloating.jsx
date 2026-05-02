@@ -1,4 +1,5 @@
 import React from "react";
+import { trackEvent } from "../../utils/trackEvent";
 import "./WhatsAppFloating.css";
 
 const WHATSAPP_NUMBER = "34623754328";
@@ -17,6 +18,7 @@ export default function WhatsAppFloating() {
       rel="noreferrer"
       aria-label="Hablar por WhatsApp"
       title="Hablar por WhatsApp"
+      onClick={() => trackEvent("click_whatsapp", { location: "floating" })}
     >
       <span className="wa-float-icon" aria-hidden="true">💬</span>
       <span className="wa-float-text">WhatsApp</span>

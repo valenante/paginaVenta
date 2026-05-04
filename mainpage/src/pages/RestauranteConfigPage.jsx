@@ -363,8 +363,8 @@ export default function RestauranteConfigPage() {
                 <input
                   id="horaCorte"
                   type="time"
+                  className="turno-input turno-input--hora"
                   value={form.diaOperativo?.horaCorte || "04:00"}
-                  style={{ maxWidth: 160 }}
                   onChange={(e) =>
                     setForm((prev) => ({
                       ...prev,
@@ -375,63 +375,66 @@ export default function RestauranteConfigPage() {
               </div>
 
               {/* ── Turnos de servicio ── */}
-              <div className="config-field" style={{ marginTop: 16 }}>
+              <div className="config-field turnos-section">
                 <label>Turnos de servicio</label>
-                <p className="config-hint">Define franjas horarias para filtrar las estadísticas del panel operativo.</p>
+                <p className="turnos-hint">Define franjas horarias para filtrar las estadísticas del panel operativo.</p>
 
-                {(form.diaOperativo?.turnos || []).map((turno, i) => (
-                  <div key={turno.id || i} className="seccion-item" style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
-                    <input
-                      type="text"
-                      placeholder="Nombre"
-                      value={turno.nombre}
-                      style={{ flex: 1, maxWidth: 120 }}
-                      onChange={(e) => {
-                        const nombre = e.target.value;
-                        const id = nombre.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "") || turno.id;
-                        const updated = [...(form.diaOperativo?.turnos || [])];
-                        updated[i] = { ...updated[i], nombre, id };
-                        setForm((prev) => ({ ...prev, diaOperativo: { ...prev.diaOperativo, turnos: updated } }));
-                      }}
-                    />
-                    <input
-                      type="time"
-                      value={turno.horaInicio}
-                      style={{ maxWidth: 100 }}
-                      onChange={(e) => {
-                        const updated = [...(form.diaOperativo?.turnos || [])];
-                        updated[i] = { ...updated[i], horaInicio: e.target.value };
-                        setForm((prev) => ({ ...prev, diaOperativo: { ...prev.diaOperativo, turnos: updated } }));
-                      }}
-                    />
-                    <span>—</span>
-                    <input
-                      type="time"
-                      value={turno.horaFin}
-                      style={{ maxWidth: 100 }}
-                      onChange={(e) => {
-                        const updated = [...(form.diaOperativo?.turnos || [])];
-                        updated[i] = { ...updated[i], horaFin: e.target.value };
-                        setForm((prev) => ({ ...prev, diaOperativo: { ...prev.diaOperativo, turnos: updated } }));
-                      }}
-                    />
-                    <button
-                      type="button"
-                      className="btn-danger-sm"
-                      onClick={() => {
-                        const updated = (form.diaOperativo?.turnos || []).filter((_, j) => j !== i);
-                        setForm((prev) => ({ ...prev, diaOperativo: { ...prev.diaOperativo, turnos: updated } }));
-                      }}
-                    >
-                      ❌
-                    </button>
-                  </div>
-                ))}
+                <div className="turnos-list">
+                  {(form.diaOperativo?.turnos || []).map((turno, i) => (
+                    <div key={turno.id || i} className="turno-row">
+                      <input
+                        type="text"
+                        className="turno-input turno-input--nombre"
+                        placeholder="Nombre (ej: Comida)"
+                        value={turno.nombre}
+                        onChange={(e) => {
+                          const nombre = e.target.value;
+                          const id = nombre.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "") || turno.id;
+                          const updated = [...(form.diaOperativo?.turnos || [])];
+                          updated[i] = { ...updated[i], nombre, id };
+                          setForm((prev) => ({ ...prev, diaOperativo: { ...prev.diaOperativo, turnos: updated } }));
+                        }}
+                      />
+                      <input
+                        type="time"
+                        className="turno-input turno-input--hora"
+                        value={turno.horaInicio}
+                        onChange={(e) => {
+                          const updated = [...(form.diaOperativo?.turnos || [])];
+                          updated[i] = { ...updated[i], horaInicio: e.target.value };
+                          setForm((prev) => ({ ...prev, diaOperativo: { ...prev.diaOperativo, turnos: updated } }));
+                        }}
+                      />
+                      <span className="turno-separator">—</span>
+                      <input
+                        type="time"
+                        className="turno-input turno-input--hora"
+                        value={turno.horaFin}
+                        onChange={(e) => {
+                          const updated = [...(form.diaOperativo?.turnos || [])];
+                          updated[i] = { ...updated[i], horaFin: e.target.value };
+                          setForm((prev) => ({ ...prev, diaOperativo: { ...prev.diaOperativo, turnos: updated } }));
+                        }}
+                      />
+                      <button
+                        type="button"
+                        className="turno-btn-delete"
+                        title="Eliminar turno"
+                        onClick={() => {
+                          const updated = (form.diaOperativo?.turnos || []).filter((_, j) => j !== i);
+                          setForm((prev) => ({ ...prev, diaOperativo: { ...prev.diaOperativo, turnos: updated } }));
+                        }}
+                      >
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                      </button>
+                    </div>
+                  ))}
+                </div>
 
                 {(form.diaOperativo?.turnos || []).length < 5 && (
                   <button
                     type="button"
-                    className="btn-crear-seccion"
+                    className="turno-btn-add"
                     onClick={() => {
                       const turnos = form.diaOperativo?.turnos || [];
                       const id = `turno_${Date.now()}`;

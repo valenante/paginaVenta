@@ -14,6 +14,150 @@
 .rest-config-aside { order: 0; }
 
 /* =========================================================
+   DÍA OPERATIVO — TURNOS DE SERVICIO
+   ========================================================= */
+
+.turnos-section {
+  margin-top: var(--space-md);
+}
+
+.turnos-hint {
+  margin: 0;
+  font-size: var(--font-size-sm, 0.85rem);
+  color: var(--color-texto-suave, #6b7280);
+  line-height: 1.4;
+}
+
+.turnos-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: var(--space-xs, 0.4rem);
+}
+
+.turno-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 0.75rem;
+  background: var(--color-gris-claro, #f8fafc);
+  border: 1px solid var(--color-borde-suave, #e5e7eb);
+  border-radius: var(--radius-md, 0.5rem);
+  transition: border-color 140ms ease, box-shadow 140ms ease;
+}
+
+.turno-row:hover {
+  border-color: var(--color-secundario, #4465e7);
+  box-shadow: 0 0 0 2px rgba(68, 101, 231, 0.08);
+}
+
+.turno-input {
+  font-family: var(--font-base, inherit);
+  font-size: var(--font-size-sm, 0.85rem);
+  padding: 0.5rem 0.65rem;
+  border-radius: var(--radius-md, 0.5rem);
+  border: 1px solid var(--color-borde-suave, #e5e7eb);
+  background: var(--color-blanco, #fff);
+  color: var(--color-texto, #1e293b);
+  outline: none;
+  transition: border-color 140ms ease, box-shadow 140ms ease;
+}
+
+.turno-input:focus {
+  border-color: var(--color-secundario, #4465e7);
+  box-shadow: 0 0 0 3px rgba(68, 101, 231, 0.18);
+}
+
+.turno-input--nombre {
+  flex: 1;
+  min-width: 0;
+  max-width: 160px;
+}
+
+.turno-input--hora {
+  width: 110px;
+  flex-shrink: 0;
+}
+
+.turno-separator {
+  color: var(--color-texto-suave, #94a3b8);
+  font-weight: 500;
+  flex-shrink: 0;
+  user-select: none;
+}
+
+.turno-btn-delete {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md, 0.5rem);
+  background: transparent;
+  color: var(--color-texto-suave, #94a3b8);
+  cursor: pointer;
+  transition: all 140ms ease;
+}
+
+.turno-btn-delete:hover {
+  background: rgba(220, 38, 38, 0.08);
+  border-color: rgba(220, 38, 38, 0.25);
+  color: #dc2626;
+}
+
+.turno-btn-add {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 0.4rem;
+  padding: 0.5rem 1rem;
+  font-size: var(--font-size-sm, 0.85rem);
+  font-weight: 600;
+  color: var(--color-secundario, #4465e7);
+  background: transparent;
+  border: 1px dashed var(--color-secundario, #4465e7);
+  border-radius: var(--radius-md, 0.5rem);
+  cursor: pointer;
+  transition: all 140ms ease;
+}
+
+.turno-btn-add:hover {
+  background: rgba(68, 101, 231, 0.06);
+  border-style: solid;
+}
+
+/* Responsive turnos */
+@media (max-width: 600px) {
+  .turno-row {
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .turno-input--nombre {
+    max-width: none;
+    width: 100%;
+    order: -1;
+  }
+
+  .turno-input--hora {
+    width: auto;
+    flex: 1;
+    min-width: 90px;
+  }
+
+  .turno-btn-delete {
+    margin-left: auto;
+  }
+
+  .turno-btn-add {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* =========================================================
    APARIENCIA TPV — TEMA
    ========================================================= */
 

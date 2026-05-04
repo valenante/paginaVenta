@@ -431,8 +431,8 @@ export default function ExtrasPanel({ onBack }) {
         {extrasVisibles.map((extra) => (
           <li key={extra._id} className="extras-item">
             {editandoId === extra._id ? (
-              <div style={{ width: "100%" }}>
-                <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+              <div className="extras-edit-wrapper">
+                <div className="extras-edit-row">
                   <input
                     type="text"
                     value={editValues.nombre}
@@ -473,15 +473,7 @@ export default function ExtrasPanel({ onBack }) {
                 </div>
 
                 {/* v2 fase 2: vinculación a producto en edición */}
-                <label
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 8,
-                    fontSize: 13,
-                    marginTop: 8,
-                  }}
-                >
+                <label className="extras-stock-toggle">
                   <input
                     type="checkbox"
                     checked={!!editValues.consumeStock}
@@ -499,18 +491,8 @@ export default function ExtrasPanel({ onBack }) {
                 </label>
 
                 {editValues.consumeStock && (
-                  <div
-                    style={{
-                      display: "grid",
-                      gridTemplateColumns: "2fr 1fr",
-                      gap: 8,
-                      padding: 8,
-                      background: "#eef5ff",
-                      borderRadius: 4,
-                      marginTop: 6,
-                    }}
-                  >
-                    <label style={{ margin: 0, fontSize: 12 }}>
+                  <div className="extras-stock-config">
+                    <label className="extras-stock-field">
                       Producto vinculado
                       <input
                         list={`extras-productos-edit-${extra._id}`}
@@ -526,7 +508,6 @@ export default function ExtrasPanel({ onBack }) {
                         }}
                         placeholder="Buscar producto…"
                         disabled={savingEdit}
-                        style={{ width: "100%" }}
                       />
                       <datalist id={`extras-productos-edit-${extra._id}`}>
                         {productosOrdenados.map((p) => (
@@ -534,17 +515,17 @@ export default function ExtrasPanel({ onBack }) {
                         ))}
                       </datalist>
                       {editValues.productoId ? (
-                        <small style={{ color: "#2a5" }}>
+                        <small className="extras-stock-ok">
                           ✓ <strong>{productoById.get(String(editValues.productoId))?.nombre}</strong>
                         </small>
                       ) : editValues.productoQuery ? (
-                        <small style={{ color: "#c22" }}>
+                        <small className="extras-stock-warn">
                           ⚠ No se encontró producto con ese nombre.
                         </small>
                       ) : null}
                     </label>
 
-                    <label style={{ margin: 0, fontSize: 12 }}>
+                    <label className="extras-stock-field">
                       Cantidad
                       <input
                         type="number"
@@ -558,7 +539,6 @@ export default function ExtrasPanel({ onBack }) {
                           }))
                         }
                         disabled={savingEdit}
-                        style={{ width: "100%" }}
                       />
                     </label>
                   </div>
@@ -570,12 +550,7 @@ export default function ExtrasPanel({ onBack }) {
                   {extra.nombre} - {to2(extra.precio).toFixed(2)} €
                   {extra.consumeStock && extra.productoId && (
                     <small
-                      style={{
-                        marginLeft: 8,
-                        color: "#2a5",
-                        fontSize: 11,
-                        fontWeight: 600,
-                      }}
+                      className="extras-stock-badge"
                       title={`Vinculado a producto. Descuenta ${extra.cantidad || 1} por unidad vendida.`}
                     >
                       · stock
@@ -634,15 +609,7 @@ export default function ExtrasPanel({ onBack }) {
         />
 
         {/* v2 fase 2: vincular a producto para descontar stock */}
-        <label
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 8,
-            fontSize: 13,
-            margin: "8px 0",
-          }}
-        >
+        <label className="extras-stock-toggle">
           <input
             type="checkbox"
             checked={!!nuevoExtra.consumeStock}
@@ -652,23 +619,13 @@ export default function ExtrasPanel({ onBack }) {
             disabled={savingCreate}
           />
           <span>
-            <strong>Descuenta stock</strong> al vender (vincular a producto del catálogo)
+            <strong>Descuenta stock</strong> al vender (vincular a producto)
           </span>
         </label>
 
         {nuevoExtra.consumeStock && (
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "2fr 1fr",
-              gap: 8,
-              padding: 8,
-              background: "#eef5ff",
-              borderRadius: 4,
-              marginBottom: 8,
-            }}
-          >
-            <label style={{ margin: 0, fontSize: 12 }}>
+          <div className="extras-stock-config">
+            <label className="extras-stock-field">
               Producto vinculado
               <input
                 list="extras-productos-crear"
@@ -684,7 +641,6 @@ export default function ExtrasPanel({ onBack }) {
                 }}
                 placeholder="Buscar producto…"
                 disabled={savingCreate}
-                style={{ width: "100%" }}
               />
               <datalist id="extras-productos-crear">
                 {productosOrdenados.map((p) => (
@@ -692,18 +648,18 @@ export default function ExtrasPanel({ onBack }) {
                 ))}
               </datalist>
               {nuevoExtra.productoId ? (
-                <small style={{ color: "#2a5" }}>
+                <small className="extras-stock-ok">
                   ✓ Vinculado a:{" "}
                   <strong>{productoById.get(String(nuevoExtra.productoId))?.nombre}</strong>
                 </small>
               ) : nuevoExtra.productoQuery ? (
-                <small style={{ color: "#c22" }}>
+                <small className="extras-stock-warn">
                   ⚠ No se encontró producto con ese nombre.
                 </small>
               ) : null}
             </label>
 
-            <label style={{ margin: 0, fontSize: 12 }}>
+            <label className="extras-stock-field">
               Cantidad por unidad
               <input
                 type="number"
@@ -717,9 +673,8 @@ export default function ExtrasPanel({ onBack }) {
                   }))
                 }
                 disabled={savingCreate}
-                style={{ width: "100%" }}
               />
-              <small style={{ color: "#666", fontSize: 11 }}>
+              <small className="extras-stock-hint">
                 Ej: "Extra queso" de 30g → pon 30.
               </small>
             </label>

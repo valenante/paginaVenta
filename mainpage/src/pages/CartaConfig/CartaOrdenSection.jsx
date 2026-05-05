@@ -47,6 +47,16 @@ export default function CartaOrdenSection({ form, handleChange }) {
       <label className="checkbox-row">
         <input
           type="checkbox"
+          name="carta.mostrarAgotados"
+          checked={form.carta?.mostrarAgotados !== false}
+          onChange={handleChange}
+        />
+        <span>Mostrar productos agotados</span>
+      </label>
+
+      <label className="checkbox-row">
+        <input
+          type="checkbox"
           name="carta.mostrarIconosCategorias"
           checked={!!form.carta?.mostrarIconosCategorias}
           onChange={handleChange}

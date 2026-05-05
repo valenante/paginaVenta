@@ -280,8 +280,8 @@
  * VERSIÓN ESCRITORIO
  *****************************************************/
 
-/* Desktop: horizontal navbar. Exclude tablets in portrait */
-@media (min-width: 769px) and (orientation: landscape), (min-width: 1025px) {
+/* Desktop: horizontal navbar. Exclude touch devices in portrait */
+@media (min-width: 769px) and (pointer: fine), (min-width: 1281px) {
   .TopBar-menu {
     display: none;
   }

@@ -82,8 +82,8 @@ export default function TopBar() {
 
   useEffect(() => {
     const manejarResize = () => {
-      const isDesktop = window.innerWidth > 1024 ||
-        (window.innerWidth > 768 && window.innerHeight < window.innerWidth);
+      const isPointerFine = window.matchMedia("(pointer: fine)").matches;
+      const isDesktop = (isPointerFine && window.innerWidth > 768) || window.innerWidth > 1280;
       if (isDesktop && menuAbierto) setMenuAbierto(false);
     };
 

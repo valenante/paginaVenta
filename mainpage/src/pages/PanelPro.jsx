@@ -49,7 +49,7 @@ const PANEL_BY_TIPO = {
     { key: "estadisticas", label: "📊 Estadísticas", permiso: "estadisticas.manage", feature: "estadisticas_avanzadas", render: () => <EstadisticasPage type="plato" /> },
     { key: "finanzas", label: "💰 Finanzas", permiso: "finanzas.view", feature: "finanzas_view", render: () => <FinanzasPage /> },
     { key: "tiempos", label: "⏱️ Tiempos cocina", permiso: null, feature: "motor_adaptativo_cocina", render: () => <TiemposCocina /> },
-    { key: "replay", label: "🔄 Replay del día", permiso: "caja.view", render: () => <DayReplay /> },
+    { key: "replay", label: "🔄 Replay del día", permiso: "caja.view", feature: "estadisticas_avanzadas", render: () => <DayReplay /> },
     { key: "cortesias", label: "🎁 Cortesias", permiso: "cortesias.view", feature: "reporting_avanzado", render: () => <CortesiasPage /> },
   ],
 

@@ -67,6 +67,7 @@ const normalizePrecios = (precios) => {
       factorStock: p.factorStock ?? 1,
       descripcion: p.descripcion || "",
       orden: p.orden ?? i,
+      visibleCarta: p.visibleCarta ?? true,
     }));
   }
 

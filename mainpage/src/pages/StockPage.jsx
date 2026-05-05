@@ -394,8 +394,8 @@ const StockPage = () => {
       {/* ── FLASH ── */}
       {flash && <div className="stock-flash">{flash}</div>}
 
-      {/* ── UPSELL ── */}
-      {!hasStockAvanzado && (
+      {/* ── UPSELL — solo fuera de stock directo ── */}
+      {!hasStockAvanzado && tab !== "productos" && (
         <div className="stock-upsell-wrapper">
           <UpsellStock />
         </div>

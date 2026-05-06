@@ -11,6 +11,8 @@ export default function useCopilot() {
   const [loading, setLoading] = useState(false);
   const [conversations, setConversations] = useState([]);
   const [convsLoading, setConvsLoading] = useState(false);
+  const [insights, setInsights] = useState([]);
+  const [insightsLoading, setInsightsLoading] = useState(false);
   const abortRef = useRef(null);
 
   // Persist conversationId
@@ -97,6 +99,19 @@ export default function useCopilot() {
     sessionStorage.removeItem(STORAGE_KEY);
   }, []);
 
+  const loadInsights = useCallback(async () => {
+    setInsightsLoading(true);
+    try {
+      const { data } = await api.get("/copilot/insights");
+      const payload = data.data || data;
+      setInsights(payload.insights || []);
+    } catch {
+      setInsights([]);
+    } finally {
+      setInsightsLoading(false);
+    }
+  }, []);
+
   const deleteConversation = useCallback(async (id) => {
     try {
       await api.delete(`/copilot/conversations/${id}`);
@@ -113,7 +128,10 @@ export default function useCopilot() {
     loading,
     conversations,
     convsLoading,
+    insights,
+    insightsLoading,
     sendMessage,
+    loadInsights,
     loadConversations,
     loadConversation,
     newConversation,

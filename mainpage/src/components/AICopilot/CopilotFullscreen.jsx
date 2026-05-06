@@ -19,7 +19,7 @@ function ConversationItem({ conv, isActive, onSelect, onDelete }) {
 }
 
 export default function CopilotFullscreen({
-  messages, loading, conversations, convsLoading, conversationId,
+  messages, loading, insights, insightsLoading, conversations, convsLoading, conversationId,
   onSend, onClose, onLoadConversations, onLoadConversation, onNewConversation, onDeleteConversation, onSuggestionClick,
 }) {
   useEffect(() => {
@@ -68,7 +68,7 @@ export default function CopilotFullscreen({
             </div>
             <button className="copilot-fs__close" onClick={onClose} aria-label="Cerrar">✕</button>
           </div>
-          <CopilotMessages messages={messages} loading={loading} onSuggestionClick={onSuggestionClick} />
+          <CopilotMessages messages={messages} loading={loading} insights={insights} insightsLoading={insightsLoading} onSuggestionClick={onSuggestionClick} />
           <CopilotInput onSend={onSend} loading={loading} fullscreen />
         </div>
       </div>

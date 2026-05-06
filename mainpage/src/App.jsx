@@ -19,6 +19,7 @@ import ErrorBoundary from "./components/ErrorBoundary/ErrorBoundary";
 import TenantErrorScreen from "./components/TenantErrorScreen/TenantErrorScreen";
 import CookieBanner from "./components/CookieBanner/CookieBanner";
 import WhatsAppFloating from "./components/WhatsAppFloating/WhatsAppFloating";
+import AICopilot from "./components/AICopilot/AICopilot";
 
 /* ── Providers (eager) ── */
 import { FeaturesPlanProvider } from "./context/FeaturesPlanContext.jsx";
@@ -107,6 +108,15 @@ function WhatsAppFloatingGate() {
 
   if (authLoading || user || isInternalRoute) return null;
   return <WhatsAppFloating />;
+}
+
+/* ══════════════════════════════════════════════
+   AI Copilot gate — solo logueado
+   ══════════════════════════════════════════════ */
+function AICopilotGate() {
+  const { user, loading: authLoading } = useAuth();
+  if (authLoading || !user) return null;
+  return <AICopilot />;
 }
 
 /* ══════════════════════════════════════════════
@@ -209,6 +219,7 @@ export default function App() {
               <ClienteAuthProvider>
                 <CookieBanner />
                 <WhatsAppFloatingGate />
+                <AICopilotGate />
                 <ErrorBoundary>
                   <Suspense fallback={<LoadingScreen />}>
                     <AppRoutes />

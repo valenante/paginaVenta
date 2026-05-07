@@ -289,14 +289,9 @@
   display: flex;
   align-items: center;
   gap: 4px;
-  margin-top: 2px;
+  margin-top: 4px;
   padding-left: 4px;
-  opacity: 0;
-  transition: opacity 0.15s;
 }
-
-.copilot-msg:hover .copilot-feedback { opacity: 1; }
-.copilot-feedback:has(.is-active) { opacity: 1; }
 
 .copilot-feedback__btn {
   background: transparent;

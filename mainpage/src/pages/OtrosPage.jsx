@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import TiemposCocina from "./TiemposCocina/TiemposCocina";
 import DayReplay from "./DayReplay/DayReplay";
+import AutomatizacionesPage from "./AutomatizacionesPage";
 import "./OtrosPage.css";
 
 const MODULES = [
@@ -23,7 +24,7 @@ const MODULES = [
     icon: "🤖",
     label: "Automatizaciones",
     description: "Pedidos a proveedores, alertas de margen, predicción de stock y más.",
-    component: null, // Próximamente
+    component: AutomatizacionesPage,
   },
 ];
 

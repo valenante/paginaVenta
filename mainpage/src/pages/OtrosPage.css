@@ -1,0 +1,123 @@
+.otros-root {
+  padding: 24px;
+  max-width: 900px;
+}
+
+.otros-header h2 {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--color-text, #f1f5f9);
+  margin: 0 0 4px;
+}
+
+.otros-subtitle {
+  color: var(--color-text-secondary, #94a3b8);
+  font-size: 0.88rem;
+}
+
+.otros-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 14px;
+  margin-top: 20px;
+}
+
+.otros-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 18px 16px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  cursor: pointer;
+  transition: all 0.15s;
+  text-align: left;
+  color: inherit;
+  font-family: inherit;
+  width: 100%;
+  position: relative;
+}
+
+.otros-card:hover:not(.otros-card--disabled) {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(96, 181, 255, 0.3);
+  transform: translateY(-1px);
+}
+
+.otros-card--disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.otros-card__icon {
+  font-size: 1.6rem;
+  flex-shrink: 0;
+  width: 36px;
+  text-align: center;
+}
+
+.otros-card__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.otros-card__label {
+  display: block;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--color-text, #f1f5f9);
+  margin-bottom: 4px;
+}
+
+.otros-card__desc {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--color-text-secondary, #94a3b8);
+  line-height: 1.4;
+}
+
+.otros-card__arrow {
+  color: var(--color-text-secondary, #64748b);
+  font-size: 1.1rem;
+  flex-shrink: 0;
+  align-self: center;
+  transition: color 0.15s;
+}
+
+.otros-card:hover .otros-card__arrow {
+  color: var(--color-accent, #60b5ff);
+}
+
+.otros-card__badge {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #94a3b8;
+  background: rgba(255, 255, 255, 0.06);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.otros-back {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: var(--color-text-secondary, #94a3b8);
+  padding: 6px 14px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  margin: 16px 0 8px 24px;
+  transition: all 0.15s;
+  font-family: inherit;
+}
+
+.otros-back:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--color-text, #f1f5f9);
+  border-color: rgba(255, 255, 255, 0.2);
+}

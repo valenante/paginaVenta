@@ -21,14 +21,11 @@ import StaffPanel from "./panel/StaffPanel";
 
 // Cortesias movido a Finanzas como tab
 
-// ✅ Tiempos de cocina (SLA)
-import TiemposCocina from "./TiemposCocina/TiemposCocina";
-
 // ✅ Finanzas (dashboard de rentabilidad + gastos fijos)
 import FinanzasPage from "./Finanzas/FinanzasPage";
 
-// ✅ Replay del día
-import DayReplay from "./DayReplay/DayReplay";
+// ✅ Otros (tiempos cocina, replay, automatizaciones)
+import OtrosPage from "./OtrosPage";
 
 // ✅ Tenant + Auth + Plan
 import { useTenant } from "../context/TenantContext";
@@ -47,8 +44,7 @@ const PANEL_BY_TIPO = {
     // Valoraciones eliminado — sin uso real
     { key: "estadisticas", label: "📊 Estadísticas", permiso: "estadisticas.manage", feature: "estadisticas_avanzadas", render: () => <EstadisticasPage type="plato" /> },
     { key: "finanzas", label: "💰 Finanzas", permiso: "finanzas.view", feature: "finanzas_view", render: () => <FinanzasPage /> },
-    { key: "tiempos", label: "⏱️ Tiempos cocina", permiso: null, feature: "motor_adaptativo_cocina", render: () => <TiemposCocina /> },
-    { key: "replay", label: "🔄 Replay del día", permiso: "caja.view", feature: "estadisticas_avanzadas", render: () => <DayReplay /> },
+    { key: "otros", label: "⚙️ Otros", permiso: null, render: () => <OtrosPage /> },
   ],
 
   shop: [

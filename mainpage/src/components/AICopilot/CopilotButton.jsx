@@ -1,4 +1,5 @@
 import React, { useRef, useCallback } from "react";
+import logoAlef from "../../assets/imagenes/alef.png";
 
 export default function CopilotButton({ onClick, onLongPress }) {
   const timerRef = useRef(null);
@@ -30,7 +31,7 @@ export default function CopilotButton({ onClick, onLongPress }) {
       aria-label="Abrir ALEF Copilot"
       title="ALEF Copilot — mantén pulsado para pantalla completa"
     >
-      <span className="copilot-btn__icon">✦</span>
+      <img src={logoAlef} alt="ALEF" className="copilot-btn__logo" />
       <span className="copilot-btn__pulse" />
     </button>
   );

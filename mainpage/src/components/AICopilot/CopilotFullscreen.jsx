@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { createPortal } from "react-dom";
+import logoAlef from "../../assets/imagenes/alef.png";
 import CopilotMessages from "./CopilotMessages";
 import CopilotInput from "./CopilotInput";
 
@@ -63,7 +64,7 @@ export default function CopilotFullscreen({
         <div className="copilot-fs__main">
           <div className="copilot-fs__header">
             <div className="copilot-fs__title">
-              <span className="copilot-fs__logo">✦</span>
+              <img src={logoAlef} alt="ALEF" className="copilot-header__logo" />
               ALEF Copilot
             </div>
             <button className="copilot-fs__close" onClick={onClose} aria-label="Cerrar">✕</button>

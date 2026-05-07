@@ -1,4 +1,5 @@
 import React, { useRef, useEffect } from "react";
+import logoAlef from "../../assets/imagenes/alef.png";
 
 function formatMarkdown(text) {
   if (!text) return "";
@@ -50,7 +51,7 @@ function InsightCard({ insight, onClick }) {
 function WelcomeMessage({ insights, insightsLoading, onInsightClick, onSuggestionClick }) {
   return (
     <div className="copilot-welcome">
-      <div className="copilot-welcome__icon">✦</div>
+      <img src={logoAlef} alt="ALEF" className="copilot-welcome__logo-img" />
       <div className="copilot-welcome__title">ALEF Copilot</div>
 
       {insightsLoading && (

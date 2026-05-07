@@ -1,4 +1,5 @@
 import React from "react";
+import logoAlef from "../../assets/imagenes/alef.png";
 import CopilotMessages from "./CopilotMessages";
 import CopilotInput from "./CopilotInput";
 
@@ -7,7 +8,7 @@ export default function CopilotMini({ messages, loading, toolStatus, insights, i
     <div className="copilot-mini">
       <div className="copilot-mini__header">
         <div className="copilot-mini__title">
-          <span className="copilot-mini__logo">✦</span>
+          <img src={logoAlef} alt="ALEF" className="copilot-header__logo" />
           ALEF Copilot
         </div>
         <div className="copilot-mini__actions">

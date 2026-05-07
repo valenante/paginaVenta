@@ -1,37 +1,44 @@
 .otros-root {
-  padding: 24px;
-  max-width: 900px;
+  padding: 20px 24px;
+}
+
+.otros-header {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 14px;
+  padding: 20px 24px;
+  margin-bottom: 20px;
 }
 
 .otros-header h2 {
-  font-size: 1.4rem;
+  font-size: 1.3rem;
   font-weight: 800;
-  color: var(--color-text, #f1f5f9);
+  color: #f1f5f9;
   margin: 0 0 4px;
 }
 
 .otros-subtitle {
-  color: var(--color-text-secondary, #94a3b8);
-  font-size: 0.88rem;
+  color: #94a3b8;
+  font-size: 0.85rem;
+  margin: 0;
 }
 
 .otros-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 14px;
-  margin-top: 20px;
 }
 
 .otros-card {
   display: flex;
   align-items: flex-start;
   gap: 14px;
-  padding: 18px 16px;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 20px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
   cursor: pointer;
-  transition: all 0.15s;
+  transition: all 0.18s;
   text-align: left;
   color: inherit;
   font-family: inherit;
@@ -40,21 +47,26 @@
 }
 
 .otros-card:hover:not(.otros-card--disabled) {
-  background: rgba(255, 255, 255, 0.07);
-  border-color: rgba(96, 181, 255, 0.3);
-  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(96, 181, 255, 0.25);
 }
 
 .otros-card--disabled {
-  opacity: 0.5;
+  opacity: 0.45;
   cursor: not-allowed;
 }
 
 .otros-card__icon {
-  font-size: 1.6rem;
+  font-size: 1.5rem;
   flex-shrink: 0;
-  width: 36px;
-  text-align: center;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .otros-card__body {
@@ -65,59 +77,62 @@
 .otros-card__label {
   display: block;
   font-weight: 700;
-  font-size: 0.95rem;
-  color: var(--color-text, #f1f5f9);
+  font-size: 0.92rem;
+  color: #f1f5f9;
   margin-bottom: 4px;
 }
 
 .otros-card__desc {
   display: block;
-  font-size: 0.8rem;
-  color: var(--color-text-secondary, #94a3b8);
-  line-height: 1.4;
+  font-size: 0.78rem;
+  color: #94a3b8;
+  line-height: 1.45;
 }
 
 .otros-card__arrow {
-  color: var(--color-text-secondary, #64748b);
+  color: #475569;
   font-size: 1.1rem;
   flex-shrink: 0;
   align-self: center;
-  transition: color 0.15s;
+  transition: color 0.15s, transform 0.15s;
 }
 
-.otros-card:hover .otros-card__arrow {
-  color: var(--color-accent, #60b5ff);
+.otros-card:hover:not(.otros-card--disabled) .otros-card__arrow {
+  color: #60b5ff;
+  transform: translateX(2px);
 }
 
 .otros-card__badge {
   position: absolute;
-  top: 8px;
-  right: 10px;
-  font-size: 0.65rem;
+  top: 10px;
+  right: 12px;
+  font-size: 0.62rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: #94a3b8;
-  background: rgba(255, 255, 255, 0.06);
-  padding: 2px 8px;
-  border-radius: 4px;
+  letter-spacing: 0.05em;
+  color: #64748b;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 3px 8px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .otros-back {
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
-  color: var(--color-text-secondary, #94a3b8);
-  padding: 6px 14px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  color: #94a3b8;
+  padding: 8px 16px;
   font-size: 0.85rem;
   cursor: pointer;
-  margin: 16px 0 8px 24px;
+  margin: 16px 0 12px 20px;
   transition: all 0.15s;
   font-family: inherit;
+  font-weight: 600;
 }
 
 .otros-back:hover {
-  background: rgba(255, 255, 255, 0.06);
-  color: var(--color-text, #f1f5f9);
-  border-color: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.07);
+  color: #f1f5f9;
+  border-color: rgba(255, 255, 255, 0.15);
 }

@@ -2,7 +2,7 @@ import React from "react";
 import CopilotMessages from "./CopilotMessages";
 import CopilotInput from "./CopilotInput";
 
-export default function CopilotMini({ messages, loading, insights, insightsLoading, onSend, onClose, onFullscreen, onSuggestionClick }) {
+export default function CopilotMini({ messages, loading, toolStatus, insights, insightsLoading, onSend, onClose, onFullscreen, onSuggestionClick }) {
   return (
     <div className="copilot-mini">
       <div className="copilot-mini__header">
@@ -15,7 +15,7 @@ export default function CopilotMini({ messages, loading, insights, insightsLoadi
           <button className="copilot-mini__action" onClick={onClose} title="Minimizar" aria-label="Minimizar">✕</button>
         </div>
       </div>
-      <CopilotMessages messages={messages} loading={loading} insights={insights} insightsLoading={insightsLoading} onSuggestionClick={onSuggestionClick} />
+      <CopilotMessages messages={messages} loading={loading} toolStatus={toolStatus} insights={insights} insightsLoading={insightsLoading} onSuggestionClick={onSuggestionClick} />
       <CopilotInput onSend={onSend} loading={loading} />
     </div>
   );

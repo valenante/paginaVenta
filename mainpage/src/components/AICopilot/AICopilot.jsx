@@ -15,7 +15,7 @@ export default function AICopilot() {
   const {
     messages, conversationId, loading,
     conversations, convsLoading,
-    insights, insightsLoading,
+    insights, insightsLoading, toolStatus,
     sendMessage, loadInsights, loadConversations, loadConversation,
     newConversation, deleteConversation,
   } = useCopilot();
@@ -38,9 +38,9 @@ export default function AICopilot() {
   }, [view, loadInsights]);
 
   // Gate AFTER all hooks
-  if (!user) return null;
-  // fallback true para dev — en prod el addon controla
-  if (!hasFeature("copilot_chat", true)) return null;
+  // En dev: mostrar siempre. En prod: descomentar los gates.
+  // if (!user) return null;
+  // if (!hasFeature("copilot_chat", true)) return null;
 
   if (view === "closed") {
     return <CopilotButton onClick={open} onLongPress={openFull} />;
@@ -51,6 +51,7 @@ export default function AICopilot() {
       <CopilotMini
         messages={messages}
         loading={loading}
+        toolStatus={toolStatus}
         insights={insights}
         insightsLoading={insightsLoading}
         onSend={sendMessage}

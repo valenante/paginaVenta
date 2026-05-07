@@ -21,42 +21,113 @@ export default function useCopilot() {
     else sessionStorage.removeItem(STORAGE_KEY);
   }, [conversationId]);
 
+  const [toolStatus, setToolStatus] = useState(null); // "Consultando ventas..."
+
   const sendMessage = useCallback(async (text) => {
     if (!text.trim() || loading) return;
 
     const userMsg = { role: "user", content: text, ts: new Date().toISOString() };
     setMessages((prev) => [...prev, userMsg]);
     setLoading(true);
+    setToolStatus(null);
+
+    // Add empty assistant message that we'll fill via streaming
+    const assistantIdx = { current: -1 };
 
     try {
-      const { data } = await api.post("/copilot/chat", {
-        message: text.trim(),
-        ...(conversationId ? { conversationId } : {}),
+      const baseUrl = api.defaults.baseURL || "";
+      const headers = { "Content-Type": "application/json" };
+      // Get CSRF token from cookie if exists
+      const csrfCookie = document.cookie.split(";").find((c) => c.trim().startsWith("alef_csrf=") || c.trim().startsWith("__Secure-alef_csrf="));
+      if (csrfCookie) headers["x-csrf-token"] = csrfCookie.split("=").slice(1).join("=").trim();
+      // Get tenant
+      const tenantId = sessionStorage.getItem("tenantId") || "";
+      if (tenantId) headers["X-Tenant-ID"] = tenantId;
+
+      const resp = await fetch(`${baseUrl}/copilot/chat/stream`, {
+        method: "POST",
+        headers,
+        credentials: "include",
+        body: JSON.stringify({
+          message: text.trim(),
+          ...(conversationId ? { conversationId } : {}),
+        }),
       });
 
-      if (data.ok !== false) {
-        const payload = data.data || data;
-        const assistantMsg = {
-          role: "assistant",
-          content: payload.response,
-          ts: new Date().toISOString(),
-        };
-        setMessages((prev) => [...prev, assistantMsg]);
-        if (payload.conversationId) setConversationId(payload.conversationId);
-      } else {
-        setMessages((prev) => [
-          ...prev,
-          { role: "assistant", content: `Error: ${data.message || "Error desconocido"}`, ts: new Date().toISOString() },
-        ]);
+      if (!resp.ok) {
+        const errData = await resp.json().catch(() => ({}));
+        throw new Error(errData.message || `HTTP ${resp.status}`);
+      }
+
+      const reader = resp.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = "";
+      let streamedText = "";
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split("\n");
+        buffer = lines.pop() || "";
+
+        for (const line of lines) {
+          if (!line.startsWith("data: ")) continue;
+          try {
+            const data = JSON.parse(line.slice(6));
+
+            if (data.event === "start") {
+              if (data.conversationId) setConversationId(data.conversationId);
+              setMessages((prev) => [...prev, { role: "assistant", content: "", ts: new Date().toISOString() }]);
+              assistantIdx.current = -1; // will be last
+            }
+
+            if (data.event === "tool_call") {
+              const names = { get_resumen_dia: "resumen del día", get_rentabilidad: "rentabilidad", get_productos: "productos", get_costes: "costes", get_finanzas: "finanzas", get_ventas_hora: "ventas por hora", get_plato_estrella: "platos estrella", get_comparativa: "comparativa" };
+              setToolStatus(`🔍 Consultando ${names[data.name] || data.name}...`);
+            }
+
+            if (data.event === "tools_executing") {
+              setToolStatus(`⚙️ Analizando datos...`);
+            }
+
+            if (data.event === "text_delta") {
+              streamedText += data.text;
+              setMessages((prev) => {
+                const copy = [...prev];
+                if (copy.length > 0) copy[copy.length - 1] = { ...copy[copy.length - 1], content: streamedText };
+                return copy;
+              });
+              setToolStatus(null);
+            }
+
+            if (data.event === "done") {
+              // Final
+            }
+          } catch { /* ignore parse errors */ }
+        }
+      }
+
+      if (!streamedText) {
+        // Fallback: no text streamed, show error
+        setMessages((prev) => {
+          const copy = [...prev];
+          if (copy.length > 0 && !copy[copy.length - 1].content) {
+            copy[copy.length - 1] = { ...copy[copy.length - 1], content: "No se recibió respuesta." };
+          }
+          return copy;
+        });
       }
     } catch (err) {
-      const msg = err.response?.data?.message || err.message || "Error de conexión";
+      const msg = err.message || "Error de conexión";
       setMessages((prev) => [
-        ...prev,
+        ...prev.filter((m) => m.content !== ""), // remove empty assistant placeholder if no stream
         { role: "assistant", content: `Error: ${msg}`, ts: new Date().toISOString() },
       ]);
     } finally {
       setLoading(false);
+      setToolStatus(null);
     }
   }, [conversationId, loading]);
 
@@ -130,6 +201,7 @@ export default function useCopilot() {
     convsLoading,
     insights,
     insightsLoading,
+    toolStatus,
     sendMessage,
     loadInsights,
     loadConversations,

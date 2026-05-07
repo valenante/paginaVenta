@@ -81,7 +81,7 @@ function WelcomeMessage({ insights, insightsLoading, onInsightClick, onSuggestio
   );
 }
 
-export default function CopilotMessages({ messages, loading, insights, insightsLoading, onSuggestionClick }) {
+export default function CopilotMessages({ messages, loading, toolStatus, insights, insightsLoading, onSuggestionClick }) {
   const bottomRef = useRef(null);
 
   useEffect(() => {
@@ -116,7 +116,12 @@ export default function CopilotMessages({ messages, loading, insights, insightsL
           </div>
         </div>
       ))}
-      {loading && <TypingIndicator />}
+      {loading && toolStatus && (
+        <div className="copilot-msg copilot-msg--assistant">
+          <div className="copilot-msg__bubble copilot-msg__bubble--assistant copilot-tool-status">{toolStatus}</div>
+        </div>
+      )}
+      {loading && !toolStatus && <TypingIndicator />}
       <div ref={bottomRef} />
     </div>
   );

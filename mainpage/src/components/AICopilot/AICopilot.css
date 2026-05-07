@@ -201,6 +201,20 @@
 .copilot-h3 { font-weight: 600; font-size: 0.92rem; color: #e2e8f0; margin: 4px 0 2px; }
 .copilot-li { padding-left: 8px; margin: 2px 0; }
 
+/* ─── TOOL STATUS ─── */
+
+.copilot-tool-status {
+  font-size: 0.8rem;
+  color: #a5b4fc;
+  font-style: italic;
+  animation: copilotPulseText 1.5s ease-in-out infinite;
+}
+
+@keyframes copilotPulseText {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
 /* ─── TYPING INDICATOR ─── */
 
 .copilot-typing {

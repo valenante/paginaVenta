@@ -432,6 +432,59 @@
 .copilot-input__send:hover { transform: scale(1.06); }
 .copilot-input__send:disabled { opacity: 0.35; cursor: not-allowed; transform: none; }
 
+/* ─── INPUT ROW + ATTACH ─── */
+
+.copilot-input__row {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  width: 100%;
+}
+
+.copilot-input__attach {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: #64748b;
+  font-size: 1.1rem;
+  padding: 8px;
+  cursor: pointer;
+  transition: all 0.15s;
+  flex-shrink: 0;
+  line-height: 1;
+}
+.copilot-input__attach:hover { color: #60b5ff; border-color: rgba(96, 181, 255, 0.3); }
+
+.copilot-input__preview {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  margin-bottom: 6px;
+  background: rgba(96, 181, 255, 0.1);
+  border: 1px solid rgba(96, 181, 255, 0.25);
+  border-radius: 8px;
+  font-size: 0.78rem;
+  color: #93d0ff;
+}
+
+.copilot-input__preview-name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.copilot-input__preview-remove {
+  background: none;
+  border: none;
+  color: #64748b;
+  cursor: pointer;
+  font-size: 0.8rem;
+  padding: 0;
+}
+.copilot-input__preview-remove:hover { color: #ef4444; }
+
 /* ─── FULLSCREEN ─── */
 
 .copilot-fs__overlay {

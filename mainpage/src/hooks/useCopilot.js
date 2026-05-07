@@ -23,10 +23,11 @@ export default function useCopilot() {
 
   const [toolStatus, setToolStatus] = useState(null); // "Consultando ventas..."
 
-  const sendMessage = useCallback(async (text) => {
-    if (!text.trim() || loading) return;
+  const sendMessage = useCallback(async (text, imageData) => {
+    if ((!text?.trim() && !imageData) || loading) return;
 
-    const userMsg = { role: "user", content: text, ts: new Date().toISOString() };
+    const displayText = imageData ? `📎 ${imageData.name}${text ? ` — ${text}` : ""}` : text;
+    const userMsg = { role: "user", content: displayText, ts: new Date().toISOString() };
     setMessages((prev) => [...prev, userMsg]);
     setLoading(true);
     setToolStatus(null);
@@ -49,8 +50,9 @@ export default function useCopilot() {
         headers,
         credentials: "include",
         body: JSON.stringify({
-          message: text.trim(),
+          message: (text || "").trim(),
           ...(conversationId ? { conversationId } : {}),
+          ...(imageData ? { imageBase64: imageData.base64, imageMimeType: imageData.mimeType } : {}),
         }),
       });
 

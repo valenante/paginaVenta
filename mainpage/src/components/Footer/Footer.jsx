@@ -6,10 +6,10 @@ export default function Footer() {
     <footer className="Footer">
       <div className="Footer-inner">
         <div className="Footer-brand">
-          <strong>Alef TPV</strong>
+          <strong>Alef</strong>
           <p>
-            Plataforma web para restaurantes y tiendas.
-            TPV, carta digital, facturación y gestión en un solo sistema.
+            Gestion inteligente para restaurantes.
+            Automatizacion, IA, carta digital, cocina coordinada y facturacion — en un solo sistema.
           </p>
         </div>
 
@@ -24,7 +24,7 @@ export default function Footer() {
       </div>
 
       <div className="Footer-bottom">
-        © {new Date().getFullYear()} Alef TPV · Todos los derechos reservados
+        © {new Date().getFullYear()} Alef · Todos los derechos reservados
       </div>
     </footer>
   );

@@ -5,33 +5,33 @@ import "./Features.css";
 
 const principales = [
   {
-    icono: "🧾",
-    titulo: "Tus camareros atienden mas mesas",
+    icono: "🧠",
+    titulo: "Un copiloto IA que conoce tu negocio",
     descripcion:
-      "Comanda completa en 3 toques con buscador inteligente. Notas por plato, orden de salida y mensajes a cocina. Menos tiempo por mesa, mas mesas atendidas por servicio.",
+      "Preguntale cualquier cosa: cual es tu plato mas rentable, cuantos camareros necesitas el sabado, que proveedor te esta subiendo precios. Responde con datos reales de TU restaurante en segundos.",
   },
   {
-    icono: "👨‍🍳",
-    titulo: "Los platos salen mas rapido y sin errores",
+    icono: "⚡",
+    titulo: "Procesos que se ejecutan solos",
     descripcion:
-      "Cocina y barra ven solo lo suyo en pantalla. El cocinero marca listo y salta ticket al camarero. Los platos llegan calientes y en orden. Cero confusion.",
+      "Stock bajo → pedido al proveedor generado. Margen cayendo → te avisa y sugiere precios. Viernes flojos → te lo dice antes de que lo notes. Tu restaurante reacciona solo.",
   },
   {
-    icono: "💰",
-    titulo: "Tu caja cuadra siempre",
+    icono: "🍽️",
+    titulo: "Operativa impecable incluida",
     descripcion:
-      "Cada venta queda registrada. Cierres automaticos, control de descuadres y facturacion legal preparada para VERI*FACTU (obligatorio julio 2027). Tu trabajas, Alef se encarga.",
+      "Comanda en 3 toques, cocina coordinada en tiempo real, carta QR en 3 idiomas, facturacion VeriFactu. Todo lo que necesitas para el dia a dia — integrado y sin fricciones.",
   },
 ];
 
 const secundarias = [
-  { icono: "📲", texto: "Carta digital QR en 3 idiomas con pedidos, reservas y valoraciones" },
-  { icono: "💳", texto: "Caja diaria con cierres automaticos y control de descuadres" },
-  { icono: "📦", texto: "Stock con alertas de minimos y gestion de proveedores" },
-  { icono: "📈", texto: "Estadisticas de ventas, productos estrella y horas punta" },
-  { icono: "🗣️", texto: "Comandas por voz para horas de maximo ritmo" },
+  { icono: "📊", texto: "Finanzas automaticas: P&L, margenes, informe al contable sin Excel" },
+  { icono: "📦", texto: "Stock inteligente con alertas, prediccion de consumo y pedidos a proveedores" },
+  { icono: "🔔", texto: "Alertas proactivas: margen erosionado, tendencias negativas, facturas vencidas" },
+  { icono: "📈", texto: "Estadisticas avanzadas: hora punta, productos estrella, correlaciones" },
+  { icono: "🗣️", texto: "Comandas por voz en horas de maximo ritmo" },
   { icono: "🖥️", texto: "Funciona en PC, tablet y movil — sin instalar nada" },
-  { icono: "🖨️", texto: "Funciona con o sin pantallas de cocina — tu decides el flujo" },
+  { icono: "✅", texto: "Facturacion legal preparada para VERI*FACTU (obligatorio julio 2027)" },
   { icono: "🔧", texto: "Desarrollo a medida: adaptamos Alef a las necesidades de tu negocio" },
 ];
 
@@ -42,11 +42,11 @@ const Features = () => {
     <section className="Features bg-fondo-claro reveal" id="ventajas">
       <div className="Features-inner section--wide">
         <div className="Features-header">
-          <span className="Features-kicker">Lo que cambia en tu dia a dia</span>
-          <h2>Tu sala mas rapida. Tu cocina sin errores. Tu negocio bajo control.</h2>
+          <span className="Features-kicker">Automatizacion real para restaurantes</span>
+          <h2>Tu restaurante toma decisiones inteligentes. Automaticamente.</h2>
           <p>
-            Alef esta pensado para el servicio real — no para demos bonitas.
-            Esto es lo que notas desde el primer dia.
+            Alef no es un TPV — es un sistema inteligente que automatiza
+            la gestion de tu restaurante. Esto es lo que cambia desde el primer dia.
           </p>
         </div>
 
@@ -61,9 +61,9 @@ const Features = () => {
           ))}
         </div>
 
-        {/* 6 features secundarias - lista compacta */}
+        {/* features secundarias - lista compacta */}
         <div className="Features-secondary">
-          <h3 className="Features-secondary-title">Y ademas...</h3>
+          <h3 className="Features-secondary-title">Todo lo que necesitas, automatizado</h3>
           <div className="Features-secondary-grid">
             {secundarias.map((s, i) => (
               <div key={i} className="Features-secondary-item">

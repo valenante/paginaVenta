@@ -3,18 +3,18 @@ import { trackEvent } from "../../utils/trackEvent";
 import "./Comparativa.css";
 
 const filas = [
-  { feature: "Comandas digitales con buscador", alef: true, tpv: "parcial", papel: false },
-  { feature: "Cocina/barra en tiempo real", alef: true, tpv: false, papel: false },
-  { feature: "Tickets por seccion con notas", alef: true, tpv: "parcial", papel: false },
-  { feature: "Carta QR en 3 idiomas", alef: true, tpv: "extra", papel: false },
+  { feature: "IA que analiza tu negocio y sugiere decisiones", alef: true, tpv: false, papel: false },
+  { feature: "Alertas automaticas (margen bajo, stock, tendencias)", alef: true, tpv: false, papel: false },
+  { feature: "Prediccion de consumo y pedidos a proveedores", alef: true, tpv: false, papel: false },
+  { feature: "Informe financiero automatico para el contable", alef: true, tpv: false, papel: false },
+  { feature: "Cocina y barra coordinadas en tiempo real", alef: true, tpv: false, papel: false },
+  { feature: "Carta digital QR en 3 idiomas", alef: true, tpv: "extra", papel: false },
+  { feature: "Comandas por voz", alef: true, tpv: false, papel: false },
+  { feature: "Stock con alertas y gestion de proveedores", alef: true, tpv: "parcial", papel: false },
+  { feature: "Estadisticas de ventas y productos estrella", alef: true, tpv: "parcial", papel: false },
   { feature: "Facturacion VERI*FACTU", alef: true, tpv: "algunos", papel: false },
-  { feature: "Reservas online", alef: true, tpv: "extra", papel: false },
-  { feature: "Stock y proveedores", alef: true, tpv: "parcial", papel: false },
-  { feature: "Estadisticas de ventas", alef: true, tpv: "parcial", papel: false },
   { feature: "Funciona en cualquier dispositivo", alef: true, tpv: false, papel: true },
-  { feature: "Sin instalacion", alef: true, tpv: false, papel: true },
-  { feature: "Voz inteligente", alef: true, tpv: false, papel: false },
-  { feature: "Coste mensual", alef: "59€ + IVA", tpv: "50-200€ + licencia", papel: "0€" },
+  { feature: "Sin instalacion ni hardware especial", alef: true, tpv: false, papel: true },
 ];
 
 function renderCell(val) {
@@ -31,8 +31,8 @@ export default function Comparativa() {
           <span className="Comp-kicker">Comparativa</span>
           <h2>Alef vs lo que usas ahora</h2>
           <p>
-            Compara lo que Alef te da desde el primer dia frente a un TPV
-            tradicional o gestionar con papel y Excel.
+            La mayoria de TPVs solo toman comandas. Alef automatiza
+            la gestion completa de tu restaurante.
           </p>
         </div>
 
@@ -60,8 +60,8 @@ export default function Comparativa() {
         </div>
 
         <div className="Comp-cta">
-          <a href="#packs" className="btn btn-primario" onClick={() => trackEvent("click_cta", { location: "comparativa", label: "empezar_con_alef" })}>
-            Empezar con Alef
+          <a href="#contacto" className="btn btn-primario" onClick={() => trackEvent("click_cta", { location: "comparativa", label: "automatizar" })}>
+            Quiero automatizar mi restaurante
           </a>
         </div>
       </div>

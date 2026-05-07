@@ -29,29 +29,27 @@ const Introduccion = () => {
             </div>
 
             <h1 className="Introduccion-titulo">
-              Tu sala mas rapida.
-              Tu cocina sin errores.
-              Tu caja siempre cuadra.
+              Hacemos tu restaurante inteligente
             </h1>
 
             <p className="Introduccion-subtitulo">
-              Alef es el TPV web que agiliza tu servicio, coordina cocina y barra
-              en tiempo real y te da control total de tu negocio.
-              Sin instalar nada. Funciona en cualquier dispositivo.
+              Automatizamos los procesos que te roban tiempo — stock, proveedores,
+              finanzas, cocina, comandas — para que tu te centres en tus clientes.
+              Con un copiloto IA que conoce tu negocio mejor que nadie.
             </p>
 
             <div className="Introduccion-highlights">
-              <span>🔎 Comanda completa en 3 toques con buscador inteligente</span>
-              <span>👨‍🍳 Cocina ve el pedido al instante y marca listo cuando sale</span>
-              <span>🧾 Tickets claros por seccion con notas y orden de salida</span>
-              <span>📲 Carta digital QR en 3 idiomas con pedidos y reservas</span>
-              <span>📊 Estadisticas, stock, caja diaria y gestion completa</span>
-              <span>✅ Facturacion legal preparada para VERI*FACTU</span>
+              <span>📦 Tu stock se controla solo — avisa cuando falta y genera el pedido al proveedor</span>
+              <span>🧠 Una IA que analiza tu negocio — te dice que plato subir de precio y cuantos camareros necesitas</span>
+              <span>📊 Finanzas al dia sin Excel — margenes, P&L e informe al contable automatico</span>
+              <span>🍽️ Comandas, cocina y mesa sin fricciones — coordinacion en tiempo real</span>
+              <span>📱 Carta digital que vende sola — QR en 3 idiomas con pedidos y reservas</span>
+              <span>🔔 Alertas antes de que el problema exista — margen cayendo, stock bajo, viernes flojos</span>
             </div>
 
             <div className="Introduccion-botones">
-              <a href="#packs" className="Introduccion-boton principal">
-                Ver planes desde 59€/mes + IVA
+              <a href="#contacto" className="Introduccion-boton principal">
+                Quiero automatizar mi restaurante
               </a>
 
               <a href="#contacto" className="Introduccion-boton secundario">
@@ -61,16 +59,16 @@ const Introduccion = () => {
 
             <div className="Introduccion-metricas">
               <div>
-                <strong>3 toques</strong>
-                <span>comanda completa</span>
+                <strong>49 herramientas IA</strong>
+                <span>analizan tu negocio</span>
               </div>
               <div>
-                <strong>0 errores</strong>
-                <span>cocina recibe todo claro</span>
+                <strong>Automatico</strong>
+                <span>stock, compras, alertas</span>
               </div>
               <div>
-                <strong>59€/mes</strong>
-                <span>+ IVA · sin permanencia</span>
+                <strong>Tiempo real</strong>
+                <span>cocina, barra, sala</span>
               </div>
               <div>
                 <strong>1 dia</strong>
@@ -84,13 +82,13 @@ const Introduccion = () => {
         <div className="Introduccion-right">
           <div className="hero-orbit">
             <div className="hero-pill pill-voz">
-              🗣️ Comandas por voz en horas pico
+              🧠 IA: "Sube el pulpo un 8%, tu margen esta bajo"
             </div>
             <div className="hero-pill pill-cocina">
-              👨‍🍳 Cocina marca listo → ticket al camarero
+              📦 Stock bajo → pedido al proveedor automatico
             </div>
             <div className="hero-pill pill-carta">
-              📲 Tu carta QR en 3 idiomas con reservas
+              📊 Informe mensual generado y enviado al contable
             </div>
 
             <div className="hero-stack">

@@ -19,8 +19,7 @@ import StockPageShop from "./StockPageShop";
 // ✅ Staff (integrado como tab operativo)
 import StaffPanel from "./panel/StaffPanel";
 
-// ✅ Cortesias (invitaciones + comida personal)
-import CortesiasPage from "../components/Cortesias/CortesiasPage";
+// Cortesias movido a Finanzas como tab
 
 // ✅ Tiempos de cocina (SLA)
 import TiemposCocina from "./TiemposCocina/TiemposCocina";
@@ -50,7 +49,6 @@ const PANEL_BY_TIPO = {
     { key: "finanzas", label: "💰 Finanzas", permiso: "finanzas.view", feature: "finanzas_view", render: () => <FinanzasPage /> },
     { key: "tiempos", label: "⏱️ Tiempos cocina", permiso: null, feature: "motor_adaptativo_cocina", render: () => <TiemposCocina /> },
     { key: "replay", label: "🔄 Replay del día", permiso: "caja.view", feature: "estadisticas_avanzadas", render: () => <DayReplay /> },
-    { key: "cortesias", label: "🎁 Cortesias", permiso: "cortesias.view", feature: "reporting_avanzado", render: () => <CortesiasPage /> },
   ],
 
   shop: [

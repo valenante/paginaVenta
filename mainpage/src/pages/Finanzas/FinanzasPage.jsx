@@ -3,6 +3,7 @@ import PeriodoSelector from "./PeriodoSelector";
 import TabResumen from "./TabResumen";
 import TabProductos from "./TabProductos";
 import TabGastos from "./TabGastos";
+import CortesiasPage from "../../components/Cortesias/CortesiasPage";
 import { PERIODOS } from "./utils";
 import "./Finanzas.css";
 
@@ -10,6 +11,7 @@ const TABS = [
   { key: "resumen", label: "📊 Resumen" },
   { key: "productos", label: "🍽️ Productos" },
   { key: "gastos", label: "🧾 Gastos fijos" },
+  { key: "cortesias", label: "🎁 Cortesías" },
 ];
 
 function FinanzasHelpModal({ onClose }) {
@@ -122,7 +124,7 @@ export default function FinanzasPage() {
           <button className="fin-help-btn" onClick={() => setShowHelp(true)} title="Como funciona">
             ?
           </button>
-          {tab !== "gastos" && (
+          {tab !== "gastos" && tab !== "cortesias" && (
             <PeriodoSelector value={periodo} onChange={setPeriodo} />
           )}
         </div>
@@ -144,6 +146,7 @@ export default function FinanzasPage() {
         {tab === "resumen" && <TabResumen periodo={periodo} />}
         {tab === "productos" && <TabProductos periodo={periodo} />}
         {tab === "gastos" && <TabGastos />}
+        {tab === "cortesias" && <CortesiasPage />}
       </div>
 
       {showHelp && <FinanzasHelpModal onClose={() => setShowHelp(false)} />}

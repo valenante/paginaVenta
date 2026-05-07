@@ -3,15 +3,56 @@ import logoAlef from "../../assets/imagenes/alef.png";
 
 function formatMarkdown(text) {
   if (!text) return "";
+
+  // Parse markdown tables
+  const lines = text.split("\n");
+  const result = [];
+  let i = 0;
+
+  while (i < lines.length) {
+    // Detect table: line with |, followed by separator |---|, followed by more | lines
+    if (lines[i].includes("|") && lines[i + 1] && /^\|?[\s-:|]+\|/.test(lines[i + 1])) {
+      const headerCells = lines[i].split("|").map((c) => c.trim()).filter(Boolean);
+      i += 2; // skip header + separator
+      const rows = [];
+      while (i < lines.length && lines[i].includes("|")) {
+        rows.push(lines[i].split("|").map((c) => c.trim()).filter(Boolean));
+        i++;
+      }
+      let table = '<div class="copilot-table-wrap"><table class="copilot-table"><thead><tr>';
+      headerCells.forEach((h) => { table += `<th>${inlineFormat(h)}</th>`; });
+      table += "</tr></thead><tbody>";
+      rows.forEach((row) => {
+        table += "<tr>";
+        row.forEach((cell) => { table += `<td>${inlineFormat(cell)}</td>`; });
+        table += "</tr>";
+      });
+      table += "</tbody></table></div>";
+      result.push(table);
+      continue;
+    }
+
+    result.push(formatLine(lines[i]));
+    i++;
+  }
+
+  return result.join("<br/>");
+}
+
+function inlineFormat(text) {
   return text
     .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
     .replace(/(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)/g, "<em>$1</em>")
-    .replace(/`([^`]+)`/g, '<code class="copilot-code">$1</code>')
-    .replace(/^### (.+)$/gm, '<div class="copilot-h3">$1</div>')
-    .replace(/^## (.+)$/gm, '<div class="copilot-h2">$1</div>')
-    .replace(/^[-•] (.+)$/gm, '<div class="copilot-li">· $1</div>')
-    .replace(/^\d+\. (.+)$/gm, '<div class="copilot-li">$&</div>')
-    .replace(/\n/g, "<br/>");
+    .replace(/`([^`]+)`/g, '<code class="copilot-code">$1</code>');
+}
+
+function formatLine(line) {
+  let out = inlineFormat(line);
+  if (/^### (.+)$/.test(out)) return out.replace(/^### (.+)$/, '<div class="copilot-h3">$1</div>');
+  if (/^## (.+)$/.test(out)) return out.replace(/^## (.+)$/, '<div class="copilot-h2">$1</div>');
+  if (/^[-•] (.+)$/.test(out)) return out.replace(/^[-•] (.+)$/, '<div class="copilot-li">· $1</div>');
+  if (/^\d+\. (.+)$/.test(out)) return `<div class="copilot-li">${out}</div>`;
+  return out;
 }
 
 function TypingIndicator() {
@@ -82,7 +123,7 @@ function WelcomeMessage({ insights, insightsLoading, onInsightClick, onSuggestio
   );
 }
 
-export default function CopilotMessages({ messages, loading, toolStatus, insights, insightsLoading, onSuggestionClick }) {
+export default function CopilotMessages({ messages, loading, toolStatus, insights, insightsLoading, onSuggestionClick, onRetry }) {
   const bottomRef = useRef(null);
 
   useEffect(() => {
@@ -106,15 +147,27 @@ export default function CopilotMessages({ messages, loading, toolStatus, insight
     <div className="copilot-messages">
       {messages.map((msg, i) => (
         <div key={i} className={`copilot-msg copilot-msg--${msg.role}`}>
-          <div className={`copilot-msg__bubble copilot-msg__bubble--${msg.role}`}
-            dangerouslySetInnerHTML={
-              msg.role === "assistant"
-                ? { __html: formatMarkdown(msg.content) }
-                : undefined
-            }
-          >
-            {msg.role === "user" ? msg.content : undefined}
-          </div>
+          {msg.isError ? (
+            <div className="copilot-msg__bubble copilot-msg__bubble--error">
+              <span className="copilot-error__icon">⚠️</span>
+              <span>{msg.content}</span>
+              {onRetry && (
+                <button className="copilot-error__retry" onClick={onRetry}>
+                  Reintentar
+                </button>
+              )}
+            </div>
+          ) : (
+            <div className={`copilot-msg__bubble copilot-msg__bubble--${msg.role}`}
+              dangerouslySetInnerHTML={
+                msg.role === "assistant"
+                  ? { __html: formatMarkdown(msg.content) }
+                  : undefined
+              }
+            >
+              {msg.role === "user" ? msg.content : undefined}
+            </div>
+          )}
         </div>
       ))}
       {loading && toolStatus && (

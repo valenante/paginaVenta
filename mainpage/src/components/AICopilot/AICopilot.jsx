@@ -16,7 +16,7 @@ export default function AICopilot() {
     messages, conversationId, loading,
     conversations, convsLoading,
     insights, insightsLoading, toolStatus,
-    sendMessage, loadInsights, loadConversations, loadConversation,
+    sendMessage, retryLast, loadInsights, loadConversations, loadConversation,
     newConversation, deleteConversation,
   } = useCopilot();
 
@@ -55,6 +55,7 @@ export default function AICopilot() {
         insights={insights}
         insightsLoading={insightsLoading}
         onSend={sendMessage}
+        onRetry={retryLast}
         onClose={close}
         onFullscreen={openFull}
         onSuggestionClick={handleSuggestionClick}
@@ -72,6 +73,7 @@ export default function AICopilot() {
       convsLoading={convsLoading}
       conversationId={conversationId}
       onSend={sendMessage}
+      onRetry={retryLast}
       onClose={close}
       onLoadConversations={loadConversations}
       onLoadConversation={loadConversation}

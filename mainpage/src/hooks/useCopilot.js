@@ -21,10 +21,14 @@ export default function useCopilot() {
     else sessionStorage.removeItem(STORAGE_KEY);
   }, [conversationId]);
 
-  const [toolStatus, setToolStatus] = useState(null); // "Consultando ventas..."
+  const [toolStatus, setToolStatus] = useState(null);
+  const lastRetryRef = useRef(null); // store last message for retry
 
   const sendMessage = useCallback(async (text, imageData) => {
     if ((!text?.trim() && !imageData) || loading) return;
+
+    // Store for retry
+    lastRetryRef.current = { text, imageData };
 
     const displayText = imageData ? `📎 ${imageData.name}${text ? ` — ${text}` : ""}` : text;
     const userMsg = { role: "user", content: displayText, ts: new Date().toISOString() };
@@ -32,16 +36,11 @@ export default function useCopilot() {
     setLoading(true);
     setToolStatus(null);
 
-    // Add empty assistant message that we'll fill via streaming
-    const assistantIdx = { current: -1 };
-
     try {
       const baseUrl = api.defaults.baseURL || "";
       const headers = { "Content-Type": "application/json" };
-      // Get CSRF token from cookie if exists
       const csrfCookie = document.cookie.split(";").find((c) => c.trim().startsWith("alef_csrf=") || c.trim().startsWith("__Secure-alef_csrf="));
       if (csrfCookie) headers["x-csrf-token"] = csrfCookie.split("=").slice(1).join("=").trim();
-      // Get tenant
       const tenantId = sessionStorage.getItem("tenantId") || "";
       if (tenantId) headers["X-Tenant-ID"] = tenantId;
 
@@ -82,11 +81,10 @@ export default function useCopilot() {
             if (data.event === "start") {
               if (data.conversationId) setConversationId(data.conversationId);
               setMessages((prev) => [...prev, { role: "assistant", content: "", ts: new Date().toISOString() }]);
-              assistantIdx.current = -1; // will be last
             }
 
             if (data.event === "tool_call") {
-              const names = { get_resumen_dia: "resumen del día", get_rentabilidad: "rentabilidad", get_productos: "productos", get_costes: "costes", get_finanzas: "finanzas", get_ventas_hora: "ventas por hora", get_plato_estrella: "platos estrella", get_comparativa: "comparativa" };
+              const names = { get_resumen_dia: "resumen del día", get_rentabilidad: "rentabilidad", get_productos: "productos", get_costes: "costes", get_finanzas: "finanzas", get_ventas_hora: "ventas por hora", get_plato_estrella: "platos estrella", get_comparativa: "comparativa", get_ingredientes: "ingredientes", get_proveedores: "proveedores", get_correlacion: "correlaciones", get_mesas_abiertas: "mesas", search_producto_ingrediente: "productos" };
               setToolStatus(`🔍 Consultando ${names[data.name] || data.name}...`);
             }
 
@@ -104,19 +102,25 @@ export default function useCopilot() {
               setToolStatus(null);
             }
 
+            if (data.event === "error") {
+              // Server sent a classified error
+              throw new Error(data.message || "Error del servidor");
+            }
+
             if (data.event === "done") {
               // Final
             }
-          } catch { /* ignore parse errors */ }
+          } catch (e) {
+            if (e.message && e.message !== "Unexpected end of JSON input") throw e;
+          }
         }
       }
 
       if (!streamedText) {
-        // Fallback: no text streamed, show error
         setMessages((prev) => {
           const copy = [...prev];
           if (copy.length > 0 && !copy[copy.length - 1].content) {
-            copy[copy.length - 1] = { ...copy[copy.length - 1], content: "No se recibió respuesta." };
+            copy[copy.length - 1] = { ...copy[copy.length - 1], content: "No se recibió respuesta. Inténtalo de nuevo.", isError: true };
           }
           return copy;
         });
@@ -124,14 +128,29 @@ export default function useCopilot() {
     } catch (err) {
       const msg = err.message || "Error de conexión";
       setMessages((prev) => [
-        ...prev.filter((m) => m.content !== ""), // remove empty assistant placeholder if no stream
-        { role: "assistant", content: `Error: ${msg}`, ts: new Date().toISOString() },
+        ...prev.filter((m) => m.content !== ""),
+        { role: "assistant", content: msg, isError: true, ts: new Date().toISOString() },
       ]);
     } finally {
       setLoading(false);
       setToolStatus(null);
     }
   }, [conversationId, loading]);
+
+  const retryLast = useCallback(() => {
+    if (!lastRetryRef.current) return;
+    // Remove last error message + user message
+    setMessages((prev) => {
+      const copy = [...prev];
+      // Remove trailing error assistant msg
+      if (copy.length > 0 && copy[copy.length - 1].isError) copy.pop();
+      // Remove the user msg that triggered it
+      if (copy.length > 0 && copy[copy.length - 1].role === "user") copy.pop();
+      return copy;
+    });
+    const { text, imageData } = lastRetryRef.current;
+    sendMessage(text, imageData);
+  }, [sendMessage]);
 
   const loadConversations = useCallback(async () => {
     setConvsLoading(true);
@@ -205,6 +224,7 @@ export default function useCopilot() {
     insightsLoading,
     toolStatus,
     sendMessage,
+    retryLast,
     loadInsights,
     loadConversations,
     loadConversation,

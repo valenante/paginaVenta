@@ -210,6 +210,79 @@
 .copilot-h3 { font-weight: 600; font-size: 0.92rem; color: #e2e8f0; margin: 4px 0 2px; }
 .copilot-li { padding-left: 8px; margin: 2px 0; }
 
+/* ─── ERROR MESSAGES ─── */
+
+.copilot-msg__bubble--error {
+  max-width: 85%;
+  padding: 10px 14px;
+  border-radius: 14px;
+  font-size: 0.87rem;
+  line-height: 1.55;
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #fca5a5;
+  border-bottom-left-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.copilot-error__icon { font-size: 1rem; flex-shrink: 0; }
+
+.copilot-error__retry {
+  margin-left: auto;
+  padding: 4px 12px;
+  border-radius: 6px;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  background: rgba(239, 68, 68, 0.15);
+  color: #fca5a5;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+
+.copilot-error__retry:hover {
+  background: rgba(239, 68, 68, 0.3);
+  border-color: rgba(239, 68, 68, 0.6);
+  color: #fff;
+}
+
+/* ─── TABLES ─── */
+
+.copilot-table-wrap {
+  overflow-x: auto;
+  margin: 6px 0;
+  border-radius: 8px;
+}
+
+.copilot-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.78rem;
+}
+
+.copilot-table th {
+  padding: 6px 10px;
+  background: rgba(96, 181, 255, 0.12);
+  border-bottom: 1px solid rgba(96, 181, 255, 0.25);
+  color: #93d0ff;
+  font-weight: 700;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.copilot-table td {
+  padding: 5px 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  color: #cbd5e1;
+}
+
+.copilot-table tr:last-child td { border-bottom: none; }
+.copilot-table tr:hover td { background: rgba(255, 255, 255, 0.03); }
+
 /* ─── TOOL STATUS ─── */
 
 .copilot-tool-status {

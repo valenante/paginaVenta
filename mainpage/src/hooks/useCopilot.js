@@ -225,16 +225,21 @@ export default function useCopilot() {
 
   const submitFeedback = useCallback(async (messageIndex, rating) => {
     if (!conversationId) return;
+    // Optimistic update — show immediately
+    setMessages((prev) => {
+      const copy = [...prev];
+      if (copy[messageIndex]) copy[messageIndex] = { ...copy[messageIndex], feedback: rating };
+      return copy;
+    });
     try {
       await api.post(`/copilot/conversations/${conversationId}/feedback`, { messageIndex, rating });
-      // Update local message with feedback
+    } catch {
+      // Revert on error
       setMessages((prev) => {
         const copy = [...prev];
-        if (copy[messageIndex]) copy[messageIndex] = { ...copy[messageIndex], feedback: rating };
+        if (copy[messageIndex]) copy[messageIndex] = { ...copy[messageIndex], feedback: null };
         return copy;
       });
-    } catch {
-      // silently fail
     }
   }, [conversationId]);
 

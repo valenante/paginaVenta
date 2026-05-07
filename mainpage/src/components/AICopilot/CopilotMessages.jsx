@@ -123,7 +123,7 @@ function WelcomeMessage({ insights, insightsLoading, onInsightClick, onSuggestio
   );
 }
 
-export default function CopilotMessages({ messages, loading, toolStatus, insights, insightsLoading, onSuggestionClick, onRetry }) {
+export default function CopilotMessages({ messages, loading, toolStatus, insights, insightsLoading, onSuggestionClick, onRetry, onFeedback }) {
   const bottomRef = useRef(null);
 
   useEffect(() => {
@@ -158,15 +158,32 @@ export default function CopilotMessages({ messages, loading, toolStatus, insight
               )}
             </div>
           ) : (
-            <div className={`copilot-msg__bubble copilot-msg__bubble--${msg.role}`}
-              dangerouslySetInnerHTML={
-                msg.role === "assistant"
-                  ? { __html: formatMarkdown(msg.content) }
-                  : undefined
-              }
-            >
-              {msg.role === "user" ? msg.content : undefined}
-            </div>
+            <>
+              <div className={`copilot-msg__bubble copilot-msg__bubble--${msg.role}`}
+                dangerouslySetInnerHTML={
+                  msg.role === "assistant"
+                    ? { __html: formatMarkdown(msg.content) }
+                    : undefined
+                }
+              >
+                {msg.role === "user" ? msg.content : undefined}
+              </div>
+              {msg.role === "assistant" && msg.content && !loading && onFeedback && (
+                <div className="copilot-feedback">
+                  <button
+                    className={`copilot-feedback__btn ${msg.feedback === 1 ? "is-active" : ""}`}
+                    onClick={() => onFeedback(i, 1)}
+                    title="Respuesta útil"
+                  >👍</button>
+                  <button
+                    className={`copilot-feedback__btn ${msg.feedback === -1 ? "is-active" : ""}`}
+                    onClick={() => onFeedback(i, -1)}
+                    title="Respuesta incorrecta"
+                  >👎</button>
+                  {msg.model && <span className="copilot-feedback__model">{msg.model}</span>}
+                </div>
+              )}
+            </>
           )}
         </div>
       ))}

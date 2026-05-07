@@ -283,6 +283,52 @@
 .copilot-table tr:last-child td { border-bottom: none; }
 .copilot-table tr:hover td { background: rgba(255, 255, 255, 0.03); }
 
+/* ─── FEEDBACK BUTTONS ─── */
+
+.copilot-feedback {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 2px;
+  padding-left: 4px;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.copilot-msg:hover .copilot-feedback { opacity: 1; }
+.copilot-feedback:has(.is-active) { opacity: 1; }
+
+.copilot-feedback__btn {
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  font-size: 0.72rem;
+  cursor: pointer;
+  padding: 2px 6px;
+  color: #64748b;
+  transition: all 0.15s;
+  line-height: 1;
+}
+
+.copilot-feedback__btn:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.copilot-feedback__btn.is-active {
+  background: rgba(96, 181, 255, 0.15);
+  border-color: rgba(96, 181, 255, 0.3);
+  color: #93d0ff;
+}
+
+.copilot-feedback__model {
+  font-size: 0.62rem;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-left: 4px;
+}
+
 /* ─── TOOL STATUS ─── */
 
 .copilot-tool-status {

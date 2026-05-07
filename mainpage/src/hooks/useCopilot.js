@@ -108,7 +108,16 @@ export default function useCopilot() {
             }
 
             if (data.event === "done") {
-              // Final
+              // Attach metadata to last assistant message
+              if (data.model || data.toolsUsed) {
+                setMessages((prev) => {
+                  const copy = [...prev];
+                  if (copy.length > 0 && copy[copy.length - 1].role === "assistant") {
+                    copy[copy.length - 1] = { ...copy[copy.length - 1], model: data.model, toolsUsed: data.toolsUsed };
+                  }
+                  return copy;
+                });
+              }
             }
           } catch (e) {
             if (e.message && e.message !== "Unexpected end of JSON input") throw e;
@@ -214,6 +223,21 @@ export default function useCopilot() {
     }
   }, [conversationId, newConversation]);
 
+  const submitFeedback = useCallback(async (messageIndex, rating) => {
+    if (!conversationId) return;
+    try {
+      await api.post(`/copilot/conversations/${conversationId}/feedback`, { messageIndex, rating });
+      // Update local message with feedback
+      setMessages((prev) => {
+        const copy = [...prev];
+        if (copy[messageIndex]) copy[messageIndex] = { ...copy[messageIndex], feedback: rating };
+        return copy;
+      });
+    } catch {
+      // silently fail
+    }
+  }, [conversationId]);
+
   return {
     messages,
     conversationId,
@@ -225,6 +249,7 @@ export default function useCopilot() {
     toolStatus,
     sendMessage,
     retryLast,
+    submitFeedback,
     loadInsights,
     loadConversations,
     loadConversation,

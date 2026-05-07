@@ -35,7 +35,9 @@ export default function CopilotInput({ onSend, loading, fullscreen }) {
   const handleFile = useCallback((e) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    if (!file.type.startsWith("image/")) return;
+    const ALLOWED = ["image/", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "application/vnd.ms-excel", "text/csv", "application/csv"];
+    const isAllowed = ALLOWED.some((t) => file.type.startsWith(t) || file.type === t);
+    if (!isAllowed) { alert("Formato no soportado. Usa imagen, Excel (.xlsx) o CSV."); return; }
     if (file.size > 10 * 1024 * 1024) { alert("Imagen demasiado grande (máx 10MB)"); return; }
 
     const reader = new FileReader();
@@ -60,7 +62,7 @@ export default function CopilotInput({ onSend, loading, fullscreen }) {
           type="button"
           className="copilot-input__attach"
           onClick={() => fileRef.current?.click()}
-          title="Adjuntar imagen (factura, albarán...)"
+          title="Adjuntar archivo (imagen, Excel, CSV...)"
           disabled={loading}
         >
           📎
@@ -68,7 +70,7 @@ export default function CopilotInput({ onSend, loading, fullscreen }) {
         <input
           ref={fileRef}
           type="file"
-          accept="image/*"
+          accept="image/*,.xlsx,.xls,.csv"
           style={{ display: "none" }}
           onChange={handleFile}
         />

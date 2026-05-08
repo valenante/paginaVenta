@@ -3,12 +3,17 @@ import api from "../../utils/api";
 import ModalBase from "../MapaEditor/ModalBase";
 
 export default function RecibirFotoModal({ onClose, onDone }) {
+  const [mode, setMode] = useState("foto"); // foto, manual
   const [step, setStep] = useState("upload"); // upload, analyzing, preview, applying, done
   const [image, setImage] = useState(null); // { base64, mimeType, name }
   const [result, setResult] = useState(null); // { matched, unmatched }
   const [error, setError] = useState(null);
   const [selected, setSelected] = useState(new Set());
   const fileRef = useRef(null);
+
+  // Manual mode state
+  const [manualItems, setManualItems] = useState([{ nombre: "", cantidad: "", unidad: "unidad" }]);
+  const [manualSearching, setManualSearching] = useState(false);
 
   const handleFile = (file) => {
     if (!file) return;
@@ -78,14 +83,49 @@ export default function RecibirFotoModal({ onClose, onDone }) {
     });
   };
 
+  const aplicarManual = async () => {
+    const valid = manualItems.filter((i) => i.nombre.trim() && Number(i.cantidad) > 0);
+    if (!valid.length) return;
+    setStep("applying");
+    setError(null);
+    try {
+      // Search each item and apply
+      const items = [];
+      for (const item of valid) {
+        const { data } = await api.get("/stock/ingredientes", { params: { search: item.nombre, limit: 1 } });
+        const found = data?.items?.[0] || data?.[0];
+        if (found) {
+          items.push({ ingredienteId: found._id, cantidad: Number(item.cantidad) });
+        }
+      }
+      if (items.length) {
+        await api.post("/stock/albaran-vision/apply", { items });
+      }
+      setStep("done");
+      setTimeout(() => { onDone?.(); onClose(); }, 1500);
+    } catch (err) {
+      setError(err.response?.data?.message || "Error aplicando");
+      setStep("upload");
+    }
+  };
+
+  const addManualRow = () => setManualItems((prev) => [...prev, { nombre: "", cantidad: "", unidad: "unidad" }]);
+  const updateManualRow = (i, field, val) => setManualItems((prev) => prev.map((r, idx) => idx === i ? { ...r, [field]: val } : r));
+  const removeManualRow = (i) => setManualItems((prev) => prev.filter((_, idx) => idx !== i));
+
   const footer = (
     <div className="alefForm-actions">
       <button type="button" className="alefBtn ghost" onClick={onClose}>
         {step === "done" ? "Cerrar" : "Cancelar"}
       </button>
-      {step === "upload" && image && (
+      {mode === "foto" && step === "upload" && image && (
         <button type="button" className="alefBtn primary" onClick={analizar}>
           🤖 Analizar imagen
+        </button>
+      )}
+      {mode === "manual" && step === "upload" && (
+        <button type="button" className="alefBtn primary" onClick={aplicarManual} disabled={!manualItems.some((i) => i.nombre.trim() && Number(i.cantidad) > 0)}>
+          ✅ Aplicar al stock
         </button>
       )}
       {step === "preview" && (
@@ -111,8 +151,30 @@ export default function RecibirFotoModal({ onClose, onDone }) {
         </div>
       )}
 
-      {/* Step 1: Upload */}
+      {/* Mode toggle */}
       {step === "upload" && (
+        <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
+          <button
+            type="button"
+            className={`alefBtn ${mode === "foto" ? "primary" : "ghost"}`}
+            onClick={() => setMode("foto")}
+            style={{ fontSize: "0.82rem" }}
+          >
+            📷 Con foto
+          </button>
+          <button
+            type="button"
+            className={`alefBtn ${mode === "manual" ? "primary" : "ghost"}`}
+            onClick={() => setMode("manual")}
+            style={{ fontSize: "0.82rem" }}
+          >
+            ✏️ Manual
+          </button>
+        </div>
+      )}
+
+      {/* Step 1a: Upload foto */}
+      {step === "upload" && mode === "foto" && (
         <div style={{ textAlign: "center", padding: "20px 0" }}>
           <input
             ref={fileRef}
@@ -154,6 +216,71 @@ export default function RecibirFotoModal({ onClose, onDone }) {
               </button>
             </div>
           )}
+        </div>
+      )}
+
+      {/* Step 1b: Manual entry */}
+      {step === "upload" && mode === "manual" && (
+        <div>
+          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.82rem" }}>
+            <thead>
+              <tr style={{ color: "#94a3b8", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
+                <th style={{ textAlign: "left", padding: "6px 8px" }}>Producto / Ingrediente</th>
+                <th style={{ padding: "6px 8px", width: 100 }}>Cantidad</th>
+                <th style={{ padding: "6px 8px", width: 100 }}>Unidad</th>
+                <th style={{ width: 40 }}></th>
+              </tr>
+            </thead>
+            <tbody>
+              {manualItems.map((item, i) => (
+                <tr key={i} style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
+                  <td style={{ padding: "4px 8px" }}>
+                    <input
+                      type="text"
+                      placeholder="Nombre del producto..."
+                      value={item.nombre}
+                      onChange={(e) => updateManualRow(i, "nombre", e.target.value)}
+                      className="alefField-input"
+                      style={{ width: "100%", fontSize: "0.82rem" }}
+                    />
+                  </td>
+                  <td style={{ padding: "4px 8px" }}>
+                    <input
+                      type="number"
+                      min="0"
+                      placeholder="0"
+                      value={item.cantidad}
+                      onChange={(e) => updateManualRow(i, "cantidad", e.target.value)}
+                      className="alefField-input"
+                      style={{ width: "100%", fontSize: "0.82rem", textAlign: "center" }}
+                    />
+                  </td>
+                  <td style={{ padding: "4px 8px" }}>
+                    <select
+                      value={item.unidad}
+                      onChange={(e) => updateManualRow(i, "unidad", e.target.value)}
+                      className="alefField-input"
+                      style={{ width: "100%", fontSize: "0.82rem" }}
+                    >
+                      <option value="unidad">uds</option>
+                      <option value="caja">caja</option>
+                      <option value="kg">kg</option>
+                      <option value="litro">litro</option>
+                      <option value="botella">botella</option>
+                    </select>
+                  </td>
+                  <td style={{ padding: "4px 8px", textAlign: "center" }}>
+                    {manualItems.length > 1 && (
+                      <button type="button" onClick={() => removeManualRow(i)} style={{ background: "none", border: "none", color: "#ef4444", cursor: "pointer", fontSize: "0.9rem" }}>✕</button>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <button type="button" className="alefBtn ghost" onClick={addManualRow} style={{ fontSize: "0.78rem", marginTop: 8 }}>
+            + Añadir línea
+          </button>
         </div>
       )}
 

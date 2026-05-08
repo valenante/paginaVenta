@@ -94,15 +94,15 @@ export default function CartaAnalyticsPage({ onBack }) {
               <span className="kpi-label">📱 Escaneos QR</span>
             </div>
             <div className="carta-analytics__kpi">
-              <span className="kpi-value">{r.topVistos?.length || 0}</span>
+              <span className="kpi-value">{r.topVistos?.reduce((s, p) => s + p.vistas, 0) || 0}</span>
               <span className="kpi-label">👁 Productos vistos</span>
             </div>
             <div className="carta-analytics__kpi">
-              <span className="kpi-value">{r.pedidos}</span>
-              <span className="kpi-label">📦 Pedidos enviados</span>
+              <span className="kpi-value">{r.topPedidos?.reduce((s, p) => s + p.pedidos, 0) || 0}</span>
+              <span className="kpi-label">🛒 Añadidos al carrito</span>
             </div>
             <div className="carta-analytics__kpi">
-              <span className="kpi-value">{totalEventos}</span>
+              <span className="kpi-value">{dias.reduce((s, d) => s + (d.eventosRaw || d.funnel?.sesiones * 10 || 0), 0)}</span>
               <span className="kpi-label">📈 Interacciones</span>
             </div>
           </div>

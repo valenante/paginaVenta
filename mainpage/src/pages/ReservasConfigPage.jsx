@@ -167,8 +167,8 @@ export default function ReservasConfigPage() {
 
       <header className="reservas-config-header cfg-header">
         <div>
-          <h1>Gestión de reservas</h1>
-          <p className="text-suave">Consulta, filtra y administra las reservas del restaurante.</p>
+          <h1>Reservas inteligentes</h1>
+          <p className="text-suave">ALEF gestiona tus reservas: confirma sola, recuerda al cliente y detecta plantones.</p>
         </div>
         <div className="reservas-config-header-status">
           <span className="badge badge-exito">Reservas activas</span>
@@ -177,36 +177,67 @@ export default function ReservasConfigPage() {
 
       <div className="reservas-config-layout cfg-layout">
         <div className="reservas-config-main cfg-main">
-          {/* Toolbar + Stats */}
+          {/* Toolbar */}
           <section className="card config-card">
             <div className="config-card-header">
               <div>
-                <h2>Resumen y herramientas</h2>
-                <p className="config-card-subtitle">Estado general y acciones rápidas.</p>
+                <h2>Herramientas</h2>
               </div>
             </div>
-
             <div className="cfg-toolbar">
-              <button className="btn btn-secundario" onClick={() => setShowAjustes(true)}>Configuracion</button>
-              <button className="btn btn-secundario" onClick={cargarReservas} disabled={loading}>{loading ? "Cargando..." : "Refrescar"}</button>
+              <button className="btn btn-secundario" onClick={() => setShowAjustes(true)}>⚙️ Configuración</button>
+              <button className="btn btn-secundario" onClick={cargarReservas} disabled={loading}>{loading ? "Cargando..." : "🔄 Refrescar"}</button>
               <button className="btn btn-primario" onClick={() => setModal({ tipo: "nueva" })}>+ Nueva reserva</button>
             </div>
-
-            <div className="cfg-stats">
-              <article className="cfg-stat">
-                <span className="cfg-stat__label">Reservas visibles</span>
-                <strong>{reservas.length}</strong>
-              </article>
-              <article className="cfg-stat">
-                <span className="cfg-stat__label">Filtro fecha</span>
-                <strong>{fecha || "Todas"}</strong>
-              </article>
-              <article className="cfg-stat">
-                <span className="cfg-stat__label">Filtro estado</span>
-                <strong>{estado || "Todos"}</strong>
-              </article>
-            </div>
           </section>
+
+          {/* Intelligence cards */}
+          <div className="rc-intel-grid">
+            <article className="rc-intel-card">
+              <span className="rc-intel-card__icon">✅</span>
+              <div>
+                <strong className="rc-intel-card__title">Confirmación automática</strong>
+                <p className="rc-intel-card__desc">Las reservas se confirman solas si cumplen los criterios. Sin intervención.</p>
+              </div>
+            </article>
+            <article className="rc-intel-card">
+              <span className="rc-intel-card__icon">📩</span>
+              <div>
+                <strong className="rc-intel-card__title">Recordatorio 24h antes</strong>
+                <p className="rc-intel-card__desc">El cliente recibe un email automático el día antes de su reserva.</p>
+              </div>
+            </article>
+            <article className="rc-intel-card">
+              <span className="rc-intel-card__icon">⏰</span>
+              <div>
+                <strong className="rc-intel-card__title">Detección de plantones</strong>
+                <p className="rc-intel-card__desc">Si el cliente no llega en 30 min, ALEF lo marca automáticamente.</p>
+              </div>
+            </article>
+            <article className="rc-intel-card">
+              <span className="rc-intel-card__icon">📈</span>
+              <div>
+                <strong className="rc-intel-card__title">Overbooking inteligente</strong>
+                <p className="rc-intel-card__desc">Acepta reservas extra según tu tasa real de plantones. Sin riesgo.</p>
+              </div>
+            </article>
+          </div>
+
+          {/* Stats */}
+          <div className="cfg-stats">
+            <article className="cfg-stat">
+              <span className="cfg-stat__label">Reservas visibles</span>
+              <strong>{reservas.length}</strong>
+            </article>
+            <article className="cfg-stat">
+              <span className="cfg-stat__label">Filtro fecha</span>
+              <strong>{fecha || "Todas"}</strong>
+            </article>
+            <article className="cfg-stat">
+              <span className="cfg-stat__label">Filtro estado</span>
+              <strong>{estado || "Todos"}</strong>
+            </article>
+          </div>
 
           {/* Filters */}
           <section className="card config-card">

@@ -65,6 +65,19 @@ const MODULES = [
     info: "Se envía los lunes junto con el P&L.",
   },
   {
+    id: "umbrales",
+    icon: "📦",
+    title: "Umbrales de stock inteligentes",
+    description: "Calcula mínimos, críticos y máximos según el consumo real de cada producto.",
+    configKey: "autoThresholdsMode",
+    options: [
+      { value: "off", label: "Desactivado", desc: "Todo manual" },
+      { value: "sugerir", label: "Sugerir", desc: "Calcula y sugiere — tú decides si aplicar" },
+      { value: "auto", label: "Automático", desc: "Recalcula cada semana y aplica solo" },
+    ],
+    info: "Basado en consumo por día de semana (8 semanas) × lead time del proveedor. Ejecuta domingos.",
+  },
+  {
     id: "menu",
     icon: "📋",
     title: "Ingeniería de menú",

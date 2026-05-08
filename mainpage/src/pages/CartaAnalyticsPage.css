@@ -63,9 +63,11 @@
   padding: 16px 20px;
   font-size: 0.9rem;
   line-height: 1.6;
+  color: #d1d5db;
 }
 .carta-analytics__help-body p { margin: 0 0 12px; }
 .carta-analytics__help-body strong { color: #60a5fa; }
+.carta-analytics__help-head h3 { color: #fff; }
 .carta-analytics__rango {
   padding: 8px 18px;
   border-radius: 8px;

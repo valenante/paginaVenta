@@ -10,6 +10,7 @@ import ErrorToast from "../components/common/ErrorToast.jsx";
 import { normalizeApiError } from "../utils/normalizeApiError.js";
 import AlertaMensaje from "../components/AlertaMensaje/AlertaMensaje.jsx";
 import UpgradeBanner from "../components/UpgradeBanner/UpgradeBanner";
+import RecibirFotoModal from "../components/Proveedores/RecibirFotoModal";
 import "../styles/ProveedoresPage.css";
 
 const PAGE_SIZE_DEFAULT = 12;
@@ -45,6 +46,7 @@ export default function ProveedoresPage() {
   const [pageSize, setPageSize] = useState(PAGE_SIZE_DEFAULT);
 
   const [modal, setModal] = useState(null); // { type: "create" | "edit" | "delete", proveedor? }
+  const [showRecibirFoto, setShowRecibirFoto] = useState(false);
 
   // Si tu api.js ya mete x-tenant-id automáticamente, puedes borrar esto.
   const headersTenant = useMemo(() => {
@@ -173,6 +175,14 @@ export default function ProveedoresPage() {
               >
                 🛒 Hacer pedido
               </Link>
+
+              <button
+                className="btn btn-secundario"
+                type="button"
+                onClick={() => setShowRecibirFoto(true)}
+              >
+                📷 Recibir mercancía
+              </button>
 
               <button
                 className="btn btn-secundario"
@@ -421,6 +431,13 @@ export default function ProveedoresPage() {
             }"? Esta acción no se puede deshacer.`}
           onConfirm={() => handleDelete(modal?.proveedor?._id)}
           onClose={() => setModal(null)}
+        />
+      )}
+
+      {showRecibirFoto && (
+        <RecibirFotoModal
+          onClose={() => setShowRecibirFoto(false)}
+          onDone={() => fetchProveedores()}
         />
       )}
     </main>

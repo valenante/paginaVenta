@@ -70,6 +70,8 @@ const StockPage = () => {
   const [prodConfiguring, setProdConfiguring] = useState(null);
   const [prodSaving, setProdSaving] = useState(null);
   const [prodPage, setProdPage] = useState(1);
+  const [prodTipo, setProdTipo] = useState("todos"); // todos, plato, bebida
+  const [selectedCat, setSelectedCat] = useState(null); // null = vista categorías, string = vista productos
   const PROD_PER_PAGE = 50;
 
   // ── AbortControllers ──
@@ -121,6 +123,63 @@ const StockPage = () => {
   useEffect(() => {
     fetchLotesResumen();
   }, [fetchLotesResumen]);
+
+  // ── Umbrales inteligentes ──
+  const [thresholdsMode, setThresholdsMode] = useState("sugerir"); // off, sugerir, auto
+  const [sugerenciasMap, setSugerenciasMap] = useState(new Map()); // itemId → sugerencia
+  const [sugerenciasLoading, setSugerenciasLoading] = useState(false);
+  const [showUmbralesModal, setShowUmbralesModal] = useState(false);
+  const [sugerenciasList, setSugerenciasList] = useState([]);
+
+  const fetchSugerencias = useCallback(async () => {
+    setSugerenciasLoading(true);
+    try {
+      const [configRes, sugRes] = await Promise.all([
+        api.get("/config/automations").catch(() => ({ data: { data: { automations: {} } } })),
+        api.get("/stock/umbrales-sugeridos").catch(() => ({ data: { data: { items: [] } } })),
+      ]);
+      const mode = configRes.data?.data?.automations?.autoThresholdsMode || "sugerir";
+      setThresholdsMode(mode);
+
+      const items = sugRes.data?.data?.items || [];
+      setSugerenciasList(items);
+      const map = new Map();
+      for (const s of items) map.set(s.itemId, s);
+      setSugerenciasMap(map);
+    } catch { /* silent */ }
+    finally { setSugerenciasLoading(false); }
+  }, []);
+
+  useEffect(() => { fetchSugerencias(); }, [fetchSugerencias]);
+
+  const aplicarUmbral = useCallback(async (item) => {
+    try {
+      await api.post("/stock/umbrales-sugeridos/aplicar", { items: [item] });
+      showToast("Umbrales aplicados para " + item.nombre, "success");
+      // Refresh products + sugerencias
+      if (item.itemType === "producto") fetchProductos(); else fetchStock();
+      fetchSugerencias();
+    } catch { showToast("Error al aplicar umbrales", "error"); }
+  }, [fetchSugerencias]);
+
+  const ignorarUmbral = useCallback(async (item) => {
+    try {
+      const endpoint = item.itemType === "ingrediente" ? `/stock/ingrediente/${item.itemId}` : `/productos/${item.itemId}`;
+      await api.put(endpoint, { umbralManual: true });
+      // Remove from suggestions
+      setSugerenciasMap((prev) => { const next = new Map(prev); next.delete(item.itemId); return next; });
+      showToast("Umbral marcado como manual para " + item.nombre, "info");
+    } catch { showToast("Error", "error"); }
+  }, []);
+
+  const aplicarTodosUmbrales = useCallback(async (items) => {
+    try {
+      await api.post("/stock/umbrales-sugeridos/aplicar", { items });
+      showToast(`Umbrales aplicados para ${items.length} productos`, "success");
+      setShowUmbralesModal(false);
+      fetchProductos(); fetchStock(); fetchSugerencias();
+    } catch { showToast("Error al aplicar umbrales", "error"); }
+  }, [fetchSugerencias]);
 
   // ── Counters for tab badges (fix #11: use total from server for ingredients) ──
   const ingCriticos = useMemo(
@@ -206,6 +265,9 @@ const StockPage = () => {
 
   const productosFiltrados = useMemo(() => {
     let arr = productos;
+    if (prodTipo !== "todos") {
+      arr = arr.filter((p) => p.tipo === prodTipo);
+    }
     if (prodSearch) {
       const q = prodSearch.toLowerCase();
       arr = arr.filter((p) => p.nombre?.toLowerCase().includes(q) || p.categoria?.toLowerCase().includes(q));
@@ -213,22 +275,32 @@ const StockPage = () => {
     if (prodFiltro !== "todos") {
       arr = arr.filter((p) => getEstadoProd(p) === prodFiltro);
     }
+    if (selectedCat) {
+      arr = arr.filter((p) => (p.categoria || "Sin categoría") === selectedCat);
+    }
     return arr;
-  }, [productos, prodSearch, prodFiltro]);
+  }, [productos, prodSearch, prodFiltro, prodTipo, selectedCat]);
+
+  // Categorías con contadores (para vista de cards de categorías)
+  const categorias = useMemo(() => {
+    let arr = productos;
+    if (prodTipo !== "todos") arr = arr.filter((p) => p.tipo === prodTipo);
+    if (prodFiltro !== "todos") arr = arr.filter((p) => getEstadoProd(p) === prodFiltro);
+    const map = {};
+    for (const p of arr) {
+      const cat = p.categoria || "Sin categoría";
+      if (!map[cat]) map[cat] = { nombre: cat, total: 0, bajo: 0, critico: 0, agotado: 0 };
+      map[cat].total++;
+      const est = getEstadoProd(p);
+      if (est === "bajo") map[cat].bajo++;
+      if (est === "critico") map[cat].critico++;
+      if (est === "agotado") map[cat].agotado++;
+    }
+    return Object.values(map).sort((a, b) => a.nombre.localeCompare(b.nombre));
+  }, [productos, prodTipo, prodFiltro]);
 
   const prodTotalPages = Math.max(1, Math.ceil(productosFiltrados.length / PROD_PER_PAGE));
   const productosPaginados = productosFiltrados.slice((prodPage - 1) * PROD_PER_PAGE, prodPage * PROD_PER_PAGE);
-
-  // Agrupar por categoría
-  const productosPorCategoria = useMemo(() => {
-    const map = {};
-    for (const p of productosPaginados) {
-      const cat = p.categoria || "Sin categoría";
-      if (!map[cat]) map[cat] = [];
-      map[cat].push(p);
-    }
-    return Object.entries(map).sort((a, b) => a[0].localeCompare(b[0]));
-  }, [productosPaginados]);
 
   // Fix #6: flash with cleanup
   const showFlash = useCallback((msg) => {
@@ -340,8 +412,8 @@ const StockPage = () => {
       <header className="stock-header">
         <div className="stock-header-top">
           <div>
-            <h2>Gestión de stock</h2>
-            <p>Control centralizado de productos, ingredientes y alertas.</p>
+            <h2>Stock inteligente</h2>
+            <p>ALEF calcula umbrales óptimos basándose en tu consumo real.</p>
           </div>
 
           {/* ── KPI PILLS ── */}
@@ -419,6 +491,15 @@ const StockPage = () => {
         <>
           {/* toolbar */}
           <div className="stock-toolbar">
+            {thresholdsMode !== "off" && sugerenciasList.filter(s => s.cambio).length > 0 && (
+              <button
+                className="btn-nuevo"
+                onClick={() => setShowUmbralesModal(true)}
+                title="ALEF sugiere umbrales para tus productos"
+              >
+                🤖 Umbrales inteligentes ({sugerenciasList.filter(s => s.cambio).length})
+              </button>
+            )}
             <input
               className="stock-search"
               placeholder="Buscar producto o categoría…"
@@ -427,6 +508,21 @@ const StockPage = () => {
             />
 
             <div className="stock-header-filtros">
+              {[
+                ["todos", "Todos"],
+                ["plato", "🍽️ Platos"],
+                ["bebida", "🥂 Bebidas"],
+              ].map(([key, label]) => (
+                <button
+                  key={`tipo-${key}`}
+                  type="button"
+                  className={`btn-toggle ${prodTipo === key ? "active" : ""}`}
+                  onClick={() => { setProdTipo(key); setSelectedCat(null); setProdPage(1); }}
+                >
+                  {label}
+                </button>
+              ))}
+              <span style={{ width: 1, height: 20, background: "rgba(255,255,255,0.1)", margin: "0 4px" }} />
               {[
                 ["todos", "Todos"],
                 ["ok", "Disponible"],
@@ -438,7 +534,7 @@ const StockPage = () => {
                   key={key}
                   type="button"
                   className={`btn-toggle ${prodFiltro === key ? "active" : ""}`}
-                  onClick={() => { setProdFiltro(key); setProdPage(1); }}
+                  onClick={() => { setProdFiltro(key); setSelectedCat(null); setProdPage(1); }}
                 >
                   {label}
                 </button>
@@ -474,13 +570,35 @@ const StockPage = () => {
                 </p>
               )}
             </div>
+          ) : !selectedCat ? (
+            /* Vista de categorías (cards) */
+            <div className="stock-cat-grid">
+              {categorias.map((cat) => (
+                <button
+                  key={cat.nombre}
+                  className="stock-cat-card"
+                  onClick={() => { setSelectedCat(cat.nombre); setProdPage(1); }}
+                >
+                  <span className="stock-cat-card__name">{cat.nombre}</span>
+                  <span className="stock-cat-card__count">{cat.total} producto{cat.total !== 1 ? "s" : ""}</span>
+                  {(cat.bajo > 0 || cat.critico > 0 || cat.agotado > 0) && (
+                    <div className="stock-cat-card__alerts">
+                      {cat.agotado > 0 && <span className="stock-cat-alert stock-cat-alert--agotado">{cat.agotado} agotado{cat.agotado > 1 ? "s" : ""}</span>}
+                      {cat.critico > 0 && <span className="stock-cat-alert stock-cat-alert--critico">{cat.critico} crítico{cat.critico > 1 ? "s" : ""}</span>}
+                      {cat.bajo > 0 && <span className="stock-cat-alert stock-cat-alert--bajo">{cat.bajo} bajo{cat.bajo > 1 ? "s" : ""}</span>}
+                    </div>
+                  )}
+                </button>
+              ))}
+              {categorias.length === 0 && <div className="stock-empty-state">No hay categorías para estos filtros.</div>}
+            </div>
           ) : (
-            <div className="stock-categorized">
-              {productosPorCategoria.map(([categoria, prods]) => (
-                <div key={categoria} className="stock-cat-group">
-                  <h3 className="stock-cat-title">{categoria} <span className="stock-cat-count">{prods.length}</span></h3>
-                  <div className="stock-grid stock-grid--productos">
-              {prods.map((prod) => {
+            /* Vista de productos de una categoría */
+            <>
+              <button className="stock-back-cat" onClick={() => setSelectedCat(null)}>← Volver a categorías</button>
+              <h3 className="stock-cat-title">{selectedCat} <span className="stock-cat-count">{productosFiltrados.length}</span></h3>
+              <div className="stock-grid stock-grid--productos">
+              {productosPaginados.map((prod) => {
                 const estado = getEstadoProd(prod);
                 const isEditing = prodEditing?._id === prod._id;
                 const isConfiguring = prodConfiguring?._id === prod._id;
@@ -679,13 +797,35 @@ const StockPage = () => {
                         </>
                       )}
                     </div>
+
+                    {/* Sugerencia inteligente */}
+                    {thresholdsMode !== "off" && (() => {
+                      const sug = sugerenciasMap.get(String(prod._id));
+                      if (!sug || !sug.cambio) return null;
+                      if (thresholdsMode === "auto") {
+                        return (
+                          <div className="stock-sug stock-sug--auto">
+                            <span className="stock-sug__label">🤖 Gestionado por ALEF</span>
+                            <span className="stock-sug__detail">mín {sug.sugerido.minimo} | máx {sug.sugerido.maximo} ({sug.consumoDiario}/día)</span>
+                          </div>
+                        );
+                      }
+                      return (
+                        <div className="stock-sug">
+                          <span className="stock-sug__label">🤖 ALEF sugiere: mín {sug.sugerido.minimo} | máx {sug.sugerido.maximo}</span>
+                          <span className="stock-sug__detail">{sug.consumoDiario}/día × {sug.leadTime}d lead time</span>
+                          <div className="stock-sug__actions">
+                            <button className="stock-sug__btn stock-sug__btn--apply" onClick={() => aplicarUmbral(sug)}>Aplicar</button>
+                            <button className="stock-sug__btn stock-sug__btn--ignore" onClick={() => ignorarUmbral(sug)}>Ignorar</button>
+                          </div>
+                        </div>
+                      );
+                    })()}
                   </div>
                 );
               })}
-                  </div>
-                </div>
-              ))}
-            </div>
+              </div>
+            </>
           )}
 
           {/* Paginación productos */}
@@ -954,6 +1094,63 @@ const StockPage = () => {
       ══════════════════════════════════════════════════ */}
       {hasStockAvanzado && tab === "lotes" && (
         <LotesView onChange={fetchLotesResumen} />
+      )}
+
+      {/* Modal: Umbrales inteligentes global */}
+      {showUmbralesModal && (
+        <div className="stock-sug-modal-overlay" onClick={() => setShowUmbralesModal(false)}>
+          <div className="stock-sug-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="stock-sug-modal__header">
+              <h3>🤖 Umbrales inteligentes</h3>
+              <button className="stock-sug-modal__close" onClick={() => setShowUmbralesModal(false)}>✕</button>
+            </div>
+            <p className="stock-sug-modal__desc">
+              Basado en consumo por día de semana (8 semanas) × lead time del proveedor.
+              Selecciona los productos y aplica.
+            </p>
+            <div className="stock-sug-modal__table-wrap">
+              <table className="stock-sug-modal__table">
+                <thead>
+                  <tr>
+                    <th><input type="checkbox" defaultChecked onChange={(e) => {
+                      document.querySelectorAll('.stock-sug-modal__cb').forEach(cb => cb.checked = e.target.checked);
+                    }} /></th>
+                    <th>Producto</th>
+                    <th>Consumo/día</th>
+                    <th>Lead time</th>
+                    <th>Mín actual → sugerido</th>
+                    <th>Máx actual → sugerido</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {sugerenciasList.filter(s => s.cambio && !s.umbralManual).map((s) => (
+                    <tr key={s.itemId}>
+                      <td><input type="checkbox" className="stock-sug-modal__cb" defaultChecked data-id={s.itemId} /></td>
+                      <td><strong>{s.nombre}</strong></td>
+                      <td>{s.consumoDiario}</td>
+                      <td>{s.leadTime}d</td>
+                      <td>{s.actual.minimo} → <strong>{s.sugerido.minimo}</strong></td>
+                      <td>{s.actual.maximo} → <strong>{s.sugerido.maximo}</strong></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div className="stock-sug-modal__footer">
+              <button
+                className="btn-nuevo"
+                onClick={() => {
+                  const checked = [...document.querySelectorAll('.stock-sug-modal__cb:checked')].map(cb => cb.dataset.id);
+                  const items = sugerenciasList.filter(s => checked.includes(s.itemId));
+                  aplicarTodosUmbrales(items);
+                }}
+              >
+                Aplicar seleccionados
+              </button>
+              <button className="btn-editar" onClick={() => setShowUmbralesModal(false)}>Cancelar</button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

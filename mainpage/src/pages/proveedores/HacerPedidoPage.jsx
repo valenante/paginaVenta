@@ -325,10 +325,10 @@ export default function HacerPedidoPage() {
 
       <header className="hp-header cfg-header">
         <div>
-          <h1>🛒 Hacer pedido</h1>
+          <h1>🛒 Pedido inteligente</h1>
           <p className="text-suave">
-            Items por debajo del objetivo de stock, agrupados por proveedor. Ajusta
-            cantidades y descarga un PDF por proveedor para enviárselo.
+            Basado en tu consumo real por día de semana y el lead time de cada proveedor.
+            Ajusta cantidades si quieres y genera los PDFs para enviar.
           </p>
         </div>
         <div className="hp-header-status">

@@ -139,10 +139,9 @@ export default function ProveedoresPage() {
 
       <header className="proveedores-config-header cfg-header">
         <div>
-          <h1>🏭 Proveedores</h1>
+          <h1>Proveedores inteligentes</h1>
           <p className="text-suave">
-            Centraliza contactos, condiciones comerciales y acceso rápido al detalle
-            de cada proveedor desde una vista Alef clara y consistente.
+            ALEF analiza precios, entregas y stock para optimizar tus compras automáticamente.
           </p>
         </div>
 
@@ -155,18 +154,8 @@ export default function ProveedoresPage() {
 
       <div className="proveedores-config-layout cfg-layout">
         <div className="proveedores-config-main">
-          {/* RESUMEN + ACCIONES */}
+          {/* TOOLBAR + INTELLIGENCE */}
           <section className="card config-card">
-            <div className="config-card-header">
-              <div>
-                <h2>Resumen y herramientas</h2>
-                <p className="config-card-subtitle">
-                  Consulta el total de proveedores, cambia la paginación y ejecuta
-                  acciones rápidas de gestión.
-                </p>
-              </div>
-            </div>
-
             <div className="proveedores-config-toolbar cfg-toolbar">
               <button
                 className="btn btn-secundario"
@@ -174,7 +163,7 @@ export default function ProveedoresPage() {
                 onClick={fetchProveedores}
                 disabled={loading}
               >
-                {loading ? "Cargando…" : "Refrescar"}
+                {loading ? "Cargando…" : "🔄 Refrescar"}
               </button>
 
               <Link
@@ -195,19 +184,21 @@ export default function ProveedoresPage() {
             </div>
 
             <div className="proveedores-config-stats cfg-stats">
-              <article className="proveedores-config-stat cfg-stat">
-                <span className="proveedores-config-stat__label cfg-stat__label">Total</span>
-                <strong>{total}</strong>
+              <article className="cfg-stat">
+                <span className="cfg-stat__label">📦 Pedidos automáticos</span>
+                <span className="text-suave" style={{ fontSize: "0.78rem" }}>ALEF detecta stock bajo y crea pedidos por ti</span>
               </article>
-
-              <article className="proveedores-config-stat cfg-stat">
-                <span className="proveedores-config-stat__label cfg-stat__label">Página actual</span>
-                <strong>{page}</strong>
+              <article className="cfg-stat">
+                <span className="cfg-stat__label">📊 Predicción de consumo</span>
+                <span className="text-suave" style={{ fontSize: "0.78rem" }}>Calcula cuánto necesitas según día de semana</span>
               </article>
-
-              <article className="proveedores-config-stat cfg-stat">
-                <span className="proveedores-config-stat__label cfg-stat__label">Total páginas</span>
-                <strong>{totalPages}</strong>
+              <article className="cfg-stat">
+                <span className="cfg-stat__label">💰 Control de precios</span>
+                <span className="text-suave" style={{ fontSize: "0.78rem" }}>Alerta si un proveedor sube precios</span>
+              </article>
+              <article className="cfg-stat">
+                <span className="cfg-stat__label">⏱️ Lead time</span>
+                <span className="text-suave" style={{ fontSize: "0.78rem" }}>Pide con tiempo para que llegue antes de que se agote</span>
               </article>
             </div>
           </section>

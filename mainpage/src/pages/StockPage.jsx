@@ -70,7 +70,7 @@ const StockPage = () => {
   const [prodConfiguring, setProdConfiguring] = useState(null);
   const [prodSaving, setProdSaving] = useState(null);
   const [prodPage, setProdPage] = useState(1);
-  const PROD_PER_PAGE = 12;
+  const PROD_PER_PAGE = 50;
 
   // ── AbortControllers ──
   const ingControllerRef = useRef(null);
@@ -218,6 +218,17 @@ const StockPage = () => {
 
   const prodTotalPages = Math.max(1, Math.ceil(productosFiltrados.length / PROD_PER_PAGE));
   const productosPaginados = productosFiltrados.slice((prodPage - 1) * PROD_PER_PAGE, prodPage * PROD_PER_PAGE);
+
+  // Agrupar por categoría
+  const productosPorCategoria = useMemo(() => {
+    const map = {};
+    for (const p of productosPaginados) {
+      const cat = p.categoria || "Sin categoría";
+      if (!map[cat]) map[cat] = [];
+      map[cat].push(p);
+    }
+    return Object.entries(map).sort((a, b) => a[0].localeCompare(b[0]));
+  }, [productosPaginados]);
 
   // Fix #6: flash with cleanup
   const showFlash = useCallback((msg) => {
@@ -464,8 +475,12 @@ const StockPage = () => {
               )}
             </div>
           ) : (
-            <div className="stock-grid stock-grid--productos">
-              {productosPaginados.map((prod) => {
+            <div className="stock-categorized">
+              {productosPorCategoria.map(([categoria, prods]) => (
+                <div key={categoria} className="stock-cat-group">
+                  <h3 className="stock-cat-title">{categoria} <span className="stock-cat-count">{prods.length}</span></h3>
+                  <div className="stock-grid stock-grid--productos">
+              {prods.map((prod) => {
                 const estado = getEstadoProd(prod);
                 const isEditing = prodEditing?._id === prod._id;
                 const isConfiguring = prodConfiguring?._id === prod._id;
@@ -667,6 +682,9 @@ const StockPage = () => {
                   </div>
                 );
               })}
+                  </div>
+                </div>
+              ))}
             </div>
           )}
 

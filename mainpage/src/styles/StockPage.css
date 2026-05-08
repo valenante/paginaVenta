@@ -273,6 +273,37 @@
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
 }
 
+/* ===== CATEGORY GROUPS ===== */
+.stock-categorized {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.stock-cat-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.stock-cat-title {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--color-text, #f1f5f9);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--color-border, rgba(255, 255, 255, 0.08));
+  margin: 0;
+}
+
+.stock-cat-count {
+  font-weight: 500;
+  color: var(--color-text-secondary, #64748b);
+  font-size: 0.78rem;
+  margin-left: 6px;
+}
+
 /* ===== CARD ===== */
 .stock-card {
   position: relative;

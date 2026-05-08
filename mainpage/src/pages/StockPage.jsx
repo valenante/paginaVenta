@@ -12,6 +12,7 @@ import ModalConfirmacion from "../components/Modal/ModalConfirmacion.jsx";
 import EditarIngredienteModal from "../components/Stock/EditarIngredienteModal";
 import HistorialMovimientosModal from "../components/Stock/HistorialMovimientosModal";
 import LotesView from "../components/Stock/LotesView.jsx";
+import ModalBase from "../components/MapaEditor/ModalBase";
 import { formatStock } from "../utils/stockFormat";
 
 import "../styles/StockPage.css";
@@ -124,62 +125,12 @@ const StockPage = () => {
     fetchLotesResumen();
   }, [fetchLotesResumen]);
 
-  // ── Umbrales inteligentes ──
-  const [thresholdsMode, setThresholdsMode] = useState("sugerir"); // off, sugerir, auto
-  const [sugerenciasMap, setSugerenciasMap] = useState(new Map()); // itemId → sugerencia
+  // ── Umbrales inteligentes (state) ──
+  const [thresholdsMode, setThresholdsMode] = useState("sugerir");
+  const [sugerenciasMap, setSugerenciasMap] = useState(new Map());
   const [sugerenciasLoading, setSugerenciasLoading] = useState(false);
   const [showUmbralesModal, setShowUmbralesModal] = useState(false);
   const [sugerenciasList, setSugerenciasList] = useState([]);
-
-  const fetchSugerencias = useCallback(async () => {
-    setSugerenciasLoading(true);
-    try {
-      const [configRes, sugRes] = await Promise.all([
-        api.get("/config/automations").catch(() => ({ data: { data: { automations: {} } } })),
-        api.get("/stock/umbrales-sugeridos").catch(() => ({ data: { data: { items: [] } } })),
-      ]);
-      const mode = configRes.data?.data?.automations?.autoThresholdsMode || "sugerir";
-      setThresholdsMode(mode);
-
-      const items = sugRes.data?.data?.items || [];
-      setSugerenciasList(items);
-      const map = new Map();
-      for (const s of items) map.set(s.itemId, s);
-      setSugerenciasMap(map);
-    } catch { /* silent */ }
-    finally { setSugerenciasLoading(false); }
-  }, []);
-
-  useEffect(() => { fetchSugerencias(); }, [fetchSugerencias]);
-
-  const aplicarUmbral = useCallback(async (item) => {
-    try {
-      await api.post("/stock/umbrales-sugeridos/aplicar", { items: [item] });
-      showToast("Umbrales aplicados para " + item.nombre, "success");
-      // Refresh products + sugerencias
-      if (item.itemType === "producto") fetchProductos(); else fetchStock();
-      fetchSugerencias();
-    } catch { showToast("Error al aplicar umbrales", "error"); }
-  }, [fetchSugerencias]);
-
-  const ignorarUmbral = useCallback(async (item) => {
-    try {
-      const endpoint = item.itemType === "ingrediente" ? `/stock/ingrediente/${item.itemId}` : `/productos/${item.itemId}`;
-      await api.put(endpoint, { umbralManual: true });
-      // Remove from suggestions
-      setSugerenciasMap((prev) => { const next = new Map(prev); next.delete(item.itemId); return next; });
-      showToast("Umbral marcado como manual para " + item.nombre, "info");
-    } catch { showToast("Error", "error"); }
-  }, []);
-
-  const aplicarTodosUmbrales = useCallback(async (items) => {
-    try {
-      await api.post("/stock/umbrales-sugeridos/aplicar", { items });
-      showToast(`Umbrales aplicados para ${items.length} productos`, "success");
-      setShowUmbralesModal(false);
-      fetchProductos(); fetchStock(); fetchSugerencias();
-    } catch { showToast("Error al aplicar umbrales", "error"); }
-  }, [fetchSugerencias]);
 
   // ── Counters for tab badges (fix #11: use total from server for ingredients) ──
   const ingCriticos = useMemo(
@@ -254,6 +205,54 @@ const StockPage = () => {
     fetchProductos();
     return () => prodControllerRef.current?.abort();
   }, [fetchProductos]);
+
+  // ── Umbrales inteligentes (callbacks — after fetchProductos/fetchStock are defined) ──
+  const fetchSugerencias = useCallback(async () => {
+    setSugerenciasLoading(true);
+    try {
+      const [configRes, sugRes] = await Promise.all([
+        api.get("/config/automations").catch(() => ({ data: { data: { automations: {} } } })),
+        api.get("/stock/umbrales-sugeridos").catch(() => ({ data: { data: { items: [] } } })),
+      ]);
+      setThresholdsMode(configRes.data?.data?.automations?.autoThresholdsMode || "sugerir");
+      const items = sugRes.data?.data?.items || sugRes.data?.items || [];
+      console.log("[stock] sugerencias loaded:", items.length, "mode:", configRes.data?.data?.automations?.autoThresholdsMode);
+      setSugerenciasList(items);
+      const map = new Map();
+      for (const s of items) map.set(s.itemId, s);
+      setSugerenciasMap(map);
+    } catch (err) { console.warn("[stock] fetchSugerencias error:", err.message); }
+    finally { setSugerenciasLoading(false); }
+  }, []);
+
+  useEffect(() => { fetchSugerencias(); }, [fetchSugerencias]);
+
+  const aplicarUmbral = useCallback(async (item) => {
+    try {
+      await api.post("/stock/umbrales-sugeridos/aplicar", { items: [item] });
+      showToast("Umbrales aplicados para " + item.nombre, "success");
+      fetchProductos(); fetchSugerencias();
+    } catch { showToast("Error al aplicar umbrales", "error"); }
+  }, [fetchProductos, fetchSugerencias, showToast]);
+
+  const ignorarUmbral = useCallback(async (item) => {
+    try {
+      const endpoint = item.itemType === "ingrediente" ? `/stock/ingrediente/${item.itemId}` : `/productos/${item.itemId}`;
+      await api.put(endpoint, { umbralManual: true });
+      setSugerenciasMap((prev) => { const next = new Map(prev); next.delete(item.itemId); return next; });
+      setSugerenciasList((prev) => prev.filter((s) => s.itemId !== item.itemId));
+      showToast("Umbral manual para " + item.nombre, "info");
+    } catch { showToast("Error", "error"); }
+  }, [showToast]);
+
+  const aplicarTodosUmbrales = useCallback(async (items) => {
+    try {
+      await api.post("/stock/umbrales-sugeridos/aplicar", { items });
+      showToast(`Umbrales aplicados para ${items.length} productos`, "success");
+      setShowUmbralesModal(false);
+      fetchProductos(); fetchSugerencias();
+    } catch { showToast("Error al aplicar umbrales", "error"); }
+  }, [fetchProductos, fetchSugerencias, showToast]);
 
   /* ================================================================
      Helpers
@@ -1098,47 +1097,18 @@ const StockPage = () => {
 
       {/* Modal: Umbrales inteligentes global */}
       {showUmbralesModal && (
-        <div className="stock-sug-modal-overlay" onClick={() => setShowUmbralesModal(false)}>
-          <div className="stock-sug-modal" onClick={(e) => e.stopPropagation()}>
-            <div className="stock-sug-modal__header">
-              <h3>🤖 Umbrales inteligentes</h3>
-              <button className="stock-sug-modal__close" onClick={() => setShowUmbralesModal(false)}>✕</button>
-            </div>
-            <p className="stock-sug-modal__desc">
-              Basado en consumo por día de semana (8 semanas) × lead time del proveedor.
-              Selecciona los productos y aplica.
-            </p>
-            <div className="stock-sug-modal__table-wrap">
-              <table className="stock-sug-modal__table">
-                <thead>
-                  <tr>
-                    <th><input type="checkbox" defaultChecked onChange={(e) => {
-                      document.querySelectorAll('.stock-sug-modal__cb').forEach(cb => cb.checked = e.target.checked);
-                    }} /></th>
-                    <th>Producto</th>
-                    <th>Consumo/día</th>
-                    <th>Lead time</th>
-                    <th>Mín actual → sugerido</th>
-                    <th>Máx actual → sugerido</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {sugerenciasList.filter(s => s.cambio && !s.umbralManual).map((s) => (
-                    <tr key={s.itemId}>
-                      <td><input type="checkbox" className="stock-sug-modal__cb" defaultChecked data-id={s.itemId} /></td>
-                      <td><strong>{s.nombre}</strong></td>
-                      <td>{s.consumoDiario}</td>
-                      <td>{s.leadTime}d</td>
-                      <td>{s.actual.minimo} → <strong>{s.sugerido.minimo}</strong></td>
-                      <td>{s.actual.maximo} → <strong>{s.sugerido.maximo}</strong></td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            <div className="stock-sug-modal__footer">
+        <ModalBase
+          open={true}
+          title="🤖 Umbrales inteligentes"
+          subtitle="Basado en consumo por día de semana (8 semanas) × lead time del proveedor."
+          onClose={() => setShowUmbralesModal(false)}
+          width={900}
+          footer={
+            <div className="alefForm-actions">
+              <button type="button" className="alefBtn ghost" onClick={() => setShowUmbralesModal(false)}>Cancelar</button>
               <button
-                className="btn-nuevo"
+                type="button"
+                className="alefBtn primary"
                 onClick={() => {
                   const checked = [...document.querySelectorAll('.stock-sug-modal__cb:checked')].map(cb => cb.dataset.id);
                   const items = sugerenciasList.filter(s => checked.includes(s.itemId));
@@ -1147,10 +1117,38 @@ const StockPage = () => {
               >
                 Aplicar seleccionados
               </button>
-              <button className="btn-editar" onClick={() => setShowUmbralesModal(false)}>Cancelar</button>
             </div>
+          }
+        >
+          <div style={{ maxHeight: "60vh", overflowY: "auto" }}>
+            <table className="stock-sug-table" style={{ width: "100%", borderCollapse: "collapse" }}>
+              <thead>
+                <tr>
+                  <th style={{ width: 30 }}><input type="checkbox" defaultChecked onChange={(e) => {
+                    document.querySelectorAll('.stock-sug-modal__cb').forEach(cb => cb.checked = e.target.checked);
+                  }} /></th>
+                  <th>Producto</th>
+                  <th>Consumo/día</th>
+                  <th>Lead time</th>
+                  <th>Mín actual → sugerido</th>
+                  <th>Máx actual → sugerido</th>
+                </tr>
+              </thead>
+              <tbody>
+                {sugerenciasList.filter(s => s.cambio && !s.umbralManual).map((s) => (
+                  <tr key={s.itemId}>
+                    <td><input type="checkbox" className="stock-sug-modal__cb" defaultChecked data-id={s.itemId} /></td>
+                    <td><strong>{s.nombre}</strong></td>
+                    <td>{s.consumoDiario}</td>
+                    <td>{s.leadTime}d</td>
+                    <td>{s.actual.minimo} → <strong style={{ color: "#60b5ff" }}>{s.sugerido.minimo}</strong></td>
+                    <td>{s.actual.maximo} → <strong style={{ color: "#60b5ff" }}>{s.sugerido.maximo}</strong></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
-        </div>
+        </ModalBase>
       )}
     </div>
   );

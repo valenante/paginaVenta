@@ -1,6 +1,5 @@
 .auto-root {
   padding: 20px 24px;
-  max-width: 960px;
 }
 
 .auto-header {
@@ -53,9 +52,21 @@
 }
 
 .auto-grid {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   gap: 12px;
+}
+
+@media (max-width: 1100px) {
+  .auto-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 700px) {
+  .auto-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .auto-card {
@@ -107,8 +118,8 @@
 /* Options (radio buttons) */
 .auto-card__options {
   display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 6px;
 }
 
 .auto-option {

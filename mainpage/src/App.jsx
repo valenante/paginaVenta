@@ -219,7 +219,7 @@ export default function App() {
               <ClienteAuthProvider>
                 <CookieBanner />
                 <WhatsAppFloatingGate />
-                <AICopilotGate />
+                <AICopilot />
                 <ErrorBoundary>
                   <Suspense fallback={<LoadingScreen />}>
                     <AppRoutes />

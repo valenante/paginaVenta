@@ -115,21 +115,38 @@ export default function RecibirFotoModal({ onClose, onDone }) {
 
   const footer = (
     <div className="alefForm-actions">
-      <button type="button" className="alefBtn ghost" onClick={onClose}>
+      <button type="button" onClick={onClose} style={{
+        padding: "8px 20px", borderRadius: 10, border: "1px solid rgba(255,255,255,0.1)",
+        background: "rgba(255,255,255,0.04)", color: "#94a3b8", fontWeight: 700,
+        fontSize: "0.84rem", cursor: "pointer", fontFamily: "inherit",
+      }}>
         {step === "done" ? "Cerrar" : "Cancelar"}
       </button>
       {mode === "foto" && step === "upload" && image && (
-        <button type="button" className="alefBtn primary" onClick={analizar}>
+        <button type="button" onClick={analizar} style={{
+          padding: "8px 20px", borderRadius: 10, border: "none",
+          background: "linear-gradient(135deg, #2f7ed8, #60b5ff)", color: "#fff",
+          fontWeight: 700, fontSize: "0.84rem", cursor: "pointer", fontFamily: "inherit",
+        }}>
           🤖 Analizar imagen
         </button>
       )}
       {mode === "manual" && step === "upload" && (
-        <button type="button" className="alefBtn primary" onClick={aplicarManual} disabled={!manualItems.some((i) => i.nombre.trim() && Number(i.cantidad) > 0)}>
+        <button type="button" onClick={aplicarManual} disabled={!manualItems.some((i) => i.nombre.trim() && Number(i.cantidad) > 0)} style={{
+          padding: "8px 20px", borderRadius: 10, border: "none",
+          background: "linear-gradient(135deg, #2f7ed8, #60b5ff)", color: "#fff",
+          fontWeight: 700, fontSize: "0.84rem", cursor: "pointer", fontFamily: "inherit",
+          opacity: manualItems.some((i) => i.nombre.trim() && Number(i.cantidad) > 0) ? 1 : 0.4,
+        }}>
           ✅ Aplicar al stock
         </button>
       )}
       {step === "preview" && (
-        <button type="button" className="alefBtn primary" onClick={aplicar}>
+        <button type="button" onClick={aplicar} style={{
+          padding: "8px 20px", borderRadius: 10, border: "none",
+          background: "linear-gradient(135deg, #2f7ed8, #60b5ff)", color: "#fff",
+          fontWeight: 700, fontSize: "0.84rem", cursor: "pointer", fontFamily: "inherit",
+        }}>
           ✅ Aplicar {selected.size} al stock
         </button>
       )}
@@ -153,20 +170,40 @@ export default function RecibirFotoModal({ onClose, onDone }) {
 
       {/* Mode toggle */}
       {step === "upload" && (
-        <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
+        <div style={{ display: "flex", gap: 6, marginBottom: 16 }}>
           <button
             type="button"
-            className={`alefBtn ${mode === "foto" ? "primary" : "ghost"}`}
             onClick={() => setMode("foto")}
-            style={{ fontSize: "0.82rem" }}
+            style={{
+              padding: "8px 18px",
+              borderRadius: 10,
+              border: mode === "foto" ? "1px solid rgba(96,181,255,0.5)" : "1px solid rgba(255,255,255,0.1)",
+              background: mode === "foto" ? "linear-gradient(135deg, rgba(96,181,255,0.2), rgba(96,181,255,0.1))" : "rgba(255,255,255,0.04)",
+              color: mode === "foto" ? "#60b5ff" : "#94a3b8",
+              fontWeight: 700,
+              fontSize: "0.84rem",
+              cursor: "pointer",
+              fontFamily: "inherit",
+              transition: "all 0.15s",
+            }}
           >
             📷 Con foto
           </button>
           <button
             type="button"
-            className={`alefBtn ${mode === "manual" ? "primary" : "ghost"}`}
             onClick={() => setMode("manual")}
-            style={{ fontSize: "0.82rem" }}
+            style={{
+              padding: "8px 18px",
+              borderRadius: 10,
+              border: mode === "manual" ? "1px solid rgba(96,181,255,0.5)" : "1px solid rgba(255,255,255,0.1)",
+              background: mode === "manual" ? "linear-gradient(135deg, rgba(96,181,255,0.2), rgba(96,181,255,0.1))" : "rgba(255,255,255,0.04)",
+              color: mode === "manual" ? "#60b5ff" : "#94a3b8",
+              fontWeight: 700,
+              fontSize: "0.84rem",
+              cursor: "pointer",
+              fontFamily: "inherit",
+              transition: "all 0.15s",
+            }}
           >
             ✏️ Manual
           </button>
@@ -240,8 +277,7 @@ export default function RecibirFotoModal({ onClose, onDone }) {
                       placeholder="Nombre del producto..."
                       value={item.nombre}
                       onChange={(e) => updateManualRow(i, "nombre", e.target.value)}
-                      className="alefField-input"
-                      style={{ width: "100%", fontSize: "0.82rem" }}
+                      style={{ width: "100%", fontSize: "0.82rem", padding: "8px 10px", borderRadius: 8, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.04)", color: "#e2e8f0", fontFamily: "inherit", outline: "none" }}
                     />
                   </td>
                   <td style={{ padding: "4px 8px" }}>
@@ -251,16 +287,14 @@ export default function RecibirFotoModal({ onClose, onDone }) {
                       placeholder="0"
                       value={item.cantidad}
                       onChange={(e) => updateManualRow(i, "cantidad", e.target.value)}
-                      className="alefField-input"
-                      style={{ width: "100%", fontSize: "0.82rem", textAlign: "center" }}
+                      style={{ width: "100%", fontSize: "0.82rem", padding: "8px 10px", borderRadius: 8, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.04)", color: "#e2e8f0", fontFamily: "inherit", outline: "none", textAlign: "center" }}
                     />
                   </td>
                   <td style={{ padding: "4px 8px" }}>
                     <select
                       value={item.unidad}
                       onChange={(e) => updateManualRow(i, "unidad", e.target.value)}
-                      className="alefField-input"
-                      style={{ width: "100%", fontSize: "0.82rem" }}
+                      style={{ width: "100%", fontSize: "0.82rem", padding: "8px 10px", borderRadius: 8, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.04)", color: "#e2e8f0", fontFamily: "inherit", outline: "none" }}
                     >
                       <option value="unidad">uds</option>
                       <option value="caja">caja</option>
@@ -278,7 +312,11 @@ export default function RecibirFotoModal({ onClose, onDone }) {
               ))}
             </tbody>
           </table>
-          <button type="button" className="alefBtn ghost" onClick={addManualRow} style={{ fontSize: "0.78rem", marginTop: 8 }}>
+          <button type="button" onClick={addManualRow} style={{
+            fontSize: "0.78rem", marginTop: 8, padding: "6px 14px", borderRadius: 8,
+            border: "1px solid rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.04)",
+            color: "#94a3b8", cursor: "pointer", fontFamily: "inherit", fontWeight: 600,
+          }}>
             + Añadir línea
           </button>
         </div>

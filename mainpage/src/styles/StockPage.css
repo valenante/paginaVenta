@@ -444,89 +444,25 @@
 }
 .stock-sug__btn--ignore:hover { background: rgba(255, 255, 255, 0.1); }
 
-/* ===== SMART MODAL ===== */
-.stock-sug-modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(4px);
-  z-index: 1000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+/* Umbrales modal table */
+.stock-sug-modal__cb { accent-color: #60b5ff; }
 
-.stock-sug-modal {
-  background: var(--color-bg, #0f172a);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 16px;
-  width: min(900px, 90vw);
-  max-height: 80vh;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-.stock-sug-modal__header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 16px 20px;
+.stock-sug-table td,
+.stock-sug-table th {
+  padding: 8px 10px;
+  color: #e2e8f0;
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-}
-
-.stock-sug-modal__header h3 { margin: 0; font-size: 1.1rem; }
-
-.stock-sug-modal__close {
-  background: transparent;
-  border: none;
-  color: #94a3b8;
-  font-size: 1.1rem;
-  cursor: pointer;
-}
-
-.stock-sug-modal__desc {
-  padding: 12px 20px 0;
-  color: #94a3b8;
-  font-size: 0.82rem;
-  margin: 0;
-}
-
-.stock-sug-modal__table-wrap {
-  flex: 1;
-  overflow: auto;
-  padding: 12px 20px;
-}
-
-.stock-sug-modal__table {
-  width: 100%;
-  border-collapse: collapse;
   font-size: 0.82rem;
 }
 
-.stock-sug-modal__table th {
-  text-align: left;
-  padding: 6px 8px;
+.stock-sug-table th {
   color: #94a3b8;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   font-weight: 600;
+  text-align: left;
 }
 
-.stock-sug-modal__table td {
-  padding: 6px 8px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-}
-
-.stock-sug-modal__table input[type="checkbox"] {
-  accent-color: #60b5ff;
-}
-
-.stock-sug-modal__footer {
-  display: flex;
-  gap: 8px;
-  padding: 14px 20px;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
-  justify-content: flex-end;
+.stock-sug-table tr:hover td {
+  background: rgba(255, 255, 255, 0.03);
 }
 
 /* ===== CARD ===== */

@@ -4,12 +4,13 @@ import ExtrasPanel from "../components/Extras/ExtrasPanel";
 import CategoriasPanel from "../components/Categories/CategoriasPanel";
 import CostesPanel from "../components/Costes/CostesPanel";
 import IvaPanel from "../components/Iva/IvaPanel";
+import CartaAnalyticsPage from "./CartaAnalyticsPage";
 import { useFeature } from "../Hooks/useFeature";
 import UpgradeBanner from "../components/UpgradeBanner/UpgradeBanner";
 import "../styles/ProductsMenu.css";
 
 const ProductsPage = () => {
-  // 'extras' | 'carta' | 'costes' | 'iva' | null
+  // 'extras' | 'carta' | 'costes' | 'iva' | 'analytics' | null
   const [selectedType, setSelectedType] = useState(null);
   const hasCostes = useFeature("finanzas_view");
 
@@ -24,6 +25,7 @@ const ProductsPage = () => {
     if (selectedType === "carta") return "Gestión de carta";
     if (selectedType === "costes") return "Gestión de costes";
     if (selectedType === "iva") return "Gestión de IVA";
+    if (selectedType === "analytics") return "Analytics de la carta";
     return "Gestor de productos";
   };
 
@@ -38,6 +40,8 @@ const ProductsPage = () => {
       return "Define el precio de coste de cada variante y revisa el margen de ganancia en vivo.";
     if (selectedType === "iva")
       return "Asigna el tipo de IVA por categoría. Obligatorio para facturación VeriFactu.";
+    if (selectedType === "analytics")
+      return "Cómo interactúan los clientes con tu carta digital.";
     return "";
   };
 
@@ -101,6 +105,17 @@ const ProductsPage = () => {
               </span>
             </button>
 
+            <button
+              type="button"
+              onClick={() => setSelectedType("analytics")}
+              className="products-type-btn--productos analytics"
+            >
+              📊 Analytics
+              <span className="products-type-desc--productos">
+                Escaneos, productos vistos, idiomas y conversión.
+              </span>
+            </button>
+
             {hasCostes ? (
               <button
                 type="button"
@@ -133,6 +148,7 @@ const ProductsPage = () => {
           {selectedType === "carta" && <CategoriasPanel onBack={resetSelection} />}
           {selectedType === "costes" && <CostesPanel onBack={resetSelection} />}
           {selectedType === "iva" && <IvaPanel />}
+          {selectedType === "analytics" && <CartaAnalyticsPage onBack={resetSelection} />}
         </section>
       )}
     </div>

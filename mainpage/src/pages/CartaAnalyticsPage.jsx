@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
+import { createPortal } from "react-dom";
 import api from "../utils/api";
 import "./CartaAnalyticsPage.css";
 
@@ -58,19 +59,14 @@ export default function CartaAnalyticsPage({ onBack }) {
 
   const flagEmoji = { es: "🇪🇸", en: "🇬🇧", fr: "🇫🇷", de: "🇩🇪", it: "🇮🇹", pt: "🇵🇹" };
 
+  const [showHelp, setShowHelp] = useState(false);
+
   return (
     <div className="carta-analytics">
-      <header className="carta-analytics__header">
-        <div>
-          <h1>📊 Analytics de la Carta</h1>
-          <p>Cómo interactúan los clientes con tu carta digital.</p>
-        </div>
-        {onBack && <button className="carta-analytics__back" onClick={onBack}>← Volver</button>}
-      </header>
-
-      {/* Rango */}
-      <div className="carta-analytics__rangos">
-        {RANGOS.map((r) => (
+      {/* Sin header propio — el padre (ProductsMenu) ya pone título */}
+      <div className="carta-analytics__toolbar">
+        <div className="carta-analytics__rangos">
+          {RANGOS.map((r) => (
           <button
             key={r.key}
             className={`carta-analytics__rango ${rango === r.key ? "active" : ""}`}
@@ -79,7 +75,31 @@ export default function CartaAnalyticsPage({ onBack }) {
             {r.label}
           </button>
         ))}
+        </div>
+        <button className="carta-analytics__help-btn" onClick={() => setShowHelp(true)}>?</button>
       </div>
+
+      {/* Modal ayuda */}
+      {showHelp && createPortal(
+        <div className="carta-analytics__help-overlay" onClick={() => setShowHelp(false)}>
+          <div className="carta-analytics__help-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="carta-analytics__help-head">
+              <h3>Qué significan estos datos</h3>
+              <button onClick={() => setShowHelp(false)}>✕</button>
+            </div>
+            <div className="carta-analytics__help-body">
+              <p><strong>Escaneos QR</strong> — Cuántas veces alguien abrió la carta desde el móvil.</p>
+              <p><strong>Productos vistos</strong> — Cuántas veces los clientes abrieron el detalle de un plato para ver precio, foto o descripción.</p>
+              <p><strong>Añadidos al carrito</strong> — Cuántos platos metieron en el carrito (no significa que los hayan pedido).</p>
+              <p><strong>Interacciones</strong> — Todo lo que hicieron: navegar, cambiar idioma, filtrar alérgenos, abrir carrito...</p>
+              <p><strong>Funnel</strong> — El recorrido del cliente: escaneó → miró platos → abrió carrito → pidió. Te dice dónde se pierden.</p>
+              <p><strong>Conversión</strong> — El % de clientes que llegan de un paso al siguiente. Verde = bien, rojo = se pierden ahí.</p>
+              <p><strong>Idiomas</strong> — En qué idioma ven la carta. Te dice cuántos turistas tienes y si necesitas traducir mejor.</p>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
 
       {loading ? (
         <div className="carta-analytics__loading">Cargando...</div>
@@ -91,15 +111,15 @@ export default function CartaAnalyticsPage({ onBack }) {
           <div className="carta-analytics__kpis">
             <div className="carta-analytics__kpi">
               <span className="kpi-value">{r.sesiones}</span>
-              <span className="kpi-label">📱 Escaneos QR</span>
+              <span className="kpi-label">📱 Abrieron la carta</span>
             </div>
             <div className="carta-analytics__kpi">
               <span className="kpi-value">{r.topVistos?.reduce((s, p) => s + p.vistas, 0) || 0}</span>
-              <span className="kpi-label">👁 Productos vistos</span>
+              <span className="kpi-label">👁 Miraron platos</span>
             </div>
             <div className="carta-analytics__kpi">
               <span className="kpi-value">{r.topPedidos?.reduce((s, p) => s + p.pedidos, 0) || 0}</span>
-              <span className="kpi-label">🛒 Añadidos al carrito</span>
+              <span className="kpi-label">🛒 Metieron al carrito</span>
             </div>
             <div className="carta-analytics__kpi">
               <span className="kpi-value">{dias.reduce((s, d) => s + (d.eventosRaw || d.funnel?.sesiones * 10 || 0), 0)}</span>
@@ -111,7 +131,7 @@ export default function CartaAnalyticsPage({ onBack }) {
           <div className="carta-analytics__row">
             {/* Funnel */}
             <div className="carta-analytics__card carta-analytics__funnel">
-              <h3>Funnel de conversión</h3>
+              <h3>Recorrido del cliente</h3>
               <div className="funnel-steps">
                 <FunnelStep label="Sesiones" value={r.sesiones} pct={100} />
                 <FunnelStep label="Productos vistos" value={r.topVistos?.reduce((s, p) => s + p.vistas, 0) || 0} />
@@ -144,7 +164,7 @@ export default function CartaAnalyticsPage({ onBack }) {
 
           {/* Tabla productos: vistas vs añadidos */}
           <div className="carta-analytics__card">
-            <h3>Productos: vistas vs añadidos al carrito</h3>
+            <h3>Qué miran vs qué piden</h3>
             {(r.conversionProductos || []).length === 0 ? (
               <p className="carta-analytics__muted">Sin datos</p>
             ) : (
@@ -181,7 +201,7 @@ export default function CartaAnalyticsPage({ onBack }) {
           {/* Revenue por producto */}
           {(r.topPedidos || []).length > 0 && (
             <div className="carta-analytics__card">
-              <h3>Revenue desde la carta</h3>
+              <h3>Lo que vende la carta</h3>
               <div className="carta-analytics__table-wrap">
                 <table className="carta-analytics__table">
                   <thead>

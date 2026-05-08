@@ -1,41 +1,71 @@
 .carta-analytics {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 0 16px 40px;
+  padding: 0 0 40px;
 }
 
-.carta-analytics__header {
+/* Toolbar: rangos + help */
+.carta-analytics__toolbar {
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
-.carta-analytics__header h1 {
-  font-size: 1.5rem;
-  font-weight: 800;
-  margin: 0;
-}
-.carta-analytics__header p {
-  margin: 4px 0 0;
-  opacity: 0.7;
-  font-size: 0.92rem;
-}
-.carta-analytics__back {
-  background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.12);
-  color: var(--texto, #fff);
-  padding: 8px 16px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 600;
-}
-
-/* Rangos */
 .carta-analytics__rangos {
   display: flex;
   gap: 6px;
-  margin-bottom: 20px;
 }
+.carta-analytics__help-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.06);
+  color: var(--texto, #fff);
+  font-weight: 800;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.carta-analytics__help-btn:hover {
+  background: rgba(255,255,255,0.12);
+}
+
+/* Help modal */
+.carta-analytics__help-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.carta-analytics__help-modal {
+  background: #1a1a2e;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 16px;
+  max-width: 480px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+.carta-analytics__help-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.carta-analytics__help-head h3 { margin: 0; font-size: 1.05rem; }
+.carta-analytics__help-head button {
+  background: none; border: none; color: #fff; font-size: 1.2rem; cursor: pointer; opacity: 0.6;
+}
+.carta-analytics__help-body {
+  padding: 16px 20px;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+.carta-analytics__help-body p { margin: 0 0 12px; }
+.carta-analytics__help-body strong { color: #60a5fa; }
 .carta-analytics__rango {
   padding: 8px 18px;
   border-radius: 8px;

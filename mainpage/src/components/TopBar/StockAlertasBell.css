@@ -62,13 +62,26 @@
   right: 0;
   width: 360px;
   max-width: 90vw;
+  max-height: 80vh;
+  overflow-y: auto;
   background: rgba(15, 15, 28, 0.98);
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 12px;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
   z-index: 2000;
-  overflow: hidden;
   color: #e5e7eb;
+}
+
+@media (max-width: 500px) {
+  .stockBell-popover {
+    position: fixed;
+    top: 8px;
+    left: 8px;
+    right: 8px;
+    width: auto;
+    max-width: none;
+    max-height: calc(100vh - 16px);
+  }
 }
 
 .stockBell-head {

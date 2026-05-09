@@ -3,18 +3,15 @@ import { createPortal } from "react-dom";
 import api from "../utils/api";
 import "./CartaAnalyticsPage.css";
 
-const RANGOS = [
-  { key: "hoy", label: "Hoy" },
-  { key: "7d", label: "7 días" },
-  { key: "30d", label: "30 días" },
-];
-
 const fmtDate = (d) => d.toISOString().split("T")[0];
 const flagEmoji = { es: "🇪🇸", en: "🇬🇧", fr: "🇫🇷", de: "🇩🇪", it: "🇮🇹", pt: "🇵🇹" };
 const allergenEmoji = { gluten: "🌾", lactosa: "🥛", "frutos secos": "🥜", huevo: "🥚", pescado: "🐟", marisco: "🦐", soja: "🫘", apio: "🌿", mostaza: "🟡", sesamo: "⚪", sulfitos: "🍷", moluscos: "🐚", altramuz: "🌱" };
 
 export default function CartaAnalyticsPage({ onBack }) {
-  const [rango, setRango] = useState("hoy");
+  const hoyStr = fmtDate(new Date());
+  const [modo, setModo] = useState("hoy"); // "hoy" | "rango" | "todo"
+  const [desde, setDesde] = useState(hoyStr);
+  const [hasta, setHasta] = useState(hoyStr);
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showHelp, setShowHelp] = useState(false);
@@ -23,17 +20,16 @@ export default function CartaAnalyticsPage({ onBack }) {
     (async () => {
       setLoading(true);
       try {
-        const ahora = new Date();
-        let desde, hasta;
-        if (rango === "hoy") { desde = hasta = fmtDate(ahora); }
-        else if (rango === "7d") { hasta = fmtDate(ahora); const d = new Date(ahora); d.setDate(d.getDate() - 7); desde = fmtDate(d); }
-        else { hasta = fmtDate(ahora); const d = new Date(ahora); d.setDate(d.getDate() - 30); desde = fmtDate(d); }
-        const { data: res } = await api.get(`/analytics/carta?desde=${desde}&hasta=${hasta}`);
+        let qDesde, qHasta;
+        if (modo === "hoy") { qDesde = qHasta = hoyStr; }
+        else if (modo === "rango") { qDesde = desde; qHasta = hasta; }
+        else { qDesde = "2020-01-01"; qHasta = hoyStr; }
+        const { data: res } = await api.get(`/analytics/carta?desde=${qDesde}&hasta=${qHasta}`);
         setData(res);
       } catch { setData(null); }
       finally { setLoading(false); }
     })();
-  }, [rango]);
+  }, [modo, desde, hasta, hoyStr]);
 
   const r = data?.resumen || {};
   const comp = data?.comparativa || {};
@@ -65,38 +61,65 @@ export default function CartaAnalyticsPage({ onBack }) {
     return { entries, max };
   }, [r.sesionesHora]);
 
-  // Insights automáticos
+  // Insights automáticos — solo datos verificables
   const insights = useMemo(() => {
     const list = [];
+
+    // Productos con interés pero sin compra (vistas reales, 0 adds)
     for (const p of r.conversionProductos || []) {
-      if (p.vistas >= 5 && p.pedidos === 0) list.push({ icon: "🔍", text: `${p.nombre} genera interés (${p.vistas} vistas) pero nadie lo pide desde la carta. Revisa la foto o el precio.`, type: "warning" });
-      if (p.ratio >= 150) list.push({ icon: "🔥", text: `${p.nombre} se pide sin mirar el detalle (${p.ratio}% conversión). Es un best-seller — ponlo como destacado.`, type: "success" });
+      if (p.vistas >= 5 && p.pedidos === 0) {
+        list.push({ icon: "🔍", text: `${p.nombre}: ${p.vistas} personas lo miraron pero ninguna lo añadió al carrito. Revisa la foto, el precio o la descripción.`, type: "warning" });
+      }
     }
+
+    // Producto con más conversión (solo si vistas > pedidos, ratio real)
+    const mejorConversion = (r.conversionProductos || []).filter(p => p.vistas >= 5 && p.pedidos > 0 && p.pedidos <= p.vistas).sort((a, b) => b.ratio - a.ratio)[0];
+    if (mejorConversion && mejorConversion.ratio >= 70) {
+      list.push({ icon: "🔥", text: `${mejorConversion.nombre}: el ${mejorConversion.ratio}% de los que lo miran, lo piden. Es tu plato más convincente en la carta.`, type: "success" });
+    }
+
+    // Idiomas
     for (const l of idiomasList) {
-      if (l.lang !== "es" && l.pct >= 15) list.push({ icon: "🌍", text: `${l.pct}% de tus clientes ven la carta en ${l.lang.toUpperCase()}. Asegúrate de tener buenas traducciones.`, type: "info" });
+      if (l.lang !== "es" && l.pct >= 15) {
+        list.push({ icon: "🌍", text: `${l.pct}% de tus clientes ven la carta en ${l.lang.toUpperCase()}. Asegúrate de tener buenas traducciones.`, type: "info" });
+      }
     }
+
+    // Alérgenos
     for (const a of alergenosList) {
-      if (a.pct >= 10) list.push({ icon: "⚠️", text: `${a.pct}% de tus clientes filtran ${a.al}. ¿Tienes suficientes opciones sin ${a.al}?`, type: "warning" });
+      if (a.pct >= 10) {
+        list.push({ icon: "⚠️", text: `${a.pct}% de tus clientes filtran ${a.al}. ¿Tienes suficientes opciones sin ${a.al}?`, type: "warning" });
+      }
     }
+
+    // Estrella de revenue
     if (totalRevenue > 0) {
       const top = (r.topPedidos || [])[0];
       if (top) {
         const pct = Math.round((top.revenue / totalRevenue) * 100);
-        if (pct >= 20) list.push({ icon: "⭐", text: `${top.nombre} genera el ${pct}% del revenue desde carta (${top.revenue.toFixed(0)}€). Es tu estrella digital.`, type: "success" });
+        if (pct >= 20) list.push({ icon: "⭐", text: `${top.nombre} genera el ${pct}% de lo que se pide desde la carta (${top.revenue.toFixed(0)}€). Es tu estrella digital.`, type: "success" });
       }
     }
+
     return list.slice(0, 5);
   }, [r.conversionProductos, idiomasList, alergenosList, totalRevenue, r.topPedidos]);
 
-  const periodoLabel = rango === "hoy" ? "vs ayer" : rango === "7d" ? "vs 7d ant." : "vs 30d ant.";
+  const periodoLabel = modo === "hoy" ? "vs ayer" : modo === "rango" ? "vs periodo ant." : "";
 
   return (
     <div className="carta-analytics">
       <div className="carta-analytics__toolbar">
-        <div className="carta-analytics__rangos">
-          {RANGOS.map((r) => (
-            <button key={r.key} className={`carta-analytics__rango ${rango === r.key ? "active" : ""}`} onClick={() => setRango(r.key)}>{r.label}</button>
-          ))}
+        <div className="carta-analytics__filtros">
+          <button className={`carta-analytics__rango ${modo === "hoy" ? "active" : ""}`} onClick={() => setModo("hoy")}>Hoy</button>
+          <button className={`carta-analytics__rango ${modo === "rango" ? "active" : ""}`} onClick={() => setModo("rango")}>Rango</button>
+          <button className={`carta-analytics__rango ${modo === "todo" ? "active" : ""}`} onClick={() => setModo("todo")}>Todo</button>
+          {modo === "rango" && (
+            <div className="carta-analytics__dates">
+              <input type="date" value={desde} onChange={(e) => setDesde(e.target.value)} max={hasta} />
+              <span>→</span>
+              <input type="date" value={hasta} onChange={(e) => setHasta(e.target.value)} min={desde} max={hoyStr} />
+            </div>
+          )}
         </div>
         <button className="carta-analytics__help-btn" onClick={() => setShowHelp(true)}>?</button>
       </div>
@@ -214,8 +237,10 @@ export default function CartaAnalyticsPage({ onBack }) {
                   <thead><tr><th>Producto</th><th>Lo miraron</th><th>Lo pidieron</th><th>Conversión</th></tr></thead>
                   <tbody>
                     {(r.conversionProductos || []).map((p, i) => {
-                      const color = p.ratio >= 100 ? "#3b82f6" : p.ratio >= 50 ? "#16a34a" : p.ratio >= 20 ? "#eab308" : "#ef4444";
-                      return (<tr key={i}><td className="prod-name">{p.nombre}</td><td className="num">{p.vistas}</td><td className="num">{p.pedidos}</td><td className="num"><span className="ratio-badge" style={{ background: color }}>{p.ratio}%</span></td></tr>);
+                      // Ratio real: solo si hay vistas, capear a 100% (no puede ser mayor)
+                      const realRatio = p.vistas > 0 ? Math.min(Math.round((p.pedidos / p.vistas) * 100), 100) : null;
+                      const color = realRatio === null ? "#6b7280" : realRatio >= 70 ? "#16a34a" : realRatio >= 40 ? "#eab308" : "#ef4444";
+                      return (<tr key={i}><td className="prod-name">{p.nombre}</td><td className="num">{p.vistas}</td><td className="num">{p.pedidos}</td><td className="num">{realRatio !== null ? <span className="ratio-badge" style={{ background: color }}>{realRatio}%</span> : <span style={{ opacity: 0.4 }}>—</span>}</td></tr>);
                     })}
                   </tbody>
                 </table>

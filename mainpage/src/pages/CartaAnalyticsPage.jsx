@@ -1,3 +1,16 @@
+/**
+ * CartaAnalyticsPage — v2 (auditoría 9-mayo-2026)
+ *
+ * Reglas de veracidad:
+ * - "Abrieron la carta" = sesiones únicas (no recargas)
+ * - "Miraron platos" = veces que se abrió modal de detalle
+ * - "Lo añadieron" = veces que se pulsó agregar (NO unidades)
+ * - "Interacciones" = total eventos raw
+ * - Conversión capeada a 100%, productos con 0 vistas NO se muestran
+ * - Revenue usa cantidad×precio (dinero real)
+ * - Comparativa solo se muestra si hay datos en periodo anterior (no "+100%")
+ * - Insights solo con datos verificables
+ */
 import React, { useState, useEffect, useMemo } from "react";
 import { createPortal } from "react-dom";
 import api from "../utils/api";
@@ -9,7 +22,7 @@ const allergenEmoji = { gluten: "🌾", lactosa: "🥛", "frutos secos": "🥜",
 
 export default function CartaAnalyticsPage({ onBack }) {
   const hoyStr = fmtDate(new Date());
-  const [modo, setModo] = useState("hoy"); // "hoy" | "rango" | "todo"
+  const [modo, setModo] = useState("hoy");
   const [desde, setDesde] = useState(hoyStr);
   const [hasta, setHasta] = useState(hoyStr);
   const [data, setData] = useState(null);
@@ -38,7 +51,6 @@ export default function CartaAnalyticsPage({ onBack }) {
   const totalVistas = useMemo(() => (r.topVistos || []).reduce((s, p) => s + p.vistas, 0), [r.topVistos]);
   const totalPedidos = useMemo(() => (r.topPedidos || []).reduce((s, p) => s + p.pedidos, 0), [r.topPedidos]);
   const totalRevenue = useMemo(() => (r.topPedidos || []).reduce((s, p) => s + (p.revenue || 0), 0), [r.topPedidos]);
-  const totalEventos = dias.reduce((s, d) => s + (d.eventosRaw || 0), 0);
 
   // Idiomas
   const idiomasList = useMemo(() => {
@@ -61,38 +73,34 @@ export default function CartaAnalyticsPage({ onBack }) {
     return { entries, max };
   }, [r.sesionesHora]);
 
-  // Insights automáticos — solo datos verificables
+  // Conversión: solo productos con vistas > 0 (del backend ya filtrado, doble seguridad)
+  const conversionFiltrada = useMemo(() =>
+    (r.conversionProductos || []).filter(p => p.vistas > 0),
+  [r.conversionProductos]);
+
+  // Insights — solo verificables
   const insights = useMemo(() => {
     const list = [];
 
-    // Productos con interés pero sin compra (vistas reales, 0 adds)
-    for (const p of r.conversionProductos || []) {
-      if (p.vistas >= 5 && p.pedidos === 0) {
+    for (const p of conversionFiltrada) {
+      if (p.vistas >= 5 && p.pedidos === 0)
         list.push({ icon: "🔍", text: `${p.nombre}: ${p.vistas} personas lo miraron pero ninguna lo añadió al carrito. Revisa la foto, el precio o la descripción.`, type: "warning" });
-      }
     }
 
-    // Producto con más conversión (solo si vistas > pedidos, ratio real)
-    const mejorConversion = (r.conversionProductos || []).filter(p => p.vistas >= 5 && p.pedidos > 0 && p.pedidos <= p.vistas).sort((a, b) => b.ratio - a.ratio)[0];
-    if (mejorConversion && mejorConversion.ratio >= 70) {
-      list.push({ icon: "🔥", text: `${mejorConversion.nombre}: el ${mejorConversion.ratio}% de los que lo miran, lo piden. Es tu plato más convincente en la carta.`, type: "success" });
-    }
+    const mejor = conversionFiltrada.filter(p => p.vistas >= 5 && p.pedidos > 0).sort((a, b) => b.ratio - a.ratio)[0];
+    if (mejor && mejor.ratio >= 70)
+      list.push({ icon: "🔥", text: `${mejor.nombre}: el ${mejor.ratio}% de los que lo miran, lo piden. Es tu plato más convincente en la carta.`, type: "success" });
 
-    // Idiomas
     for (const l of idiomasList) {
-      if (l.lang !== "es" && l.pct >= 15) {
+      if (l.lang !== "es" && l.pct >= 15)
         list.push({ icon: "🌍", text: `${l.pct}% de tus clientes ven la carta en ${l.lang.toUpperCase()}. Asegúrate de tener buenas traducciones.`, type: "info" });
-      }
     }
 
-    // Alérgenos
     for (const a of alergenosList) {
-      if (a.pct >= 10) {
+      if (a.pct >= 10)
         list.push({ icon: "⚠️", text: `${a.pct}% de tus clientes filtran ${a.al}. ¿Tienes suficientes opciones sin ${a.al}?`, type: "warning" });
-      }
     }
 
-    // Estrella de revenue
     if (totalRevenue > 0) {
       const top = (r.topPedidos || [])[0];
       if (top) {
@@ -102,7 +110,7 @@ export default function CartaAnalyticsPage({ onBack }) {
     }
 
     return list.slice(0, 5);
-  }, [r.conversionProductos, idiomasList, alergenosList, totalRevenue, r.topPedidos]);
+  }, [conversionFiltrada, idiomasList, alergenosList, totalRevenue, r.topPedidos]);
 
   const periodoLabel = modo === "hoy" ? "vs ayer" : modo === "rango" ? "vs periodo ant." : "";
 
@@ -129,14 +137,12 @@ export default function CartaAnalyticsPage({ onBack }) {
           <div className="carta-analytics__help-modal" onClick={(e) => e.stopPropagation()}>
             <div className="carta-analytics__help-head"><h3>Qué significan estos datos</h3><button onClick={() => setShowHelp(false)}>✕</button></div>
             <div className="carta-analytics__help-body">
-              <p><strong>Abrieron la carta</strong> — Cuántas veces alguien escaneó el QR y entró a la carta.</p>
-              <p><strong>Miraron platos</strong> — Cuántas veces abrieron el detalle de un plato (precio, foto, descripción).</p>
-              <p><strong>Metieron al carrito</strong> — Cuántos platos añadieron al carrito. No significa que los hayan pedido.</p>
-              <p><strong>Interacciones</strong> — Todo lo que hicieron: navegar, cambiar idioma, filtrar alérgenos, abrir carrito...</p>
-              <p><strong>Recorrido</strong> — El camino del cliente: escaneó → miró platos → abrió carrito → pidió. Te dice dónde se pierden.</p>
-              <p><strong>Conversión</strong> — Qué % de clientes que miraron un plato lo metieron al carrito. Verde = bien, rojo = interés sin compra.</p>
-              <p><strong>Idiomas</strong> — En qué idioma ven la carta. Te dice cuántos turistas tienes.</p>
-              <p><strong>Alérgenos</strong> — Qué filtran tus clientes. Si muchos buscan "sin gluten", igual necesitas más opciones.</p>
+              <p><strong>Abrieron la carta</strong> — Cuántos dispositivos distintos escanearon el QR y entraron a la carta.</p>
+              <p><strong>Miraron platos</strong> — Cuántas veces se abrió el detalle de un plato (para ver precio, foto, descripción).</p>
+              <p><strong>Lo añadieron</strong> — Cuántas veces se pulsó "Agregar al carrito". Si alguien añade 5 unidades de golpe, cuenta como 1.</p>
+              <p><strong>Interacciones</strong> — Total de acciones registradas: navegar, cambiar idioma, filtrar alérgenos, abrir carrito, etc.</p>
+              <p><strong>Conversión</strong> — De los que miraron un plato, ¿cuántos lo añadieron? Verde (&gt;70%) = convence. Rojo (&lt;40%) = miran pero no piden.</p>
+              <p><strong>Revenue</strong> — Dinero real de lo añadido al carrito (precio × cantidad).</p>
             </div>
           </div>
         </div>, document.body
@@ -148,12 +154,12 @@ export default function CartaAnalyticsPage({ onBack }) {
         <div className="carta-analytics__empty">Sin datos para este periodo.</div>
       ) : (
         <>
-          {/* KPIs con comparativa */}
+          {/* KPIs */}
           <div className="carta-analytics__kpis">
             <KpiCard value={r.sesiones} label="📱 Abrieron la carta" delta={comp.sesiones?.delta} periodo={periodoLabel} />
             <KpiCard value={totalVistas} label="👁 Miraron platos" delta={comp.vistas?.delta} periodo={periodoLabel} />
-            <KpiCard value={totalPedidos} label="🛒 Metieron al carrito" delta={comp.pedidos?.delta} periodo={periodoLabel} />
-            <KpiCard value={totalEventos || "—"} label="📈 Interacciones" />
+            <KpiCard value={totalPedidos} label="🛒 Lo añadieron" delta={comp.pedidos?.delta} periodo={periodoLabel} />
+            <KpiCard value={r.eventosRaw || dias.reduce((s, d) => s + (d.eventosRaw || 0), 0)} label="📈 Interacciones" />
           </div>
 
           {/* Insights */}
@@ -184,14 +190,16 @@ export default function CartaAnalyticsPage({ onBack }) {
             </div>
             <div className="carta-analytics__card">
               <h3>Idiomas</h3>
-              {idiomasList.map((l) => (
-                <div key={l.lang} className="idioma-row">
-                  <span className="idioma-flag">{flagEmoji[l.lang] || "🌐"}</span>
-                  <span className="idioma-code">{l.lang.toUpperCase()}</span>
-                  <div className="idioma-bar-bg"><div className="idioma-bar" style={{ width: `${Math.max(l.pct, 2)}%` }} /></div>
-                  <span className="idioma-pct">{l.pct}%</span>
-                </div>
-              ))}
+              {idiomasList.length === 0 ? <p className="carta-analytics__muted">Sin datos</p> :
+                idiomasList.map((l) => (
+                  <div key={l.lang} className="idioma-row">
+                    <span className="idioma-flag">{flagEmoji[l.lang] || "🌐"}</span>
+                    <span className="idioma-code">{l.lang.toUpperCase()}</span>
+                    <div className="idioma-bar-bg"><div className="idioma-bar" style={{ width: `${Math.max(l.pct, 2)}%` }} /></div>
+                    <span className="idioma-pct">{l.pct}%</span>
+                  </div>
+                ))
+              }
             </div>
           </div>
 
@@ -215,7 +223,7 @@ export default function CartaAnalyticsPage({ onBack }) {
             </div>
             <div className="carta-analytics__card">
               <h3>Filtros de alérgenos</h3>
-              {alergenosList.length === 0 ? <p className="carta-analytics__muted">Nadie ha filtrado alérgenos</p> : (
+              {alergenosList.length === 0 ? <p className="carta-analytics__muted">Nadie ha filtrado alérgenos</p> :
                 alergenosList.map((a) => (
                   <div key={a.al} className="idioma-row">
                     <span className="idioma-flag">{allergenEmoji[a.al.toLowerCase()] || "⚠️"}</span>
@@ -224,23 +232,21 @@ export default function CartaAnalyticsPage({ onBack }) {
                     <span className="idioma-pct">{a.pct}%</span>
                   </div>
                 ))
-              )}
+              }
             </div>
           </div>
 
-          {/* Qué miran vs qué piden */}
+          {/* Qué miran vs qué piden — SOLO productos con vistas > 0 */}
           <div className="carta-analytics__card">
             <h3>Qué miran vs qué piden</h3>
-            {(r.conversionProductos || []).length === 0 ? <p className="carta-analytics__muted">Sin datos</p> : (
+            {conversionFiltrada.length === 0 ? <p className="carta-analytics__muted">Sin datos</p> : (
               <div className="carta-analytics__table-wrap">
                 <table className="carta-analytics__table">
-                  <thead><tr><th>Producto</th><th>Lo miraron</th><th>Lo pidieron</th><th>Conversión</th></tr></thead>
+                  <thead><tr><th>Producto</th><th>Lo miraron</th><th>Lo añadieron</th><th>Conversión</th></tr></thead>
                   <tbody>
-                    {(r.conversionProductos || []).map((p, i) => {
-                      // Ratio real: solo si hay vistas, capear a 100% (no puede ser mayor)
-                      const realRatio = p.vistas > 0 ? Math.min(Math.round((p.pedidos / p.vistas) * 100), 100) : null;
-                      const color = realRatio === null ? "#6b7280" : realRatio >= 70 ? "#16a34a" : realRatio >= 40 ? "#eab308" : "#ef4444";
-                      return (<tr key={i}><td className="prod-name">{p.nombre}</td><td className="num">{p.vistas}</td><td className="num">{p.pedidos}</td><td className="num">{realRatio !== null ? <span className="ratio-badge" style={{ background: color }}>{realRatio}%</span> : <span style={{ opacity: 0.4 }}>—</span>}</td></tr>);
+                    {conversionFiltrada.map((p, i) => {
+                      const color = p.ratio >= 70 ? "#16a34a" : p.ratio >= 40 ? "#eab308" : "#ef4444";
+                      return (<tr key={i}><td className="prod-name">{p.nombre}</td><td className="num">{p.vistas}</td><td className="num">{p.pedidos}</td><td className="num"><span className="ratio-badge" style={{ background: color }}>{p.ratio}%</span></td></tr>);
                     })}
                   </tbody>
                 </table>
@@ -255,7 +261,7 @@ export default function CartaAnalyticsPage({ onBack }) {
                 <h3>Lo que vende la carta</h3>
                 <div className="carta-analytics__table-wrap">
                   <table className="carta-analytics__table">
-                    <thead><tr><th>Producto</th><th>Uds</th><th>Revenue</th></tr></thead>
+                    <thead><tr><th>Producto</th><th>Veces</th><th>Revenue</th></tr></thead>
                     <tbody>
                       {(r.topPedidos || []).map((p, i) => (
                         <tr key={i}><td className="prod-name">{p.nombre}</td><td className="num">{p.pedidos}</td><td className="num revenue">{p.revenue?.toFixed(2)} €</td></tr>
@@ -270,7 +276,7 @@ export default function CartaAnalyticsPage({ onBack }) {
                 <h3>Por categoría</h3>
                 <div className="carta-analytics__table-wrap">
                   <table className="carta-analytics__table">
-                    <thead><tr><th>Categoría</th><th>Vistas</th><th>Pedidos</th></tr></thead>
+                    <thead><tr><th>Categoría</th><th>Vistas</th><th>Añadidos</th></tr></thead>
                     <tbody>
                       {(r.categorias || []).map((c, i) => (
                         <tr key={i}><td className="prod-name">{c.nombre}</td><td className="num">{c.vistas}</td><td className="num">{c.pedidos}</td></tr>
@@ -288,15 +294,13 @@ export default function CartaAnalyticsPage({ onBack }) {
 }
 
 function KpiCard({ value, label, delta, periodo }) {
-  const isUp = delta > 0;
-  const isDown = delta < 0;
   return (
     <div className="carta-analytics__kpi">
       <span className="kpi-value">{value}</span>
       <span className="kpi-label">{label}</span>
-      {delta != null && delta !== 0 && (
-        <span className={`kpi-delta ${isUp ? "kpi-delta--up" : "kpi-delta--down"}`}>
-          {isUp ? "↑" : "↓"} {Math.abs(delta)}% {periodo || ""}
+      {delta != null && (
+        <span className={`kpi-delta ${delta > 0 ? "kpi-delta--up" : "kpi-delta--down"}`}>
+          {delta > 0 ? "↑" : "↓"} {Math.abs(delta)}% {periodo || ""}
         </span>
       )}
     </div>

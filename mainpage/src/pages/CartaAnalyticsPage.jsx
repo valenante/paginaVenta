@@ -180,12 +180,12 @@ export default function CartaAnalyticsPage({ onBack }) {
             <div className="carta-analytics__card">
               <h3>Recorrido del cliente</h3>
               <div className="funnel-steps">
-                <FunnelStep label="Escanearon QR" value={r.sesiones} pct={100} />
-                <FunnelStep label="Miraron platos" value={totalVistas} />
-                <FunnelStep label="Abrieron carrito" value={dias.reduce((s, d) => s + (d.funnel?.carritoAbierto || 0), 0)} />
-                <FunnelStep label="Enviaron pedido" value={r.pedidos} pct={r.conversionSesionAPedido} />
-                <FunnelStep label="Pidieron cuenta" value={dias.reduce((s, d) => s + (d.funnel?.cuentasPedidas || 0), 0)} />
-                <FunnelStep label="Valoraron" value={dias.reduce((s, d) => s + (d.funnel?.valoraciones || 0), 0)} />
+                <FunnelStep label="sesiones" value={r.sesiones} />
+                <FunnelStep label="veces miraron un plato" value={totalVistas} />
+                <FunnelStep label="veces abrieron el carrito" value={dias.reduce((s, d) => s + (d.funnel?.carritoAbierto || 0), 0)} />
+                <FunnelStep label="pedidos enviados" value={r.pedidos} />
+                <FunnelStep label="veces pidieron cuenta" value={dias.reduce((s, d) => s + (d.funnel?.cuentasPedidas || 0), 0)} />
+                <FunnelStep label="valoraciones" value={dias.reduce((s, d) => s + (d.funnel?.valoraciones || 0), 0)} />
               </div>
             </div>
             <div className="carta-analytics__card">

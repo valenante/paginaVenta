@@ -5,7 +5,7 @@ import * as logger from "../../utils/logger";
 import "./StaffStats.css";
 
 export default function StaffStats() {
-  const { user } = useAuth();
+  const { user, tienePermiso } = useAuth();
   const hoyRef = useRef(new Date().toISOString().slice(0, 10));
 
   const [fecha, setFecha] = useState(hoyRef.current);
@@ -96,6 +96,10 @@ export default function StaffStats() {
   }, [productos, ordenProductos]);
 
   const formatCurrency = (v) => `${Number(v || 0).toFixed(2)} €`;
+
+  if (!tienePermiso("estadisticas.view") && !tienePermiso("estadisticas.manage")) {
+    return null;
+  }
 
   return (
     <section className="staff-stats">

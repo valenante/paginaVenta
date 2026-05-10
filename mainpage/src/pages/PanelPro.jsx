@@ -44,7 +44,7 @@ const PANEL_BY_TIPO = {
     // Valoraciones eliminado — sin uso real
     { key: "estadisticas", label: "📊 Estadísticas", permiso: "estadisticas.manage", feature: "estadisticas_avanzadas", render: () => <EstadisticasPage type="plato" /> },
     { key: "finanzas", label: "💰 Finanzas", permiso: "finanzas.view", feature: "finanzas_view", render: () => <FinanzasPage /> },
-    { key: "otros", label: "⚙️ Otros", permiso: null, render: () => <OtrosPage /> },
+    { key: "otros", label: "⚙️ Otros", permiso: "config.view", render: () => <OtrosPage /> },
   ],
 
   shop: [
@@ -58,7 +58,7 @@ const PANEL_BY_TIPO = {
 const STAFF_TAB = {
   key: "staff",
   label: "📊 Panel operativo",
-  permiso: null,
+  permiso: "dashboard.view",
   render: () => <StaffPanel />,
 };
 
@@ -77,7 +77,8 @@ export default function PanelPro() {
     const gestion = (PANEL_BY_TIPO[tipoNegocio] || PANEL_BY_TIPO.shop)
       .filter((t) => !t.permiso || tienePermiso(t.permiso))
       .filter((t) => !t.feature || hasFeature(t.feature));
-    return [STAFF_TAB, ...gestion];
+    const staffVisible = !STAFF_TAB.permiso || tienePermiso(STAFF_TAB.permiso);
+    return staffVisible ? [STAFF_TAB, ...gestion] : gestion;
   }, [tipoNegocio, tienePermiso, hasFeature]);
 
   const [active, setActive] = useState("staff");

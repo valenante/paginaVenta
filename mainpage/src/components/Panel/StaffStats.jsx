@@ -1,11 +1,13 @@
 import { useEffect, useRef, useState, useMemo } from "react";
 import { useAuth } from "../../context/AuthContext";
+import { useConfig } from "../../context/ConfigContext";
 import api from "../../utils/api";
 import * as logger from "../../utils/logger";
 import "./StaffStats.css";
 
 export default function StaffStats() {
-  const { user, tienePermiso } = useAuth();
+  const { user } = useAuth();
+  const { config } = useConfig();
   const hoyRef = useRef(new Date().toISOString().slice(0, 10));
 
   const [fecha, setFecha] = useState(hoyRef.current);
@@ -97,7 +99,7 @@ export default function StaffStats() {
 
   const formatCurrency = (v) => `${Number(v || 0).toFixed(2)} €`;
 
-  if (!tienePermiso("estadisticas.view") && !tienePermiso("estadisticas.manage")) {
+  if (config?.staff?.mostrarEstadisticas === false) {
     return null;
   }
 

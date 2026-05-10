@@ -137,7 +137,7 @@ export function AuthProvider({ children }) {
       setUser(null);
       clearUserClient();
       clearTenant();
-      window.location.replace("/login");
+      window.location.replace("https://softalef.com/login");
     }
   }, [clearTenant]);
 

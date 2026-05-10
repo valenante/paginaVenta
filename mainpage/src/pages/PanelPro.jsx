@@ -44,7 +44,7 @@ const PANEL_BY_TIPO = {
     // Valoraciones eliminado — sin uso real
     { key: "estadisticas", label: "📊 Estadísticas", permiso: "estadisticas.manage", feature: "estadisticas_avanzadas", render: () => <EstadisticasPage type="plato" /> },
     { key: "finanzas", label: "💰 Finanzas", permiso: "finanzas.view", feature: "finanzas_view", render: () => <FinanzasPage /> },
-    { key: "otros", label: "⚙️ Otros", permiso: "config.view", render: () => <OtrosPage /> },
+    { key: "otros", label: "⚙️ Otros", permiso: "herramientas.avanzadas", render: () => <OtrosPage /> },
   ],
 
   shop: [

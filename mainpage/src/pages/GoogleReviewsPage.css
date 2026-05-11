@@ -1,0 +1,725 @@
+/* ─── Google Reviews Page ─────────────────────────────── */
+.grev-root {
+  padding: 20px 24px;
+}
+
+/* Header */
+.grev-header {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 14px;
+  padding: 20px 24px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.grev-header h2 {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #f1f5f9;
+  margin: 0 0 4px;
+}
+
+.grev-header__subtitle {
+  color: #94a3b8;
+  font-size: 0.83rem;
+  margin: 0;
+}
+
+.grev-header__status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.grev-header__status--on {
+  color: #22c55e;
+  background: rgba(34, 197, 94, 0.1);
+}
+
+.grev-header__status--off {
+  color: #f59e0b;
+  background: rgba(245, 158, 11, 0.1);
+}
+
+.grev-header__status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+  flex-shrink: 0;
+}
+
+/* Tabs */
+.grev-tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  padding-bottom: 0;
+}
+
+.grev-tab-btn {
+  padding: 10px 18px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #94a3b8;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.grev-tab-btn:hover {
+  color: #e2e8f0;
+}
+
+.grev-tab-btn--active {
+  color: #60b5ff;
+  border-bottom-color: #60b5ff;
+}
+
+.grev-tab-btn__badge {
+  background: #ef4444;
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 800;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 5px;
+}
+
+/* Tab content */
+.grev-tab {
+  position: relative;
+}
+
+/* Filters */
+.grev-filters {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+.grev-filter {
+  padding: 6px 14px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.02);
+  color: #94a3b8;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: inherit;
+}
+
+.grev-filter:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.grev-filter--active {
+  background: rgba(96, 181, 255, 0.12);
+  border-color: rgba(96, 181, 255, 0.3);
+  color: #60b5ff;
+}
+
+/* Loading / Error / Empty */
+.grev-loading {
+  color: #94a3b8;
+  text-align: center;
+  padding: 40px;
+  font-size: 0.9rem;
+}
+
+.grev-error {
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: 10px;
+  padding: 14px 18px;
+  font-size: 0.85rem;
+}
+
+.grev-empty {
+  color: #64748b;
+  text-align: center;
+  padding: 50px 20px;
+  font-size: 0.9rem;
+}
+
+/* Toast */
+.grev-toast {
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 8px 16px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+
+.grev-toast--ok {
+  color: #22c55e;
+  background: rgba(34, 197, 94, 0.1);
+  border: 1px solid rgba(34, 197, 94, 0.2);
+}
+
+.grev-toast--error {
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+/* Review list */
+.grev-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Review card */
+.grev-review {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  padding: 16px 20px;
+  transition: border-color 0.15s;
+}
+
+.grev-review:hover {
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.grev-review--pending {
+  border-left: 3px solid #f59e0b;
+}
+
+.grev-review__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  gap: 12px;
+}
+
+.grev-review__meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.grev-review__author {
+  font-weight: 700;
+  font-size: 0.88rem;
+  color: #e2e8f0;
+}
+
+.grev-review__date {
+  font-size: 0.72rem;
+  color: #64748b;
+}
+
+/* Stars */
+.grev-stars {
+  display: inline-flex;
+  gap: 1px;
+  font-size: 0.85rem;
+}
+
+.grev-star--filled {
+  color: #f59e0b;
+}
+
+.grev-star--empty {
+  color: #334155;
+}
+
+/* Status badge */
+.grev-badge {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 3px 10px;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+
+.grev-badge--pending {
+  color: #f59e0b;
+  background: rgba(245, 158, 11, 0.1);
+}
+
+.grev-badge--approved {
+  color: #60b5ff;
+  background: rgba(96, 181, 255, 0.1);
+}
+
+.grev-badge--published {
+  color: #22c55e;
+  background: rgba(34, 197, 94, 0.1);
+}
+
+.grev-badge--rejected {
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.1);
+}
+
+.grev-badge--skipped {
+  color: #64748b;
+  background: rgba(100, 116, 139, 0.1);
+}
+
+/* Review text */
+.grev-review__text {
+  font-size: 0.83rem;
+  color: #cbd5e1;
+  line-height: 1.5;
+  margin: 0 0 8px;
+}
+
+/* Draft toggle */
+.grev-review__toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: #60b5ff;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 0;
+  font-family: inherit;
+  transition: opacity 0.15s;
+}
+
+.grev-review__toggle:hover {
+  opacity: 0.8;
+}
+
+.grev-review__toggle-arrow {
+  font-size: 0.6rem;
+}
+
+.grev-review__draft-text {
+  margin-top: 8px;
+  padding: 12px 16px;
+  background: rgba(96, 181, 255, 0.05);
+  border: 1px solid rgba(96, 181, 255, 0.1);
+  border-radius: 10px;
+}
+
+.grev-review__draft-text p {
+  font-size: 0.82rem;
+  color: #94a3b8;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.grev-review__tone {
+  display: inline-block;
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: #64748b;
+  margin-bottom: 6px;
+}
+
+.grev-review__rejected {
+  margin-top: 8px;
+  font-size: 0.76rem;
+  color: #ef4444;
+  opacity: 0.8;
+}
+
+/* Pending draft */
+.grev-pending-count {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #f59e0b;
+  margin-bottom: 12px;
+}
+
+.grev-pending-draft {
+  margin: 10px 0;
+  padding: 14px 18px;
+  background: rgba(96, 181, 255, 0.04);
+  border: 1px solid rgba(96, 181, 255, 0.1);
+  border-radius: 10px;
+}
+
+.grev-pending-draft__label {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #60b5ff;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 6px;
+}
+
+.grev-pending-draft__text {
+  font-size: 0.83rem;
+  color: #cbd5e1;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Pending actions */
+.grev-pending-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+/* Buttons */
+.grev-btn {
+  padding: 8px 18px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: inherit;
+}
+
+.grev-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.grev-btn--approve {
+  background: rgba(34, 197, 94, 0.15);
+  color: #22c55e;
+  border-color: rgba(34, 197, 94, 0.3);
+}
+
+.grev-btn--approve:hover:not(:disabled) {
+  background: rgba(34, 197, 94, 0.25);
+}
+
+.grev-btn--reject {
+  background: rgba(239, 68, 68, 0.08);
+  color: #ef4444;
+  border-color: rgba(239, 68, 68, 0.2);
+}
+
+.grev-btn--reject:hover:not(:disabled) {
+  background: rgba(239, 68, 68, 0.15);
+}
+
+.grev-btn--reject-confirm {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+.grev-btn--cancel {
+  background: rgba(255, 255, 255, 0.04);
+  color: #94a3b8;
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.grev-btn--cancel:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* Reject form */
+.grev-reject-form {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+}
+
+.grev-reject-input {
+  flex: 1;
+  min-width: 160px;
+  padding: 8px 14px;
+  font-size: 0.8rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+  color: #e2e8f0;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.grev-reject-input:focus {
+  border-color: rgba(96, 181, 255, 0.4);
+}
+
+.grev-reject-input::placeholder {
+  color: #64748b;
+}
+
+/* Pagination */
+.grev-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.grev-pagination button {
+  padding: 6px 16px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+  color: #94a3b8;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: inherit;
+}
+
+.grev-pagination button:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.06);
+  color: #f1f5f9;
+}
+
+.grev-pagination button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.grev-pagination__info {
+  font-size: 0.78rem;
+  color: #64748b;
+}
+
+/* ─── Config Tab ──────────────────────────────────────── */
+.grev-config-section {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 14px;
+  padding: 20px 24px;
+  margin-bottom: 12px;
+}
+
+.grev-config-section__title {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #f1f5f9;
+  margin: 0 0 14px;
+}
+
+/* Connection status */
+.grev-config-connection {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.grev-config-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.grev-config-status--ok {
+  color: #22c55e;
+}
+
+.grev-config-status--off {
+  color: #64748b;
+}
+
+.grev-config-status__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.grev-config-location {
+  font-size: 0.82rem;
+  color: #94a3b8;
+}
+
+.grev-config-location strong {
+  color: #e2e8f0;
+}
+
+.grev-btn--connect {
+  background: rgba(96, 181, 255, 0.12);
+  color: #60b5ff;
+  border-color: rgba(96, 181, 255, 0.3);
+}
+
+.grev-btn--connect:hover:not(:disabled) {
+  background: rgba(96, 181, 255, 0.2);
+}
+
+.grev-btn--disconnect {
+  background: rgba(239, 68, 68, 0.08);
+  color: #ef4444;
+  border-color: rgba(239, 68, 68, 0.15);
+  font-size: 0.76rem;
+}
+
+.grev-btn--disconnect:hover:not(:disabled) {
+  background: rgba(239, 68, 68, 0.15);
+}
+
+/* Toggle row */
+.grev-config-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.grev-config-toggle-label {
+  display: block;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #e2e8f0;
+  margin-bottom: 2px;
+}
+
+.grev-config-toggle-desc {
+  display: block;
+  font-size: 0.76rem;
+  color: #64748b;
+}
+
+/* Toggle switch */
+.grev-toggle {
+  width: 44px;
+  height: 24px;
+  border-radius: 12px;
+  border: none;
+  background: rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+  position: relative;
+  transition: background 0.2s;
+  flex-shrink: 0;
+  padding: 0;
+}
+
+.grev-toggle--on {
+  background: #22c55e;
+}
+
+.grev-toggle__knob {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #fff;
+  transition: transform 0.2s;
+}
+
+.grev-toggle--on .grev-toggle__knob {
+  transform: translateX(20px);
+}
+
+/* Mode options (radio) */
+.grev-config-modes {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.grev-mode-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 14px 18px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.02);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.grev-mode-option:hover {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.grev-mode-option--active {
+  background: rgba(96, 181, 255, 0.08);
+  border-color: rgba(96, 181, 255, 0.3);
+}
+
+.grev-mode-option input[type="radio"] {
+  margin-top: 2px;
+  accent-color: #60b5ff;
+  flex-shrink: 0;
+}
+
+.grev-mode-option__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.grev-mode-option__label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #e2e8f0;
+  margin-bottom: 2px;
+}
+
+.grev-mode-option__desc {
+  display: block;
+  font-size: 0.74rem;
+  color: #94a3b8;
+  line-height: 1.4;
+}
+
+/* ─── Responsive ──────────────────────────────────────── */
+@media (max-width: 600px) {
+  .grev-header {
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
+  }
+
+  .grev-pending-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .grev-reject-form {
+    flex-direction: column;
+  }
+
+  .grev-config-connection {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

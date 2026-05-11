@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import TiemposCocina from "./TiemposCocina/TiemposCocina";
 import DayReplay from "./DayReplay/DayReplay";
 import AutomatizacionesPage from "./AutomatizacionesPage";
+import GoogleReviewsPage from "./GoogleReviewsPage";
+import SugerenciasConfigPage from "./SugerenciasConfigPage";
 import "./OtrosPage.css";
 
 const MODULES = [
@@ -25,6 +27,20 @@ const MODULES = [
     label: "Automatizaciones",
     description: "Pedidos a proveedores, alertas de margen, predicción de stock y más.",
     component: AutomatizacionesPage,
+  },
+  {
+    key: "google-reviews",
+    icon: "⭐",
+    label: "Google Reviews",
+    description: "Gestiona reseñas de Google Business con respuestas automáticas por IA.",
+    component: GoogleReviewsPage,
+  },
+  {
+    key: "sugerencias",
+    icon: "💡",
+    label: "Sugerencias inteligentes",
+    description: "Configura recomendaciones automáticas, reglas fijas y flujo de comida.",
+    component: SugerenciasConfigPage,
   },
 ];
 

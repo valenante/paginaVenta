@@ -13,7 +13,7 @@ import {
   getGmailAuthUrl,
   disconnectGmail,
   syncGmailNow,
-} from "../hooks/useFacturasAutomaticas";
+} from "../Hooks/useFacturasAutomaticas";
 import "./FacturasAutomaticasPage.css";
 
 // ── Status badge ───────────────────────────────────────────

@@ -5,6 +5,7 @@ import AutomatizacionesPage from "./AutomatizacionesPage";
 import GoogleReviewsPage from "./GoogleReviewsPage";
 import SugerenciasConfigPage from "./SugerenciasConfigPage";
 import AprendizajeIAPage from "./AprendizajeIAPage";
+import FacturasAutomaticasPage from "./FacturasAutomaticasPage";
 import "./OtrosPage.css";
 
 const MODULES = [
@@ -49,6 +50,13 @@ const MODULES = [
     label: "Aprendizaje IA",
     description: "Métricas del asistente IA en carta: scores de productos, propuestas y tendencias.",
     component: AprendizajeIAPage,
+  },
+  {
+    key: "facturas-automaticas",
+    icon: "📧",
+    label: "Facturas automáticas",
+    description: "Lee facturas de tu email y las procesa automáticamente con IA.",
+    component: FacturasAutomaticasPage,
   },
 ];
 

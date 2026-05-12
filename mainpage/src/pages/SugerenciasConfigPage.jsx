@@ -100,13 +100,8 @@ function HelpModal({ help, onClose }) {
   );
 }
 
-const FASES = [
-  { key: "aperitivo", label: "Aperitivo", emoji: "🥗" },
-  { key: "principal", label: "Principal", emoji: "🍖" },
-  { key: "bebida", label: "Bebida", emoji: "🍺" },
-  { key: "postre", label: "Postre", emoji: "🍰" },
-  { key: "café", label: "Café / Copa", emoji: "☕" },
-];
+// Emojis sugeridos para nuevas fases
+const EMOJI_OPTIONS = ["🥗", "🍖", "🍺", "🍰", "☕", "🍣", "🍕", "🥘", "🍷", "🧁", "🍽️", "🥂", "🍔", "🌮", "🍜"];
 
 const TIPO_REGLA_LABELS = {
   maridaje: "Maridaje",
@@ -280,25 +275,24 @@ function TabGeneral({ config, onSave, stats }) {
 /*  Tab Flujo de comida                                      */
 /* ══════════════════════════════════════════════════════════ */
 function TabFases({ config, onSave }) {
-  const [fases, setFases] = useState({
-    aperitivo: [], principal: [], bebida: [], postre: [], cafe: [],
-  });
+  // fases es ARRAY de objetos: [{ key, label, emoji, orden, categorias, esBebida, traducciones }]
+  const [fases, setFases] = useState([]);
   const [categoriasDisp, setCategoriasDisp] = useState([]);
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState(null);
   const [detecting, setDetecting] = useState(false);
+  const [newFase, setNewFase] = useState({ label: "", emoji: "🍽️", esBebida: false });
+  const [showNewForm, setShowNewForm] = useState(false);
 
   useEffect(() => {
-    if (config?.fasesMenu) {
-      setFases(prev => ({ ...prev, ...config.fasesMenu }));
+    if (config?.fasesMenu && Array.isArray(config.fasesMenu) && config.fasesMenu.length) {
+      setFases(config.fasesMenu.sort((a, b) => (a.orden ?? 0) - (b.orden ?? 0)));
     }
-    // Cargar categorias del tenant
     (async () => {
       try {
         const { data } = await api.get("/admin/sugerencias/auto-detect-fases");
         setCategoriasDisp(data.categoriasDisponibles || []);
-        // Si no hay fases configuradas, pre-rellenar con auto-detect
-        if (!config?.fasesMenu || !Object.values(config.fasesMenu).some(v => v?.length)) {
+        if (!config?.fasesMenu || !Array.isArray(config.fasesMenu) || !config.fasesMenu.length) {
           setFases(data.fases);
         }
       } catch { /* ignore */ }
@@ -328,27 +322,64 @@ function TabFases({ config, onSave }) {
     finally { setSaving(false); }
   };
 
-  const addCat = (fase, cat) => {
+  const slugify = (text) =>
+    text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, "_").replace(/[^a-z0-9_]/g, "");
+
+  const addFase = () => {
+    if (!newFase.label.trim()) return;
+    const key = slugify(newFase.label);
+    if (fases.some(f => f.key === key)) {
+      setMsg({ t: "error", m: "Ya existe una fase con ese nombre" });
+      return;
+    }
+    setFases(prev => [...prev, {
+      key,
+      label: newFase.label.trim(),
+      emoji: newFase.emoji || "🍽️",
+      orden: prev.length,
+      categorias: [],
+      esBebida: newFase.esBebida,
+      traducciones: { en: { label: "" }, fr: { label: "" } },
+    }]);
+    setNewFase({ label: "", emoji: "🍽️", esBebida: false });
+    setShowNewForm(false);
+  };
+
+  const removeFase = (key) => {
+    if (!window.confirm("¿Eliminar esta fase?")) return;
+    setFases(prev => prev.filter(f => f.key !== key).map((f, i) => ({ ...f, orden: i })));
+  };
+
+  const moveFase = (idx, dir) => {
     setFases(prev => {
-      // Quitar de otras fases
-      const next = {};
-      for (const [f, cats] of Object.entries(prev)) {
-        next[f] = cats.filter(c => c !== cat);
-      }
-      next[fase] = [...(next[fase] || []), cat];
-      return next;
+      const arr = [...prev];
+      const target = idx + dir;
+      if (target < 0 || target >= arr.length) return arr;
+      [arr[idx], arr[target]] = [arr[target], arr[idx]];
+      return arr.map((f, i) => ({ ...f, orden: i }));
     });
   };
 
-  const removeCat = (fase, cat) => {
-    setFases(prev => ({
-      ...prev,
-      [fase]: (prev[fase] || []).filter(c => c !== cat),
+  const updateFase = (key, field, value) => {
+    setFases(prev => prev.map(f => f.key === key ? { ...f, [field]: value } : f));
+  };
+
+  const addCat = (faseKey, cat) => {
+    setFases(prev => prev.map(f => {
+      // Quitar de cualquier otra fase
+      const newCats = (f.categorias || []).filter(c => c !== cat);
+      if (f.key === faseKey) newCats.push(cat);
+      return { ...f, categorias: newCats };
     }));
   };
 
-  // Categorias no asignadas
-  const asignadas = new Set(Object.values(fases).flat());
+  const removeCat = (faseKey, cat) => {
+    setFases(prev => prev.map(f =>
+      f.key === faseKey ? { ...f, categorias: (f.categorias || []).filter(c => c !== cat) } : f
+    ));
+  };
+
+  const asignadas = new Set(fases.flatMap(f => f.categorias || []));
   const sinAsignar = categoriasDisp.filter(c => !asignadas.has(c));
 
   return (
@@ -358,36 +389,64 @@ function TabFases({ config, onSave }) {
       <div className="sug-section">
         <div className="sug-fases-header">
           <div>
-            <h3 className="sug-section__title">Asignar categorias a fases del menu</h3>
+            <h3 className="sug-section__title">Fases del menú</h3>
             <p className="sug-section__desc">
-              El motor sugiere la siguiente fase lógica. Asigna tus categorías a cada fase.
+              Crea y personaliza las fases de tu menú. Cada fase guía al cliente por tu carta.
             </p>
           </div>
-          <button className="sug-btn sug-btn--secondary" onClick={handleAutoDetect} disabled={detecting}>
-            {detecting ? "Detectando..." : "Auto-detectar"}
-          </button>
+          <div style={{ display: "flex", gap: "8px" }}>
+            <button className="sug-btn sug-btn--secondary" onClick={handleAutoDetect} disabled={detecting}>
+              {detecting ? "Detectando..." : "Auto-detectar"}
+            </button>
+            <button className="sug-btn sug-btn--primary" onClick={() => setShowNewForm(true)}>
+              + Nueva fase
+            </button>
+          </div>
         </div>
 
+        {/* Formulario nueva fase */}
+        {showNewForm && (
+          <div className="sug-new-fase" style={{ display: "flex", gap: "8px", alignItems: "center", padding: "12px", background: "var(--bg-card)", borderRadius: "8px", marginBottom: "12px" }}>
+            <select value={newFase.emoji} onChange={e => setNewFase(p => ({ ...p, emoji: e.target.value }))} style={{ fontSize: "1.2rem", width: "50px" }}>
+              {EMOJI_OPTIONS.map(e => <option key={e} value={e}>{e}</option>)}
+            </select>
+            <input
+              type="text" placeholder="Nombre de la fase (ej: Sushi, Tapas...)"
+              value={newFase.label} onChange={e => setNewFase(p => ({ ...p, label: e.target.value }))}
+              style={{ flex: 1, padding: "8px", borderRadius: "6px", border: "1px solid var(--border)" }}
+              onKeyDown={e => e.key === "Enter" && addFase()}
+            />
+            <label style={{ display: "flex", alignItems: "center", gap: "4px", fontSize: "0.8rem", whiteSpace: "nowrap" }}>
+              <input type="checkbox" checked={newFase.esBebida} onChange={e => setNewFase(p => ({ ...p, esBebida: e.target.checked }))} />
+              Es bebida
+            </label>
+            <button className="sug-btn sug-btn--primary" onClick={addFase}>Crear</button>
+            <button className="sug-btn sug-btn--secondary" onClick={() => setShowNewForm(false)}>Cancelar</button>
+          </div>
+        )}
+
         <div className="sug-fases-grid">
-          {FASES.map(f => (
+          {fases.map((f, idx) => (
             <div key={f.key} className="sug-fase-col">
               <div className="sug-fase-col__header">
                 <span className="sug-fase-col__emoji">{f.emoji}</span>
                 <span className="sug-fase-col__label">{f.label}</span>
+                {f.esBebida && <span style={{ fontSize: "0.6rem", background: "#3b82f6", color: "#fff", padding: "1px 6px", borderRadius: "8px" }}>bebida</span>}
+                <div style={{ marginLeft: "auto", display: "flex", gap: "2px" }}>
+                  <button className="sug-fase-col__move" onClick={() => moveFase(idx, -1)} disabled={idx === 0} title="Subir">↑</button>
+                  <button className="sug-fase-col__move" onClick={() => moveFase(idx, 1)} disabled={idx === fases.length - 1} title="Bajar">↓</button>
+                  <button className="sug-fase-col__delete" onClick={() => removeFase(f.key)} title="Eliminar">✕</button>
+                </div>
               </div>
               <div className="sug-fase-col__cats">
-                {(fases[f.key] || []).map(cat => (
+                {(f.categorias || []).map(cat => (
                   <span key={cat} className="sug-fase-tag">
                     {cat}
                     <button className="sug-fase-tag__x" onClick={() => removeCat(f.key, cat)}>x</button>
                   </span>
                 ))}
-                <select
-                  className="sug-fase-add"
-                  value=""
-                  onChange={e => e.target.value && addCat(f.key, e.target.value)}
-                >
-                  <option value="">+ Anadir...</option>
+                <select className="sug-fase-add" value="" onChange={e => e.target.value && addCat(f.key, e.target.value)}>
+                  <option value="">+ Añadir...</option>
                   {sinAsignar.map(c => <option key={c} value={c}>{c}</option>)}
                 </select>
               </div>
@@ -705,7 +764,7 @@ function TabReglas({ config, onSave }) {
                 <label>Fase trigger</label>
                 <select value={form.faseTrigger || ""} onChange={e => setForm(prev => ({ ...prev, faseTrigger: e.target.value }))}>
                   <option value="">Seleccionar...</option>
-                  {FASES.map(f => <option key={f.key} value={f.key}>{f.emoji} {f.label}</option>)}
+                  {(config?.fasesMenu || []).map(f => <option key={f.key} value={f.key}>{f.emoji} {f.label}</option>)}
                 </select>
               </div>
             )}

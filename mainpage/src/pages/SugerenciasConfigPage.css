@@ -353,3 +353,20 @@
   .sug-regla-card { flex-direction: column; align-items: flex-start; }
   .sug-regla-card__actions { width: 100%; }
 }
+
+/* ── Fases dinámicas: botones mover/eliminar ── */
+.sug-fase-col__move,
+.sug-fase-col__delete {
+  background: none;
+  border: 1px solid var(--border, #333);
+  border-radius: 4px;
+  cursor: pointer;
+  padding: 2px 6px;
+  font-size: 0.7rem;
+  color: var(--text-muted, #999);
+  transition: all 0.2s;
+}
+.sug-fase-col__move:hover { background: var(--bg-hover, #333); }
+.sug-fase-col__move:disabled { opacity: 0.3; cursor: default; }
+.sug-fase-col__delete { color: #ef4444; border-color: #ef4444; }
+.sug-fase-col__delete:hover { background: #ef4444; color: #fff; }

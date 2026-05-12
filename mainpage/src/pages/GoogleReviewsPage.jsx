@@ -412,14 +412,6 @@ function TabConfig() {
             >
               {disconnecting ? "Desconectando..." : "Desconectar"}
             </button>
-            {showConfirmDisconnect && (
-              <ModalConfirmacion
-                titulo="Desconectar Google Business"
-                mensaje="Se dejarán de procesar reseñas automáticamente. ¿Deseas continuar?"
-                onConfirm={handleDisconnect}
-                onClose={() => setShowConfirmDisconnect(false)}
-              />
-            )}
           ) : (
             <button
               className="grev-btn grev-btn--connect"
@@ -486,6 +478,15 @@ function TabConfig() {
             ))}
           </div>
         </div>
+      )}
+
+      {showConfirmDisconnect && (
+        <ModalConfirmacion
+          titulo="Desconectar Google Business"
+          mensaje="Se dejarán de procesar reseñas automáticamente. ¿Deseas continuar?"
+          onConfirm={handleDisconnect}
+          onClose={() => setShowConfirmDisconnect(false)}
+        />
       )}
     </div>
   );

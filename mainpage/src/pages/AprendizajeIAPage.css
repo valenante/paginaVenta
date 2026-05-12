@@ -1,0 +1,78 @@
+/* ═══════════════════════════════════════
+   APRENDIZAJE IA — Dashboard
+   ═══════════════════════════════════════ */
+
+.ia-learn { max-width: 1200px; margin: 0 auto; padding: 24px 16px; }
+.ia-learn__header h2 { margin: 0 0 4px; color: var(--text-primary, #e5e5e5); }
+.ia-learn__header p { margin: 0 0 24px; color: var(--text-muted, #999); font-size: 0.9rem; }
+.ia-learn__loading, .ia-learn__error { text-align: center; padding: 60px 20px; color: var(--text-muted, #999); }
+.ia-learn__error { color: #ef4444; }
+.ia-learn__empty { text-align: center; padding: 40px; color: var(--text-muted, #999); background: var(--bg-card, #1e1e1e); border-radius: 12px; margin-top: 24px; }
+
+/* KPIs */
+.ia-learn__kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 24px; }
+.ia-learn__kpi { background: var(--bg-card, #1e1e1e); border-radius: 12px; padding: 16px; text-align: center; display: flex; flex-direction: column; gap: 4px; }
+.ia-learn__kpi-icon { font-size: 1.3rem; }
+.ia-learn__kpi-value { font-size: 1.5rem; font-weight: 700; color: var(--text-primary, #e5e5e5); }
+.ia-learn__kpi-label { font-size: 0.72rem; color: var(--text-muted, #999); text-transform: uppercase; letter-spacing: 0.04em; }
+
+/* Sections */
+.ia-learn__section { background: var(--bg-card, #1e1e1e); border-radius: 12px; padding: 20px; margin-bottom: 16px; }
+.ia-learn__section h3 { margin: 0 0 16px; font-size: 1rem; color: var(--text-primary, #e5e5e5); }
+.ia-learn__section h4 { margin: 0 0 8px; font-size: 0.85rem; color: var(--text-muted, #999); }
+.ia-learn__row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.ia-learn__section--half { margin-bottom: 0; }
+
+/* Chart */
+.ia-learn__chart { display: flex; align-items: flex-end; gap: 4px; height: 120px; padding: 0 4px; }
+.ia-learn__bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; height: 100%; justify-content: flex-end; }
+.ia-learn__bar { background: linear-gradient(to top, var(--color-principal, #9B1C1C), #c0392b); border-radius: 4px 4px 0 0; min-width: 12px; width: 100%; max-width: 30px; position: relative; transition: height 0.5s ease; }
+.ia-learn__bar-val { position: absolute; top: -16px; left: 50%; transform: translateX(-50%); font-size: 0.6rem; color: var(--text-muted, #999); white-space: nowrap; }
+.ia-learn__bar-label { font-size: 0.55rem; color: var(--text-muted, #999); margin-top: 4px; text-align: center; white-space: nowrap; }
+
+/* Distribution */
+.ia-learn__distrib { display: flex; flex-direction: column; gap: 8px; }
+.ia-learn__distrib-row { display: flex; align-items: center; gap: 8px; }
+.ia-learn__distrib-label { width: 160px; font-size: 0.75rem; color: var(--text-muted, #999); flex-shrink: 0; }
+.ia-learn__distrib-bar-bg { flex: 1; height: 8px; background: var(--bg-hover, #333); border-radius: 4px; overflow: hidden; }
+.ia-learn__distrib-bar-fill { height: 100%; border-radius: 4px; transition: width 0.5s ease; }
+.ia-learn__distrib-count { width: 30px; text-align: right; font-size: 0.75rem; font-weight: 600; color: var(--text-primary, #e5e5e5); }
+
+/* Tendencias */
+.ia-learn__tendencias { display: flex; flex-direction: column; gap: 10px; }
+.ia-learn__tend-item { display: flex; align-items: center; gap: 10px; font-size: 0.85rem; color: var(--text-primary, #e5e5e5); }
+.ia-learn__tend-arrow { font-size: 1.2rem; font-weight: 700; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; border-radius: 50%; }
+.ia-learn__tend-arrow--up { background: rgba(34, 197, 94, 0.15); color: #22c55e; }
+.ia-learn__tend-arrow--stable { background: rgba(59, 130, 246, 0.15); color: #3b82f6; }
+.ia-learn__tend-arrow--down { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
+
+/* Propuestas stats */
+.ia-learn__prop-row { display: flex; justify-content: space-between; padding: 4px 0; font-size: 0.85rem; color: var(--text-primary, #e5e5e5); border-bottom: 1px solid var(--border, #333); }
+
+/* Table */
+.ia-learn__table { overflow-x: auto; }
+.ia-learn__table-head, .ia-learn__table-row { display: grid; grid-template-columns: 2fr 1.2fr 1.2fr 0.8fr 0.8fr 0.5fr; gap: 8px; padding: 8px 4px; align-items: center; }
+.ia-learn__table-head { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted, #999); border-bottom: 1px solid var(--border, #333); font-weight: 600; }
+.ia-learn__table-row { font-size: 0.8rem; color: var(--text-primary, #e5e5e5); border-bottom: 1px solid var(--border-light, #2a2a2a); }
+.ia-learn__table-row--warn { background: rgba(239, 68, 68, 0.05); }
+.ia-learn__prod-name { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ia-learn__prod-cat { font-size: 0.7rem; color: var(--text-muted, #999); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* Score bar */
+.ia-learn__score { position: relative; display: flex; align-items: center; gap: 6px; }
+.ia-learn__score-bar { height: 6px; border-radius: 3px; min-width: 4px; transition: width 0.5s ease; }
+.ia-learn__score-val { font-size: 0.75rem; font-weight: 700; min-width: 24px; }
+
+/* Trend */
+.ia-learn__trend { font-size: 1rem; font-weight: 700; text-align: center; }
+.ia-learn__trend--subiendo { color: #22c55e; }
+.ia-learn__trend--estable { color: #3b82f6; }
+.ia-learn__trend--bajando { color: #ef4444; }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .ia-learn__row { grid-template-columns: 1fr; }
+  .ia-learn__table-head, .ia-learn__table-row { grid-template-columns: 1.5fr 1fr 1fr 0.6fr 0.6fr 0.4fr; font-size: 0.7rem; }
+  .ia-learn__kpis { grid-template-columns: repeat(3, 1fr); }
+  .ia-learn__distrib-label { width: 120px; font-size: 0.65rem; }
+}

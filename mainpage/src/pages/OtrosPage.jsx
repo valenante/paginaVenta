@@ -4,6 +4,7 @@ import DayReplay from "./DayReplay/DayReplay";
 import AutomatizacionesPage from "./AutomatizacionesPage";
 import GoogleReviewsPage from "./GoogleReviewsPage";
 import SugerenciasConfigPage from "./SugerenciasConfigPage";
+import AprendizajeIAPage from "./AprendizajeIAPage";
 import "./OtrosPage.css";
 
 const MODULES = [
@@ -41,6 +42,13 @@ const MODULES = [
     label: "Sugerencias inteligentes",
     description: "Configura recomendaciones automáticas, reglas fijas y flujo de comida.",
     component: SugerenciasConfigPage,
+  },
+  {
+    key: "aprendizaje-ia",
+    icon: "🧠",
+    label: "Aprendizaje IA",
+    description: "Métricas del asistente IA en carta: scores de productos, propuestas y tendencias.",
+    component: AprendizajeIAPage,
   },
 ];
 

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
+import ModalConfirmacion from "../components/Modal/ModalConfirmacion.jsx";
 import api from "../utils/api";
 import {
   useSugerenciasConfig,
@@ -345,9 +346,15 @@ function TabFases({ config, onSave }) {
     setShowNewForm(false);
   };
 
+  const [confirmDeleteFase, setConfirmDeleteFase] = useState(null);
   const removeFase = (key) => {
-    if (!window.confirm("¿Eliminar esta fase?")) return;
-    setFases(prev => prev.filter(f => f.key !== key).map((f, i) => ({ ...f, orden: i })));
+    setConfirmDeleteFase(key);
+  };
+  const doRemoveFase = () => {
+    if (confirmDeleteFase) {
+      setFases(prev => prev.filter(f => f.key !== confirmDeleteFase).map((f, i) => ({ ...f, orden: i })));
+    }
+    setConfirmDeleteFase(null);
   };
 
   const moveFase = (idx, dir) => {
@@ -467,6 +474,15 @@ function TabFases({ config, onSave }) {
       <button className="sug-btn sug-btn--primary" onClick={save} disabled={saving}>
         {saving ? "Guardando..." : "Guardar fases"}
       </button>
+
+      {confirmDeleteFase && (
+        <ModalConfirmacion
+          titulo="Eliminar fase"
+          mensaje="¿Eliminar esta fase del flujo de comida?"
+          onConfirm={doRemoveFase}
+          onClose={() => setConfirmDeleteFase(null)}
+        />
+      )}
     </div>
   );
 }
@@ -649,14 +665,17 @@ function TabReglas({ config, onSave }) {
     }
   };
 
-  const handleDelete = async (id) => {
-    if (!window.confirm("Eliminar esta regla?")) return;
+  const [confirmDeleteRegla, setConfirmDeleteRegla] = useState(null);
+  const handleDelete = (id) => setConfirmDeleteRegla(id);
+  const doDeleteRegla = async () => {
+    if (!confirmDeleteRegla) return;
     try {
-      await eliminarRegla(id);
+      await eliminarRegla(confirmDeleteRegla);
       setMsg({ t: "ok", m: "Regla eliminada" });
       onSave({});
       setTimeout(() => setMsg(null), 2500);
     } catch { setMsg({ t: "error", m: "Error al eliminar" }); }
+    setConfirmDeleteRegla(null);
   };
 
   const handleToggle = async (id) => {
@@ -874,6 +893,15 @@ function TabReglas({ config, onSave }) {
           </div>
         )}
       </div>
+
+      {confirmDeleteRegla && (
+        <ModalConfirmacion
+          titulo="Eliminar regla"
+          mensaje="¿Eliminar esta regla fija?"
+          onConfirm={doDeleteRegla}
+          onClose={() => setConfirmDeleteRegla(null)}
+        />
+      )}
     </div>
   );
 }

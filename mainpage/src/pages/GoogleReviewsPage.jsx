@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
+import ModalConfirmacion from "../components/Modal/ModalConfirmacion.jsx";
 import {
   useGoogleStatus,
   useGoogleReviews,
@@ -361,8 +362,10 @@ function TabConfig() {
     }
   };
 
+  const [showConfirmDisconnect, setShowConfirmDisconnect] = useState(false);
+
   const handleDisconnect = async () => {
-    if (!window.confirm("Desconectar Google Business? Se dejaran de procesar resenas automaticamente.")) return;
+    setShowConfirmDisconnect(false);
     setDisconnecting(true);
     setMsg(null);
     try {
@@ -404,11 +407,19 @@ function TabConfig() {
           {status?.connected ? (
             <button
               className="grev-btn grev-btn--disconnect"
-              onClick={handleDisconnect}
+              onClick={() => setShowConfirmDisconnect(true)}
               disabled={disconnecting}
             >
               {disconnecting ? "Desconectando..." : "Desconectar"}
             </button>
+            {showConfirmDisconnect && (
+              <ModalConfirmacion
+                titulo="Desconectar Google Business"
+                mensaje="Se dejarán de procesar reseñas automáticamente. ¿Deseas continuar?"
+                onConfirm={handleDisconnect}
+                onClose={() => setShowConfirmDisconnect(false)}
+              />
+            )}
           ) : (
             <button
               className="grev-btn grev-btn--connect"

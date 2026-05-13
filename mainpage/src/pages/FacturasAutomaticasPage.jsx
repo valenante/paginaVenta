@@ -3,6 +3,7 @@
 
 import React, { useState } from "react";
 import ModalConfirmacion from "../components/Modal/ModalConfirmacion.jsx";
+import api from "../utils/api";
 import {
   useInboundJobs,
   useInboundStats,
@@ -83,26 +84,36 @@ function JobDetail({ job, onClose, onAction }) {
             <h4>Líneas ({(datos.lineas || []).length})</h4>
             <div className="finv-modal__table">
               <div className="finv-modal__table-head">
-                <span>Producto</span>
+                <span>Producto factura</span>
                 <span>Cant.</span>
                 <span>Precio</span>
-                <span>IVA</span>
-                <span>Total</span>
                 <span>Match</span>
+                <span>Producto carta</span>
+                <span>Stock</span>
               </div>
               {(datos.lineas || []).map((l, i) => (
                 <div key={i} className={`finv-modal__table-row ${l.precioCambio ? "finv-modal__table-row--price-change" : ""}`}>
                   <span className="finv-modal__prod-name">{l.descripcion}</span>
                   <span>{l.cantidad} {l.unidad}</span>
-                  <span>{(l.precioUnitario || 0).toFixed(2)}€</span>
-                  <span>{l.iva}%</span>
-                  <span>{(l.totalLinea || 0).toFixed(2)}€</span>
+                  <span>{(l.precioUnitario || 0).toFixed(2)}€ <span style={{color:"#64748b",fontSize:"0.7rem"}}>{l.iva}%</span></span>
                   <span>
                     {l.matchEstado === "auto" && <span className="finv-badge badge--ok">Auto</span>}
                     {l.matchEstado === "sugerido" && <span className="finv-badge badge--warn">Sugerido</span>}
                     {l.matchEstado === "nuevo" && <span className="finv-badge badge--info">Nuevo</span>}
                     {l.matchEstado === "pendiente" && <span className="finv-badge badge--muted">—</span>}
-                    {l.precioCambio && <span className="finv-price-change">⚠ Precio: {l.precioAnterior?.toFixed(2)}€ → {l.precioUnitario?.toFixed(2)}€</span>}
+                    {l.precioCambio && <span className="finv-price-change">⚠ {l.precioAnterior?.toFixed(2)}→{l.precioUnitario?.toFixed(2)}€</span>}
+                  </span>
+                  <span style={{fontWeight:600, color: l._stockPreview ? "#e2e8f0" : "#64748b"}}>
+                    {l._stockPreview ? l._stockPreview.productoNombre : "—"}
+                  </span>
+                  <span>
+                    {l._stockPreview ? (
+                      <span style={{fontSize:"0.75rem"}}>
+                        <span style={{color:"#64748b"}}>{l._stockPreview.stockActual}</span>
+                        <span style={{color:"#22c55e", fontWeight:700}}> +{l._stockPreview.deltaStock}</span>
+                        <span style={{color:"#64748b"}}> → {l._stockPreview.stockNuevo}</span>
+                      </span>
+                    ) : "—"}
                   </span>
                 </div>
               ))}
@@ -344,7 +355,12 @@ export default function FacturasAutomaticasPage() {
               <span>Estado</span>
             </div>
             {filteredItems.map(job => (
-              <button key={job._id} className="finv-list__row" onClick={() => setSelectedJob(job)}>
+              <button key={job._id} className="finv-list__row" onClick={async () => {
+                try {
+                  const { data } = await api.get(`/admin/facturas-automaticas/${job._id}`);
+                  setSelectedJob(data.job);
+                } catch { setSelectedJob(job); }
+              }}>
                 <span>{new Date(job.createdAt).toLocaleDateString("es")}</span>
                 <span className="finv-list__prov">
                   {job.datosExtraidos?.emisor?.nombre || job.emailFrom || "—"}

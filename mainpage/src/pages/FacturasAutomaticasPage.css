@@ -197,7 +197,7 @@
 .finv-modal__table { overflow-x: auto; }
 .finv-modal__table-head {
   display: grid;
-  grid-template-columns: 2.5fr 0.7fr 0.7fr 0.5fr 0.7fr 1.5fr;
+  grid-template-columns: 2fr 0.8fr 0.8fr 0.7fr 1.5fr 1.2fr;
   gap: 6px;
   padding: 6px 4px;
   font-size: 0.68rem;
@@ -209,7 +209,7 @@
 }
 .finv-modal__table-row {
   display: grid;
-  grid-template-columns: 2.5fr 0.7fr 0.7fr 0.5fr 0.7fr 1.5fr;
+  grid-template-columns: 2fr 0.8fr 0.8fr 0.7fr 1.5fr 1.2fr;
   gap: 6px;
   padding: 6px 4px;
   font-size: 0.78rem;

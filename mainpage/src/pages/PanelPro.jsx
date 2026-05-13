@@ -24,6 +24,9 @@ import StaffPanel from "./panel/StaffPanel";
 // ✅ Finanzas (dashboard de rentabilidad + gastos fijos)
 import FinanzasPage from "./Finanzas/FinanzasPage";
 
+// ✅ Horarios (planilla semanal de turnos)
+import HorariosPage from "./HorariosPage";
+
 // ✅ Otros (tiempos cocina, replay, automatizaciones)
 import OtrosPage from "./OtrosPage";
 
@@ -44,6 +47,7 @@ const PANEL_BY_TIPO = {
     // Valoraciones eliminado — sin uso real
     { key: "estadisticas", label: "📊 Estadísticas", permiso: "estadisticas.manage", feature: "estadisticas_avanzadas", render: () => <EstadisticasPage type="plato" /> },
     { key: "finanzas", label: "💰 Finanzas", permiso: "finanzas.view", feature: "finanzas_view", render: () => <FinanzasPage /> },
+    { key: "horarios", label: "📅 Horarios", render: () => <HorariosPage /> },
     { key: "otros", label: "⚙️ Otros", permiso: "herramientas.avanzadas", render: () => <OtrosPage /> },
   ],
 

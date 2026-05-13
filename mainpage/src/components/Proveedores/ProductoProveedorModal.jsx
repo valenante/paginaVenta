@@ -12,8 +12,34 @@ const DEFAULT = {
   precio: "",
   iva: 10,
   activo: true,
+  cantidadPorCompra: 1,
+  unidadContenido: "",
+  pesoNetoPorItem: "",
+  unidadPesoNeto: "",
   factorConversion: 1,
 };
+
+const UNIDAD_CONTENIDO_OPTIONS = [
+  { value: "ud", label: "Unidad" },
+  { value: "botella", label: "Botella" },
+  { value: "lata", label: "Lata" },
+  { value: "pieza", label: "Pieza" },
+  { value: "saco", label: "Saco" },
+  { value: "paquete", label: "Paquete" },
+  { value: "barril", label: "Barril" },
+  { value: "bote", label: "Bote" },
+  { value: "bolsa", label: "Bolsa" },
+  { value: "tarrina", label: "Tarrina" },
+  { value: "cubo", label: "Cubo" },
+  { value: "garrafa", label: "Garrafa" },
+];
+
+const PESO_VOL_UNIDADES = [
+  { value: "g", label: "g" },
+  { value: "kg", label: "kg" },
+  { value: "ml", label: "ml" },
+  { value: "l", label: "l" },
+];
 
 const UNIDAD_OPTIONS = [
   { value: "kg", label: "Kilogramo (kg)" },
@@ -89,6 +115,10 @@ export default function ProductoProveedorModal({
     ingredienteId: producto?.ingredienteId || "",
     productoId: producto?.productoId || "",
     productoShopId: producto?.productoShopId || "",
+    cantidadPorCompra: producto?.cantidadPorCompra ?? producto?.factorConversion ?? 1,
+    unidadContenido: producto?.unidadContenido || "",
+    pesoNetoPorItem: producto?.pesoNetoPorItem || "",
+    unidadPesoNeto: producto?.unidadPesoNeto || "",
     factorConversion: producto?.factorConversion ?? 1,
     factoresPorPrecio: producto?.factoresPorPrecio || [],
   }));
@@ -123,7 +153,7 @@ export default function ProductoProveedorModal({
   useEffect(() => {
     if (multiPrecioRestored || !tieneMultiPrecios) return;
     const fps = producto?.factoresPorPrecio || form.factoresPorPrecio || [];
-    const fc = Number(producto?.factorConversion || form.factorConversion) || 1;
+    const fc = Number(producto?.factorConversion || form.cantidadPorCompra) || 1;
     if (!fps.length) return;
 
     // La unidad base es la que tiene factor == fc (el factor general)
@@ -139,14 +169,14 @@ export default function ProductoProveedorModal({
       setRatios(newRatios);
     }
     setMultiPrecioRestored(true);
-  }, [tieneMultiPrecios, producto, form.factoresPorPrecio, form.factorConversion, multiPrecioRestored]);
+  }, [tieneMultiPrecios, producto, form.factoresPorPrecio, form.cantidadPorCompra, multiPrecioRestored]);
 
   const setRatio = (clave, val) => setRatios((prev) => ({ ...prev, [clave]: Number(val) || 0 }));
 
   // Calcular factoresPorPrecio a partir de unidadBase + ratios + factorConversion
   const buildFactoresPorPrecio = () => {
     if (!tieneMultiPrecios || !unidadBase) return [];
-    const fc = Number(form.factorConversion) || 1;
+    const fc = Number(form.cantidadPorCompra) || 1;
     return preciosProducto.map((p) => {
       if (p.clave === unidadBase) return { clave: p.clave, factor: fc };
       const ratio = ratios[p.clave] || 0;
@@ -156,7 +186,7 @@ export default function ProductoProveedorModal({
 
   // Coste por tipo
   const getCostePorTipo = (clave) => {
-    const fc = Number(form.factorConversion) || 1;
+    const fc = Number(form.cantidadPorCompra) || 1;
     const precio = Number(form.precio) || 0;
     if (precio <= 0) return null;
     if (clave === unidadBase) return precio / fc;
@@ -202,8 +232,8 @@ export default function ProductoProveedorModal({
     if (!form.nombre.trim()) return "El nombre es obligatorio.";
     if (Number(form.precio) <= 0) return "El precio debe ser mayor que 0.";
     if (Number(form.iva) < 0) return "IVA no válido.";
-    if (Number(form.factorConversion) <= 0) {
-      return "El factor de conversión debe ser mayor que 0.";
+    if (Number(form.cantidadPorCompra) <= 0) {
+      return "La cantidad por compra debe ser mayor que 0.";
     }
 
     if (isRest) {
@@ -235,6 +265,7 @@ export default function ProductoProveedorModal({
       setSaving(true);
       setError("");
 
+      const cantPorCompra = Number(form.cantidadPorCompra) || 1;
       const payload = {
         nombre: form.nombre,
         unidad: form.unidad,
@@ -242,10 +273,16 @@ export default function ProductoProveedorModal({
         precioBase: Number(form.precio),
         iva: Number(form.iva),
         activo: !!form.activo,
-        factorConversion: Number(form.factorConversion),
+        // Presentación
+        cantidadPorCompra: cantPorCompra,
+        unidadContenido: form.unidadContenido || "",
+        pesoNetoPorItem: Number(form.pesoNetoPorItem) || 0,
+        unidadPesoNeto: form.unidadPesoNeto || "",
+        // Legacy compat
+        factorConversion: cantPorCompra,
         factoresPorPrecio: tieneMultiPrecios ? buildFactoresPorPrecio() : [],
 
-        // Asociaciones: solo una activa
+        // Asociaciones
         ingredienteId: isRest && tipoAsociacion === "ingrediente" ? form.ingredienteId : null,
         productoId: isRest && tipoAsociacion === "producto" ? form.productoId : null,
         productoShopId: isShop ? form.productoShopId : null,
@@ -388,14 +425,15 @@ export default function ProductoProveedorModal({
                 </div>
               )}
 
+              {/* ── PRESENTACIÓN ── */}
               <div className="ppModal-field">
-                <label>Unidad *</label>
+                <label>Unidad de compra *</label>
                 <select
                   value={form.unidad}
                   onChange={(e) => set("unidad", e.target.value)}
                   required
                 >
-                  <option value="">Selecciona unidad…</option>
+                  <option value="">Selecciona…</option>
                   {UNIDAD_OPTIONS.map((o) => (
                     <option key={o.value} value={o.value}>
                       {o.label}
@@ -407,25 +445,100 @@ export default function ProductoProveedorModal({
               <div className="ppModal-field">
                 <label>Formato</label>
                 <input
-                  placeholder="saco, caja, botella…"
+                  placeholder="Ej: Caja 24 botellas 237ml"
                   value={form.formato}
                   onChange={(e) => set("formato", e.target.value)}
                 />
               </div>
 
               <div className="ppModal-field">
-                <label>Factor de conversión *</label>
-                <input
-                  type="number"
-                  min="0"
-                  step="any"
-                  value={form.factorConversion}
-                  onChange={(e) => set("factorConversion", e.target.value)}
-                />
+                <label>Contiene</label>
+                <div className="ppModal-inline">
+                  <input
+                    type="number"
+                    min="1"
+                    step="1"
+                    value={form.cantidadPorCompra}
+                    onChange={(e) => {
+                      const v = Number(e.target.value) || 1;
+                      set("cantidadPorCompra", v);
+                      set("factorConversion", v);
+                    }}
+                    className="ppModal-input--short"
+                  />
+                  <span className="ppModal-inline-sep">×</span>
+                  <select
+                    value={form.unidadContenido}
+                    onChange={(e) => set("unidadContenido", e.target.value)}
+                    className="ppModal-select--med"
+                  >
+                    <option value="">item</option>
+                    {UNIDAD_CONTENIDO_OPTIONS.map((o) => (
+                      <option key={o.value} value={o.value}>{o.label}</option>
+                    ))}
+                  </select>
+                </div>
                 <small className="ppModal-help">
-                  Ej: si una caja contiene 50 unidades, escribe <b>50</b>
+                  Items individuales por compra. Ej: 1 caja = <b>{form.cantidadPorCompra || 1}</b> {form.unidadContenido || "items"}
                 </small>
               </div>
+
+              <div className="ppModal-field">
+                <label>Peso/volumen por item</label>
+                <div className="ppModal-inline">
+                  <input
+                    type="number"
+                    min="0"
+                    step="any"
+                    value={form.pesoNetoPorItem}
+                    onChange={(e) => set("pesoNetoPorItem", e.target.value)}
+                    placeholder="0"
+                    className="ppModal-input--short"
+                  />
+                  <select
+                    value={form.unidadPesoNeto}
+                    onChange={(e) => set("unidadPesoNeto", e.target.value)}
+                    className="ppModal-select--sm"
+                  >
+                    <option value="">—</option>
+                    {PESO_VOL_UNIDADES.map((o) => (
+                      <option key={o.value} value={o.value}>{o.label}</option>
+                    ))}
+                  </select>
+                </div>
+                <small className="ppModal-help">Opcional. Ej: 237 ml por botella, 25000 g por saco</small>
+              </div>
+
+              {/* ── RESUMEN CALCULADO ── */}
+              {Number(form.precio) > 0 && (
+                <div className="ppModal-field ppModal-field--full">
+                  <div className="ppModal-resumen">
+                    {(() => {
+                      const cant = Number(form.cantidadPorCompra) || 1;
+                      const precio = Number(form.precio) || 0;
+                      const peso = Number(form.pesoNetoPorItem) || 0;
+                      const udCont = form.unidadContenido || "item";
+                      const udPeso = form.unidadPesoNeto || "";
+                      const costePorItem = cant > 0 ? precio / cant : precio;
+                      const totalPeso = peso > 0 ? cant * peso : 0;
+                      const costePorPeso = totalPeso > 0 ? precio / totalPeso : 0;
+
+                      return (
+                        <>
+                          <span className="ppModal-resumen__line">
+                            1 {form.unidad || "compra"} = <b>{cant} {udCont}{cant !== 1 ? "s" : ""}</b>
+                            {totalPeso > 0 && <> = <b>{totalPeso.toLocaleString()} {udPeso}</b></>}
+                          </span>
+                          <span className="ppModal-resumen__line">
+                            Coste: <b>{costePorItem.toFixed(2)} €/{udCont}</b>
+                            {costePorPeso > 0 && <> · {costePorPeso.toFixed(4)} €/{udPeso}</>}
+                          </span>
+                        </>
+                      );
+                    })()}
+                  </div>
+                </div>
+              )}
 
               {/* Multi-precio: unidad base + ratios */}
               {tieneMultiPrecios && (
@@ -447,7 +560,7 @@ export default function ProductoProveedorModal({
                     {unidadBase && (
                       <small className="ppModal-help">
                         Compras por <b>{preciosProducto.find(p => p.clave === unidadBase)?.label || unidadBase}</b>.
-                        El formato trae <b>{form.factorConversion || "?"}</b> unidades.
+                        El formato trae <b>{form.cantidadPorCompra || "?"}</b> unidades.
                       </small>
                     )}
                   </div>
@@ -467,7 +580,7 @@ export default function ProductoProveedorModal({
                   ))}
 
                   {/* Resumen de costes calculados */}
-                  {unidadBase && Number(form.precio) > 0 && Number(form.factorConversion) > 0 && (
+                  {unidadBase && Number(form.precio) > 0 && Number(form.cantidadPorCompra) > 0 && (
                     <div className="ppModal-field ppModal-field--full">
                       <label>Coste calculado</label>
                       <div style={{ display: "flex", flexDirection: "column", gap: "0.35rem" }}>

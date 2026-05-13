@@ -173,6 +173,51 @@
 }
 
 /* =========================
+   Inline fields (presentación)
+========================= */
+
+.ppModal-inline {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.ppModal-inline-sep {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--color-texto-suave, #6b7280);
+}
+
+.ppModal-input--short {
+  width: 80px;
+}
+
+.ppModal-select--med {
+  min-width: 120px;
+}
+
+.ppModal-select--sm {
+  min-width: 60px;
+}
+
+/* Resumen calculado */
+.ppModal-resumen {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.6rem 0.8rem;
+  background: rgba(96, 181, 255, 0.08);
+  border: 1px solid rgba(96, 181, 255, 0.2);
+  border-radius: var(--radius-sm, 6px);
+  font-size: 0.82rem;
+  color: var(--color-texto, #e2e8f0);
+}
+
+.ppModal-resumen__line b {
+  color: #60b5ff;
+}
+
+/* =========================
    Tipo asociación toggle
 ========================= */
 

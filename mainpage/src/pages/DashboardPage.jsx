@@ -132,12 +132,6 @@ export default function DashboardPage() {
           </Link>
         )}
 
-        <Link to="/configuracion/horarios" className="dashboard-tile card">
-          <div className="dashboard-tile-icon">📅</div>
-          <h2>Horarios</h2>
-          <p>Planifica los turnos de tu equipo semana a semana con vista de calendario.</p>
-        </Link>
-
         {hasPermission("roles.manage") && (
           <Link to="/configuracion/roles" className="dashboard-tile card">
             <div className="dashboard-tile-icon">🔐</div>

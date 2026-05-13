@@ -3,7 +3,7 @@
    Estilos alineados con SugerenciasConfigPage
    ═══════════════════════════════════════ */
 
-.ia-learn { max-width: 1200px; margin: 0 auto; padding: 20px 24px; }
+.ia-learn { padding: 20px 24px; }
 
 /* Header — same as .sug-header */
 .ia-learn__header {

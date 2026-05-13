@@ -78,6 +78,15 @@
   color: #ff6b6b;
 }
 
+.stock-kpi--warn {
+  background: rgba(255, 166, 0, 0.15);
+  border-color: rgba(255, 166, 0, 0.35);
+}
+
+.stock-kpi--warn .stock-kpi-value {
+  color: #ffcd3c;
+}
+
 .stock-kpi-label {
   font-size: 0.72rem;
   text-transform: uppercase;
@@ -740,6 +749,14 @@
 .stock-details strong { font-size: 1.05rem; color: #fff; }
 
 .stock-details .max { color: rgba(255, 255, 255, 0.4); font-size: 0.82rem; }
+
+/* ===== COST ===== */
+.stock-cost {
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.45);
+  margin-bottom: 0.6rem;
+  letter-spacing: 0.02em;
+}
 
 /* ===== ACTIONS ROW ===== */
 .stock-card-actions {

@@ -16,8 +16,8 @@ export function useInboundJobs({ estado = "", page = 1 } = {}) {
       if (estado) params.estado = estado;
       const { data: res } = await api.get("/admin/facturas-automaticas", { params });
       setData(res);
-    } catch (err) {
-      setError(err?.response?.data?.message || "Error al cargar");
+    } catch {
+      // Silent fail — feature may not be deployed yet
     } finally {
       setLoading(false);
     }
@@ -86,5 +86,26 @@ export async function disconnectGmail() {
 
 export async function syncGmailNow() {
   const { data } = await api.post("/admin/gmail/sync");
+  return data;
+}
+
+export function useFacturasConfig() {
+  const [config, setConfig] = useState({ autoAprobar: false, habilitado: false });
+  const [loading, setLoading] = useState(true);
+
+  const fetch = useCallback(async () => {
+    try {
+      const { data } = await api.get("/admin/facturas-automaticas/config");
+      setConfig(data.config || {});
+    } catch { /* ignore */ }
+    finally { setLoading(false); }
+  }, []);
+
+  useEffect(() => { fetch(); }, [fetch]);
+  return { config, loading, refetch: fetch };
+}
+
+export async function updateFacturasConfig(updates) {
+  const { data } = await api.patch("/admin/facturas-automaticas/config", updates);
   return data;
 }

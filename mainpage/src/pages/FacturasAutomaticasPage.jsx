@@ -7,12 +7,14 @@ import {
   useInboundJobs,
   useInboundStats,
   useGmailStatus,
+  useFacturasConfig,
   aprobarJob,
   rechazarJob,
   reprocesarJob,
   getGmailAuthUrl,
   disconnectGmail,
   syncGmailNow,
+  updateFacturasConfig,
 } from "../Hooks/useFacturasAutomaticas";
 import "./FacturasAutomaticasPage.css";
 
@@ -164,6 +166,15 @@ export default function FacturasAutomaticasPage() {
   const { items, total, pages, loading, refetch } = useInboundJobs({ estado: estadoFilter, page });
   const stats = useInboundStats();
   const gmail = useGmailStatus();
+  const facturasConfig = useFacturasConfig();
+
+  const handleToggleAutoAprobar = async () => {
+    try {
+      await updateFacturasConfig({ autoAprobar: !facturasConfig.config.autoAprobar });
+      facturasConfig.refetch();
+      setMsg({ t: "ok", m: facturasConfig.config.autoAprobar ? "Auto-aprobación desactivada" : "Auto-aprobación activada" });
+    } catch { setMsg({ t: "error", m: "Error al actualizar config" }); }
+  };
 
   const handleConnectGmail = async () => {
     try {
@@ -260,6 +271,26 @@ export default function FacturasAutomaticasPage() {
               </button>
             )}
           </div>
+        </div>
+      </div>
+
+      {/* Auto-aprobación */}
+      <div className="sug-section">
+        <div className="sug-toggle-row">
+          <div>
+            <span className="sug-toggle-label">Auto-aprobación + stock</span>
+            <span className="sug-toggle-desc">
+              {facturasConfig.config.autoAprobar
+                ? "Las facturas con alta confianza se aprueban automáticamente y actualizan el stock."
+                : "Las facturas requieren revisión manual antes de actualizar stock y costes."}
+            </span>
+          </div>
+          <button
+            className={`sug-toggle ${facturasConfig.config.autoAprobar ? "sug-toggle--on" : ""}`}
+            onClick={handleToggleAutoAprobar}
+          >
+            <span className="sug-toggle__knob" />
+          </button>
         </div>
       </div>
 

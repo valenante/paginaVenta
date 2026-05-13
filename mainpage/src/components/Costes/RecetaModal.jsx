@@ -1,5 +1,6 @@
 // src/components/Costes/RecetaModal.jsx
 import React, { useState, useEffect, useCallback } from "react";
+import { createPortal } from "react-dom";
 import { useReceta, guardarReceta, buscarIngredientes } from "../../Hooks/useRecetas";
 import "./RecetaModal.css";
 
@@ -86,15 +87,16 @@ export default function RecetaModal({ productoId, productoNombre, onClose, onSav
     }
   };
 
-  if (loading) return (
+  if (loading) return createPortal(
     <div className="rec-overlay" onClick={onClose}>
       <div className="rec-modal" onClick={e => e.stopPropagation()}>
         <div className="rec-loading">Cargando receta...</div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 
-  return (
+  return createPortal(
     <div className="rec-overlay" onClick={onClose}>
       <div className="rec-modal" onClick={e => e.stopPropagation()}>
         <div className="rec-header">
@@ -201,7 +203,8 @@ export default function RecetaModal({ productoId, productoNombre, onClose, onSav
           </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 

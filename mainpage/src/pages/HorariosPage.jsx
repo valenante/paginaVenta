@@ -2,7 +2,7 @@
 // Calendario semanal de turnos del personal.
 
 import React, { useState, useMemo } from "react";
-import { useSemana, useConflictos, asignarTurno, eliminarAsignacion, publicarSemana } from "../Hooks/useHorarios";
+import { useSemana, useConflictos, asignarTurno, eliminarAsignacion, editarAsignacion, publicarSemana } from "../Hooks/useHorarios";
 import "./HorariosPage.css";
 
 const DIAS_SHORT = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"];
@@ -27,6 +27,7 @@ export default function HorariosPage() {
   const { conflictos, refetch: refetchConflictos } = useConflictos(fecha);
   const [msg, setMsg] = useState(null);
   const [selectedCell, setSelectedCell] = useState(null); // { usuarioId, dia }
+  const [editingChip, setEditingChip] = useState(null); // { planillaId, asignacionId, horaInicio, horaFin, nota }
   const [publishing, setPublishing] = useState(false);
 
   const turnos = data?.turnos || [];
@@ -42,6 +43,21 @@ export default function HorariosPage() {
       setMsg(null);
     } catch (err) {
       setMsg({ t: "error", m: err?.response?.data?.message || "Error al asignar" });
+    }
+  };
+
+  const handleSaveEdit = async () => {
+    if (!editingChip) return;
+    try {
+      await editarAsignacion(editingChip.planillaId, editingChip.asignacionId, {
+        horaInicio: editingChip.horaInicio,
+        horaFin: editingChip.horaFin,
+        nota: editingChip.nota,
+      });
+      setEditingChip(null);
+      refetch();
+    } catch (err) {
+      setMsg({ t: "error", m: err?.response?.data?.message || "Error al editar" });
     }
   };
 
@@ -168,19 +184,58 @@ export default function HorariosPage() {
                     isSelected ? null : { usuarioId: emp.usuario._id.toString(), dia }
                   )}
                 >
-                  {asigs.map(a => (
-                    <div
-                      key={a._id}
-                      className={`hor-turno-chip ${a.esLibre ? "hor-turno-chip--libre" : ""}`}
-                      style={!a.esLibre ? { background: a.color || "#6366f1" } : undefined}
-                    >
-                      <span className="hor-turno-chip__name">{a.esLibre ? "Libre" : a.turnoNombre}</span>
-                      <button
-                        className="hor-turno-chip__remove"
-                        onClick={e => { e.stopPropagation(); handleRemove(emp.planillaId, a._id); }}
-                      >✕</button>
-                    </div>
-                  ))}
+                  {asigs.map(a => {
+                    const isEditing = editingChip?.asignacionId === a._id;
+                    return (
+                      <div key={a._id} className="hor-turno-chip-wrapper">
+                        <div
+                          className={`hor-turno-chip ${a.esLibre ? "hor-turno-chip--libre" : ""}`}
+                          style={!a.esLibre ? { background: a.color || "#6366f1" } : undefined}
+                          onClick={e => {
+                            e.stopPropagation();
+                            if (!a.esLibre) setEditingChip(isEditing ? null : {
+                              planillaId: emp.planillaId,
+                              asignacionId: a._id,
+                              horaInicio: a.horaInicio,
+                              horaFin: a.horaFin,
+                              nota: a.nota || "",
+                              turnoNombre: a.turnoNombre,
+                            });
+                          }}
+                        >
+                          <span className="hor-turno-chip__name">
+                            {a.esLibre ? "Libre" : a.turnoNombre}
+                            {!a.esLibre && <span className="hor-turno-chip__time">{a.horaInicio}-{a.horaFin}</span>}
+                          </span>
+                          <button
+                            className="hor-turno-chip__remove"
+                            onClick={e => { e.stopPropagation(); handleRemove(emp.planillaId, a._id); }}
+                          >✕</button>
+                        </div>
+                        {isEditing && (
+                          <div className="hor-edit-popup" onClick={e => e.stopPropagation()}>
+                            <div className="hor-edit-popup__title">{editingChip.turnoNombre}</div>
+                            <div className="hor-edit-popup__row">
+                              <label>Entrada</label>
+                              <input type="time" value={editingChip.horaInicio} onChange={e => setEditingChip(p => ({...p, horaInicio: e.target.value}))} />
+                            </div>
+                            <div className="hor-edit-popup__row">
+                              <label>Salida</label>
+                              <input type="time" value={editingChip.horaFin} onChange={e => setEditingChip(p => ({...p, horaFin: e.target.value}))} />
+                            </div>
+                            <div className="hor-edit-popup__row">
+                              <label>Nota</label>
+                              <input type="text" placeholder="Ej: cubre a Hugo" value={editingChip.nota} onChange={e => setEditingChip(p => ({...p, nota: e.target.value}))} />
+                            </div>
+                            <div className="hor-edit-popup__actions">
+                              <button className="hor-edit-popup__cancel" onClick={() => setEditingChip(null)}>Cancelar</button>
+                              <button className="hor-edit-popup__save" onClick={handleSaveEdit}>Guardar</button>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
                   {asigs.length === 0 && !isClosed && (
                     <span className="hor-cell--empty">+</span>
                   )}

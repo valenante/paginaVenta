@@ -41,6 +41,11 @@ export async function eliminarAsignacion(planillaId, asignacionId) {
   return data;
 }
 
+export async function editarAsignacion(planillaId, asignacionId, updates) {
+  const { data } = await api.patch(`/admin/horarios/asignacion/${planillaId}/${asignacionId}`, updates);
+  return data;
+}
+
 export async function publicarSemana(fecha) {
   const { data } = await api.post("/admin/horarios/publicar", { fecha });
   return data;

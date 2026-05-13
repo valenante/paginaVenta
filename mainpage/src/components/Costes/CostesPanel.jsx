@@ -4,6 +4,7 @@
 
 import React, { useEffect, useMemo, useState } from "react";
 import useCostes from "../../hooks/useCostes";
+import RecetaModal from "./RecetaModal";
 import "./CostesPanel.css";
 
 const TABS = [
@@ -45,6 +46,7 @@ const CostesPanel = () => {
   const [categoriaFiltro, setCategoriaFiltro] = useState("todas");
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(24);
+  const [recetaProducto, setRecetaProducto] = useState(null);
 
   const {
     items, loading, error, saving,
@@ -238,6 +240,7 @@ const CostesPanel = () => {
               onDiscard={() => discardChanges(p._id)}
               saving={saving}
               getCosteActual={getCosteActual}
+              onReceta={(prod) => setRecetaProducto(prod)}
             />
           ))}
         </div>
@@ -291,6 +294,15 @@ const CostesPanel = () => {
           </div>
         </div>
       )}
+
+      {recetaProducto && (
+        <RecetaModal
+          productoId={recetaProducto._id}
+          productoNombre={recetaProducto.nombre}
+          onClose={() => setRecetaProducto(null)}
+          onSaved={() => { setRecetaProducto(null); window.location.reload(); }}
+        />
+      )}
     </div>
   );
 };
@@ -298,9 +310,10 @@ const CostesPanel = () => {
 /* =====================================================
  * Card de producto (con todas sus variantes)
  * ===================================================== */
-function ProductoCard({ producto, dirty, onChangeCoste, onSave, onDiscard, saving, getCosteActual }) {
+function ProductoCard({ producto, dirty, onChangeCoste, onSave, onDiscard, saving, getCosteActual, onReceta }) {
   const precios = producto.precios || [];
   const hasDirty = Object.keys(dirty).length > 0;
+  const tieneReceta = producto.receta?.length > 0;
 
   return (
     <div className={`costes-card ${hasDirty ? "is-dirty" : ""}`}>
@@ -309,11 +322,20 @@ function ProductoCard({ producto, dirty, onChangeCoste, onSave, onDiscard, savin
           <div className="costes-card__name">{producto.nombre}</div>
           <div className="costes-card__cat">{producto.categoria || "(sin categoría)"}</div>
         </div>
-        {producto.costeActualizadoAt && (
-          <div className="costes-card__meta">
-            {new Date(producto.costeActualizadoAt).toLocaleDateString()}
-          </div>
-        )}
+        <div className="costes-card__actions">
+          <button
+            className={`costes-receta-btn ${tieneReceta ? "costes-receta-btn--active" : ""}`}
+            onClick={() => onReceta(producto)}
+            title={tieneReceta ? `Receta (${producto.receta.length} ingredientes)` : "Crear receta"}
+          >
+            📋 {tieneReceta ? producto.receta.length : ""}
+          </button>
+          {producto.costeActualizadoAt && (
+            <div className="costes-card__meta">
+              {new Date(producto.costeActualizadoAt).toLocaleDateString()}
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="costes-card__variants">

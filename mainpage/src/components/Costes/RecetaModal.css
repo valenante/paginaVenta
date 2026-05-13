@@ -1,0 +1,48 @@
+/* ═══ Receta Modal ═══ */
+.rec-overlay { position: fixed; inset: 0; z-index: 9999; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; animation: sug-fadeIn 0.15s ease-out; }
+.rec-modal { background: #1a1f2e; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; max-width: 750px; width: 95%; max-height: 85vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.4); }
+.rec-header { display: flex; align-items: center; justify-content: space-between; padding: 20px 24px 14px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+.rec-header h3 { font-size: 1.1rem; font-weight: 800; color: #f1f5f9; margin: 0; }
+.rec-close { background: none; border: none; color: #64748b; font-size: 1.1rem; cursor: pointer; padding: 4px; }
+.rec-close:hover { color: #f1f5f9; }
+.rec-body { padding: 18px 24px; }
+.rec-loading { text-align: center; padding: 40px; color: #94a3b8; }
+.rec-empty { text-align: center; color: #64748b; font-size: 0.85rem; padding: 20px; }
+
+/* Table */
+.rec-table { margin-bottom: 16px; }
+.rec-table__head { display: grid; grid-template-columns: 2.5fr 0.8fr 0.7fr 0.8fr 0.8fr 0.4fr; gap: 6px; padding: 6px 4px; font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.04em; color: #64748b; font-weight: 700; border-bottom: 1px solid rgba(255,255,255,0.06); }
+.rec-table__row { display: grid; grid-template-columns: 2.5fr 0.8fr 0.7fr 0.8fr 0.8fr 0.4fr; gap: 6px; padding: 8px 4px; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.03); }
+.rec-ing-name { font-size: 0.8rem; font-weight: 600; color: #e2e8f0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rec-input { width: 100%; padding: 5px 8px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.04); color: #e2e8f0; font-size: 0.8rem; font-family: inherit; }
+.rec-input:focus { border-color: #60b5ff; outline: none; }
+.rec-select { width: 100%; padding: 5px 4px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.04); color: #e2e8f0; font-size: 0.78rem; font-family: inherit; }
+.rec-cost { font-size: 0.78rem; color: #94a3b8; }
+.rec-cost--total { color: #60b5ff; font-weight: 700; }
+.rec-remove { background: none; border: none; color: #ef4444; cursor: pointer; font-size: 0.8rem; opacity: 0.5; }
+.rec-remove:hover { opacity: 1; }
+
+/* Add button */
+.rec-add-btn { display: block; width: 100%; padding: 10px; border-radius: 10px; border: 1px dashed rgba(96,181,255,0.3); background: rgba(96,181,255,0.04); color: #60b5ff; font-size: 0.85rem; font-weight: 600; cursor: pointer; font-family: inherit; transition: all 0.15s; }
+.rec-add-btn:hover { background: rgba(96,181,255,0.1); border-color: rgba(96,181,255,0.5); }
+
+/* Search */
+.rec-search { margin-top: 8px; }
+.rec-search__input { width: 100%; padding: 10px 14px; border-radius: 10px; border: 1px solid rgba(96,181,255,0.3); background: rgba(255,255,255,0.04); color: #e2e8f0; font-size: 0.85rem; font-family: inherit; }
+.rec-search__input:focus { border-color: #60b5ff; outline: none; }
+.rec-search__loading { font-size: 0.78rem; color: #94a3b8; padding: 8px; }
+.rec-search__results { max-height: 200px; overflow-y: auto; border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; margin-top: 6px; }
+.rec-search__item { display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 10px 14px; border: none; border-bottom: 1px solid rgba(255,255,255,0.03); background: none; color: #e2e8f0; font-size: 0.82rem; cursor: pointer; font-family: inherit; text-align: left; transition: background 0.12s; }
+.rec-search__item:hover { background: rgba(96,181,255,0.08); }
+.rec-search__name { font-weight: 600; }
+.rec-search__meta { font-size: 0.7rem; color: #64748b; }
+.rec-search__cancel { display: block; margin-top: 6px; background: none; border: none; color: #94a3b8; font-size: 0.78rem; cursor: pointer; font-family: inherit; }
+
+/* Footer */
+.rec-footer { padding: 14px 24px; border-top: 1px solid rgba(255,255,255,0.06); }
+.rec-total { display: flex; justify-content: space-between; font-size: 0.95rem; color: #f1f5f9; margin-bottom: 8px; }
+.rec-total strong { color: #60b5ff; font-size: 1.1rem; }
+.rec-margins { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+.rec-margin { font-size: 0.78rem; color: #22c55e; font-weight: 600; }
+.rec-margin--warn { color: #f59e0b; }
+.rec-actions { display: flex; justify-content: flex-end; gap: 8px; }

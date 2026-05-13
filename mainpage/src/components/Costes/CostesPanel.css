@@ -506,3 +506,32 @@
   }
   .costes-panel__count { margin-left: 0; }
 }
+
+/* ═══ Receta button ═══ */
+.costes-card__actions {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+.costes-receta-btn {
+  padding: 4px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.03);
+  color: #64748b;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s;
+}
+.costes-receta-btn:hover {
+  background: rgba(96,181,255,0.1);
+  border-color: rgba(96,181,255,0.3);
+  color: #60b5ff;
+}
+.costes-receta-btn--active {
+  background: rgba(34,197,94,0.1);
+  border-color: rgba(34,197,94,0.2);
+  color: #22c55e;
+}

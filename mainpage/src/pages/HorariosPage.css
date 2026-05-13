@@ -201,6 +201,11 @@
 .hor-assign-option:hover {
   background: rgba(255,255,255,0.06);
 }
+.hor-assign-option--all {
+  color: #60b5ff;
+  font-weight: 700;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
 .hor-assign-option--libre {
   color: #94a3b8;
   border-top: 1px solid rgba(255,255,255,0.06);

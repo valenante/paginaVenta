@@ -45,6 +45,19 @@ export default function HorariosPage() {
     }
   };
 
+  const handleAssignAll = async (usuarioId, diaSemana) => {
+    try {
+      for (const t of turnos) {
+        await asignarTurno({ usuarioId, fecha, diaSemana, turnoId: t.id });
+      }
+      refetch();
+      refetchConflictos();
+      setSelectedCell(null);
+    } catch (err) {
+      setMsg({ t: "error", m: err?.response?.data?.message || "Error al asignar" });
+    }
+  };
+
   const handleSetLibre = async (usuarioId, diaSemana) => {
     try {
       await asignarTurno({ usuarioId, fecha, diaSemana, turnoId: "libre", esLibre: true });
@@ -175,6 +188,14 @@ export default function HorariosPage() {
                   {/* Dropdown de asignación */}
                   {isSelected && (
                     <div className="hor-assign-dropdown" onClick={e => e.stopPropagation()}>
+                      {turnos.length > 1 && (
+                        <button
+                          className="hor-assign-option hor-assign-option--all"
+                          onClick={() => handleAssignAll(emp.usuario._id, dia)}
+                        >
+                          📋 Todo el día
+                        </button>
+                      )}
                       {turnos.map(t => (
                         <button
                           key={t.id}

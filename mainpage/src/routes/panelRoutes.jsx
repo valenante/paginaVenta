@@ -13,6 +13,7 @@ const ReservasConfigPage = lazy(() => import("../pages/ReservasConfigPage"));
 const MiCuentaPage = lazy(() => import("../pages/MiCuentaPage"));
 const FacturasPage = lazy(() => import("../pages/FacturasPage"));
 const ConfigImpresionPage = lazy(() => import("../pages/ConfigImpresionPage"));
+const HorariosPage = lazy(() => import("../pages/HorariosPage"));
 const ConfigImpresionShopPage = lazy(() => import("../pages/ConfigImpresionShopPage"));
 const PrintCenterPage = lazy(() => import("../pages/PrintCenterPage.jsx"));
 const ExportsPage = lazy(() => import("../pages/ExportsPage.jsx"));
@@ -81,6 +82,7 @@ export default function panelRoutes() {
       <Route path="/configuracion/impresion-shop" element={<UserLayout><ConfigImpresionShopPage /></UserLayout>} />
       <Route path="/configuracion/exports" element={<UserLayout><ExportsPage /></UserLayout>} />
       <Route path="/configuracion/loyalty" element={<UserLayout><LoyaltyConfigPage /></UserLayout>} />
+      <Route path="/configuracion/horarios" element={<UserLayout><HorariosPage /></UserLayout>} />
 
       {/* Proveedores */}
       <Route path="/configuracion/proveedores" element={<UserLayout><ProveedoresPage /></UserLayout>} />

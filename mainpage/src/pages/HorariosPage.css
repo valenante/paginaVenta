@@ -1,0 +1,239 @@
+/* ═══════════════════════════════════════
+   HORARIOS — Calendar Grid
+   ═══════════════════════════════════════ */
+
+.hor-root { padding: 20px 24px; }
+
+/* Conflictos */
+.hor-conflictos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  padding: 12px 16px;
+  border-radius: 10px;
+  background: rgba(245,158,11,0.08);
+  border: 1px solid rgba(245,158,11,0.2);
+  margin-bottom: 16px;
+  font-size: 0.82rem;
+  color: #f59e0b;
+}
+.hor-conflicto-item {
+  background: rgba(245,158,11,0.12);
+  padding: 3px 10px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+}
+
+/* Calendar grid */
+.hor-calendar {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 14px;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+
+/* Row */
+.hor-row {
+  display: grid;
+  grid-template-columns: 160px repeat(7, 1fr) 70px;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+.hor-row:last-child { border-bottom: none; }
+.hor-row--header {
+  background: rgba(255,255,255,0.05);
+}
+
+/* Cell */
+.hor-cell {
+  padding: 10px 8px;
+  min-height: 60px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  border-right: 1px solid rgba(255,255,255,0.04);
+  position: relative;
+}
+.hor-cell:last-child { border-right: none; }
+
+/* Name cell */
+.hor-cell--name {
+  justify-content: center;
+  padding: 10px 14px;
+  min-height: auto;
+}
+.hor-emp-name {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #f1f5f9;
+}
+.hor-emp-role {
+  font-size: 0.68rem;
+  color: #64748b;
+  text-transform: capitalize;
+}
+
+/* Day header */
+.hor-cell--day {
+  align-items: center;
+  justify-content: center;
+  min-height: auto;
+  padding: 8px;
+}
+.hor-day-name {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #f1f5f9;
+}
+.hor-day-date {
+  font-size: 0.65rem;
+  color: #64748b;
+}
+
+/* Shift cell */
+.hor-cell--shift {
+  cursor: pointer;
+  transition: background 0.15s;
+  align-items: center;
+  justify-content: center;
+}
+.hor-cell--shift:hover {
+  background: rgba(255,255,255,0.04);
+}
+.hor-cell--selected {
+  background: rgba(96,181,255,0.08) !important;
+}
+.hor-cell--closed {
+  background: rgba(255,255,255,0.02);
+  cursor: default;
+}
+.hor-cell--closed::after {
+  content: "—";
+  font-size: 0.75rem;
+  color: #475569;
+}
+.hor-cell--empty {
+  font-size: 1.2rem;
+  color: #334155;
+  font-weight: 300;
+}
+
+/* Turno chip */
+.hor-turno-chip {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  white-space: nowrap;
+  position: relative;
+}
+.hor-turno-chip--libre {
+  background: #475569 !important;
+  color: #cbd5e1;
+}
+.hor-turno-chip__name {
+  flex: 1;
+}
+.hor-turno-chip__remove {
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.5);
+  cursor: pointer;
+  font-size: 0.65rem;
+  padding: 0 2px;
+  transition: color 0.15s;
+}
+.hor-turno-chip__remove:hover {
+  color: #fff;
+}
+
+/* Hours cell */
+.hor-cell--hours {
+  align-items: center;
+  justify-content: center;
+  min-height: auto;
+  padding: 8px;
+}
+.hor-hours-value {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #60b5ff;
+}
+
+/* Assign dropdown */
+.hor-assign-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  background: #1a1f2e;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  min-width: 180px;
+  overflow: hidden;
+  animation: hor-dropdown-in 0.15s ease-out;
+}
+@keyframes hor-dropdown-in {
+  from { opacity: 0; transform: translateX(-50%) translateY(-4px); }
+  to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+.hor-assign-option {
+  display: block;
+  width: 100%;
+  padding: 10px 14px;
+  border: none;
+  background: none;
+  color: #e2e8f0;
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.12s;
+}
+.hor-assign-option:hover {
+  background: rgba(255,255,255,0.06);
+}
+.hor-assign-option--libre {
+  color: #94a3b8;
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+
+/* Leyenda */
+.hor-leyenda {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 12px 16px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 10px;
+}
+.hor-leyenda-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  color: #94a3b8;
+}
+.hor-leyenda-color {
+  width: 12px;
+  height: 12px;
+  border-radius: 4px;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .hor-row {
+    grid-template-columns: 120px repeat(7, 1fr) 50px;
+  }
+  .hor-emp-name { font-size: 0.75rem; }
+  .hor-turno-chip { font-size: 0.65rem; padding: 3px 6px; }
+}

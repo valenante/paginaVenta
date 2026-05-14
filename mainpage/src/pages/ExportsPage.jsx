@@ -224,10 +224,10 @@ export default function ExportsPage() {
   ===================================================== */
 
   return (
-    <main className="exports-page section section--wide">
-      <header className="exports-header">
-        <h2>Exports / Reports</h2>
-        <p>Genera y descarga exports (sin bloquear la app). Historial auditable.</p>
+    <main className="exports-page cfg-page section section--wide">
+      <header className="config-page-header">
+        <h1>Exports / Reports</h1>
+        <p className="config-page-subtitle">Genera y descarga exports (sin bloquear la app). Historial auditable.</p>
       </header>
 
       {/* ✅ Alertas positivas */}
@@ -250,15 +250,15 @@ export default function ExportsPage() {
         />
       )}
 
-      <div className="exports-tabs">
+      <div className="config-tabs">
         <button
-          className={`exports-tab ${tab === "generate" ? "is-active" : ""}`}
+          className={`config-tab ${tab === "generate" ? "is-active" : ""}`}
           onClick={() => setTab("generate")}
         >
           Generar
         </button>
         <button
-          className={`exports-tab ${tab === "history" ? "is-active" : ""}`}
+          className={`config-tab ${tab === "history" ? "is-active" : ""}`}
           onClick={() => setTab("history")}
         >
           Historial
@@ -415,7 +415,7 @@ export default function ExportsPage() {
           ) : items.length === 0 ? (
             <p className="exports-muted">Sin exports todavía.</p>
           ) : (
-            <div className="exports-table">
+            <div className="config-table">
               <div className="exports-thead">
                 <div>Estado</div>
                 <div>Tipo</div>

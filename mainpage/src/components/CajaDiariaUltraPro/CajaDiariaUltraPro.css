@@ -410,11 +410,22 @@
     gap: 1rem;
   }
 
-  /* Los filtros pasan a ocupar toda la línea */
+  /* Los filtros: wrap en 2 filas, dates arriba, botones abajo */
   .caja-ultra-filtros {
-    flex-direction: column;
+    flex-wrap: wrap;
     width: 100%;
-    gap: 0.8rem;
+    gap: 0.5rem;
+  }
+
+  .caja-ultra-filtros input[type="date"] {
+    flex: 1 1 calc(50% - 0.25rem);
+    min-width: 0;
+  }
+
+  .caja-ultra-filtros button {
+    flex: 1 1 auto;
+    font-size: 0.78rem;
+    padding: 0.5rem 0.6rem;
   }
 
   .caja-ultra-lista ul {

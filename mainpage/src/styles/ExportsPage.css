@@ -10,7 +10,7 @@
 .exports-alert { padding: 0; }
 
 /* Tabs: estilo panel ALEF */
-.config-tabs { display: flex; gap: var(--space-sm, 8px); flex-wrap: wrap; }
+.config-tabs { display: flex; gap: var(--space-sm, 8px); flex-wrap: wrap; margin-bottom: var(--space-md, 16px); }
 .config-tab {
   display: inline-flex; align-items: center; gap: 10px;
   padding: 0.6rem 1rem; border-radius: var(--radius-md, 8px);

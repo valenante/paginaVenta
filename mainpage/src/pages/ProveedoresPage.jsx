@@ -54,11 +54,6 @@ export default function ProveedoresPage() {
     return tenantId ? { headers: { "x-tenant-id": tenantId } } : {};
   }, [tenantId]);
 
-  const filteredItems = useMemo(() => {
-    if (tipoFiltro === "todos") return items;
-    return items.filter((p) => p.tipo === tipoFiltro);
-  }, [items, tipoFiltro]);
-
   const totalPages = useMemo(() => {
     return Math.max(1, Math.ceil((total || 0) / pageSize));
   }, [total, pageSize]);
@@ -76,6 +71,7 @@ export default function ProveedoresPage() {
         ...headersTenant,
         params: {
           q: q || undefined,
+          tipo: tipoFiltro !== "todos" ? tipoFiltro : undefined,
           page,
           limit: pageSize,
         },
@@ -95,7 +91,7 @@ export default function ProveedoresPage() {
     } finally {
       setLoading(false);
     }
-  }, [headersTenant, q, page, pageSize]);
+  }, [headersTenant, q, page, pageSize, tipoFiltro]);
 
   useEffect(() => {
     fetchProveedores();
@@ -296,7 +292,7 @@ export default function ProveedoresPage() {
               <div className="proveedores-loading">
                 Cargando proveedores…
               </div>
-            ) : filteredItems.length === 0 ? (
+            ) : items.length === 0 ? (
               <div className="proveedores-empty">
                 <div className="proveedores-empty__title">No hay proveedores</div>
                 <div className="proveedores-empty__text">
@@ -320,7 +316,7 @@ export default function ProveedoresPage() {
                     </thead>
 
                     <tbody>
-                      {filteredItems.map((p) => (
+                      {items.map((p) => (
                         <tr key={p._id}>
                           <td data-label="Proveedor">
                             <div className="proveedores-name-cell">

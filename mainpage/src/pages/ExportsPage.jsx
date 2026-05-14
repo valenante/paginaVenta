@@ -225,9 +225,11 @@ export default function ExportsPage() {
 
   return (
     <main className="exports-page cfg-page section section--wide">
-      <header className="config-page-header">
-        <h1>Exports / Reports</h1>
-        <p className="config-page-subtitle">Genera y descarga exports (sin bloquear la app). Historial auditable.</p>
+      <header className="cfg-header">
+        <div>
+          <h1>Exports / Reports</h1>
+          <p className="text-suave">Genera y descarga exports (sin bloquear la app). Historial auditable.</p>
+        </div>
       </header>
 
       {/* ✅ Alertas positivas */}

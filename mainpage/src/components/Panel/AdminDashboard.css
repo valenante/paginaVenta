@@ -389,8 +389,25 @@
 @media (max-width: 480px) {
   .adm__kpis { grid-template-columns: 1fr; }
   .adm__cards { grid-template-columns: repeat(2, 1fr); }
-  .adm__staff-head, .adm__staff-row { grid-template-columns: 1fr 42px 42px 58px; font-size: 0.72rem; gap: 2px; padding: 6px 4px; }
-  .adm__staff-head--5col, .adm__staff-row--5col { grid-template-columns: 1fr 28px 52px 44px 38px; font-size: 0.72rem; }
+
+  /* Camareros: ocultar header, rows como cards */
+  .adm__staff-head { display: none; }
+  .adm__staff-row {
+    display: flex; flex-wrap: wrap; align-items: baseline;
+    gap: 2px 8px; padding: 8px 6px; font-size: 0.78rem;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .adm__staff-name { flex: 1 1 100%; font-size: 0.85rem; margin-bottom: 2px; }
+  .adm__staff-amt { margin-left: auto; }
+
+  /* Rotación 5col: igual, ocultar header */
+  .adm__staff-head--5col { display: none; }
+  .adm__staff-row--5col {
+    display: flex; flex-wrap: wrap; align-items: baseline;
+    gap: 2px 8px; padding: 8px 6px; font-size: 0.78rem;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+
   .adm__top-row { grid-template-columns: 18px 1fr 36px 56px; gap: 2px; font-size: 0.75rem; }
   .adm__elim-row { grid-template-columns: 1fr 52px 48px; font-size: 0.72rem; }
   .adm__elim-who { display: none; }

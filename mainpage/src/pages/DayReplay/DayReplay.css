@@ -160,3 +160,24 @@
 
 /* ── Loading/Empty ── */
 .dr-loading, .dr-empty { text-align: center; padding: 40px 20px; color: var(--dash-text-soft, #64748b); }
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .dr .adm__kpis {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 6px;
+  }
+  .dr .adm__kpi-value { font-size: 1.1rem; }
+  .dr-staff__grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 480px) {
+  .dr .adm__kpis {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 5px;
+  }
+  .dr .adm__kpi { padding: 10px 8px; }
+  .dr .adm__kpi-value { font-size: 1rem; }
+  .dr .adm__kpi-label { font-size: 0.6rem; }
+  .dr-summary .adm__kpi-value { font-size: 0.9rem; }
+}

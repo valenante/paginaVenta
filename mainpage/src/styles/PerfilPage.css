@@ -1,72 +1,169 @@
-/*****************************************************
- * Perfil Page – Alef
- * Base: config-common.css
- *****************************************************/
+/* Perfil Page – ALEF Professional */
 
-/* ===== Resumen ===== */
+/* ===== Summary ===== */
 .perfil-summary {
   display: flex;
   align-items: center;
-  gap: var(--space-lg);
-}
-
-.perfil-summary-left {
-  display: flex;
-  align-items: center;
-  gap: var(--space-lg);
+  gap: var(--space-lg, 20px);
 }
 
 .perfil-avatar {
-  width: 92px;
-  height: 92px;
+  width: 80px;
+  height: 80px;
   border-radius: 999px;
   object-fit: cover;
-  border: 1px solid var(--color-borde-suave);
-  box-shadow: var(--shadow-suave);
-  background: var(--color-blanco, #ffffff);
+  border: 2px solid var(--color-borde-suave, #e2e8f0);
+  background: var(--color-gris-claro, #f1f5f9);
+}
+
+.perfil-avatar--placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  font-weight: 800;
+  color: #60b5ff;
+  background: rgba(96, 181, 255, 0.1);
+  border-color: rgba(96, 181, 255, 0.3);
 }
 
 .perfil-summary-info {
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
+  gap: 0.3rem;
 }
 
 .perfil-summary-info h3 {
   margin: 0;
-  font-size: var(--font-size-xl);
-  color: var(--color-texto);
+  font-size: 1.2rem;
+  font-weight: 800;
 }
 
 .perfil-summary-email {
   margin: 0;
   color: var(--color-texto-suave);
-  font-size: var(--font-size-sm);
+  font-size: 0.85rem;
 }
 
-.perfil-summary-meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-xs);
-}
-
-/* ===== Formulario ===== */
+/* ===== Form ===== */
 .perfil-form {
   display: flex;
   flex-direction: column;
-  gap: var(--space-lg);
+  gap: var(--space-lg, 20px);
+}
+
+.perfil-form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: var(--space-md, 12px);
+}
+
+.perfil-form-grid-full {
+  grid-column: 1 / -1;
 }
 
 .input-disabled {
-  background: var(--color-gris-claro, #f5f5f5) !important;
-  color: var(--color-texto-suave);
+  background: var(--color-gris-claro, #f1f5f9) !important;
+  color: var(--color-texto-suave) !important;
   cursor: not-allowed;
+}
+
+.input-disabled:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 1000px var(--color-gris-claro, #f1f5f9) inset !important;
+  -webkit-text-fill-color: var(--color-texto-suave) !important;
+}
+
+.perfil-help {
+  color: var(--color-texto-suave);
+  font-size: 0.75rem;
+}
+
+/* ===== Avatar button ===== */
+.perfil-avatar-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.6rem 1rem;
+  border: 1.5px dashed var(--color-borde-suave, #d1d5db);
+  border-radius: 12px;
+  background: transparent;
+  color: var(--color-texto);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.perfil-avatar-btn:hover {
+  border-color: #60b5ff;
+  background: rgba(96, 181, 255, 0.04);
+}
+
+.perfil-avatar-btn__preview {
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  object-fit: cover;
+}
+
+.perfil-avatar-btn__icon {
+  font-size: 1.2rem;
+}
+
+/* ===== Password strength ===== */
+.perfil-strength {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-top: 0.2rem;
+}
+
+.perfil-strength__bar {
+  height: 4px;
+  border-radius: 2px;
+  background: var(--color-gris-claro, #e2e8f0);
+  overflow: hidden;
+}
+
+.perfil-strength__fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.3s ease, background 0.3s ease;
+}
+
+.perfil-strength--weak { color: #ef4444; }
+.perfil-strength--weak.perfil-strength__fill { background: #ef4444; }
+.perfil-strength--medium { color: #f59e0b; }
+.perfil-strength--medium.perfil-strength__fill { background: #f59e0b; }
+.perfil-strength--strong { color: #22c55e; }
+.perfil-strength--strong.perfil-strength__fill { background: #22c55e; }
+
+.perfil-strength__label {
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.perfil-strength__hint {
+  font-size: 0.7rem;
+  color: var(--color-texto-suave);
+}
+
+/* ===== Actions ===== */
+.perfil-actions {
+  display: flex;
+  gap: var(--space-sm, 8px);
+  flex-wrap: wrap;
 }
 
 /* ===== Responsive ===== */
 @media (max-width: 768px) {
-  .perfil-summary-left {
+  .perfil-summary {
     flex-direction: column;
     align-items: flex-start;
+    gap: var(--space-md, 12px);
+  }
+
+  .perfil-form-grid {
+    grid-template-columns: 1fr;
   }
 }

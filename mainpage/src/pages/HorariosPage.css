@@ -330,3 +330,32 @@
   .hor-emp-name { font-size: 0.75rem; }
   .hor-turno-chip { font-size: 0.65rem; padding: 3px 6px; }
 }
+
+@media (max-width: 768px) {
+  .hor-root { padding: 12px 8px; }
+
+  /* Header botones: wrap en mobile */
+  .sug-header { flex-wrap: wrap; gap: 10px; }
+  .sug-header > div:last-child {
+    flex-wrap: wrap !important;
+    width: 100%;
+    gap: 6px !important;
+  }
+  .sug-header > div:last-child .sug-btn {
+    flex: 1 1 auto;
+    font-size: 0.78rem;
+    padding: 0.45rem 0.6rem;
+  }
+
+  /* Calendar: scroll horizontal */
+  .hor-calendar {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .hor-row {
+    min-width: 600px;
+    grid-template-columns: 100px repeat(7, 1fr) 45px;
+    font-size: 0.75rem;
+  }
+}

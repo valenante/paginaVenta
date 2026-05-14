@@ -3,6 +3,40 @@
  * Base: config-common.css
  *****************************************************/
 
+/* ===== Toggle tipo proveedor ===== */
+.proveedores-tipo-filtro {
+  display: flex;
+  gap: 0;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1.5px solid var(--color-borde-suave, #d1d5db);
+  margin-bottom: var(--space-md, 12px);
+}
+
+.proveedores-tipo-btn {
+  flex: 1;
+  padding: 0.5rem 0.8rem;
+  border: none;
+  background: transparent;
+  color: var(--color-texto, #374151);
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: var(--fuente-principal);
+  white-space: nowrap;
+}
+
+.proveedores-tipo-btn + .proveedores-tipo-btn {
+  border-left: 1.5px solid var(--color-borde-suave, #d1d5db);
+}
+
+.proveedores-tipo-btn:hover { background: rgba(0, 0, 0, 0.04); }
+.proveedores-tipo-btn.is-active {
+  background: var(--color-principal, #6a0dad);
+  color: #fff;
+}
+
 /* ===== Filtros (específico) ===== */
 .proveedores-config-filtros {
   display: grid;

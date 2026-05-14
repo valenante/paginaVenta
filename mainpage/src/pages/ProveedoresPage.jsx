@@ -42,6 +42,7 @@ export default function ProveedoresPage() {
   const [alerta, setAlerta] = useState(null); // opcional: success/info
 
   const [q, setQ] = useState("");
+  const [tipoFiltro, setTipoFiltro] = useState("todos");
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(PAGE_SIZE_DEFAULT);
 
@@ -52,6 +53,11 @@ export default function ProveedoresPage() {
   const headersTenant = useMemo(() => {
     return tenantId ? { headers: { "x-tenant-id": tenantId } } : {};
   }, [tenantId]);
+
+  const filteredItems = useMemo(() => {
+    if (tipoFiltro === "todos") return items;
+    return items.filter((p) => p.tipo === tipoFiltro);
+  }, [items, tipoFiltro]);
 
   const totalPages = useMemo(() => {
     return Math.max(1, Math.ceil((total || 0) / pageSize));
@@ -225,6 +231,25 @@ export default function ProveedoresPage() {
               </div>
             </div>
 
+            <div className="proveedores-tipo-filtro">
+              {[
+                { value: "todos", label: "Todos" },
+                { value: "alimentacion", label: "Alimentación" },
+                { value: "bebidas", label: "Bebidas" },
+                { value: "limpieza", label: "Limpieza" },
+                { value: "otros", label: "Otros" },
+              ].map((t) => (
+                <button
+                  key={t.value}
+                  type="button"
+                  className={`proveedores-tipo-btn ${tipoFiltro === t.value ? "is-active" : ""}`}
+                  onClick={() => { setTipoFiltro(t.value); setPage(1); }}
+                >
+                  {t.label}
+                </button>
+              ))}
+            </div>
+
             <div className="proveedores-config-filtros">
               <div className="config-field proveedores-config-filtros__search">
                 <label>Buscar proveedor</label>
@@ -271,7 +296,7 @@ export default function ProveedoresPage() {
               <div className="proveedores-loading">
                 Cargando proveedores…
               </div>
-            ) : items.length === 0 ? (
+            ) : filteredItems.length === 0 ? (
               <div className="proveedores-empty">
                 <div className="proveedores-empty__title">No hay proveedores</div>
                 <div className="proveedores-empty__text">
@@ -295,7 +320,7 @@ export default function ProveedoresPage() {
                     </thead>
 
                     <tbody>
-                      {items.map((p) => (
+                      {filteredItems.map((p) => (
                         <tr key={p._id}>
                           <td data-label="Proveedor">
                             <div className="proveedores-name-cell">

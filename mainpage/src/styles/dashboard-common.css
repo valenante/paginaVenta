@@ -806,4 +806,25 @@
     padding: 0.42rem 0.78rem;
     font-size: 0.74rem;
   }
+
+  /* Tablas en mobile: font pequeño, scroll horizontal */
+  .dash-table-wrap {
+    padding: 0.6rem;
+  }
+
+  .dash-table {
+    font-size: 0.75rem;
+    min-width: 420px;
+  }
+
+  .dash-table thead th {
+    font-size: 0.65rem;
+    padding: 0.4rem 0.35rem;
+    letter-spacing: 0.04em;
+  }
+
+  .dash-table tbody td {
+    padding: 0.45rem 0.35rem;
+    font-size: 0.78rem;
+  }
 }

@@ -33,7 +33,7 @@
 
 .proveedores-tipo-btn:hover { background: rgba(0, 0, 0, 0.04); }
 .proveedores-tipo-btn.is-active {
-  background: #1e293b;
+  background: #60b5ff;
   color: #fff;
 }
 

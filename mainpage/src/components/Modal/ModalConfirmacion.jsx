@@ -5,6 +5,7 @@ export default function ModalConfirmacion({
   titulo = "Confirmar acción",
   mensaje = "¿Está seguro?",
   placeholder = "",
+  textoConfirmar = "Aceptar",
   onConfirm,
   onClose,
   children
@@ -76,7 +77,7 @@ export default function ModalConfirmacion({
             onClick={manejarConfirmacion}
             className="boton-aceptar--modalconfirmacion"
           >
-            Aceptar
+            {textoConfirmar}
           </button>
         </div>
 

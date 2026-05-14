@@ -222,17 +222,33 @@ const StockPage = () => {
   /* ================================================================
      Actions: ingredientes
   ================================================================ */
-  const eliminarIngrediente = async (id) => {
+  const checkDependenciasYEliminar = async (ing) => {
     try {
-      await api.delete(`/stock/ingrediente/${id}`);
-      showFlash("Ingrediente eliminado");
+      const { data } = await api.get(`/stock/ingrediente/${ing._id}/dependencias`);
+      if (data?.tieneDependencias) {
+        setModal({ type: "eliminar-deps", ingrediente: ing, deps: data });
+      } else {
+        setModal({ type: "eliminar", ingrediente: ing });
+      }
+    } catch {
+      setModal({ type: "eliminar", ingrediente: ing });
+    }
+  };
+
+  const eliminarIngrediente = async (id, force = false) => {
+    try {
+      await api.delete(`/stock/ingrediente/${id}${force ? "?force=true" : ""}`);
+      showFlash("Ingrediente archivado");
       fetchStock();
       setModal(null);
     } catch (err) {
-      showToast(
-        err?.response?.data?.message || "Error eliminando el ingrediente.",
-        "error"
-      );
+      const code = err?.response?.data?.code;
+      if (code === "INGREDIENTE_IN_USE") {
+        const deps = err?.response?.data?.deps;
+        setModal({ type: "eliminar-deps", ingrediente: modal?.ingrediente, deps });
+      } else {
+        showToast(err?.response?.data?.message || "Error eliminando el ingrediente.", "error");
+      }
     }
   };
 
@@ -391,9 +407,7 @@ const StockPage = () => {
                     <button
                       className="btn-eliminar-ingrediente"
                       aria-label="Eliminar"
-                      onClick={() =>
-                        setModal({ type: "eliminar", ingrediente: ing })
-                      }
+                      onClick={() => checkDependenciasYEliminar(ing)}
                     >
                       ✖
                     </button>
@@ -530,9 +544,27 @@ const StockPage = () => {
           )}
           {modal?.type === "eliminar" && (
             <ModalConfirmacion
-              titulo="Eliminar ingrediente"
-              mensaje={`¿Seguro que deseas eliminar "${modal.ingrediente.nombre}"? Esta acción no se puede deshacer.`}
+              titulo="Archivar ingrediente"
+              mensaje={`¿Seguro que deseas archivar "${modal.ingrediente.nombre}"? No tiene recetas ni proveedores asociados.`}
               onConfirm={() => eliminarIngrediente(modal.ingrediente._id)}
+              onClose={() => setModal(null)}
+            />
+          )}
+          {modal?.type === "eliminar-deps" && (
+            <ModalConfirmacion
+              titulo="⚠️ Ingrediente en uso"
+              mensaje={
+                `"${modal.ingrediente.nombre}" está en uso:\n\n` +
+                (modal.deps?.recetas?.length > 0
+                  ? `• ${modal.deps.recetas.length} receta${modal.deps.recetas.length > 1 ? "s" : ""}: ${modal.deps.recetas.map(r => r.nombre).slice(0, 5).join(", ")}\n`
+                  : "") +
+                (modal.deps?.proveedores?.length > 0
+                  ? `• ${modal.deps.proveedores.length} proveedor${modal.deps.proveedores.length > 1 ? "es" : ""}: ${modal.deps.proveedores.map(p => p.nombre).slice(0, 5).join(", ")}\n`
+                  : "") +
+                `\nArchivar igualmente desvinculará los proveedores. Las recetas mantendrán la referencia pero no descontarán stock.`
+              }
+              textoConfirmar="Archivar igualmente"
+              onConfirm={() => eliminarIngrediente(modal.ingrediente._id, true)}
               onClose={() => setModal(null)}
             />
           )}

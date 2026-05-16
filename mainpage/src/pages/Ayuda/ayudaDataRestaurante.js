@@ -2184,4 +2184,1238 @@ El sistema guarda un registro de todas las exportaciones realizadas con fecha y 
         ]
     },
 
+    stockRecetas: {
+        titulo: "Stock • Ingredientes y Recetas",
+        articulos: [
+            {
+                id: "stock-unificado",
+                titulo: "Stock unificado: ingredientes como fuente de verdad",
+                descripcion: "Entiende cómo funciona el sistema de stock de ALEF basado en ingredientes.",
+                contenido: [
+                    `En ALEF, el **ingrediente** es la fuente de verdad del stock. No gestionas stock de productos — gestionas stock de ingredientes, y los productos lo consumen a través de recetas.
+
+---
+
+## 🔹 Cómo funciona
+
+1. **Ingrediente** = materia prima real (ej: "Calamar", "Harina", "Cerveza Heineken")
+2. **Receta** = cuánto de cada ingrediente usa un producto de la carta
+3. **Cuando se vende un producto** → ALEF descuenta automáticamente los ingredientes de su receta
+
+Ejemplo: vendes 1 "Brioche de Calamar" → el sistema descuenta 150g de Calamar + 1 ud de Pan Brioche + 1 ud de Harina.
+
+---
+
+## 🔹 Crear un ingrediente
+
+Desde **Stock** en el panel:
+
+- **Nombre**: nombre real de la materia prima
+- **Unidad**: kg, litros, unidades...
+- **Stock actual**: cuánto tienes ahora
+- **Stock mínimo**: ALEF te avisa cuando baje de aquí
+- **Stock crítico**: ALEF desactiva sugerencias de productos que usen este ingrediente
+- **Control de stock**: activa/desactiva el seguimiento automático
+
+---
+
+## 🔹 Productos agotados automáticamente
+
+Cuando un ingrediente llega a stock 0, ALEF marca automáticamente como **agotado** todos los productos que lo necesitan. Cuando el stock se restaura (por ejemplo al recibir un pedido de proveedor), los productos se reactivan solos.
+
+---
+
+## 🔹 Ajustar stock manualmente
+
+Puedes ajustar el stock de cualquier ingrediente desde el panel. Cada ajuste queda registrado con fecha, usuario y motivo.
+
+---
+
+## 🔹 Dependencias
+
+Antes de archivar un ingrediente, ALEF te muestra qué productos y proveedores lo usan. No puedes eliminar un ingrediente que esté vinculado a recetas activas.`
+                ]
+            },
+            {
+                id: "recetas-producto",
+                titulo: "Recetas: vincular ingredientes a productos",
+                descripcion: "Cómo crear recetas para que el stock se descuente automáticamente al vender.",
+                contenido: [
+                    `Las **recetas** conectan los productos de tu carta con los ingredientes del stock. Cuando vendes un producto, ALEF descuenta automáticamente los ingredientes que necesita.
+
+---
+
+## 🔹 Crear una receta
+
+1. Ve a **Carta y productos** → selecciona un producto
+2. Pestaña **Receta**
+3. Añade ingredientes con la cantidad que usa ese plato
+
+Ejemplo para "Ensalada César":
+- Lechuga: 200g
+- Pollo: 150g
+- Pan tostado: 30g
+- Parmesano: 20g
+- Salsa César: 40ml
+
+---
+
+## 🔹 ¿Qué pasa al vender?
+
+Cuando un camarero cierra una mesa con 2 Ensaladas César:
+- Se descuentan 400g de Lechuga, 300g de Pollo, etc.
+- Si algún ingrediente llega a 0, el producto se marca como agotado automáticamente
+- El coste del plato se calcula desde los precios de los ingredientes
+
+---
+
+## 🔹 Productos sin receta
+
+Los productos sin receta funcionan normalmente pero no descuentan stock. Son útiles para productos que no necesitas controlar (ej: servilletas, agua del grifo).
+
+---
+
+## 🔹 Coste automático
+
+Si tus ingredientes tienen coste (desde los proveedores), ALEF calcula automáticamente el coste de cada plato sumando sus ingredientes. Esto te permite ver el margen real de cada producto.`
+                ]
+            }
+        ]
+    },
+
+    proveedoresAvanzado: {
+        titulo: "Proveedores Avanzado",
+        articulos: [
+            {
+                id: "smart-reorder",
+                titulo: "Pedidos inteligentes: ALEF pide por ti",
+                descripcion: "Cómo funciona el sistema de pedidos automáticos basado en consumo real.",
+                contenido: [
+                    `ALEF analiza el consumo de tu restaurante por día de la semana (últimas 8 semanas) y genera pedidos a proveedores automáticamente cuando detecta que un ingrediente va a quedarse sin stock.
+
+---
+
+## 🔹 Modos de funcionamiento
+
+Configurable en **Configuración → Automatizaciones**:
+
+- **Semi-automático** (recomendado): ALEF crea borradores de pedido y te envía un email para que los revises y apruebes. Tú decides si se envían.
+- **Automático**: ALEF crea los pedidos y los envía directamente al proveedor por email. Solo recibes una notificación de confirmación.
+- **Desactivado**: sin pedidos automáticos.
+
+---
+
+## 🔹 Cómo calcula qué pedir
+
+1. Analiza el consumo del día de la semana (ej: los viernes gastas más calamar)
+2. Pondera las últimas 8 semanas (más peso a las recientes)
+3. Compara con el stock actual y el lead time del proveedor
+4. Genera las líneas del pedido con cantidades sugeridas
+
+---
+
+## 🔹 Cuándo se ejecuta
+
+Se ejecuta una vez al día por la mañana (8:00-11:00). Solo genera pedidos si hay ingredientes por debajo del stock mínimo.
+
+---
+
+## 🔹 Email de notificación
+
+Recibes un email con:
+- Productos bajo mínimo
+- Pedidos creados (con detalle de items y coste estimado)
+- Link al panel para aprobar (modo semi) o revisar (modo auto)`
+                ]
+            },
+            {
+                id: "facturas-automaticas",
+                titulo: "Facturas automáticas por email",
+                descripcion: "ALEF lee las facturas de tu email, las procesa con IA y actualiza tu stock.",
+                contenido: [
+                    `ALEF puede leer las facturas que llegan a tu email (Gmail), procesarlas con inteligencia artificial y actualizar tu stock automáticamente.
+
+---
+
+## 🔹 Cómo funciona
+
+1. **Conectas tu Gmail** desde Configuración → Facturas Automáticas
+2. ALEF escanea tu email cada 15 minutos buscando facturas (PDF o foto)
+3. La IA extrae: proveedor, productos, cantidades, precios
+4. Hace matching con tus proveedores y productos existentes
+5. Actualiza el stock de los ingredientes recibidos
+
+---
+
+## 🔹 Qué formatos acepta
+
+- **PDF**: se procesan perfectamente (facturas digitales)
+- **Fotos/imágenes**: se procesan pero con menor precisión
+
+---
+
+## 🔹 Estados del procesamiento
+
+Cada factura pasa por estos estados:
+1. **Recibida**: email detectado con adjunto
+2. **Clasificada**: la IA confirma que es una factura
+3. **Extraída**: datos extraídos (proveedor, líneas, importes)
+4. **Matched**: productos vinculados a tu catálogo
+5. **Completada**: stock actualizado
+
+---
+
+## 🔹 Activación
+
+1. Ve a **Otros → Facturas automáticas**
+2. Conecta tu cuenta de Gmail
+3. ALEF empezará a procesar automáticamente
+
+Puedes ver el historial de facturas procesadas y corregir errores manualmente si la IA no hace un matching perfecto.`
+                ]
+            },
+            {
+                id: "productos-proveedor",
+                titulo: "Productos de proveedor y cadena de conversión",
+                descripcion: "Cómo vincular lo que compras con lo que usas en cocina.",
+                contenido: [
+                    `Los **productos de proveedor** conectan lo que compras (ej: "Caja 24 Heineken") con lo que usas (ej: "Cerveza Heineken" por unidad).
+
+---
+
+## 🔹 Campos clave
+
+- **Nombre comercial**: cómo aparece en la factura del proveedor
+- **Precio**: precio de compra (sin IVA)
+- **Cantidad por compra**: cuántas unidades vienen por pedido (ej: 24 en una caja)
+- **Peso neto por item**: si el ingrediente se mide en kg/litros (ej: cada botella = 0.33L)
+- **Ingrediente vinculado**: a qué ingrediente de tu stock se conecta
+
+---
+
+## 🔹 Ejemplo: Caja de Heineken
+
+| Campo | Valor |
+|---|---|
+| Nombre | Heineken 33cl Caja 24 |
+| Precio | 25.44€ |
+| Cantidad por compra | 24 |
+| Ingrediente | Cerveza Heineken |
+
+Cuando recibes 1 caja, el stock de "Cerveza Heineken" sube en 24 unidades.
+El coste por unidad se calcula automáticamente: 25.44 / 24 = 1.06€.
+
+---
+
+## 🔹 Conversión peso/volumen
+
+Si compras por cajas pero usas por kg/litros:
+
+| Campo | Valor |
+|---|---|
+| Nombre | Calamar Limpio 10x2 |
+| Precio | 86.25€ |
+| Cantidad por compra | 10 |
+| Peso neto por item | 2 kg |
+| Ingrediente | Calamar |
+
+Recibes 1 caja = 10 items × 2kg = 20kg de calamar en stock.
+Coste: 86.25 / 20 = 4.31€/kg.`
+                ]
+            }
+        ]
+    },
+
+    horarios: {
+        titulo: "Horarios del Personal",
+        articulos: [
+            {
+                id: "horarios-personal",
+                titulo: "Calendario semanal de turnos",
+                descripcion: "Organiza los turnos de tu equipo semana a semana.",
+                contenido: [
+                    `El módulo de **Horarios** permite crear y gestionar los turnos de trabajo de tu personal semana a semana.
+
+---
+
+## 🔹 Acceso
+
+Desde el panel: **Horarios** (pestaña en la barra superior).
+
+---
+
+## 🔹 Vista de calendario
+
+El calendario muestra una cuadrícula con:
+- **Filas**: cada empleado del restaurante
+- **Columnas**: los 7 días de la semana
+- **Celdas**: el turno asignado (con horario y color)
+
+---
+
+## 🔹 Asignar un turno
+
+1. Pulsa en la celda vacía del empleado + día
+2. Se abre un desplegable con los turnos disponibles
+3. Selecciona el turno (ej: "Almuerzo", "Cena", "Turno partido")
+4. El turno se asigna con su horario por defecto
+
+---
+
+## 🔹 Personalizar horario
+
+Puedes hacer clic en un turno ya asignado para cambiar la hora de inicio y fin manualmente. Útil para turnos especiales o cambios puntuales.
+
+---
+
+## 🔹 Marcar día libre
+
+Selecciona "Libre" en el desplegable para marcar un día sin turno.
+
+---
+
+## 🔹 Horas semanales
+
+En la última columna se muestra el total de horas asignadas a cada empleado esa semana. Útil para controlar que no se exceden las horas contratadas.
+
+---
+
+## 🔹 Navegación
+
+Usa las flechas para moverte entre semanas. Puedes ver semanas futuras para planificar con antelación.`
+                ]
+            }
+        ]
+    },
+
+    mesasCerradas: {
+        titulo: "Mesas Cerradas",
+        articulos: [
+            {
+                id: "mesas-cerradas",
+                titulo: "Mesas cerradas: historial y reimpresión",
+                descripcion: "Consulta el historial de mesas cerradas y reimprime cuentas o facturas.",
+                contenido: [
+                    `La sección **Mesas Cerradas** guarda el historial de todas las mesas cobradas. Puedes consultar los detalles y reimprimir cuentas o facturas.
+
+---
+
+## 🔹 Acceso
+
+Desde el TPV: desplegable **"Ir a"** → **Mesas cerradas**.
+
+---
+
+## 🔹 Filtros
+
+- **Solo caja actual**: muestra solo las mesas cerradas en la caja del día (activado por defecto)
+- **Buscar mesa**: filtra por número de mesa
+
+---
+
+## 🔹 Detalle de una mesa cerrada
+
+Al pulsar en una mesa cerrada ves:
+- Número de mesa y fecha/hora de cierre
+- Camarero que la cerró
+- Lista de todos los productos con cantidades y precios
+- Método de pago (efectivo, tarjeta, mixto)
+- Total cobrado
+
+---
+
+## 🔹 Reimprimir cuenta
+
+Pulsa **Reimprimir cuenta** para enviar la cuenta a la impresora. Sale exactamente igual que la cuenta original con todos los productos, adicionales y el total correcto.
+
+---
+
+## 🔹 Reimprimir factura
+
+Si la mesa generó factura (simplificada o nominativa), puedes reimprimirla con los datos fiscales, número de factura, IVA desglosado y QR de VeriFactu si aplica.
+
+---
+
+## 🔹 Importante
+
+Las reimpresiones usan los datos congelados en el momento del cierre. Si cambias precios después, las reimpresiones siguen mostrando los precios originales — que es lo correcto fiscalmente.`
+                ]
+            }
+        ]
+    },
+
+    rolesPermisos: {
+        titulo: "Roles y Permisos",
+        articulos: [
+            {
+                id: "roles-permisos-avanzado",
+                titulo: "Sistema de roles y permisos granular",
+                descripcion: "Controla exactamente qué puede hacer cada miembro de tu equipo.",
+                contenido: [
+                    `ALEF tiene un sistema de permisos granular que te permite controlar exactamente qué puede ver y hacer cada persona de tu equipo.
+
+---
+
+## 🔹 Roles predefinidos
+
+| Rol | Qué puede hacer |
+|---|---|
+| **Admin** | Todo — gestión completa del restaurante |
+| **Encargado** | Casi todo excepto configuración avanzada y facturación |
+| **Camarero** | Mesas, pedidos, cobrar, imprimir cuenta |
+| **Cocina** | Ver y gestionar pantalla de cocina |
+| **Barra** | Ver y gestionar pantalla de barra |
+
+---
+
+## 🔹 Permisos personalizados
+
+Desde **Configuración → Roles y Permisos** puedes crear roles personalizados con permisos específicos:
+
+- **Pedidos**: crear, editar, eliminar productos de pedidos
+- **Mesas**: abrir, cerrar, transferir
+- **Caja**: abrir, cerrar, ver movimientos
+- **Impresión**: imprimir cuenta, factura, comanda
+- **Stock**: ver, ajustar, crear ingredientes
+- **Estadísticas**: ver dashboard, estadísticas avanzadas
+- **Configuración**: editar datos restaurante, impresoras
+- **Usuarios**: crear, editar, eliminar personal
+- **Herramientas avanzadas**: acceso a módulos de IA, analytics
+
+---
+
+## 🔹 Permisos por usuario
+
+Además de los roles, puedes asignar permisos extra o revocar permisos específicos a un usuario concreto. Esto te permite hacer excepciones sin crear un rol nuevo.
+
+---
+
+## 🔹 Ejemplo práctico
+
+Quieres que tu encargado de sala pueda cerrar caja pero no pueda ver las finanzas:
+1. Asígnale el rol "Encargado"
+2. Revócale el permiso "estadisticas.view"
+3. Mantén el permiso "caja.close"
+
+---
+
+## 🔹 Seguridad
+
+- Eliminar productos de un pedido requiere permiso explícito
+- Cerrar caja requiere contraseña del usuario
+- Todas las eliminaciones quedan registradas con usuario, fecha y motivo`
+                ]
+            }
+        ]
+    },
+
+    autopilotIA: {
+        titulo: "Autopilot • Inteligencia Artificial",
+        articulos: [
+            {
+                id: "autopilot-que-es",
+                titulo: "ALEF Autopilot: tu empleado IA 24/7",
+                descripcion: "Entiende cómo funciona el sistema de automatización inteligente de ALEF.",
+                contenido: [
+                    `**ALEF Autopilot** es un sistema de automatización que trabaja las 24 horas por ti. No es un chat — es un empleado invisible que ejecuta acciones, toma decisiones y solo te molesta cuando necesita tu aprobación.
+
+---
+
+## 🔹 Cómo funciona
+
+Autopilot ejecuta tareas automáticamente en segundo plano:
+
+- **Detecta** problemas (stock bajo, márgenes erosionados, productos que no se venden)
+- **Actúa** cuando puede (marca productos agotados, desactiva sugerencias)
+- **Te propone** acciones cuando necesita tu OK (subir un precio, ocultar un producto)
+
+---
+
+## 🔹 El Orbe IA
+
+En la esquina inferior derecha del panel verás un **orbe circular** que respira suavemente. Este orbe cambia de color según el estado de tu restaurante:
+
+| Color | Significado |
+|---|---|
+| **Azul** | Todo en orden, sin alertas |
+| **Violeta** | Hay información para revisar |
+| **Naranja** | Hay acciones pendientes de tu aprobación |
+| **Rojo** | Algo crítico necesita tu atención |
+
+El número en el badge indica cuántas acciones pendientes hay.
+
+---
+
+## 🔹 Panel Autopilot
+
+Al pulsar el orbe se abre un panel con dos secciones:
+
+### Necesita tu OK
+Acciones que ALEF propone y necesitan tu aprobación:
+- "Subir precio de Croquetas de 4.40€ a 5.50€ (margen actual 22%)" → **[Aprobar]** **[Rechazar]**
+- "Ocultar Ensalada César? Baja venta + bajo margen" → **[Aprobar]** **[Rechazar]**
+
+### Hecho por ALEF
+Acciones que ya ejecutó automáticamente:
+- "3 productos marcados agotado" → **[Deshacer]** si te equivocaste
+- "Pedido a Picking: 5 items, 342€" → **[Ver]**
+- "Brownie marcado como estrella" → **[Deshacer]**
+
+---
+
+## 🔹 Qué puede hacer Autopilot
+
+| Acción | Modo | Frecuencia |
+|---|---|---|
+| Marcar productos agotados | Automático | Cada 5 min |
+| Reactivar productos con stock | Automático | Cada 5 min |
+| Generar pedidos a proveedores | Semi/Auto | 1x/día |
+| Detectar márgenes erosionados | Propone | 1x/día |
+| Marcar estrellas de la carta | Automático | 1x/semana |
+| Proponer ocultar productos "perro" | Propone | 1x/semana |
+| Desactivar sugerencias por stock bajo | Automático | Cada 10 min |
+| Cerrar caja automáticamente | Propone | Cada 15 min |
+| Expirar acciones no aprobadas | Automático | Cada hora |
+
+---
+
+## 🔹 Configuración
+
+Desde **Configuración → Automatizaciones** puedes controlar qué hace Autopilot solo y qué necesita tu aprobación:
+
+- **Auto**: lo hace solo (reversible desde el Orbe)
+- **Aprobación**: te propone y esperas tu OK
+- **Desactivado**: no actúa
+
+Por defecto, las acciones financieras (precios, cierre caja) requieren tu aprobación. Las acciones de stock (marcar agotado, desactivar sugerencias) se ejecutan solas porque son reversibles.`
+                ]
+            },
+            {
+                id: "copilot-ia",
+                titulo: "Copilot IA: pregúntale lo que quieras",
+                descripcion: "Usa el chat de IA para analizar tu restaurante, obtener insights y ejecutar acciones.",
+                contenido: [
+                    `**ALEF Copilot** es un asistente de inteligencia artificial con el que puedes chatear. Tiene acceso a todos los datos de tu restaurante y puede ejecutar acciones por ti.
+
+---
+
+## 🔹 Cómo acceder
+
+Desde el panel Autopilot (Orbe), pulsa **"Pregúntame lo que quieras"** en la parte inferior. También puedes mantener pulsado el Orbe para abrir el chat en pantalla completa.
+
+---
+
+## 🔹 Qué puedes preguntarle
+
+El Copilot tiene 78 herramientas integradas. Algunos ejemplos:
+
+### Análisis
+- "¿Cómo van las ventas hoy?"
+- "¿Cuál es mi plato estrella esta semana?"
+- "Compara mis ventas con la semana pasada"
+- "¿Qué productos debería quitar de la carta?"
+- "¿Cuáles son mis márgenes por categoría?"
+
+### Acciones
+- "Crea un producto llamado Tarta de Queso a 6.50€"
+- "Sube el precio del brownie a 5.90€"
+- "Crea una categoría Postres Especiales"
+- "Ajusta el stock de calamar a 10kg"
+- "Genera un pedido a Picking con lo que necesito"
+
+### Datos
+- "¿Cuánto he facturado este mes?"
+- "¿Quién es mi mejor camarero?"
+- "¿A qué hora tengo más mesas?"
+- "¿Qué tiempo hace mañana y cómo afecta?"
+
+---
+
+## 🔹 Adjuntar archivos
+
+Puedes adjuntar imágenes o archivos Excel al chat. Útil para:
+- Enviar una foto de una factura para que la procese
+- Subir un Excel con datos para analizar
+
+---
+
+## 🔹 Historial
+
+Tus conversaciones se guardan. Puedes volver a ellas desde la pantalla completa del chat (sidebar izquierdo con todas las conversaciones anteriores).
+
+---
+
+## 🔹 Feedback
+
+Debajo de cada respuesta del Copilot hay botones 👍 👎 para indicar si la respuesta fue útil. Esto ayuda a mejorar la calidad de las respuestas.`
+                ]
+            }
+        ]
+    },
+
+    cocinaInteligente: {
+        titulo: "Cocina Inteligente",
+        articulos: [
+            {
+                id: "cocina-inteligente",
+                titulo: "Motor adaptativo de cocina",
+                descripcion: "Cómo ALEF aprende los tiempos de tu cocina y gestiona la capacidad automáticamente.",
+                contenido: [
+                    `La **cocina inteligente** de ALEF aprende de los datos reales de tu restaurante para predecir tiempos de preparación, detectar cuellos de botella y gestionar la capacidad de cada estación.
+
+---
+
+## 🔹 Tiempos adaptativos
+
+ALEF mide cuánto tarda cada plato en prepararse. Con el tiempo, aprende los tiempos reales de tu cocina (no estimaciones genéricas). Estos tiempos se usan para:
+
+- Estimar cuándo estará listo un pedido
+- Detectar cuándo un plato se está retrasando (indicador rojo en cocina)
+- Priorizar el orden de preparación
+
+---
+
+## 🔹 Estaciones de cocina
+
+Puedes configurar múltiples estaciones (ej: Entrantes, Finales, Plancha, Freidora). Cada estación tiene:
+
+- **Capacidad máxima**: cuántos platos puede preparar a la vez
+- **Workers activos**: cuántos cocineros están en esa estación
+- **Productos asignados**: qué platos van a cada estación
+
+Cuando un pedido entra, cada producto se rutea automáticamente a su estación.
+
+---
+
+## 🔹 Auto-capacidad
+
+ALEF ajusta la capacidad percibida de cada estación en función de la carga actual. Si una estación está al límite, los nuevos pedidos se marcan con un indicador de espera.
+
+---
+
+## 🔹 Predicciones
+
+Con suficientes datos (2-3 semanas), ALEF puede predecir:
+- Cuántos pedidos esperar a cada hora
+- Qué estaciones van a saturarse
+- Cuándo necesitas más personal en cocina
+
+---
+
+## 🔹 Configuración
+
+Desde **Otros → Tiempos cocina**:
+- Activa/desactiva el motor adaptativo
+- Configura la capacidad de cada estación
+- Ve el historial de tiempos por plato
+- Ejecuta simulaciones de carga`
+                ]
+            },
+            {
+                id: "analytics-cocina",
+                titulo: "Analytics de cocina: cuellos de botella y rendimiento",
+                descripcion: "Analiza el rendimiento de tu cocina con datos reales.",
+                contenido: [
+                    `Los **analytics de cocina** te muestran exactamente dónde pierde tiempo tu cocina y qué productos o estaciones son problemáticos.
+
+---
+
+## 🔹 Acceso
+
+Desde **Otros → Tiempos cocina** → pestaña de análisis.
+
+---
+
+## 🔹 Cuellos de botella
+
+ALEF detecta qué estaciones o productos están frenando al resto. Un cuello de botella aparece cuando:
+- Una estación tarda más de lo esperado consistentemente
+- Un producto específico tiene tiempos muy variables
+- Una combinación de platos genera retrasos (ej: cuando salen 3 paellas + 2 arroces a la vez)
+
+---
+
+## 🔹 Degradación por carga
+
+Muestra cómo empeoran los tiempos de preparación cuando la cocina está llena. Ejemplo:
+- Con 5 pedidos simultáneos: 8 min de media
+- Con 15 pedidos simultáneos: 14 min de media
+
+Esto te ayuda a saber cuándo necesitas refuerzos.
+
+---
+
+## 🔹 Rendimiento por estación
+
+Compara estaciones entre sí:
+- Throughput (platos/hora)
+- Tiempo medio de preparación
+- Variabilidad (¿es consistente o impredecible?)
+- Uso de capacidad (% del máximo)
+
+---
+
+## 🔹 Productos lentos
+
+Lista de los productos que más tardan o que más variabilidad tienen. Útil para decidir si simplificar una receta o sacar un plato de la carta.`
+                ]
+            },
+            {
+                id: "replay-dia",
+                titulo: "Replay del día: revive tu servicio minuto a minuto",
+                descripcion: "Reconstrucción completa de todo lo que pasó en tu restaurante.",
+                contenido: [
+                    `El **Replay del día** reconstruye minuto a minuto todo lo que ocurrió en tu restaurante: mesas, pedidos, cocina, ventas, camareros, caja.
+
+---
+
+## 🔹 Acceso
+
+Desde **Otros → Replay del día**.
+
+---
+
+## 🔹 Cómo funciona
+
+Un **slider temporal** en la parte superior te permite moverte por las horas del día. Al moverlo, toda la pantalla se actualiza mostrando el estado del restaurante en ese momento exacto:
+
+- Qué mesas estaban abiertas/cerradas
+- Qué pedidos se hicieron
+- Qué estaba preparando la cocina
+- Cuánto llevaba de venta acumulada
+- Qué camareros estaban activos
+
+---
+
+## 🔹 KPIs en tiempo real
+
+Mientras mueves el slider ves KPIs que se actualizan:
+- Ventas acumuladas hasta ese momento
+- Mesas abiertas/cerradas
+- Ticket medio
+- Pedidos por hora
+- Comensales
+
+---
+
+## 🔹 Para qué usarlo
+
+- **Analizar un servicio malo**: ¿a qué hora se saturó la cocina? ¿cuándo empezaron los retrasos?
+- **Entrenar personal**: muestra al equipo cómo fue el servicio y dónde mejorar
+- **Detectar patrones**: ¿siempre se satura a las 14:30? ¿los viernes necesitas más personal?
+
+---
+
+## 🔹 Fechas
+
+Puedes seleccionar cualquier fecha pasada para ver su replay. Los datos se guardan mientras la caja esté activa.`
+                ]
+            }
+        ]
+    },
+
+    sugerenciasInteligentes: {
+        titulo: "Sugerencias Inteligentes",
+        articulos: [
+            {
+                id: "sugerencias-v2",
+                titulo: "Motor de sugerencias: vende más sin esfuerzo",
+                descripcion: "Cómo ALEF recomienda productos a tus clientes para aumentar el ticket medio.",
+                contenido: [
+                    `El motor de **sugerencias inteligentes** de ALEF recomienda productos a los clientes en la carta QR para aumentar el ticket medio. No son recomendaciones aleatorias — se basan en datos reales de tu restaurante.
+
+---
+
+## 🔹 Cómo funcionan las sugerencias
+
+Cuando un cliente tiene productos en su carrito, ALEF analiza:
+
+1. **Flujo de comida**: ¿tiene entrante pero no principal? Sugiere un principal
+2. **Co-ocurrencia**: los clientes que piden X también piden Y (datos reales)
+3. **Margen**: prioriza productos con mayor rentabilidad
+4. **Popularidad**: productos más vendidos tienen más peso
+5. **Valoraciones**: productos mejor valorados suben en la lista
+6. **Stock**: no sugiere productos con ingredientes agotados
+
+---
+
+## 🔹 3 puntos de contacto
+
+Las sugerencias aparecen en 3 momentos de la carta QR:
+
+| Momento | Qué sugiere |
+|---|---|
+| **En el carrito** | Complementos al pedido actual (ej: "¿Una bebida?") |
+| **Post-pedido** | Después de pedir (ej: "¿Un postre para terminar?") |
+| **En detalle de producto** | Al ver un plato (ej: "También te puede gustar...") |
+
+---
+
+## 🔹 Reglas fijas
+
+Además del motor automático, puedes crear reglas manuales:
+
+- **Maridaje**: "Si pide Entrecot, sugerir Malbec"
+- **Siempre**: "Sugerir siempre el brownie" (ej: tu producto estrella)
+- **Nunca**: "No sugerir Ensalada César" (ej: la vas a quitar de la carta)
+- **Franja horaria**: "Sugerir cócteles solo a partir de las 18:00"
+- **Por fase**: "En la fase de postres, sugerir cafés"
+
+---
+
+## 🔹 Configuración
+
+Desde **Otros → Sugerencias inteligentes**:
+
+- Activa/desactiva el motor
+- Configura los touchpoints (carrito, post-pedido, detalle)
+- Ajusta los pesos de cada factor (margen, popularidad, co-ocurrencia...)
+- Crea y gestiona reglas fijas
+- Define las fases del menú (entrante → principal → postre → café)
+
+---
+
+## 🔹 Filtro de alérgenos
+
+Si el cliente indica sus alergias al escanear el QR, las sugerencias filtran automáticamente los productos que contengan esos alérgenos. Nunca se sugiere algo que el cliente no puede comer.`
+                ]
+            }
+        ]
+    },
+
+    cartaAvanzada: {
+        titulo: "Carta QR • Experiencia IA",
+        articulos: [
+            {
+                id: "camarero-ia",
+                titulo: "Camarero IA: asistente virtual en la carta QR",
+                descripcion: "Un asistente de inteligencia artificial que ayuda a tus clientes a pedir desde la carta.",
+                contenido: [
+                    `El **Camarero IA** es un asistente virtual integrado en la carta QR. Cuando el cliente escanea el QR de la mesa, puede chatear con la IA para pedir recomendaciones, preguntar por alérgenos o recibir ayuda para elegir.
+
+---
+
+## 🔹 Qué puede hacer
+
+- **Recomendar platos**: "¿Qué me recomiendas para cenar?" — la IA conoce tu carta, los precios, las valoraciones y los platos estrella
+- **Filtrar por alérgenos**: "Soy celíaco, ¿qué puedo comer?" — filtra toda la carta al instante
+- **Explicar platos**: "¿Qué lleva el Matambre a la Pizza?" — describe ingredientes y preparación
+- **Multiidioma**: el cliente puede hablar en español, inglés o francés y la IA responde en su idioma
+- **Sugerir maridajes**: "¿Qué vino va bien con el entrecot?" — recomienda basándose en tu carta de vinos
+
+---
+
+## 🔹 Cómo lo ven los clientes
+
+Un botón de chat aparece en la carta QR. Al pulsarlo se abre una conversación natural. El cliente escribe lo que quiere y la IA responde con sugerencias concretas de tu carta (con precios y opción de añadir al carrito).
+
+---
+
+## 🔹 Coste
+
+Usa modelos de IA eficientes (Claude Haiku). El coste por conversación es mínimo (~0.01-0.03€ por sesión).
+
+---
+
+## 🔹 Configuración
+
+Desde **Otros → Sugerencias inteligentes → Asistente IA**:
+- Activa/desactiva el asistente
+- Configura el saludo personalizado
+- Limita mensajes por sesión
+- Activa la Guía IA (experiencia guiada)`
+                ]
+            },
+            {
+                id: "guia-ia",
+                titulo: "Guía IA: experiencia gastronómica por fases",
+                descripcion: "Guía al cliente fase a fase por la comida con comentarios de la IA.",
+                contenido: [
+                    `La **Guía IA** transforma la carta QR en una experiencia gastronómica guiada. En vez de ver un listado de productos, el cliente recorre la comida por fases: aperitivo → entrante → principal → postre → café.
+
+---
+
+## 🔹 Cómo funciona
+
+1. El cliente escanea el QR
+2. La IA le saluda y le presenta la primera fase: "¿Empezamos con un aperitivo?"
+3. Muestra los productos de esa fase con un comentario personalizado de la IA
+4. El cliente elige, la IA le felicita y le guía a la siguiente fase
+5. En cada fase, la IA adapta las sugerencias a lo que ya ha pedido
+
+---
+
+## 🔹 Fases del menú
+
+Configura las fases en **Otros → Sugerencias inteligentes → Fases del menú**:
+
+Ejemplo típico:
+1. **Aperitivos**: categorías de entrantes fríos
+2. **Entrantes**: entrantes calientes, ensaladas
+3. **Principal**: carnes, pescados, pastas
+4. **Postres**: dulces, frutas
+5. **Bebidas calientes**: cafés, infusiones
+
+Cada fase se vincula a categorías de tu carta.
+
+---
+
+## 🔹 Comentarios de la IA
+
+La IA genera un comentario único para cada producto según el contexto:
+- "Si te gusta la carne, el entrecot es la estrella de la casa"
+- "Para acompañar tu pescado, este Albariño es perfecto"
+- "Un clásico para terminar: nuestro flan casero con dulce de leche"
+
+---
+
+## 🔹 Activación
+
+Desde **Otros → Sugerencias inteligentes → Asistente IA → Guía IA**: activa el modo guía. Puedes desactivar los comentarios de IA y usar templates fijos si prefieres.`
+                ]
+            },
+            {
+                id: "reservas-avanzadas",
+                titulo: "Reservas online avanzadas",
+                descripcion: "Sistema completo de reservas con confirmación automática, franjas y gestión de no-shows.",
+                contenido: [
+                    `El sistema de **reservas online** permite a tus clientes reservar mesa directamente desde la carta QR o la web del restaurante.
+
+---
+
+## 🔹 Flujo del cliente
+
+1. El cliente accede a la carta y pulsa **"Reservar mesa"**
+2. Selecciona fecha, hora, número de personas
+3. Introduce nombre, teléfono y email
+4. Confirma la reserva
+
+---
+
+## 🔹 Modos de confirmación
+
+| Modo | Cómo funciona |
+|---|---|
+| **Auto-confirmar** | La reserva se confirma al instante si hay disponibilidad |
+| **Manual** | La reserva queda como "Pendiente" y tú la confirmas desde el panel |
+
+Puedes auto-confirmar solo grupos pequeños (ej: hasta 4 personas) y pedir confirmación manual para grupos grandes.
+
+---
+
+## 🔹 Configuración de franjas
+
+Desde **Configuración → Reservas**:
+
+- Define las franjas horarias disponibles por día
+- Configura la capacidad por franja (cuántas reservas aceptas a la vez)
+- Bloquea días específicos (ej: festivos, eventos privados)
+- Establece la duración estándar de una reserva (ej: 90 min)
+
+---
+
+## 🔹 Gestión desde el panel
+
+En **Reservas** del panel ves:
+- Calendario con todas las reservas del día
+- Estado de cada reserva: confirmada, pendiente, cancelada, no-show
+- Datos del cliente (nombre, teléfono, email)
+- Botones para confirmar, cancelar o marcar check-in
+
+---
+
+## 🔹 No-shows automáticos
+
+ALEF marca automáticamente como **no-show** las reservas que no se presentaron pasados 30 minutos de la hora reservada.
+
+---
+
+## 🔹 Emails automáticos
+
+El sistema envía emails automáticos:
+- **Confirmación**: cuando la reserva se confirma
+- **Recordatorio**: 24 horas antes de la reserva
+- **Cancelación**: si se cancela`
+                ]
+            }
+        ]
+    },
+
+    integraciones: {
+        titulo: "Integraciones Externas",
+        articulos: [
+            {
+                id: "weather-intelligence",
+                titulo: "Weather Intelligence: el tiempo afecta a tu negocio",
+                descripcion: "ALEF usa datos meteorológicos para predecir demanda y optimizar tu operación.",
+                contenido: [
+                    `**Weather Intelligence** conecta ALEF con datos meteorológicos en tiempo real para ayudarte a tomar mejores decisiones.
+
+---
+
+## 🔹 Qué datos recoge
+
+Cada 3 horas, ALEF consulta:
+- Temperatura actual y sensación térmica
+- Condiciones (soleado, nublado, lluvia, viento)
+- Previsión de los próximos 5 días
+
+---
+
+## 🔹 Cómo lo usa ALEF
+
+| Dato | Impacto |
+|---|---|
+| **Sol + calor** | Más demanda de terraza, bebidas frías, ensaladas |
+| **Lluvia** | Menos terraza, más interior, platos calientes |
+| **Fin de semana + sol** | Pico de demanda — prepara más stock |
+| **Frío** | Más sopas, cafés, platos de cuchara |
+
+---
+
+## 🔹 Dónde lo ves
+
+- **Autopilot**: el greeting del Orbe incluye el tiempo ("Buenos días, hoy 28°C soleado con 8 reservas")
+- **Copilot**: pregúntale "¿qué tiempo hace mañana?" y te da el impacto previsto
+- **Predicciones de demanda**: las previsiones de stock y personal consideran el tiempo
+
+---
+
+## 🔹 Activación
+
+Weather Intelligence se activa automáticamente cuando configuras la dirección de tu restaurante. ALEF usa las coordenadas para obtener datos meteorológicos de tu zona exacta.`
+                ]
+            },
+            {
+                id: "google-reviews",
+                titulo: "Google Reviews: respuestas automáticas con IA",
+                descripcion: "ALEF lee tus reseñas de Google y genera respuestas profesionales automáticamente.",
+                contenido: [
+                    `El módulo de **Google Reviews** conecta tu cuenta de Google Business con ALEF para gestionar las reseñas de tus clientes automáticamente.
+
+---
+
+## 🔹 Cómo funciona
+
+1. Conectas tu cuenta de Google Business desde **Otros → Google Reviews**
+2. ALEF escanea tus reseñas nuevas cada 30 minutos
+3. La IA genera una respuesta profesional y personalizada para cada reseña
+4. Según el modo, la publica automáticamente o te la deja como borrador
+
+---
+
+## 🔹 Modos
+
+| Modo | Reseñas positivas | Reseñas negativas |
+|---|---|---|
+| **Automático** | Se publican solas | Se dejan como borrador para revisión |
+| **Supervisado** | Todas como borrador para que las revises antes |
+
+---
+
+## 🔹 Qué genera la IA
+
+Para cada reseña, la IA:
+- Lee el texto completo del cliente
+- Genera una respuesta personalizada (no genérica)
+- Agradece por nombre si es posible
+- Si es negativa, muestra empatía y ofrece solución
+- Mantiene el tono profesional de tu marca
+
+---
+
+## 🔹 Acceso
+
+Desde **Otros → Google Reviews** en el panel:
+- Listado de todas las reseñas recientes
+- Estado: publicada, borrador, pendiente
+- Editar respuesta antes de publicar
+- Estadísticas: puntuación media, tendencia`
+                ]
+            }
+        ]
+    },
+
+    estadisticasAvanzadas: {
+        titulo: "Estadísticas Avanzadas",
+        articulos: [
+            {
+                id: "estadisticas-dashboard-pro",
+                titulo: "Panel operativo: KPIs en tiempo real",
+                descripcion: "Dashboard completo con todos los indicadores de tu restaurante.",
+                contenido: [
+                    `El **panel operativo** muestra los indicadores clave de tu restaurante en tiempo real. Es lo primero que ves al entrar al panel de gestión.
+
+---
+
+## 🔹 KPIs principales
+
+| Indicador | Qué mide |
+|---|---|
+| **Total realizado** | Ventas totales del día (cobrado + en mesas abiertas) |
+| **Cobrado** | Lo que ya se ha cobrado (mesas cerradas) |
+| **Mesas del día** | Total de mesas abiertas + cerradas |
+| **Comensales** | Personas atendidas |
+| **Ticket medio / mesa** | Total cobrado ÷ mesas cerradas |
+| **Ticket medio / comensal** | Total cobrado ÷ comensales |
+| **Pedidos** | Número total de pedidos del día |
+| **Cancelados** | Productos eliminados (con detalle) |
+| **Duración media** | Cuánto tardan las mesas de media |
+
+---
+
+## 🔹 Selector de fecha y turno
+
+- Selecciona cualquier fecha pasada para ver sus KPIs
+- Filtra por turno (Almuerzo, Cena) si los tienes configurados
+- Botón "Hoy" para volver al día actual
+
+---
+
+## 🔹 Comparativa
+
+El sistema compara automáticamente con el mismo día de la semana anterior:
+- "+12% vs viernes pasado" te indica la tendencia
+- Datos positivos en verde, negativos en rojo
+
+---
+
+## 🔹 Top productos
+
+Lista de los productos más vendidos del día, filtrable por:
+- **Platos / Bebidas** (tabs)
+- **Por cantidad** (los más pedidos) o **por importe** (los que más facturan)
+
+---
+
+## 🔹 Staff
+
+Rendimiento de cada camarero:
+- Mesas atendidas
+- Ventas generadas
+- Ticket medio por camarero`
+                ]
+            },
+            {
+                id: "estadisticas-bcg-finanzas",
+                titulo: "BCG, finanzas y análisis avanzado",
+                descripcion: "Análisis de rentabilidad, márgenes y clasificación BCG de tu carta.",
+                contenido: [
+                    `Las estadísticas avanzadas de ALEF van más allá de las ventas — analizan la rentabilidad real de cada producto y la salud financiera de tu negocio.
+
+---
+
+## 🔹 Análisis BCG (ingeniería de menú)
+
+ALEF clasifica automáticamente cada producto en 4 categorías según su venta y margen:
+
+| Categoría | Venta | Margen | Acción |
+|---|---|---|---|
+| **⭐ Estrella** | Alta | Alto | Mantener, promocionar |
+| **🐄 Vaca** | Alta | Bajo | Subir precio o reducir coste |
+| **❓ Incógnita** | Baja | Alto | Promocionar, dar visibilidad |
+| **🐕 Perro** | Baja | Bajo | Considerar eliminar |
+
+Este análisis se ejecuta automáticamente cada semana. Las estrellas se marcan como destacados en la carta y los perros se proponen para ocultar (via Autopilot).
+
+---
+
+## 🔹 Finanzas
+
+Desde **Finanzas** en el panel:
+
+- **Ingresos**: ventas por periodo (día, semana, mes)
+- **Costes**: coste de materias primas (desde recetas e ingredientes)
+- **Gastos fijos**: los que configures (alquiler, personal, suministros)
+- **Beneficio neto**: ingresos - costes - gastos fijos
+- **Margen por producto**: cuánto ganas realmente por cada plato
+- **Tendencias**: cómo evolucionan tus márgenes semana a semana
+
+---
+
+## 🔹 Ventas por hora
+
+Gráfico que muestra a qué horas vendes más. Útil para:
+- Decidir horarios de apertura
+- Planificar personal
+- Detectar horas muertas
+
+---
+
+## 🔹 Ratio comida/bebida
+
+Proporción entre ventas de comida y bebida. El ratio ideal varía por tipo de restaurante:
+- Restaurante tradicional: 60-70% comida / 30-40% bebida
+- Bar de tapas: 40-50% comida / 50-60% bebida
+- Coctelería: 20-30% comida / 70-80% bebida
+
+---
+
+## 🔹 Heatmap semanal
+
+Mapa de calor que muestra los días y horas más fuertes de la semana. De un vistazo ves cuándo tu restaurante funciona a tope y cuándo está flojo.`
+                ]
+            },
+            {
+                id: "verifactu-completo",
+                titulo: "VeriFactu / SIF: cumplimiento fiscal completo",
+                descripcion: "Todo sobre la facturación fiscal obligatoria en España.",
+                contenido: [
+                    `**VeriFactu** (Sistema Informático de Facturación) es el sistema de facturación electrónica obligatorio en España. ALEF cumple con todos los requisitos.
+
+---
+
+## 🔹 Qué hace ALEF automáticamente
+
+- **Facturación encadenada**: cada factura lleva un hash SHA-256 que la vincula a la anterior. Imposible modificar o eliminar facturas sin romper la cadena.
+- **Registro WORM**: las facturas son inmutables una vez emitidas (Write Once, Read Many)
+- **Envío a la AEAT**: cada factura se reporta al sistema de la Agencia Tributaria
+- **QR de verificación**: cada factura lleva un código QR que permite validarla en la web de la AEAT
+- **Reintentos automáticos**: si el envío a la AEAT falla, ALEF reintenta con backoff exponencial (hasta 10 intentos)
+
+---
+
+## 🔹 Tipos de factura
+
+| Tipo | Cuándo |
+|---|---|
+| **Simplificada** | Cuando el cliente no pide factura nominativa (la más común) |
+| **Nominativa** | Cuando el cliente da sus datos fiscales (nombre, NIF, dirección) |
+| **Rectificativa** | Para corregir una factura emitida (ej: error de precio, devolución) |
+
+---
+
+## 🔹 Configuración
+
+Desde **Configuración → Datos del restaurante**:
+
+1. **Datos fiscales obligatorios**: CIF/NIF, razón social, dirección fiscal completa
+2. **Activar VeriFactu**: el sistema empieza a generar facturas encadenadas
+3. **Certificado digital** (si aplica): para firma electrónica
+
+---
+
+## 🔹 IVA
+
+Cada producto debe tener su IVA configurado:
+- **10%**: comida y bebidas no alcohólicas
+- **21%**: alcohol, refrescos con azúcar añadido
+
+ALEF asigna automáticamente el IVA según el tipo de producto si lo configuraste al crear la carta.
+
+---
+
+## 🔹 Exportación
+
+Desde **Facturas** en el panel puedes:
+- Ver todas las facturas emitidas
+- Filtrar por fecha, tipo, estado
+- Descargar XML firmado
+- Exportar listado en CSV para contabilidad
+- Ver el estado de envío a la AEAT (correcto, pendiente, error)`
+                ]
+            }
+        ]
+    },
+
 };

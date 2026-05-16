@@ -2,7 +2,7 @@ import React, { useState, useCallback, useEffect, useMemo } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { useFeaturesPlan } from "../../context/FeaturesPlanContext";
 import useCopilot from "../../hooks/useCopilot";
-import { useAutopilot } from "../../hooks/useAutopilot";
+import { useAutopilot } from "../../Hooks/useAutopilot";
 import CopilotButton from "./CopilotButton";
 import CopilotAutopilot from "./CopilotAutopilot";
 import CopilotMini from "./CopilotMini";

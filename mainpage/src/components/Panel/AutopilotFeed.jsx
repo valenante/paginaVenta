@@ -1,5 +1,5 @@
 import React from "react";
-import { useAutopilot } from "../../hooks/useAutopilot";
+import { useAutopilot } from "../../Hooks/useAutopilot";
 import { useNavigate } from "react-router-dom";
 import "./AutopilotFeed.css";
 

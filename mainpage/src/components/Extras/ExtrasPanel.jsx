@@ -35,7 +35,7 @@ const byCreatedDesc = (a, b) => {
   return db - da;
 };
 
-export default function ExtrasPanel({ onBack }) {
+export default function ExtrasPanel({ onBack, inline, onExtrasCountChange }) {
   const [extras, setExtras] = useState([]);
   const [loading, setLoading] = useState(false);
   const [savingCreate, setSavingCreate] = useState(false);
@@ -123,6 +123,7 @@ export default function ExtrasPanel({ onBack }) {
               ? raw.items
               : [];
       setExtras(data);
+      if (onExtrasCountChange) onExtrasCountChange(data.filter((e) => e.activo !== false).length);
     } catch (err) {
       // Abort => no mostrar error
       if (err?.name === "CanceledError" || err?.code === "ERR_CANCELED") return;
@@ -393,6 +394,7 @@ export default function ExtrasPanel({ onBack }) {
         />
       )}
 
+      {!inline && (
       <div className="extras-panel-header">
         <div>
           <h2>Extras disponibles</h2>
@@ -417,6 +419,7 @@ export default function ExtrasPanel({ onBack }) {
           </button>
         </div>
       </div>
+      )}
 
       {/* LISTA */}
       <ul className="extras-list">

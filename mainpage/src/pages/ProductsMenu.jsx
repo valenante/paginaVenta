@@ -1,6 +1,5 @@
 // src/pages/ProductsPage.jsx
 import React, { useState } from "react";
-import ExtrasPanel from "../components/Extras/ExtrasPanel";
 import CategoriasPanel from "../components/Categories/CategoriasPanel";
 import CostesPanel from "../components/Costes/CostesPanel";
 import IvaPanel from "../components/Iva/IvaPanel";
@@ -10,7 +9,7 @@ import UpgradeBanner from "../components/UpgradeBanner/UpgradeBanner";
 import "../styles/ProductsMenu.css";
 
 const ProductsPage = () => {
-  // 'extras' | 'carta' | 'costes' | 'iva' | 'analytics' | null
+  // 'carta' | 'costes' | 'iva' | 'analytics' | null
   const [selectedType, setSelectedType] = useState(null);
   const hasCostes = useFeature("finanzas_view");
 
@@ -21,7 +20,6 @@ const ProductsPage = () => {
 
   const getTitle = () => {
     if (!selectedType) return "Gestor de productos";
-    if (selectedType === "extras") return "Gestión de extras";
     if (selectedType === "carta") return "Gestión de carta";
     if (selectedType === "costes") return "Gestión de costes";
     if (selectedType === "iva") return "Gestión de IVA";
@@ -32,8 +30,6 @@ const ProductsPage = () => {
   const getSubtitle = () => {
     if (!selectedType)
       return "Elige qué parte de la carta quieres configurar.";
-    if (selectedType === "extras")
-      return "Crea y organiza los extras y suplementos de tus productos.";
     if (selectedType === "carta")
       return "Gestiona categorías, platos y bebidas de tu carta. Arrastra para reordenar.";
     if (selectedType === "costes")
@@ -80,17 +76,6 @@ const ProductsPage = () => {
               📋 Carta
               <span className="products-type-desc--productos">
                 Categorías, platos y bebidas de tu carta.
-              </span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setSelectedType("extras")}
-              className="products-type-btn--productos extras"
-            >
-              ➕ Extras
-              <span className="products-type-desc--productos">
-                Suplementos, salsas y añadidos.
               </span>
             </button>
 
@@ -144,7 +129,6 @@ const ProductsPage = () => {
       {/* ===== CONTENIDO ===== */}
       {selectedType && (
         <section className="products-content-card--productos">
-          {selectedType === "extras" && <ExtrasPanel onBack={resetSelection} />}
           {selectedType === "carta" && <CategoriasPanel onBack={resetSelection} />}
           {selectedType === "costes" && <CostesPanel onBack={resetSelection} />}
           {selectedType === "iva" && <IvaPanel />}

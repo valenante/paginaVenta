@@ -6,6 +6,7 @@ import CategoriaFormModal from "./CategoriaFormModal";
 import CrearProducto from "./CrearProducto";
 import EditProduct from "./EditProducts";
 import { useCategorias } from "../../context/CategoriasContext";
+import ExtrasPanel from "../Extras/ExtrasPanel";
 import Portal from "../ui/Portal";
 import api from "../../utils/api";
 import { getFirstPrice } from "./categoriesHelpers";
@@ -14,6 +15,7 @@ import "./CategoriasPanel.css";
 const TABS = [
   { key: "plato", label: "Platos", emoji: "🍽️" },
   { key: "bebida", label: "Bebidas", emoji: "🥂" },
+  { key: "extra", label: "Extras", emoji: "➕" },
 ];
 
 const CategoriasPanel = ({ onBack }) => {
@@ -29,6 +31,7 @@ const CategoriasPanel = ({ onBack }) => {
   const [deleteError, setDeleteError] = useState(null);
   const [confirmDeleteProduct, setConfirmDeleteProduct] = useState(null);
   const [deleteProductError, setDeleteProductError] = useState(null);
+  const [extrasCount, setExtrasCount] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const bodyStylesRef = useRef(null);
 
@@ -44,10 +47,13 @@ const CategoriasPanel = ({ onBack }) => {
     deleteProduct,
   } = useCategorias();
 
-  // Cargar ambos tipos al montar
+  // Cargar ambos tipos al montar + count de extras
   useEffect(() => {
     fetchCategoryObjects("plato");
     fetchCategoryObjects("bebida");
+    api.get("/extras").then(({ data }) => {
+      setExtrasCount(Array.isArray(data?.items) ? data.items.filter((e) => e.activo !== false).length : 0);
+    }).catch(() => {});
   }, [fetchCategoryObjects]);
 
   const catObjects = categoryObjectsByTipo[tab] || [];
@@ -307,29 +313,31 @@ const CategoriasPanel = ({ onBack }) => {
           </p>
         </div>
 
-        <div className="catpanel-header-actions">
-          <button
-            type="button"
-            className="catpanel-btn-new"
-            onClick={() => setCatModal({ open: true, categoria: null })}
-          >
-            + Nueva categoría
-          </button>
-          <button
-            type="button"
-            className="catpanel-btn-new catpanel-btn-new--plato"
-            onClick={() => setCrearProductoTipo("plato")}
-          >
-            + Nuevo plato
-          </button>
-          <button
-            type="button"
-            className="catpanel-btn-new catpanel-btn-new--bebida"
-            onClick={() => setCrearProductoTipo("bebida")}
-          >
-            + Nueva bebida
-          </button>
-        </div>
+        {tab !== "extra" && (
+          <div className="catpanel-header-actions">
+            <button
+              type="button"
+              className="catpanel-btn-new"
+              onClick={() => setCatModal({ open: true, categoria: null })}
+            >
+              + Nueva categoría
+            </button>
+            <button
+              type="button"
+              className="catpanel-btn-new catpanel-btn-new--plato"
+              onClick={() => setCrearProductoTipo("plato")}
+            >
+              + Nuevo plato
+            </button>
+            <button
+              type="button"
+              className="catpanel-btn-new catpanel-btn-new--bebida"
+              onClick={() => setCrearProductoTipo("bebida")}
+            >
+              + Nueva bebida
+            </button>
+          </div>
+        )}
       </header>
 
       {/* Tabs */}
@@ -343,14 +351,22 @@ const CategoriasPanel = ({ onBack }) => {
           >
             {t.emoji} {t.label}
             <span className="catpanel-tab-count">
-              {(categoryObjectsByTipo[t.key] || []).length}
+              {t.key === "extra" ? extrasCount : (categoryObjectsByTipo[t.key] || []).length}
             </span>
           </button>
         ))}
       </div>
 
-      {/* Lista con drag & drop */}
-      {catObjects.length === 0 ? (
+      {/* Tab Extras: renderizar ExtrasPanel inline */}
+      {tab === "extra" && (
+        <ExtrasPanel
+          inline
+          onExtrasCountChange={(count) => setExtrasCount(count)}
+        />
+      )}
+
+      {/* Tab Platos/Bebidas: Lista con drag & drop */}
+      {tab !== "extra" && (catObjects.length === 0 ? (
         <div className="catpanel-empty">
           <p>No hay categorías de {tab === "plato" ? "platos" : "bebidas"} todavía.</p>
           <button
@@ -543,7 +559,7 @@ const CategoriasPanel = ({ onBack }) => {
             )}
           </Droppable>
         </DragDropContext>
-      )}
+      ))}
 
       {/* Modal crear / editar categoría */}
       {catModal.open && (

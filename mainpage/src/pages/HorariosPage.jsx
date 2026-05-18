@@ -3,6 +3,7 @@
 
 import React, { useState, useMemo } from "react";
 import { useSemana, useConflictos, asignarTurno, eliminarAsignacion, editarAsignacion, publicarSemana } from "../Hooks/useHorarios";
+import ControlTurnosPanel from "../components/Turnos/ControlTurnosPanel";
 import "./HorariosPage.css";
 
 const DIAS_SHORT = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"];
@@ -21,6 +22,7 @@ function formatFecha(dateStr) {
 }
 
 export default function HorariosPage() {
+  const [showTurnos, setShowTurnos] = useState(false);
   const [weekOffset, setWeekOffset] = useState(0);
   const fecha = useMemo(() => getLunesFecha(weekOffset), [weekOffset]);
   const { data, loading, refetch } = useSemana(fecha);
@@ -117,6 +119,18 @@ export default function HorariosPage() {
 
   return (
     <div className="hor-root">
+      {/* Control de acceso por turno (colapsable) */}
+      <div className="hor-turnos-section">
+        <button
+          className="hor-turnos-toggle"
+          onClick={() => setShowTurnos(!showTurnos)}
+        >
+          <span>{showTurnos ? "▾" : "▸"} Control de acceso al TPV</span>
+          <span className="hor-turnos-hint">Habilitar/bloquear empleados en tiempo real</span>
+        </button>
+        {showTurnos && <ControlTurnosPanel />}
+      </div>
+
       {/* Header */}
       <div className="sug-header">
         <div>

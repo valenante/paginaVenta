@@ -27,6 +27,9 @@ import FinanzasPage from "./Finanzas/FinanzasPage";
 // ✅ Horarios (planilla semanal de turnos)
 import HorariosPage from "./HorariosPage";
 
+// ✅ Control de turnos (acceso por turno)
+import ControlTurnosPanel from "../components/Turnos/ControlTurnosPanel";
+
 // ✅ Otros (tiempos cocina, replay, automatizaciones)
 import OtrosPage from "./OtrosPage";
 
@@ -48,6 +51,7 @@ const PANEL_BY_TIPO = {
     { key: "estadisticas", label: "📊 Estadísticas", permiso: "estadisticas.manage", feature: "estadisticas_avanzadas", render: () => <EstadisticasPage type="plato" /> },
     { key: "finanzas", label: "💰 Finanzas", permiso: "finanzas.view", feature: "finanzas_view", render: () => <FinanzasPage /> },
     { key: "horarios", label: "📅 Horarios", render: () => <HorariosPage /> },
+    { key: "turnos", label: "🔐 Control turnos", permiso: "turnos.manage", render: () => <ControlTurnosPanel /> },
     { key: "otros", label: "⚙️ Otros", permiso: "herramientas.avanzadas", render: () => <OtrosPage /> },
   ],
 

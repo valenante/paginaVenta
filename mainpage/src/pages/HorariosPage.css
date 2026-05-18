@@ -331,6 +331,38 @@
   .hor-turno-chip { font-size: 0.65rem; padding: 3px 6px; }
 }
 
+/* ─── Sección Control de Turnos (colapsable) ─── */
+.hor-turnos-section {
+  margin-bottom: 20px;
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 12px;
+  overflow: hidden;
+  background: rgba(255,255,255,0.02);
+}
+.hor-turnos-toggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  border: none;
+  background: none;
+  color: #f1f5f9;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s;
+}
+.hor-turnos-toggle:hover {
+  background: rgba(255,255,255,0.03);
+}
+.hor-turnos-hint {
+  font-size: 0.72rem;
+  color: #64748b;
+  font-weight: 400;
+}
+
 @media (max-width: 768px) {
   .hor-root { padding: 12px 8px; }
 

@@ -8,6 +8,7 @@ export default function RecetaEditor({ producto }) {
     const [receta, setReceta] = useState([]);
     const [nuevoIng, setNuevoIng] = useState("");
     const [cantidad, setCantidad] = useState("");
+    const [error, setError] = useState(null);
 
     /* ============================
        Cargar ingredientes del stock
@@ -26,10 +27,15 @@ export default function RecetaEditor({ producto }) {
        ============================ */
     const fetchReceta = async () => {
         try {
+            setError(null);
             const { data } = await api.get(`/recetas/${producto._id}/receta`);
             setReceta(data.receta || []);
         } catch (err) {
-            console.error("Error cargando receta", err);
+            if (err?.response?.status === 403) {
+                setError("No tienes permiso para ver recetas.");
+            } else {
+                console.error("Error cargando receta", err);
+            }
         }
     };
 
@@ -49,7 +55,11 @@ export default function RecetaEditor({ producto }) {
             setCantidad("");
             fetchReceta();
         } catch (err) {
-            console.error("Error agregando ingrediente", err);
+            if (err?.response?.status === 403) {
+                setError("No tienes permiso para modificar recetas.");
+            } else {
+                console.error("Error agregando ingrediente", err);
+            }
         }
     };
 
@@ -61,7 +71,11 @@ export default function RecetaEditor({ producto }) {
             await api.delete(`/recetas/${producto._id}/receta/${id}`);
             fetchReceta();
         } catch (err) {
-            console.error("Error eliminando ingrediente", err);
+            if (err?.response?.status === 403) {
+                setError("No tienes permiso para modificar recetas.");
+            } else {
+                console.error("Error eliminando ingrediente", err);
+            }
         }
     };
 
@@ -78,6 +92,8 @@ export default function RecetaEditor({ producto }) {
             <h4 className="receta-editor-title">
                 Ingredientes del producto
             </h4>
+
+            {error && <p className="receta-vacia" style={{ color: "#c0392b" }}>{error}</p>}
 
             {/* ============================
           LISTA DE INGREDIENTES ACTUALES

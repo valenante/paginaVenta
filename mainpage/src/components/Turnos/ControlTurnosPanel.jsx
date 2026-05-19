@@ -2,7 +2,7 @@
 // Panel de control de acceso por turno — admin habilita/deshabilita empleados en tiempo real.
 
 import React, { useState } from "react";
-import { useTurnosAcceso, toggleTurnoUsuario, bulkToggleTurnos } from "../../Hooks/useTurnosAcceso";
+import { useTurnosAcceso, toggleTurnoUsuario, bulkToggleTurnos, toggleControlTurnos } from "../../Hooks/useTurnosAcceso";
 import "./ControlTurnosPanel.css";
 
 const ROLES_LABEL = {
@@ -13,9 +13,23 @@ const ROLES_LABEL = {
 };
 
 export default function ControlTurnosPanel() {
-  const { usuarios, loading, refetch } = useTurnosAcceso();
+  const { usuarios, controlActivo, loading, refetch } = useTurnosAcceso();
   const [msg, setMsg] = useState(null);
-  const [toggling, setToggling] = useState(null); // userId being toggled
+  const [toggling, setToggling] = useState(null);
+  const [togglingControl, setTogglingControl] = useState(false);
+
+  const handleToggleControl = async () => {
+    setTogglingControl(true);
+    try {
+      await toggleControlTurnos(!controlActivo);
+      refetch();
+      setMsg({ t: "ok", m: controlActivo ? "Control de turnos desactivado — todos pueden acceder" : "Control de turnos activado" });
+    } catch (err) {
+      setMsg({ t: "error", m: err?.response?.data?.message || "Error al cambiar control de turnos" });
+    } finally {
+      setTogglingControl(false);
+    }
+  };
 
   const handleToggle = async (userId, newValue) => {
     setToggling(userId);
@@ -68,13 +82,24 @@ export default function ControlTurnosPanel() {
           </p>
         </div>
         <div className="ct-bulk-actions">
-          <button className="sug-btn sug-btn--secondary ct-bulk-btn" onClick={() => handleBulk(true)} title="Activar todos">
+          <div className="ct-control-toggle" title={controlActivo ? "Desactivar control de turnos — todos podrán acceder" : "Activar control de turnos"}>
+            <span className="ct-control-label">{controlActivo ? "Control activo" : "Control desactivado"}</span>
+            <button
+              className={`ct-switch ${controlActivo ? "ct-switch--on" : "ct-switch--off"}`}
+              onClick={handleToggleControl}
+              disabled={togglingControl}
+              aria-label={controlActivo ? "Desactivar control de turnos" : "Activar control de turnos"}
+            >
+              <span className="ct-switch-thumb" />
+            </button>
+          </div>
+          <button className="sug-btn sug-btn--secondary ct-bulk-btn" onClick={() => handleBulk(true)} disabled={!controlActivo} title="Activar todos">
             Activar todos
           </button>
-          <button className="sug-btn sug-btn--secondary ct-bulk-btn" onClick={() => handleBulk(false)} title="Desactivar todos">
+          <button className="sug-btn sug-btn--secondary ct-bulk-btn" onClick={() => handleBulk(false)} disabled={!controlActivo} title="Desactivar todos">
             Desactivar todos
           </button>
-          <button className="sug-btn sug-btn--secondary ct-bulk-btn" onClick={() => handleBulk(null)} title="Restaurar modo automático">
+          <button className="sug-btn sug-btn--secondary ct-bulk-btn" onClick={() => handleBulk(null)} disabled={!controlActivo} title="Restaurar modo automático">
             Auto
           </button>
         </div>
@@ -84,6 +109,12 @@ export default function ControlTurnosPanel() {
         <div className={`sug-toast sug-toast--${msg.t === "ok" ? "ok" : "error"}`}>
           {msg.m}
           <button onClick={() => setMsg(null)} style={{ marginLeft: 8, background: "none", border: "none", cursor: "pointer", color: "inherit" }}>✕</button>
+        </div>
+      )}
+
+      {!controlActivo && (
+        <div className="ct-disabled-banner">
+          Control de turnos desactivado — todos los empleados pueden acceder al TPV sin restricción.
         </div>
       )}
 

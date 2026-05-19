@@ -249,3 +249,67 @@
     flex-wrap: wrap;
   }
 }
+
+/* ─── Control toggle (switch on/off) ─── */
+.ct-control-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-right: 12px;
+  padding-right: 12px;
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+}
+.ct-control-label {
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.7);
+  white-space: nowrap;
+}
+.ct-switch {
+  position: relative;
+  width: 44px;
+  height: 24px;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s;
+  padding: 0;
+}
+.ct-switch--on {
+  background: #22c55e;
+}
+.ct-switch--off {
+  background: rgba(255, 255, 255, 0.15);
+}
+.ct-switch-thumb {
+  position: absolute;
+  top: 3px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #fff;
+  transition: left 0.2s;
+}
+.ct-switch--on .ct-switch-thumb {
+  left: 23px;
+}
+.ct-switch--off .ct-switch-thumb {
+  left: 3px;
+}
+.ct-switch:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ─── Disabled banner ─── */
+.ct-disabled-banner {
+  background: rgba(250, 204, 21, 0.1);
+  border: 1px solid rgba(250, 204, 21, 0.3);
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  color: #facc15;
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-align: center;
+}

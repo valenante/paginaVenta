@@ -447,11 +447,8 @@ const EditProduct = ({
   // Render
   // =========================
   return (
-    <div className="crear-producto-overlay--crear" onClick={onCancel}>
-      <div
-        className="crear-producto-modal--crear"
-        onClick={(e) => e.stopPropagation()}
-      >
+    <div className="crear-producto-overlay--crear">
+      <div className="crear-producto-modal--crear">
         <h2 className="titulo--crear">Editar producto</h2>
 
         {alerta && (

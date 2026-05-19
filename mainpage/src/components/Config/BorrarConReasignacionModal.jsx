@@ -86,8 +86,8 @@ const BorrarConReasignacionModal = ({ tipo, item, onClose, onEliminado }) => {
   };
 
   return (
-    <div className="br-overlay" onClick={onClose}>
-      <div className="br-modal" onClick={(e) => e.stopPropagation()}>
+    <div className="br-overlay">
+      <div className="br-modal">
         <header className="br-header">
           <h2>
             <span className="br-icon">⚠️</span>

@@ -37,10 +37,9 @@ const AjustarStockShopModal = ({ producto, onClose, onSave }) => {
   };
 
   return (
-    <div className="alef-modal-overlay" onClick={onClose}>
+    <div className="alef-modal-overlay">
       <div
         className="alef-modal-content"
-        onClick={(e) => e.stopPropagation()}
       >
         {/* HEADER */}
         <div className="stock-modal-header">

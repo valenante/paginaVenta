@@ -417,11 +417,8 @@ const CrearProducto = ({ onClose, onCreated, initialTipo, cloneFrom }) => {
   }, [previewUrl]);
 
   return (
-    <div className="crear-producto-overlay--crear" onClick={onClose}>
-      <div
-        className="crear-producto-modal--crear"
-        onClick={(e) => e.stopPropagation()}
-      >
+    <div className="crear-producto-overlay--crear">
+      <div className="crear-producto-modal--crear">
         <h2 className="titulo--crear">{cloneFrom ? "Clonar producto" : "Crear producto"}</h2>
 
         {alerta && (

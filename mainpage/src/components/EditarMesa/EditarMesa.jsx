@@ -93,10 +93,9 @@ export default function ModalEditarMesa({ mesa, mesas = [], onClose, onSave, onD
   };
 
   return (
-    <div className="modal-overlay-editar" onClick={onClose}>
+    <div className="modal-overlay-editar">
       <div
         className="modal-contenido-editar"
-        onClick={(e) => e.stopPropagation()}
         role="dialog"
         aria-modal="true"
         aria-labelledby="modal-editar-mesa-title"

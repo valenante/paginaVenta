@@ -82,8 +82,8 @@ export default function UsuarioPermisosModalShop({
   };
 
   return (
-    <div className="permModal-overlay" onClick={onClose} aria-modal="true" role="dialog">
-      <div className="permModal-container" onClick={(e) => e.stopPropagation()}>
+    <div className="permModal-overlay" aria-modal="true" role="dialog">
+      <div className="permModal-container">
         <header className="permModal-header">
           <div>
             <h2 className="permModal-title">Permisos del empleado</h2>

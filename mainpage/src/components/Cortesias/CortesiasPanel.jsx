@@ -14,8 +14,8 @@ export default function CortesiasPanel({ abierto, onClose }) {
   if (!abierto) return null;
 
   return (
-    <div className="cortpanel-overlay" onClick={onClose}>
-      <div className="cortpanel" onClick={(e) => e.stopPropagation()}>
+    <div className="cortpanel-overlay">
+      <div className="cortpanel">
         <header className="cortpanel__header">
           <h2>Cortesias e Invitaciones</h2>
           <button className="cortpanel__close btn-icon" onClick={onClose}>&times;</button>

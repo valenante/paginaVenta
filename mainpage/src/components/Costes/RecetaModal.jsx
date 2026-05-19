@@ -88,8 +88,8 @@ export default function RecetaModal({ productoId, productoNombre, onClose, onSav
   };
 
   if (loading) return createPortal(
-    <div className="rec-overlay" onClick={onClose}>
-      <div className="rec-modal" onClick={e => e.stopPropagation()}>
+    <div className="rec-overlay">
+      <div className="rec-modal">
         <div className="rec-loading">Cargando receta...</div>
       </div>
     </div>,
@@ -97,8 +97,8 @@ export default function RecetaModal({ productoId, productoNombre, onClose, onSav
   );
 
   return createPortal(
-    <div className="rec-overlay" onClick={onClose}>
-      <div className="rec-modal" onClick={e => e.stopPropagation()}>
+    <div className="rec-overlay">
+      <div className="rec-modal">
         <div className="rec-header">
           <h3>📋 Receta: {productoNombre}</h3>
           <button className="rec-close" onClick={onClose}>✕</button>

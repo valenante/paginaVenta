@@ -87,8 +87,8 @@ const CategoriaFormModal = ({ categoria, tipo, onClose, onSave }) => {
 
   return (
     <Portal>
-      <div className="catmodal-overlay" onClick={onClose}>
-        <div className="catmodal-card" onClick={(e) => e.stopPropagation()}>
+      <div className="catmodal-overlay">
+        <div className="catmodal-card">
           <div className="catmodal-header">
             <h2 className="catmodal-title">
               {isEdit ? "Editar categoría" : "Nueva categoría"}

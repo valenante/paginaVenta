@@ -199,8 +199,8 @@ export default function ModalConfigPromocion({ producto, onClose, onSaved }) {
   const promoActiva = !!producto?.promocion?.activa;
 
   return (
-    <div className="modal-promo-overlay" onClick={onClose}>
-      <div className="modal-promocion" role="dialog" aria-modal="true" onClick={(e) => e.stopPropagation()}>
+    <div className="modal-promo-overlay">
+      <div className="modal-promocion" role="dialog" aria-modal="true">
         <header className="modal-header">
           <h3>Configurar promoción</h3>
           <button onClick={onClose} aria-label="Cerrar">✕</button>

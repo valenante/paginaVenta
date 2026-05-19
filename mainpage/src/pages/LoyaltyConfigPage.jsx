@@ -804,8 +804,8 @@ function ModalShell({ title, onClose, children }) {
   }, [onClose]);
 
   return (
-    <div className="loyalty-modal-overlay" onClick={onClose}>
-      <div className="loyalty-modal card" onClick={(e) => e.stopPropagation()}>
+    <div className="loyalty-modal-overlay">
+      <div className="loyalty-modal card">
         <header className="loyalty-modal-header">
           <h3>{title}</h3>
           <button type="button" className="loyalty-modal-close" onClick={onClose} aria-label="Cerrar">×</button>

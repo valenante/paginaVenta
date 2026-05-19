@@ -53,8 +53,8 @@ export default function CrearProductoShopModal({ onClose, onSave }) {
   };
 
   return (
-    <div className="alef-modal-overlay" onClick={onClose}>
-      <div className="alef-modal-content" onClick={(e) => e.stopPropagation()}>
+    <div className="alef-modal-overlay">
+      <div className="alef-modal-content">
         <div className="crear-ingrediente-modal">
           <h3>➕ Nuevo producto</h3>
           <p>Registra un nuevo producto de tienda.</p>

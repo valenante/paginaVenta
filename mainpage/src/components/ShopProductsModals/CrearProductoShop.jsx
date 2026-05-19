@@ -66,11 +66,8 @@ export default function CrearProductoShop({ defaultCategory, onClose, onCreated 
   };
 
   return (
-    <div className="crear-producto-overlay--crear" onClick={onClose}>
-      <div
-        className="crear-producto-modal--crear"
-        onClick={(e) => e.stopPropagation()}
-      >
+    <div className="crear-producto-overlay--crear">
+      <div className="crear-producto-modal--crear">
         <h2 className="titulo--crear">Crear producto (Shop)</h2>
 
         <form onSubmit={handleSubmit} className="form--crear">

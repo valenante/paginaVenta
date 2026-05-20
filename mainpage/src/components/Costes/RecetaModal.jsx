@@ -1,5 +1,9 @@
 // src/components/Costes/RecetaModal.jsx
-import React, { useState, useEffect, useCallback } from "react";
+// Modal de receta con soporte de variantes (clavePrecio).
+// Si el producto tiene >1 precio, agrupa ingredientes por variante.
+// Si tiene 1 solo precio, UI plana como antes.
+
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { createPortal } from "react-dom";
 import { useReceta, guardarReceta, buscarIngredientes } from "../../Hooks/useRecetas";
 import "./RecetaModal.css";
@@ -13,12 +17,16 @@ export default function RecetaModal({ productoId, productoNombre, onClose, onSav
   const [searchQ, setSearchQ] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [searching, setSearching] = useState(false);
-  const [showSearch, setShowSearch] = useState(false);
+  const [searchForVariant, setSearchForVariant] = useState(null); // null = no search, string = clavePrecio
+
+  const precios = data?.precios || [];
+  const multiVariante = precios.length > 1;
 
   useEffect(() => {
     if (data?.receta) setLineas(data.receta.map((r, i) => ({ ...r, _key: i })));
   }, [data]);
 
+  // ── Búsqueda de ingredientes ──
   const doSearch = useCallback(async (q) => {
     if (!q || q.length < 2) { setSearchResults([]); return; }
     setSearching(true);
@@ -34,7 +42,7 @@ export default function RecetaModal({ productoId, productoNombre, onClose, onSav
     return () => clearTimeout(t);
   }, [searchQ, doSearch]);
 
-  const addIngrediente = (pp) => {
+  const addIngrediente = (pp, clavePrecio) => {
     setLineas(prev => [...prev, {
       _key: Date.now(),
       productoProveedorId: pp._id,
@@ -46,8 +54,9 @@ export default function RecetaModal({ productoId, productoNombre, onClose, onSav
       precioBase: pp.precioBase,
       factorConversion: pp.factorConversion || 1,
       unidadProveedor: pp.unidad,
+      clavePrecio: clavePrecio || null,
     }]);
-    setShowSearch(false);
+    setSearchForVariant(null);
     setSearchQ("");
   };
 
@@ -55,7 +64,6 @@ export default function RecetaModal({ productoId, productoNombre, onClose, onSav
     setLineas(prev => prev.map((l, i) => {
       if (i !== idx) return l;
       const updated = { ...l, [field]: value };
-      // Recalcular coste
       const costeUd = calcCosteUnitario(updated);
       updated.costeUnitario = costeUd;
       updated.costeLinea = Math.round(updated.cantidad * costeUd * 100) / 100;
@@ -65,7 +73,28 @@ export default function RecetaModal({ productoId, productoNombre, onClose, onSav
 
   const removeLinea = (idx) => setLineas(prev => prev.filter((_, i) => i !== idx));
 
-  const costeTotal = lineas.reduce((s, l) => s + (l.costeLinea || 0), 0);
+  // ── Costes por variante ──
+  const costesPorVariante = useMemo(() => {
+    if (!multiVariante) {
+      const total = lineas.reduce((s, l) => s + (l.costeLinea || 0), 0);
+      return { _all: total };
+    }
+    const map = {};
+    for (const p of precios) map[p.clave] = 0;
+    for (const l of lineas) {
+      const key = l.clavePrecio || "_universal";
+      map[key] = (map[key] || 0) + (l.costeLinea || 0);
+    }
+    // Distribuir universales a cada variante
+    const universal = map._universal || 0;
+    delete map._universal;
+    for (const p of precios) {
+      map[p.clave] = Math.round(((map[p.clave] || 0) + universal) * 100) / 100;
+    }
+    return map;
+  }, [lineas, precios, multiVariante]);
+
+  const costeTotalGlobal = lineas.reduce((s, l) => s + (l.costeLinea || 0), 0);
 
   const handleSave = async () => {
     setSaving(true);
@@ -87,6 +116,80 @@ export default function RecetaModal({ productoId, productoNombre, onClose, onSav
     }
   };
 
+  // ── Render helpers ──
+  const renderLinea = (l, globalIdx) => (
+    <div key={l._key || globalIdx} className="rec-table__row">
+      <span className="rec-ing-name">{l.nombre}</span>
+      <span>
+        <input
+          type="number"
+          className="rec-input"
+          value={l.cantidad}
+          min="0"
+          step="any"
+          onChange={e => updateLinea(globalIdx, "cantidad", Number(e.target.value) || 0)}
+        />
+      </span>
+      <span>
+        <select className="rec-select" value={l.unidad} onChange={e => updateLinea(globalIdx, "unidad", e.target.value)}>
+          {UNIDADES.map(u => <option key={u} value={u}>{u}</option>)}
+        </select>
+      </span>
+      <span className="rec-cost">{l.costeUnitario?.toFixed(4)}€</span>
+      <span className="rec-cost rec-cost--total">{l.costeLinea?.toFixed(2)}€</span>
+      <span>
+        <button className="rec-remove" onClick={() => removeLinea(globalIdx)}>✕</button>
+      </span>
+    </div>
+  );
+
+  const renderSearchBlock = (clavePrecio) => {
+    if (searchForVariant !== clavePrecio) {
+      return (
+        <button className="rec-add-btn" onClick={() => { setSearchForVariant(clavePrecio); setSearchQ(""); }}>
+          + Añadir ingrediente
+        </button>
+      );
+    }
+    return (
+      <div className="rec-search">
+        <input
+          type="text"
+          className="rec-search__input"
+          placeholder="Buscar ingrediente..."
+          value={searchQ}
+          onChange={e => setSearchQ(e.target.value)}
+          autoFocus
+        />
+        {searching && <div className="rec-search__loading">Buscando...</div>}
+        {searchResults.length > 0 && (
+          <div className="rec-search__results">
+            {searchResults.map(pp => (
+              <button key={pp._id} className="rec-search__item" onClick={() => addIngrediente(pp, clavePrecio)}>
+                <span className="rec-search__name">{pp.nombre}</span>
+                <span className="rec-search__meta">{pp.precioBase}€/{pp.unidad} | {pp.formato}</span>
+              </button>
+            ))}
+          </div>
+        )}
+        <button className="rec-search__cancel" onClick={() => { setSearchForVariant(null); setSearchQ(""); }}>Cancelar</button>
+      </div>
+    );
+  };
+
+  const renderMargen = (clave, precio) => {
+    const coste = costesPorVariante[clave] || 0;
+    const margen = precio > 0 ? Math.round((1 - coste / precio) * 100) : 0;
+    return (
+      <div className="rec-variant-summary">
+        <span>Coste: <strong>{coste.toFixed(2)}€</strong></span>
+        <span className={`rec-margin ${margen < 40 ? "rec-margin--warn" : ""}`}>
+          Margen: {(precio - coste).toFixed(2)}€ ({margen}%)
+        </span>
+      </div>
+    );
+  };
+
   if (loading) return createPortal(
     <div className="rec-overlay">
       <div className="rec-modal">
@@ -105,95 +208,88 @@ export default function RecetaModal({ productoId, productoNombre, onClose, onSav
         </div>
 
         <div className="rec-body">
-          {/* Ingredient list */}
-          {lineas.length > 0 && (
-            <div className="rec-table">
-              <div className="rec-table__head">
-                <span>Ingrediente</span>
-                <span>Cantidad</span>
-                <span>Unidad</span>
-                <span>Coste/ud</span>
-                <span>Coste línea</span>
-                <span></span>
-              </div>
-              {lineas.map((l, i) => (
-                <div key={l._key || i} className="rec-table__row">
-                  <span className="rec-ing-name">{l.nombre}</span>
-                  <span>
-                    <input
-                      type="number"
-                      className="rec-input"
-                      value={l.cantidad}
-                      min="0"
-                      step="any"
-                      onChange={e => updateLinea(i, "cantidad", Number(e.target.value) || 0)}
-                    />
-                  </span>
-                  <span>
-                    <select className="rec-select" value={l.unidad} onChange={e => updateLinea(i, "unidad", e.target.value)}>
-                      {UNIDADES.map(u => <option key={u} value={u}>{u}</option>)}
-                    </select>
-                  </span>
-                  <span className="rec-cost">{l.costeUnitario?.toFixed(4)}€</span>
-                  <span className="rec-cost rec-cost--total">{l.costeLinea?.toFixed(2)}€</span>
-                  <span>
-                    <button className="rec-remove" onClick={() => removeLinea(i)}>✕</button>
-                  </span>
+          {multiVariante ? (
+            /* ── Multi-variante: sección por cada precio ── */
+            precios.map(p => {
+              const variantLineas = lineas
+                .map((l, globalIdx) => ({ ...l, _globalIdx: globalIdx }))
+                .filter(l => l.clavePrecio === p.clave);
+
+              return (
+                <div key={p.clave} className="rec-variant-section">
+                  <div className="rec-variant-header">
+                    <span className="rec-variant-label">{p.label || p.clave}</span>
+                    <span className="rec-variant-price">{p.precio}€</span>
+                  </div>
+
+                  {variantLineas.length > 0 && (
+                    <div className="rec-table">
+                      <div className="rec-table__head">
+                        <span>Ingrediente</span>
+                        <span>Cantidad</span>
+                        <span>Unidad</span>
+                        <span>Coste/ud</span>
+                        <span>Coste línea</span>
+                        <span></span>
+                      </div>
+                      {variantLineas.map(l => renderLinea(l, l._globalIdx))}
+                    </div>
+                  )}
+
+                  {variantLineas.length === 0 && (
+                    <p className="rec-empty-sm">Sin ingredientes para esta variante.</p>
+                  )}
+
+                  {renderSearchBlock(p.clave)}
+                  {renderMargen(p.clave, p.precio)}
                 </div>
-              ))}
-            </div>
-          )}
-
-          {lineas.length === 0 && (
-            <p className="rec-empty">No hay ingredientes. Añade el primer ingrediente para definir la receta.</p>
-          )}
-
-          {/* Add ingredient */}
-          {showSearch ? (
-            <div className="rec-search">
-              <input
-                type="text"
-                className="rec-search__input"
-                placeholder="Buscar ingrediente (ej: calamar, harina, aceite...)"
-                value={searchQ}
-                onChange={e => setSearchQ(e.target.value)}
-                autoFocus
-              />
-              {searching && <div className="rec-search__loading">Buscando...</div>}
-              {searchResults.length > 0 && (
-                <div className="rec-search__results">
-                  {searchResults.map(pp => (
-                    <button key={pp._id} className="rec-search__item" onClick={() => addIngrediente(pp)}>
-                      <span className="rec-search__name">{pp.nombre}</span>
-                      <span className="rec-search__meta">{pp.precioBase}€/{pp.unidad} | {pp.formato}</span>
-                    </button>
-                  ))}
+              );
+            })
+          ) : (
+            /* ── Precio único: UI plana ── */
+            <>
+              {lineas.length > 0 && (
+                <div className="rec-table">
+                  <div className="rec-table__head">
+                    <span>Ingrediente</span>
+                    <span>Cantidad</span>
+                    <span>Unidad</span>
+                    <span>Coste/ud</span>
+                    <span>Coste línea</span>
+                    <span></span>
+                  </div>
+                  {lineas.map((l, i) => renderLinea(l, i))}
                 </div>
               )}
-              <button className="rec-search__cancel" onClick={() => { setShowSearch(false); setSearchQ(""); }}>Cancelar</button>
-            </div>
-          ) : (
-            <button className="rec-add-btn" onClick={() => setShowSearch(true)}>+ Añadir ingrediente</button>
+              {lineas.length === 0 && (
+                <p className="rec-empty">No hay ingredientes. Añade el primer ingrediente para definir la receta.</p>
+              )}
+              {renderSearchBlock(null)}
+            </>
           )}
         </div>
 
-        {/* Footer: total + save */}
+        {/* Footer */}
         <div className="rec-footer">
-          <div className="rec-total">
-            <span>Coste total receta:</span>
-            <strong>{costeTotal.toFixed(2)}€</strong>
-          </div>
-          {data?.precios?.length > 0 && (
-            <div className="rec-margins">
-              {data.precios.map(p => {
-                const margen = p.precio > 0 ? Math.round((1 - costeTotal / p.precio) * 100) : 0;
-                return (
-                  <span key={p.clave} className={`rec-margin ${margen < 40 ? "rec-margin--warn" : ""}`}>
-                    {p.label}: {p.precio}€ → {margen}%
-                  </span>
-                );
-              })}
-            </div>
+          {!multiVariante && (
+            <>
+              <div className="rec-total">
+                <span>Coste total receta:</span>
+                <strong>{costeTotalGlobal.toFixed(2)}€</strong>
+              </div>
+              {precios.length > 0 && (
+                <div className="rec-margins">
+                  {precios.map(p => {
+                    const margen = p.precio > 0 ? Math.round((1 - costeTotalGlobal / p.precio) * 100) : 0;
+                    return (
+                      <span key={p.clave} className={`rec-margin ${margen < 40 ? "rec-margin--warn" : ""}`}>
+                        {p.label}: {p.precio}€ → {margen}%
+                      </span>
+                    );
+                  })}
+                </div>
+              )}
+            </>
           )}
           <div className="rec-actions">
             <button className="sug-btn sug-btn--secondary" onClick={onClose}>Cancelar</button>

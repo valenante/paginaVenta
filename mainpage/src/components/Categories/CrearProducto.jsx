@@ -117,6 +117,11 @@ const CrearProducto = ({ onClose, onCreated, initialTipo, cloneFrom }) => {
         stock: 0,
         controlStock: cloneFrom.controlStock ?? false,
         imprimirSiempre: cloneFrom.imprimirSiempre ?? false,
+        destacadoEnMesa: {
+          activo: cloneFrom.destacadoEnMesa?.activo ?? false,
+          emoji: cloneFrom.destacadoEnMesa?.emoji || "🔥",
+          label: cloneFrom.destacadoEnMesa?.label || "",
+        },
         // BUGFIX clonado: campos del schema que antes no se copiaban
         iva: cloneFrom.iva ?? 10,
         puntosDeCoccion: Array.isArray(cloneFrom.puntosDeCoccion) ? cloneFrom.puntosDeCoccion : [],
@@ -161,6 +166,7 @@ const CrearProducto = ({ onClose, onCreated, initialTipo, cloneFrom }) => {
       stock: 0,
       controlStock: false,
       imprimirSiempre: false,
+      destacadoEnMesa: { activo: false, emoji: "🔥", label: "" },
     };
   });
   const [ingredientesStock, setIngredientesStock] = useState([]);
@@ -323,6 +329,11 @@ const CrearProducto = ({ onClose, onCreated, initialTipo, cloneFrom }) => {
     productData.stock = Number(productData.stock) || 0;
     productData.controlStock = !!productData.controlStock;
     productData.imprimirSiempre = !!productData.imprimirSiempre;
+    productData.destacadoEnMesa = {
+      activo: !!productData.destacadoEnMesa?.activo,
+      emoji: productData.destacadoEnMesa?.emoji || "🔥",
+      label: productData.destacadoEnMesa?.label || "",
+    };
     delete productData.alergenosRaros; // solo UI local
 
     // Auto-derivar clave slug desde label + label desde clave (fallbacks cruzados)
@@ -1061,6 +1072,59 @@ const CrearProducto = ({ onClose, onCreated, initialTipo, cloneFrom }) => {
                 Si la impresion de pedidos esta desactivada para cocina o barra,
                 este producto se seguira imprimiendo igualmente.
               </p>
+            </div>
+
+            <div className="stock-directo-row--crear" style={{ marginTop: "12px" }}>
+              <label className="toggle-stock--crear">
+                <input
+                  type="checkbox"
+                  checked={!!formData.destacadoEnMesa?.activo}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      destacadoEnMesa: { ...prev.destacadoEnMesa, activo: e.target.checked },
+                    }))
+                  }
+                />
+                <span className="toggle-stock-label--crear">
+                  Destacar en mesa
+                </span>
+              </label>
+              <p className="help-text--crear" style={{ marginTop: "4px" }}>
+                Si esta activo, la card de la mesa en el TPV mostrara un indicador cuando tenga este producto.
+              </p>
+              {formData.destacadoEnMesa?.activo && (
+                <div style={{ display: "flex", gap: "8px", marginTop: "8px" }}>
+                  <div style={{ flex: "0 0 60px" }}>
+                    <label className="label--crear" style={{ fontSize: "0.75rem" }}>Emoji</label>
+                    <input
+                      className="input--crear"
+                      value={formData.destacadoEnMesa?.emoji || ""}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          destacadoEnMesa: { ...prev.destacadoEnMesa, emoji: e.target.value.slice(0, 4) },
+                        }))
+                      }
+                      style={{ textAlign: "center", fontSize: "1.2rem" }}
+                    />
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <label className="label--crear" style={{ fontSize: "0.75rem" }}>Texto corto (opcional)</label>
+                    <input
+                      className="input--crear"
+                      value={formData.destacadoEnMesa?.label || ""}
+                      placeholder="ej: Parrilla"
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          destacadoEnMesa: { ...prev.destacadoEnMesa, label: e.target.value.slice(0, 20) },
+                        }))
+                      }
+                    />
+                  </div>
+                </div>
+              )}
             </div>
           </fieldset>
 

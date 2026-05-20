@@ -200,6 +200,12 @@ const EditProduct = ({
 
       imprimirSiempre: product?.imprimirSiempre ?? false,
 
+      destacadoEnMesa: {
+        activo: product?.destacadoEnMesa?.activo ?? false,
+        emoji: product?.destacadoEnMesa?.emoji || "🔥",
+        label: product?.destacadoEnMesa?.label || "",
+      },
+
     };
   }, [product]);
 
@@ -424,6 +430,11 @@ const EditProduct = ({
       stock: Number(formData.stock) || 0,
       controlStock: !!formData.controlStock,
       imprimirSiempre: !!formData.imprimirSiempre,
+      destacadoEnMesa: {
+        activo: !!formData.destacadoEnMesa?.activo,
+        emoji: formData.destacadoEnMesa?.emoji || "🔥",
+        label: formData.destacadoEnMesa?.label || "",
+      },
       img: formData.img || undefined,
     };
 
@@ -1020,6 +1031,59 @@ const EditProduct = ({
                 Si la impresion de pedidos esta desactivada para cocina o barra,
                 este producto se seguira imprimiendo igualmente.
               </p>
+            </div>
+
+            <div className="stock-directo-row--crear" style={{ marginTop: "12px" }}>
+              <label className="toggle-stock--crear">
+                <input
+                  type="checkbox"
+                  checked={!!formData.destacadoEnMesa?.activo}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      destacadoEnMesa: { ...prev.destacadoEnMesa, activo: e.target.checked },
+                    }))
+                  }
+                />
+                <span className="toggle-stock-label--crear">
+                  Destacar en mesa
+                </span>
+              </label>
+              <p className="help-text--crear" style={{ marginTop: "4px" }}>
+                Si esta activo, la card de la mesa en el TPV mostrara un indicador cuando tenga este producto.
+              </p>
+              {formData.destacadoEnMesa?.activo && (
+                <div style={{ display: "flex", gap: "8px", marginTop: "8px" }}>
+                  <div style={{ flex: "0 0 60px" }}>
+                    <label className="label--crear" style={{ fontSize: "0.75rem" }}>Emoji</label>
+                    <input
+                      className="input--crear"
+                      value={formData.destacadoEnMesa?.emoji || ""}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          destacadoEnMesa: { ...prev.destacadoEnMesa, emoji: e.target.value.slice(0, 4) },
+                        }))
+                      }
+                      style={{ textAlign: "center", fontSize: "1.2rem" }}
+                    />
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <label className="label--crear" style={{ fontSize: "0.75rem" }}>Texto corto (opcional)</label>
+                    <input
+                      className="input--crear"
+                      value={formData.destacadoEnMesa?.label || ""}
+                      placeholder="ej: Parrilla"
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          destacadoEnMesa: { ...prev.destacadoEnMesa, label: e.target.value.slice(0, 20) },
+                        }))
+                      }
+                    />
+                  </div>
+                </div>
+              )}
             </div>
           </fieldset>
 

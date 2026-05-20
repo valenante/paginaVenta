@@ -134,6 +134,50 @@ export default function ProductoProveedorModal({
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
+  // ── Modo IA ──
+  const [aiText, setAiText] = useState("");
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiResult, setAiResult] = useState(null);
+  const [aiError, setAiError] = useState("");
+
+  const handleAiParse = async () => {
+    if (!aiText.trim() || aiText.trim().length < 5) return;
+    setAiLoading(true);
+    setAiError("");
+    setAiResult(null);
+    try {
+      const { data } = await api.post(`/admin/proveedores/${proveedorId}/productos/parse-natural`, { texto: aiText });
+      if (data.ok && data.parsed) {
+        setAiResult(data.parsed);
+      } else {
+        setAiError(data.message || "No se pudo interpretar");
+      }
+    } catch (err) {
+      setAiError(err?.response?.data?.message || "Error al analizar");
+    } finally {
+      setAiLoading(false);
+    }
+  };
+
+  const applyAiResult = () => {
+    if (!aiResult) return;
+    setForm((prev) => ({
+      ...prev,
+      nombre: aiResult.nombre || prev.nombre,
+      unidad: aiResult.unidad || prev.unidad,
+      formato: aiResult.formato || prev.formato,
+      precio: aiResult.precioBase || prev.precio,
+      iva: aiResult.iva || prev.iva,
+      cantidadPorCompra: aiResult.cantidadPorCompra || prev.cantidadPorCompra,
+      factorConversion: aiResult.cantidadPorCompra || prev.factorConversion,
+      unidadContenido: aiResult.unidadContenido || prev.unidadContenido,
+      pesoNetoPorItem: aiResult.pesoNetoPorItem || prev.pesoNetoPorItem,
+      unidadPesoNeto: aiResult.unidadPesoNeto || prev.unidadPesoNeto,
+    }));
+    setAiResult(null);
+    setAiText("");
+  };
+
   const isRest = tenant?.tipoNegocio === "restaurante";
   const isShop = tenant?.tipoNegocio === "shop";
 
@@ -329,6 +373,67 @@ export default function ProductoProveedorModal({
               ✕
             </button>
           </header>
+
+          {/* ── Asistente IA (solo en crear) ── */}
+          {!isEdit && !aiResult && (
+            <div className="ppModal-ai">
+              <div className="ppModal-ai-header">
+                <span className="ppModal-ai-icon">🤖</span>
+                <span>Describe el producto con tus palabras</span>
+              </div>
+              <textarea
+                className="ppModal-ai-input"
+                rows={3}
+                placeholder='Ej: "Croquetas de espinaca, caja de 4 bolsas de 1kg, cada croqueta 25g, me sale a 44€ sin IVA"'
+                value={aiText}
+                onChange={(e) => setAiText(e.target.value)}
+                disabled={aiLoading}
+              />
+              {aiError && <p className="ppModal-ai-error">{aiError}</p>}
+              <button
+                type="button"
+                className="ppModal-ai-btn"
+                onClick={handleAiParse}
+                disabled={aiLoading || aiText.trim().length < 5}
+              >
+                {aiLoading ? "Analizando..." : "✨ Analizar con IA"}
+              </button>
+            </div>
+          )}
+
+          {/* ── Preview IA ── */}
+          {aiResult && (
+            <div className="ppModal-ai-preview">
+              <div className="ppModal-ai-header">
+                <span className="ppModal-ai-icon">🤖</span>
+                <span>Esto es lo que entendí:</span>
+              </div>
+              <div className="ppModal-ai-card">
+                <h3>{aiResult.nombre}</h3>
+                <div className="ppModal-ai-details">
+                  <span>📦 1 {aiResult.unidad} = {aiResult.cantidadPorCompra} {aiResult.unidadContenido}s</span>
+                  {aiResult.pesoNetoPorItem > 0 && (
+                    <span>⚖️ {aiResult.pesoNetoPorItem}{aiResult.unidadPesoNeto} por {aiResult.unidadContenido}</span>
+                  )}
+                  <span>💰 {aiResult.precioBase}€ + IVA {aiResult.iva}% = {aiResult._preview?.precioConIva}€</span>
+                  <span>📊 Coste: {aiResult._preview?.costeUnitarioLabel}</span>
+                  {aiResult._preview?.costePorPesoLabel && (
+                    <span>📊 {aiResult._preview.costePorPesoLabel}</span>
+                  )}
+                </div>
+                {aiResult.formato && <p className="ppModal-ai-formato">{aiResult.formato}</p>}
+                {aiResult.resumen && <p className="ppModal-ai-resumen">{aiResult.resumen}</p>}
+              </div>
+              <div className="ppModal-ai-actions">
+                <button type="button" className="ppModal-ai-btn ppModal-ai-btn--secondary" onClick={() => setAiResult(null)}>
+                  ✏️ Corregir
+                </button>
+                <button type="button" className="ppModal-ai-btn ppModal-ai-btn--primary" onClick={applyAiResult}>
+                  ✅ Usar estos datos
+                </button>
+              </div>
+            </div>
+          )}
 
           <form className="ppModal-body" onSubmit={submit}>
             {error && <div className="ppModal-alert badge-error">❌ {error}</div>}

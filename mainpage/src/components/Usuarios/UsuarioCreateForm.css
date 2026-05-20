@@ -149,6 +149,39 @@
   font-size: var(--font-size-xs);
   font-weight: 600;
 }
+.userCreateModal-error--general {
+  text-align: center;
+  padding: 8px 12px;
+  background: rgba(239, 68, 68, 0.08);
+  border-radius: 6px;
+  margin-bottom: 4px;
+}
+
+/* ===== Password toggle ===== */
+.userCreateModal-passwordWrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.userCreateModal-passwordWrap input {
+  flex: 1;
+  padding-right: 36px;
+}
+.userCreateModal-eyeBtn {
+  position: absolute;
+  right: 6px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  line-height: 1;
+  padding: 2px;
+  opacity: 0.6;
+  transition: opacity 0.15s;
+}
+.userCreateModal-eyeBtn:hover {
+  opacity: 1;
+}
 
 /* ===== Footer ===== */
 .userCreateModal-footer {

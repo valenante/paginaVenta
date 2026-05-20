@@ -19,6 +19,8 @@ export default function UsuarioCreateForm({ onCrear, onClose }) {
 
   const [errors, setErrors] = useState({});
   const [saving, setSaving] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
 
   const validate = () => {
     const e = {};
@@ -27,9 +29,9 @@ export default function UsuarioCreateForm({ onCrear, onClose }) {
     if (!/\S+@\S+\.\S+/.test(form.email)) e.email = "Email inválido";
     const rolesValidos = rolesDisponibles.map((r) => r.value);
     if (!rolesValidos.includes(form.role)) e.role = "Rol inválido";
-    if (form.password.length < 8) e.password = "Min 8 caracteres";
+    if (form.password.length < 8) e.password = "Mínimo 8 caracteres";
     if (form.password !== form.confirmPassword)
-      e.confirmPassword = "No coinciden";
+      e.confirmPassword = "Las contraseñas no coinciden";
 
     return e;
   };
@@ -53,6 +55,20 @@ export default function UsuarioCreateForm({ onCrear, onClose }) {
 
     if (result?.ok !== false) {
       onClose();
+    } else {
+      // Mostrar errores del API inline en los campos correspondientes
+      const apiFields = result?.error?.fields || result?.fields || {};
+      const apiMsg = result?.error?.message || result?.message || "";
+      const apiErrors = {};
+      if (apiFields.password) apiErrors.password = apiFields.password;
+      if (apiFields.email) apiErrors.email = apiFields.email;
+      if (apiFields.name) apiErrors.name = apiFields.name;
+      if (apiFields.role) apiErrors.role = apiFields.role;
+      // Si no hay fields específicos, mostrar el mensaje general
+      if (!Object.keys(apiErrors).length && apiMsg) {
+        apiErrors._general = apiMsg;
+      }
+      if (Object.keys(apiErrors).length) setErrors(apiErrors);
     }
   };
 
@@ -61,11 +77,9 @@ export default function UsuarioCreateForm({ onCrear, onClose }) {
       className="userCreateModal-overlay"
       role="dialog"
       aria-modal="true"
-      onClick={saving ? undefined : onClose}
     >
       <div
         className="userCreateModal-container"
-        onClick={(e) => e.stopPropagation()}
       >
         {/* HEADER */}
         <header className="userCreateModal-header">
@@ -141,29 +155,55 @@ export default function UsuarioCreateForm({ onCrear, onClose }) {
           <div className="userCreateModal-row">
             <div className="userCreateModal-field">
               <label>Contraseña</label>
-              <input
-                type="password"
-                value={form.password}
-                onChange={(e) => setForm({ ...form, password: e.target.value })}
-                placeholder="Min 8 caracteres"
-              />
+              <div className="userCreateModal-passwordWrap">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  value={form.password}
+                  onChange={(e) => setForm({ ...form, password: e.target.value })}
+                  placeholder="Min 8 caracteres"
+                />
+                <button
+                  type="button"
+                  className="userCreateModal-eyeBtn"
+                  onClick={() => setShowPassword((v) => !v)}
+                  tabIndex={-1}
+                  aria-label={showPassword ? "Ocultar contraseña" : "Ver contraseña"}
+                >
+                  {showPassword ? "🙈" : "👁️"}
+                </button>
+              </div>
               {errors.password && <p className="userCreateModal-error">{errors.password}</p>}
             </div>
 
             <div className="userCreateModal-field">
               <label>Confirmar contraseña</label>
-              <input
-                type="password"
-                value={form.confirmPassword}
-                onChange={(e) =>
-                  setForm({ ...form, confirmPassword: e.target.value })
-                }
-              />
+              <div className="userCreateModal-passwordWrap">
+                <input
+                  type={showConfirm ? "text" : "password"}
+                  value={form.confirmPassword}
+                  onChange={(e) =>
+                    setForm({ ...form, confirmPassword: e.target.value })
+                  }
+                />
+                <button
+                  type="button"
+                  className="userCreateModal-eyeBtn"
+                  onClick={() => setShowConfirm((v) => !v)}
+                  tabIndex={-1}
+                  aria-label={showConfirm ? "Ocultar contraseña" : "Ver contraseña"}
+                >
+                  {showConfirm ? "🙈" : "👁️"}
+                </button>
+              </div>
               {errors.confirmPassword && (
                 <p className="userCreateModal-error">{errors.confirmPassword}</p>
               )}
             </div>
           </div>
+
+          {errors._general && (
+            <p className="userCreateModal-error userCreateModal-error--general">{errors._general}</p>
+          )}
 
           {/* FOOTER */}
           <footer className="userCreateModal-footer">

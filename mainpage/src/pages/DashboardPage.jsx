@@ -160,7 +160,7 @@ export default function DashboardPage() {
           </Link>
         )}
 
-        {hasPermission("estadisticas.manage") && (
+        {hasPermission("exports.manage") && (
           <Link to="/configuracion/exports" className="dashboard-tile card">
             <div className="dashboard-tile-icon">📤</div>
             <h2>Exports / Reports</h2>

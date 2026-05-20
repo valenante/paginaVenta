@@ -50,7 +50,7 @@ const PANEL_BY_TIPO = {
     // Valoraciones eliminado — sin uso real
     { key: "estadisticas", label: "📊 Estadísticas", permiso: "estadisticas.manage", feature: "estadisticas_avanzadas", render: () => <EstadisticasPage type="plato" /> },
     { key: "finanzas", label: "💰 Finanzas", permiso: "finanzas.view", feature: "finanzas_view", render: () => <FinanzasPage /> },
-    { key: "horarios", label: "📅 Horarios", render: () => <HorariosPage /> },
+    { key: "horarios", label: "📅 Horarios", permiso: "horarios.view", render: () => <HorariosPage /> },
     { key: "turnos", label: "🔐 Control turnos", permiso: "turnos.manage", render: () => <ControlTurnosPanel /> },
     { key: "otros", label: "⚙️ Otros", permiso: "herramientas.avanzadas", render: () => <OtrosPage /> },
   ],

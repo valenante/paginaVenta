@@ -229,6 +229,13 @@ const EditProduct = ({
     return objects.map((c) => c.nombre).sort((a, b) => a.localeCompare(b, "es"));
   }, [formData.tipo, categoryObjectsByTipo]);
 
+  // Icono de la categoría actual (para pre-rellenar destacadoEnMesa)
+  const iconoCategoria = useMemo(() => {
+    const objects = categoryObjectsByTipo[formData.tipo] || [];
+    const cat = objects.find((c) => c.nombre === formData.categoria);
+    return cat?.icono || "🔥";
+  }, [formData.tipo, formData.categoria, categoryObjectsByTipo]);
+
   // usarOtraCategoria: si la categoría actual no está en la lista, abre input
   useEffect(() => {
     if (!categorias?.length) return;
@@ -1038,12 +1045,18 @@ const EditProduct = ({
                 <input
                   type="checkbox"
                   checked={!!formData.destacadoEnMesa?.activo}
-                  onChange={(e) =>
+                  onChange={(e) => {
+                    const checked = e.target.checked;
                     setFormData((prev) => ({
                       ...prev,
-                      destacadoEnMesa: { ...prev.destacadoEnMesa, activo: e.target.checked },
-                    }))
-                  }
+                      destacadoEnMesa: {
+                        ...prev.destacadoEnMesa,
+                        activo: checked,
+                        // Auto-rellenar con icono de la categoría al activar
+                        ...(checked && !prev.destacadoEnMesa?.emoji ? { emoji: iconoCategoria } : {}),
+                      },
+                    }));
+                  }}
                 />
                 <span className="toggle-stock-label--crear">
                   Destacar en mesa

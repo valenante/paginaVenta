@@ -166,7 +166,7 @@ const CrearProducto = ({ onClose, onCreated, initialTipo, cloneFrom }) => {
       stock: 0,
       controlStock: false,
       imprimirSiempre: false,
-      destacadoEnMesa: { activo: false, emoji: "🔥", label: "" },
+      destacadoEnMesa: { activo: false, emoji: "", label: "" },
     };
   });
   const [ingredientesStock, setIngredientesStock] = useState([]);
@@ -228,6 +228,12 @@ const CrearProducto = ({ onClose, onCreated, initialTipo, cloneFrom }) => {
     const objects = categoryObjectsByTipo[tipo] || [];
     return objects.map((c) => c.nombre).sort((a, b) => a.localeCompare(b, "es"));
   }, [formData.tipo, categoryObjectsByTipo]);
+
+  const iconoCategoria = useMemo(() => {
+    const objects = categoryObjectsByTipo[formData.tipo] || [];
+    const cat = objects.find((c) => c.nombre === formData.categoria);
+    return cat?.icono || "🔥";
+  }, [formData.tipo, formData.categoria, categoryObjectsByTipo]);
 
   // BUGFIX clonado: limpiar sección/estación solo cuando el usuario CAMBIA tipo,
   // no en el primer render. Al clonar, formData.tipo ya trae el valor correcto
@@ -1079,12 +1085,17 @@ const CrearProducto = ({ onClose, onCreated, initialTipo, cloneFrom }) => {
                 <input
                   type="checkbox"
                   checked={!!formData.destacadoEnMesa?.activo}
-                  onChange={(e) =>
+                  onChange={(e) => {
+                    const checked = e.target.checked;
                     setFormData((prev) => ({
                       ...prev,
-                      destacadoEnMesa: { ...prev.destacadoEnMesa, activo: e.target.checked },
-                    }))
-                  }
+                      destacadoEnMesa: {
+                        ...prev.destacadoEnMesa,
+                        activo: checked,
+                        ...(checked && !prev.destacadoEnMesa?.emoji ? { emoji: iconoCategoria } : {}),
+                      },
+                    }));
+                  }}
                 />
                 <span className="toggle-stock-label--crear">
                   Destacar en mesa

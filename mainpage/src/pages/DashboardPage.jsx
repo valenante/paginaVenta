@@ -91,7 +91,7 @@ export default function DashboardPage() {
           </Link>
         )}
 
-        {hasPermission("config.edit") && (
+        {hasPermission("impresoras.manage") && (
           <Link to={impresionPath} className="dashboard-tile card">
             <div className="dashboard-tile-icon">🖨️</div>
             <h2>Impresión</h2>
@@ -168,7 +168,7 @@ export default function DashboardPage() {
           </Link>
         )}
 
-        {hasPermission("config.edit") && (
+        {hasPermission("loyalty.manage") && (
           <Link to="/configuracion/loyalty" className="dashboard-tile card">
             <div className="dashboard-tile-icon">💳</div>
             <h2>Programa de fidelización</h2>

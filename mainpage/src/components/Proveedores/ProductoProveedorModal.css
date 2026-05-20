@@ -428,8 +428,8 @@
   margin: 0 20px 16px;
   padding: 16px;
   border-radius: 12px;
-  background: linear-gradient(135deg, rgba(96,181,255,0.06), rgba(139,92,246,0.06));
-  border: 1px solid rgba(96,181,255,0.15);
+  background: linear-gradient(135deg, rgba(96,181,255,0.05), rgba(139,92,246,0.05));
+  border: 1px solid rgba(96,181,255,0.2);
 }
 .ppModal-ai-header {
   display: flex;
@@ -438,23 +438,23 @@
   margin-bottom: 10px;
   font-size: 0.85rem;
   font-weight: 600;
-  color: var(--color-texto, #e2e8f0);
+  color: #334155;
 }
 .ppModal-ai-icon { font-size: 1.1rem; }
 .ppModal-ai-input {
   width: 100%;
   padding: 10px 14px;
   border-radius: 10px;
-  border: 1px solid rgba(96,181,255,0.2);
-  background: rgba(0,0,0,0.15);
-  color: var(--color-texto, #e2e8f0);
+  border: 1px solid #cbd5e1;
+  background: #f8fafc;
+  color: #1e293b;
   font-size: 0.85rem;
   font-family: inherit;
   resize: vertical;
   min-height: 60px;
 }
-.ppModal-ai-input:focus { border-color: #60b5ff; outline: none; }
-.ppModal-ai-input::placeholder { color: rgba(148,163,184,0.6); }
+.ppModal-ai-input:focus { border-color: #60b5ff; outline: none; box-shadow: 0 0 0 3px rgba(96,181,255,0.15); }
+.ppModal-ai-input::placeholder { color: #94a3b8; }
 .ppModal-ai-error { color: #ef4444; font-size: 0.78rem; margin: 6px 0 0; }
 .ppModal-ai-btn {
   display: block;
@@ -469,49 +469,52 @@
   font-weight: 700;
   cursor: pointer;
   font-family: inherit;
-  transition: opacity 0.15s;
+  transition: all 0.15s;
 }
-.ppModal-ai-btn:hover { opacity: 0.9; }
-.ppModal-ai-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.ppModal-ai-btn:hover { opacity: 0.9; box-shadow: 0 4px 12px rgba(96,181,255,0.3); }
+.ppModal-ai-btn:disabled { opacity: 0.4; cursor: not-allowed; box-shadow: none; }
 .ppModal-ai-btn--secondary {
-  background: rgba(255,255,255,0.08);
-  color: var(--color-texto, #e2e8f0);
-  border: 1px solid rgba(255,255,255,0.15);
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #e2e8f0;
 }
+.ppModal-ai-btn--secondary:hover { background: #e2e8f0; }
 .ppModal-ai-btn--primary {
   background: linear-gradient(135deg, #22c55e, #16a34a);
 }
+.ppModal-ai-btn--primary:hover { box-shadow: 0 4px 12px rgba(34,197,94,0.3); }
 
 /* AI Preview Card */
 .ppModal-ai-card {
   padding: 14px;
   border-radius: 10px;
-  background: rgba(0,0,0,0.2);
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
   margin-bottom: 12px;
 }
 .ppModal-ai-card h3 {
   margin: 0 0 10px;
   font-size: 1rem;
   font-weight: 700;
-  color: var(--color-texto, #f1f5f9);
+  color: #1e293b;
 }
 .ppModal-ai-details {
   display: flex;
   flex-direction: column;
   gap: 4px;
   font-size: 0.82rem;
-  color: rgba(148,163,184,0.9);
+  color: #475569;
 }
 .ppModal-ai-formato {
   margin: 8px 0 0;
   font-size: 0.78rem;
-  color: #60b5ff;
+  color: #3b82f6;
   font-style: italic;
 }
 .ppModal-ai-resumen {
   margin: 6px 0 0;
   font-size: 0.78rem;
-  color: rgba(148,163,184,0.7);
+  color: #64748b;
 }
 .ppModal-ai-actions {
   display: flex;
@@ -519,4 +522,17 @@
 }
 .ppModal-ai-actions .ppModal-ai-btn {
   flex: 1;
+}
+
+/* AI Notice */
+.ppModal-ai-notice {
+  margin: 0 20px 6px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: #fef3c7;
+  border: 1px solid #fbbf24;
+  color: #92400e;
+  font-size: 0.78rem;
+  font-weight: 500;
+  text-align: center;
 }

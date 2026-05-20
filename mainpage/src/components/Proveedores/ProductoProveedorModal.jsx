@@ -176,7 +176,10 @@ export default function ProductoProveedorModal({
     }));
     setAiResult(null);
     setAiText("");
+    setAiApplied(true);
   };
+
+  const [aiApplied, setAiApplied] = useState(false);
 
   const isRest = tenant?.tipoNegocio === "restaurante";
   const isShop = tenant?.tipoNegocio === "shop";
@@ -432,6 +435,12 @@ export default function ProductoProveedorModal({
                   ✅ Usar estos datos
                 </button>
               </div>
+            </div>
+          )}
+
+          {aiApplied && (
+            <div className="ppModal-ai-notice">
+              ⚠️ Datos rellenados por IA — revisa que sean correctos y asocia el producto o ingrediente antes de guardar.
             </div>
           )}
 

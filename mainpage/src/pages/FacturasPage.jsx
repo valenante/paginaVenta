@@ -10,6 +10,7 @@ import AlertaMensaje from "../components/AlertaMensaje/AlertaMensaje.jsx";
 import ErrorToast from "../components/common/ErrorToast.jsx";
 import FacturasHelpModal from "../components/Facturas/FacturasHelpModal.jsx";
 import ModalConfirmacion from "../components/Modal/ModalConfirmacion.jsx";
+import ClientesFiscalesPanel from "../components/Facturas/ClientesFiscalesPanel.jsx";
 
 import { normalizeApiError } from "../utils/normalizeApiError.js";
 import "../styles/FacturasPage.css";
@@ -884,6 +885,9 @@ export default function FacturasPage() {
           }}
         />
       )}
+
+      {/* REGISTROS FISCALES */}
+      <ClientesFiscalesPanel />
 
       {/* AYUDA */}
       {mostrarAyuda && <FacturasHelpModal onClose={() => setMostrarAyuda(false)} />}

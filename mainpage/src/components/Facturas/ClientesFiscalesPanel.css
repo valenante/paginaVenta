@@ -1,0 +1,182 @@
+/* ClientesFiscalesPanel — registros fiscales CRUD */
+
+.cf-panel { padding: 20px 0; }
+
+.cf-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+.cf-title { margin: 0; font-size: 1.1rem; font-weight: 800; color: var(--color-texto, #f1f5f9); }
+.cf-subtitle { margin: 4px 0 0; font-size: 0.78rem; color: var(--color-texto-suave, #94a3b8); }
+.cf-count {
+  background: rgba(96,181,255,0.12);
+  color: #60b5ff;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.cf-search {
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.04);
+  color: var(--color-texto, #f1f5f9);
+  font-size: 0.85rem;
+  font-family: inherit;
+  margin-bottom: 16px;
+}
+.cf-search:focus { border-color: #60b5ff; outline: none; }
+.cf-search::placeholder { color: rgba(148,163,184,0.5); }
+
+/* Tabla */
+.cf-table { margin-bottom: 12px; }
+.cf-table-head {
+  display: grid;
+  grid-template-columns: 1.2fr 2fr 2fr 0.6fr 1fr 0.8fr;
+  gap: 8px;
+  padding: 8px 12px;
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #64748b;
+  font-weight: 700;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.cf-table-row {
+  display: grid;
+  grid-template-columns: 1.2fr 2fr 2fr 0.6fr 1fr 0.8fr;
+  gap: 8px;
+  padding: 10px 12px;
+  align-items: center;
+  border-bottom: 1px solid rgba(255,255,255,0.03);
+  font-size: 0.82rem;
+  color: var(--color-texto, #e2e8f0);
+}
+.cf-table-row:hover { background: rgba(255,255,255,0.02); }
+.cf-nif { font-weight: 700; font-family: monospace; }
+.cf-dir { color: #94a3b8; font-size: 0.78rem; }
+.cf-usos { text-align: center; }
+.cf-fecha { font-size: 0.75rem; color: #64748b; }
+.cf-actions { display: flex; gap: 4px; }
+
+.cf-btn-sm {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.85rem;
+  padding: 4px;
+  border-radius: 6px;
+  transition: background 0.12s;
+}
+.cf-btn-sm:hover { background: rgba(255,255,255,0.08); }
+.cf-btn-sm--danger:hover { background: rgba(239,68,68,0.15); }
+
+/* Pagination */
+.cf-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  padding: 10px;
+  font-size: 0.78rem;
+  color: #94a3b8;
+}
+.cf-pagination button {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: var(--color-texto, #e2e8f0);
+  padding: 6px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.78rem;
+}
+.cf-pagination button:disabled { opacity: 0.3; cursor: not-allowed; }
+
+/* Messages */
+.cf-msg {
+  padding: 10px 14px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  font-size: 0.82rem;
+  font-weight: 500;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.cf-msg--ok { background: rgba(34,197,94,0.1); color: #22c55e; border: 1px solid rgba(34,197,94,0.2); }
+.cf-msg--error { background: rgba(239,68,68,0.1); color: #ef4444; border: 1px solid rgba(239,68,68,0.2); }
+.cf-msg button { background: none; border: none; color: inherit; cursor: pointer; }
+
+.cf-loading, .cf-empty {
+  text-align: center;
+  color: #64748b;
+  font-size: 0.85rem;
+  padding: 30px;
+}
+
+/* Edit overlay */
+.cf-edit-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0,0,0,0.5);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.cf-edit-card {
+  background: var(--color-fondo-card, #1a1f2e);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 16px;
+  padding: 24px;
+  width: min(420px, 90vw);
+}
+.cf-edit-card h4 { margin: 0 0 16px; font-size: 1rem; color: var(--color-texto, #f1f5f9); }
+.cf-edit-card label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #94a3b8;
+  margin: 10px 0 4px;
+  text-transform: uppercase;
+}
+.cf-edit-card input {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.04);
+  color: var(--color-texto, #f1f5f9);
+  font-size: 0.85rem;
+  font-family: inherit;
+}
+.cf-edit-card input:focus { border-color: #60b5ff; outline: none; }
+.cf-edit-actions { display: flex; gap: 8px; margin-top: 18px; }
+.cf-btn {
+  flex: 1;
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+}
+.cf-btn--secondary { background: rgba(255,255,255,0.08); color: var(--color-texto, #e2e8f0); }
+.cf-btn--primary { background: #60b5ff; color: #000; }
+.cf-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+@media (max-width: 768px) {
+  .cf-table-head, .cf-table-row {
+    grid-template-columns: 1fr 1.5fr 0.5fr 0.6fr;
+  }
+  .cf-dir, .cf-fecha { display: none; }
+}

@@ -2,9 +2,10 @@
 // Panel de gestión de costes por variante de precio.
 // Base del futuro módulo "Finanzas": precio coste → precio venta → ganancia.
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import useCostes from "../../hooks/useCostes";
 import RecetaModal from "./RecetaModal";
+import api from "../../utils/api";
 import "./CostesPanel.css";
 
 const TABS = [
@@ -121,6 +122,28 @@ const CostesPanel = () => {
     () => filtrados.filter((p) => (p.precios || []).every((pr) => !getCosteActual(p, pr.clave))).length,
     [filtrados, getCosteActual]
   );
+
+  /* =====================================================
+   * Navegar al ProductoProveedor asociado
+   * ===================================================== */
+  const handleNavigateProveedor = useCallback(async (productoId) => {
+    try {
+      const { data } = await api.get(`/admin/proveedores/lookup/by-producto/${productoId}`);
+      const items = data?.items || [];
+      if (!items.length) {
+        alert("Este producto no tiene proveedor asociado.");
+        return;
+      }
+      // Si hay varios, preferir el principal
+      const pp = items.find((p) => p.esPrincipal) || items[0];
+      window.open(
+        `/configuracion/proveedores/${pp.proveedorId}/productos?pp=${pp._id}`,
+        "_blank"
+      );
+    } catch {
+      alert("Error al buscar el proveedor de este producto.");
+    }
+  }, []);
 
   /* =====================================================
    * Handlers
@@ -241,6 +264,7 @@ const CostesPanel = () => {
               saving={saving}
               getCosteActual={getCosteActual}
               onReceta={(prod) => setRecetaProducto(prod)}
+              onNavigateProveedor={handleNavigateProveedor}
             />
           ))}
         </div>
@@ -310,7 +334,7 @@ const CostesPanel = () => {
 /* =====================================================
  * Card de producto (con todas sus variantes)
  * ===================================================== */
-function ProductoCard({ producto, dirty, onChangeCoste, onSave, onDiscard, saving, getCosteActual, onReceta }) {
+function ProductoCard({ producto, dirty, onChangeCoste, onSave, onDiscard, saving, getCosteActual, onReceta, onNavigateProveedor }) {
   const precios = producto.precios || [];
   const hasDirty = Object.keys(dirty).length > 0;
   const tieneReceta = producto.receta?.length > 0;
@@ -319,7 +343,13 @@ function ProductoCard({ producto, dirty, onChangeCoste, onSave, onDiscard, savin
     <div className={`costes-card ${hasDirty ? "is-dirty" : ""}`}>
       <div className="costes-card__head">
         <div className="costes-card__title">
-          <div className="costes-card__name">{producto.nombre}</div>
+          <div
+            className="costes-card__name costes-card__name--link"
+            onClick={() => onNavigateProveedor(producto._id)}
+            title="Ver producto del proveedor"
+          >
+            {producto.nombre}
+          </div>
           <div className="costes-card__cat">{producto.categoria || "(sin categoría)"}</div>
         </div>
         <div className="costes-card__actions">

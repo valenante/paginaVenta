@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { useOutletContext, useParams } from "react-router-dom";
+import React, { useEffect, useState, useRef } from "react";
+import { useOutletContext, useParams, useSearchParams } from "react-router-dom";
 import api from "../../../utils/api";
 import ModalConfirmacion from "../../../components/Modal/ModalConfirmacion.jsx";
 import ProductoProveedorModal from "../../../components/Proveedores/ProductoProveedorModal.jsx";
@@ -8,12 +8,14 @@ import "./ProveedorProductosTab.css";
 export default function ProveedorProductosTab() {
   const { proveedorId } = useParams();
   const { headersTenant } = useOutletContext();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [modalProducto, setModalProducto] = useState(null);
   const [modalDelete, setModalDelete] = useState(null);
+  const ppAutoOpened = useRef(false);
 
   const fetchProductos = async () => {
     try {
@@ -22,16 +24,32 @@ export default function ProveedorProductosTab() {
         `/admin/proveedores/${proveedorId}/productos`,
         headersTenant
       );
-      setItems(data?.items || []);
+      const fetched = data?.items || [];
+      setItems(fetched);
+      return fetched;
     } catch {
       setError("No se pudieron cargar los productos.");
+      return [];
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchProductos();
+    fetchProductos().then((fetched) => {
+      // Auto-abrir modal si viene ?pp=<id> en la URL
+      const ppId = searchParams.get("pp");
+      if (ppId && !ppAutoOpened.current && fetched.length > 0) {
+        ppAutoOpened.current = true;
+        const match = fetched.find((p) => p._id === ppId);
+        if (match) {
+          setModalProducto({ mode: "edit", producto: match });
+          // Limpiar el param para que no se reabra al navegar
+          searchParams.delete("pp");
+          setSearchParams(searchParams, { replace: true });
+        }
+      }
+    });
   }, [proveedorId]);
 
   const handleDelete = async (productoId) => {

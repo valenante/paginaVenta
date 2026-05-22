@@ -236,6 +236,16 @@
   color: #fff;
   line-height: 1.25;
 }
+.costes-card__name--link {
+  cursor: pointer;
+  transition: color 0.15s;
+}
+.costes-card__name--link:hover {
+  color: #60b5ff;
+  text-decoration: underline;
+  text-decoration-color: rgba(96,181,255,0.4);
+  text-underline-offset: 2px;
+}
 .costes-card__cat {
   font-size: 0.72rem;
   color: #94a3b8;

@@ -116,10 +116,19 @@ export default function RecetaModal({ productoId, productoNombre, onClose, onSav
     }
   };
 
+  // ── Navegar al PP del ingrediente ──
+  const handleIngredienteClick = useCallback((linea) => {
+    if (!linea.productoProveedorId || !linea.proveedorId) {
+      alert("Este ingrediente no tiene proveedor asociado.");
+      return;
+    }
+    window.open(`/configuracion/proveedores/${linea.proveedorId}/productos?pp=${linea.productoProveedorId}`, "_blank");
+  }, []);
+
   // ── Render helpers ──
   const renderLinea = (l, globalIdx) => (
     <div key={l._key || globalIdx} className="rec-table__row">
-      <span className="rec-ing-name">{l.nombre}</span>
+      <span className="rec-ing-name rec-ing-name--link" onClick={() => handleIngredienteClick(l)}>{l.nombre}</span>
       <span>
         <input
           type="number"

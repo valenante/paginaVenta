@@ -14,6 +14,8 @@
 .rec-table__head { display: grid; grid-template-columns: 2.5fr 0.8fr 0.7fr 0.8fr 0.8fr 0.4fr; gap: 6px; padding: 6px 4px; font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.04em; color: #64748b; font-weight: 700; border-bottom: 1px solid rgba(255,255,255,0.06); }
 .rec-table__row { display: grid; grid-template-columns: 2.5fr 0.8fr 0.7fr 0.8fr 0.8fr 0.4fr; gap: 6px; padding: 8px 4px; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.03); }
 .rec-ing-name { font-size: 0.8rem; font-weight: 600; color: #e2e8f0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rec-ing-name--link { cursor: pointer; transition: color 0.15s; }
+.rec-ing-name--link:hover { color: #60b5ff; text-decoration: underline; text-decoration-color: rgba(96,181,255,0.4); text-underline-offset: 2px; }
 .rec-input { width: 100%; padding: 5px 8px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.04); color: #e2e8f0; font-size: 0.8rem; font-family: inherit; }
 .rec-input:focus { border-color: #60b5ff; outline: none; }
 .rec-select { width: 100%; padding: 5px 4px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.04); color: #e2e8f0; font-size: 0.78rem; font-family: inherit; }

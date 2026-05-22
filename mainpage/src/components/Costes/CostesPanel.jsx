@@ -54,6 +54,7 @@ const CostesPanel = () => {
     hasChanges, dirtyCount, dirty,
     setCosteLocal, discardChanges,
     getCosteActual, saveProducto, saveAll,
+    refresh,
   } = useCostes({ tipo: tab });
 
   /* =====================================================
@@ -324,7 +325,7 @@ const CostesPanel = () => {
           productoId={recetaProducto._id}
           productoNombre={recetaProducto.nombre}
           onClose={() => setRecetaProducto(null)}
-          onSaved={() => { setRecetaProducto(null); window.location.reload(); }}
+          onSaved={() => { setRecetaProducto(null); refresh(); }}
         />
       )}
     </div>

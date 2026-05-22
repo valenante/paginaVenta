@@ -98,6 +98,7 @@ export default function CajaDiariaUltraPro() {
         map[fechaKey] = {
           fecha: fechaKey,
           total: 0,
+          totalVentas: 0,
           numTickets: 0,
           numComensales: 0,
           avgDuracionMin: null,
@@ -105,14 +106,23 @@ export default function CajaDiariaUltraPro() {
         };
       }
 
-      map[fechaKey].total += Number(d.total || 0);
+      // totalVentas = suma de Ventas (distribución horaria, para fallback)
+      map[fechaKey].totalVentas += Number(d.total || 0);
+      // totalDia = MesaCerrada (source of truth del cobro real, repetido por hora como numTickets)
+      map[fechaKey].total = Math.max(map[fechaKey].total, Number(d.totalDia || 0));
       // numTickets y numComensales vienen repetidos por hora (mismo total del día), usar el máximo
       map[fechaKey].numTickets = Math.max(map[fechaKey].numTickets, Number(d.numTickets || 0));
       map[fechaKey].numComensales = Math.max(map[fechaKey].numComensales, Number(d.numComensales || 0));
       if (d.avgDuracionMin != null) map[fechaKey].avgDuracionMin = Number(d.avgDuracionMin);
     });
 
-    return Object.values(map)
+    // Fallback: si totalDia (MesaCerrada) no está disponible, usar totalVentas
+    const rows = Object.values(map);
+    for (const r of rows) {
+      if (!r.total && r.totalVentas > 0) r.total = r.totalVentas;
+    }
+
+    return rows
       .filter((d) => d.total > 0 || d.numTickets > 0)
       .sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
   }, [datos]);

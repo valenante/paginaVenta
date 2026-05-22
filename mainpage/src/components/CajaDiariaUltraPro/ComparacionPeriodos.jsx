@@ -22,11 +22,14 @@ function agregarPorDia(datosRaw) {
   datosRaw.forEach((d) => {
     const key = toISODateKey(d.fecha);
     if (!key) return;
-    if (!map[key]) map[key] = { fecha: key, total: 0, numTickets: 0 };
-    map[key].total += Number(d.total || 0);
-    map[key].numTickets += Number(d.numTickets || 0);
+    if (!map[key]) map[key] = { fecha: key, total: 0, totalVentas: 0, numTickets: 0 };
+    map[key].totalVentas += Number(d.total || 0);
+    map[key].total = Math.max(map[key].total, Number(d.totalDia || 0));
+    map[key].numTickets = Math.max(map[key].numTickets, Number(d.numTickets || 0));
   });
-  return Object.values(map).sort((a, b) => a.fecha.localeCompare(b.fecha));
+  const rows = Object.values(map);
+  for (const r of rows) { if (!r.total && r.totalVentas > 0) r.total = r.totalVentas; }
+  return rows.sort((a, b) => a.fecha.localeCompare(b.fecha));
 }
 
 function computeKPIs(diarios) {

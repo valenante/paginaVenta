@@ -125,6 +125,7 @@ const CrearProducto = ({ onClose, onCreated, initialTipo, cloneFrom }) => {
         // BUGFIX clonado: campos del schema que antes no se copiaban
         iva: cloneFrom.iva ?? 10,
         puntosDeCoccion: Array.isArray(cloneFrom.puntosDeCoccion) ? cloneFrom.puntosDeCoccion : [],
+        mensajesPredefinidos: Array.isArray(cloneFrom.mensajesPredefinidos) ? cloneFrom.mensajesPredefinidos : [],
         tipoPlato: cloneFrom.tipoPlato || "compartir",
         destacado: !!cloneFrom.destacado,
         promocionado: !!cloneFrom.promocionado,
@@ -1058,7 +1059,13 @@ const CrearProducto = ({ onClose, onCreated, initialTipo, cloneFrom }) => {
               )}
             </div>
 
-            <div className="stock-directo-row--crear" style={{ marginTop: "12px" }}>
+          </fieldset>
+
+          {/* === OPCIONES TPV === */}
+          <fieldset className="fieldset--crear">
+            <legend className="legend--crear">⚙️ Opciones de TPV</legend>
+
+            <div className="stock-directo-row--crear">
               <label className="toggle-stock--crear">
                 <input
                   type="checkbox"
@@ -1075,8 +1082,8 @@ const CrearProducto = ({ onClose, onCreated, initialTipo, cloneFrom }) => {
                 </span>
               </label>
               <p className="help-text--crear" style={{ marginTop: "4px" }}>
-                Si la impresion de pedidos esta desactivada para cocina o barra,
-                este producto se seguira imprimiendo igualmente.
+                Si la impresión de pedidos está desactivada para cocina o barra,
+                este producto se seguirá imprimiendo igualmente.
               </p>
             </div>
 
@@ -1102,7 +1109,7 @@ const CrearProducto = ({ onClose, onCreated, initialTipo, cloneFrom }) => {
                 </span>
               </label>
               <p className="help-text--crear" style={{ marginTop: "4px" }}>
-                Si esta activo, la card de la mesa en el TPV mostrara un indicador cuando tenga este producto.
+                Si está activo, la card de la mesa en el TPV mostrará un indicador cuando tenga este producto.
               </p>
               {formData.destacadoEnMesa?.activo && (
                 <div style={{ display: "flex", gap: "8px", marginTop: "8px" }}>
@@ -1136,6 +1143,76 @@ const CrearProducto = ({ onClose, onCreated, initialTipo, cloneFrom }) => {
                   </div>
                 </div>
               )}
+            </div>
+
+            <div className="stock-directo-row--crear" style={{ marginTop: "12px" }}>
+              <span className="toggle-stock-label--crear" style={{ fontWeight: 700 }}>
+                💬 Mensajes predefinidos
+              </span>
+              <p className="help-text--crear" style={{ marginTop: "4px" }}>
+                Mensajes rápidos que el camarero puede seleccionar al añadir este producto.
+              </p>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "6px", marginTop: "8px" }}>
+                {(formData.mensajesPredefinidos || []).map((msg, i) => (
+                  <span key={i} style={{
+                    display: "inline-flex", alignItems: "center", gap: "6px",
+                    padding: "5px 12px", borderRadius: "16px", fontSize: "0.82rem", fontWeight: 600,
+                    background: "rgba(96,181,255,0.12)", color: "#60b5ff", border: "1px solid rgba(96,181,255,0.25)"
+                  }}>
+                    {msg}
+                    <button type="button" onClick={() => {
+                      setFormData(prev => ({
+                        ...prev,
+                        mensajesPredefinidos: (prev.mensajesPredefinidos || []).filter((_, j) => j !== i),
+                      }));
+                    }} style={{
+                      background: "none", border: "none", color: "#94a3b8", cursor: "pointer",
+                      fontSize: "0.85rem", padding: 0, lineHeight: 1
+                    }}>✕</button>
+                  </span>
+                ))}
+              </div>
+              <div style={{ display: "flex", gap: "6px", marginTop: "8px" }}>
+                <input
+                  id="msg-pred-input-crear"
+                  type="text"
+                  placeholder="Ej: Sin cebolla"
+                  className="input--crear"
+                  style={{ flex: 1 }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      const val = e.target.value.trim();
+                      if (!val) return;
+                      if ((formData.mensajesPredefinidos || []).includes(val)) return;
+                      setFormData(prev => ({
+                        ...prev,
+                        mensajesPredefinidos: [...(prev.mensajesPredefinidos || []), val],
+                      }));
+                      e.target.value = "";
+                    }
+                  }}
+                />
+                <button
+                  type="button"
+                  className="btn btn-secundario"
+                  style={{ padding: "8px 16px", whiteSpace: "nowrap" }}
+                  onClick={() => {
+                    const input = document.getElementById("msg-pred-input-crear");
+                    const val = (input?.value || "").trim();
+                    if (!val) return;
+                    if ((formData.mensajesPredefinidos || []).includes(val)) return;
+                    setFormData(prev => ({
+                      ...prev,
+                      mensajesPredefinidos: [...(prev.mensajesPredefinidos || []), val],
+                    }));
+                    input.value = "";
+                    input.focus();
+                  }}
+                >
+                  + Añadir
+                </button>
+              </div>
             </div>
           </fieldset>
 

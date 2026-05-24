@@ -6,6 +6,7 @@ import GoogleReviewsPage from "./GoogleReviewsPage";
 import SugerenciasConfigPage from "./SugerenciasConfigPage";
 import AprendizajeIAPage from "./AprendizajeIAPage";
 import FacturasAutomaticasPage from "./FacturasAutomaticasPage";
+import InstagramPage from "./InstagramPage";
 import "./OtrosPage.css";
 
 const MODULES = [
@@ -57,6 +58,13 @@ const MODULES = [
     label: "Facturas automáticas",
     description: "Lee facturas de tu email y las procesa automáticamente con IA.",
     component: FacturasAutomaticasPage,
+  },
+  {
+    key: "instagram",
+    icon: "📸",
+    label: "Instagram",
+    description: "Publica automáticamente en Instagram con contenido generado por IA basado en tus datos.",
+    component: InstagramPage,
   },
 ];
 

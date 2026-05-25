@@ -15,6 +15,8 @@ export default function InstagramPage() {
   const [status, setStatus] = useState(null);
   const [config, setConfig] = useState({});
   const [posts, setPosts] = useState([]);
+  const [postsTotal, setPostsTotal] = useState(0);
+  const [postsPage, setPostsPage] = useState(1);
   const [gallery, setGallery] = useState([]);
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
@@ -25,24 +27,30 @@ export default function InstagramPage() {
   const [galleryCat, setGalleryCat] = useState("");
   const fileRef = useRef(null);
 
-  const fetchAll = useCallback(async () => {
+  const POSTS_PER_PAGE = 10;
+
+  const fetchAll = useCallback(async (page = 1) => {
     setLoading(true);
     try {
       const [s, c, p, g] = await Promise.allSettled([
         api.get("/admin/instagram/status"),
         api.get("/admin/instagram/config"),
-        api.get("/admin/instagram/posts?limit=20"),
+        api.get(`/admin/instagram/posts?limit=${POSTS_PER_PAGE}&page=${page}`),
         api.get("/admin/instagram/media"),
       ]);
       if (s.status === "fulfilled") setStatus(s.value.data?.data || s.value.data);
       if (c.status === "fulfilled") setConfig(c.value.data?.data || c.value.data || {});
-      if (p.status === "fulfilled") setPosts((p.value.data?.data?.items || p.value.data?.items || []));
+      if (p.status === "fulfilled") {
+        const d = p.value.data?.data || p.value.data || {};
+        setPosts(d.items || []);
+        setPostsTotal(d.total || 0);
+      }
       if (g.status === "fulfilled") setGallery((g.value.data?.data?.items || g.value.data?.items || []));
     } catch { /* ignore */ }
     setLoading(false);
   }, []);
 
-  useEffect(() => { fetchAll(); }, [fetchAll]);
+  useEffect(() => { fetchAll(1); }, [fetchAll]);
 
   const handleConnect = async () => {
     try {
@@ -60,11 +68,12 @@ export default function InstagramPage() {
     fetchAll();
   };
 
-  const handleGenerate = async () => {
+  const handleGenerate = async (tipo = "post") => {
     setGenerating(true);
     try {
-      await api.post("/admin/instagram/posts/generate");
-      fetchAll();
+      await api.post("/admin/instagram/posts/generate", { tipo });
+      fetchAll(1);
+      setPostsPage(1);
     } catch (err) {
       alert("No se pudo generar: " + (err?.response?.data?.message || "Sin contenido disponible"));
     }
@@ -75,7 +84,7 @@ export default function InstagramPage() {
     setPublishing(postId);
     try {
       await api.post(`/admin/instagram/posts/${postId}/publish`);
-      fetchAll();
+      fetchAll(postsPage);
     } catch (err) {
       alert("Error: " + (err?.response?.data?.message || err.message));
     }
@@ -84,12 +93,12 @@ export default function InstagramPage() {
 
   const handleApprove = async (postId) => {
     await api.post(`/admin/instagram/posts/${postId}/approve`);
-    fetchAll();
+    fetchAll(postsPage);
   };
 
   const handleDiscard = async (postId) => {
     await api.post(`/admin/instagram/posts/${postId}/discard`);
-    fetchAll();
+    fetchAll(postsPage);
   };
 
   const handleSaveConfig = async (updates) => {
@@ -187,15 +196,20 @@ export default function InstagramPage() {
           {tab === "posts" && (
             <>
               <div className="sug-section ig-posts-bar">
-                <span className="ig-posts-bar__count">{posts.length} posts</span>
-                <button className="sug-btn sug-btn--primary" onClick={handleGenerate} disabled={generating}>
-                  {generating ? "Generando..." : "🤖 Generar post"}
-                </button>
+                <span className="ig-posts-bar__count">{postsTotal} posts</span>
+                <div className="ig-posts-bar__actions">
+                  <button className="sug-btn sug-btn--secondary" onClick={() => handleGenerate("story")} disabled={generating}>
+                    {generating ? "..." : "📱 Story"}
+                  </button>
+                  <button className="sug-btn sug-btn--primary" onClick={() => handleGenerate("post")} disabled={generating}>
+                    {generating ? "Generando..." : "🤖 Post"}
+                  </button>
+                </div>
               </div>
 
               {posts.length === 0 && (
                 <div className="sug-section ig-empty">
-                  No hay posts. Pulsa "Generar post" para que ALEF cree un borrador.
+                  No hay posts. Genera un post o una story para empezar.
                 </div>
               )}
 
@@ -208,6 +222,7 @@ export default function InstagramPage() {
                     <div className="ig-post-card__body">
                       <div className="ig-post-card__meta">
                         <span className={`finv-badge badge--${post.estado === "publicado" ? "ok" : post.estado === "error" ? "error" : post.estado === "borrador" ? "info" : "warn"}`}>{post.estado}</span>
+                        {post.tipo === "story" && <span className="ig-post-card__tipo">Story</span>}
                         <span className="ig-post-card__motivo">{post.motivo?.replace("_", " ")}</span>
                         {post.productoNombre && <span className="ig-post-card__producto">{post.productoNombre}</span>}
                       </div>
@@ -239,6 +254,25 @@ export default function InstagramPage() {
                   </div>
                 </div>
               ))}
+
+              {/* Paginación */}
+              {postsTotal > POSTS_PER_PAGE && (
+                <div className="ig-pagination">
+                  <button
+                    className="sug-btn sug-btn--secondary sug-btn--sm"
+                    disabled={postsPage <= 1}
+                    onClick={() => { const p = postsPage - 1; setPostsPage(p); fetchAll(p); }}
+                  >Anterior</button>
+                  <span className="ig-pagination__info">
+                    Página {postsPage} de {Math.ceil(postsTotal / POSTS_PER_PAGE)}
+                  </span>
+                  <button
+                    className="sug-btn sug-btn--secondary sug-btn--sm"
+                    disabled={postsPage >= Math.ceil(postsTotal / POSTS_PER_PAGE)}
+                    onClick={() => { const p = postsPage + 1; setPostsPage(p); fetchAll(p); }}
+                  >Siguiente</button>
+                </div>
+              )}
             </>
           )}
 

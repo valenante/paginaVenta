@@ -220,6 +220,36 @@
   color: #94a3b8;
   font-weight: 600;
 }
+.ig-posts-bar__actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* Tipo badge (story) */
+.ig-post-card__tipo {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 2px 8px;
+  border-radius: 5px;
+  color: #a78bfa;
+  background: rgba(167,139,250,0.12);
+}
+
+/* Paginación */
+.ig-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 16px 0 4px;
+}
+.ig-pagination__info {
+  font-size: 0.78rem;
+  color: #94a3b8;
+  font-weight: 600;
+}
 
 /* Empty state */
 .ig-empty {

@@ -12,11 +12,11 @@ const preguntas = [
   },
   {
     q: "¿La IA puede equivocarse?",
-    a: "El copiloto usa exclusivamente datos reales de tu restaurante — no inventa cifras. Si no tiene datos suficientes, te lo dice. Y para cualquier accion que modifique algo (subir un precio, crear un producto), siempre te pide confirmacion antes de hacerlo.",
+    a: "El copiloto usa exclusivamente datos reales de tu restaurante — no inventa cifras. Si no tiene datos suficientes, te lo dice. Y para cualquier acción que modifique algo (subir un precio, crear un producto), siempre te pide confirmación antes de hacerlo.",
   },
   {
     q: "¿Necesito saber de tecnologia?",
-    a: "No. Hablas con el copiloto como hablas con un consultor: en lenguaje normal. Le dices 'como van las ventas' o 'que deberia comprar esta semana' y te responde claro. La operativa diaria (comandas, cocina) la aprende tu equipo en 10 minutos.",
+    a: "No. Hablas con el copiloto como hablas con un consultor: en lenguaje normal. Le dices 'cómo van las ventas' o 'qué debería comprar esta semana' y te responde claro. La operativa diaria (comandas, cocina) la aprende tu equipo en 10 minutos.",
   },
   {
     q: "¿Funciona con mi tablet u ordenador actual?",
@@ -36,11 +36,11 @@ const preguntas = [
   },
   {
     q: "¿Que es VERI*FACTU y me afecta?",
-    a: "Es el nuevo sistema de facturacion electronica de la Agencia Tributaria (Ley 11/2021). A partir de julio 2027, todos los negocios de hosteleria deben emitir facturas con software certificado. Alef ya esta preparado — no tienes que hacer nada extra.",
+    a: "Es el nuevo sistema de facturación electrónica de la Agencia Tributaria (Ley 11/2021). A partir de julio 2027, todos los negocios de hostelería deben emitir facturas con software certificado. Alef ya está preparado — no tienes que hacer nada extra.",
   },
   {
     q: "¿Que automatiza Alef exactamente?",
-    a: "Stock (alertas + pedidos a proveedor), finanzas (P&L + informe mensual), pricing (sugiere precios optimos), personal (cuantos camareros por dia), cocina (coordinacion tiempo real), carta (analisis de productos muertos/estrella), y alertas proactivas de problemas antes de que los notes.",
+    a: "Stock (alertas + pedidos a proveedor), finanzas (P&L + informe mensual), pricing (sugiere precios óptimos), personal (cuántos camareros por día), cocina (coordinación tiempo real), carta (análisis de productos muertos/estrella), y alertas proactivas de problemas antes de que los notes.",
   },
   {
     q: "¿Puedo probarlo antes de pagar?",

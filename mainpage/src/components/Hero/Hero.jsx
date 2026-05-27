@@ -18,21 +18,21 @@ const Hero = () => {
           </h2>
 
           <p className="Hero-parrafo">
-            A partir de julio 2027 todos los negocios de hosteleria deben
+            A partir de julio 2027 todos los negocios de hostelería deben
             emitir facturas con software certificado (Ley 11/2021).
             Alef ya genera facturas encadenadas con hash inalterable
-            y esta preparado para VERI*FACTU. Tu trabajas, Alef se encarga de la ley.
+            y está preparado para VERI*FACTU. Tú trabajas, Alef se encarga de la ley.
           </p>
 
           <ul className="Hero-lista">
-            <li>📌 Numeracion encadenada e inalterable en cada ticket y factura.</li>
+            <li>📌 Numeración encadenada e inalterable en cada ticket y factura.</li>
             <li>📌 Hash antifraude que garantiza que nadie modifica los datos.</li>
-            <li>📌 Preparado para envio automatico a la AEAT.</li>
+            <li>📌 Preparado para envío automático a la AEAT.</li>
           </ul>
 
           <p className="Hero-aviso">
             <strong>Los que se adaptan ahora lo hacen tranquilos.</strong> Te acompañamos
-            en la adaptacion sin coste extra ni letra pequeña.
+            en la adaptación sin coste extra ni letra pequeña.
           </p>
 
           <div className="Hero-acciones">

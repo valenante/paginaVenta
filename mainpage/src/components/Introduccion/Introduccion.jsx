@@ -12,7 +12,7 @@ const Introduccion = () => {
         <div className="Introduccion-left">
           <div className="Introduccion-contenido">
             <div className="Introduccion-badge">
-              <span>Usado en restaurantes reales cada dia</span>
+              <span>Usado en restaurantes reales cada día</span>
 
               <span
                 className="badge-verifactu"
@@ -68,7 +68,7 @@ const Introduccion = () => {
                 <span>en un solo sistema</span>
               </div>
               <div>
-                <strong>1 dia</strong>
+                <strong>1 día</strong>
                 <span>para estar operativo</span>
               </div>
             </div>
@@ -85,7 +85,7 @@ const Introduccion = () => {
               📦 Stock bajo → pedido al proveedor generado
             </div>
             <div className="hero-pill pill-carta">
-              ⭐ Resena de Google respondida con IA en 2 min
+              ⭐ Reseña de Google respondida con IA en 2 min
             </div>
 
             <div className="hero-stack">

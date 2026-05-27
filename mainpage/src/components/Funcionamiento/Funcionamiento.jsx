@@ -7,10 +7,10 @@ export default function Funcionamiento() {
       <div className="Fn-inner">
         {/* TÍTULO CENTRAL */}
         <header className="Fn-header">
-          <span className="Fn-badge">De 0 a restaurante inteligente en un dia</span>
-          <h2 id="fn-title">Asi de rapido empiezas con Alef</h2>
+          <span className="Fn-badge">De 0 a restaurante inteligente en un día</span>
+          <h2 id="fn-title">Así de rápido empiezas con Alef</h2>
           <p>
-            Sin tecnicos, sin instalaciones, sin esperas.
+            Sin técnicos, sin instalaciones, sin esperas.
             Te preparamos todo y tu restaurante empieza a funcionar de forma inteligente.
           </p>
         </header>

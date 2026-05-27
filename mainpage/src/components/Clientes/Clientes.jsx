@@ -25,7 +25,7 @@ export default function Clientes() {
     <section className="Clientes" id="clientes">
       <div className="Clientes-inner">
         <span className="Clientes-kicker">Restaurantes que confian en Alef</span>
-        <h2 className="Clientes-titulo">Funcionando en restaurantes reales cada dia</h2>
+        <h2 className="Clientes-titulo">Funcionando en restaurantes reales cada día</h2>
         <p className="Clientes-sub">
           Estos restaurantes ya gestionan su operativa, stock, finanzas y cocina con Alef.
           Pulsa en su logo para ver su carta digital en directo.

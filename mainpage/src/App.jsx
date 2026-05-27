@@ -58,8 +58,8 @@ function LandingPage() {
       <TopBar />
       <Introduccion />
       <Features />
-      <Clientes />
       <Funcionamiento />
+      <Clientes />
       <Comparativa />
       <Hero />
       <FAQ />

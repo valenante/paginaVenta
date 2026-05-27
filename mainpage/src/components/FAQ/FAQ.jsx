@@ -46,6 +46,18 @@ const preguntas = [
     q: "¿Puedo probarlo antes de pagar?",
     a: "Contactanos por WhatsApp o email y te hacemos una demo en directo de 10 minutos con datos reales. Veras la IA respondiendo preguntas sobre un restaurante real.",
   },
+  {
+    q: "¿Alef realmente publica en Instagram automáticamente?",
+    a: "Sí. Alef genera posts con las fotos de tus platos, escribe el copy adaptado a tu marca, y publica según el calendario que configures. Tú solo subes buenas fotos de vez en cuando — el resto es automático. Un community manager cobra 300-700€/mes por esto.",
+  },
+  {
+    q: "¿Cómo funciona la respuesta automática a reseñas de Google?",
+    a: "Cuando recibes una reseña en Google, la IA la lee, entiende el sentimiento, y genera una respuesta personalizada con el tono de tu restaurante. Las reseñas negativas generan una alerta inmediata para que actúes. Los restaurantes que responden reseñas suben hasta un 15% en visibilidad.",
+  },
+  {
+    q: "¿Cuánto tarda en verse el ahorro?",
+    a: "Desde el primer mes. Las facturas de proveedor se procesan solas (ahorro de 1-2h/día), los pedidos de stock se generan automáticamente, y las publicaciones de Instagram salen sin community manager. Solo en community manager ya te ahorras más de lo que cuesta Alef entero.",
+  },
 ];
 
 export default function FAQ() {

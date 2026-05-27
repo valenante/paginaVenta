@@ -1,77 +1,64 @@
 // src/components/Features/Features.jsx
+// Tier S — 5 features que cambian el negocio
 import React from "react";
 import useRevealOnScroll from "../../hooks/useRevealOnScroll";
 import "./Features.css";
 
-const principales = [
+const tierS = [
+  {
+    icono: "📧",
+    kicker: "Ahorra 1-2 horas al día",
+    titulo: "Facturas del proveedor → stock actualizado. Sin tocar nada.",
+    desc: "Recibes una factura de tu proveedor por email. La IA la lee, extrae productos y cantidades, actualiza tu stock, y registra el coste. Tú solo abres el restaurante.",
+  },
   {
     icono: "🧠",
-    titulo: "Un copiloto IA que conoce tu negocio",
-    descripcion:
-      "Preguntale cualquier cosa: cual es tu plato mas rentable, cuantos camareros necesitas el sabado, que proveedor te esta subiendo precios. Responde con datos reales de TU restaurante en segundos.",
+    kicker: "50 herramientas IA",
+    titulo: "Pregúntale lo que quieras sobre tu negocio. Responde con tus datos.",
+    desc: "¿Cuál es mi plato más rentable? ¿Cuántos camareros necesito el sábado? ¿Qué proveedor me está subiendo precios? El copiloto analiza tus datos reales y responde en segundos. No es ChatGPT — es una IA entrenada en TU restaurante.",
   },
   {
-    icono: "⚡",
-    titulo: "Procesos que se ejecutan solos",
-    descripcion:
-      "Stock bajo → pedido al proveedor generado. Margen cayendo → te avisa y sugiere precios. Viernes flojos → te lo dice antes de que lo notes. Tu restaurante reacciona solo.",
+    icono: "🛡️",
+    kicker: "Detecta erosión silenciosa",
+    titulo: "Tu margen está bajando y no lo sabes. Alef sí.",
+    desc: "El proveedor sube un 5% el solomillo. Tú no cambias el precio del plato. En 3 meses has perdido 2.000€ sin darte cuenta. Alef detecta el cambio, calcula el impacto, y te sugiere el nuevo precio.",
   },
   {
-    icono: "🍽️",
-    titulo: "Operativa impecable incluida",
-    descripcion:
-      "Comanda en 3 toques, cocina coordinada en tiempo real, carta QR en 3 idiomas, facturacion VeriFactu. Todo lo que necesitas para el dia a dia — integrado y sin fricciones.",
+    icono: "📦",
+    kicker: "Cero roturas de stock",
+    titulo: "Sabe lo que necesitas antes que tú. Y lo pide solo.",
+    desc: "Alef analiza 8 semanas de consumo, reservas del fin de semana, y día de la semana. Genera el pedido al proveedor automáticamente. Se acabó el 'nos hemos quedado sin X un viernes noche'.",
   },
-];
-
-const secundarias = [
-  { icono: "📊", texto: "Finanzas automaticas: P&L, margenes, informe al contable sin Excel" },
-  { icono: "📦", texto: "Stock inteligente con alertas, prediccion de consumo y pedidos a proveedores" },
-  { icono: "🔔", texto: "Alertas proactivas: margen erosionado, tendencias negativas, facturas vencidas" },
-  { icono: "📈", texto: "Estadisticas avanzadas: hora punta, productos estrella, correlaciones" },
-  { icono: "🗣️", texto: "Comandas por voz en horas de maximo ritmo" },
-  { icono: "🖥️", texto: "Funciona en PC, tablet y movil — sin instalar nada" },
-  { icono: "✅", texto: "Facturacion legal preparada para VERI*FACTU (obligatorio julio 2027)" },
-  { icono: "🔧", texto: "Desarrollo a medida: adaptamos Alef a las necesidades de tu negocio" },
+  {
+    icono: "📊",
+    kicker: "Nunca más Excel",
+    titulo: "Finanzas al día. Informe al contable generado solo.",
+    desc: "Márgenes por plato, costes de personal, P&L mensual, informe para la gestoría — todo calculado automáticamente con datos reales. Sabes si tu negocio es rentable sin esperar al cierre de mes.",
+  },
 ];
 
 const Features = () => {
   useRevealOnScroll();
 
   return (
-    <section className="Features bg-fondo-claro reveal" id="ventajas">
-      <div className="Features-inner section--wide">
-        <div className="Features-header">
-          <span className="Features-kicker">Automatizacion real para restaurantes</span>
-          <h2>Tu restaurante toma decisiones inteligentes. Automaticamente.</h2>
-          <p>
-            Alef no es un TPV — es un sistema inteligente que automatiza
-            la gestion de tu restaurante. Esto es lo que cambia desde el primer dia.
-          </p>
-        </div>
+    <section className="Feat reveal" id="ventajas">
+      <div className="Feat-inner">
+        <span className="Feat-kicker">Lo que ningún competidor en España tiene junto</span>
+        <h2 className="Feat-titulo">5 cosas que te cambian el negocio desde la primera semana</h2>
 
-        {/* 3 features principales - cards grandes */}
-        <div className="Features-grid Features-grid--main">
-          {principales.map((v, i) => (
-            <article key={i} className="Features-card Features-card--main">
-              <div className="Features-icono">{v.icono}</div>
-              <h3 className="Features-titulo">{v.titulo}</h3>
-              <p className="Features-descripcion">{v.descripcion}</p>
-            </article>
-          ))}
-        </div>
-
-        {/* features secundarias - lista compacta */}
-        <div className="Features-secondary">
-          <h3 className="Features-secondary-title">Todo lo que necesitas, automatizado</h3>
-          <div className="Features-secondary-grid">
-            {secundarias.map((s, i) => (
-              <div key={i} className="Features-secondary-item">
-                <span className="Features-secondary-icon">{s.icono}</span>
-                <span className="Features-secondary-text">{s.texto}</span>
+        <div className="Feat-stack">
+          {tierS.map((f, i) => (
+            <div key={i} className={`Feat-card ${i % 2 !== 0 ? "Feat-card--reverse" : ""}`}>
+              <div className="Feat-card-visual">
+                <span className="Feat-card-emoji">{f.icono}</span>
               </div>
-            ))}
-          </div>
+              <div className="Feat-card-text">
+                <span className="Feat-card-kicker">{f.kicker}</span>
+                <h3 className="Feat-card-title">{f.titulo}</h3>
+                <p className="Feat-card-desc">{f.desc}</p>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </section>

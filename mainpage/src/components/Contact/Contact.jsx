@@ -63,20 +63,19 @@ const Contact = () => {
       <div className="Contact-inner section--wide">
         {/* LADO IZQUIERDO */}
         <div className="Contact-left">
-          <span className="Contact-kicker">Demo gratuita</span>
-          <h2 className="Contact-title">¿Quieres ver como la IA analiza un restaurante real?</h2>
+          <span className="Contact-kicker">Demo gratuita en 10 minutos</span>
+          <h2 className="Contact-title">¿Quieres ver cómo Alef gestiona un restaurante real?</h2>
 
           <p className="Contact-subtitle">
-            En 10 minutos te mostramos Alef funcionando con datos reales:
-            el copiloto IA respondiendo preguntas, las automatizaciones en accion,
-            y todo el sistema operativo. Sin compromiso.
+            Te mostramos el copiloto IA respondiendo preguntas, las automatizaciones en acción,
+            el Instagram publicándose solo, y todo el sistema. Sin compromiso, sin presión.
           </p>
 
           <div className="Contact-channels">
             <a href={`mailto:${CONTACT_EMAIL}`} className="Contact-channel" onClick={() => trackEvent("click_email", { location: "contact" })}>
               <div className="Contact-channel-icon">✉️</div>
               <div>
-                <span className="Contact-channel-label">Correo electronico</span>
+                <span className="Contact-channel-label">Correo electrónico</span>
                 <span className="Contact-channel-value">{CONTACT_EMAIL}</span>
               </div>
             </a>
@@ -91,14 +90,27 @@ const Contact = () => {
               <div className="Contact-channel-icon whatsapp">💬</div>
               <div>
                 <span className="Contact-channel-label">WhatsApp</span>
-                <span className="Contact-channel-value">Respuesta rapida y directa</span>
+                <span className="Contact-channel-value">Respuesta rápida y directa</span>
+              </div>
+            </a>
+            <a
+              href="https://instagram.com/softalef"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="Contact-channel"
+              onClick={() => trackEvent("click_instagram", { location: "contact" })}
+            >
+              <div className="Contact-channel-icon">📸</div>
+              <div>
+                <span className="Contact-channel-label">Instagram</span>
+                <span className="Contact-channel-value">@softalef</span>
               </div>
             </a>
           </div>
 
           <p className="Contact-help">
-            Tambien podemos agendar una llamada o una demo en directo
-            donde veras la IA respondiendo preguntas sobre tu tipo de negocio.
+            También podemos agendar una llamada o una demo en directo
+            donde verás la IA respondiendo preguntas sobre tu tipo de negocio.
           </p>
         </div>
 
@@ -106,7 +118,7 @@ const Contact = () => {
         <div className="Contact-right">
           <form className="Contact-form card" onSubmit={handleSubmit}>
             <div className="Contact-form-header">
-              <h3>Quiero saber mas</h3>
+              <h3>Quiero saber más</h3>
               <p>Te contactaremos lo antes posible.</p>
             </div>
 
@@ -116,7 +128,7 @@ const Contact = () => {
             </div>
 
             <div className="Contact-field">
-              <label htmlFor="contact-email">Correo electronico</label>
+              <label htmlFor="contact-email">Correo electrónico</label>
               <input id="contact-email" name="email" type="email" placeholder="tucorreo@ejemplo.com" required autoComplete="email" />
             </div>
 
@@ -126,8 +138,8 @@ const Contact = () => {
             </div>
 
             <div className="Contact-field">
-              <label htmlFor="contact-mensaje">¿Que te gustaria automatizar?</label>
-              <textarea id="contact-mensaje" name="mensaje" placeholder="Cuentanos como trabajas ahora y que procesos te gustaria que se hicieran solos." required rows={5} />
+              <label htmlFor="contact-mensaje">¿Qué te gustaría automatizar?</label>
+              <textarea id="contact-mensaje" name="mensaje" placeholder="Cuéntanos cómo trabajas ahora y qué procesos te gustaría que se hicieran solos." required rows={5} />
             </div>
 
             <p className="Contact-legal">

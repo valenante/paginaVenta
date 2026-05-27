@@ -8,9 +8,12 @@ export default function Footer() {
         <div className="Footer-brand">
           <strong>Alef</strong>
           <p>
-            Gestion inteligente para restaurantes.
-            Automatizacion, IA, carta digital, cocina coordinada y facturacion — en un solo sistema.
+            Gestión inteligente para restaurantes. 50 herramientas IA, 25 automatizaciones,
+            facturación VeriFactu. Todo en un solo sistema.
           </p>
+          <a href="https://instagram.com/softalef" target="_blank" rel="noopener noreferrer" className="Footer-social">
+            📸 @softalef
+          </a>
         </div>
 
         <nav className="Footer-links">

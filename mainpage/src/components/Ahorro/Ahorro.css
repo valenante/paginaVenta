@@ -1,0 +1,219 @@
+/* =============================
+   AHORRO — Calculadora de coste
+============================= */
+
+.Ahorro {
+  padding: 5rem 0;
+  background: #f8fafc;
+  color: #1e293b;
+}
+
+.Ahorro-inner {
+  max-width: 1100px;
+  margin: auto;
+  padding: 0 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2.5rem;
+}
+
+.Ahorro-kicker {
+  display: inline-block;
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  padding: 0.4rem 1.2rem;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #dc2626;
+}
+
+.Ahorro-titulo {
+  font-size: 2.2rem;
+  font-weight: 800;
+  text-align: center;
+  margin: 0;
+  line-height: 1.25;
+  color: #0f172a;
+}
+
+.Ahorro-sub {
+  color: #64748b;
+  font-size: 1rem;
+  text-align: center;
+  margin: 0;
+}
+
+/* Grid */
+.Ahorro-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 2.5rem;
+  width: 100%;
+  align-items: start;
+}
+
+/* Columna costes */
+.Ahorro-costes {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.Ahorro-costes-title {
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #94a3b8;
+  margin: 0 0 12px;
+}
+
+.Ahorro-coste-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  border-bottom: 1px solid #e2e8f0;
+  gap: 12px;
+}
+
+.Ahorro-coste-row:last-of-type {
+  border-bottom: none;
+}
+
+.Ahorro-coste-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.Ahorro-coste-servicio {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.Ahorro-coste-nota {
+  font-size: 0.75rem;
+  color: #94a3b8;
+}
+
+.Ahorro-coste-precio {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #dc2626;
+  white-space: nowrap;
+}
+
+.Ahorro-total-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  margin-top: 8px;
+  background: rgba(239, 68, 68, 0.05);
+  border: 1px solid rgba(239, 68, 68, 0.15);
+  border-radius: 12px;
+  font-weight: 800;
+  font-size: 0.95rem;
+  color: #dc2626;
+}
+
+.Ahorro-total-precio {
+  font-size: 1.1rem;
+}
+
+/* Columna Alef */
+.Ahorro-alef {
+  position: sticky;
+  top: 100px;
+}
+
+.Ahorro-alef-card {
+  background: #ffffff;
+  border: 2px solid rgba(96, 181, 255, 0.3);
+  border-radius: 20px;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 8px 30px rgba(96, 181, 255, 0.08);
+}
+
+.Ahorro-alef-desde {
+  font-size: 0.8rem;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 600;
+}
+
+.Ahorro-alef-precio {
+  font-size: 3.5rem;
+  font-weight: 900;
+  color: #2563eb;
+  line-height: 1;
+}
+
+.Ahorro-alef-mes {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.Ahorro-alef-sub {
+  font-size: 0.85rem;
+  color: #64748b;
+  margin-bottom: 12px;
+}
+
+.Ahorro-alef-lista {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+}
+
+.Ahorro-alef-lista li {
+  padding: 6px 0;
+  font-size: 0.82rem;
+  color: #334155;
+  font-weight: 500;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.Ahorro-alef-lista li::before {
+  content: "\2713  ";
+  color: #16a34a;
+  font-weight: 700;
+}
+
+.Ahorro-alef-lista li:last-child {
+  border-bottom: none;
+}
+
+.Ahorro-cta {
+  margin-top: 16px;
+  width: 100%;
+  text-align: center;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .Ahorro-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .Ahorro-alef {
+    position: static;
+  }
+
+  .Ahorro-titulo {
+    font-size: 1.6rem;
+  }
+}

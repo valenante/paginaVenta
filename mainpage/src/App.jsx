@@ -9,6 +9,9 @@ import Funcionamiento from "./components/Funcionamiento/Funcionamiento";
 import Features from "./components/Features/Features";
 import Comparativa from "./components/Comparativa/Comparativa";
 import Clientes from "./components/Clientes/Clientes";
+import Ahorro from "./components/Ahorro/Ahorro";
+import SocialAuto from "./components/SocialAuto/SocialAuto";
+import FeaturesGrid from "./components/FeaturesGrid/FeaturesGrid";
 import Packs from "./components/Packs/Packs";
 import FAQ from "./components/FAQ/FAQ";
 import Contact from "./components/Contact/Contact";
@@ -57,10 +60,14 @@ function LandingPage() {
     <div className="main-grid">
       <TopBar />
       <Introduccion />
+      <Ahorro />
       <Features />
-      <Funcionamiento />
+      <SocialAuto />
+      <FeaturesGrid />
       <Clientes />
       <Comparativa />
+      <Funcionamiento />
+      <Packs />
       <Hero />
       <FAQ />
       <Contact />

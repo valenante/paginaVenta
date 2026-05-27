@@ -4,6 +4,26 @@
   padding: var(--space-2xl) var(--space-lg);
 }
 
+.Packs--dark {
+  background:
+    radial-gradient(circle at bottom left, #60b5ff10 0, #0b1020 55%),
+    radial-gradient(circle at top right, #ff914912 0, #0b1020 65%);
+  color: #e2e8f0;
+}
+
+.Packs--dark .packs-header h2 {
+  color: #f1f5f9;
+}
+
+.Packs--dark .packs-header p {
+  color: #94a3b8;
+}
+
+.Packs--dark .packs-kicker {
+  background: rgba(96, 181, 255, 0.15);
+  color: #60b5ff;
+}
+
 .Packs-inner {
   max-width: 1100px;
   margin: 0 auto;

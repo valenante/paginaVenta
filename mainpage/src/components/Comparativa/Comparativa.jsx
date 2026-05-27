@@ -3,24 +3,24 @@ import { trackEvent } from "../../utils/trackEvent";
 import "./Comparativa.css";
 
 const filas = [
-  { feature: "IA que analiza tu negocio y sugiere decisiones", alef: true, tpv: false, papel: false },
-  { feature: "Alertas automaticas (margen bajo, stock, tendencias)", alef: true, tpv: false, papel: false },
-  { feature: "Prediccion de consumo y pedidos a proveedores", alef: true, tpv: false, papel: false },
-  { feature: "Informe financiero automatico para el contable", alef: true, tpv: false, papel: false },
-  { feature: "Cocina y barra coordinadas en tiempo real", alef: true, tpv: false, papel: false },
-  { feature: "Carta digital QR en 3 idiomas", alef: true, tpv: "extra", papel: false },
-  { feature: "Comandas por voz", alef: true, tpv: false, papel: false },
-  { feature: "Stock con alertas y gestion de proveedores", alef: true, tpv: "parcial", papel: false },
-  { feature: "Estadisticas de ventas y productos estrella", alef: true, tpv: "parcial", papel: false },
-  { feature: "Facturacion VERI*FACTU", alef: true, tpv: "algunos", papel: false },
-  { feature: "Funciona en cualquier dispositivo", alef: true, tpv: false, papel: true },
-  { feature: "Sin instalacion ni hardware especial", alef: true, tpv: false, papel: true },
+  { feature: "IA que analiza tu negocio (50 herramientas)", alef: "Incluido", separado: "No existe", manual: "Imposible" },
+  { feature: "Facturas proveedor → stock automático", alef: "Incluido", separado: "100–200€/mes", manual: "1-2h/día a mano" },
+  { feature: "Instagram automático", alef: "Incluido", separado: "300–700€/mes", manual: "3-5h/semana" },
+  { feature: "Reseñas Google respondidas con IA", alef: "Incluido", separado: "50–150€/mes", manual: "30 min/día" },
+  { feature: "P&L y finanzas automáticas", alef: "Incluido", separado: "500–1.500€/mes", manual: "Excel y rezar" },
+  { feature: "Stock predictivo + pedidos a proveedor", alef: "Incluido", separado: "100–200€/mes", manual: "Ojo y papel" },
+  { feature: "Carta digital QR + camarero IA", alef: "Incluido", separado: "50–100€/mes", manual: "PDF estático" },
+  { feature: "Reservas con confirmación automática", alef: "Incluido", separado: "50–150€/mes", manual: "Libreta" },
+  { feature: "Facturación VeriFactu", alef: "Incluido", separado: "30–80€/mes", manual: "No cumples la ley" },
+  { feature: "Coordinación cocina en tiempo real", alef: "Incluido", separado: "No existe", manual: "Gritar fuerte" },
 ];
 
-function renderCell(val) {
-  if (val === true) return <span className="Comp-check">✓</span>;
-  if (val === false) return <span className="Comp-cross">✗</span>;
-  return <span className="Comp-text">{val}</span>;
+function renderCell(val, isAlef) {
+  if (val === "Incluido") return <span className="Comp-check">✓ Incluido</span>;
+  if (val === "No existe" || val === "Imposible") return <span className="Comp-cross">✗ {val}</span>;
+  // Costes o texto descriptivo
+  const isCoste = val.includes("€");
+  return <span className={isCoste ? "Comp-cost" : "Comp-text"}>{val}</span>;
 }
 
 export default function Comparativa() {
@@ -29,10 +29,9 @@ export default function Comparativa() {
       <div className="Comp-inner section--wide">
         <div className="Comp-header">
           <span className="Comp-kicker">Comparativa</span>
-          <h2>Alef vs lo que usas ahora</h2>
+          <h2>Alef vs contratar todo por separado</h2>
           <p>
-            La mayoria de TPVs solo toman comandas. Alef automatiza
-            la gestion completa de tu restaurante.
+            La mayoría de restaurantes pagan por 5-7 herramientas diferentes. O lo hacen a mano. Alef lo unifica todo.
           </p>
         </div>
 
@@ -41,27 +40,35 @@ export default function Comparativa() {
             <thead>
               <tr>
                 <th></th>
-                <th className="Comp-th--alef">Alef</th>
-                <th>TPV tradicional</th>
-                <th>Papel / Excel</th>
+                <th className="Comp-th--alef">Alef (desde 89€/mes)</th>
+                <th>Herramientas separadas</th>
+                <th>A mano / Excel</th>
               </tr>
             </thead>
             <tbody>
               {filas.map((f, i) => (
                 <tr key={i}>
                   <td className="Comp-feature">{f.feature}</td>
-                  <td className="Comp-cell Comp-cell--alef">{renderCell(f.alef)}</td>
-                  <td className="Comp-cell">{renderCell(f.tpv)}</td>
-                  <td className="Comp-cell">{renderCell(f.papel)}</td>
+                  <td className="Comp-cell Comp-cell--alef">{renderCell(f.alef, true)}</td>
+                  <td className="Comp-cell">{renderCell(f.separado)}</td>
+                  <td className="Comp-cell">{renderCell(f.manual)}</td>
                 </tr>
               ))}
             </tbody>
+            <tfoot>
+              <tr className="Comp-total-row">
+                <td className="Comp-feature"><strong>TOTAL MENSUAL</strong></td>
+                <td className="Comp-cell Comp-cell--alef"><strong className="Comp-total-alef">desde 89€</strong></td>
+                <td className="Comp-cell"><strong className="Comp-total-cost">1.300–3.400€</strong></td>
+                <td className="Comp-cell"><strong className="Comp-total-manual">Tu tiempo + riesgo</strong></td>
+              </tr>
+            </tfoot>
           </table>
         </div>
 
         <div className="Comp-cta">
-          <a href="#contacto" className="btn btn-primario" onClick={() => trackEvent("click_cta", { location: "comparativa", label: "automatizar" })}>
-            Quiero automatizar mi restaurante
+          <a href="#contacto" className="btn btn-primario" onClick={() => trackEvent("click_cta", { location: "comparativa", label: "empezar" })}>
+            Empezar con Alef
           </a>
         </div>
       </div>

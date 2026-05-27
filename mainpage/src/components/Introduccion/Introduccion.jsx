@@ -29,46 +29,43 @@ const Introduccion = () => {
             </div>
 
             <h1 className="Introduccion-titulo">
-              Hacemos tu restaurante inteligente
+              Tu restaurante gana más dinero cuando piensa solo
             </h1>
 
             <p className="Introduccion-subtitulo">
-              Automatizamos los procesos que te roban tiempo — stock, proveedores,
-              finanzas, cocina, comandas — para que tu te centres en tus clientes.
-              Con un copiloto IA que conoce tu negocio mejor que nadie.
+              Alef automatiza stock, proveedores, finanzas, Instagram, reseñas de Google, y 25 procesos más.
+              Un copiloto IA con 50 herramientas que conoce tu negocio mejor que tu contable.
             </p>
 
             <div className="Introduccion-highlights">
-              <span>📦 Tu stock se controla solo — avisa cuando falta y genera el pedido al proveedor</span>
-              <span>🧠 Una IA que analiza tu negocio — te dice que plato subir de precio y cuantos camareros necesitas</span>
-              <span>📊 Finanzas al dia sin Excel — margenes, P&L e informe al contable automatico</span>
-              <span>🍽️ Comandas, cocina y mesa sin fricciones — coordinacion en tiempo real</span>
-              <span>📱 Carta digital que vende sola — QR en 3 idiomas con pedidos y reservas</span>
-              <span>🔔 Alertas antes de que el problema exista — margen cayendo, stock bajo, viernes flojos</span>
+              <span>💰 Ahorra 1.300–3.400€/mes en herramientas que ya no necesitas</span>
+              <span>⏱️ Recupera 2-3 horas diarias en tareas que se hacen solas</span>
+              <span>📈 Protege tus márgenes — la IA detecta erosión antes que tú</span>
+              <span>🤖 50 herramientas IA que responden con datos reales de TU restaurante</span>
             </div>
 
             <div className="Introduccion-botones">
               <a href="#contacto" className="Introduccion-boton principal">
-                Quiero automatizar mi restaurante
+                Quiero ver la demo
               </a>
 
-              <a href="#contacto" className="Introduccion-boton secundario">
-                Ver demo en 10 minutos
+              <a href="#ahorro" className="Introduccion-boton secundario">
+                Ver cuanto ahorro
               </a>
             </div>
 
             <div className="Introduccion-metricas">
               <div>
-                <strong>49 herramientas IA</strong>
+                <strong>50+ herramientas IA</strong>
                 <span>analizan tu negocio</span>
               </div>
               <div>
-                <strong>Automatico</strong>
-                <span>stock, compras, alertas</span>
+                <strong>25 automatizaciones</strong>
+                <span>trabajando 24/7</span>
               </div>
               <div>
-                <strong>Tiempo real</strong>
-                <span>cocina, barra, sala</span>
+                <strong>39 modulos</strong>
+                <span>en un solo sistema</span>
               </div>
               <div>
                 <strong>1 dia</strong>
@@ -82,13 +79,13 @@ const Introduccion = () => {
         <div className="Introduccion-right">
           <div className="hero-orbit">
             <div className="hero-pill pill-voz">
-              🧠 IA: "Sube el pulpo un 8%, tu margen esta bajo"
+              📸 IA: Post de Instagram publicado automaticamente
             </div>
             <div className="hero-pill pill-cocina">
-              📦 Stock bajo → pedido al proveedor automatico
+              📦 Stock bajo → pedido al proveedor generado
             </div>
             <div className="hero-pill pill-carta">
-              📊 Informe mensual generado y enviado al contable
+              ⭐ Resena de Google respondida con IA en 2 min
             </div>
 
             <div className="hero-stack">

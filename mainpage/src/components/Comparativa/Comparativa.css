@@ -120,8 +120,34 @@
 }
 
 .Comp-text {
-  color: #64748b;
+  color: #94a3b8;
   font-size: 0.75rem;
+  font-style: italic;
+}
+
+.Comp-cost {
+  color: #f59e0b;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.Comp-total-row {
+  border-top: 2px solid rgba(255,255,255,0.1) !important;
+}
+
+.Comp-total-alef {
+  color: #22c55e;
+  font-size: 1.05rem;
+}
+
+.Comp-total-cost {
+  color: #ef4444;
+  font-size: 1.05rem;
+}
+
+.Comp-total-manual {
+  color: #94a3b8;
+  font-size: 0.85rem;
 }
 
 /* CTA */

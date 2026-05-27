@@ -52,7 +52,7 @@ export default function FAQ() {
   const [open, setOpen] = useState(null);
 
   return (
-    <section className="FAQ bg-fondo-claro" id="faq">
+    <section className="FAQ" id="faq">
       <div className="FAQ-inner section--wide">
         <div className="FAQ-header">
           <span className="FAQ-kicker">Preguntas frecuentes</span>

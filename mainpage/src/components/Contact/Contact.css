@@ -23,13 +23,14 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--color-primario-suave);
+  color: #2563eb;
   margin-bottom: 0.4rem;
 }
 
 .Contact-title {
   font-size: var(--font-size-2xl);
   margin: 0 0 0.6rem;
+  color: #0f172a;
 }
 
 .Contact-subtitle {
@@ -86,6 +87,7 @@
   display: block;
   font-size: var(--font-size-sm);
   font-weight: 600;
+  color: #1e293b;
 }
 
 .Contact-channel-value {

@@ -1,10 +1,8 @@
 /* src/components/FAQ/FAQ.css */
 
 .FAQ {
-  background:
-    radial-gradient(circle at top right, #60b5ff12 0, #0b1020 55%),
-    radial-gradient(circle at bottom left, #ff914910 0, #0b1020 65%);
-  color: #e2e8f0;
+  background: #f8fafc;
+  color: #1e293b;
 }
 
 .FAQ-inner {
@@ -27,15 +25,15 @@
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  background: rgba(96, 181, 255, 0.15);
-  color: #60b5ff;
+  background: rgba(37, 99, 235, 0.1);
+  color: #2563eb;
   margin-bottom: 0.6rem;
 }
 
 .FAQ-header h2 {
   font-size: var(--font-size-2xl);
   margin: 0;
-  color: #f1f5f9;
+  color: #0f172a;
 }
 
 /* Lista */
@@ -47,20 +45,20 @@
 }
 
 .FAQ-item {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
   border-radius: var(--radius-md);
   overflow: hidden;
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .FAQ-item:hover {
-  border-color: rgba(96, 181, 255, 0.25);
+  border-color: rgba(96, 181, 255, 0.4);
 }
 
 .FAQ-item--open {
-  border-color: rgba(96, 181, 255, 0.4);
-  box-shadow: 0 4px 12px rgba(96, 181, 255, 0.08);
+  border-color: #2563eb;
+  box-shadow: 0 4px 12px rgba(96, 181, 255, 0.1);
 }
 
 /* Pregunta (botón) */
@@ -78,13 +76,13 @@
   text-align: left;
   font-size: var(--font-size-md);
   font-weight: 600;
-  color: #e2e8f0;
+  color: #1e293b;
   line-height: 1.4;
   font-family: inherit;
 }
 
 .FAQ-question:hover {
-  color: #60b5ff;
+  color: #2563eb;
 }
 
 .FAQ-arrow {
@@ -95,8 +93,8 @@
   align-items: center;
   justify-content: center;
   border-radius: var(--radius-pill);
-  background: rgba(96, 181, 255, 0.15);
-  color: #60b5ff;
+  background: rgba(37, 99, 235, 0.1);
+  color: #2563eb;
   font-size: 1.1rem;
   font-weight: 700;
   transition: transform 0.15s ease;
@@ -118,7 +116,7 @@
 .FAQ-answer p {
   margin: 0;
   font-size: var(--font-size-sm);
-  color: #94a3b8;
+  color: #64748b;
   line-height: 1.7;
 }
 

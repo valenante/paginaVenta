@@ -67,7 +67,7 @@ function LandingPage() {
       <Clientes />
       <Comparativa />
       <Funcionamiento />
-      <Packs />
+      {/* <Packs /> */}
       <Hero />
       <FAQ />
       <Contact />

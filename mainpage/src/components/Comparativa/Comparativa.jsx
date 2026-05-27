@@ -40,7 +40,7 @@ export default function Comparativa() {
             <thead>
               <tr>
                 <th></th>
-                <th className="Comp-th--alef">Alef (desde 89€/mes)</th>
+                <th className="Comp-th--alef">Alef (129€/mes)</th>
                 <th>Herramientas separadas</th>
                 <th>A mano / Excel</th>
               </tr>
@@ -58,7 +58,7 @@ export default function Comparativa() {
             <tfoot>
               <tr className="Comp-total-row">
                 <td className="Comp-feature"><strong>TOTAL MENSUAL</strong></td>
-                <td className="Comp-cell Comp-cell--alef"><strong className="Comp-total-alef">desde 89€</strong></td>
+                <td className="Comp-cell Comp-cell--alef"><strong className="Comp-total-alef">129€</strong></td>
                 <td className="Comp-cell"><strong className="Comp-total-cost">1.300–3.400€</strong></td>
                 <td className="Comp-cell"><strong className="Comp-total-manual">Tu tiempo + riesgo</strong></td>
               </tr>

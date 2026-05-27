@@ -1,8 +1,10 @@
 .Contact {
   padding-top: var(--space-2xl);
   padding-bottom: var(--space-2xl);
-  background: #f8fafc;
-  color: #1e293b;
+  background:
+    radial-gradient(circle at top right, #60b5ff12 0, #0b1020 55%),
+    radial-gradient(circle at bottom left, #ff914910 0, #0b1020 65%);
+  color: #e2e8f0;
 }
 
 .Contact-inner {
@@ -23,19 +25,19 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: #2563eb;
+  color: #60b5ff;
   margin-bottom: 0.4rem;
 }
 
 .Contact-title {
   font-size: var(--font-size-2xl);
   margin: 0 0 0.6rem;
-  color: #0f172a;
+  color: #f1f5f9;
 }
 
 .Contact-subtitle {
   font-size: var(--font-size-md);
-  color: #64748b;
+  color: rgba(226, 232, 240, 0.9);
   line-height: 1.6;
   margin: 0 0 var(--space-md);
 }
@@ -53,8 +55,8 @@
   align-items: center;
   padding: 0.75rem 0.85rem;
   border-radius: var(--radius-md);
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(148, 163, 184, 0.4);
   text-decoration: none;
   color: inherit;
   transition: background 0.15s ease, transform 0.15s ease,
@@ -62,10 +64,10 @@
 }
 
 .Contact-channel:hover {
-  background: #ffffff;
-  border-color: rgba(96, 181, 255, 0.4);
+  background: rgba(15, 23, 42, 0.92);
+  border-color: rgba(148, 163, 184, 0.8);
   transform: translateY(-1px);
-  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 10px 26px rgba(15, 23, 42, 0.45);
 }
 
 .Contact-channel-icon {
@@ -87,18 +89,18 @@
   display: block;
   font-size: var(--font-size-sm);
   font-weight: 600;
-  color: #1e293b;
+  color: #f1f5f9;
 }
 
 .Contact-channel-value {
   display: block;
   font-size: var(--font-size-xs);
-  color: #64748b;
+  color: rgba(209, 213, 219, 0.95);
 }
 
 .Contact-help {
   font-size: var(--font-size-sm);
-  color: #94a3b8;
+  color: rgba(156, 163, 175, 0.9);
   margin-top: 0.3rem;
 }
 
@@ -111,24 +113,24 @@
 .Contact-form {
   width: 100%;
   max-width: 420px;
-  background: #ffffff;
+  background: #0f172a;
   border-radius: var(--radius-lg);
-  border: 1px solid #e2e8f0;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(148, 163, 184, 0.5);
+  box-shadow: var(--shadow-suave);
   padding: var(--space-lg);
-  color: #1e293b;
+  color: var(--color-texto-invertido);
 }
 
 .Contact-form-header h3 {
   margin: 0 0 0.25rem;
   font-size: var(--font-size-lg);
-  color: #0f172a;
+  color: #f1f5f9;
 }
 
 .Contact-form-header p {
   margin: 0 0 var(--space-md);
   font-size: var(--font-size-sm);
-  color: #64748b;
+  color: rgba(148, 163, 184, 0.95);
 }
 
 .Contact-field {
@@ -143,22 +145,22 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: #64748b;
+  color: rgba(148, 163, 184, 0.95);
 }
 
 .Contact-field input,
 .Contact-field textarea {
   padding: 0.6rem 0.7rem;
   border-radius: var(--radius-sm);
-  border: 1px solid #e2e8f0;
-  background: #f8fafc;
-  color: #1e293b;
+  border: 1px solid rgba(55, 65, 81, 0.9);
+  background: rgba(15, 23, 42, 0.9);
+  color: var(--color-texto-invertido);
   font-size: var(--font-size-sm);
 }
 
 .Contact-field input::placeholder,
 .Contact-field textarea::placeholder {
-  color: #94a3b8;
+  color: rgba(148, 163, 184, 0.75);
 }
 
 .Contact-field input:focus,
@@ -176,7 +178,7 @@
 /* Legal */
 .Contact-legal {
   font-size: var(--font-size-xs);
-  color: #94a3b8;
+  color: rgba(148, 163, 184, 0.85);
   margin: 0 0 var(--space-md);
   line-height: 1.5;
 }

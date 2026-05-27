@@ -53,8 +53,8 @@ export default function Ahorro() {
           {/* Columna derecha — Alef */}
           <div className="Ahorro-alef">
             <div className="Ahorro-alef-card">
-              <span className="Ahorro-alef-desde">desde</span>
-              <span className="Ahorro-alef-precio">89€<span className="Ahorro-alef-mes">/mes</span></span>
+              <span className="Ahorro-alef-desde"></span>
+              <span className="Ahorro-alef-precio">129€<span className="Ahorro-alef-mes">/mes</span></span>
               <span className="Ahorro-alef-sub">Todo incluido. Sin permanencia.</span>
 
               <ul className="Ahorro-alef-lista">

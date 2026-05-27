@@ -6,7 +6,7 @@
   padding: 1.8rem 2rem;
   background: var(--dash-glass-bg);
   border-radius: var(--dash-radius-lg);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid var(--dash-glass-border);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   box-shadow: 0 8px 26px rgba(0, 0, 0, 0.28);

@@ -8,7 +8,7 @@
   background: var(--dash-glass-bg);
   border-radius: var(--dash-radius-lg);
   padding: 1.6rem 2rem;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid var(--dash-glass-border);
   box-shadow: var(--dash-shadow);
   animation: dashFadeIn 0.3s ease;
   overflow: hidden;

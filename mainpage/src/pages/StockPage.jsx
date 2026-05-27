@@ -640,8 +640,8 @@ const StockPage = () => {
                     <td><strong>{s.nombre}</strong></td>
                     <td>{s.consumoDiario}</td>
                     <td>{s.leadTime}d</td>
-                    <td>{s.actual.minimo} → <strong style={{ color: "#60b5ff" }}>{s.sugerido.minimo}</strong></td>
-                    <td>{s.actual.maximo} → <strong style={{ color: "#60b5ff" }}>{s.sugerido.maximo}</strong></td>
+                    <td>{s.actual.minimo} → <strong style={{ color: "#ff6700" }}>{s.sugerido.minimo}</strong></td>
+                    <td>{s.actual.maximo} → <strong style={{ color: "#ff6700" }}>{s.sugerido.maximo}</strong></td>
                   </tr>
                 ))}
               </tbody>

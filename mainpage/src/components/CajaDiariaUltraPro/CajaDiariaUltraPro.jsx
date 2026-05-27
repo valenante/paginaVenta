@@ -226,8 +226,8 @@ export default function CajaDiariaUltraPro() {
       chartDataURL: chartImg,
       brand: {
         nombre: tenant?.nombre || "Alef",
-        primary: "#60b5ff",
-        accent: "#ff9149",
+        primary: "#6a0dad",
+        accent: "#ff6700",
       },
     });
 

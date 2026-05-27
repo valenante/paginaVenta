@@ -53,8 +53,9 @@
 }
 
 .toppro-toggle-btn--active {
-  background: var(--color-primario, rgba(255, 255, 255, 0.14));
+  background: linear-gradient(135deg, var(--dash-accent-1), var(--dash-accent-2));
   color: #fff;
+  box-shadow: 0 3px 10px rgba(255, 103, 0, 0.3);
 }
 
 .toppro-title {

@@ -50,7 +50,7 @@
   border-bottom: 1px solid var(--color-borde-suave, #e5e7eb);
   background: linear-gradient(
     180deg,
-    rgba(96, 181, 255, 0.04),
+    rgba(106, 13, 173, 0.04),
     var(--color-fondo-claro, #f9fafb)
   );
   flex-shrink: 0;
@@ -81,7 +81,7 @@
 
 .facturaProvModal-close:hover {
   background: var(--color-fondo-claro, #f3f4f6);
-  border-color: var(--color-primario, #60b5ff);
+  border-color: var(--color-primario, #ff6700);
   transform: translateY(-1px);
 }
 
@@ -179,8 +179,8 @@
 .facturaProvModal-field input:focus,
 .facturaProvModal-field select:focus,
 .facturaProvModal-field textarea:focus {
-  border-color: var(--color-primario, #60b5ff);
-  box-shadow: 0 0 0 3px rgba(96, 181, 255, 0.18);
+  border-color: var(--color-primario, #ff6700);
+  box-shadow: 0 0 0 3px rgba(255, 103, 0, 0.18);
 }
 
 .facturaProvModal-field textarea {
@@ -208,7 +208,7 @@
 }
 
 .facturaProvModal-file input[type="file"]:hover {
-  border-color: var(--color-primario, #60b5ff);
+  border-color: var(--color-primario, #ff6700);
 }
 
 .facturaProvModal-file-hint {

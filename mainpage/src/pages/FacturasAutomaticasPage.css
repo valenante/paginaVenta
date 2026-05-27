@@ -45,7 +45,7 @@
 .badge--ok { color: #22c55e; background: rgba(34,197,94,0.1); }
 .badge--warn { color: #f59e0b; background: rgba(245,158,11,0.1); }
 .badge--error { color: #ef4444; background: rgba(239,68,68,0.1); }
-.badge--info { color: #60b5ff; background: rgba(96,181,255,0.1); }
+.badge--info { color: #ff6700; background: rgba(255,103,0,0.1); }
 .badge--muted { color: #64748b; background: rgba(100,116,139,0.1); }
 
 /* Job list */
@@ -108,9 +108,9 @@
 }
 .finv-pagination__btn:hover { background: rgba(255,255,255,0.06); color: #f1f5f9; }
 .finv-pagination__btn--active {
-  background: rgba(96,181,255,0.15);
-  color: #60b5ff;
-  border-color: rgba(96,181,255,0.3);
+  background: rgba(106,13,173,0.15);
+  color: #ff6700;
+  border-color: rgba(106,13,173,0.3);
 }
 
 /* Price change indicator */
@@ -119,6 +119,177 @@
   font-size: 0.68rem;
   color: #f59e0b;
   margin-left: 6px;
+}
+
+/* ═══════════════════════════════════════
+   GESTOR — Envío automático al asesor
+   ═══════════════════════════════════════ */
+
+.finv-gestor__expand {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.03);
+  color: #94a3b8;
+  font-size: 0.7rem;
+  cursor: pointer;
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.finv-gestor__expand:hover {
+  background: rgba(255,255,255,0.06);
+  color: #f1f5f9;
+}
+
+.finv-gestor {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  animation: finv-slideDown 0.2s ease-out;
+}
+
+@keyframes finv-slideDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.finv-gestor__field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.finv-gestor__field--flex {
+  flex: 1;
+}
+
+.finv-gestor__row {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+
+.finv-gestor__label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.finv-gestor__input {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 10px;
+  padding: 10px 14px;
+  color: #f1f5f9;
+  font-size: 0.85rem;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.15s;
+  width: 100%;
+  max-width: 400px;
+}
+.finv-gestor__input::placeholder {
+  color: #475569;
+}
+.finv-gestor__input:focus {
+  border-color: rgba(255,103,0,0.4);
+}
+
+.finv-gestor__select {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 10px;
+  padding: 10px 14px;
+  color: #f1f5f9;
+  font-size: 0.85rem;
+  font-family: inherit;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.15s;
+  min-width: 120px;
+  -webkit-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2394a3b8' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 36px;
+}
+.finv-gestor__select option {
+  background: #1a1f2e;
+  color: #f1f5f9;
+}
+.finv-gestor__select:focus {
+  border-color: rgba(255,103,0,0.4);
+}
+
+/* Chips de frecuencia */
+.finv-gestor__chips {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.finv-gestor__chip {
+  padding: 8px 16px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.03);
+  color: #94a3b8;
+  font-size: 0.8rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.finv-gestor__chip:hover {
+  background: rgba(255,255,255,0.06);
+  color: #e2e8f0;
+}
+.finv-gestor__chip--active {
+  background: rgba(255,103,0,0.12);
+  border-color: rgba(255,103,0,0.3);
+  color: #ff6700;
+}
+.finv-gestor__chip--sm {
+  padding: 6px 12px;
+  font-size: 0.75rem;
+  min-width: 40px;
+  text-align: center;
+}
+
+/* Footer: último envío + botón */
+.finv-gestor__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255,255,255,0.04);
+  margin-top: 4px;
+}
+.finv-gestor__last {
+  font-size: 0.75rem;
+  color: #64748b;
+}
+
+/* Responsive gestor */
+@media (max-width: 600px) {
+  .finv-gestor__row {
+    flex-direction: column;
+  }
+  .finv-gestor__input {
+    max-width: 100%;
+  }
+  .finv-gestor__footer {
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
+  }
 }
 
 /* ── Modal overlay ──────────────────────────────────────── */
@@ -236,16 +407,16 @@
 .finv-modal__attachment {
   padding: 6px 14px;
   border-radius: 8px;
-  background: rgba(96,181,255,0.08);
-  border: 1px solid rgba(96,181,255,0.2);
-  color: #60b5ff;
+  background: rgba(106,13,173,0.08);
+  border: 1px solid rgba(106,13,173,0.2);
+  color: #ff6700;
   font-size: 0.78rem;
   font-weight: 600;
   text-decoration: none;
   transition: all 0.15s;
 }
 .finv-modal__attachment:hover {
-  background: rgba(96,181,255,0.15);
+  background: rgba(106,13,173,0.15);
 }
 
 /* Errors */

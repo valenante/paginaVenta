@@ -157,7 +157,7 @@
 .ppModal-field input:focus,
 .ppModal-field select:focus {
   border-color: var(--color-primario);
-  box-shadow: 0 0 0 3px rgba(96, 181, 255, 0.18);
+  box-shadow: 0 0 0 3px rgba(106, 13, 173, 0.18);
 }
 
 /* =========================
@@ -206,15 +206,15 @@
   flex-direction: column;
   gap: 0.25rem;
   padding: 0.6rem 0.8rem;
-  background: rgba(96, 181, 255, 0.08);
-  border: 1px solid rgba(96, 181, 255, 0.2);
+  background: rgba(106, 13, 173, 0.08);
+  border: 1px solid rgba(106, 13, 173, 0.2);
   border-radius: var(--radius-sm, 6px);
   font-size: 0.82rem;
   color: var(--color-texto, #e2e8f0);
 }
 
 .ppModal-resumen__line b {
-  color: #60b5ff;
+  color: #ff6700;
 }
 
 /* =========================
@@ -316,7 +316,7 @@
 
 .ppSearch-input:focus {
   border-color: var(--color-primario);
-  box-shadow: 0 0 0 3px rgba(96, 181, 255, 0.18);
+  box-shadow: 0 0 0 3px rgba(106, 13, 173, 0.18);
 }
 
 .ppSearch-input::placeholder {
@@ -428,8 +428,8 @@
   margin: 0 20px 16px;
   padding: 16px;
   border-radius: 12px;
-  background: linear-gradient(135deg, rgba(96,181,255,0.05), rgba(139,92,246,0.05));
-  border: 1px solid rgba(96,181,255,0.2);
+  background: linear-gradient(135deg, rgba(106,13,173,0.05), rgba(139,92,246,0.05));
+  border: 1px solid rgba(106,13,173,0.2);
 }
 .ppModal-ai-header {
   display: flex;
@@ -453,7 +453,7 @@
   resize: vertical;
   min-height: 60px;
 }
-.ppModal-ai-input:focus { border-color: #60b5ff; outline: none; box-shadow: 0 0 0 3px rgba(96,181,255,0.15); }
+.ppModal-ai-input:focus { border-color: #ff6700; outline: none; box-shadow: 0 0 0 3px rgba(106,13,173,0.15); }
 .ppModal-ai-input::placeholder { color: #94a3b8; }
 .ppModal-ai-error { color: #ef4444; font-size: 0.78rem; margin: 6px 0 0; }
 .ppModal-ai-btn {
@@ -463,7 +463,7 @@
   padding: 10px;
   border-radius: 10px;
   border: none;
-  background: linear-gradient(135deg, #60b5ff, #8b5cf6);
+  background: linear-gradient(135deg, #ff6700, #8b5cf6);
   color: white;
   font-size: 0.85rem;
   font-weight: 700;
@@ -471,7 +471,7 @@
   font-family: inherit;
   transition: all 0.15s;
 }
-.ppModal-ai-btn:hover { opacity: 0.9; box-shadow: 0 4px 12px rgba(96,181,255,0.3); }
+.ppModal-ai-btn:hover { opacity: 0.9; box-shadow: 0 4px 12px rgba(106,13,173,0.3); }
 .ppModal-ai-btn:disabled { opacity: 0.4; cursor: not-allowed; box-shadow: none; }
 .ppModal-ai-btn--secondary {
   background: #f1f5f9;

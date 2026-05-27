@@ -57,7 +57,8 @@ export default function AdminDashboard() {
       setDeploy({ slot: active.slot, sha: active.deploySha, buildTime: active.buildTime });
     }
     if (l.status === "fulfilled") {
-      setLive(l.value.data?.data?.items || l.value.data?.items || []);
+      const allLive = l.value.data?.data?.items || l.value.data?.items || [];
+      setLive(allLive.filter(t => t.activo !== false));
     }
     setLiveLoading(false);
   }, []);

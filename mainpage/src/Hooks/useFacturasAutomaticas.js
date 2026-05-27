@@ -109,3 +109,8 @@ export async function updateFacturasConfig(updates) {
   const { data } = await api.patch("/admin/facturas-automaticas/config", updates);
   return data;
 }
+
+export async function enviarGestorManual(body = {}) {
+  const { data } = await api.post("/admin/facturas-automaticas/enviar-gestor", body);
+  return data;
+}

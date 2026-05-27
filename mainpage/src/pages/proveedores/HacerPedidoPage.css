@@ -36,7 +36,7 @@
   white-space: nowrap;
 }
 .hp-checkbox-field input {
-  accent-color: var(--color-primario, #60b5ff);
+  accent-color: var(--color-primario, #ff6700);
   width: 18px;
   height: 18px;
 }

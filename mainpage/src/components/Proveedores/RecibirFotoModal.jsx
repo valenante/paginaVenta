@@ -125,7 +125,7 @@ export default function RecibirFotoModal({ onClose, onDone }) {
       {mode === "foto" && step === "upload" && image && (
         <button type="button" onClick={analizar} style={{
           padding: "8px 20px", borderRadius: 10, border: "none",
-          background: "linear-gradient(135deg, #2f7ed8, #60b5ff)", color: "#fff",
+          background: "linear-gradient(135deg, #6a0dad, #ff6700)", color: "#fff",
           fontWeight: 700, fontSize: "0.84rem", cursor: "pointer", fontFamily: "inherit",
         }}>
           🤖 Analizar imagen
@@ -134,7 +134,7 @@ export default function RecibirFotoModal({ onClose, onDone }) {
       {mode === "manual" && step === "upload" && (
         <button type="button" onClick={aplicarManual} disabled={!manualItems.some((i) => i.nombre.trim() && Number(i.cantidad) > 0)} style={{
           padding: "8px 20px", borderRadius: 10, border: "none",
-          background: "linear-gradient(135deg, #2f7ed8, #60b5ff)", color: "#fff",
+          background: "linear-gradient(135deg, #6a0dad, #ff6700)", color: "#fff",
           fontWeight: 700, fontSize: "0.84rem", cursor: "pointer", fontFamily: "inherit",
           opacity: manualItems.some((i) => i.nombre.trim() && Number(i.cantidad) > 0) ? 1 : 0.4,
         }}>
@@ -144,7 +144,7 @@ export default function RecibirFotoModal({ onClose, onDone }) {
       {step === "preview" && (
         <button type="button" onClick={aplicar} style={{
           padding: "8px 20px", borderRadius: 10, border: "none",
-          background: "linear-gradient(135deg, #2f7ed8, #60b5ff)", color: "#fff",
+          background: "linear-gradient(135deg, #6a0dad, #ff6700)", color: "#fff",
           fontWeight: 700, fontSize: "0.84rem", cursor: "pointer", fontFamily: "inherit",
         }}>
           ✅ Aplicar {selected.size} al stock
@@ -179,7 +179,7 @@ export default function RecibirFotoModal({ onClose, onDone }) {
               borderRadius: 10,
               border: mode === "foto" ? "1px solid rgba(96,181,255,0.5)" : "1px solid rgba(255,255,255,0.1)",
               background: mode === "foto" ? "linear-gradient(135deg, rgba(96,181,255,0.2), rgba(96,181,255,0.1))" : "rgba(255,255,255,0.04)",
-              color: mode === "foto" ? "#60b5ff" : "#94a3b8",
+              color: mode === "foto" ? "#ff6700" : "#94a3b8",
               fontWeight: 700,
               fontSize: "0.84rem",
               cursor: "pointer",
@@ -197,7 +197,7 @@ export default function RecibirFotoModal({ onClose, onDone }) {
               borderRadius: 10,
               border: mode === "manual" ? "1px solid rgba(96,181,255,0.5)" : "1px solid rgba(255,255,255,0.1)",
               background: mode === "manual" ? "linear-gradient(135deg, rgba(96,181,255,0.2), rgba(96,181,255,0.1))" : "rgba(255,255,255,0.04)",
-              color: mode === "manual" ? "#60b5ff" : "#94a3b8",
+              color: mode === "manual" ? "#ff6700" : "#94a3b8",
               fontWeight: 700,
               fontSize: "0.84rem",
               cursor: "pointer",
@@ -353,7 +353,7 @@ export default function RecibirFotoModal({ onClose, onDone }) {
                   {result.matched.map((m, i) => (
                     <tr key={i} style={{ borderBottom: "1px solid rgba(255,255,255,0.04)", color: "#e2e8f0" }}>
                       <td style={{ padding: "6px 8px" }}>
-                        <input type="checkbox" checked={selected.has(i)} onChange={() => toggleSelect(i)} style={{ accentColor: "#60b5ff" }} />
+                        <input type="checkbox" checked={selected.has(i)} onChange={() => toggleSelect(i)} style={{ accentColor: "#ff6700" }} />
                       </td>
                       <td style={{ padding: "6px 8px" }}>{m.nombreAlbaran}</td>
                       <td style={{ padding: "6px 8px" }}>

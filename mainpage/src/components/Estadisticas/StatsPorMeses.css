@@ -3,19 +3,12 @@
    ========================================================= */
 
 .statsmeses-container {
-  background: rgba(255, 255, 255, 0.06);
-  border-radius: var(--radius-lg);
+  background: var(--dash-glass-bg);
+  border-radius: var(--dash-radius-lg);
   padding: 1.6rem 2rem;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow:
-    0 8px 24px rgba(0, 0, 0, 0.25),
-    0 0 0 1px rgba(255, 255, 255, 0.05);
-  animation: fadeInStatsMeses 0.3s ease;
-}
-
-@keyframes fadeInStatsMeses {
-  from { opacity: 0; transform: translateY(6px); }
-  to   { opacity: 1; transform: translateY(0); }
+  border: 1px solid var(--dash-glass-border);
+  box-shadow: var(--dash-shadow);
+  animation: dashFadeIn 0.3s ease;
 }
 
 .statsmeses-header {
@@ -159,7 +152,7 @@
   .statsmeses-table tbody tr {
     border: 1px solid rgba(255, 255, 255, 0.10);
     background: rgba(255, 255, 255, 0.04);
-    border-radius: var(--radius-lg);
+    border-radius: var(--dash-radius-lg);
     padding: 0.85rem 0.9rem;
     margin-bottom: 0.75rem;
     box-shadow:

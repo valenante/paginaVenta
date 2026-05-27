@@ -67,13 +67,13 @@
 .config-checkbox input[type="checkbox"] {
   width: 18px;
   height: 18px;
-  accent-color: var(--color-primario, #60b5ff);
+  accent-color: var(--color-primario, #ff6700);
   cursor: pointer;
 }
 
 /* ===== Card trigger para modal de diseño ===== */
 .td-card-trigger {
-  border-left: 4px solid var(--color-primario, #60b5ff);
+  border-left: 4px solid var(--color-primario, #ff6700);
 }
 
 .td-card-row {
@@ -196,7 +196,7 @@
 .td-fieldset legend {
   font-weight: 700;
   font-size: var(--font-size-sm);
-  color: var(--color-primario, #60b5ff);
+  color: var(--color-primario, #ff6700);
   padding: 0 0.4rem;
 }
 

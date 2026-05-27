@@ -7,7 +7,7 @@
 .estadisticas-page {
   min-height: 100vh;
   padding: 2.5rem 1.5rem 4rem;
-  background: radial-gradient(circle at top right, #1a1a2f 0, #0c0c17 85%);
+  background: var(--dash-bg);
   overflow-x: hidden;
   width: 100%;
   max-width: 100%;
@@ -457,6 +457,7 @@
 }
 
 .stats-vista-tab--active {
-  background: rgba(255, 255, 255, 0.10);
+  background: linear-gradient(135deg, var(--dash-accent-1), var(--dash-accent-2));
   color: #fff;
+  box-shadow: 0 3px 10px rgba(255, 103, 0, 0.3);
 }

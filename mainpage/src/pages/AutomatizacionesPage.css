@@ -143,13 +143,13 @@
 }
 
 .auto-option--active {
-  background: rgba(96, 181, 255, 0.08);
-  border-color: rgba(96, 181, 255, 0.3);
+  background: rgba(106, 13, 173, 0.08);
+  border-color: rgba(106, 13, 173, 0.3);
 }
 
 .auto-option input[type="radio"] {
   margin-top: 2px;
-  accent-color: #60b5ff;
+  accent-color: #6a0dad;
   flex-shrink: 0;
 }
 
@@ -174,7 +174,7 @@
 }
 
 .auto-option__saving {
-  color: #60b5ff;
+  color: #ff6700;
   font-size: 0.75rem;
   position: absolute;
   top: 6px;

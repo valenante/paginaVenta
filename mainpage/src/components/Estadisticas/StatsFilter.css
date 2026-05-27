@@ -57,7 +57,7 @@
   padding: 0.45rem 0.95rem;
   background: rgba(255, 255, 255, 0.065);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: var(--radius-pill);
+  border-radius: var(--dash-radius-pill);
   font-size: 0.85rem;
   color: #fff;
   cursor: pointer;
@@ -80,7 +80,7 @@
 /* ===== DATEPICKER INPUT ===== */
 .stats-datepicker {
   padding: 0.5rem 0.75rem;
-  border-radius: var(--radius-md);
+  border-radius: var(--dash-radius-md);
   border: 1px solid rgba(255, 255, 255, 0.15);
   background: rgba(255, 255, 255, 0.065);
   color: #fff;

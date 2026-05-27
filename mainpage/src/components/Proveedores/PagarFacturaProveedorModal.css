@@ -76,7 +76,7 @@
 
 .pagarFactModal-close:hover {
   background: var(--color-fondo-claro, #f3f4f6);
-  border-color: var(--color-primario, #60b5ff);
+  border-color: var(--color-primario, #ff6700);
 }
 
 /* =========================
@@ -100,8 +100,8 @@
   align-items: center;
   padding: var(--space-md, 1rem);
   border-radius: var(--radius-md, 8px);
-  background: rgba(96, 181, 255, 0.06);
-  border: 1px solid rgba(96, 181, 255, 0.15);
+  background: rgba(106, 13, 173, 0.06);
+  border: 1px solid rgba(106, 13, 173, 0.15);
 }
 
 .pagarFactModal-summary-label {
@@ -157,8 +157,8 @@
 
 .pagarFactModal-field select:focus,
 .pagarFactModal-field input:focus {
-  border-color: var(--color-primario, #60b5ff);
-  box-shadow: 0 0 0 3px rgba(96, 181, 255, 0.18);
+  border-color: var(--color-primario, #ff6700);
+  box-shadow: 0 0 0 3px rgba(255, 103, 0, 0.18);
 }
 
 /* =========================

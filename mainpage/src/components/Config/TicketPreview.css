@@ -165,7 +165,7 @@
   background: var(--color-fondo, #f9fafb);
 }
 .tp-type-tab--active {
-  background: var(--color-primario, #60b5ff);
+  background: var(--color-primario, #ff6700);
   color: #fff;
 }
 .tp-type-tab--active:hover {

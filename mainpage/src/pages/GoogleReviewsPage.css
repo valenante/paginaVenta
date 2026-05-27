@@ -87,8 +87,8 @@
 }
 
 .grev-tab-btn--active {
-  color: #60b5ff;
-  border-bottom-color: #60b5ff;
+  color: #ff6700;
+  border-bottom-color: #ff6700;
 }
 
 .grev-tab-btn__badge {
@@ -137,9 +137,9 @@
 }
 
 .grev-filter--active {
-  background: rgba(96, 181, 255, 0.12);
-  border-color: rgba(96, 181, 255, 0.3);
-  color: #60b5ff;
+  background: rgba(106, 13, 173, 0.12);
+  border-color: rgba(106, 13, 173, 0.3);
+  color: #ff6700;
 }
 
 /* Loading / Error / Empty */
@@ -269,8 +269,8 @@
 }
 
 .grev-badge--approved {
-  color: #60b5ff;
-  background: rgba(96, 181, 255, 0.1);
+  color: #ff6700;
+  background: rgba(255, 103, 0, 0.1);
 }
 
 .grev-badge--published {
@@ -303,7 +303,7 @@
   gap: 6px;
   font-size: 0.76rem;
   font-weight: 600;
-  color: #60b5ff;
+  color: #ff6700;
   background: none;
   border: none;
   cursor: pointer;
@@ -323,8 +323,8 @@
 .grev-review__draft-text {
   margin-top: 8px;
   padding: 12px 16px;
-  background: rgba(96, 181, 255, 0.05);
-  border: 1px solid rgba(96, 181, 255, 0.1);
+  background: rgba(106, 13, 173, 0.05);
+  border: 1px solid rgba(106, 13, 173, 0.1);
   border-radius: 10px;
 }
 
@@ -361,8 +361,8 @@
 .grev-pending-draft {
   margin: 10px 0;
   padding: 14px 18px;
-  background: rgba(96, 181, 255, 0.04);
-  border: 1px solid rgba(96, 181, 255, 0.1);
+  background: rgba(106, 13, 173, 0.04);
+  border: 1px solid rgba(106, 13, 173, 0.1);
   border-radius: 10px;
 }
 
@@ -370,7 +370,7 @@
   display: block;
   font-size: 0.72rem;
   font-weight: 700;
-  color: #60b5ff;
+  color: #ff6700;
   text-transform: uppercase;
   letter-spacing: 0.04em;
   margin-bottom: 6px;
@@ -468,7 +468,7 @@
 }
 
 .grev-reject-input:focus {
-  border-color: rgba(96, 181, 255, 0.4);
+  border-color: rgba(106, 13, 173, 0.4);
 }
 
 .grev-reject-input::placeholder {
@@ -571,13 +571,13 @@
 }
 
 .grev-btn--connect {
-  background: rgba(96, 181, 255, 0.12);
-  color: #60b5ff;
-  border-color: rgba(96, 181, 255, 0.3);
+  background: rgba(106, 13, 173, 0.12);
+  color: #ff6700;
+  border-color: rgba(106, 13, 173, 0.3);
 }
 
 .grev-btn--connect:hover:not(:disabled) {
-  background: rgba(96, 181, 255, 0.2);
+  background: rgba(106, 13, 173, 0.2);
 }
 
 .grev-btn--disconnect {
@@ -671,13 +671,13 @@
 }
 
 .grev-mode-option--active {
-  background: rgba(96, 181, 255, 0.08);
-  border-color: rgba(96, 181, 255, 0.3);
+  background: rgba(106, 13, 173, 0.08);
+  border-color: rgba(106, 13, 173, 0.3);
 }
 
 .grev-mode-option input[type="radio"] {
   margin-top: 2px;
-  accent-color: #60b5ff;
+  accent-color: #ff6700;
   flex-shrink: 0;
 }
 

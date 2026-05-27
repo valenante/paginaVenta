@@ -1157,7 +1157,7 @@ const CrearProducto = ({ onClose, onCreated, initialTipo, cloneFrom }) => {
                   <span key={i} style={{
                     display: "inline-flex", alignItems: "center", gap: "6px",
                     padding: "5px 12px", borderRadius: "16px", fontSize: "0.82rem", fontWeight: 600,
-                    background: "rgba(96,181,255,0.12)", color: "#60b5ff", border: "1px solid rgba(96,181,255,0.25)"
+                    background: "rgba(106,13,173,0.12)", color: "#c084fc", border: "1px solid rgba(106,13,173,0.25)"
                   }}>
                     {msg}
                     <button type="button" onClick={() => {

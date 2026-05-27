@@ -67,7 +67,7 @@
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  background: var(--color-primario, #60b5ff);
+  background: var(--color-primario, #ff6700);
   color: #fff;
   margin-bottom: 0.5rem;
 }
@@ -174,18 +174,18 @@
   padding: 0.75rem;
   border: none;
   border-radius: var(--radius-pill, 999px);
-  background: var(--color-primario, #60b5ff);
+  background: var(--color-primario, #ff6700);
   color: #fff;
   font-size: 0.95rem;
   font-weight: 700;
   cursor: pointer;
   transition: transform 0.15s, box-shadow 0.15s, filter 0.15s;
-  box-shadow: 0 6px 16px rgba(96, 181, 255, 0.25);
+  box-shadow: 0 6px 16px rgba(255, 103, 0, 0.25);
 }
 
 .changelog-btn:hover {
   transform: translateY(-1px);
-  box-shadow: 0 10px 24px rgba(96, 181, 255, 0.35);
+  box-shadow: 0 10px 24px rgba(255, 103, 0, 0.35);
   filter: brightness(1.05);
 }
 

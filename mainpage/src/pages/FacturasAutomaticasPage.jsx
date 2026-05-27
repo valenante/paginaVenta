@@ -16,6 +16,7 @@ import {
   disconnectGmail,
   syncGmailNow,
   updateFacturasConfig,
+  enviarGestorManual,
 } from "../Hooks/useFacturasAutomaticas";
 import "./FacturasAutomaticasPage.css";
 
@@ -172,19 +173,71 @@ export default function FacturasAutomaticasPage() {
   const [confirmAction, setConfirmAction] = useState(null);
   const [msg, setMsg] = useState(null);
   const [syncing, setSyncing] = useState(false);
+  const [enviandoGestor, setEnviandoGestor] = useState(false);
+  const [gestorExpanded, setGestorExpanded] = useState(false);
 
   const estadoFilter = tab === "pending" ? "pending_review" : tab === "completed" ? "" : "";
   const { items, total, pages, loading, refetch } = useInboundJobs({ estado: estadoFilter, page });
   const stats = useInboundStats();
   const gmail = useGmailStatus();
   const facturasConfig = useFacturasConfig();
+  const gc = facturasConfig.config; // shortcut
 
   const handleToggleAutoAprobar = async () => {
     try {
-      await updateFacturasConfig({ autoAprobar: !facturasConfig.config.autoAprobar });
+      await updateFacturasConfig({ autoAprobar: !gc.autoAprobar });
       facturasConfig.refetch();
-      setMsg({ t: "ok", m: facturasConfig.config.autoAprobar ? "Auto-aprobación desactivada" : "Auto-aprobación activada" });
+      setMsg({ t: "ok", m: gc.autoAprobar ? "Auto-aprobación desactivada" : "Auto-aprobación activada" });
     } catch { setMsg({ t: "error", m: "Error al actualizar config" }); }
+  };
+
+  // ── Gestor handlers ──
+  const handleGestorFieldChange = async (field, value) => {
+    try {
+      await updateFacturasConfig({ [field]: value });
+      facturasConfig.refetch();
+    } catch { setMsg({ t: "error", m: "Error al guardar" }); }
+  };
+
+  const handleToggleGestorActivo = async () => {
+    if (!gc.envioGestorActivo && !gc.gestorEmail) {
+      setMsg({ t: "error", m: "Configura el email del gestor antes de activar" });
+      return;
+    }
+    try {
+      await updateFacturasConfig({ envioGestorActivo: !gc.envioGestorActivo });
+      facturasConfig.refetch();
+      setMsg({ t: "ok", m: gc.envioGestorActivo ? "Envío al gestor desactivado" : "Envío al gestor activado" });
+    } catch { setMsg({ t: "error", m: "Error al actualizar config" }); }
+  };
+
+  const handleEnviarGestorAhora = async () => {
+    if (!gc.gestorEmail) {
+      setMsg({ t: "error", m: "Configura el email del gestor primero" });
+      return;
+    }
+    setEnviandoGestor(true);
+    try {
+      const result = await enviarGestorManual();
+      if (result.enviadas > 0) {
+        setMsg({ t: "ok", m: `${result.enviadas} factura${result.enviadas !== 1 ? "s" : ""} enviada${result.enviadas !== 1 ? "s" : ""} a ${result.emailTo}` });
+      } else {
+        setMsg({ t: "ok", m: result.mensaje || "No hay facturas en el periodo" });
+      }
+    } catch (err) {
+      setMsg({ t: "error", m: err?.response?.data?.message || "Error al enviar" });
+    } finally {
+      setEnviandoGestor(false);
+    }
+  };
+
+  const handleGestorEmailBlur = async (e) => {
+    const email = e.target.value.trim();
+    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setMsg({ t: "error", m: "Email del gestor no válido" });
+      return;
+    }
+    await handleGestorFieldChange("gestorEmail", email);
   };
 
   const handleConnectGmail = async () => {
@@ -291,18 +344,148 @@ export default function FacturasAutomaticasPage() {
           <div>
             <span className="sug-toggle-label">Auto-aprobación + stock</span>
             <span className="sug-toggle-desc">
-              {facturasConfig.config.autoAprobar
+              {gc.autoAprobar
                 ? "Las facturas con alta confianza se aprueban automáticamente y actualizan el stock."
                 : "Las facturas requieren revisión manual antes de actualizar stock y costes."}
             </span>
           </div>
           <button
-            className={`sug-toggle ${facturasConfig.config.autoAprobar ? "sug-toggle--on" : ""}`}
+            className={`sug-toggle ${gc.autoAprobar ? "sug-toggle--on" : ""}`}
             onClick={handleToggleAutoAprobar}
           >
             <span className="sug-toggle__knob" />
           </button>
         </div>
+      </div>
+
+      {/* ── Envío al gestor ── */}
+      <div className="sug-section">
+        <div className="sug-toggle-row">
+          <div>
+            <span className="sug-toggle-label">Envío automático al gestor</span>
+            <span className="sug-toggle-desc">
+              {gc.envioGestorActivo
+                ? `Las facturas se envían ${gc.envioGestorFreq === "diario" ? "cada día" : gc.envioGestorFreq === "semanal" ? "cada semana" : "cada mes"} a ${gc.gestorEmail || "—"}`
+                : "Envía automáticamente un resumen con todas las facturas a tu gestoría o asesoría."}
+            </span>
+          </div>
+          <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+            <button
+              className="finv-gestor__expand"
+              onClick={() => setGestorExpanded(!gestorExpanded)}
+              title="Configurar"
+            >
+              {gestorExpanded ? "▲" : "▼"}
+            </button>
+            <button
+              className={`sug-toggle ${gc.envioGestorActivo ? "sug-toggle--on" : ""}`}
+              onClick={handleToggleGestorActivo}
+            >
+              <span className="sug-toggle__knob" />
+            </button>
+          </div>
+        </div>
+
+        {gestorExpanded && (
+          <div className="finv-gestor">
+            {/* Email gestor */}
+            <div className="finv-gestor__field">
+              <label className="finv-gestor__label">Email del gestor / asesoría</label>
+              <input
+                type="email"
+                className="finv-gestor__input"
+                placeholder="gestor@asesoria.com"
+                defaultValue={gc.gestorEmail || ""}
+                onBlur={handleGestorEmailBlur}
+              />
+            </div>
+
+            {/* Frecuencia */}
+            <div className="finv-gestor__row">
+              <div className="finv-gestor__field finv-gestor__field--flex">
+                <label className="finv-gestor__label">Frecuencia</label>
+                <div className="finv-gestor__chips">
+                  {[
+                    { value: "diario", label: "Diario" },
+                    { value: "semanal", label: "Semanal" },
+                    { value: "mensual", label: "Mensual" },
+                  ].map(opt => (
+                    <button
+                      key={opt.value}
+                      className={`finv-gestor__chip ${(gc.envioGestorFreq || "semanal") === opt.value ? "finv-gestor__chip--active" : ""}`}
+                      onClick={() => handleGestorFieldChange("envioGestorFreq", opt.value)}
+                    >
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="finv-gestor__field">
+                <label className="finv-gestor__label">Hora de envío</label>
+                <select
+                  className="finv-gestor__select"
+                  value={gc.envioGestorHora || "08:00"}
+                  onChange={e => handleGestorFieldChange("envioGestorHora", e.target.value)}
+                >
+                  {Array.from({ length: 24 }, (_, h) => {
+                    const hh = String(h).padStart(2, "0");
+                    return <option key={h} value={`${hh}:00`}>{hh}:00</option>;
+                  })}
+                </select>
+              </div>
+            </div>
+
+            {/* Día de semana / mes (condicional) */}
+            {(gc.envioGestorFreq || "semanal") === "semanal" && (
+              <div className="finv-gestor__field">
+                <label className="finv-gestor__label">Día de la semana</label>
+                <div className="finv-gestor__chips">
+                  {["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"].map((d, i) => (
+                    <button
+                      key={i}
+                      className={`finv-gestor__chip finv-gestor__chip--sm ${(gc.envioGestorDiaSemana ?? 1) === i ? "finv-gestor__chip--active" : ""}`}
+                      onClick={() => handleGestorFieldChange("envioGestorDiaSemana", i)}
+                    >
+                      {d}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {(gc.envioGestorFreq || "semanal") === "mensual" && (
+              <div className="finv-gestor__field">
+                <label className="finv-gestor__label">Día del mes</label>
+                <select
+                  className="finv-gestor__select"
+                  value={gc.envioGestorDiaMes ?? 1}
+                  onChange={e => handleGestorFieldChange("envioGestorDiaMes", Number(e.target.value))}
+                >
+                  {Array.from({ length: 28 }, (_, i) => (
+                    <option key={i + 1} value={i + 1}>{i + 1}</option>
+                  ))}
+                </select>
+              </div>
+            )}
+
+            {/* Último envío + botón manual */}
+            <div className="finv-gestor__footer">
+              <span className="finv-gestor__last">
+                {gc.ultimoEnvioGestor
+                  ? `Último envío: ${new Date(gc.ultimoEnvioGestor).toLocaleString("es-ES", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" })}`
+                  : "Aún no se ha enviado ningún resumen"}
+              </span>
+              <button
+                className="sug-btn sug-btn--primary"
+                onClick={handleEnviarGestorAhora}
+                disabled={enviandoGestor || !gc.gestorEmail}
+              >
+                {enviandoGestor ? "Enviando..." : "Enviar ahora"}
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Stats */}

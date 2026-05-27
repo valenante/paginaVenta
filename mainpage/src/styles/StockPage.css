@@ -295,9 +295,9 @@
   gap: 4px;
   padding: 14px 16px;
   border-radius: 12px;
-  background: linear-gradient(135deg, rgba(96, 181, 255, 0.08), rgba(139, 92, 246, 0.06));
-  border: 1px solid rgba(96, 181, 255, 0.15);
-  border-left: 3px solid rgba(96, 181, 255, 0.5);
+  background: linear-gradient(135deg, rgba(106, 13, 173, 0.08), rgba(139, 92, 246, 0.06));
+  border: 1px solid rgba(106, 13, 173, 0.15);
+  border-left: 3px solid rgba(106, 13, 173, 0.5);
   cursor: pointer;
   transition: all 0.18s;
   text-align: left;
@@ -307,10 +307,10 @@
 }
 
 .stock-cat-card:hover {
-  background: linear-gradient(135deg, rgba(96, 181, 255, 0.14), rgba(139, 92, 246, 0.1));
-  border-color: rgba(96, 181, 255, 0.35);
+  background: linear-gradient(135deg, rgba(106, 13, 173, 0.14), rgba(139, 92, 246, 0.1));
+  border-color: rgba(106, 13, 173, 0.35);
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(96, 181, 255, 0.1);
+  box-shadow: 0 4px 12px rgba(106, 13, 173, 0.1);
 }
 
 .stock-cat-card:nth-child(3n+2) {
@@ -402,8 +402,8 @@
   margin-top: 8px;
   padding: 8px 10px;
   border-radius: 8px;
-  background: linear-gradient(135deg, rgba(96, 181, 255, 0.08), rgba(139, 92, 246, 0.05));
-  border: 1px solid rgba(96, 181, 255, 0.2);
+  background: linear-gradient(135deg, rgba(106, 13, 173, 0.08), rgba(139, 92, 246, 0.05));
+  border: 1px solid rgba(106, 13, 173, 0.2);
   font-size: 0.72rem;
 }
 
@@ -442,10 +442,10 @@
 }
 
 .stock-sug__btn--apply {
-  background: rgba(96, 181, 255, 0.2);
-  color: #60b5ff;
+  background: rgba(255, 103, 0, 0.2);
+  color: #ff6700;
 }
-.stock-sug__btn--apply:hover { background: rgba(96, 181, 255, 0.35); }
+.stock-sug__btn--apply:hover { background: rgba(255, 103, 0, 0.35); }
 
 .stock-sug__btn--ignore {
   background: rgba(255, 255, 255, 0.06);
@@ -454,7 +454,7 @@
 .stock-sug__btn--ignore:hover { background: rgba(255, 255, 255, 0.1); }
 
 /* Umbrales modal table */
-.stock-sug-modal__cb { accent-color: #60b5ff; }
+.stock-sug-modal__cb { accent-color: #ff6700; }
 
 .stock-sug-table td,
 .stock-sug-table th {

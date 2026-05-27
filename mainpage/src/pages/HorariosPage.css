@@ -102,7 +102,7 @@
   background: rgba(255,255,255,0.04);
 }
 .hor-cell--selected {
-  background: rgba(96,181,255,0.08) !important;
+  background: rgba(106,13,173,0.08) !important;
 }
 .hor-cell--closed {
   background: rgba(255,255,255,0.02);
@@ -162,7 +162,7 @@
 .hor-hours-value {
   font-size: 0.82rem;
   font-weight: 700;
-  color: #60b5ff;
+  color: #ff6700;
 }
 
 /* Assign dropdown */
@@ -202,7 +202,7 @@
   background: rgba(255,255,255,0.06);
 }
 .hor-assign-option--all {
-  color: #60b5ff;
+  color: #ff6700;
   font-weight: 700;
   border-bottom: 1px solid rgba(255,255,255,0.06);
 }
@@ -268,7 +268,7 @@
   font-family: inherit;
 }
 .hor-edit-popup__row input:focus {
-  border-color: #60b5ff;
+  border-color: #6a0dad;
   outline: none;
 }
 .hor-edit-popup__actions {
@@ -292,11 +292,11 @@
   color: #94a3b8;
 }
 .hor-edit-popup__save {
-  background: rgba(96,181,255,0.15);
-  color: #60b5ff;
+  background: rgba(106,13,173,0.15);
+  color: #c084fc;
 }
 .hor-edit-popup__save:hover {
-  background: rgba(96,181,255,0.25);
+  background: rgba(106,13,173,0.25);
 }
 
 /* Leyenda */

@@ -48,7 +48,7 @@
 
 .otros-card:hover:not(.otros-card--disabled) {
   background: rgba(255, 255, 255, 0.06);
-  border-color: rgba(96, 181, 255, 0.25);
+  border-color: rgba(106, 13, 173, 0.25);
 }
 
 .otros-card--disabled {
@@ -98,7 +98,7 @@
 }
 
 .otros-card:hover:not(.otros-card--disabled) .otros-card__arrow {
-  color: #60b5ff;
+  color: #ff6700;
   transform: translateX(2px);
 }
 

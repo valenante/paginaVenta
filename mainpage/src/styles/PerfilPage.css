@@ -22,9 +22,9 @@
   justify-content: center;
   font-size: 2rem;
   font-weight: 800;
-  color: #60b5ff;
-  background: rgba(96, 181, 255, 0.1);
-  border-color: rgba(96, 181, 255, 0.3);
+  color: #ff6700;
+  background: rgba(255, 103, 0, 0.1);
+  border-color: rgba(255, 103, 0, 0.3);
 }
 
 .perfil-summary-info {
@@ -95,8 +95,8 @@
 }
 
 .perfil-avatar-btn:hover {
-  border-color: #60b5ff;
-  background: rgba(96, 181, 255, 0.04);
+  border-color: #ff6700;
+  background: rgba(255, 103, 0, 0.04);
 }
 
 .perfil-avatar-btn__preview {

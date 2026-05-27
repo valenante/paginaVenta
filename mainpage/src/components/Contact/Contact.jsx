@@ -59,7 +59,7 @@ const Contact = () => {
   );
 
   return (
-    <section className="Contact section bg-fondo-oscuro reveal" id="contacto">
+    <section className="Contact section reveal" id="contacto">
       <div className="Contact-inner section--wide">
         {/* LADO IZQUIERDO */}
         <div className="Contact-left">

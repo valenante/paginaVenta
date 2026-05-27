@@ -1,5 +1,12 @@
 /* src/components/FAQ/FAQ.css */
 
+.FAQ {
+  background:
+    radial-gradient(circle at top right, #60b5ff12 0, #0b1020 55%),
+    radial-gradient(circle at bottom left, #ff914910 0, #0b1020 65%);
+  color: #e2e8f0;
+}
+
 .FAQ-inner {
   padding: var(--space-2xl) var(--space-lg);
   max-width: 800px;
@@ -20,15 +27,15 @@
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  background: var(--color-primario-suave);
-  color: var(--color-primario-oscuro);
+  background: rgba(96, 181, 255, 0.15);
+  color: #60b5ff;
   margin-bottom: 0.6rem;
 }
 
 .FAQ-header h2 {
   font-size: var(--font-size-2xl);
   margin: 0;
-  color: var(--color-texto);
+  color: #f1f5f9;
 }
 
 /* Lista */
@@ -40,20 +47,20 @@
 }
 
 .FAQ-item {
-  background: var(--color-fondo-card);
-  border: 1px solid var(--color-borde-suave);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: var(--radius-md);
   overflow: hidden;
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .FAQ-item:hover {
-  border-color: rgba(96, 181, 255, 0.4);
+  border-color: rgba(96, 181, 255, 0.25);
 }
 
 .FAQ-item--open {
-  border-color: var(--color-primario);
-  box-shadow: 0 4px 12px rgba(96, 181, 255, 0.1);
+  border-color: rgba(96, 181, 255, 0.4);
+  box-shadow: 0 4px 12px rgba(96, 181, 255, 0.08);
 }
 
 /* Pregunta (botón) */
@@ -71,12 +78,13 @@
   text-align: left;
   font-size: var(--font-size-md);
   font-weight: 600;
-  color: var(--color-texto);
+  color: #e2e8f0;
   line-height: 1.4;
+  font-family: inherit;
 }
 
 .FAQ-question:hover {
-  color: var(--color-primario-oscuro);
+  color: #60b5ff;
 }
 
 .FAQ-arrow {
@@ -87,8 +95,8 @@
   align-items: center;
   justify-content: center;
   border-radius: var(--radius-pill);
-  background: var(--color-primario-suave);
-  color: var(--color-primario-oscuro);
+  background: rgba(96, 181, 255, 0.15);
+  color: #60b5ff;
   font-size: 1.1rem;
   font-weight: 700;
   transition: transform 0.15s ease;
@@ -110,7 +118,7 @@
 .FAQ-answer p {
   margin: 0;
   font-size: var(--font-size-sm);
-  color: var(--color-texto-suave);
+  color: #94a3b8;
   line-height: 1.7;
 }
 

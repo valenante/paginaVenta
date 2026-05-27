@@ -1,10 +1,8 @@
 
 .Hero {
   padding: 5rem 0;
-  background:
-    radial-gradient(circle at top left, #60b5ff20 0, #0b1020 60%),
-    radial-gradient(circle at bottom right, #ff914930 0, #0b1020 70%);
-  color: #e2e8f0;
+  background: #f8fafc;
+  color: #1e293b;
 }
 
 .Hero-inner {
@@ -32,8 +30,8 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  background: rgba(96, 181, 255, 0.15);
-  color: #60b5ff;
+  background: rgba(96, 181, 255, 0.12);
+  color: #2563eb;
   margin-bottom: 0.9rem;
 }
 
@@ -42,13 +40,13 @@
   font-weight: 800;
   line-height: 1.15;
   margin: 0 0 0.9rem;
-  color: #fff;
+  color: #0f172a;
 }
 
 .Hero-parrafo {
   font-size: 1rem;
   line-height: 1.6;
-  color: rgba(226, 232, 240, 0.8);
+  color: #475569;
   margin: 0 0 1rem;
 }
 
@@ -57,7 +55,7 @@
   padding: 0;
   margin: 0 0 1.2rem;
   font-size: 0.9rem;
-  color: rgba(226, 232, 240, 0.9);
+  color: #334155;
 }
 
 .Hero-lista li {
@@ -66,10 +64,10 @@
 
 .Hero-aviso {
   font-size: 0.9rem;
-  color: #e2e8f0;
-  background: rgba(255, 255, 255, 0.06);
+  color: #334155;
+  background: #ffffff;
   border-radius: 12px;
-  border: 1px solid rgba(148, 163, 184, 0.2);
+  border: 1px solid #e2e8f0;
   padding: 0.8rem 1rem;
   margin-bottom: 1.3rem;
 }
@@ -102,10 +100,10 @@
 }
 
 .Hero-card {
-  background: rgba(255, 255, 255, 0.05);
+  background: #ffffff;
   border-radius: 24px;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
-  border: 1px solid rgba(148, 163, 184, 0.15);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e2e8f0;
   overflow: hidden;
   max-width: 420px;
   width: 100%;
@@ -124,21 +122,21 @@
   justify-content: flex-start;
   gap: 0.5rem;
   padding: 0.7rem 0.9rem 0.9rem;
-  background: rgba(0, 0, 0, 0.2);
+  background: #f1f5f9;
 }
 
 .Hero-chip {
   font-size: 0.75rem;
   padding: 0.25rem 0.7rem;
   border-radius: 999px;
-  background: rgba(96, 181, 255, 0.15);
-  color: #60b5ff;
+  background: rgba(37, 99, 235, 0.1);
+  color: #2563eb;
   font-weight: 600;
 }
 
 .Hero-chip--verde {
-  background: rgba(74, 222, 128, 0.15);
-  color: #4ade80;
+  background: rgba(22, 163, 74, 0.1);
+  color: #16a34a;
 }
 
 /* Responsive */

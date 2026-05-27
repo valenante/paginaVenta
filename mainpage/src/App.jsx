@@ -8,6 +8,7 @@ import Hero from "./components/Hero/Hero";
 import Funcionamiento from "./components/Funcionamiento/Funcionamiento";
 import Features from "./components/Features/Features";
 import Comparativa from "./components/Comparativa/Comparativa";
+import Clientes from "./components/Clientes/Clientes";
 import Packs from "./components/Packs/Packs";
 import FAQ from "./components/FAQ/FAQ";
 import Contact from "./components/Contact/Contact";
@@ -57,6 +58,7 @@ function LandingPage() {
       <TopBar />
       <Introduccion />
       <Features />
+      <Clientes />
       <Funcionamiento />
       <Comparativa />
       <Hero />

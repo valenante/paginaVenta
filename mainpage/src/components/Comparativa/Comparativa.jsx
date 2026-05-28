@@ -7,7 +7,7 @@ const filas = [
   { feature: "Facturas proveedor → stock automático", alef: "Incluido", separado: "50–150€/mes", manual: "1-2h/día a mano" },
   { feature: "Instagram automático", alef: "Incluido", separado: "150–350€/mes", manual: "3-5h/semana" },
   { feature: "Reseñas Google respondidas con IA", alef: "Incluido", separado: "0–50€/mes", manual: "30 min/día" },
-  { feature: "P&L y finanzas automáticas", alef: "Incluido", separado: "Incluido en gestoría", manual: "Excel y rezar" },
+  { feature: "P&L y finanzas automáticas", alef: "Incluido", separado: "No existe", manual: "Excel y rezar" },
   { feature: "Stock predictivo + pedidos a proveedor", alef: "Incluido", separado: "50–150€/mes", manual: "Ojo y papel" },
   { feature: "Carta digital QR + camarero IA", alef: "Incluido", separado: "30–80€/mes", manual: "PDF estático" },
   { feature: "Reservas con confirmación automática", alef: "Incluido", separado: "30–90€/mes", manual: "Libreta" },
@@ -59,7 +59,7 @@ export default function Comparativa() {
               <tr className="Comp-total-row">
                 <td className="Comp-feature"><strong>TOTAL MENSUAL</strong></td>
                 <td className="Comp-cell Comp-cell--alef"><strong className="Comp-total-alef">129€</strong></td>
-                <td className="Comp-cell"><strong className="Comp-total-cost">300–790€</strong></td>
+                <td className="Comp-cell"><strong className="Comp-total-cost">330–920€</strong></td>
                 <td className="Comp-cell"><strong className="Comp-total-manual">Tu tiempo + riesgo</strong></td>
               </tr>
             </tfoot>

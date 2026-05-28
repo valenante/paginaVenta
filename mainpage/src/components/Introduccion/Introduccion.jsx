@@ -38,7 +38,7 @@ const Introduccion = () => {
             </p>
 
             <div className="Introduccion-highlights">
-              <span>💰 Ahorra 300–800€/mes en herramientas que ya no necesitas</span>
+              <span>💰 Ahorra 330–870€/mes en herramientas que ya no necesitas</span>
               <span>⏱️ Recupera 2-3 horas diarias en tareas que se hacen solas</span>
               <span>📈 Protege tus márgenes — la IA detecta erosión antes que tú</span>
               <span>🤖 50 herramientas IA que responden con datos reales de TU restaurante</span>

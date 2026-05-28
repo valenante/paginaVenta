@@ -4,6 +4,7 @@ import "./Ahorro.css";
 const costes = [
   { servicio: "Community manager / Instagram", rango: "150–350€/mes", nota: "freelance, 3 posts por semana" },
   { servicio: "Software de inventario", rango: "50–150€/mes", nota: "MarketMan, Tiller, etc." },
+  { servicio: "Carta digital QR", rango: "30–80€/mes", nota: "Qamarero, OrderEat, etc." },
   { servicio: "Sistema de reservas", rango: "30–90€/mes", nota: "TheFork, CoverManager" },
   { servicio: "Gestión de reseñas", rango: "0–50€/mes", nota: "la mayoría no responde o lo hace manual" },
   { servicio: "TPV con soporte", rango: "50–100€/mes", nota: "solo comandas y cobros" },
@@ -27,7 +28,7 @@ export default function Ahorro() {
     <section className="Ahorro" id="ahorro">
       <div className="Ahorro-inner">
         <span className="Ahorro-kicker">El coste real de NO tener Alef</span>
-        <h2 className="Ahorro-titulo">Estás pagando 300–800€/mes sin saberlo</h2>
+        <h2 className="Ahorro-titulo">Estás pagando 330–870€/mes sin saberlo</h2>
         <p className="Ahorro-sub">Cada herramienta por separado tiene un coste. Alef las reemplaza todas.</p>
 
         <div className="Ahorro-grid">
@@ -45,7 +46,7 @@ export default function Ahorro() {
             ))}
             <div className="Ahorro-total-row">
               <span>TOTAL</span>
-              <span className="Ahorro-total-precio">300 – 790€/mes</span>
+              <span className="Ahorro-total-precio">330 – 870€/mes</span>
             </div>
           </div>
 

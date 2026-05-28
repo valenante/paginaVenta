@@ -4,14 +4,14 @@ import "./Comparativa.css";
 
 const filas = [
   { feature: "IA que analiza tu negocio (50 herramientas)", alef: "Incluido", separado: "No existe", manual: "Imposible" },
-  { feature: "Facturas proveedor → stock automático", alef: "Incluido", separado: "100–200€/mes", manual: "1-2h/día a mano" },
-  { feature: "Instagram automático", alef: "Incluido", separado: "300–700€/mes", manual: "3-5h/semana" },
-  { feature: "Reseñas Google respondidas con IA", alef: "Incluido", separado: "50–150€/mes", manual: "30 min/día" },
-  { feature: "P&L y finanzas automáticas", alef: "Incluido", separado: "500–1.500€/mes", manual: "Excel y rezar" },
-  { feature: "Stock predictivo + pedidos a proveedor", alef: "Incluido", separado: "100–200€/mes", manual: "Ojo y papel" },
-  { feature: "Carta digital QR + camarero IA", alef: "Incluido", separado: "50–100€/mes", manual: "PDF estático" },
-  { feature: "Reservas con confirmación automática", alef: "Incluido", separado: "50–150€/mes", manual: "Libreta" },
-  { feature: "Facturación VeriFactu", alef: "Incluido", separado: "30–80€/mes", manual: "No cumples la ley" },
+  { feature: "Facturas proveedor → stock automático", alef: "Incluido", separado: "50–150€/mes", manual: "1-2h/día a mano" },
+  { feature: "Instagram automático", alef: "Incluido", separado: "150–350€/mes", manual: "3-5h/semana" },
+  { feature: "Reseñas Google respondidas con IA", alef: "Incluido", separado: "0–50€/mes", manual: "30 min/día" },
+  { feature: "P&L y finanzas automáticas", alef: "Incluido", separado: "Incluido en gestoría", manual: "Excel y rezar" },
+  { feature: "Stock predictivo + pedidos a proveedor", alef: "Incluido", separado: "50–150€/mes", manual: "Ojo y papel" },
+  { feature: "Carta digital QR + camarero IA", alef: "Incluido", separado: "30–80€/mes", manual: "PDF estático" },
+  { feature: "Reservas con confirmación automática", alef: "Incluido", separado: "30–90€/mes", manual: "Libreta" },
+  { feature: "Facturación VeriFactu", alef: "Incluido", separado: "20–50€/mes", manual: "No cumples la ley" },
   { feature: "Coordinación cocina en tiempo real", alef: "Incluido", separado: "No existe", manual: "Gritar fuerte" },
 ];
 
@@ -59,7 +59,7 @@ export default function Comparativa() {
               <tr className="Comp-total-row">
                 <td className="Comp-feature"><strong>TOTAL MENSUAL</strong></td>
                 <td className="Comp-cell Comp-cell--alef"><strong className="Comp-total-alef">129€</strong></td>
-                <td className="Comp-cell"><strong className="Comp-total-cost">1.300–3.400€</strong></td>
+                <td className="Comp-cell"><strong className="Comp-total-cost">300–790€</strong></td>
                 <td className="Comp-cell"><strong className="Comp-total-manual">Tu tiempo + riesgo</strong></td>
               </tr>
             </tfoot>

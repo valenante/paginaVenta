@@ -2,13 +2,12 @@ import React from "react";
 import "./Ahorro.css";
 
 const costes = [
-  { servicio: "Community manager / Instagram", rango: "300–700€/mes", nota: "publicar 3 veces por semana" },
-  { servicio: "Software de inventario", rango: "100–200€/mes", nota: "MarketMan, Tiller, etc." },
-  { servicio: "Sistema de reservas", rango: "50–150€/mes", nota: "TheFork, CoverManager" },
-  { servicio: "Gestión de reseñas", rango: "50–150€/mes", nota: "responder Google/TripAdvisor" },
-  { servicio: "Analista / controller externo", rango: "500–1.500€/mes", nota: "saber si tu negocio es rentable" },
-  { servicio: "TPV con soporte", rango: "80–150€/mes", nota: "solo comandas y cobros" },
-  { servicio: "Facturación certificada", rango: "30–80€/mes", nota: "para cumplir VeriFactu" },
+  { servicio: "Community manager / Instagram", rango: "150–350€/mes", nota: "freelance, 3 posts por semana" },
+  { servicio: "Software de inventario", rango: "50–150€/mes", nota: "MarketMan, Tiller, etc." },
+  { servicio: "Sistema de reservas", rango: "30–90€/mes", nota: "TheFork, CoverManager" },
+  { servicio: "Gestión de reseñas", rango: "0–50€/mes", nota: "la mayoría no responde o lo hace manual" },
+  { servicio: "TPV con soporte", rango: "50–100€/mes", nota: "solo comandas y cobros" },
+  { servicio: "Facturación certificada", rango: "20–50€/mes", nota: "para cumplir VeriFactu" },
 ];
 
 const incluido = [
@@ -28,7 +27,7 @@ export default function Ahorro() {
     <section className="Ahorro" id="ahorro">
       <div className="Ahorro-inner">
         <span className="Ahorro-kicker">El coste real de NO tener Alef</span>
-        <h2 className="Ahorro-titulo">Estás pagando 1.300–3.400€/mes sin saberlo</h2>
+        <h2 className="Ahorro-titulo">Estás pagando 300–800€/mes sin saberlo</h2>
         <p className="Ahorro-sub">Cada herramienta por separado tiene un coste. Alef las reemplaza todas.</p>
 
         <div className="Ahorro-grid">
@@ -46,7 +45,7 @@ export default function Ahorro() {
             ))}
             <div className="Ahorro-total-row">
               <span>TOTAL</span>
-              <span className="Ahorro-total-precio">1.110 – 2.930€/mes</span>
+              <span className="Ahorro-total-precio">300 – 790€/mes</span>
             </div>
           </div>
 

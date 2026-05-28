@@ -247,21 +247,76 @@
 }
 
 
-/* CARTA – tarjeta frontal */
-.hero-secondary {
+/* =======================================================
+   PHONE MOCKUP — iPhone CSS frame
+   ======================================================= */
+
+.phone-mockup.hero-secondary {
   position: relative;
-  width: 44%;
-  transform: translate(10%, -6%) rotate(-10deg) translateZ(70px);
+  width: 38%;
+  transform: translate(10%, -6%) rotate(-6deg) translateZ(70px);
   z-index: 3;
   opacity: 1;
   animation: cartaFloat 8s ease-in-out infinite;
-  padding: 2vh;
+  padding: 0;
+
+  /* Frame del dispositivo */
+  background: #1a1a1a;
+  border-radius: 44px;
+  border: 3px solid #2a2a2a;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.08),
+    0 25px 60px rgba(0, 0, 0, 0.7),
+    0 8px 20px rgba(0, 0, 0, 0.4),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+  overflow: hidden;
+}
+
+/* Dynamic Island */
+.phone-notch {
+  position: relative;
+  z-index: 5;
+  width: 92px;
+  height: 26px;
+  margin: 10px auto 0;
+  background: #000;
+  border-radius: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+/* Pantalla */
+.phone-screen {
+  margin: 6px 6px 0;
+  border-radius: 36px 36px 0 0;
+  overflow: hidden;
+  background: #000;
+  aspect-ratio: 9 / 19.5;
+}
+
+.phone-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Barra Home inferior */
+.phone-home-bar {
+  width: 96px;
+  height: 4px;
+  margin: 8px auto 10px;
+  background: rgba(255, 255, 255, 0.35);
+  border-radius: 4px;
 }
 
 /* Hover/parallax */
 .hero-stack:hover .hero-secondary {
-  transform: translate(14%, -10%) rotate(-12deg) translateZ(80px) scale(1.03);
-  box-shadow: 0 38px 90px rgba(0, 0, 0, 0.9);
+  transform: translate(14%, -10%) rotate(-8deg) translateZ(80px) scale(1.03);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.1),
+    0 38px 90px rgba(0, 0, 0, 0.9),
+    0 12px 30px rgba(0, 0, 0, 0.5),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.06);
 }
 
 .hero-stack:hover .hero-main {
@@ -366,15 +421,15 @@
 
 @keyframes cartaFloat {
   0% {
-    transform: translate(10%, -6%) rotate(-10deg) translateZ(70px);
+    transform: translate(10%, -6%) rotate(-6deg) translateZ(70px);
   }
 
   50% {
-    transform: translate(8%, 0%) rotate(-8deg) translateZ(80px);
+    transform: translate(8%, 0%) rotate(-4deg) translateZ(80px);
   }
 
   100% {
-    transform: translate(10%, -6%) rotate(-10deg) translateZ(70px);
+    transform: translate(10%, -6%) rotate(-6deg) translateZ(70px);
   }
 }
 
@@ -461,8 +516,26 @@
     padding: 10px 8px 56px;
   }
 
-  .hero-secondary {
-    width: 78%;
+  .phone-mockup.hero-secondary {
+    width: 52%;
+    border-radius: 32px;
+  }
+
+  .phone-notch {
+    width: 72px;
+    height: 22px;
+    margin-top: 8px;
+  }
+
+  .phone-screen {
+    margin: 4px 4px 0;
+    border-radius: 26px 26px 0 0;
+  }
+
+  .phone-home-bar {
+    width: 72px;
+    height: 3px;
+    margin: 6px auto 8px;
   }
 
   .hero-main {

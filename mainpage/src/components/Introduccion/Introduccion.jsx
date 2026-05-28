@@ -1,8 +1,8 @@
 import React from "react";
 import "./Introduccion.css";
 import letrasalefsinfondo from "../../assets/imagenes/letrasalefsinfondo.png";
-import cartaMain from "../../assets/imagenes/cartaMain.png";
 import verifactuLogo from "../../assets/imagenes/verifactu.png";
+import tpvDemo from "../../assets/videos/tpv-demo.mp4";
 
 const Introduccion = () => {
   return (
@@ -97,11 +97,20 @@ const Introduccion = () => {
                 className="hero-img hero-main"
               />
 
-              <img
-                src={cartaMain}
-                alt="Alef en movil, tablet y TPV"
-                className="hero-img hero-secondary"
-              />
+              <div className="phone-mockup hero-secondary">
+                <div className="phone-notch" />
+                <div className="phone-screen">
+                  <video
+                    src={tpvDemo}
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    className="phone-video"
+                  />
+                </div>
+                <div className="phone-home-bar" />
+              </div>
             </div>
           </div>
         </div>

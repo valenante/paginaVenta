@@ -12,6 +12,7 @@ import Clientes from "./components/Clientes/Clientes";
 import Ahorro from "./components/Ahorro/Ahorro";
 import SocialAuto from "./components/SocialAuto/SocialAuto";
 import FeaturesGrid from "./components/FeaturesGrid/FeaturesGrid";
+import CartaShowcase from "./components/CartaShowcase/CartaShowcase";
 import Packs from "./components/Packs/Packs";
 import FAQ from "./components/FAQ/FAQ";
 import Contact from "./components/Contact/Contact";
@@ -62,6 +63,7 @@ function LandingPage() {
       <Introduccion />
       <Ahorro />
       <Features />
+      <CartaShowcase />
       <SocialAuto />
       <FeaturesGrid />
       <Clientes />

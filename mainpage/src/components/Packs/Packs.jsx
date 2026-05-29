@@ -40,7 +40,7 @@ const Packs = () => {
         <div className="fila-superior">
           <div className="packs-header">
             <span className="packs-kicker">Sin permanencia. Sin letra pequeña.</span>
-            <h2>Desde 59€/mes. Todo incluido.</h2>
+            <h2>Todo incluido. Sin permanencia.</h2>
             <p>
               Todos los planes incluyen copiloto IA, automatizaciones, carta digital, VeriFactu y soporte.
               La única diferencia es el tamaño de tu negocio.

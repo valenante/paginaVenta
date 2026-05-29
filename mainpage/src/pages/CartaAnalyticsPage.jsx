@@ -287,9 +287,143 @@ export default function CartaAnalyticsPage({ onBack }) {
               </div>
             )}
           </div>
+
+          {/* Sugerencias */}
+          <SugerenciasSection dias={dias} resumen={r} />
         </>
       )}
     </div>
+  );
+}
+
+function SugerenciasSection({ dias, resumen }) {
+  const sug = useMemo(() => {
+    // Agregar sugerencias de todos los días
+    let mostradas = 0, añadidas = 0, descartadas = 0;
+    const touchpoints = { carrito: { mostradas: 0, añadidas: 0 }, detalleProducto: { mostradas: 0, añadidas: 0 }, postPedido: { mostradas: 0, añadidas: 0 } };
+    const topMap = new Map();
+
+    for (const d of dias) {
+      const s = d.sugerencias;
+      if (!s) continue;
+      mostradas += s.mostradas || 0;
+      añadidas += s.añadidas || 0;
+      descartadas += s.descartadas || 0;
+      if (s.porTouchpoint) {
+        for (const [tp, v] of Object.entries(s.porTouchpoint)) {
+          if (touchpoints[tp]) {
+            touchpoints[tp].mostradas += v.mostradas || 0;
+            touchpoints[tp].añadidas += v.añadidas || 0;
+          }
+        }
+      }
+      for (const t of (s.topSugerencias || [])) {
+        const key = t.productId || t.nombre;
+        const acc = topMap.get(key) || { nombre: t.nombre, mostradas: 0, añadidas: 0 };
+        acc.mostradas += t.mostradas || 0;
+        acc.añadidas += t.añadidas || 0;
+        topMap.set(key, acc);
+      }
+    }
+
+    const top = [...topMap.values()]
+      .map(t => ({ ...t, rate: t.mostradas > 0 ? Math.round((t.añadidas / t.mostradas) * 1000) / 10 : 0 }))
+      .sort((a, b) => b.añadidas - a.añadidas)
+      .slice(0, 10);
+
+    const conversionRate = mostradas > 0 ? Math.round((añadidas / mostradas) * 1000) / 10 : 0;
+
+    return { mostradas, añadidas, descartadas, conversionRate, touchpoints, top };
+  }, [dias]);
+
+  if (sug.mostradas === 0 && sug.añadidas === 0) {
+    return (
+      <div className="carta-analytics__card">
+        <h3>Sugerencias inteligentes</h3>
+        <p className="carta-analytics__muted">Las metricas de sugerencias se agregan cada noche. Los datos aparecaran manana.</p>
+      </div>
+    );
+  }
+
+  const tpList = [
+    { key: "carrito", label: "Carrito", emoji: "🛒" },
+    { key: "detalleProducto", label: "Detalle producto", emoji: "📋" },
+    { key: "postPedido", label: "Post-pedido", emoji: "🍰" },
+  ];
+
+  return (
+    <>
+      <div className="carta-analytics__card">
+        <h3>Sugerencias inteligentes</h3>
+        <div className="carta-analytics__kpis" style={{ marginBottom: 16 }}>
+          <div className="carta-analytics__kpi">
+            <span className="kpi-value">{sug.mostradas}</span>
+            <span className="kpi-label">Mostradas</span>
+          </div>
+          <div className="carta-analytics__kpi">
+            <span className="kpi-value">{sug.añadidas}</span>
+            <span className="kpi-label">Anadidas al carrito</span>
+          </div>
+          <div className="carta-analytics__kpi">
+            <span className="kpi-value">{sug.descartadas}</span>
+            <span className="kpi-label">Descartadas</span>
+          </div>
+          <div className="carta-analytics__kpi">
+            <span className="kpi-value" style={{ color: sug.conversionRate >= 10 ? "#16a34a" : sug.conversionRate >= 5 ? "#eab308" : "#ef4444" }}>
+              {sug.conversionRate}%
+            </span>
+            <span className="kpi-label">Conversion</span>
+          </div>
+        </div>
+
+        {/* Por touchpoint */}
+        <h4 style={{ fontSize: "0.88rem", fontWeight: 700, marginBottom: 8 }}>Por punto de contacto</h4>
+        <div className="carta-analytics__table-wrap">
+          <table className="carta-analytics__table">
+            <thead><tr><th>Touchpoint</th><th>Mostradas</th><th>Anadidas</th><th>Conversion</th></tr></thead>
+            <tbody>
+              {tpList.map(({ key, label, emoji }) => {
+                const tp = sug.touchpoints[key];
+                const rate = tp.mostradas > 0 ? Math.round((tp.añadidas / tp.mostradas) * 1000) / 10 : 0;
+                const color = rate >= 10 ? "#16a34a" : rate >= 5 ? "#eab308" : "#ef4444";
+                return (
+                  <tr key={key}>
+                    <td className="prod-name">{emoji} {label}</td>
+                    <td className="num">{tp.mostradas}</td>
+                    <td className="num">{tp.añadidas}</td>
+                    <td className="num"><span className="ratio-badge" style={{ background: tp.mostradas > 0 ? color : "#9ca3af" }}>{rate}%</span></td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {sug.top.length > 0 && (
+        <div className="carta-analytics__card">
+          <h3>Top sugerencias que convierten</h3>
+          <div className="carta-analytics__table-wrap">
+            <table className="carta-analytics__table">
+              <thead><tr><th>Producto sugerido</th><th>Mostrado</th><th>Anadido</th><th>Conversion</th></tr></thead>
+              <tbody>
+                {sug.top.map((t, i) => {
+                  const color = t.rate >= 15 ? "#16a34a" : t.rate >= 5 ? "#eab308" : "#ef4444";
+                  return (
+                    <tr key={i}>
+                      <td className="prod-name">{t.nombre}</td>
+                      <td className="num">{t.mostradas}</td>
+                      <td className="num">{t.añadidas}</td>
+                      <td className="num"><span className="ratio-badge" style={{ background: t.mostradas > 0 ? color : "#9ca3af" }}>{t.rate}%</span></td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
 

@@ -12,7 +12,7 @@ const filas = [
   { feature: "Instagram automático", alef: "Incluido", separado: "200–500€/mes", manual: "3-5h/semana" },
   { feature: "Reseñas Google respondidas", alef: "Incluido", separado: "No se hace", manual: "30 min/día" },
   { feature: "Facturación VeriFactu", alef: "Incluido", separado: "20–50€/mes", manual: "No cumples la ley" },
-  { feature: "Cocina conectada en tiempo real", alef: "Incluido", separado: "No existe", manual: "Gritar fuerte" },
+  { feature: "Cocina conectada con predicciones", alef: "Incluido", separado: "KDS básico", manual: "Gritar fuerte" },
 ];
 
 function renderCell(val) {

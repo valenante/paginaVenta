@@ -32,7 +32,7 @@ const preguntas = [
   },
   {
     q: "¿Cómo funciona lo de las facturas automáticas?",
-    a: "Cuando un proveedor te envía una factura por email, el sistema la lee automáticamente, extrae los productos y precios, y actualiza tu stock y tus costes. Tú no haces nada — solo ves el resultado.",
+    a: "Cuando un proveedor te envía una factura por email, el sistema la lee automáticamente, extrae los productos y precios, y actualiza tu stock y tus costes. Si la factura llega en papel, la escaneas con la cámara del móvil. Además, toda la documentación se envía automáticamente a tu gestoría.",
   },
   {
     q: "¿Realmente publica en Instagram solo?",
@@ -40,7 +40,7 @@ const preguntas = [
   },
   {
     q: "¿Responde reseñas de Google automáticamente?",
-    a: "Sí. Cuando recibes una reseña, el sistema genera una respuesta personalizada con el tono adecuado. Las reseñas negativas generan alerta inmediata para que actúes. Los restaurantes que responden reseñas suben hasta un 15% en visibilidad.",
+    a: "Sí. Cuando recibes una reseña, el sistema genera una respuesta personalizada con el tono adecuado. Las reseñas negativas generan alerta inmediata para que actúes.",
   },
   {
     q: "¿Puedo probarlo antes de pagar?",
@@ -58,20 +58,25 @@ export default function FAQ() {
   return (
     <section className="FAQ" id="faq">
       <div className="FAQ-inner">
-        <h2 className="FAQ-titulo">Preguntas frecuentes</h2>
+        <div className="FAQ-header">
+          <h2>Preguntas frecuentes</h2>
+        </div>
 
-        <div className="FAQ-lista">
+        <div className="FAQ-list">
           {preguntas.map((p, i) => (
             <div
               key={i}
               className={`FAQ-item ${abierta === i ? "FAQ-item--open" : ""}`}
-              onClick={() => setAbierta(abierta === i ? null : i)}
             >
-              <div className="FAQ-q">
+              <button className="FAQ-question" onClick={() => setAbierta(abierta === i ? null : i)}>
                 <span>{p.q}</span>
                 <span className="FAQ-arrow">{abierta === i ? "−" : "+"}</span>
-              </div>
-              {abierta === i && <p className="FAQ-a">{p.a}</p>}
+              </button>
+              {abierta === i && (
+                <div className="FAQ-answer">
+                  <p>{p.a}</p>
+                </div>
+              )}
             </div>
           ))}
         </div>

@@ -5,7 +5,7 @@ const dolores = [
   {
     titulo: "Cargar facturas a mano",
     antes: "Cada factura de proveedor llega por email o en papel. La abres, la lees, la cargas en el sistema, actualizas precios uno a uno.",
-    conAlef: "ALEF procesa tus facturas automáticamente — las que llegan por email se leen solas, y las que llegan en papel las escaneas con la cámara del móvil. Tu stock y tus costes se actualizan al instante.",
+    conAlef: "ALEF procesa tus facturas automáticamente — las que llegan por email se leen solas, y las que llegan en papel las escaneas con la cámara del móvil. Tu stock y tus costes se actualizan al instante. Y toda la documentación se envía automáticamente a tu gestoría.",
   },
   {
     titulo: "Descubrir tarde que te subieron precios",

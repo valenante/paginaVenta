@@ -14,8 +14,8 @@ const tierS = [
   {
     icono: "🛡️",
     kicker: "Protege tus márgenes",
-    titulo: "Si un proveedor sube precios, lo sabes en 48 horas. No en 3 meses.",
-    desc: "El sistema detecta automáticamente cambios de precio en tus proveedores, calcula qué platos pierden margen y te sugiere a cuánto ajustar el precio para mantener tu rentabilidad.",
+    titulo: "Si un proveedor sube precios, lo sabes al momento. No al final de mes.",
+    desc: "El sistema detecta automáticamente cambios de precio, calcula qué platos pierden margen y te sugiere a cuánto ajustar el precio para mantener tu rentabilidad.",
   },
   {
     icono: "📦",

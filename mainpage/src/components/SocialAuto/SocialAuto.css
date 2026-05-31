@@ -42,11 +42,11 @@
   color: #f1f5f9;
 }
 
-/* Grid 2 columnas */
+/* Grid 3 columnas */
 .Social-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 2rem;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
   width: 100%;
 }
 
@@ -95,9 +95,9 @@
 }
 
 .Social-card-title {
-  font-size: 1.15rem;
+  font-size: 1.05rem;
   font-weight: 800;
-  color: #0f172a;
+  color: #f1f5f9;
   margin: 0;
   line-height: 1.3;
 }
@@ -112,8 +112,8 @@
 }
 
 .Social-card-list li {
-  font-size: 0.88rem;
-  color: #475569;
+  font-size: 0.85rem;
+  color: #cbd5e1;
   padding-left: 20px;
   position: relative;
   line-height: 1.5;
@@ -145,8 +145,30 @@
   margin-top: 0.5rem;
 }
 
+.Social-card-badge--blue {
+  background: rgba(96, 181, 255, 0.08);
+  color: #60b5ff;
+}
+
+.Social-nota {
+  font-size: 0.85rem;
+  color: #94a3b8;
+  text-align: center;
+  max-width: 700px;
+  line-height: 1.6;
+  font-style: italic;
+}
+
+.Social-card-link {
+  color: #60b5ff;
+}
+
+.Social-card-link:hover {
+  color: #93c5fd;
+}
+
 /* Responsive */
-@media (max-width: 768px) {
+@media (max-width: 900px) {
   .Social-grid {
     grid-template-columns: 1fr;
   }

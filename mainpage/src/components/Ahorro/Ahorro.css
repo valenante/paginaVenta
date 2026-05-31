@@ -102,7 +102,7 @@
 /* Derecha: la solución (celeste ALEF) */
 .Ahorro-dolor-despues {
   padding: 2rem;
-  background: linear-gradient(135deg, #eff6ff, #f0f9ff);
+  background: linear-gradient(135deg, #eef7ff, #f2f9ff);
   display: flex;
   flex-direction: column;
   gap: 0.7rem;
@@ -116,7 +116,7 @@
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: #1d4ed8;
+  color: #3a9be0;
 }
 
 .Ahorro-dolor-despues-label::before {
@@ -127,7 +127,7 @@
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background: #2563eb;
+  background: #60b5ff;
   color: white;
   font-size: 0.65rem;
   font-weight: 700;
@@ -136,7 +136,7 @@
 .Ahorro-dolor-despues p {
   font-size: 0.88rem;
   line-height: 1.65;
-  color: #1e40af;
+  color: #2d7ab5;
   margin: 0;
 }
 

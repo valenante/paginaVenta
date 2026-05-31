@@ -10,13 +10,13 @@ const clientes = [
     nombre: "Zabor Feten",
     logo: logoZF,
     slug: "zabor-feten",
-    ciudad: "Torremolinos, Malaga",
+    ciudad: "Torremolinos, Málaga",
   },
   {
-    nombre: "Bodegon Argentino",
+    nombre: "Bodegón Argentino",
     logo: logoBA,
     slug: "bodegon-argentino",
-    ciudad: "Torremolinos, Malaga",
+    ciudad: "Torremolinos, Málaga",
   },
 ];
 
@@ -24,7 +24,7 @@ export default function Clientes() {
   return (
     <section className="Clientes" id="clientes">
       <div className="Clientes-inner">
-        <span className="Clientes-kicker">Restaurantes que confian en Alef</span>
+        <span className="Clientes-kicker">Restaurantes que confían en ALEF</span>
         <h2 className="Clientes-titulo">Funcionando en restaurantes reales cada día</h2>
         <p className="Clientes-sub">
           Estos restaurantes ya gestionan su operativa, stock, finanzas y cocina con Alef.

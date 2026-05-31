@@ -80,7 +80,7 @@ export default function GuiaVerifactu() {
       <h2>¿Que tengo que hacer yo como restaurante?</h2>
       <ol>
         <li><strong>Usar Alef como tu TPV.</strong> Al usar Alef para emitir facturas y tickets, ya cumples con los requisitos tecnicos de la ley.</li>
-        <li><strong>Configurar tus datos fiscales.</strong> Desde el panel de Alef, introduce tu NIF/CIF, razon social y direccion fiscal. Alef los incluye automaticamente en cada factura.</li>
+        <li><strong>Configurar tus datos fiscales.</strong> Desde el panel de Alef, introduce tu NIF/CIF, razón social y direccion fiscal. Alef los incluye automaticamente en cada factura.</li>
         <li><strong>No modificar facturas fuera del sistema.</strong> Si necesitas anular o rectificar una factura, hazlo siempre desde Alef. El sistema registra cada cambio con su hash.</li>
         <li><strong>Nada mas.</strong> Alef se encarga del resto: encadenamiento, hash, registro, QR y envio a Hacienda.</li>
       </ol>

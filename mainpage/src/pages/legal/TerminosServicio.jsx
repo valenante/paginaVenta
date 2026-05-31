@@ -14,7 +14,7 @@ export default function TerminosServicio() {
       </ul>
 
       <h2>2. Objeto</h2>
-      <p>Estas condiciones regulan el acceso y uso de la plataforma Alef ("el Servicio"), incluyendo el TPV web, la carta digital, el panel de gestion, la impresion de tickets, y cualquier funcionalidad ofrecida a traves de softalef.com y sus subdominios.</p>
+      <p>Estas condiciones regulan el acceso y uso de la plataforma Alef ("el Servicio"), incluyendo el TPV web, la carta digital, el panel de gestion, la impresion de tickets, y cualquier funcionalidad ofrecida a través de softalef.com y sus subdominios.</p>
       <p>Al registrarte y/o pagar una suscripcion, aceptas estas condiciones en su totalidad.</p>
 
       <h2>3. Alta y cuenta de usuario</h2>
@@ -22,7 +22,7 @@ export default function TerminosServicio() {
       <p>El titular es responsable de mantener la confidencialidad de sus credenciales y de toda la actividad bajo su cuenta. Puede crear cuentas adicionales para su personal con distintos niveles de permisos.</p>
 
       <h2>4. Planes, precios y facturacion</h2>
-      <p>Alef ofrece distintos planes de suscripcion publicados en softalef.com. Los precios no incluyen IVA salvo indicacion expresa. La suscripcion se cobra de forma recurrente (mensual o anual) a traves de Stripe.</p>
+      <p>Alef ofrece distintos planes de suscripcion publicados en softalef.com. Los precios no incluyen IVA salvo indicacion expresa. La suscripcion se cobra de forma recurrente (mensual o anual) a través de Stripe.</p>
       <p>Alef puede modificar los precios con un preaviso de 30 dias por email. Si un cobro falla, el titular dispone de 15 dias para actualizar su metodo de pago antes de que la cuenta sea suspendida.</p>
 
       <h2>5. Cancelacion y reembolsos</h2>
@@ -62,7 +62,7 @@ export default function TerminosServicio() {
 
       <h2>11. Propiedad intelectual y de datos</h2>
       <p>Alef, su codigo, marca y logotipos son propiedad del prestador. El titular conserva la propiedad sobre sus datos y contenido. El titular concede a Alef una licencia limitada para procesar dicho contenido con el fin de prestar el Servicio.</p>
-      <p>Las configuraciones del tenant (productos, precios, categorias, recetas, mapa de mesas) son propiedad del titular. Alef ofrece exportacion de datos en formatos estandar (CSV, JSON) a peticion del titular o a traves del panel de gestion.</p>
+      <p>Las configuraciones del tenant (productos, precios, categorias, recetas, mapa de mesas) son propiedad del titular. Alef ofrece exportacion de datos en formatos estandar (CSV, JSON) a peticion del titular o a través del panel de gestion.</p>
 
       <h2>12. Limitacion de responsabilidad</h2>
       <p>La responsabilidad total de Alef no excedera el importe pagado por el titular en los 12 meses anteriores al evento. Quedan excluidas de esta limitacion las responsabilidades derivadas de dolo o negligencia grave, asi como las obligaciones en materia de proteccion de datos personales.</p>

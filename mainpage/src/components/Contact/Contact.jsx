@@ -116,7 +116,7 @@ const Contact = () => {
 
         {/* LADO DERECHO: FORMULARIO */}
         <div className="Contact-right">
-          <form className="Contact-form card" onSubmit={handleSubmit}>
+          <form className="Contact-form" onSubmit={handleSubmit}>
             <div className="Contact-form-header">
               <h3>Solicitar demo</h3>
               <p>Te contactaremos en menos de 24 horas.</p>

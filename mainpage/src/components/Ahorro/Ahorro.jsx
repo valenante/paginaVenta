@@ -5,7 +5,7 @@ const dolores = [
   {
     titulo: "Facturas, stock y costes a mano",
     antes: "Cada factura hay que cargarla, cada precio hay que actualizarlo, cada pedido a proveedor hay que hacerlo a mano. Horas perdidas cada semana.",
-    conAlef: "Las facturas se procesan solas (email o cámara), el stock se actualiza con cada venta, los pedidos a proveedor se generan automáticamente. La documentación se envía a tu gestoría sin que hagas nada.",
+    conAlef: "Las facturas se procesan solas (email o cámara), el stock se actualiza con cada venta y los pedidos a proveedor se generan automáticamente. La documentación se envía a tu gestoría sin que hagas nada.",
   },
   {
     titulo: "No saber realmente cuánto ganas",
@@ -20,7 +20,7 @@ const dolores = [
   {
     titulo: "Tiempo perdido en tareas que podrían hacerse solas",
     antes: "Publicar en redes, responder reseñas, gestionar reservas, planificar turnos, revisar estadísticas. Todo manual, todo disperso, todo resta tiempo al negocio.",
-    conAlef: "Instagram se publica solo, las reseñas se responden automáticamente, las reservas se confirman sin intervención y los turnos se planifican según la demanda prevista. Tú te centras en dirigir.",
+    conAlef: "Instagram se publica solo, las reseñas se responden automáticamente, las reservas se confirman sin intervención y los turnos se planifican según la demanda prevista.",
   },
 ];
 
@@ -34,16 +34,13 @@ export default function Ahorro() {
         <div className="Ahorro-dolores">
           {dolores.map((d, i) => (
             <div key={i} className="Ahorro-dolor">
-              <h3 className="Ahorro-dolor-titulo">{d.titulo}</h3>
-              <div className="Ahorro-dolor-grid">
-                <div className="Ahorro-dolor-antes">
-                  <span className="Ahorro-dolor-tag">Hoy</span>
-                  <p>{d.antes}</p>
-                </div>
-                <div className="Ahorro-dolor-despues">
-                  <span className="Ahorro-dolor-tag Ahorro-dolor-tag--alef">Con ALEF</span>
-                  <p>{d.conAlef}</p>
-                </div>
+              <div className="Ahorro-dolor-antes">
+                <h3 className="Ahorro-dolor-titulo">{d.titulo}</h3>
+                <p>{d.antes}</p>
+              </div>
+              <div className="Ahorro-dolor-despues">
+                <div className="Ahorro-dolor-despues-label">Con ALEF</div>
+                <p>{d.conAlef}</p>
               </div>
             </div>
           ))}

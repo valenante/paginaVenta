@@ -9,13 +9,13 @@
 }
 
 .Ahorro-inner {
-  max-width: 900px;
+  max-width: 1100px;
   margin: auto;
   padding: 0 1.5rem;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2.5rem;
+  gap: 3rem;
 }
 
 .Ahorro-titulo {
@@ -35,70 +35,103 @@
   max-width: 600px;
 }
 
-/* Dolores grid */
+/* Grid 2x2 */
 .Ahorro-dolores {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 1.5rem;
   width: 100%;
 }
 
 .Ahorro-dolor {
   background: white;
+  border-radius: 20px;
+  overflow: hidden;
   border: 1px solid #e2e8f0;
-  border-radius: 16px;
-  padding: 1.5rem 2rem;
-  transition: box-shadow 0.2s ease;
+  transition: box-shadow 0.25s ease, transform 0.25s ease;
 }
 
 .Ahorro-dolor:hover {
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
+  transform: translateY(-3px);
+}
+
+/* Top: el problema (rojo sutil) */
+.Ahorro-dolor-antes {
+  padding: 1.5rem 1.8rem;
+  background: linear-gradient(135deg, #fef2f2, #fff5f5);
+  border-bottom: 1px solid #fecaca;
 }
 
 .Ahorro-dolor-titulo {
-  font-size: 1.15rem;
-  font-weight: 700;
+  font-size: 1.05rem;
+  font-weight: 800;
   color: #0f172a;
-  margin: 0 0 1rem;
-}
-
-.Ahorro-dolor-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
-}
-
-.Ahorro-dolor-antes,
-.Ahorro-dolor-despues {
+  margin: 0 0 0.6rem;
   display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
+  align-items: center;
+  gap: 8px;
 }
 
-.Ahorro-dolor-antes p,
-.Ahorro-dolor-despues p {
-  font-size: 0.9rem;
+.Ahorro-dolor-titulo::before {
+  content: "✗";
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #dc2626;
+  color: white;
+  font-size: 0.7rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.Ahorro-dolor-antes p {
+  font-size: 0.88rem;
   line-height: 1.6;
-  color: #475569;
+  color: #71717a;
   margin: 0;
 }
 
-.Ahorro-dolor-tag {
-  display: inline-block;
+/* Bottom: la solución (verde sutil) */
+.Ahorro-dolor-despues {
+  padding: 1.5rem 1.8rem;
+  background: linear-gradient(135deg, #f0fdf4, #f5fff8);
+}
+
+.Ahorro-dolor-despues-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   font-size: 0.7rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  padding: 3px 10px;
-  border-radius: 999px;
-  background: rgba(239, 68, 68, 0.08);
-  color: #dc2626;
-  width: fit-content;
+  color: #16a34a;
+  margin-bottom: 0.5rem;
 }
 
-.Ahorro-dolor-tag--alef {
-  background: rgba(22, 163, 74, 0.08);
-  color: #16a34a;
+.Ahorro-dolor-despues-label::before {
+  content: "✓";
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #16a34a;
+  color: white;
+  font-size: 0.65rem;
+  font-weight: 700;
+}
+
+.Ahorro-dolor-despues p {
+  font-size: 0.88rem;
+  line-height: 1.6;
+  color: #374151;
+  margin: 0;
 }
 
 .Ahorro-cta-wrap {
@@ -111,15 +144,11 @@
 
 /* Responsive */
 @media (max-width: 768px) {
-  .Ahorro-dolor-grid {
+  .Ahorro-dolores {
     grid-template-columns: 1fr;
   }
 
   .Ahorro-titulo {
     font-size: 1.6rem;
-  }
-
-  .Ahorro-dolor {
-    padding: 1.2rem 1.5rem;
   }
 }

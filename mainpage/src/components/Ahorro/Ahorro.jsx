@@ -3,24 +3,24 @@ import "./Ahorro.css";
 
 const dolores = [
   {
-    titulo: "Cargar facturas a mano",
-    antes: "Cada factura de proveedor llega por email o en papel. La abres, la lees, la cargas en el sistema, actualizas precios uno a uno.",
-    conAlef: "ALEF procesa tus facturas automáticamente — las que llegan por email se leen solas, y las que llegan en papel las escaneas con la cámara del móvil. Tu stock y tus costes se actualizan al instante. Y toda la documentación se envía automáticamente a tu gestoría.",
+    titulo: "Facturas, stock y costes a mano",
+    antes: "Cada factura hay que cargarla, cada precio hay que actualizarlo, cada pedido a proveedor hay que hacerlo a mano. Horas perdidas cada semana.",
+    conAlef: "Las facturas se procesan solas (email o cámara), el stock se actualiza con cada venta, los pedidos a proveedor se generan automáticamente. La documentación se envía a tu gestoría sin que hagas nada.",
   },
   {
-    titulo: "Descubrir tarde que te subieron precios",
-    antes: "Un proveedor sube un 15% y no te enteras hasta final de mes. Tus márgenes se erosionan sin que lo sepas.",
-    conAlef: "ALEF detecta automáticamente cambios de precio y te dice exactamente qué platos pierden margen y a cuánto subirlos.",
+    titulo: "No saber realmente cuánto ganas",
+    antes: "Facturas mucho pero no sabes qué platos te dan dinero. Un proveedor sube precios y no te enteras hasta final de mes.",
+    conAlef: "ALEF calcula el margen real de cada producto, detecta cambios de precio y te dice exactamente qué ajustar. Sabes qué vender más y qué quitar de la carta.",
   },
   {
-    titulo: "Quedarte sin producto un viernes",
-    antes: "El stock se controla de memoria o con una hoja de Excel. Cuando falta algo, ya es demasiado tarde.",
-    conAlef: "ALEF predice tu consumo de los próximos 7 días y genera pedidos a proveedor antes de que te falte nada.",
+    titulo: "Cocina y sala desconectadas",
+    antes: "Las comandas se pierden, cocina no sabe qué viene, los tiempos se alargan. Errores de coordinación que afectan al servicio.",
+    conAlef: "Comandas en tiempo real por estación, tiempos controlados, y cocina que sabe qué pedidos vienen antes de que lleguen. Menos errores, mejor servicio.",
   },
   {
-    titulo: "No saber qué platos te dan dinero",
-    antes: "Facturas mucho, pero no sabes cuánto ganas realmente con cada plato. Los costes cambian y los márgenes también.",
-    conAlef: "ALEF calcula el margen real de cada producto en tiempo real. Sabes qué vender más y qué replantear.",
+    titulo: "Instagram, reservas, turnos — todo por separado",
+    antes: "Una app para reservas, otra para Instagram, otra para turnos, otra para estadísticas. Cada una con su coste y su gestión.",
+    conAlef: "Instagram se publica solo, las reservas se confirman automáticamente, los turnos se planifican según demanda y las reseñas de Google se responden solas. Todo desde un mismo sitio.",
   },
 ];
 

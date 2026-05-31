@@ -6,34 +6,34 @@ import "./Features.css";
 
 const tierS = [
   {
-    icono: "📧",
-    kicker: "Deja de cargar facturas a mano",
-    titulo: "Tu proveedor envía una factura. Tu stock se actualiza solo.",
-    desc: "Cada factura que llega por email se procesa automáticamente. Se extraen los productos, las cantidades y los precios. Tu inventario y tus costes se actualizan sin que tú hagas nada.",
+    icono: "📱",
+    kicker: "Carta digital inteligente",
+    titulo: "Tu carta recomienda platos, se traduce sola y envía pedidos directo a cocina.",
+    desc: "Carta QR con sugerencias basadas en lo que piden tus clientes, traducción automática para turistas, y pedido directo a cocina desde el móvil del cliente. Sin camarero intermediario.",
   },
   {
-    icono: "🛡️",
-    kicker: "Protege tus márgenes",
-    titulo: "Si un proveedor sube precios, lo sabes al momento. No al final de mes.",
-    desc: "El sistema detecta automáticamente cambios de precio, calcula qué platos pierden margen y te sugiere a cuánto ajustar el precio para mantener tu rentabilidad.",
-  },
-  {
-    icono: "📦",
-    kicker: "Cero roturas de stock",
-    titulo: "Evita quedarte sin producto un viernes por la noche.",
-    desc: "ALEF predice tu consumo de los próximos 7 días basándose en histórico y reservas confirmadas. Cuando algo va a faltar, genera el pedido al proveedor automáticamente.",
+    icono: "📅",
+    kicker: "Reservas y fidelización",
+    titulo: "Reservas confirmadas automáticamente. Clientes que vuelven.",
+    desc: "Sistema de reservas con confirmación automática, recordatorio 24h, gestión de no-shows. Programa de fidelidad con puntos y recompensas que hace que tus clientes repitan.",
   },
   {
     icono: "📊",
-    kicker: "Control real de tu negocio",
-    titulo: "Sabe qué platos te hacen ganar dinero. Y cuáles no.",
-    desc: "Margen real por producto, costes actualizados, P&L mensual y análisis de rentabilidad — todo calculado con datos reales de tu operativa. Sin esperar al cierre de mes.",
+    kicker: "Decisiones con datos reales",
+    titulo: "Sabe qué platos vender más, qué horarios reforzar y qué quitar de la carta.",
+    desc: "Ventas por hora, productos estrella vs productos muertos, tendencias semanales, previsión de demanda. Información clara para tomar decisiones de negocio, no intuiciones.",
   },
   {
-    icono: "🍽️",
-    kicker: "Cocina y sala conectadas",
-    titulo: "Menos errores. Mejor servicio. Más control.",
-    desc: "Comandas en tiempo real, tiempos de preparación controlados por estación, comunicación directa entre equipos. Tu cocina sabe qué viene antes de que llegue el pedido.",
+    icono: "📦",
+    kicker: "Stock que se gestiona solo",
+    titulo: "Predice tu consumo, genera pedidos y evita que te falte producto.",
+    desc: "ALEF analiza 8 semanas de histórico y reservas confirmadas para predecir qué vas a necesitar. Cuando algo va a faltar, genera el pedido al proveedor automáticamente.",
+  },
+  {
+    icono: "✅",
+    kicker: "VeriFactu incluido",
+    titulo: "Cumples la normativa fiscal sin contratar nada aparte.",
+    desc: "Facturación certificada con hash antifraude, numeración encadenada y preparada para envío automático a la AEAT. Obligatorio desde julio 2027 — ALEF ya lo tiene.",
   },
 ];
 

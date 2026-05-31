@@ -9,7 +9,7 @@
 }
 
 .Ahorro-inner {
-  max-width: 1100px;
+  max-width: 1000px;
   margin: auto;
   padding: 0 1.5rem;
   display: flex;
@@ -35,82 +35,88 @@
   max-width: 600px;
 }
 
-/* Grid 2x2 */
+/* Stack vertical */
 .Ahorro-dolores {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
   width: 100%;
 }
 
+/* Cada dolor: 2 columnas lado a lado */
 .Ahorro-dolor {
-  background: white;
-  border-radius: 20px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-radius: 16px;
   overflow: hidden;
   border: 1px solid #e2e8f0;
-  transition: box-shadow 0.25s ease, transform 0.25s ease;
+  transition: box-shadow 0.25s ease;
 }
 
 .Ahorro-dolor:hover {
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
-  transform: translateY(-3px);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.07);
 }
 
-/* Top: el problema (rojo sutil) */
+/* Izquierda: el problema (rojo) */
 .Ahorro-dolor-antes {
-  padding: 1.5rem 1.8rem;
-  background: linear-gradient(135deg, #fef2f2, #fff5f5);
-  border-bottom: 1px solid #fecaca;
+  padding: 2rem;
+  background: #fef2f2;
+  border-right: 1px solid #fecaca;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
 }
 
 .Ahorro-dolor-titulo {
-  font-size: 1.05rem;
+  font-size: 1rem;
   font-weight: 800;
-  color: #0f172a;
-  margin: 0 0 0.6rem;
+  color: #991b1b;
+  margin: 0;
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-.Ahorro-dolor-titulo::before {
-  content: "✗";
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 22px;
-  height: 22px;
+.Ahorro-dolor-icon {
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
   background: #dc2626;
   color: white;
   font-size: 0.7rem;
   font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
 }
 
 .Ahorro-dolor-antes p {
   font-size: 0.88rem;
-  line-height: 1.6;
-  color: #71717a;
+  line-height: 1.65;
+  color: #7f1d1d;
   margin: 0;
+  opacity: 0.8;
 }
 
-/* Bottom: la solución (verde sutil) */
+/* Derecha: la solución (celeste ALEF) */
 .Ahorro-dolor-despues {
-  padding: 1.5rem 1.8rem;
-  background: linear-gradient(135deg, #f0fdf4, #f5fff8);
+  padding: 2rem;
+  background: linear-gradient(135deg, #eff6ff, #f0f9ff);
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
 }
 
 .Ahorro-dolor-despues-label {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-size: 0.7rem;
-  font-weight: 700;
+  font-size: 0.75rem;
+  font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: #16a34a;
-  margin-bottom: 0.5rem;
+  color: #1d4ed8;
 }
 
 .Ahorro-dolor-despues-label::before {
@@ -118,10 +124,10 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
-  background: #16a34a;
+  background: #2563eb;
   color: white;
   font-size: 0.65rem;
   font-weight: 700;
@@ -129,8 +135,8 @@
 
 .Ahorro-dolor-despues p {
   font-size: 0.88rem;
-  line-height: 1.6;
-  color: #374151;
+  line-height: 1.65;
+  color: #1e40af;
   margin: 0;
 }
 
@@ -144,8 +150,13 @@
 
 /* Responsive */
 @media (max-width: 768px) {
-  .Ahorro-dolores {
+  .Ahorro-dolor {
     grid-template-columns: 1fr;
+  }
+
+  .Ahorro-dolor-antes {
+    border-right: none;
+    border-bottom: 1px solid #fecaca;
   }
 
   .Ahorro-titulo {

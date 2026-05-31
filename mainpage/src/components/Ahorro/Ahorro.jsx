@@ -35,7 +35,10 @@ export default function Ahorro() {
           {dolores.map((d, i) => (
             <div key={i} className="Ahorro-dolor">
               <div className="Ahorro-dolor-antes">
-                <h3 className="Ahorro-dolor-titulo">{d.titulo}</h3>
+                <h3 className="Ahorro-dolor-titulo">
+                  <span className="Ahorro-dolor-icon">✗</span>
+                  {d.titulo}
+                </h3>
                 <p>{d.antes}</p>
               </div>
               <div className="Ahorro-dolor-despues">

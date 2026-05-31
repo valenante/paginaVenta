@@ -1,5 +1,5 @@
 /* =============================
-   AHORRO — Calculadora de coste
+   AHORRO — Dolores reales
 ============================= */
 
 .Ahorro {
@@ -9,26 +9,13 @@
 }
 
 .Ahorro-inner {
-  max-width: 1100px;
+  max-width: 900px;
   margin: auto;
   padding: 0 1.5rem;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 2.5rem;
-}
-
-.Ahorro-kicker {
-  display: inline-block;
-  background: rgba(239, 68, 68, 0.08);
-  border: 1px solid rgba(239, 68, 68, 0.2);
-  padding: 0.4rem 1.2rem;
-  border-radius: 999px;
-  font-weight: 700;
-  font-size: 0.78rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: #dc2626;
 }
 
 .Ahorro-titulo {
@@ -44,176 +31,95 @@
   color: #64748b;
   font-size: 1rem;
   text-align: center;
-  margin: 0;
+  margin: -1rem 0 0;
+  max-width: 600px;
 }
 
-/* Grid */
-.Ahorro-grid {
+/* Dolores grid */
+.Ahorro-dolores {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.Ahorro-dolor {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 1.5rem 2rem;
+  transition: box-shadow 0.2s ease;
+}
+
+.Ahorro-dolor:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+}
+
+.Ahorro-dolor-titulo {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 1rem;
+}
+
+.Ahorro-dolor-grid {
   display: grid;
-  grid-template-columns: 1.2fr 1fr;
-  gap: 2.5rem;
-  width: 100%;
-  align-items: start;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
 }
 
-/* Columna costes */
-.Ahorro-costes {
+.Ahorro-dolor-antes,
+.Ahorro-dolor-despues {
   display: flex;
   flex-direction: column;
-  gap: 0;
+  gap: 0.5rem;
 }
 
-.Ahorro-costes-title {
-  font-size: 0.78rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: #94a3b8;
-  margin: 0 0 12px;
-}
-
-.Ahorro-coste-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 16px;
-  border-bottom: 1px solid #e2e8f0;
-  gap: 12px;
-}
-
-.Ahorro-coste-row:last-of-type {
-  border-bottom: none;
-}
-
-.Ahorro-coste-info {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.Ahorro-coste-servicio {
+.Ahorro-dolor-antes p,
+.Ahorro-dolor-despues p {
   font-size: 0.9rem;
-  font-weight: 600;
-  color: #1e293b;
-}
-
-.Ahorro-coste-nota {
-  font-size: 0.75rem;
-  color: #94a3b8;
-}
-
-.Ahorro-coste-precio {
-  font-size: 0.9rem;
-  font-weight: 700;
-  color: #dc2626;
-  white-space: nowrap;
-}
-
-.Ahorro-total-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16px;
-  margin-top: 8px;
-  background: rgba(239, 68, 68, 0.05);
-  border: 1px solid rgba(239, 68, 68, 0.15);
-  border-radius: 12px;
-  font-weight: 800;
-  font-size: 0.95rem;
-  color: #dc2626;
-}
-
-.Ahorro-total-precio {
-  font-size: 1.1rem;
-}
-
-/* Columna Alef */
-.Ahorro-alef {
-  position: sticky;
-  top: 100px;
-}
-
-.Ahorro-alef-card {
-  background: #ffffff;
-  border: 2px solid rgba(96, 181, 255, 0.3);
-  border-radius: 20px;
-  padding: 2rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  box-shadow: 0 8px 30px rgba(96, 181, 255, 0.08);
-}
-
-.Ahorro-alef-desde {
-  font-size: 0.8rem;
-  color: #94a3b8;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  font-weight: 600;
-}
-
-.Ahorro-alef-precio {
-  font-size: 3.5rem;
-  font-weight: 900;
-  color: #2563eb;
-  line-height: 1;
-}
-
-.Ahorro-alef-mes {
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: #64748b;
-}
-
-.Ahorro-alef-sub {
-  font-size: 0.85rem;
-  color: #64748b;
-  margin-bottom: 12px;
-}
-
-.Ahorro-alef-lista {
-  list-style: none;
-  padding: 0;
+  line-height: 1.6;
+  color: #475569;
   margin: 0;
-  width: 100%;
 }
 
-.Ahorro-alef-lista li {
-  padding: 6px 0;
-  font-size: 0.82rem;
-  color: #334155;
-  font-weight: 500;
-  border-bottom: 1px solid #f1f5f9;
-}
-
-.Ahorro-alef-lista li::before {
-  content: "\2713  ";
-  color: #16a34a;
+.Ahorro-dolor-tag {
+  display: inline-block;
+  font-size: 0.7rem;
   font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: rgba(239, 68, 68, 0.08);
+  color: #dc2626;
+  width: fit-content;
 }
 
-.Ahorro-alef-lista li:last-child {
-  border-bottom: none;
+.Ahorro-dolor-tag--alef {
+  background: rgba(22, 163, 74, 0.08);
+  color: #16a34a;
+}
+
+.Ahorro-cta-wrap {
+  text-align: center;
 }
 
 .Ahorro-cta {
-  margin-top: 16px;
-  width: 100%;
-  text-align: center;
+  display: inline-block;
 }
 
 /* Responsive */
 @media (max-width: 768px) {
-  .Ahorro-grid {
+  .Ahorro-dolor-grid {
     grid-template-columns: 1fr;
-  }
-
-  .Ahorro-alef {
-    position: static;
   }
 
   .Ahorro-titulo {
     font-size: 1.6rem;
+  }
+
+  .Ahorro-dolor {
+    padding: 1.2rem 1.5rem;
   }
 }

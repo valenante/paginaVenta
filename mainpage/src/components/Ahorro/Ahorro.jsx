@@ -1,73 +1,58 @@
 import React from "react";
 import "./Ahorro.css";
 
-const costes = [
-  { servicio: "Community manager / Instagram", rango: "150–350€/mes", nota: "freelance, 3 posts por semana" },
-  { servicio: "Software de inventario", rango: "50–150€/mes", nota: "MarketMan, Tiller, etc." },
-  { servicio: "Carta digital QR", rango: "30–80€/mes", nota: "Qamarero, OrderEat, etc." },
-  { servicio: "Sistema de reservas", rango: "30–90€/mes", nota: "TheFork, CoverManager" },
-  { servicio: "Gestión de reseñas", rango: "0–50€/mes", nota: "la mayoría no responde o lo hace manual" },
-  { servicio: "TPV con soporte", rango: "50–100€/mes", nota: "solo comandas y cobros" },
-  { servicio: "Facturación certificada", rango: "20–50€/mes", nota: "para cumplir VeriFactu" },
-];
-
-const incluido = [
-  "Copiloto IA con 50 herramientas",
-  "Instagram automático",
-  "Reseñas Google con IA",
-  "Stock predictivo + pedidos a proveedor",
-  "P&L automático + informe al contable",
-  "Carta digital QR en 3 idiomas",
-  "Facturación VeriFactu",
-  "25 automatizaciones en background",
-  "Soporte incluido",
+const dolores = [
+  {
+    titulo: "Cargar facturas a mano",
+    antes: "Cada factura de proveedor llega por email. La abres, la lees, la cargas en el sistema, actualizas precios.",
+    conAlef: "ALEF lee tus emails, extrae los datos de cada factura y actualiza tu stock automáticamente.",
+  },
+  {
+    titulo: "Descubrir tarde que te subieron precios",
+    antes: "Un proveedor sube un 15% y no te enteras hasta final de mes. Tus márgenes se erosionan sin que lo sepas.",
+    conAlef: "ALEF detecta cambios de precio en 48 horas y te dice exactamente qué platos pierden margen y a cuánto subirlos.",
+  },
+  {
+    titulo: "Quedarte sin producto un viernes",
+    antes: "El stock se controla de memoria o con una hoja de Excel. Cuando falta algo, ya es demasiado tarde.",
+    conAlef: "ALEF predice tu consumo de los próximos 7 días y genera pedidos a proveedor antes de que te falte nada.",
+  },
+  {
+    titulo: "No saber qué platos te dan dinero",
+    antes: "Facturas mucho, pero no sabes cuánto ganas realmente con cada plato. Los costes cambian y los márgenes también.",
+    conAlef: "ALEF calcula el margen real de cada producto en tiempo real. Sabes qué vender más y qué replantear.",
+  },
 ];
 
 export default function Ahorro() {
   return (
     <section className="Ahorro" id="ahorro">
       <div className="Ahorro-inner">
-        <span className="Ahorro-kicker">El coste real de NO tener Alef</span>
-        <h2 className="Ahorro-titulo">Estás pagando 330–870€/mes sin saberlo</h2>
-        <p className="Ahorro-sub">Cada herramienta por separado tiene un coste. Alef las reemplaza todas.</p>
+        <h2 className="Ahorro-titulo">¿Cuántas horas pierdes cada semana en tareas que no deberían ser tuyas?</h2>
+        <p className="Ahorro-sub">Estos son los problemas reales que ALEF resuelve. No con más herramientas — con un sistema que lo conecta todo.</p>
 
-        <div className="Ahorro-grid">
-          {/* Columna izquierda — costes actuales */}
-          <div className="Ahorro-costes">
-            <h3 className="Ahorro-costes-title">Lo que pagas ahora</h3>
-            {costes.map((c, i) => (
-              <div key={i} className="Ahorro-coste-row">
-                <div className="Ahorro-coste-info">
-                  <span className="Ahorro-coste-servicio">{c.servicio}</span>
-                  <span className="Ahorro-coste-nota">{c.nota}</span>
+        <div className="Ahorro-dolores">
+          {dolores.map((d, i) => (
+            <div key={i} className="Ahorro-dolor">
+              <h3 className="Ahorro-dolor-titulo">{d.titulo}</h3>
+              <div className="Ahorro-dolor-grid">
+                <div className="Ahorro-dolor-antes">
+                  <span className="Ahorro-dolor-tag">Hoy</span>
+                  <p>{d.antes}</p>
                 </div>
-                <span className="Ahorro-coste-precio">{c.rango}</span>
+                <div className="Ahorro-dolor-despues">
+                  <span className="Ahorro-dolor-tag Ahorro-dolor-tag--alef">Con ALEF</span>
+                  <p>{d.conAlef}</p>
+                </div>
               </div>
-            ))}
-            <div className="Ahorro-total-row">
-              <span>TOTAL</span>
-              <span className="Ahorro-total-precio">330 – 870€/mes</span>
             </div>
-          </div>
+          ))}
+        </div>
 
-          {/* Columna derecha — Alef */}
-          <div className="Ahorro-alef">
-            <div className="Ahorro-alef-card">
-              <span className="Ahorro-alef-desde"></span>
-              <span className="Ahorro-alef-precio">129€<span className="Ahorro-alef-mes">/mes</span></span>
-              <span className="Ahorro-alef-sub">Todo incluido. Sin permanencia.</span>
-
-              <ul className="Ahorro-alef-lista">
-                {incluido.map((item, i) => (
-                  <li key={i}>{item}</li>
-                ))}
-              </ul>
-
-              <a href="#contacto" className="btn btn-primario Ahorro-cta">
-                Quiero ahorrar desde el primer mes
-              </a>
-            </div>
-          </div>
+        <div className="Ahorro-cta-wrap">
+          <a href="#contacto" className="btn btn-primario Ahorro-cta">
+            Solicitar demo
+          </a>
         </div>
       </div>
     </section>

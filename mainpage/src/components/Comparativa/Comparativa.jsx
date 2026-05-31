@@ -3,22 +3,21 @@ import { trackEvent } from "../../utils/trackEvent";
 import "./Comparativa.css";
 
 const filas = [
-  { feature: "IA que analiza tu negocio (50 herramientas)", alef: "Incluido", separado: "No existe", manual: "Imposible" },
-  { feature: "Facturas proveedor → stock automático", alef: "Incluido", separado: "50–150€/mes", manual: "1-2h/día a mano" },
-  { feature: "Instagram automático", alef: "Incluido", separado: "150–350€/mes", manual: "3-5h/semana" },
-  { feature: "Reseñas Google respondidas con IA", alef: "Incluido", separado: "0–50€/mes", manual: "30 min/día" },
-  { feature: "P&L y finanzas automáticas", alef: "Incluido", separado: "No existe", manual: "Excel y rezar" },
-  { feature: "Stock predictivo + pedidos a proveedor", alef: "Incluido", separado: "50–150€/mes", manual: "Ojo y papel" },
-  { feature: "Carta digital QR + camarero IA", alef: "Incluido", separado: "30–80€/mes", manual: "PDF estático" },
-  { feature: "Reservas con confirmación automática", alef: "Incluido", separado: "30–90€/mes", manual: "Libreta" },
+  { feature: "TPV completo (mesas, cobros, cierres)", alef: "Incluido", separado: "80–150€/mes", manual: "Caja registradora" },
+  { feature: "Control de stock con alertas", alef: "Incluido", separado: "50–120€/mes", manual: "Ojo y papel" },
+  { feature: "Facturación automática de proveedores", alef: "Incluido", separado: "No existe", manual: "1-2h/día a mano" },
+  { feature: "Protección de márgenes con alertas", alef: "Incluido", separado: "No existe", manual: "Imposible" },
+  { feature: "Pedidos a proveedor automáticos", alef: "Incluido", separado: "50–150€/mes", manual: "Llamar uno a uno" },
+  { feature: "Carta digital QR con pedidos", alef: "Incluido", separado: "30–60€/mes", manual: "PDF estático" },
+  { feature: "Instagram automático", alef: "Incluido", separado: "200–500€/mes", manual: "3-5h/semana" },
+  { feature: "Reseñas Google respondidas", alef: "Incluido", separado: "No se hace", manual: "30 min/día" },
   { feature: "Facturación VeriFactu", alef: "Incluido", separado: "20–50€/mes", manual: "No cumples la ley" },
-  { feature: "Coordinación cocina en tiempo real", alef: "Incluido", separado: "No existe", manual: "Gritar fuerte" },
+  { feature: "Cocina conectada en tiempo real", alef: "Incluido", separado: "No existe", manual: "Gritar fuerte" },
 ];
 
-function renderCell(val, isAlef) {
+function renderCell(val) {
   if (val === "Incluido") return <span className="Comp-check">✓ Incluido</span>;
-  if (val === "No existe" || val === "Imposible") return <span className="Comp-cross">✗ {val}</span>;
-  // Costes o texto descriptivo
+  if (val === "No existe" || val === "Imposible" || val === "No se hace") return <span className="Comp-cross">✗ {val}</span>;
   const isCoste = val.includes("€");
   return <span className={isCoste ? "Comp-cost" : "Comp-text"}>{val}</span>;
 }
@@ -28,10 +27,10 @@ export default function Comparativa() {
     <section className="Comp" id="comparativa">
       <div className="Comp-inner section--wide">
         <div className="Comp-header">
-          <span className="Comp-kicker">Comparativa</span>
-          <h2>Alef vs contratar todo por separado</h2>
+          <span className="Comp-kicker">¿Cuánto pagas hoy?</span>
+          <h2>ALEF vs contratar todo por separado</h2>
           <p>
-            La mayoría de restaurantes pagan por 5-7 herramientas diferentes. O lo hacen a mano. Alef lo unifica todo.
+            Un sistema que lo incluye todo frente a pagar por cada herramienta individualmente.
           </p>
         </div>
 
@@ -40,7 +39,7 @@ export default function Comparativa() {
             <thead>
               <tr>
                 <th></th>
-                <th className="Comp-th--alef">Alef (129€/mes)</th>
+                <th className="Comp-th--alef">ALEF (129€/mes)</th>
                 <th>Herramientas separadas</th>
                 <th>A mano / Excel</th>
               </tr>
@@ -49,7 +48,7 @@ export default function Comparativa() {
               {filas.map((f, i) => (
                 <tr key={i}>
                   <td className="Comp-feature">{f.feature}</td>
-                  <td className="Comp-cell Comp-cell--alef">{renderCell(f.alef, true)}</td>
+                  <td className="Comp-cell Comp-cell--alef">{renderCell(f.alef)}</td>
                   <td className="Comp-cell">{renderCell(f.separado)}</td>
                   <td className="Comp-cell">{renderCell(f.manual)}</td>
                 </tr>
@@ -59,7 +58,7 @@ export default function Comparativa() {
               <tr className="Comp-total-row">
                 <td className="Comp-feature"><strong>TOTAL MENSUAL</strong></td>
                 <td className="Comp-cell Comp-cell--alef"><strong className="Comp-total-alef">129€</strong></td>
-                <td className="Comp-cell"><strong className="Comp-total-cost">330–920€</strong></td>
+                <td className="Comp-cell"><strong className="Comp-total-cost">390–910€</strong></td>
                 <td className="Comp-cell"><strong className="Comp-total-manual">Tu tiempo + riesgo</strong></td>
               </tr>
             </tfoot>
@@ -68,7 +67,7 @@ export default function Comparativa() {
 
         <div className="Comp-cta">
           <a href="#contacto" className="btn btn-primario" onClick={() => trackEvent("click_cta", { location: "comparativa", label: "empezar" })}>
-            Empezar con Alef
+            Solicitar demo
           </a>
         </div>
       </div>

@@ -7,33 +7,33 @@ import "./Features.css";
 const tierS = [
   {
     icono: "📧",
-    kicker: "Ahorra 1-2 horas al día",
-    titulo: "Facturas del proveedor → stock actualizado. Sin tocar nada.",
-    desc: "Recibes una factura de tu proveedor por email. La IA la lee, extrae productos y cantidades, actualiza tu stock, y registra el coste. Tú solo abres el restaurante.",
-  },
-  {
-    icono: "🧠",
-    kicker: "50 herramientas IA",
-    titulo: "Pregúntale lo que quieras sobre tu negocio. Responde con tus datos.",
-    desc: "¿Cuál es mi plato más rentable? ¿Cuántos camareros necesito el sábado? ¿Qué proveedor me está subiendo precios? El copiloto analiza tus datos reales y responde en segundos. No es ChatGPT — es una IA entrenada en TU restaurante.",
+    kicker: "Deja de cargar facturas a mano",
+    titulo: "Tu proveedor envía una factura. Tu stock se actualiza solo.",
+    desc: "Cada factura que llega por email se procesa automáticamente. Se extraen los productos, las cantidades y los precios. Tu inventario y tus costes se actualizan sin que tú hagas nada.",
   },
   {
     icono: "🛡️",
-    kicker: "Detecta erosión silenciosa",
-    titulo: "Tu margen está bajando y no lo sabes. Alef sí.",
-    desc: "El proveedor sube un 5% el solomillo. Tú no cambias el precio del plato. En 3 meses has perdido 2.000€ sin darte cuenta. Alef detecta el cambio, calcula el impacto, y te sugiere el nuevo precio.",
+    kicker: "Protege tus márgenes",
+    titulo: "Si un proveedor sube precios, lo sabes en 48 horas. No en 3 meses.",
+    desc: "El sistema detecta automáticamente cambios de precio en tus proveedores, calcula qué platos pierden margen y te sugiere a cuánto ajustar el precio para mantener tu rentabilidad.",
   },
   {
     icono: "📦",
     kicker: "Cero roturas de stock",
-    titulo: "Sabe lo que necesitas antes que tú. Y lo pide solo.",
-    desc: "Alef analiza 8 semanas de consumo, reservas del fin de semana, y día de la semana. Genera el pedido al proveedor automáticamente. Se acabó el 'nos hemos quedado sin X un viernes noche'.",
+    titulo: "Evita quedarte sin producto un viernes por la noche.",
+    desc: "ALEF predice tu consumo de los próximos 7 días basándose en histórico y reservas confirmadas. Cuando algo va a faltar, genera el pedido al proveedor automáticamente.",
   },
   {
     icono: "📊",
-    kicker: "Nunca más Excel",
-    titulo: "Finanzas al día. Informe al contable generado solo.",
-    desc: "Márgenes por plato, costes de personal, P&L mensual, informe para la gestoría — todo calculado automáticamente con datos reales. Sabes si tu negocio es rentable sin esperar al cierre de mes.",
+    kicker: "Control real de tu negocio",
+    titulo: "Sabe qué platos te hacen ganar dinero. Y cuáles no.",
+    desc: "Margen real por producto, costes actualizados, P&L mensual y análisis de rentabilidad — todo calculado con datos reales de tu operativa. Sin esperar al cierre de mes.",
+  },
+  {
+    icono: "🍽️",
+    kicker: "Cocina y sala conectadas",
+    titulo: "Menos errores. Mejor servicio. Más control.",
+    desc: "Comandas en tiempo real, tiempos de preparación controlados por estación, comunicación directa entre equipos. Tu cocina sabe qué viene antes de que llegue el pedido.",
   },
 ];
 
@@ -43,8 +43,8 @@ const Features = () => {
   return (
     <section className="Feat reveal" id="ventajas">
       <div className="Feat-inner">
-        <span className="Feat-kicker">Lo que ningún competidor en España tiene junto</span>
-        <h2 className="Feat-titulo">5 cosas que te cambian el negocio desde la primera semana</h2>
+        <span className="Feat-kicker">Lo que cambia cuando todo funciona conectado</span>
+        <h2 className="Feat-titulo">Resultados desde la primera semana</h2>
 
         <div className="Feat-stack">
           {tierS.map((f, i) => (

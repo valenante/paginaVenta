@@ -5,24 +5,21 @@ export default function Funcionamiento() {
   return (
     <section className="Fn" aria-labelledby="fn-title">
       <div className="Fn-inner">
-        {/* TÍTULO CENTRAL */}
         <header className="Fn-header">
-          <span className="Fn-badge">De 0 a restaurante inteligente en un día</span>
-          <h2 id="fn-title">Así de rápido empiezas con Alef</h2>
+          <span className="Fn-badge">Operativo en 24 horas</span>
+          <h2 id="fn-title">Así de rápido empiezas con ALEF</h2>
           <p>
-            Sin técnicos, sin instalaciones, sin esperas.
-            Te preparamos todo y tu restaurante empieza a funcionar de forma inteligente.
+            Sin técnicos, sin instalaciones complicadas, sin semanas de espera.
           </p>
         </header>
 
-        {/* PASOS */}
         <div className="Fn-steps">
           <div className="Fn-step">
-            <div className="Fn-step-icon">📦</div>
+            <div className="Fn-step-icon">📞</div>
             <h3>Nos cuentas tu negocio</h3>
             <p>
               Tu carta, tus mesas, tu equipo. En una llamada de 10 minutos
-              entendemos como trabajas y que necesitas automatizar.
+              entendemos cómo trabajas y qué necesitas.
             </p>
           </div>
 
@@ -30,26 +27,26 @@ export default function Funcionamiento() {
             <div className="Fn-step-icon">⚙️</div>
             <h3>Configuramos todo por ti</h3>
             <p>
-              Creamos tu entorno con mesas, carta, categorias, accesos
-              y toda la configuracion. Listo para usar.
+              Creamos tu entorno con mesas, carta, categorías, accesos
+              y toda la configuración. Listo para usar.
             </p>
           </div>
 
           <div className="Fn-step">
-            <div className="Fn-step-icon">🧠</div>
-            <h3>La IA aprende tu restaurante</h3>
+            <div className="Fn-step-icon">🍽️</div>
+            <h3>Empiezas a operar</h3>
             <p>
-              Desde el primer servicio, Alef empieza a recoger datos.
-              En dias ya tienes insights de ventas, margenes y tendencias.
+              Desde el primer servicio, el sistema registra ventas, costes
+              y márgenes. En días tienes información real de tu negocio.
             </p>
           </div>
 
           <div className="Fn-step">
-            <div className="Fn-step-icon">🚀</div>
-            <h3>Tu restaurante funciona solo</h3>
+            <div className="Fn-step-icon">📈</div>
+            <h3>Tu negocio gana control</h3>
             <p>
-              Stock, proveedores, alertas, finanzas — todo automatizado.
-              Tu te dedicas a tus clientes y a cocinar.
+              Stock controlado, facturas procesadas, márgenes protegidos.
+              Tú te dedicas a tus clientes y a tu cocina.
             </p>
           </div>
         </div>

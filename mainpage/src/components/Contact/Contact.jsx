@@ -64,11 +64,11 @@ const Contact = () => {
         {/* LADO IZQUIERDO */}
         <div className="Contact-left">
           <span className="Contact-kicker">Demo gratuita en 10 minutos</span>
-          <h2 className="Contact-title">¿Quieres ver cómo Alef gestiona un restaurante real?</h2>
+          <h2 className="Contact-title">¿Quieres ver ALEF funcionando con datos reales?</h2>
 
           <p className="Contact-subtitle">
-            Te mostramos el copiloto IA respondiendo preguntas, las automatizaciones en acción,
-            el Instagram publicándose solo, y todo el sistema. Sin compromiso, sin presión.
+            Te mostramos el sistema completo con un restaurante real: costes, stock, cocina, facturación
+            y todo lo que incluye. Sin compromiso, sin presión.
           </p>
 
           <div className="Contact-channels">
@@ -110,7 +110,7 @@ const Contact = () => {
 
           <p className="Contact-help">
             También podemos agendar una llamada o una demo en directo
-            donde verás la IA respondiendo preguntas sobre tu tipo de negocio.
+            adaptada a las necesidades de tu negocio.
           </p>
         </div>
 

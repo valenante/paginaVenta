@@ -29,47 +29,47 @@ const Introduccion = () => {
             </div>
 
             <h1 className="Introduccion-titulo">
-              Tu restaurante gana más dinero cuando piensa solo
+              Todo tu restaurante. Un único sistema.
             </h1>
 
             <p className="Introduccion-subtitulo">
-              Alef automatiza stock, proveedores, finanzas, Instagram, reseñas de Google, y 25 procesos más.
-              Un copiloto IA con 50 herramientas que conoce tu negocio mejor que tu contable.
+              Costes, stock, cocina, sala, facturación y gestión conectados en una plataforma
+              diseñada para hostelería. Menos tiempo gestionando. Más tiempo dirigiendo.
             </p>
 
             <div className="Introduccion-highlights">
-              <span>💰 Ahorra 330–870€/mes en herramientas que ya no necesitas</span>
-              <span>⏱️ Recupera 2-3 horas diarias en tareas que se hacen solas</span>
-              <span>📈 Protege tus márgenes — la IA detecta erosión antes que tú</span>
-              <span>🤖 50 herramientas IA que responden con datos reales de TU restaurante</span>
+              <span>💰 Deja de pagar 5 herramientas — todo incluido desde 129€/mes</span>
+              <span>⏱️ Recupera hasta 2 horas diarias en tareas administrativas</span>
+              <span>📈 Sabe qué platos te dan dinero y cuáles no — en tiempo real</span>
+              <span>📦 Tu stock se controla solo — predice, pide y repone automáticamente</span>
             </div>
 
             <div className="Introduccion-botones">
               <a href="#contacto" className="Introduccion-boton principal">
-                Quiero ver la demo
+                Solicitar demo
               </a>
 
               <a href="#ahorro" className="Introduccion-boton secundario">
-                Ver cuanto ahorro
+                Ver qué incluye
               </a>
             </div>
 
             <div className="Introduccion-metricas">
               <div>
-                <strong>50+ herramientas IA</strong>
-                <span>analizan tu negocio</span>
+                <strong>129€/mes</strong>
+                <span>todo incluido</span>
               </div>
               <div>
-                <strong>25 automatizaciones</strong>
-                <span>trabajando 24/7</span>
+                <strong>Sin permanencia</strong>
+                <span>cancela cuando quieras</span>
               </div>
               <div>
-                <strong>39 modulos</strong>
-                <span>en un solo sistema</span>
+                <strong>Soporte incluido</strong>
+                <span>te acompañamos siempre</span>
               </div>
               <div>
-                <strong>1 día</strong>
-                <span>para estar operativo</span>
+                <strong>Operativo en 1 día</strong>
+                <span>sin instalaciones</span>
               </div>
             </div>
           </div>
@@ -79,13 +79,13 @@ const Introduccion = () => {
         <div className="Introduccion-right">
           <div className="hero-orbit">
             <div className="hero-pill pill-voz">
-              📸 IA: Post de Instagram publicado automaticamente
+              📸 Post de Instagram publicado automáticamente
             </div>
             <div className="hero-pill pill-cocina">
-              📦 Stock bajo → pedido al proveedor generado
+              📦 Stock bajo → pedido a proveedor generado
             </div>
             <div className="hero-pill pill-carta">
-              ⭐ Reseña de Google respondida con IA en 2 min
+              📄 Factura de proveedor procesada → stock actualizado
             </div>
 
             <div className="hero-stack">

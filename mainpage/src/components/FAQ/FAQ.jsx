@@ -3,93 +3,75 @@ import "./FAQ.css";
 
 const preguntas = [
   {
-    q: "¿Que hace Alef diferente de un TPV normal?",
-    a: "Un TPV toma comandas y cobra. Alef automatiza tu restaurante entero: controla stock, analiza finanzas, predice consumo, genera pedidos a proveedores, y tiene un copiloto IA que responde cualquier pregunta sobre tu negocio con datos reales. El TPV esta incluido — pero es solo el principio.",
+    q: "¿Qué hace ALEF diferente de un TPV normal?",
+    a: "Un TPV toma comandas y cobra. ALEF conecta todo tu restaurante: controla stock, calcula márgenes reales, procesa facturas de proveedores automáticamente, protege tu rentabilidad y genera pedidos a proveedor cuando algo va a faltar. El TPV está incluido, pero es solo una parte del sistema.",
   },
   {
-    q: "¿Que es el Copiloto IA?",
-    a: "Es un asistente inteligente dentro de Alef al que puedes preguntar cualquier cosa: cual es tu plato mas rentable, que productos quitar de la carta, cuantos camareros necesitas el sabado, que proveedor te esta subiendo precios. Responde con datos reales de tu restaurante, no con respuestas genericas.",
-  },
-  {
-    q: "¿La IA puede equivocarse?",
-    a: "El copiloto usa exclusivamente datos reales de tu restaurante — no inventa cifras. Si no tiene datos suficientes, te lo dice. Y para cualquier acción que modifique algo (subir un precio, crear un producto), siempre te pide confirmación antes de hacerlo.",
-  },
-  {
-    q: "¿Necesito saber de tecnologia?",
-    a: "No. Hablas con el copiloto como hablas con un consultor: en lenguaje normal. Le dices 'cómo van las ventas' o 'qué debería comprar esta semana' y te responde claro. La operativa diaria (comandas, cocina) la aprende tu equipo en 10 minutos.",
+    q: "¿Necesito saber de tecnología?",
+    a: "No. La operativa diaria (comandas, cocina, cobros) la aprende tu equipo en 10 minutos. El sistema funciona en cualquier tablet o portátil con navegador — sin instalar nada.",
   },
   {
     q: "¿Funciona con mi tablet u ordenador actual?",
-    a: "Si. Alef funciona en cualquier dispositivo con navegador (Chrome, Safari, Edge). No necesitas hardware especial — tu tablet, portatil o movil actual sirve. Sin instalar nada.",
+    a: "Sí. ALEF funciona en cualquier dispositivo con navegador (Chrome, Safari, Edge). No necesitas hardware especial — tu tablet, portátil o móvil actual sirve.",
   },
   {
-    q: "¿Que pasa si se cae internet?",
-    a: "Los pedidos que ya estan en cocina siguen funcionando. Cuando vuelve la conexion todo se sincroniza automaticamente. La impresion en red local sigue funcionando sin internet.",
+    q: "¿Qué pasa si se cae internet?",
+    a: "Los pedidos que ya están en cocina siguen funcionando. Cuando vuelve la conexión todo se sincroniza automáticamente.",
   },
   {
     q: "¿Puedo cambiar de plan o cancelar?",
-    a: "Si, en cualquier momento. Sin permanencia, sin penalizacion. Subes o bajas de plan desde tu panel.",
+    a: "Sí, en cualquier momento. Sin permanencia, sin penalización.",
   },
   {
-    q: "¿Mis datos estan seguros?",
-    a: "Tus datos estan en servidores europeos. Cada restaurante tiene su propia base de datos aislada. Backups automaticos diarios con cifrado. Nadie mas accede a tus datos.",
+    q: "¿Mis datos están seguros?",
+    a: "Tus datos están en servidores europeos. Cada restaurante tiene su propia base de datos aislada. Backups automáticos diarios. Nadie más accede a tus datos.",
   },
   {
-    q: "¿Que es VERI*FACTU y me afecta?",
-    a: "Es el nuevo sistema de facturación electrónica de la Agencia Tributaria (Ley 11/2021). A partir de julio 2027, todos los negocios de hostelería deben emitir facturas con software certificado. Alef ya está preparado — no tienes que hacer nada extra.",
+    q: "¿Qué es VERI*FACTU y me afecta?",
+    a: "Es el nuevo sistema de facturación electrónica de la Agencia Tributaria. A partir de julio 2027, todos los negocios de hostelería deben emitir facturas con software certificado. ALEF ya está preparado — no tienes que contratar nada extra.",
   },
   {
-    q: "¿Que automatiza Alef exactamente?",
-    a: "Stock (alertas + pedidos a proveedor), finanzas (P&L + informe mensual), pricing (sugiere precios óptimos), personal (cuántos camareros por día), cocina (coordinación tiempo real), carta (análisis de productos muertos/estrella), y alertas proactivas de problemas antes de que los notes.",
+    q: "¿Cómo funciona lo de las facturas automáticas?",
+    a: "Cuando un proveedor te envía una factura por email, el sistema la lee automáticamente, extrae los productos y precios, y actualiza tu stock y tus costes. Tú no haces nada — solo ves el resultado.",
+  },
+  {
+    q: "¿Realmente publica en Instagram solo?",
+    a: "Sí. ALEF genera posts con las fotos de tu carta, escribe textos adaptados a tu marca, y publica según el calendario que configures. Solo necesitas subir buenas fotos de vez en cuando.",
+  },
+  {
+    q: "¿Responde reseñas de Google automáticamente?",
+    a: "Sí. Cuando recibes una reseña, el sistema genera una respuesta personalizada con el tono adecuado. Las reseñas negativas generan alerta inmediata para que actúes. Los restaurantes que responden reseñas suben hasta un 15% en visibilidad.",
   },
   {
     q: "¿Puedo probarlo antes de pagar?",
-    a: "Contactanos por WhatsApp o email y te hacemos una demo en directo de 10 minutos con datos reales. Veras la IA respondiendo preguntas sobre un restaurante real.",
+    a: "Contáctanos por WhatsApp o email y te hacemos una demo en directo de 10 minutos con datos de un restaurante real. Sin compromiso.",
   },
   {
-    q: "¿Alef realmente publica en Instagram automáticamente?",
-    a: "Sí. Alef genera posts con las fotos de tus platos, escribe el copy adaptado a tu marca, y publica según el calendario que configures. Tú solo subes buenas fotos de vez en cuando — el resto es automático. Un community manager cobra 300-700€/mes por esto.",
-  },
-  {
-    q: "¿Cómo funciona la respuesta automática a reseñas de Google?",
-    a: "Cuando recibes una reseña en Google, la IA la lee, entiende el sentimiento, y genera una respuesta personalizada con el tono de tu restaurante. Las reseñas negativas generan una alerta inmediata para que actúes. Los restaurantes que responden reseñas suben hasta un 15% en visibilidad.",
-  },
-  {
-    q: "¿Cuánto tarda en verse el ahorro?",
-    a: "Desde el primer mes. Las facturas de proveedor se procesan solas (ahorro de 1-2h/día), los pedidos de stock se generan automáticamente, y las publicaciones de Instagram salen sin community manager. Solo en community manager ya te ahorras más de lo que cuesta Alef entero.",
+    q: "¿Cuánto tarda en verse el resultado?",
+    a: "Desde la primera semana. Las facturas se procesan solas, el stock se controla automáticamente, y tienes visibilidad real de tus márgenes desde el primer día de uso.",
   },
 ];
 
 export default function FAQ() {
-  const [open, setOpen] = useState(null);
+  const [abierta, setAbierta] = useState(null);
 
   return (
     <section className="FAQ" id="faq">
-      <div className="FAQ-inner section--wide">
-        <div className="FAQ-header">
-          <span className="FAQ-kicker">Preguntas frecuentes</span>
-          <h2>Lo que nos preguntan antes de empezar</h2>
-        </div>
+      <div className="FAQ-inner">
+        <h2 className="FAQ-titulo">Preguntas frecuentes</h2>
 
-        <div className="FAQ-list">
+        <div className="FAQ-lista">
           {preguntas.map((p, i) => (
             <div
               key={i}
-              className={`FAQ-item ${open === i ? "FAQ-item--open" : ""}`}
+              className={`FAQ-item ${abierta === i ? "FAQ-item--open" : ""}`}
+              onClick={() => setAbierta(abierta === i ? null : i)}
             >
-              <button
-                className="FAQ-question"
-                onClick={() => setOpen(open === i ? null : i)}
-                aria-expanded={open === i}
-              >
+              <div className="FAQ-q">
                 <span>{p.q}</span>
-                <span className="FAQ-arrow">{open === i ? "−" : "+"}</span>
-              </button>
-              {open === i && (
-                <div className="FAQ-answer">
-                  <p>{p.a}</p>
-                </div>
-              )}
+                <span className="FAQ-arrow">{abierta === i ? "−" : "+"}</span>
+              </div>
+              {abierta === i && <p className="FAQ-a">{p.a}</p>}
             </div>
           ))}
         </div>

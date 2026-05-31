@@ -4,13 +4,13 @@ import "./Ahorro.css";
 const dolores = [
   {
     titulo: "Cargar facturas a mano",
-    antes: "Cada factura de proveedor llega por email. La abres, la lees, la cargas en el sistema, actualizas precios.",
-    conAlef: "ALEF lee tus emails, extrae los datos de cada factura y actualiza tu stock automáticamente.",
+    antes: "Cada factura de proveedor llega por email o en papel. La abres, la lees, la cargas en el sistema, actualizas precios uno a uno.",
+    conAlef: "ALEF procesa tus facturas automáticamente — las que llegan por email se leen solas, y las que llegan en papel las escaneas con la cámara del móvil. Tu stock y tus costes se actualizan al instante.",
   },
   {
     titulo: "Descubrir tarde que te subieron precios",
     antes: "Un proveedor sube un 15% y no te enteras hasta final de mes. Tus márgenes se erosionan sin que lo sepas.",
-    conAlef: "ALEF detecta cambios de precio en 48 horas y te dice exactamente qué platos pierden margen y a cuánto subirlos.",
+    conAlef: "ALEF detecta automáticamente cambios de precio y te dice exactamente qué platos pierden margen y a cuánto subirlos.",
   },
   {
     titulo: "Quedarte sin producto un viernes",

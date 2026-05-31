@@ -150,11 +150,11 @@
 
 .Contact-field input,
 .Contact-field textarea {
-  padding: 0.6rem 0.7rem;
+  padding: 0.7rem 0.8rem;
   border-radius: var(--radius-sm);
-  border: 1px solid rgba(55, 65, 81, 0.9);
-  background: rgba(15, 23, 42, 0.9);
-  color: var(--color-texto-invertido);
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  background: rgba(255, 255, 255, 0.08);
+  color: #f1f5f9;
   font-size: var(--font-size-sm);
 }
 

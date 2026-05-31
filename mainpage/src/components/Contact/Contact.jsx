@@ -118,8 +118,8 @@ const Contact = () => {
         <div className="Contact-right">
           <form className="Contact-form card" onSubmit={handleSubmit}>
             <div className="Contact-form-header">
-              <h3>Quiero saber más</h3>
-              <p>Te contactaremos lo antes posible.</p>
+              <h3>Solicitar demo</h3>
+              <p>Te contactaremos en menos de 24 horas.</p>
             </div>
 
             <div className="Contact-field">

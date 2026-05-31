@@ -15,7 +15,7 @@ const tierS = [
     icono: "📅",
     kicker: "Reservas y fidelización",
     titulo: "Reservas confirmadas automáticamente. Clientes que vuelven.",
-    desc: "Sistema de reservas con confirmación automática, recordatorio 24h, gestión de no-shows. Programa de fidelidad con puntos y recompensas que hace que tus clientes repitan.",
+    desc: "Sistema de reservas con confirmación automática y recordatorio 24h al cliente. Programa de fidelidad con puntos y recompensas que hace que tus clientes repitan.",
   },
   {
     icono: "📊",

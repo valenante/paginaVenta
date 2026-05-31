@@ -18,9 +18,9 @@ const dolores = [
     conAlef: "Comandas en tiempo real por estación, tiempos controlados, y cocina que sabe qué pedidos vienen antes de que lleguen. Menos errores, mejor servicio.",
   },
   {
-    titulo: "Instagram, reservas, turnos — todo por separado",
-    antes: "Una app para reservas, otra para Instagram, otra para turnos, otra para estadísticas. Cada una con su coste y su gestión.",
-    conAlef: "Instagram se publica solo, las reservas se confirman automáticamente, los turnos se planifican según demanda y las reseñas de Google se responden solas. Todo desde un mismo sitio.",
+    titulo: "Tiempo perdido en tareas que podrían hacerse solas",
+    antes: "Publicar en redes, responder reseñas, gestionar reservas, planificar turnos, revisar estadísticas. Todo manual, todo disperso, todo resta tiempo al negocio.",
+    conAlef: "Instagram se publica solo, las reseñas se responden automáticamente, las reservas se confirman sin intervención y los turnos se planifican según la demanda prevista. Tú te centras en dirigir.",
   },
 ];
 

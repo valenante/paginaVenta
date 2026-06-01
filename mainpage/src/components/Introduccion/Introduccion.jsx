@@ -29,7 +29,7 @@ const Introduccion = () => {
             </div>
 
             <h1 className="Introduccion-titulo">
-              Sabe qué platos te dan dinero y cuáles te lo quitan.
+              Controla tu restaurante desde un único sistema.
             </h1>
 
             <p className="Introduccion-subtitulo">

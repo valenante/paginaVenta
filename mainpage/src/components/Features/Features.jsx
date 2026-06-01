@@ -13,9 +13,9 @@ const tierS = [
   },
   {
     icono: "🎯",
-    kicker: "Ingeniería de menú automática",
-    titulo: "Cada semana clasifica tus platos: estrellas, vacas, incógnitas y perros.",
-    desc: "Te dice qué promocionar (alto margen + alta venta), qué subir de precio (alta venta + bajo margen), qué potenciar (bajo volumen + alto margen) y qué eliminar. Tu carta se optimiza sola.",
+    kicker: "Tu carta se optimiza sola",
+    titulo: "Cada semana analiza qué platos venden mucho y dan margen, y cuáles no. Y te dice qué hacer.",
+    desc: "Te dice qué promocionar, qué subir de precio, qué potenciar y qué eliminar de la carta. Decisiones basadas en datos reales de tu negocio, no en intuición.",
   },
   {
     icono: "📦",

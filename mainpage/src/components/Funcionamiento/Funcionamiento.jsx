@@ -45,15 +45,14 @@ export default function Funcionamiento() {
         <div className="Fn-caso-real">
           <p className="Fn-caso-label">Ya funcionando en Málaga</p>
           <p className="Fn-caso-texto">
-            2 restaurantes operan con ALEF cada día en Torremolinos.
-            Haz click en su carta para verlo en directo.
+            Restaurantes reales operando con ALEF cada día.
           </p>
           <div className="Fn-caso-links">
             <a href="https://zabor-feten-carta.softalef.com" target="_blank" rel="noopener noreferrer" className="Fn-caso-link">
-              Ver carta Zabor Feten →
+              Zabor Feten — Torremolinos →
             </a>
             <a href="https://bodegon-argentino-carta.softalef.com" target="_blank" rel="noopener noreferrer" className="Fn-caso-link">
-              Ver carta Bodegón Argentino →
+              Bodegón Argentino — Torremolinos →
             </a>
           </div>
         </div>

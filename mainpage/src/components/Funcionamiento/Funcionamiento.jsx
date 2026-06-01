@@ -1,5 +1,7 @@
 import React from "react";
 import "./Funcionamiento.css";
+import logoZF from "../../assets/imagenes/logo-zabor-feten.png";
+import logoBA from "../../assets/imagenes/logo-bodegon-argentino.png";
 
 export default function Funcionamiento() {
   return (
@@ -47,12 +49,16 @@ export default function Funcionamiento() {
           <p className="Fn-caso-texto">
             Restaurantes reales operando con ALEF cada día.
           </p>
-          <div className="Fn-caso-links">
-            <a href="https://zabor-feten-carta.softalef.com" target="_blank" rel="noopener noreferrer" className="Fn-caso-link">
-              Zabor Feten — Torremolinos →
+          <div className="Fn-caso-clientes">
+            <a href="https://zabor-feten-carta.softalef.com" target="_blank" rel="noopener noreferrer" className="Fn-caso-cliente">
+              <img src={logoZF} alt="Zabor Feten" className="Fn-caso-logo" />
+              <span className="Fn-caso-nombre">Zabor Feten</span>
+              <span className="Fn-caso-ciudad">Torremolinos</span>
             </a>
-            <a href="https://bodegon-argentino-carta.softalef.com" target="_blank" rel="noopener noreferrer" className="Fn-caso-link">
-              Bodegón Argentino — Torremolinos →
+            <a href="https://bodegon-argentino-carta.softalef.com" target="_blank" rel="noopener noreferrer" className="Fn-caso-cliente">
+              <img src={logoBA} alt="Bodegón Argentino" className="Fn-caso-logo" />
+              <span className="Fn-caso-nombre">Bodegón Argentino</span>
+              <span className="Fn-caso-ciudad">Torremolinos</span>
             </a>
           </div>
         </div>

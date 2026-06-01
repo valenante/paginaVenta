@@ -177,20 +177,38 @@
   font-size: 1rem;
   margin-bottom: 1.2rem;
 }
-.Fn-caso-links {
+.Fn-caso-clientes {
   display: flex;
-  gap: 1.5rem;
+  gap: 2rem;
   justify-content: center;
   flex-wrap: wrap;
 }
-.Fn-caso-link {
-  color: #60b5ff;
-  font-weight: 600;
-  font-size: 0.95rem;
+.Fn-caso-cliente {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
   text-decoration: none;
-  transition: opacity 0.2s;
+  padding: 1rem 1.5rem;
+  border-radius: 12px;
+  transition: background 0.2s, transform 0.2s;
 }
-.Fn-caso-link:hover {
-  opacity: 0.8;
-  text-decoration: underline;
+.Fn-caso-cliente:hover {
+  background: #f1f5f9;
+  transform: translateY(-2px);
+}
+.Fn-caso-logo {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  border-radius: 12px;
+}
+.Fn-caso-nombre {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #1e293b;
+}
+.Fn-caso-ciudad {
+  font-size: 0.78rem;
+  color: #94a3b8;
 }

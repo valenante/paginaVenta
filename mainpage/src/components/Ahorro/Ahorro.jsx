@@ -3,24 +3,24 @@ import "./Ahorro.css";
 
 const dolores = [
   {
-    titulo: "Facturas, stock y costes a mano",
-    antes: "Cada factura hay que cargarla, cada precio hay que actualizarlo, cada pedido a proveedor hay que hacerlo a mano. Horas perdidas cada semana.",
-    conAlef: "Las facturas se procesan solas (email o cámara), el stock se actualiza con cada venta y los pedidos a proveedor se generan automáticamente. La documentación se envía a tu gestoría sin que hagas nada.",
+    titulo: "Compras y facturas a ciegas",
+    antes: "Cada factura hay que cargarla a mano. Cada pedido a proveedor requiere llamar, revisar y anotar. 5-8 horas/semana perdidas en tareas administrativas.",
+    conAlef: "Las facturas se procesan solas desde email o cámara. Los pedidos a proveedor se generan automáticamente cuando algo va a faltar. La documentación se envía sola a tu gestoría.",
   },
   {
-    titulo: "No saber realmente cuánto ganas",
-    antes: "Facturas mucho pero no sabes qué platos te dan dinero. Un proveedor sube precios y no te enteras hasta final de mes.",
-    conAlef: "ALEF calcula el margen real de cada producto, detecta cambios de precio y te dice exactamente qué ajustar. Sabes qué vender más y qué quitar de la carta.",
+    titulo: "No saber cuánto ganas realmente",
+    antes: "Facturas 15.000€/mes pero no sabes qué platos te dan dinero. Un proveedor sube un 12% y no te enteras hasta que cierras caja.",
+    conAlef: "Margen real de cada plato en tiempo real. Si un proveedor sube precio, el sistema te avisa y te dice qué platos se ven afectados. Sabes qué vender más y qué sacar.",
   },
   {
     titulo: "Cocina y sala desconectadas",
-    antes: "Las comandas se pierden, cocina no sabe qué viene, los tiempos se alargan. Errores de coordinación que afectan al servicio.",
-    conAlef: "Comandas en tiempo real por estación, tiempos controlados, y cocina que sabe qué pedidos vienen antes de que lleguen. Menos errores, mejor servicio.",
+    antes: "Comandas que se pierden, cocina que no sabe qué viene, tiempos que se alargan. Cada error de coordinación le cuesta entre 5 y 15€ al restaurante.",
+    conAlef: "Comandas en tiempo real por estación. Cocina predice qué pedidos vienen antes de que lleguen. Tiempos controlados. Menos errores, mejor servicio.",
   },
   {
-    titulo: "Tiempo perdido en tareas que podrían hacerse solas",
-    antes: "Publicar en redes, responder reseñas, gestionar reservas, planificar turnos, revisar estadísticas. Todo manual, todo disperso, todo resta tiempo al negocio.",
-    conAlef: "Instagram se publica solo, las reseñas se responden automáticamente, las reservas se confirman sin intervención y los turnos se planifican según la demanda prevista.",
+    titulo: "Horas en tareas que se hacen solas",
+    antes: "Cerrar caja, cuadrar turnos, revisar stock, publicar en redes, responder reseñas. Todo manual, todo disperso. 2-3 horas diarias que no dedicas a tu negocio.",
+    conAlef: "Cierre de caja automático. Stock que se controla solo. Instagram que se publica solo. Reseñas respondidas automáticamente. Tu tiempo vuelve a ser tuyo.",
   },
 ];
 

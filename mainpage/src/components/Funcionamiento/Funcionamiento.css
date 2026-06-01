@@ -151,3 +151,43 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ── Caso real ── */
+.Fn-caso-real {
+  margin-top: 3rem;
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  text-align: center;
+}
+.Fn-caso-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #60b5ff;
+  margin-bottom: 0.5rem;
+}
+.Fn-caso-texto {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 1rem;
+  margin-bottom: 1.2rem;
+}
+.Fn-caso-links {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.Fn-caso-link {
+  color: #60b5ff;
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+.Fn-caso-link:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+}

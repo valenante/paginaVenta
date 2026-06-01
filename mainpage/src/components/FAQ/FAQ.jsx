@@ -4,51 +4,35 @@ import "./FAQ.css";
 const preguntas = [
   {
     q: "¿Qué hace ALEF diferente de un TPV normal?",
-    a: "Un TPV toma comandas y cobra. ALEF conecta todo tu restaurante: controla stock, calcula márgenes reales, procesa facturas de proveedores automáticamente, protege tu rentabilidad y genera pedidos a proveedor cuando algo va a faltar. El TPV está incluido, pero es solo una parte del sistema.",
-  },
-  {
-    q: "¿Necesito saber de tecnología?",
-    a: "No. La operativa diaria (comandas, cocina, cobros) la aprende tu equipo en 10 minutos. El sistema funciona en cualquier tablet o portátil con navegador — sin instalar nada.",
+    a: "Un TPV toma comandas y cobra. ALEF conecta todo tu restaurante: calcula márgenes reales por plato, procesa facturas de proveedores automáticamente, predice tu stock, protege tu rentabilidad y genera pedidos a proveedor cuando algo va a faltar. El TPV está incluido, pero es solo una parte del sistema.",
   },
   {
     q: "¿Funciona con mi tablet u ordenador actual?",
-    a: "Sí. ALEF funciona en cualquier dispositivo con navegador (Chrome, Safari, Edge). No necesitas hardware especial — tu tablet, portátil o móvil actual sirve.",
+    a: "Sí. ALEF funciona en cualquier dispositivo con navegador (Chrome, Safari, Edge). No necesitas hardware especial — tu tablet, portátil o móvil actual sirve. Tu equipo aprende la operativa en 10 minutos.",
   },
   {
     q: "¿Qué pasa si se cae internet?",
     a: "Los pedidos que ya están en cocina siguen funcionando. Cuando vuelve la conexión todo se sincroniza automáticamente.",
   },
   {
-    q: "¿Puedo cambiar de plan o cancelar?",
-    a: "Sí, en cualquier momento. Sin permanencia, sin penalización.",
+    q: "¿Puedo cancelar cuando quiera?",
+    a: "Sí. Sin permanencia, sin penalización, sin letra pequeña. Cancelas cuando quieras.",
   },
   {
     q: "¿Mis datos están seguros?",
     a: "Tus datos están en servidores europeos. Cada restaurante tiene su propia base de datos aislada. Backups automáticos diarios. Nadie más accede a tus datos.",
   },
   {
-    q: "¿Qué es VERI*FACTU y me afecta?",
-    a: "Es el nuevo sistema de facturación electrónica de la Agencia Tributaria. A partir de julio 2027, todos los negocios de hostelería deben emitir facturas con software certificado. ALEF ya está preparado — no tienes que contratar nada extra.",
+    q: "¿Qué es VeriFactu y me afecta?",
+    a: "Es el nuevo sistema de facturación electrónica de Hacienda. A partir de julio 2027, todos los negocios de hostelería deben usar software certificado. ALEF ya cumple — no tienes que contratar nada extra.",
   },
   {
     q: "¿Cómo funciona lo de las facturas automáticas?",
-    a: "Cuando un proveedor te envía una factura por email, el sistema la lee automáticamente, extrae los productos y precios, y actualiza tu stock y tus costes. Si la factura llega en papel, la escaneas con la cámara del móvil. Además, toda la documentación se envía automáticamente a tu gestoría.",
-  },
-  {
-    q: "¿Realmente publica en Instagram solo?",
-    a: "Sí. ALEF genera posts con las fotos de tu carta, escribe textos adaptados a tu marca, y publica según el calendario que configures. Solo necesitas subir buenas fotos de vez en cuando.",
-  },
-  {
-    q: "¿Responde reseñas de Google automáticamente?",
-    a: "Sí. Cuando recibes una reseña, el sistema genera una respuesta personalizada con el tono adecuado. Las reseñas negativas generan alerta inmediata para que actúes.",
+    a: "Cuando un proveedor te envía una factura por email, el sistema la lee, extrae productos y precios, y actualiza stock y costes automáticamente. Si llega en papel, la escaneas con el móvil. La documentación se envía sola a tu gestoría.",
   },
   {
     q: "¿Puedo probarlo antes de pagar?",
-    a: "Contáctanos por WhatsApp o email y te hacemos una demo en directo de 10 minutos con datos de un restaurante real. Sin compromiso.",
-  },
-  {
-    q: "¿Cuánto tarda en verse el resultado?",
-    a: "Desde la primera semana. Las facturas se procesan solas, el stock se controla automáticamente, y tienes visibilidad real de tus márgenes desde el primer día de uso.",
+    a: "Sí. Te hacemos una demo en directo de 10 minutos con datos de un restaurante real que ya usa ALEF. Sin compromiso. Por WhatsApp, email o videollamada.",
   },
 ];
 

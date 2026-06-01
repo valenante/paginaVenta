@@ -60,17 +60,21 @@ function LandingPage() {
   return (
     <div className="main-grid">
       <TopBar />
+      {/* B1: Hero */}
       <Introduccion />
+      {/* B2: Dolor con números */}
       <Ahorro />
+      {/* B3: Diferencial — lo que ALEF tiene y nadie más */}
       <Features />
+      {/* B4: Carta — demo visual */}
       <CartaShowcase />
-      <SocialAuto />
-      <FeaturesGrid />
-      <Clientes />
+      {/* B5: Comparativa honesta vs competencia */}
       <Comparativa />
+      {/* B6: Onboarding + caso real */}
       <Funcionamiento />
-      {/* <Packs /> */}
+      {/* B7: VeriFactu */}
       <Hero />
+      {/* B8: FAQ + CTA */}
       <FAQ />
       <Contact />
       <Footer />

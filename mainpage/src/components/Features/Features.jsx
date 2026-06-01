@@ -6,34 +6,34 @@ import "./Features.css";
 
 const tierS = [
   {
-    icono: "📱",
-    kicker: "Carta digital inteligente",
-    titulo: "Tu carta recomienda platos, se traduce sola y envía pedidos directo a cocina.",
-    desc: "Carta QR con sugerencias basadas en lo que piden tus clientes, traducción automática para turistas, y pedido directo a cocina desde el móvil del cliente. Sin camarero intermediario.",
+    icono: "📄",
+    kicker: "Facturas que se procesan solas",
+    titulo: "Tu proveedor envía factura por email. ALEF la lee, extrae productos y actualiza stock y costes.",
+    desc: "Si la factura llega en papel, la escaneas con el móvil. Productos, precios y cantidades se cargan automáticamente. La documentación se envía sola a tu gestoría. Ningún otro TPV del mercado hace esto.",
   },
   {
-    icono: "📅",
-    kicker: "Reservas y fidelización",
-    titulo: "Reservas confirmadas automáticamente. Clientes que vuelven.",
-    desc: "Sistema de reservas con confirmación automática y recordatorio 24h al cliente. Programa de fidelidad con puntos y recompensas que hace que tus clientes repitan.",
-  },
-  {
-    icono: "📊",
-    kicker: "Decisiones con datos reales",
-    titulo: "Sabe qué platos vender más, qué horarios reforzar y qué quitar de la carta.",
-    desc: "Ventas por hora, productos estrella vs productos muertos, tendencias semanales, previsión de demanda. Información clara para tomar decisiones de negocio, no intuiciones.",
+    icono: "🎯",
+    kicker: "Ingeniería de menú automática",
+    titulo: "Cada semana clasifica tus platos: estrellas, vacas, incógnitas y perros.",
+    desc: "Te dice qué promocionar (alto margen + alta venta), qué subir de precio (alta venta + bajo margen), qué potenciar (bajo volumen + alto margen) y qué eliminar. Tu carta se optimiza sola.",
   },
   {
     icono: "📦",
-    kicker: "Stock que se gestiona solo",
-    titulo: "Predice tu consumo, genera pedidos y evita que te falte producto.",
-    desc: "ALEF analiza 8 semanas de histórico y reservas confirmadas para predecir qué vas a necesitar. Cuando algo va a faltar, genera el pedido al proveedor automáticamente.",
+    kicker: "Stock predictivo con pedidos automáticos",
+    titulo: "Analiza 8 semanas de histórico, reservas y clima. Genera el pedido al proveedor antes de que te falte.",
+    desc: "No es un simple control de stock con alertas. Es predicción real: sabe que el viernes necesitarás más entrecot porque hay 12 reservas y hace sol. El pedido se genera solo.",
   },
   {
-    icono: "✅",
-    kicker: "VeriFactu incluido",
-    titulo: "Cumples la normativa fiscal sin contratar nada aparte.",
-    desc: "Facturación certificada con hash antifraude, numeración encadenada y preparada para envío automático a la AEAT. Obligatorio desde julio 2027 — ALEF ya lo tiene.",
+    icono: "🛡️",
+    kicker: "Protección de márgenes",
+    titulo: "Si un proveedor sube un 10%, el sistema te alerta al momento y te dice qué platos pierden rentabilidad.",
+    desc: "Antes de que te des cuenta, sabes exactamente cuánto margen pierdes, en qué platos y qué opciones tienes: subir precio, cambiar proveedor o sacar el plato. Decisión informada, no sorpresa a final de mes.",
+  },
+  {
+    icono: "🤖",
+    kicker: "Copilot IA para hostelería",
+    titulo: "Pregúntale al sistema en lenguaje normal. Responde con datos reales de tu negocio.",
+    desc: "\"¿Qué plato me da más margen?\" \"¿Cuánto vendí el sábado?\" \"¿Qué proveedor me sale más caro?\" No necesitas buscar en informes — preguntas y el sistema responde con tus datos reales.",
   },
 ];
 
@@ -43,8 +43,8 @@ const Features = () => {
   return (
     <section className="Feat reveal" id="ventajas">
       <div className="Feat-inner">
-        <span className="Feat-kicker">Lo que cambia cuando todo funciona conectado</span>
-        <h2 className="Feat-titulo">Resultados desde la primera semana</h2>
+        <span className="Feat-kicker">Lo que no vas a encontrar en otro sistema</span>
+        <h2 className="Feat-titulo">No es solo un TPV. Es un sistema que piensa por ti.</h2>
 
         <div className="Feat-stack">
           {tierS.map((f, i) => (

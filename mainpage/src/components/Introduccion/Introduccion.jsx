@@ -29,19 +29,19 @@ const Introduccion = () => {
             </div>
 
             <h1 className="Introduccion-titulo">
-              Todo tu restaurante. Un único sistema.
+              Sabe qué platos te dan dinero y cuáles te lo quitan.
             </h1>
 
             <p className="Introduccion-subtitulo">
-              Costes, stock, cocina, sala, facturación y gestión conectados en una plataforma
-              diseñada para hostelería. Menos tiempo gestionando. Más tiempo dirigiendo.
+              Costes, stock, cocina, sala y facturación conectados en una plataforma
+              diseñada para hostelería. Operativo en 24 horas.
             </p>
 
             <div className="Introduccion-highlights">
-              <span>💰 Deja de pagar 5 herramientas — todo incluido desde 129€/mes</span>
-              <span>⏱️ Recupera hasta 2 horas diarias en tareas administrativas</span>
-              <span>📈 Sabe qué platos te dan dinero y cuáles no — en tiempo real</span>
-              <span>📦 Tu stock se controla solo — predice, pide y repone automáticamente</span>
+              <span>📈 Margen real de cada plato — calculado automáticamente</span>
+              <span>📦 Stock que se repone solo — pedidos a proveedor automáticos</span>
+              <span>📄 Facturas procesadas sin tocar nada — desde email o cámara</span>
+              <span>✅ VeriFactu incluido — obligatorio desde julio 2027</span>
             </div>
 
             <div className="Introduccion-botones">

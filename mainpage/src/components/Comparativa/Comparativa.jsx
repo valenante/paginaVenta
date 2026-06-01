@@ -3,21 +3,21 @@ import { trackEvent } from "../../utils/trackEvent";
 import "./Comparativa.css";
 
 const filas = [
-  { feature: "TPV completo (mesas, cobros, cierres)", alef: "Incluido", separado: "80–150€/mes", manual: "Caja registradora" },
-  { feature: "Control de stock con alertas", alef: "Incluido", separado: "50–120€/mes", manual: "Ojo y papel" },
+  { feature: "TPV completo (mesas, cobros, cierres)", alef: "Incluido", separado: "Incluido", manual: "Caja registradora" },
+  { feature: "Control de stock con alertas", alef: "Incluido", separado: "Básico (sin predicción)", manual: "Excel" },
+  { feature: "Costes y márgenes por plato", alef: "Incluido", separado: "No incluido", manual: "Imposible" },
   { feature: "Facturación automática de proveedores", alef: "Incluido", separado: "No existe", manual: "1-2h/día a mano" },
-  { feature: "Protección de márgenes con alertas", alef: "Incluido", separado: "No existe", manual: "Imposible" },
-  { feature: "Pedidos a proveedor automáticos", alef: "Incluido", separado: "50–150€/mes", manual: "Llamar uno a uno" },
-  { feature: "Carta digital QR con pedidos", alef: "Incluido", separado: "30–60€/mes", manual: "PDF estático" },
-  { feature: "Instagram automático", alef: "Incluido", separado: "200–500€/mes", manual: "3-5h/semana" },
-  { feature: "Reseñas Google respondidas", alef: "Incluido", separado: "No se hace", manual: "30 min/día" },
-  { feature: "Facturación VeriFactu", alef: "Incluido", separado: "20–50€/mes", manual: "No cumples la ley" },
-  { feature: "Cocina conectada con predicciones", alef: "Incluido", separado: "KDS básico", manual: "Gritar fuerte" },
+  { feature: "Protección de márgenes con alertas", alef: "Incluido", separado: "No existe", manual: "No existe" },
+  { feature: "Pedidos a proveedor automáticos", alef: "Incluido", separado: "No existe", manual: "Llamar uno a uno" },
+  { feature: "Carta QR con pedidos a cocina", alef: "Incluido", separado: "Incluido (básica)", manual: "PDF estático" },
+  { feature: "Cocina conectada (KDS)", alef: "Con predicción", separado: "KDS básico", manual: "No existe" },
+  { feature: "VeriFactu", alef: "Incluido", separado: "Incluido", manual: "No cumples la ley" },
+  { feature: "Copilot IA", alef: "Incluido", separado: "No existe", manual: "No existe" },
 ];
 
 function renderCell(val) {
-  if (val === "Incluido") return <span className="Comp-check">✓ Incluido</span>;
-  if (val === "No existe" || val === "Imposible" || val === "No se hace") return <span className="Comp-cross">✗ {val}</span>;
+  if (val === "Incluido" || val === "Con predicción") return <span className="Comp-check">✓ {val}</span>;
+  if (val === "No existe" || val === "Imposible" || val === "No incluido") return <span className="Comp-cross">✗ {val}</span>;
   const isCoste = val.includes("€");
   return <span className={isCoste ? "Comp-cost" : "Comp-text"}>{val}</span>;
 }
@@ -28,9 +28,9 @@ export default function Comparativa() {
       <div className="Comp-inner section--wide">
         <div className="Comp-header">
           <span className="Comp-kicker">¿Cuánto pagas hoy?</span>
-          <h2>ALEF vs contratar todo por separado</h2>
+          <h2>ALEF vs lo que hay en el mercado</h2>
           <p>
-            Un sistema que lo incluye todo frente a pagar por cada herramienta individualmente.
+            Comparativa honesta con otros TPVs (Last.app, Revo, Ágora) y con hacer todo a mano.
           </p>
         </div>
 
@@ -40,7 +40,7 @@ export default function Comparativa() {
               <tr>
                 <th></th>
                 <th className="Comp-th--alef">ALEF (129€/mes)</th>
-                <th>Herramientas separadas</th>
+                <th>Otros TPVs (75-150€)</th>
                 <th>A mano / Excel</th>
               </tr>
             </thead>
@@ -58,7 +58,7 @@ export default function Comparativa() {
               <tr className="Comp-total-row">
                 <td className="Comp-feature"><strong>TOTAL MENSUAL</strong></td>
                 <td className="Comp-cell Comp-cell--alef"><strong className="Comp-total-alef">129€</strong></td>
-                <td className="Comp-cell"><strong className="Comp-total-cost">390–910€</strong></td>
+                <td className="Comp-cell"><strong className="Comp-total-cost">75–150€ + lo que falta</strong></td>
                 <td className="Comp-cell"><strong className="Comp-total-manual">Tu tiempo + riesgo</strong></td>
               </tr>
             </tfoot>

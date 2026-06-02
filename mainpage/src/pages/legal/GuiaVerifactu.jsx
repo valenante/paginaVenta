@@ -1,8 +1,36 @@
 import LegalLayout from "./LegalLayout";
+import SEOHead from "../../components/SEO/SEOHead";
+import { ArticleStructuredData, FAQStructuredData, BreadcrumbStructuredData } from "../../components/SEO/StructuredData";
+
+const verifactuFaqs = [
+  { question: "¿Los tickets de caja también cuentan como factura electrónica?", answer: "Sí. Todo documento que registre una operación económica (factura simplificada, ticket, factura completa) debe cumplir con la ley VeriFactu." },
+  { question: "¿Puedo usar otro TPV además de Alef?", answer: "Solo puedes usar un sistema de facturación por establecimiento. Si usas Alef, todas las facturas deben emitirse desde Alef para mantener la cadena intacta." },
+  { question: "¿Puedo seguir dando tickets a mano?", answer: "No. La ley exige que los tickets se generen desde un software certificado. Los tickets escritos a mano no cumplen con VeriFactu." },
+  { question: "¿Alef guarda mis facturas?", answer: "Sí. Todas las facturas quedan registradas en tu base de datos con su hash, fecha y hora. Puedes consultarlas, exportarlas y reimprimirlas desde el panel en cualquier momento." },
+  { question: "¿Tengo que contratar un plan específico para VeriFactu?", answer: "No. La facturación encadenada y antifraude está incluida en todos los planes de Alef, desde el Esencial." },
+];
 
 export default function GuiaVerifactu() {
   return (
     <LegalLayout title="VERI*FACTU: Lo que tu restaurante necesita saber">
+      <SEOHead
+        title="VeriFactu para restaurantes — Guía completa 2026"
+        description="¿Qué es VeriFactu y cómo afecta a tu restaurante? Guía clara sobre la Ley Antifraude, requisitos técnicos, sanciones de hasta 50.000€ y cómo cumplir con ALEF."
+        path="/verifactu"
+        type="article"
+      />
+      <ArticleStructuredData
+        title="VeriFactu para restaurantes: lo que necesitas saber"
+        description="Guía completa sobre VeriFactu, la Ley Antifraude y cómo afecta a restaurantes en España. Requisitos, plazos y sanciones."
+        path="/verifactu"
+        datePublished="2026-04-01"
+        dateModified="2026-06-02"
+      />
+      <FAQStructuredData faqs={verifactuFaqs} />
+      <BreadcrumbStructuredData items={[
+        { name: "Inicio", path: "/" },
+        { name: "VeriFactu para restaurantes", path: "/verifactu" },
+      ]} />
       <p><em>Guia actualizada a abril de 2026. Escrita en lenguaje claro, sin tecnicismos.</em></p>
 
       <h2>¿Que es VERI*FACTU?</h2>

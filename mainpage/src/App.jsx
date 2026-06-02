@@ -41,6 +41,10 @@ import publicRoutes from "./routes/publicRoutes.jsx";
 import panelRoutes from "./routes/panelRoutes.jsx";
 import superadminRoutes from "./routes/superadminRoutes.jsx";
 
+/* ── SEO ── */
+import SEOHead from "./components/SEO/SEOHead";
+import { HomeStructuredData } from "./components/SEO/StructuredData";
+
 /* ── Hooks ── */
 import useGoogleAnalytics from "./Hooks/useGoogleAnalytics.js";
 
@@ -59,6 +63,8 @@ function LandingPage() {
 
   return (
     <div className="main-grid">
+      <SEOHead path="/" />
+      <HomeStructuredData />
       <TopBar />
       {/* B1: Hero */}
       <Introduccion />

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { FAQStructuredData } from "../SEO/StructuredData";
 import "./FAQ.css";
 
 const preguntas = [
@@ -41,6 +42,9 @@ export default function FAQ() {
 
   return (
     <section className="FAQ" id="faq">
+      <FAQStructuredData
+        faqs={preguntas.map((p) => ({ question: p.q, answer: p.a }))}
+      />
       <div className="FAQ-inner">
         <div className="FAQ-header">
           <h2>Preguntas frecuentes</h2>

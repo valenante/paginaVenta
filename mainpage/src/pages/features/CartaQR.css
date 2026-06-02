@@ -172,21 +172,6 @@
   color: var(--color-primario-suave) !important;
 }
 
-.FP-section--dark .FP-faq-item {
-  border-bottom-color: rgba(148, 163, 184, 0.15);
-}
-
-.FP-section--dark .FP-faq-q {
-  color: #fff;
-}
-
-.FP-section--dark .FP-faq-q:hover {
-  color: var(--color-primario-suave);
-}
-
-.FP-section--dark .FP-faq-a {
-  color: rgba(226, 232, 240, 0.75);
-}
 
 .FP-section-inner {
   max-width: 1080px;
@@ -201,7 +186,7 @@
 .FP-section-header h2 {
   font-size: clamp(1.5rem, 3.5vw, 2.25rem);
   font-weight: 800;
-  color: var(--color-primario-oscuro);
+  color: #0f172a;
   margin-bottom: 0.75rem;
 }
 
@@ -410,39 +395,84 @@
   margin-top: -1.5rem;
 }
 
-/* ── FAQ ── */
+/* ── FAQ (mismo estilo que landing) ── */
 .FP-faq-list {
   max-width: 740px;
   margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 .FP-faq-item {
-  border-bottom: 1px solid var(--color-borde-suave);
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.FP-faq-item:hover {
+  border-color: rgba(96, 181, 255, 0.4);
+}
+
+.FP-faq-item--open {
+  border-color: #2563eb;
+  box-shadow: 0 4px 12px rgba(96, 181, 255, 0.1);
 }
 
 .FP-faq-q {
   width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.2rem;
   background: none;
   border: none;
-  padding: 1.25rem 0;
+  cursor: pointer;
+  text-align: left;
   font-size: var(--font-size-md);
   font-weight: 600;
-  color: var(--color-texto);
-  text-align: left;
-  cursor: pointer;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  color: #1e293b;
+  line-height: 1.4;
   font-family: inherit;
 }
 
-.FP-faq-q:hover { color: var(--color-primario-oscuro); }
+.FP-faq-q:hover { color: #2563eb; }
+
+.FP-faq-arrow {
+  flex-shrink: 0;
+  width: 1.6rem;
+  height: 1.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-pill);
+  background: rgba(37, 99, 235, 0.1);
+  color: #2563eb;
+  font-size: 1.1rem;
+  font-weight: 700;
+  transition: transform 0.15s ease;
+}
+
+.FP-faq-item--open .FP-faq-arrow {
+  transform: rotate(180deg);
+  background: var(--color-primario);
+  color: #fff;
+}
 
 .FP-faq-a {
-  padding: 0 0 1.25rem;
-  font-size: var(--font-size-md);
-  color: var(--color-texto-suave);
-  line-height: 1.6;
+  padding: 0 1.2rem 1rem;
+  font-size: var(--font-size-sm);
+  color: #64748b;
+  line-height: 1.7;
+  animation: faqFadeIn 0.2s ease;
+}
+
+@keyframes faqFadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 /* ── CTA FINAL ── */

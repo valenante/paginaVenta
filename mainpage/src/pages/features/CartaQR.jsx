@@ -362,13 +362,13 @@ export default function CartaQR() {
 
           <div className="FP-faq-list">
             {faqs.map((f, i) => (
-              <div className="FP-faq-item" key={i}>
+              <div className={`FP-faq-item ${faqOpen === i ? "FP-faq-item--open" : ""}`} key={i}>
                 <button
                   className="FP-faq-q"
                   onClick={() => setFaqOpen(faqOpen === i ? null : i)}
                 >
                   <span>{f.q}</span>
-                  <span>{faqOpen === i ? "−" : "+"}</span>
+                  <span className="FP-faq-arrow">{faqOpen === i ? "−" : "+"}</span>
                 </button>
                 {faqOpen === i && <div className="FP-faq-a">{f.a}</div>}
               </div>

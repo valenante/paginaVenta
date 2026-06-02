@@ -172,6 +172,35 @@
   color: var(--color-primario-suave) !important;
 }
 
+.FP-section--dark .FP-faq-item {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(148, 163, 184, 0.15);
+}
+
+.FP-section--dark .FP-faq-item:hover {
+  border-color: rgba(96, 181, 255, 0.3);
+}
+
+.FP-section--dark .FP-faq-item--open {
+  border-color: var(--color-primario);
+}
+
+.FP-section--dark .FP-faq-q {
+  color: #fff;
+}
+
+.FP-section--dark .FP-faq-q:hover {
+  color: var(--color-primario-suave);
+}
+
+.FP-section--dark .FP-faq-a {
+  color: rgba(226, 232, 240, 0.75);
+}
+
+.FP-section--dark .FP-section-header h2 {
+  color: #fff;
+}
+
 
 .FP-section-inner {
   max-width: 1080px;

@@ -26,6 +26,7 @@ const DPA = lazy(() => import("../pages/legal/DPA"));
 const Subencargados = lazy(() => import("../pages/legal/Subencargados"));
 const GuiaVerifactu = lazy(() => import("../pages/legal/GuiaVerifactu"));
 const CartaQR = lazy(() => import("../pages/features/CartaQR"));
+const FacturacionAutomatica = lazy(() => import("../pages/features/FacturacionAutomatica"));
 
 export default function publicRoutes(HomeEntry) {
   return (
@@ -54,6 +55,7 @@ export default function publicRoutes(HomeEntry) {
 
       {/* FEATURES */}
       <Route path="/carta-qr-restaurante" element={<CartaQR />} />
+      <Route path="/facturacion-automatica-restaurante" element={<FacturacionAutomatica />} />
 
       {/* LEGAL */}
       <Route path="/aviso-legal" element={<AvisoLegal />} />

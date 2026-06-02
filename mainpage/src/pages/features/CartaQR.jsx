@@ -313,7 +313,7 @@ export default function CartaQR() {
               </tr>
               <tr>
                 <td>Analytics por plato</td>
-                <td className="FP-compare-alef FP-check">30 métricas</td>
+                <td className="FP-compare-alef FP-check">Detallado</td>
                 <td className="FP-cross">No</td>
                 <td className="FP-partial">Básico</td>
                 <td className="FP-cross">No</td>

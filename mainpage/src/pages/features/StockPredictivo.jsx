@@ -11,7 +11,7 @@ import "./CartaQR.css";
 const faqs = [
   {
     q: "¿Cómo sabe ALEF cuánto voy a necesitar?",
-    a: "Analiza tus ventas de las últimas 12 semanas, día por día. Sabe que un viernes vendes más que un martes, y que si tienes 8 reservas para el jueves, necesitarás más producto. Cuantas más semanas uses ALEF, más precisa es la predicción.",
+    a: "Analiza tus ventas de las últimas 8 a 12 semanas, día por día. Sabe que un viernes vendes más que un martes, y que si tienes 8 reservas para el jueves, necesitarás más producto. Cuantas más semanas uses ALEF, más precisa es la predicción.",
   },
   {
     q: "¿Y si un día tengo un evento especial o más gente de lo normal?",
@@ -149,7 +149,7 @@ export default function StockPredictivo() {
             <div className="FP-flow-step">
               <div className="FP-flow-num">1</div>
               <strong>Analiza</strong>
-              <span>12 semanas de ventas + reservas + día de la semana</span>
+              <span>Semanas de ventas + reservas + día de la semana</span>
             </div>
             <div className="FP-flow-arrow">&#8594;</div>
             <div className="FP-flow-step">
@@ -191,7 +191,7 @@ export default function StockPredictivo() {
                 no es igual que cada martes, y el sistema lo sabe.
               </p>
               <ul>
-                <li>12 semanas de histórico ponderado: lo reciente pesa más</li>
+                <li>Hasta 12 semanas de histórico ponderado: lo reciente pesa más</li>
                 <li>Predicción a 7 días vista, día por día</li>
                 <li>Integra reservas confirmadas automáticamente</li>
                 <li>Cuantas más semanas lo usas, más preciso se vuelve</li>
@@ -245,7 +245,7 @@ export default function StockPredictivo() {
                 <li>Alerta crítica: se agota antes de que llegue el proveedor</li>
                 <li>Alerta alta: stock por debajo del mínimo</li>
                 <li>Alerta media: bajando, pero aún hay margen</li>
-                <li>Resumen por email cada mañana entre las 8 y las 11</li>
+                <li>Resumen por email cada mañana antes de abrir</li>
               </ul>
             </div>
           </div>

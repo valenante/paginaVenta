@@ -386,7 +386,7 @@ export default function FacturacionAutomatica() {
               </tr>
               <tr>
                 <td>Tiempo diario</td>
-                <td className="FP-compare-alef FP-check">0 minutos</td>
+                <td className="FP-compare-alef FP-check">5-10 min</td>
                 <td className="FP-partial">30-60 min</td>
                 <td className="FP-cross">1-2 horas</td>
               </tr>

@@ -12,8 +12,6 @@
   },
   "dependencies": {
     "@hello-pangea/dnd": "^18.0.1",
-    "@prerenderer/renderer-puppeteer": "^1.2.4",
-    "@prerenderer/rollup-plugin": "^0.3.12",
     "@reactour/tour": "^3.8.0",
     "@stripe/stripe-js": "^8.3.0",
     "axios": "^1.13.1",

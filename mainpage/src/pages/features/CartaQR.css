@@ -348,8 +348,8 @@
 }
 
 .FP-compare-table th {
-  background: var(--color-fondo);
-  color: var(--color-texto-invertido);
+  background: var(--color-primario);
+  color: #fff;
   font-weight: 700;
   font-size: var(--font-size-xs);
   text-transform: uppercase;
@@ -504,7 +504,7 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* ── CTA FINAL ── */
+/* ── CTA FINAL (oscuro por defecto) ── */
 .FP-cta-section {
   text-align: center;
   padding: clamp(48px, 8vh, 96px) 7%;
@@ -528,6 +528,20 @@
   max-width: 540px;
   margin-left: auto;
   margin-right: auto;
+}
+
+/* Variante clara */
+.FP-cta-section--light {
+  background: var(--color-fondo-claro);
+  color: var(--color-texto);
+}
+
+.FP-cta-section--light h2 {
+  color: #0f172a;
+}
+
+.FP-cta-section--light p {
+  color: var(--color-texto-suave);
 }
 
 /* ── RESPONSIVE ── */

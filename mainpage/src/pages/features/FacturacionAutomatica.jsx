@@ -308,7 +308,7 @@ export default function FacturacionAutomatica() {
             <div className="FP-pain-card" style={{ background: "rgba(255,255,255,0.04)", borderColor: "rgba(148,163,184,0.15)", borderLeftColor: "var(--color-primario)" }}>
               <strong style={{ color: "#fff" }}>Sin coste de adaptación</strong>
               <span style={{ color: "rgba(226,232,240,0.75)" }}>
-                Otros TPVs cobran hasta 8.000 euros por adaptarse.
+                Muchos TPVs cobran la adaptación como extra.
                 Con ALEF, VeriFactu viene incluido en todos los planes.
               </span>
             </div>
@@ -381,7 +381,7 @@ export default function FacturacionAutomatica() {
               <tr>
                 <td>VeriFactu</td>
                 <td className="FP-compare-alef FP-check">Incluido</td>
-                <td className="FP-partial">Extra (hasta 8.000€)</td>
+                <td className="FP-partial">Coste extra</td>
                 <td className="FP-cross">No cumple</td>
               </tr>
               <tr>
@@ -424,7 +424,7 @@ export default function FacturacionAutomatica() {
       {/* ══════════════════════════════════════
          CTA FINAL (claro con gradiente)
          ══════════════════════════════════════ */}
-      <section className="FP-cta-section">
+      <section className="FP-cta-section FP-cta-section--light">
         <h2>¿Quieres dejar de perder tiempo con facturas?</h2>
         <p>
           Te hacemos una demo de 10 minutos con datos de un restaurante real.

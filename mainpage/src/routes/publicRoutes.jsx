@@ -27,6 +27,7 @@ const Subencargados = lazy(() => import("../pages/legal/Subencargados"));
 const GuiaVerifactu = lazy(() => import("../pages/legal/GuiaVerifactu"));
 const CartaQR = lazy(() => import("../pages/features/CartaQR"));
 const FacturacionAutomatica = lazy(() => import("../pages/features/FacturacionAutomatica"));
+const StockPredictivo = lazy(() => import("../pages/features/StockPredictivo"));
 
 export default function publicRoutes(HomeEntry) {
   return (
@@ -56,6 +57,7 @@ export default function publicRoutes(HomeEntry) {
       {/* FEATURES */}
       <Route path="/carta-qr-restaurante" element={<CartaQR />} />
       <Route path="/facturacion-automatica-restaurante" element={<FacturacionAutomatica />} />
+      <Route path="/stock-predictivo-restaurante" element={<StockPredictivo />} />
 
       {/* LEGAL */}
       <Route path="/aviso-legal" element={<AvisoLegal />} />

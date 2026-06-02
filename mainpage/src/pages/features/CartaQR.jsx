@@ -218,9 +218,9 @@ export default function CartaQR() {
               </p>
               <ul>
                 <li>Responde en español, inglés y francés automáticamente</li>
-                <li>Solo recomienda platos que existen en tu carta, nunca inventa</li>
                 <li>Tiene en cuenta alergias, hora del día y hasta el clima</li>
                 <li>Puede montar una propuesta completa para toda la mesa</li>
+                <li>El cliente puede añadir platos al carrito directamente desde el chat</li>
               </ul>
             </div>
 
@@ -229,24 +229,23 @@ export default function CartaQR() {
               <div className="FP-feature-icon">&#128260;</div>
               <h3>El cliente elige, el camarero lo ve al instante</h3>
               <p>
-                Los clientes van añadiendo platos a su carrito desde el móvil.
-                El camarero lo ve en tiempo real en su tablet o PDA.
-                Cuando todo está listo, el camarero revisa, confirma
-                y manda el pedido a cocina con un toque. Control total
-                sin perder agilidad.
+                Tú decides cómo funciona. El cliente puede mandar el pedido
+                directo a cocina desde su móvil, o simplemente ir añadiendo
+                platos a su carrito mientras el camarero lo ve en tiempo real
+                en su tablet y lo confirma cuando está listo.
               </p>
               <ul>
-                <li>El cliente añade platos tranquilamente sin esperar al camarero</li>
-                <li>El camarero ve el carrito actualizado en su pantalla en tiempo real</li>
-                <li>El camarero puede ajustar, añadir notas o sugerir antes de confirmar</li>
-                <li>Cocina recibe el pedido limpio, sin errores de transcripción</li>
+                <li>Modo directo: el cliente pide y cocina lo recibe sin intermediarios</li>
+                <li>Modo asistido: el cliente monta el carrito, el camarero revisa y confirma</li>
+                <li>El camarero puede ajustar cantidades o añadir notas antes de enviar</li>
+                <li>Tú eliges qué modo usar según el estilo de tu restaurante</li>
               </ul>
             </div>
 
             {/* F4: Analytics */}
             <div className="FP-feature-card">
               <div className="FP-feature-icon">&#128200;</div>
-              <h3>Datos que nunca has tenido</h3>
+              <h3>Analíticas que nunca has tenido</h3>
               <p>
                 Por primera vez sabes qué platos miran tus clientes pero no piden.
                 Qué categorías convierten más. Cuánto tardan en decidirse.

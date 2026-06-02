@@ -201,7 +201,7 @@
 .FP-section-header h2 {
   font-size: clamp(1.5rem, 3.5vw, 2.25rem);
   font-weight: 800;
-  color: var(--color-texto);
+  color: var(--color-primario-oscuro);
   margin-bottom: 0.75rem;
 }
 

@@ -180,7 +180,7 @@ export default function CartaQR() {
       </section>
 
       {/* ══════════════════════════════════════
-         4 FEATURES PRINCIPALES
+         4 FEATURES PRINCIPALES (claro)
          ══════════════════════════════════════ */}
       <section className="FP-section">
         <div className="FP-section-inner">
@@ -189,41 +189,61 @@ export default function CartaQR() {
           </div>
 
           <div className="FP-features">
-            {/* F1: Camarero IA */}
-            <div className="FP-feature-card">
-              <div className="FP-feature-icon">&#128172;</div>
-              <h3>Un camarero virtual que conoce cada plato</h3>
-              <p>
-                Tu cliente pregunta en su idioma: "¿Qué me recomiendas
-                para dos sin gluten?" y recibe una respuesta real,
-                con platos de tu carta, en menos de un segundo.
-              </p>
-              <ul>
-                <li>Responde en español, inglés y francés</li>
-                <li>Solo recomienda platos que existen en tu carta</li>
-                <li>Tiene en cuenta alergias, hora del día y clima</li>
-                <li>Puede montar una propuesta completa para la mesa</li>
-              </ul>
-            </div>
-
-            {/* F2: Aprendizaje */}
+            {/* F1: Sugerencias inteligentes */}
             <div className="FP-feature-card">
               <div className="FP-feature-icon">&#129504;</div>
-              <h3>Aprende de cada servicio</h3>
+              <h3>Sugiere platos porque aprende de tu restaurante</h3>
               <p>
-                La carta no repite las mismas sugerencias para todos.
-                Analiza qué piden tus clientes y va afinando
-                las recomendaciones con datos reales de tu restaurante.
+                La carta no muestra lo mismo a todos. Observa cómo piden
+                tus clientes, semana tras semana, y afina las sugerencias
+                con datos reales de tu negocio. No son recomendaciones genéricas:
+                son las de tu restaurante.
               </p>
               <ul>
                 <li>Detecta combinaciones habituales ("con el pulpo suelen pedir vino blanco")</li>
                 <li>Adapta las sugerencias a la hora: no recomienda lo mismo a las 13h que a las 21h</li>
-                <li>Sabe cuántos platos pide cada tipo de grupo</li>
-                <li>Cada restaurante tiene su propio perfil de aprendizaje</li>
+                <li>Sabe cuántos platos pide cada tipo de grupo (parejas, familias, grupos)</li>
+                <li>Cada restaurante tiene su propio perfil de aprendizaje, entrenado con sus datos</li>
               </ul>
             </div>
 
-            {/* F3: Analytics */}
+            {/* F2: Camarero IA */}
+            <div className="FP-feature-card">
+              <div className="FP-feature-icon">&#128172;</div>
+              <h3>Un camarero virtual que habla 3 idiomas</h3>
+              <p>
+                Tu cliente abre un chat dentro de la carta y pregunta lo que quiera:
+                "¿Qué me recomiendas para dos sin gluten?" La IA responde con
+                platos reales de tu carta, en menos de un segundo, en su idioma.
+              </p>
+              <ul>
+                <li>Responde en español, inglés y francés automáticamente</li>
+                <li>Solo recomienda platos que existen en tu carta, nunca inventa</li>
+                <li>Tiene en cuenta alergias, hora del día y hasta el clima</li>
+                <li>Puede montar una propuesta completa para toda la mesa</li>
+              </ul>
+            </div>
+
+            {/* F3: Carrito sincronizado */}
+            <div className="FP-feature-card">
+              <div className="FP-feature-icon">&#128260;</div>
+              <h3>El cliente elige, el camarero lo ve al instante</h3>
+              <p>
+                Los clientes van añadiendo platos a su carrito desde el móvil.
+                El camarero lo ve en tiempo real en su tablet o PDA.
+                Cuando todo está listo, el camarero revisa, confirma
+                y manda el pedido a cocina con un toque. Control total
+                sin perder agilidad.
+              </p>
+              <ul>
+                <li>El cliente añade platos tranquilamente sin esperar al camarero</li>
+                <li>El camarero ve el carrito actualizado en su pantalla en tiempo real</li>
+                <li>El camarero puede ajustar, añadir notas o sugerir antes de confirmar</li>
+                <li>Cocina recibe el pedido limpio, sin errores de transcripción</li>
+              </ul>
+            </div>
+
+            {/* F4: Analytics */}
             <div className="FP-feature-card">
               <div className="FP-feature-icon">&#128200;</div>
               <h3>Datos que nunca has tenido</h3>
@@ -239,29 +259,12 @@ export default function CartaQR() {
                 <li>Comparativa automática con la semana anterior</li>
               </ul>
             </div>
-
-            {/* F4: Pedido directo */}
-            <div className="FP-feature-card">
-              <div className="FP-feature-icon">&#9889;</div>
-              <h3>Pedido directo a cocina</h3>
-              <p>
-                El cliente confirma desde su móvil y cocina lo recibe
-                en su pantalla al instante. Sin camarero apuntando,
-                sin errores de transcripción, sin esperas.
-              </p>
-              <ul>
-                <li>Cada pedido descuenta stock automáticamente</li>
-                <li>Soporte para extras, variantes y notas especiales</li>
-                <li>Imposible duplicar un pedido por error</li>
-                <li>El precio se congela en el momento del pedido</li>
-              </ul>
-            </div>
           </div>
         </div>
       </section>
 
       {/* ══════════════════════════════════════
-         COMPARATIVA
+         COMPARATIVA (oscuro)
          ══════════════════════════════════════ */}
       <section className="FP-section FP-section--dark">
         <div className="FP-section-inner">
@@ -324,6 +327,13 @@ export default function CartaQR() {
                 <td className="FP-cross">No</td>
               </tr>
               <tr>
+                <td>Carrito sincronizado con camarero</td>
+                <td className="FP-compare-alef FP-check">Tiempo real</td>
+                <td className="FP-cross">No</td>
+                <td className="FP-cross">No</td>
+                <td className="FP-cross">No</td>
+              </tr>
+              <tr>
                 <td>Conectada con stock y costes</td>
                 <td className="FP-compare-alef FP-check">Automático</td>
                 <td className="FP-cross">No</td>
@@ -343,9 +353,9 @@ export default function CartaQR() {
       </section>
 
       {/* ══════════════════════════════════════
-         FAQ
+         FAQ (claro)
          ══════════════════════════════════════ */}
-      <section className="FP-section FP-section--dark">
+      <section className="FP-section">
         <div className="FP-section-inner">
           <div className="FP-section-header">
             <h2>Preguntas frecuentes</h2>

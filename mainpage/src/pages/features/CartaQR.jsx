@@ -150,7 +150,7 @@ export default function CartaQR() {
       {/* ══════════════════════════════════════
          CÓMO FUNCIONA (flujo visual)
          ══════════════════════════════════════ */}
-      <section className="FP-section FP-section--alt" id="como-funciona">
+      <section className="FP-section FP-section--dark" id="como-funciona">
         <div className="FP-section-inner">
           <div className="FP-section-header">
             <h2>Así funciona para tu cliente</h2>
@@ -263,7 +263,7 @@ export default function CartaQR() {
       {/* ══════════════════════════════════════
          COMPARATIVA
          ══════════════════════════════════════ */}
-      <section className="FP-section FP-section--alt">
+      <section className="FP-section FP-section--dark">
         <div className="FP-section-inner">
           <div className="FP-section-header">
             <h2>ALEF vs otras cartas digitales</h2>
@@ -345,7 +345,7 @@ export default function CartaQR() {
       {/* ══════════════════════════════════════
          FAQ
          ══════════════════════════════════════ */}
-      <section className="FP-section">
+      <section className="FP-section FP-section--dark">
         <div className="FP-section-inner">
           <div className="FP-section-header">
             <h2>Preguntas frecuentes</h2>

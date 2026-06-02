@@ -25,6 +25,7 @@ const TerminosServicio = lazy(() => import("../pages/legal/TerminosServicio"));
 const DPA = lazy(() => import("../pages/legal/DPA"));
 const Subencargados = lazy(() => import("../pages/legal/Subencargados"));
 const GuiaVerifactu = lazy(() => import("../pages/legal/GuiaVerifactu"));
+const CartaQR = lazy(() => import("../pages/features/CartaQR"));
 
 export default function publicRoutes(HomeEntry) {
   return (
@@ -50,6 +51,9 @@ export default function publicRoutes(HomeEntry) {
       <Route path="/registro/cancel" element={<RegistroSuccess />} />
       <Route path="/pago/exito" element={<RegistroSuccess />} />
       <Route path="/pago/cancelado" element={<RegistroSuccess />} />
+
+      {/* FEATURES */}
+      <Route path="/carta-qr-restaurante" element={<CartaQR />} />
 
       {/* LEGAL */}
       <Route path="/aviso-legal" element={<AvisoLegal />} />

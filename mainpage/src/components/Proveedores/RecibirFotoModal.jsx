@@ -16,6 +16,19 @@ export default function RecibirFotoModal({ onClose, onDone }) {
 
   const [manualItems, setManualItems] = useState([{ nombre: "", cantidad: "", unidad: "unidad" }]);
 
+  // Detalle ingrediente
+  const [detailData, setDetailData] = useState(null);
+  const [detailLoading, setDetailLoading] = useState(false);
+
+  const openDetail = async (ingredienteId) => {
+    setDetailLoading(true);
+    try {
+      const { data } = await api.get(`/stock/ingrediente/${ingredienteId}/detail`);
+      setDetailData(data);
+    } catch { setDetailData(null); }
+    finally { setDetailLoading(false); }
+  };
+
   // Búsqueda para vincular no reconocidos
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
@@ -290,6 +303,7 @@ export default function RecibirFotoModal({ onClose, onDone }) {
                     <th style={{ width: 80 }}>En DB</th>
                     <th style={{ width: 50 }}>Diff</th>
                     <th style={{ width: 30 }}>$</th>
+                    <th style={{ width: 30 }}></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -311,6 +325,7 @@ export default function RecibirFotoModal({ onClose, onDone }) {
                         <td className="recibir-table td--muted">{m.match?.costeDB != null ? m.match.costeDB.toFixed(2) + "€" : "—"}</td>
                         <td>{badge ? <span className={`recibir-badge ${badge.cls}`}>{badge.text}</span> : "—"}</td>
                         <td>{badge && badge.cls !== "recibir-badge--equal" ? <input type="checkbox" checked={updatePrices.has(i)} onChange={() => toggleUpdatePrice(i)} title="Actualizar precio en DB" /> : null}</td>
+                        <td><button type="button" className="recibir-infoBtn" onClick={() => openDetail(m.match?.id)} title="Ver detalle">i</button></td>
                       </tr>
                     );
                   })}
@@ -380,6 +395,74 @@ export default function RecibirFotoModal({ onClose, onDone }) {
 
       {step === "done" && (
         <div className="recibir-status recibir-status--done"><div className="recibir-status-icon">✅</div><div className="recibir-status-title">Stock actualizado</div></div>
+      )}
+
+      {/* Sub-modal detalle ingrediente */}
+      {detailData && (
+        <div className="recibir-detailOverlay" onClick={() => setDetailData(null)}>
+          <div className="recibir-detailModal" onClick={e => e.stopPropagation()}>
+            <div className="recibir-detailHeader">
+              <h3 className="recibir-detailTitle">{detailData.ingrediente?.nombre}</h3>
+              <button type="button" className="recibir-detailClose" onClick={() => setDetailData(null)}>✕</button>
+            </div>
+            <div className="recibir-detailBody">
+              {/* Info general */}
+              <div className="recibir-detailSection">
+                <h4 className="recibir-detailSectionTitle">Stock</h4>
+                <div className="recibir-detailGrid">
+                  <div className="recibir-detailKpi"><span className="recibir-detailKpi-label">Actual</span><span className="recibir-detailKpi-value">{detailData.ingrediente?.stockActual} {detailData.ingrediente?.unidad}</span></div>
+                  <div className="recibir-detailKpi"><span className="recibir-detailKpi-label">Minimo</span><span className="recibir-detailKpi-value">{detailData.ingrediente?.stockMinimo}</span></div>
+                  <div className="recibir-detailKpi"><span className="recibir-detailKpi-label">Maximo</span><span className="recibir-detailKpi-value">{detailData.ingrediente?.stockMax}</span></div>
+                  <div className="recibir-detailKpi"><span className="recibir-detailKpi-label">Coste</span><span className="recibir-detailKpi-value">{detailData.ingrediente?.coste?.toFixed(2)}€/{detailData.ingrediente?.unidad}</span></div>
+                </div>
+              </div>
+
+              {/* Proveedores */}
+              {detailData.proveedores?.length > 0 && (
+                <div className="recibir-detailSection">
+                  <h4 className="recibir-detailSectionTitle">Proveedores</h4>
+                  {detailData.proveedores.map((p, i) => (
+                    <div key={i} className="recibir-detailProv">
+                      <span className="recibir-detailProv-name">{p.nombre} {p.esPrincipal ? "★" : ""}</span>
+                      <span className="recibir-detailProv-price">{p.precioBase?.toFixed(2)}€/{p.unidad}</span>
+                      <span className="recibir-detailProv-format">{p.formato}</span>
+                      {p.leadTimeDias > 0 && <span className="recibir-detailProv-lead">{p.leadTimeDias}d lead</span>}
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Productos que lo usan */}
+              {detailData.productos?.length > 0 && (
+                <div className="recibir-detailSection">
+                  <h4 className="recibir-detailSectionTitle">Productos que lo usan ({detailData.productos.length})</h4>
+                  {detailData.productos.map((p, i) => (
+                    <div key={i} className="recibir-detailProd">
+                      <span className="recibir-detailProd-name">{p.nombre}</span>
+                      <span className="recibir-detailProd-pvp">PVP {p.pvp?.toFixed(2)}€</span>
+                      <span className="recibir-detailProd-coste">Coste {p.coste?.toFixed(2)}€</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Últimos movimientos */}
+              {detailData.movimientos?.length > 0 && (
+                <div className="recibir-detailSection">
+                  <h4 className="recibir-detailSectionTitle">Ultimos movimientos</h4>
+                  {detailData.movimientos.slice(0, 5).map((m, i) => (
+                    <div key={i} className="recibir-detailMov">
+                      <span className={`recibir-detailMov-delta ${m.delta > 0 ? "recibir-detailMov--pos" : "recibir-detailMov--neg"}`}>{m.delta > 0 ? "+" : ""}{m.delta}</span>
+                      <span className="recibir-detailMov-tipo">{m.tipo}</span>
+                      <span className="recibir-detailMov-ref">{m.referencia}</span>
+                      <span className="recibir-detailMov-fecha">{m.fecha ? new Date(m.fecha).toLocaleDateString("es-ES") : ""}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
       )}
     </ModalBase>
   );

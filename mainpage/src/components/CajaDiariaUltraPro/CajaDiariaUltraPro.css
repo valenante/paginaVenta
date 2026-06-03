@@ -139,8 +139,8 @@
 .caja-ultra-filtros input[type="date"]:hover,
 .caja-ultra-filtros input[type="date"]:focus {
   background: rgba(255, 255, 255, 0.12);
-  border-color: #6a0dad;
-  box-shadow: 0 0 0 1px #6a0dad;
+  border-color: var(--color-primario-oscuro, #2f7ed8);
+  box-shadow: 0 0 0 1px var(--color-primario-oscuro, #2f7ed8);
 }
 
 /* Botones */
@@ -153,7 +153,7 @@
   color: #fff;
   font-size: 0.85rem;
   transition: 0.2s ease;
-  background: linear-gradient(90deg, #6a0dad, #ff6700);
+  background: linear-gradient(90deg, var(--color-primario-oscuro, #2f7ed8), var(--color-primario, #60b5ff));
   box-shadow: 0 4px 18px rgba(106, 13, 173, 0.35);
 }
 
@@ -163,7 +163,7 @@
 }
 
 .pdf-btn {
-  background: linear-gradient(90deg, #ff6700, #6a0dad);
+  background: linear-gradient(90deg, var(--color-primario, #60b5ff), var(--color-primario-oscuro, #2f7ed8));
 }
 
 /* ===== Comparar toggle ===== */
@@ -235,12 +235,12 @@
 }
 
 .kpi-card.highlight {
-  border-color: #6a0dad;
+  border-color: var(--color-primario-oscuro, #2f7ed8);
   box-shadow: 0 0 12px rgba(106, 13, 173, 0.55);
 }
 
 .kpi-card.worst {
-  border-color: #ff6700;
+  border-color: var(--color-primario, #60b5ff);
   box-shadow: 0 0 12px rgba(255, 103, 0, 0.55);
 }
 

@@ -98,7 +98,7 @@
 }
 
 .otros-card:hover:not(.otros-card--disabled) .otros-card__arrow {
-  color: #ff6700;
+  color: var(--color-primario, #60b5ff);
   transform: translateX(2px);
 }
 

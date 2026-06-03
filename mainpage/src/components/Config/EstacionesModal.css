@@ -89,7 +89,7 @@
 .estaciones-modal-body input:focus,
 .estaciones-modal-body select:focus {
   outline: none;
-  border-color: var(--color-primario, #6a0dad);
+  border-color: var(--color-primario, var(--color-primario-oscuro, #2f7ed8));
   box-shadow: 0 0 0 3px rgba(106, 13, 173, 0.08);
   background: #fff;
 }

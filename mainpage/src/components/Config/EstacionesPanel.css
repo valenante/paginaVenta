@@ -129,7 +129,7 @@
 }
 
 .check-central input[type="checkbox"] {
-  accent-color: var(--color-primario, #6a0dad);
+  accent-color: var(--color-primario, var(--color-primario-oscuro, #2f7ed8));
   width: 16px;
   height: 16px;
 }
@@ -228,7 +228,7 @@ small.text-suave {
 .config-field--stacked > input:focus,
 .config-field--stacked > select:focus {
   outline: none;
-  border-color: var(--color-primario, #6a0dad);
+  border-color: var(--color-primario, var(--color-primario-oscuro, #2f7ed8));
   box-shadow: 0 0 0 3px rgba(106, 13, 173, 0.08);
   background: #fff;
 }

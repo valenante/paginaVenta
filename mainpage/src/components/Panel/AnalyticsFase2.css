@@ -56,7 +56,7 @@
 .af2-ratio-dot {
   display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px;
 }
-.af2-ratio-dot--comida { background: #ff6700; }
+.af2-ratio-dot--comida { background: var(--color-primario, #60b5ff); }
 .af2-ratio-dot--bebida { background: #a855f7; }
 
 .af2-insight {

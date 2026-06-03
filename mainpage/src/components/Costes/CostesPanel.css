@@ -241,7 +241,7 @@
   transition: color 0.15s;
 }
 .costes-card__name--link:hover {
-  color: #ff6700;
+  color: var(--color-primario, #60b5ff);
   text-decoration: underline;
   text-decoration-color: rgba(255,103,0,0.4);
   text-underline-offset: 2px;
@@ -538,7 +538,7 @@
 .costes-receta-btn:hover {
   background: rgba(106,13,173,0.1);
   border-color: rgba(106,13,173,0.3);
-  color: #ff6700;
+  color: var(--color-primario, #60b5ff);
 }
 .costes-receta-btn--active {
   background: rgba(34,197,94,0.1);

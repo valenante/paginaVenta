@@ -19,7 +19,7 @@
   transition: all 0.15s;
   font-family: inherit;
 }
-.ig-tab--active { color: #ff6700; border-bottom-color: #ff6700; }
+.ig-tab--active { color: var(--color-primario, #60b5ff); border-bottom-color: var(--color-primario, #60b5ff); }
 .ig-tab:hover:not(.ig-tab--active) { color: #e2e8f0; }
 
 /* ─── Config: selects, inputs, checkbox ──────────────── */
@@ -180,7 +180,7 @@
 }
 .ig-post-card__tag {
   font-size: 0.7rem;
-  color: #ff6700;
+  color: var(--color-primario, #60b5ff);
 }
 .ig-post-card__actions {
   display: flex;
@@ -429,7 +429,7 @@
   display: block;
   padding: 0 10px 8px;
   font-size: 0.7rem;
-  color: #ff6700;
+  color: var(--color-primario, #60b5ff);
   font-weight: 600;
 }
 

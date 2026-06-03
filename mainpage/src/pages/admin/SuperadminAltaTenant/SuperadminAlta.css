@@ -69,7 +69,7 @@
   font-size: 14px; font-weight: 600; border: none; transition: all 0.15s;
 }
 .sa-btn--primary {
-  background: linear-gradient(135deg, #6a0dad, #ff6700);
+  background: linear-gradient(135deg, var(--color-primario-oscuro, #2f7ed8), var(--color-primario, #60b5ff));
   color: #fff;
 }
 .sa-btn--primary:hover { filter: brightness(1.1); }

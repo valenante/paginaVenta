@@ -66,7 +66,7 @@
 }
 
 .panelpro-tabs button.active {
-  background: linear-gradient(90deg, #6a0dad, #ff6700);
+  background: linear-gradient(90deg, var(--color-primario-oscuro, #2f7ed8), var(--color-primario, #60b5ff));
   border-color: transparent;
   font-weight: 600;
   color: white;
@@ -148,7 +148,7 @@
   border-radius: 999px;
 
   border: 1px solid rgba(255, 255, 255, 0.14);
-  background: linear-gradient(90deg, #6a0dad, #ff6700);
+  background: linear-gradient(90deg, var(--color-primario-oscuro, #2f7ed8), var(--color-primario, #60b5ff));
   color: rgba(255, 255, 255, 0.9);
 
   display: grid;

@@ -75,7 +75,7 @@
   font-size: 1.4rem;
   cursor: pointer;
   color: #fff;
-  background: linear-gradient(90deg, #6a0dad, #ff6700);
+  background: linear-gradient(90deg, var(--color-primario-oscuro, #2f7ed8), var(--color-primario, #60b5ff));
   box-shadow: 0 4px 18px rgba(255,103,0,0.25);
   transition: 0.2s ease;
 }
@@ -132,7 +132,7 @@
   border: none;
   color: white;
   font-weight: 700;
-  background: linear-gradient(90deg, #ff6700, #6a0dad);
+  background: linear-gradient(90deg, var(--color-primario, #60b5ff), var(--color-primario-oscuro, #2f7ed8));
   box-shadow: 0 4px 18px rgba(255,103,0,0.28);
   cursor: pointer;
   transition: 0.25s ease;

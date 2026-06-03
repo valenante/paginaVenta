@@ -30,8 +30,8 @@
   --dash-text-muted: rgba(226, 232, 240, 0.72);
 
   /* Accent Alef */
-  --dash-accent-1: #6a0dad;
-  --dash-accent-2: #ff6700;
+  --dash-accent-1: var(--color-primario-oscuro, #2f7ed8);
+  --dash-accent-2: var(--color-primario, #60b5ff);
 
   /* Fondos */
   --dash-bg: radial-gradient(circle at top right, #141423, #0a0a13 70%);

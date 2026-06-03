@@ -132,7 +132,7 @@
 }
 
 .Introduccion-boton.principal {
-  background: var(--color-primario, #6a0dad);
+  background: var(--color-primario, var(--color-primario-oscuro, #2f7ed8));
   color: var(--color-texto-invertido, #ffffff);
   box-shadow: 0 18px 40px rgba(0, 0, 0, 0.55);
 }
@@ -145,7 +145,7 @@
 
 .Introduccion-boton.secundario {
   background: transparent;
-  color: var(--color-primario, #6a0dad);
+  color: var(--color-primario, var(--color-primario-oscuro, #2f7ed8));
   border-color: rgba(148, 163, 184, 0.7);
   backdrop-filter: blur(6px);
 }

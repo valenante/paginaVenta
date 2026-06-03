@@ -33,7 +33,7 @@
 
 .proveedores-tipo-btn:hover { background: rgba(0, 0, 0, 0.04); }
 .proveedores-tipo-btn.is-active {
-  background: #ff6700;
+  background: var(--color-primario, #60b5ff);
   color: #fff;
 }
 
@@ -176,8 +176,8 @@
 
 .proveedores-pager button:hover:not(:disabled) {
   background: #f1f5f9;
-  border-color: #ff6700;
-  color: #ff6700;
+  border-color: var(--color-primario, #60b5ff);
+  color: var(--color-primario, #60b5ff);
 }
 
 .proveedores-pager button:disabled {

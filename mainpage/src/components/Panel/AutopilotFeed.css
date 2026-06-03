@@ -34,7 +34,7 @@
   letter-spacing: 0.08em;
   padding: 0.2rem 0.6rem;
   border-radius: 999px;
-  background: linear-gradient(135deg, #ff6700, #8b5cf6);
+  background: linear-gradient(135deg, var(--color-primario, #60b5ff), #8b5cf6);
   color: #fff;
   white-space: nowrap;
 }
@@ -115,7 +115,7 @@
   border-radius: 8px;
   border: 1px solid rgba(106, 13, 173, 0.3);
   background: rgba(106, 13, 173, 0.08);
-  color: #ff6700;
+  color: var(--color-primario, #60b5ff);
   font-size: 0.7rem;
   font-weight: 700;
   cursor: pointer;
@@ -125,7 +125,7 @@
 
 .ap-card__action:hover {
   background: rgba(106, 13, 173, 0.18);
-  border-color: #ff6700;
+  border-color: var(--color-primario, #60b5ff);
 }
 
 /* Responsive */

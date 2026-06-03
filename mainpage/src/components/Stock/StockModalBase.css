@@ -208,7 +208,7 @@
 .stk-checkbox {
   width: 18px;
   height: 18px;
-  accent-color: #ff6700;
+  accent-color: var(--color-primario, #60b5ff);
 }
 
 /* ===== HINT / ERROR ===== */
@@ -295,7 +295,7 @@
 
 .stk-btn--primary {
   color: #fff;
-  background: linear-gradient(135deg, #6a0dad, #ff6700);
+  background: linear-gradient(135deg, var(--color-primario-oscuro, #2f7ed8), var(--color-primario, #60b5ff));
   box-shadow: 0 6px 18px rgba(255, 103, 0, 0.35);
 }
 

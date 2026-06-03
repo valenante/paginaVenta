@@ -108,7 +108,7 @@
 }
 
 .ra-franja:hover {
-  border-color: var(--color-primario, #6a0dad);
+  border-color: var(--color-primario, var(--color-primario-oscuro, #2f7ed8));
   box-shadow: 0 2px 8px rgba(106, 13, 173, 0.06);
 }
 
@@ -179,14 +179,14 @@
 .ra-dia input[type="checkbox"] {
   width: 14px;
   height: 14px;
-  accent-color: var(--color-primario, #6a0dad);
+  accent-color: var(--color-primario, var(--color-primario-oscuro, #2f7ed8));
   cursor: pointer;
 }
 
 .ra-dia--on {
   background: rgba(106, 13, 173, 0.08);
-  border-color: var(--color-primario, #6a0dad);
-  color: var(--color-primario, #6a0dad);
+  border-color: var(--color-primario, var(--color-primario-oscuro, #2f7ed8));
+  color: var(--color-primario, var(--color-primario-oscuro, #2f7ed8));
   font-weight: 700;
 }
 
@@ -208,7 +208,7 @@
 .ra-toggle input[type="checkbox"] {
   width: 16px;
   height: 16px;
-  accent-color: var(--color-primario, #6a0dad);
+  accent-color: var(--color-primario, var(--color-primario-oscuro, #2f7ed8));
   cursor: pointer;
 }
 

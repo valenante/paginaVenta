@@ -42,7 +42,7 @@
 .upsell-valoraciones-btn {
   margin-top: 1.2rem;
   padding: 0.7rem 1.6rem;
-  background: linear-gradient(90deg, #6a0dad, #ff6700);
+  background: linear-gradient(90deg, var(--color-primario-oscuro, #2f7ed8), var(--color-primario, #60b5ff));
   color: #fff;
   border: none;
   border-radius: 999px;

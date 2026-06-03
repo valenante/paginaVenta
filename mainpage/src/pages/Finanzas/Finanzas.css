@@ -68,7 +68,7 @@
 }
 
 .finanzas-tab.active {
-  background: linear-gradient(90deg, var(--dash-accent-1, #6a0dad), var(--dash-accent-2, #ff6700));
+  background: linear-gradient(90deg, var(--dash-accent-1, var(--color-primario-oscuro, #2f7ed8)), var(--dash-accent-2, var(--color-primario, #60b5ff)));
   color: #ffffff;
   border: none;
   box-shadow:
@@ -102,7 +102,7 @@
 }
 
 .fin-periodo-btn.active {
-  background: linear-gradient(90deg, var(--dash-accent-1, #6a0dad), var(--dash-accent-2, #ff6700));
+  background: linear-gradient(90deg, var(--dash-accent-1, var(--color-primario-oscuro, #2f7ed8)), var(--dash-accent-2, var(--color-primario, #60b5ff)));
   border-color: transparent;
   color: #ffffff;
   box-shadow: 0 4px 14px rgba(255, 103, 0, 0.28);
@@ -344,7 +344,7 @@
 .fin-btn-primary {
   padding: 0.55rem 1.25rem;
   border-radius: var(--dash-radius-pill);
-  background: linear-gradient(90deg, var(--dash-accent-1, #6a0dad), var(--dash-accent-2, #ff6700));
+  background: linear-gradient(90deg, var(--dash-accent-1, var(--color-primario-oscuro, #2f7ed8)), var(--dash-accent-2, var(--color-primario, #60b5ff)));
   color: #ffffff;
   border: none;
   font-weight: 700;
@@ -572,7 +572,7 @@ select.fin-input option {
 }
 
 .fin-checkbox input[type="checkbox"]:checked {
-  background: linear-gradient(135deg, var(--dash-accent-1, #6a0dad), var(--dash-accent-2, #ff6700));
+  background: linear-gradient(135deg, var(--dash-accent-1, var(--color-primario-oscuro, #2f7ed8)), var(--dash-accent-2, var(--color-primario, #60b5ff)));
   border-color: transparent;
 }
 
@@ -656,7 +656,7 @@ select.fin-input option {
 }
 
 .fin-pag-btn.active {
-  background: linear-gradient(90deg, var(--dash-accent-1, #6a0dad), var(--dash-accent-2, #ff6700));
+  background: linear-gradient(90deg, var(--dash-accent-1, var(--color-primario-oscuro, #2f7ed8)), var(--dash-accent-2, var(--color-primario, #60b5ff)));
   border-color: transparent;
   color: #fff;
   box-shadow: 0 4px 14px rgba(255, 103, 0, 0.3);

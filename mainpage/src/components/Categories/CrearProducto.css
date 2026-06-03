@@ -538,7 +538,7 @@
   padding: 0.6rem;
   border-radius: 999px;
   border: none;
-  background: linear-gradient(90deg, #6a0dad, #ff6700);
+  background: linear-gradient(90deg, var(--color-primario-oscuro, #2f7ed8), var(--color-primario, #60b5ff));
   color: #fff;
   font-weight: 700;
   letter-spacing: 0.04em;
@@ -631,7 +631,7 @@
   letter-spacing: 0.04em;
   text-transform: uppercase;
   cursor: pointer;
-  background: linear-gradient(90deg, #6a0dad, #ff6700);
+  background: linear-gradient(90deg, var(--color-primario-oscuro, #2f7ed8), var(--color-primario, #60b5ff));
   color: #f9fafb;
   box-shadow: 0 4px 18px rgba(255, 103, 0, 0.25);
   display: inline-flex;

@@ -127,12 +127,12 @@
 .tc-kpi__val--warn { color: #fbbf24; }
 
 .tc-kpi--highlight {
-  border-color: #6a0dad;
+  border-color: var(--color-primario-oscuro, #2f7ed8);
   box-shadow: 0 0 14px rgba(106,13,173,0.4);
 }
 
 .tc-kpi--alert {
-  border-color: #ff6700;
+  border-color: var(--color-primario, #60b5ff);
   box-shadow: 0 0 14px rgba(255,103,0,0.35);
 }
 
@@ -297,7 +297,7 @@
   align-items: center;
   justify-content: center;
   font-size: 1.1rem;
-  background: linear-gradient(135deg, #6a0dad, #ff6700);
+  background: linear-gradient(135deg, var(--color-primario-oscuro, #2f7ed8), var(--color-primario, #60b5ff));
   box-shadow: 0 4px 14px rgba(106,13,173,0.4);
   flex-shrink: 0;
 }
@@ -555,7 +555,7 @@
 }
 
 .tc-sel:focus {
-  border-color: #6a0dad;
+  border-color: var(--color-primario-oscuro, #2f7ed8);
   box-shadow: 0 0 0 2px rgba(106,13,173,0.3);
 }
 
@@ -775,7 +775,7 @@
 }
 
 .tc-station-save .btn-primario {
-  background: linear-gradient(90deg, #6a0dad, #ff6700);
+  background: linear-gradient(90deg, var(--color-primario-oscuro, #2f7ed8), var(--color-primario, #60b5ff));
   box-shadow: 0 2px 10px rgba(106,13,173,0.3);
   border: none;
   color: #fff;
@@ -1010,7 +1010,7 @@
 }
 
 .tc-inp:focus {
-  border-color: #6a0dad;
+  border-color: var(--color-primario-oscuro, #2f7ed8);
   box-shadow: 0 0 0 2px rgba(106,13,173,0.3);
   background: rgba(255,255,255,0.1);
 }
@@ -1099,12 +1099,12 @@
 }
 
 .tc-sim__chip:hover {
-  border-color: #6a0dad;
+  border-color: var(--color-primario-oscuro, #2f7ed8);
   background: rgba(106,13,173,0.1);
 }
 
 .tc-sim__chip--on {
-  background: linear-gradient(135deg, #6a0dad, #8b5cf6);
+  background: linear-gradient(135deg, var(--color-primario-oscuro, #2f7ed8), #8b5cf6);
   border-color: #8b5cf6;
   color: #fff;
   box-shadow: 0 2px 10px rgba(106,13,173,0.4);
@@ -1180,7 +1180,7 @@
 }
 
 .tc-actions .btn-primario {
-  background: linear-gradient(90deg, #6a0dad, #ff6700);
+  background: linear-gradient(90deg, var(--color-primario-oscuro, #2f7ed8), var(--color-primario, #60b5ff));
   box-shadow: 0 4px 18px rgba(106,13,173,0.35);
   border: none;
   color: #fff;
@@ -1437,7 +1437,7 @@
 }
 
 .tc-mode--on {
-  background: linear-gradient(135deg, #6a0dad, #ff6700) !important;
+  background: linear-gradient(135deg, var(--color-primario-oscuro, #2f7ed8), var(--color-primario, #60b5ff)) !important;
   color: #fff !important;
   box-shadow: 0 2px 12px rgba(106,13,173,0.4);
 }
@@ -1538,7 +1538,7 @@
 }
 
 .tc-mesa-bar__input:focus {
-  border-color: #6a0dad;
+  border-color: var(--color-primario-oscuro, #2f7ed8);
   box-shadow: 0 0 0 2px rgba(106,13,173,0.3);
 }
 
@@ -1546,7 +1546,7 @@
   padding: 6px 14px;
   border-radius: 999px;
   border: none;
-  background: linear-gradient(90deg, #6a0dad, #ff6700);
+  background: linear-gradient(90deg, var(--color-primario-oscuro, #2f7ed8), var(--color-primario, #60b5ff));
   color: #fff;
   font-size: 0.8rem;
   font-weight: 700;
@@ -1725,7 +1725,7 @@
   font-weight: 800;
   padding: 1px 6px;
   border-radius: 999px;
-  background: linear-gradient(135deg, #6a0dad, #8b5cf6);
+  background: linear-gradient(135deg, var(--color-primario-oscuro, #2f7ed8), #8b5cf6);
   color: #fff;
   box-shadow: 0 1px 6px rgba(106,13,173,0.5);
 }
@@ -1845,7 +1845,7 @@
 .tc-sla-toggle input[type="checkbox"] {
   width: 20px;
   height: 20px;
-  accent-color: #6a0dad;
+  accent-color: var(--color-primario-oscuro, #2f7ed8);
   cursor: pointer;
   flex-shrink: 0;
   margin-top: 2px;
@@ -1899,7 +1899,7 @@
 
 .tc-sla-field input:focus,
 .tc-sla-field select:focus {
-  border-color: #6a0dad;
+  border-color: var(--color-primario-oscuro, #2f7ed8);
   box-shadow: 0 0 0 2px rgba(106,13,173,0.3);
 }
 
@@ -1924,7 +1924,7 @@
 }
 
 .tc-sla-actions .btn-primario {
-  background: linear-gradient(90deg, #6a0dad, #ff6700);
+  background: linear-gradient(90deg, var(--color-primario-oscuro, #2f7ed8), var(--color-primario, #60b5ff));
   box-shadow: 0 2px 10px rgba(106,13,173,0.3);
   border: none;
   color: #fff;

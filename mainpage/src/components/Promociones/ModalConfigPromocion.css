@@ -100,7 +100,7 @@
 .modal-promocion .modal-body input:focus,
 .modal-promocion .modal-body select:focus,
 .modal-promocion .modal-body textarea:focus {
-  border-color: var(--color-primario, #6a0dad);
+  border-color: var(--color-primario, var(--color-primario-oscuro, #2f7ed8));
   box-shadow: 0 0 0 3px rgba(106, 13, 173, 0.1);
 }
 
@@ -137,7 +137,7 @@
   border: 1px solid rgba(106, 13, 173, 0.15);
   font-size: 0.85rem;
   font-weight: 600;
-  color: var(--color-primario, #6a0dad);
+  color: var(--color-primario, var(--color-primario-oscuro, #2f7ed8));
 }
 
 /* ===== Footer / Actions ===== */
@@ -181,7 +181,7 @@
 
 .modal-promocion .modal-actions .btn-primario,
 .modal-promocion .modal-actions .btn.btn-primario {
-  background: var(--color-primario, #6a0dad);
+  background: var(--color-primario, var(--color-primario-oscuro, #2f7ed8));
   color: #ffffff;
   box-shadow: 0 2px 8px rgba(106, 13, 173, 0.2);
 }

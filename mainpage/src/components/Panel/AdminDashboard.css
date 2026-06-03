@@ -103,7 +103,7 @@
   font-weight: 600;
 }
 .adm__kpi--total { border-left: 3px solid #22c55e; }
-.adm__kpi--cobrado { border-left: 3px solid #6a0dad; }
+.adm__kpi--cobrado { border-left: 3px solid var(--color-primario-oscuro, #2f7ed8); }
 .adm__kpi--mesas { border-left: 3px solid #f59e0b; }
 .adm__kpi--comensales { border-left: 3px solid #0ea5e9; }
 .adm__kpi--ticket { border-left: 3px solid #ec4899; }

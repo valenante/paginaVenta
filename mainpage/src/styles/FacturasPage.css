@@ -439,7 +439,7 @@
 
 .rectModal-close:hover {
   background: #f3f4f6;
-  border-color: var(--color-primario, #ff6700);
+  border-color: var(--color-primario, var(--color-primario, #60b5ff));
 }
 
 /* ── Rectificación sections ── */
@@ -502,7 +502,7 @@
 }
 
 .modal-botones_facturaspage button.btn-primario {
-  background: var(--color-primario, #ff6700);
+  background: var(--color-primario, var(--color-primario, #60b5ff));
   color: #fff;
   border-color: transparent;
   box-shadow: 0 4px 14px rgba(106, 13, 173, 0.3);

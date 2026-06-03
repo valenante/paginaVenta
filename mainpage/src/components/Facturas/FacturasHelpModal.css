@@ -177,7 +177,7 @@
   align-items: center;
   justify-content: center;
   font-weight: 900;
-  color: #6a0dad;
+  color: var(--color-primario-oscuro, #2f7ed8);
   background: rgba(106, 13, 173, 0.12);
   border: 1px solid rgba(106, 13, 173, 0.18);
 }
@@ -231,12 +231,12 @@
   padding: 0.65rem 1rem;
   font-weight: 800;
   color: #fff;
-  background: var(--color-primario, #6a0dad);
+  background: var(--color-primario, var(--color-primario-oscuro, #2f7ed8));
   transition: transform 0.12s ease, background 0.15s ease;
 }
 
 .facturashelp-btn:hover {
-  background: var(--color-secundario, #ff6700);
+  background: var(--color-secundario, var(--color-primario, #60b5ff));
   transform: translateY(-1px);
 }
 

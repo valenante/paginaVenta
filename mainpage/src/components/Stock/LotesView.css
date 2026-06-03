@@ -100,7 +100,7 @@
   background: transparent;
 }
 .lotesView-btn--primary {
-  background: linear-gradient(135deg, #6a0dad, #8b5cf6);
+  background: linear-gradient(135deg, var(--color-primario-oscuro, #2f7ed8), #8b5cf6);
   border-color: transparent;
   color: #ffffff;
 }

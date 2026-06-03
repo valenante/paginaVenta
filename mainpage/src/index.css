@@ -267,7 +267,7 @@ html, body {
 
 .field input:focus,
 .field select:focus {
-  border-color: #ff6700;
+  border-color: var(--color-primario, #60b5ff);
   background: rgba(255,255,255,0.16);
   box-shadow: 0 0 0 2px rgba(255,103,0,0.35);
 }

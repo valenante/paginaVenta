@@ -73,7 +73,7 @@
 }
 
 .cort-page__tab--active {
-  background: linear-gradient(90deg, var(--dash-accent-1, #6a0dad), var(--dash-accent-2, #ff6700));
+  background: linear-gradient(90deg, var(--dash-accent-1, var(--color-primario-oscuro, #2f7ed8)), var(--dash-accent-2, var(--color-primario, #60b5ff)));
   color: #ffffff;
   border: none;
   box-shadow:
@@ -415,7 +415,7 @@
 .cort-page__btn-submit {
   padding: 0.65rem 1.4rem;
   border-radius: var(--dash-radius-pill);
-  background: linear-gradient(90deg, var(--dash-accent-1, #6a0dad), var(--dash-accent-2, #ff6700));
+  background: linear-gradient(90deg, var(--dash-accent-1, var(--color-primario-oscuro, #2f7ed8)), var(--dash-accent-2, var(--color-primario, #60b5ff)));
   color: #ffffff;
   border: none;
   font-weight: 700;

@@ -12,7 +12,7 @@
 .cf-subtitle { margin: 4px 0 0; font-size: 0.78rem; color: var(--color-texto-suave, #94a3b8); }
 .cf-count {
   background: rgba(106,13,173,0.12);
-  color: #ff6700;
+  color: var(--color-primario, #60b5ff);
   padding: 4px 12px;
   border-radius: 12px;
   font-size: 0.75rem;
@@ -31,7 +31,7 @@
   font-family: inherit;
   margin-bottom: 16px;
 }
-.cf-search:focus { border-color: #ff6700; outline: none; }
+.cf-search:focus { border-color: var(--color-primario, #60b5ff); outline: none; }
 .cf-search::placeholder { color: rgba(148,163,184,0.5); }
 
 /* Tabla */
@@ -158,7 +158,7 @@
   font-size: 0.85rem;
   font-family: inherit;
 }
-.cf-edit-card input:focus { border-color: #ff6700; outline: none; }
+.cf-edit-card input:focus { border-color: var(--color-primario, #60b5ff); outline: none; }
 .cf-edit-actions { display: flex; gap: 8px; margin-top: 18px; }
 .cf-btn {
   flex: 1;
@@ -171,7 +171,7 @@
   font-family: inherit;
 }
 .cf-btn--secondary { background: rgba(255,255,255,0.08); color: var(--color-texto, #e2e8f0); }
-.cf-btn--primary { background: #ff6700; color: #000; }
+.cf-btn--primary { background: var(--color-primario, #60b5ff); color: #000; }
 .cf-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
 @media (max-width: 768px) {

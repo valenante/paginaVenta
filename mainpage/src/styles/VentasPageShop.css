@@ -130,7 +130,7 @@
 .btn-secondary {
   border: none;
   color: #fff;
-  background: linear-gradient(90deg, #6a0dad, #ff6700);
+  background: linear-gradient(90deg, var(--color-primario-oscuro, #2f7ed8), var(--color-primario, #60b5ff));
   box-shadow: 0 4px 14px rgba(255, 103, 0, 0.28),
               0 0 0 1px rgba(255, 255, 255, 0.06);
 }

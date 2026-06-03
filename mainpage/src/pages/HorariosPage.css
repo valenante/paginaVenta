@@ -162,7 +162,7 @@
 .hor-hours-value {
   font-size: 0.82rem;
   font-weight: 700;
-  color: #ff6700;
+  color: var(--color-primario, #60b5ff);
 }
 
 /* Assign dropdown */
@@ -202,7 +202,7 @@
   background: rgba(255,255,255,0.06);
 }
 .hor-assign-option--all {
-  color: #ff6700;
+  color: var(--color-primario, #60b5ff);
   font-weight: 700;
   border-bottom: 1px solid rgba(255,255,255,0.06);
 }
@@ -268,7 +268,7 @@
   font-family: inherit;
 }
 .hor-edit-popup__row input:focus {
-  border-color: #6a0dad;
+  border-color: var(--color-primario-oscuro, #2f7ed8);
   outline: none;
 }
 .hor-edit-popup__actions {

@@ -70,7 +70,7 @@
 }
 
 .stats-pill--active {
-  background: linear-gradient(90deg, #6a0dad, #ff6700);
+  background: linear-gradient(90deg, var(--color-primario-oscuro, #2f7ed8), var(--color-primario, #60b5ff));
   border: none;
   color: #fff;
   font-weight: 600;
@@ -92,9 +92,9 @@
 
 .stats-datepicker:hover,
 .stats-datepicker:focus {
-  border-color: #6a0dad;
+  border-color: var(--color-primario-oscuro, #2f7ed8);
   background: rgba(255, 255, 255, 0.1);
-  box-shadow: 0 0 0 1px #6a0dad;
+  box-shadow: 0 0 0 1px var(--color-primario-oscuro, #2f7ed8);
 }
 /* =========================================================
    PILLS PROFESIONALES ALEF

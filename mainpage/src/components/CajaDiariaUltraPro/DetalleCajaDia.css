@@ -7,7 +7,7 @@
   display: inline-flex; align-items: center;
   transition: color 0.15s;
 }
-.dcj__trigger:hover { color: #ff6700; }
+.dcj__trigger:hover { color: var(--color-primario, #60b5ff); }
 .dcj__trigger svg { width: 16px; height: 16px; }
 
 /* Overlay */

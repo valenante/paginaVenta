@@ -23,7 +23,7 @@
   background: rgba(255, 255, 255, 0.14);
 }
 .historial-filtro-btn.active {
-  background: linear-gradient(135deg, #6a0dad, #ff6700);
+  background: linear-gradient(135deg, var(--color-primario-oscuro, #2f7ed8), var(--color-primario, #60b5ff));
   border-color: transparent;
   color: #fff;
 }
@@ -42,7 +42,7 @@
   background: linear-gradient(135deg, #c2410c, #fb923c);
 }
 .historial-filtro-btn--purple.active {
-  background: linear-gradient(135deg, #6a0dad, #a855f7);
+  background: linear-gradient(135deg, var(--color-primario-oscuro, #2f7ed8), #a855f7);
 }
 
 /* Estados */

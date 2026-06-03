@@ -76,7 +76,7 @@
 
 .pagarFactModal-close:hover {
   background: var(--color-fondo-claro, #f3f4f6);
-  border-color: var(--color-primario, #ff6700);
+  border-color: var(--color-primario, var(--color-primario, #60b5ff));
 }
 
 /* =========================
@@ -157,7 +157,7 @@
 
 .pagarFactModal-field select:focus,
 .pagarFactModal-field input:focus {
-  border-color: var(--color-primario, #ff6700);
+  border-color: var(--color-primario, var(--color-primario, #60b5ff));
   box-shadow: 0 0 0 3px rgba(255, 103, 0, 0.18);
 }
 

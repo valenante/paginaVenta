@@ -149,7 +149,7 @@
 
 .auto-option input[type="radio"] {
   margin-top: 2px;
-  accent-color: #6a0dad;
+  accent-color: var(--color-primario-oscuro, #2f7ed8);
   flex-shrink: 0;
 }
 
@@ -174,7 +174,7 @@
 }
 
 .auto-option__saving {
-  color: #ff6700;
+  color: var(--color-primario, #60b5ff);
   font-size: 0.75rem;
   position: absolute;
   top: 6px;

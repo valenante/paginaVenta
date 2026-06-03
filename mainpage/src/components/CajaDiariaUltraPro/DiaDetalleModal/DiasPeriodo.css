@@ -87,7 +87,7 @@
   padding: 0.45rem 0.6rem;
   font-size: 0.8rem;
   background: rgba(255, 255, 255, 0.06);
-  border-left: 3px solid #ff6700;
+  border-left: 3px solid var(--color-primario, #60b5ff);
   border-radius: 4px;
   color: #e5e7eb;
 }
@@ -108,7 +108,7 @@
   font-size: 0.75rem;
   font-weight: 600;
   color: #fff;
-  background: linear-gradient(90deg, #6a0dad, #ff6700);
+  background: linear-gradient(90deg, var(--color-primario-oscuro, #2f7ed8), var(--color-primario, #60b5ff));
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
   transition: 0.2s ease;
 }

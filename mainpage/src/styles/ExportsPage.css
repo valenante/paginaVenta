@@ -19,8 +19,8 @@
   color: var(--color-texto); font-weight: 700; font-size: 0.85rem;
   cursor: pointer; transition: all 0.15s;
 }
-.config-tab:hover { border-color: #ff6700; }
-.config-tab.is-active { border-color: #ff6700; background: rgba(106,13,173,0.08); color: #ff6700; }
+.config-tab:hover { border-color: var(--color-primario, #60b5ff); }
+.config-tab.is-active { border-color: var(--color-primario, #60b5ff); background: rgba(106,13,173,0.08); color: var(--color-primario, #60b5ff); }
 
 /* Card */
 .exports-card {
@@ -47,7 +47,7 @@
   background: var(--color-superficie, #fff); color: var(--color-texto);
   outline: none; transition: border-color 0.15s, box-shadow 0.15s;
 }
-.exports-input:focus { border-color: #ff6700; box-shadow: 0 0 0 3px rgba(106,13,173,0.15); }
+.exports-input:focus { border-color: var(--color-primario, #60b5ff); box-shadow: 0 0 0 3px rgba(106,13,173,0.15); }
 .exports-input:disabled { opacity: 0.6; cursor: not-allowed; }
 select.exports-input { cursor: pointer; }
 .exports-input[type="date"] { color-scheme: light; }
@@ -60,8 +60,8 @@ select.exports-input { cursor: pointer; }
   background: var(--color-superficie, #fff);
   font-weight: 700; font-size: 0.85rem; cursor: pointer; transition: all 0.15s;
 }
-.exports-check:hover { border-color: #ff6700; }
-.exports-check input { accent-color: #ff6700; }
+.exports-check:hover { border-color: var(--color-primario, #60b5ff); }
+.exports-check input { accent-color: var(--color-primario, #60b5ff); }
 .exports-check.is-disabled { opacity: 0.5; cursor: not-allowed; }
 
 /* Actions */
@@ -75,9 +75,9 @@ select.exports-input { cursor: pointer; }
   background: var(--color-superficie, #fff); color: var(--color-texto);
   font-weight: 700; font-size: 0.82rem; cursor: pointer; transition: all 0.15s;
 }
-.exports-btn:hover { border-color: #ff6700; color: #ff6700; }
+.exports-btn:hover { border-color: var(--color-primario, #60b5ff); color: var(--color-primario, #60b5ff); }
 .exports-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-.exports-btn.primary { background: #ff6700; color: #fff; border-color: #ff6700; }
+.exports-btn.primary { background: var(--color-primario, #60b5ff); color: #fff; border-color: var(--color-primario, #60b5ff); }
 .exports-btn.primary:hover { background: #4da3ee; }
 .exports-btn.danger { background: rgba(220,38,38,0.08); border-color: rgba(220,38,38,0.3); color: #dc2626; }
 
@@ -101,7 +101,7 @@ select.exports-input { cursor: pointer; }
   border: 1px solid var(--color-borde-suave); background: var(--color-superficie, #fff);
   transition: border-color 0.15s;
 }
-.exports-row-item:hover { border-color: #ff6700; }
+.exports-row-item:hover { border-color: var(--color-primario, #60b5ff); }
 .exports-cell { display: flex; flex-direction: column; gap: 0.25rem; min-width: 0; }
 .exports-strong { font-weight: 700; word-break: break-word; }
 .exports-sub { font-size: 0.75rem; color: var(--color-texto-suave); word-break: break-word; }

@@ -56,7 +56,7 @@
 /* Chart */
 .ia-learn__chart { display: flex; align-items: flex-end; gap: 4px; height: 120px; padding: 0 4px; }
 .ia-learn__bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; height: 100%; justify-content: flex-end; }
-.ia-learn__bar { background: linear-gradient(to top, #ff6700, #6a0dad); border-radius: 4px 4px 0 0; min-width: 12px; width: 100%; max-width: 30px; position: relative; transition: height 0.5s ease; }
+.ia-learn__bar { background: linear-gradient(to top, var(--color-primario, #60b5ff), var(--color-primario-oscuro, #2f7ed8)); border-radius: 4px 4px 0 0; min-width: 12px; width: 100%; max-width: 30px; position: relative; transition: height 0.5s ease; }
 .ia-learn__bar-val { position: absolute; top: -16px; left: 50%; transform: translateX(-50%); font-size: 0.6rem; color: #94a3b8; white-space: nowrap; }
 .ia-learn__bar-label { font-size: 0.55rem; color: #64748b; margin-top: 4px; text-align: center; white-space: nowrap; }
 
@@ -73,7 +73,7 @@
 .ia-learn__tend-item { display: flex; align-items: center; gap: 10px; font-size: 0.85rem; color: #e2e8f0; }
 .ia-learn__tend-arrow { font-size: 1.2rem; font-weight: 700; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; border-radius: 50%; }
 .ia-learn__tend-arrow--up { background: rgba(34, 197, 94, 0.15); color: #22c55e; }
-.ia-learn__tend-arrow--stable { background: rgba(106, 13, 173, 0.15); color: #6a0dad; }
+.ia-learn__tend-arrow--stable { background: rgba(106, 13, 173, 0.15); color: var(--color-primario-oscuro, #2f7ed8); }
 .ia-learn__tend-arrow--down { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
 
 /* Propuestas stats */
@@ -97,7 +97,7 @@
 /* Trend */
 .ia-learn__trend { font-size: 1rem; font-weight: 700; text-align: center; }
 .ia-learn__trend--subiendo { color: #22c55e; }
-.ia-learn__trend--estable { color: #6a0dad; }
+.ia-learn__trend--estable { color: var(--color-primario-oscuro, #2f7ed8); }
 .ia-learn__trend--bajando { color: #ef4444; }
 
 /* Responsive */

@@ -91,7 +91,7 @@
 
 .receta-add-btn {
   margin-top: 0.6rem;
-  background: linear-gradient(135deg, #6a0dad, #ff6700);
+  background: linear-gradient(135deg, var(--color-primario-oscuro, #2f7ed8), var(--color-primario, #60b5ff));
   padding: 10px 16px;
   border-radius: 12px;
   border: none;

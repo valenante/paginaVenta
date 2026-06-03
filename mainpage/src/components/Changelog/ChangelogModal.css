@@ -67,7 +67,7 @@
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  background: var(--color-primario, #ff6700);
+  background: var(--color-primario, var(--color-primario, #60b5ff));
   color: #fff;
   margin-bottom: 0.5rem;
 }
@@ -174,7 +174,7 @@
   padding: 0.75rem;
   border: none;
   border-radius: var(--radius-pill, 999px);
-  background: var(--color-primario, #ff6700);
+  background: var(--color-primario, var(--color-primario, #60b5ff));
   color: #fff;
   font-size: 0.95rem;
   font-weight: 700;

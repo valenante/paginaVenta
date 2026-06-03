@@ -111,13 +111,13 @@
 }
 
 .promo-tipos .pill:hover {
-  border-color: var(--color-primario, #6a0dad);
-  color: var(--color-primario, #6a0dad);
+  border-color: var(--color-primario, var(--color-primario-oscuro, #2f7ed8));
+  color: var(--color-primario, var(--color-primario-oscuro, #2f7ed8));
 }
 
 .promo-tipos .pill.active {
-  background: var(--color-primario, #6a0dad);
-  border-color: var(--color-primario, #6a0dad);
+  background: var(--color-primario, var(--color-primario-oscuro, #2f7ed8));
+  border-color: var(--color-primario, var(--color-primario-oscuro, #2f7ed8));
   color: #ffffff;
   box-shadow: 0 2px 8px rgba(106, 13, 173, 0.2);
 }
@@ -152,7 +152,7 @@
 }
 
 .promo-categorias select:focus {
-  border-color: var(--color-primario, #6a0dad);
+  border-color: var(--color-primario, var(--color-primario-oscuro, #2f7ed8));
   box-shadow: 0 0 0 3px rgba(106, 13, 173, 0.1);
 }
 
@@ -240,7 +240,7 @@
   width: 16px;
   height: 16px;
   cursor: pointer;
-  accent-color: var(--color-primario, #6a0dad);
+  accent-color: var(--color-primario, var(--color-primario-oscuro, #2f7ed8));
 }
 
 /* ===== Responsive ===== */

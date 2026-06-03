@@ -139,7 +139,7 @@
 }
 
 .heatmap-mobile-row strong {
-  color: #ff6700;
+  color: var(--color-primario, #60b5ff);
 }
 
 .heatmap-expand-btn {
@@ -151,7 +151,7 @@
   font-size: 0.85rem;
   cursor: pointer;
   color: #fff;
-  background: linear-gradient(90deg, #6a0dad, #ff6700);
+  background: linear-gradient(90deg, var(--color-primario-oscuro, #2f7ed8), var(--color-primario, #60b5ff));
   box-shadow: 0 6px 18px rgba(106,13,173,0.4);
 }
 

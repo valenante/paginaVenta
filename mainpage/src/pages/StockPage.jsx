@@ -106,6 +106,9 @@ const StockPage = () => {
   const [sugerenciasLoading, setSugerenciasLoading] = useState(false);
   const [showUmbralesModal, setShowUmbralesModal] = useState(false);
   const [sugerenciasList, setSugerenciasList] = useState([]);
+  const [umbralSearch, setUmbralSearch] = useState("");
+  const [umbralPage, setUmbralPage] = useState(1);
+  const UMBRAL_PER_PAGE = 15;
 
   // ── Counters for tab badges (fix #11: use total from server for ingredients) ──
   const ingCriticos = useMemo(
@@ -640,60 +643,84 @@ const StockPage = () => {
       )}
 
       {/* Modal: Umbrales inteligentes global */}
-      {showUmbralesModal && (
-        <ModalBase
-          open={true}
-          title="🤖 Umbrales inteligentes"
-          subtitle="Basado en consumo por día de semana (8 semanas) × lead time del proveedor."
-          onClose={() => setShowUmbralesModal(false)}
-          width={900}
-          footer={
-            <div className="alefForm-actions">
-              <button type="button" className="alefBtn ghost" onClick={() => setShowUmbralesModal(false)}>Cancelar</button>
-              <button
-                type="button"
-                className="alefBtn primary"
-                onClick={() => {
-                  const checked = [...document.querySelectorAll('.stock-sug-modal__cb:checked')].map(cb => cb.dataset.id);
-                  const items = sugerenciasList.filter(s => checked.includes(s.itemId));
-                  aplicarTodosUmbrales(items);
-                }}
-              >
-                Aplicar seleccionados
-              </button>
-            </div>
-          }
-        >
-          <div style={{ maxHeight: "60vh", overflowY: "auto" }}>
-            <table className="stock-sug-table" style={{ width: "100%", borderCollapse: "collapse" }}>
-              <thead>
-                <tr>
-                  <th style={{ width: 30 }}><input type="checkbox" defaultChecked onChange={(e) => {
-                    document.querySelectorAll('.stock-sug-modal__cb').forEach(cb => cb.checked = e.target.checked);
-                  }} /></th>
-                  <th>Producto</th>
-                  <th>Consumo/día</th>
-                  <th>Lead time</th>
-                  <th>Mín actual → sugerido</th>
-                  <th>Máx actual → sugerido</th>
-                </tr>
-              </thead>
-              <tbody>
-                {sugerenciasList.filter(s => s.cambio && !s.umbralManual).map((s) => (
-                  <tr key={s.itemId}>
-                    <td><input type="checkbox" className="stock-sug-modal__cb" defaultChecked data-id={s.itemId} /></td>
-                    <td><strong>{s.nombre}</strong></td>
-                    <td>{s.consumoDiario}</td>
-                    <td>{s.leadTime}d</td>
-                    <td>{s.actual.minimo} → <strong style={{ color: "#ff6700" }}>{s.sugerido.minimo}</strong></td>
-                    <td>{s.actual.maximo} → <strong style={{ color: "#ff6700" }}>{s.sugerido.maximo}</strong></td>
+      {showUmbralesModal && (() => {
+        const filtered = sugerenciasList
+          .filter(s => s.cambio && !s.umbralManual)
+          .filter(s => !umbralSearch || s.nombre.toLowerCase().includes(umbralSearch.toLowerCase()));
+        const totalUmbralPages = Math.ceil(filtered.length / UMBRAL_PER_PAGE);
+        const paginated = filtered.slice((umbralPage - 1) * UMBRAL_PER_PAGE, umbralPage * UMBRAL_PER_PAGE);
+
+        return (
+          <ModalBase
+            open={true}
+            title="🤖 Umbrales inteligentes"
+            subtitle={`Basado en consumo real (8 semanas) × lead time. ${filtered.length} sugerencias.`}
+            onClose={() => { setShowUmbralesModal(false); setUmbralSearch(""); setUmbralPage(1); }}
+            width={900}
+            footer={
+              <div className="alefForm-actions">
+                <button type="button" className="alefBtn ghost" onClick={() => { setShowUmbralesModal(false); setUmbralSearch(""); setUmbralPage(1); }}>Cancelar</button>
+                <button
+                  type="button"
+                  className="alefBtn primary"
+                  onClick={() => {
+                    const checked = [...document.querySelectorAll('.stock-sug-modal__cb:checked')].map(cb => cb.dataset.id);
+                    const items = sugerenciasList.filter(s => checked.includes(s.itemId));
+                    aplicarTodosUmbrales(items);
+                    setUmbralSearch(""); setUmbralPage(1);
+                  }}
+                >
+                  Aplicar seleccionados
+                </button>
+              </div>
+            }
+          >
+            <input
+              className="stock-search"
+              placeholder="Buscar ingrediente…"
+              value={umbralSearch}
+              onChange={(e) => { setUmbralSearch(e.target.value); setUmbralPage(1); }}
+            />
+
+            <div className="stock-sug-modal__table-wrap">
+              <table className="stock-sug-table">
+                <thead>
+                  <tr>
+                    <th><input type="checkbox" defaultChecked onChange={(e) => {
+                      document.querySelectorAll('.stock-sug-modal__cb').forEach(cb => cb.checked = e.target.checked);
+                    }} /></th>
+                    <th>Producto</th>
+                    <th>Consumo/día</th>
+                    <th>Lead time</th>
+                    <th>Mín actual → sugerido</th>
+                    <th>Máx actual → sugerido</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </ModalBase>
-      )}
+                </thead>
+                <tbody>
+                  {paginated.map((s) => (
+                    <tr key={s.itemId}>
+                      <td><input type="checkbox" className="stock-sug-modal__cb" defaultChecked data-id={s.itemId} /></td>
+                      <td><strong>{s.nombre}</strong></td>
+                      <td>{s.consumoDiario}</td>
+                      <td>{s.leadTime}d</td>
+                      <td>{s.actual.minimo} → <strong className="stock-sug-highlight">{s.sugerido.minimo}</strong></td>
+                      <td>{s.actual.maximo} → <strong className="stock-sug-highlight">{s.sugerido.maximo}</strong></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {totalUmbralPages > 1 && (
+              <div className="stock-pagination">
+                <button className="stock-pagination-btn" disabled={umbralPage <= 1} onClick={() => setUmbralPage(p => p - 1)}>← Anterior</button>
+                <span className="stock-pagination-info">{umbralPage} / {totalUmbralPages}</span>
+                <button className="stock-pagination-btn" disabled={umbralPage >= totalUmbralPages} onClick={() => setUmbralPage(p => p + 1)}>Siguiente →</button>
+              </div>
+            )}
+          </ModalBase>
+        );
+      })()}
     </div>
   );
 };

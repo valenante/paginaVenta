@@ -474,6 +474,16 @@
   background: rgba(255, 255, 255, 0.03);
 }
 
+.stock-sug-table { width: 100%; border-collapse: collapse; }
+
+.stock-sug-highlight { color: #ff6700; }
+
+.stock-sug-modal__table-wrap {
+  max-height: 50vh;
+  overflow-y: auto;
+  margin-top: 0.75rem;
+}
+
 /* ===== CARD ===== */
 .stock-card {
   position: relative;

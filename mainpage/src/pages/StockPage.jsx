@@ -112,6 +112,12 @@ const StockPage = () => {
   const [consumoDetail, setConsumoDetail] = useState(null);
   const [consumoLoading, setConsumoLoading] = useState(false);
 
+  const closeUmbralesModal = useCallback(() => {
+    setShowUmbralesModal(false);
+    setUmbralSearch("");
+    setUmbralPage(1);
+  }, []);
+
   const openConsumoDetail = useCallback(async (itemId) => {
     setConsumoLoading(true);
     try {
@@ -668,11 +674,11 @@ const StockPage = () => {
           open={true}
           title="🤖 Umbrales inteligentes"
           subtitle="Basado en consumo real (8 semanas) × lead time del proveedor."
-          onClose={() => { setShowUmbralesModal(false); setUmbralSearch(""); setUmbralPage(1); }}
+          onClose={closeUmbralesModal}
           width={900}
           footer={
             <div className="alefForm-actions">
-              <button type="button" className="alefBtn ghost" onClick={() => { setShowUmbralesModal(false); setUmbralSearch(""); setUmbralPage(1); }}>Cancelar</button>
+              <button type="button" className="alefBtn ghost" onClick={closeUmbralesModal}>Cancelar</button>
               <button
                 type="button"
                 className="alefBtn primary"

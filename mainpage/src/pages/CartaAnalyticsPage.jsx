@@ -340,7 +340,7 @@ function SugerenciasSection({ dias, resumen }) {
     return (
       <div className="carta-analytics__card">
         <h3>Sugerencias inteligentes</h3>
-        <p className="carta-analytics__muted">Las métricas de sugerencias se agregan cada noche. Los datos aparecerán mañana.</p>
+        <p className="carta-analytics__muted">Aún no hay datos de sugerencias. Aparecerán cuando los clientes interactúen con las recomendaciones en la carta.</p>
       </div>
     );
   }

@@ -161,13 +161,13 @@
   color: #fff;
   font-weight: 600;
   cursor: pointer;
-  box-shadow: 0 6px 18px rgba(255,103,0,0.35);
+  box-shadow: 0 6px 18px rgba(96,181,255,0.30);
   transition: .2s ease;
 }
 
 .diaModal-footer button:hover {
   transform: translateY(-2px);
-  background: linear-gradient(135deg, #7c1fcf, #ff7a22);
+  background: linear-gradient(135deg, #2a6fc0, #4da8f7);
 }
 
 /* ===============================

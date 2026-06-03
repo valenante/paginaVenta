@@ -246,12 +246,12 @@
 .btn-guardar-editar{
   color: #fff;
   background: linear-gradient(135deg, var(--color-primario-oscuro, #2f7ed8), var(--color-primario, #60b5ff));
-  box-shadow: 0 8px 22px rgba(255,103,0,0.32);
+  box-shadow: 0 8px 22px rgba(96,181,255,0.30);
 }
 
 .btn-guardar-editar:hover{
   transform: translateY(-2px);
-  background: linear-gradient(135deg, #7d22c9, #ff7b26);
+  background: linear-gradient(135deg, #2a6fc0, #4da8f7);
 }
 
 /* Eliminar */

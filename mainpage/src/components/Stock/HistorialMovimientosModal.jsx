@@ -233,7 +233,13 @@ export default function HistorialMovimientosModal({ ingrediente, onClose }) {
                       {m.actor?.name || m.actor?.email || "Sistema"}
                     </span>
                     {m.referencia && (
-                      <span className="historial-row-ref">{m.referencia}</span>
+                      <span className="historial-row-ref">
+                        {m.referencia
+                          .replace(/Pedido\s+[0-9a-f]{24}/gi, "Venta")
+                          .replace(/[0-9a-f]{24}/gi, "")
+                          .replace(/\s{2,}/g, " ")
+                          .trim()}
+                      </span>
                     )}
                   </div>
                 </div>

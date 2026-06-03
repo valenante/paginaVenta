@@ -399,7 +399,7 @@
 
 /* ===== SMART SUGGESTIONS ===== */
 .stock-sug {
-  margin-top: 8px;
+  margin: 12px 0;
   padding: 8px 10px;
   border-radius: 8px;
   background: linear-gradient(135deg, rgba(96, 181, 255, 0.08), rgba(96, 181, 255, 0.04));
@@ -477,6 +477,184 @@
 .stock-sug-table { width: 100%; border-collapse: collapse; }
 
 .stock-sug-highlight { color: var(--color-primario, #60b5ff); }
+
+.stock-sug-modal__search-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.stock-sug-modal__search-row .stock-search {
+  flex: 1;
+}
+
+.stock-sug-modal__count {
+  font-size: 0.8rem;
+  color: #94a3b8;
+  white-space: nowrap;
+}
+
+/* Name button in umbrales table */
+.stock-sug-name-btn {
+  background: none;
+  border: none;
+  color: var(--color-primario, #60b5ff);
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: inherit;
+  padding: 0;
+  text-align: left;
+}
+.stock-sug-name-btn:hover { text-decoration: underline; }
+
+/* ===== CONSUMO DETAIL MODAL ===== */
+.consumo-detail__kpis {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.consumo-detail__kpi {
+  background: rgba(96, 181, 255, 0.06);
+  border: 1px solid rgba(96, 181, 255, 0.15);
+  border-radius: 10px;
+  padding: 0.75rem;
+  text-align: center;
+}
+
+.consumo-detail__kpi-value {
+  display: block;
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #fff;
+}
+
+.consumo-detail__kpi-label {
+  font-size: 0.7rem;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.consumo-detail__section {
+  margin-bottom: 1rem;
+}
+
+.consumo-detail__title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.5rem;
+}
+
+/* Bars */
+.consumo-detail__bars { display: flex; flex-direction: column; gap: 4px; }
+
+.consumo-detail__bar-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.consumo-detail__bar-label {
+  width: 32px;
+  font-size: 0.75rem;
+  color: #94a3b8;
+  font-weight: 600;
+}
+
+.consumo-detail__bar-track {
+  flex: 1;
+  height: 14px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 7px;
+  overflow: hidden;
+}
+
+.consumo-detail__bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-primario-oscuro, #2f7ed8), var(--color-primario, #60b5ff));
+  border-radius: 7px;
+  transition: width 0.3s ease;
+}
+
+.consumo-detail__bar-value {
+  width: 40px;
+  text-align: right;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #e2e8f0;
+}
+
+/* Proveedor */
+.consumo-detail__proveedor {
+  display: flex;
+  gap: 1.5rem;
+  font-size: 0.82rem;
+  color: #e2e8f0;
+}
+
+/* Umbrales */
+.consumo-detail__umbrales {
+  display: flex;
+  gap: 1.5rem;
+  font-size: 0.82rem;
+  color: #e2e8f0;
+}
+
+/* Movimientos */
+.consumo-detail__movimientos { display: flex; flex-direction: column; gap: 4px; }
+
+.consumo-detail__mov {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.78rem;
+  padding: 4px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.consumo-detail__mov-tipo {
+  font-weight: 700;
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border-radius: 4px;
+  min-width: 55px;
+  text-align: center;
+}
+.consumo-detail__mov-tipo--venta { background: rgba(239, 68, 68, 0.15); color: #f87171; }
+.consumo-detail__mov-tipo--entrada { background: rgba(34, 197, 94, 0.15); color: #4ade80; }
+.consumo-detail__mov-tipo--ajuste { background: rgba(96, 181, 255, 0.15); color: #60b5ff; }
+.consumo-detail__mov-tipo--merma { background: rgba(251, 191, 36, 0.15); color: #fbbf24; }
+
+.consumo-detail__mov-delta { font-weight: 700; color: #e2e8f0; min-width: 40px; }
+.consumo-detail__mov-ref { flex: 1; color: #94a3b8; }
+.consumo-detail__mov-fecha { color: #64748b; font-size: 0.72rem; }
+
+.consumo-detail__loading {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  padding: 1rem 2rem;
+  border-radius: 10px;
+  z-index: 9999;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 600px) {
+  .consumo-detail__kpis { grid-template-columns: repeat(2, 1fr); }
+  .consumo-detail__proveedor,
+  .consumo-detail__umbrales { flex-direction: column; gap: 0.25rem; }
+}
 
 .stock-sug-modal__table-wrap {
   max-height: 50vh;

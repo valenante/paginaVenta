@@ -109,6 +109,17 @@ const StockPage = () => {
   const [umbralSearch, setUmbralSearch] = useState("");
   const [umbralPage, setUmbralPage] = useState(1);
   const UMBRAL_PER_PAGE = 15;
+  const [consumoDetail, setConsumoDetail] = useState(null);
+  const [consumoLoading, setConsumoLoading] = useState(false);
+
+  const openConsumoDetail = useCallback(async (itemId) => {
+    setConsumoLoading(true);
+    try {
+      const { data } = await api.get(`/stock/ingrediente/${itemId}/consumo`);
+      setConsumoDetail(data);
+    } catch { setConsumoDetail(null); }
+    finally { setConsumoLoading(false); }
+  }, []);
 
   const umbralFiltered = useMemo(() => {
     return sugerenciasList
@@ -656,7 +667,7 @@ const StockPage = () => {
         <ModalBase
           open={true}
           title="🤖 Umbrales inteligentes"
-          subtitle={`Basado en consumo real (8 semanas) × lead time. ${umbralFiltered.length} sugerencias.`}
+          subtitle="Basado en consumo real (8 semanas) × lead time del proveedor."
           onClose={() => { setShowUmbralesModal(false); setUmbralSearch(""); setUmbralPage(1); }}
           width={900}
           footer={
@@ -677,12 +688,15 @@ const StockPage = () => {
             </div>
           }
         >
-          <input
-            className="stock-search"
-            placeholder="Buscar ingrediente…"
-            value={umbralSearch}
-            onChange={(e) => { setUmbralSearch(e.target.value); setUmbralPage(1); }}
-          />
+          <div className="stock-sug-modal__search-row">
+            <input
+              className="stock-search"
+              placeholder="Buscar ingrediente…"
+              defaultValue=""
+              onInput={(e) => { setUmbralSearch(e.target.value); setUmbralPage(1); }}
+            />
+            <span className="stock-sug-modal__count">{umbralFiltered.length} sugerencias</span>
+          </div>
 
           <div className="stock-sug-modal__table-wrap">
             <table className="stock-sug-table">
@@ -702,7 +716,14 @@ const StockPage = () => {
                 {umbralPaginated.map((s) => (
                   <tr key={s.itemId}>
                     <td><input type="checkbox" className="stock-sug-modal__cb" defaultChecked data-id={s.itemId} /></td>
-                    <td><strong>{s.nombre}</strong></td>
+                    <td>
+                      <button
+                        className="stock-sug-name-btn"
+                        onClick={() => openConsumoDetail(s.itemId)}
+                      >
+                        {s.nombre}
+                      </button>
+                    </td>
                     <td>{s.consumoDiario}</td>
                     <td>{s.leadTime}d</td>
                     <td>{s.actual.minimo} → <strong className="stock-sug-highlight">{s.sugerido.minimo}</strong></td>
@@ -721,6 +742,114 @@ const StockPage = () => {
             </div>
           )}
         </ModalBase>
+      )}
+      {/* Modal: Detalle de consumo */}
+      {consumoDetail && (
+        <ModalBase
+          open={true}
+          title={`📊 ${consumoDetail.nombre}`}
+          subtitle={`${consumoDetail.stockActual} ${consumoDetail.unidad} en stock`}
+          onClose={() => setConsumoDetail(null)}
+          width={640}
+          footer={
+            <div className="alefForm-actions">
+              <button type="button" className="alefBtn ghost" onClick={() => setConsumoDetail(null)}>Cerrar</button>
+            </div>
+          }
+        >
+          <div className="consumo-detail">
+            {/* KPIs */}
+            <div className="consumo-detail__kpis">
+              <div className="consumo-detail__kpi">
+                <span className="consumo-detail__kpi-value">{consumoDetail.consumoDiarioMedio}</span>
+                <span className="consumo-detail__kpi-label">{consumoDetail.unidad}/día</span>
+              </div>
+              <div className="consumo-detail__kpi">
+                <span className="consumo-detail__kpi-value">{consumoDetail.diasRestantes ?? "∞"}</span>
+                <span className="consumo-detail__kpi-label">días restantes</span>
+              </div>
+              <div className="consumo-detail__kpi">
+                <span className="consumo-detail__kpi-value">{consumoDetail.consumoTotal8sem}</span>
+                <span className="consumo-detail__kpi-label">consumo 8 sem</span>
+              </div>
+              <div className="consumo-detail__kpi">
+                <span className="consumo-detail__kpi-value">{consumoDetail.coste ? `${consumoDetail.coste.toFixed(2)}€` : "—"}</span>
+                <span className="consumo-detail__kpi-label">coste/{consumoDetail.unidad}</span>
+              </div>
+            </div>
+
+            {/* Consumo por día de semana */}
+            {consumoDetail.consumoPorDia?.length > 0 && (
+              <div className="consumo-detail__section">
+                <h4 className="consumo-detail__title">Consumo por día de semana</h4>
+                <div className="consumo-detail__bars">
+                  {consumoDetail.consumoPorDia.map((d) => {
+                    const maxMedia = Math.max(...consumoDetail.consumoPorDia.map(x => x.media), 1);
+                    const pct = Math.round((d.media / maxMedia) * 100);
+                    return (
+                      <div key={d.dia} className="consumo-detail__bar-row">
+                        <span className="consumo-detail__bar-label">{d.dia}</span>
+                        <div className="consumo-detail__bar-track">
+                          <div className="consumo-detail__bar-fill" style={{ width: `${pct}%` }} />
+                        </div>
+                        <span className="consumo-detail__bar-value">{d.media}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* Proveedor */}
+            {consumoDetail.proveedor && (
+              <div className="consumo-detail__section">
+                <h4 className="consumo-detail__title">Proveedor principal</h4>
+                <div className="consumo-detail__proveedor">
+                  <span><strong>{consumoDetail.proveedor.nombre}</strong></span>
+                  <span>Precio: {consumoDetail.proveedor.precioBase.toFixed(2)}€</span>
+                  <span>Lead time: {consumoDetail.proveedor.leadTimeDias} días</span>
+                </div>
+              </div>
+            )}
+
+            {/* Umbrales */}
+            <div className="consumo-detail__section">
+              <h4 className="consumo-detail__title">Umbrales</h4>
+              <div className="consumo-detail__umbrales">
+                <span>Crítico: <strong>{consumoDetail.stockCritico}</strong></span>
+                <span>Mínimo: <strong>{consumoDetail.stockMinimo}</strong></span>
+                <span>Máximo: <strong>{consumoDetail.stockMax}</strong></span>
+              </div>
+            </div>
+
+            {/* Últimos movimientos */}
+            {consumoDetail.ultimosMovimientos?.length > 0 && (
+              <div className="consumo-detail__section">
+                <h4 className="consumo-detail__title">Últimos movimientos</h4>
+                <div className="consumo-detail__movimientos">
+                  {consumoDetail.ultimosMovimientos.map((m, i) => (
+                    <div key={i} className="consumo-detail__mov">
+                      <span className={`consumo-detail__mov-tipo consumo-detail__mov-tipo--${m.tipo}`}>
+                        {m.tipo}
+                      </span>
+                      <span className="consumo-detail__mov-delta">
+                        {m.delta != null ? (m.delta > 0 ? `+${m.delta}` : m.delta) : "—"}
+                      </span>
+                      <span className="consumo-detail__mov-ref">{m.referencia || m.actor}</span>
+                      <span className="consumo-detail__mov-fecha">
+                        {m.fecha ? new Date(m.fecha).toLocaleDateString("es-ES", { day: "2-digit", month: "short" }) : ""}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </ModalBase>
+      )}
+
+      {consumoLoading && (
+        <div className="consumo-detail__loading">Cargando...</div>
       )}
     </div>
   );

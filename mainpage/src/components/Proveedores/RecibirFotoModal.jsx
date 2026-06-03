@@ -68,9 +68,13 @@ export default function RecibirFotoModal({ onClose, onDone }) {
       const upd = new Set();
       (res.matched || []).forEach((m, i) => {
         sel.add(i);
-        // Auto-marcar actualizar precio si difiere >5%
-        if (m.match?.costeDB && m.precioTotal) {
-          const precioUd = m.precioTotal / (m.cantidad || 1);
+        // Auto-marcar actualizar precio si difiere >5% (con conversión de unidades)
+        if (m.match?.costeDB && m.precioTotal && m.cantidad) {
+          const cant = Number(m.cantidad);
+          const unidadAlb = (m.unidad || "").toLowerCase();
+          const factor = (unidadAlb === "caja" || unidadAlb === "pack") && m.match.cantidadPorCompra > 1
+            ? m.match.cantidadPorCompra : 1;
+          const precioUd = Number(m.precioTotal) / (cant * factor);
           const diff = Math.abs(precioUd - m.match.costeDB) / m.match.costeDB;
           if (diff > 0.05) upd.add(i);
         }
@@ -97,11 +101,14 @@ export default function RecibirFotoModal({ onClose, onDone }) {
             ingredienteId: m.match.id,
             cantidad: Number(m.cantidad) || 0,
           };
-          // Si "actualizar precio" está marcado, enviar precio nuevo
+          // Si "actualizar precio" está marcado, enviar precio por unidad convertido
           const realIdx = editedResult.matched.indexOf(m);
-          if (updatePrices.has(realIdx) && m.precioTotal && m.cantidad) {
-            base.precioNuevo = Math.round((Number(m.precioTotal) / Number(m.cantidad)) * 100) / 100;
-            if (m.match.productoProveedorId) base.productoProveedorId = m.match.productoProveedorId;
+          if (updatePrices.has(realIdx)) {
+            const precioUd = calcPrecioUnitario(m);
+            if (precioUd != null && precioUd > 0) {
+              base.precioNuevo = Math.round(precioUd * 100) / 100;
+              if (m.match.productoProveedorId) base.productoProveedorId = m.match.productoProveedorId;
+            }
           }
           return base;
         });
@@ -179,13 +186,36 @@ export default function RecibirFotoModal({ onClose, onDone }) {
   };
 
   // Calcular badge de diferencia de precio
+  // Calcula el precio por unidad del ingrediente usando el factor de conversión del PP
+  const calcPrecioUnitario = (m) => {
+    if (!m.precioTotal || !m.cantidad) return null;
+    const cantidad = Number(m.cantidad);
+    if (cantidad <= 0) return null;
+
+    // Si la unidad del albarán es la misma que la del ingrediente → factor = 1
+    const unidadAlbaran = (m.unidad || "").toLowerCase();
+    const unidadIng = (m.match?.unidadSistema || "").toLowerCase();
+    const esUnidadDirecta = ["unidad", "uds", "ud", "botella", "litro", "kg", "g", "ml", "l"].includes(unidadAlbaran)
+      && (unidadAlbaran === unidadIng || unidadAlbaran === "unidad" || unidadAlbaran === "uds");
+
+    // Si viene en cajas y tenemos cantidadPorCompra del PP → convertir
+    const cantidadPorCompra = m.match?.cantidadPorCompra || 1;
+    const factor = (unidadAlbaran === "caja" || unidadAlbaran === "pack") && cantidadPorCompra > 1
+      ? cantidadPorCompra
+      : esUnidadDirecta ? 1 : cantidadPorCompra;
+
+    return Number(m.precioTotal) / (cantidad * factor);
+  };
+
   const priceBadge = (m) => {
-    if (!m.match?.costeDB || !m.precioTotal || !m.cantidad) return null;
-    const precioNuevo = Number(m.precioTotal) / Number(m.cantidad);
-    const diff = ((precioNuevo - m.match.costeDB) / m.match.costeDB) * 100;
-    if (Math.abs(diff) < 2) return { cls: "recibir-badge--equal", text: "=" };
-    if (diff > 0) return { cls: "recibir-badge--up", text: `+${diff.toFixed(0)}%` };
-    return { cls: "recibir-badge--down", text: `${diff.toFixed(0)}%` };
+    if (!m.match?.costeDB) return null;
+    const precioUd = calcPrecioUnitario(m);
+    if (precioUd == null) return null;
+
+    const diff = ((precioUd - m.match.costeDB) / m.match.costeDB) * 100;
+    if (Math.abs(diff) < 3) return { cls: "recibir-badge--equal", text: "=", precioUd };
+    if (diff > 0) return { cls: "recibir-badge--up", text: `+${diff.toFixed(0)}%`, precioUd };
+    return { cls: "recibir-badge--down", text: `${diff.toFixed(0)}%`, precioUd };
   };
 
   // Manual mode

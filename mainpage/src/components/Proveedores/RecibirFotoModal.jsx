@@ -1,4 +1,5 @@
 import React, { useState, useRef } from "react";
+import { createPortal } from "react-dom";
 import api from "../../utils/api";
 import ModalBase from "../MapaEditor/ModalBase";
 import "./RecibirFotoModal.css";
@@ -21,11 +22,15 @@ export default function RecibirFotoModal({ onClose, onDone }) {
   const [detailLoading, setDetailLoading] = useState(false);
 
   const openDetail = async (ingredienteId) => {
+    if (!ingredienteId) return;
     setDetailLoading(true);
     try {
       const { data } = await api.get(`/stock/ingrediente/${ingredienteId}/detail`);
       setDetailData(data);
-    } catch { setDetailData(null); }
+    } catch (err) {
+      console.error("Detail error:", err);
+      setDetailData({ error: true, ingrediente: { nombre: "Error al cargar detalle" } });
+    }
     finally { setDetailLoading(false); }
   };
 
@@ -397,8 +402,8 @@ export default function RecibirFotoModal({ onClose, onDone }) {
         <div className="recibir-status recibir-status--done"><div className="recibir-status-icon">✅</div><div className="recibir-status-title">Stock actualizado</div></div>
       )}
 
-      {/* Sub-modal detalle ingrediente */}
-      {detailData && (
+      {/* Sub-modal detalle ingrediente — renderizado en Portal para escapar del overflow del modal padre */}
+      {detailData && createPortal(
         <div className="recibir-detailOverlay" onClick={() => setDetailData(null)}>
           <div className="recibir-detailModal" onClick={e => e.stopPropagation()}>
             <div className="recibir-detailHeader">
@@ -462,7 +467,8 @@ export default function RecibirFotoModal({ onClose, onDone }) {
               )}
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </ModalBase>
   );

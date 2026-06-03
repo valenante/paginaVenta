@@ -18,6 +18,22 @@ export default class ErrorBoundary extends Component {
 
   componentDidCatch(error, info) {
     console.error("[ErrorBoundary]", error, info.componentStack);
+
+    // Chunk loading error (deploy nuevo → archivos JS viejos ya no existen)
+    // Recargar automáticamente una vez
+    const isChunkError =
+      error?.name === "ChunkLoadError" ||
+      error?.message?.includes("Failed to fetch dynamically imported module") ||
+      error?.message?.includes("Loading chunk") ||
+      error?.message?.includes("error loading dynamically imported module");
+
+    if (isChunkError && !sessionStorage.getItem("_alef_chunk_retry")) {
+      sessionStorage.setItem("_alef_chunk_retry", "1");
+      window.location.reload();
+      return;
+    }
+    // Limpiar flag para futuros errores reales
+    sessionStorage.removeItem("_alef_chunk_retry");
   }
 
   handleRetry = () => {
@@ -106,7 +122,7 @@ const styles = {
   actions: { display: "flex", gap: "0.75rem", justifyContent: "center" },
   btnPrimary: {
     padding: "0.6rem 1.4rem",
-    background: "#6a0dad",
+    background: "#60b5ff",
     color: "#fff",
     border: "none",
     borderRadius: "0.5rem",

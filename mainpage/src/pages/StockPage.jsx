@@ -286,6 +286,17 @@ const StockPage = () => {
           </div>
         </div>
 
+        {/* ── SUGERENCIAS INTELIGENTES ── */}
+        {sugerenciasList.filter(s => s.cambio && !s.umbralManual).length > 0 && (
+          <button
+            className="alefBtn primary"
+            style={{ margin: "0.75rem 0" }}
+            onClick={() => setShowUmbralesModal(true)}
+          >
+            🤖 {sugerenciasList.filter(s => s.cambio && !s.umbralManual).length} umbrales sugeridos — Revisar
+          </button>
+        )}
+
         {/* ── TABS ── */}
         <nav className="stock-tabs">
           <button
@@ -339,6 +350,16 @@ const StockPage = () => {
             >
               + Nuevo ingrediente
             </button>
+
+            {thresholdsMode !== "off" && sugerenciasList.filter(s => s.cambio && !s.umbralManual).length > 0 && (
+              <button
+                className="btn-nuevo"
+                onClick={() => setShowUmbralesModal(true)}
+                title="ALEF sugiere umbrales para tus productos"
+              >
+                🤖 Umbrales inteligentes ({sugerenciasList.filter(s => s.cambio && !s.umbralManual).length})
+              </button>
+            )}
 
             <input
               className="stock-search"
@@ -474,6 +495,30 @@ const StockPage = () => {
                         {ing.coste.toFixed(2)} €/{ing.unidad}
                       </div>
                     )}
+
+                    {/* Sugerencia de umbrales inline */}
+                    {(() => {
+                      const sug = sugerenciasMap.get(String(ing._id));
+                      if (!sug || !sug.cambio || sug.umbralManual) return null;
+                      if (thresholdsMode === "auto") {
+                        return (
+                          <div className="stock-sug stock-sug--auto">
+                            <span className="stock-sug__label">🤖 Gestionado por ALEF</span>
+                            <span className="stock-sug__detail">mín {sug.sugerido.minimo} | máx {sug.sugerido.maximo} ({sug.consumoDiario}/día)</span>
+                          </div>
+                        );
+                      }
+                      return (
+                        <div className="stock-sug">
+                          <span className="stock-sug__label">🤖 ALEF sugiere: mín {sug.sugerido.minimo} | máx {sug.sugerido.maximo}</span>
+                          <span className="stock-sug__detail">{sug.consumoDiario}/día × {sug.leadTime}d lead time</span>
+                          <div className="stock-sug__actions">
+                            <button className="stock-sug__btn stock-sug__btn--apply" onClick={() => aplicarUmbral(sug)}>Aplicar</button>
+                            <button className="stock-sug__btn stock-sug__btn--ignore" onClick={() => ignorarUmbral(sug)}>Ignorar</button>
+                          </div>
+                        </div>
+                      );
+                    })()}
 
                     <div className="stock-card-actions">
                       <button

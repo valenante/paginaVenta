@@ -338,24 +338,20 @@ export default function RecibirFotoModal({ onClose, onDone }) {
                       <td><input type="number" min="0" step="0.1" className="recibir-editInput recibir-editInput--muted" value={u.cantidad ?? ""} onChange={e => updateUnmatched(i, "cantidad", e.target.value)} /></td>
                       <td><input type="number" min="0" step="0.01" className="recibir-editInput recibir-editInput--muted" value={u.precioTotal ?? ""} onChange={e => updateUnmatched(i, "precioTotal", e.target.value)} /></td>
                       <td>
-                        {/* Sugerencias automáticas del backend */}
-                        {u.sugerencias?.length > 0 && searchingIdx !== i && (
+                        {searchingIdx !== i ? (
                           <div className="recibir-sugerencias">
-                            {u.sugerencias.map((sug, j) => (
-                              <button key={j} type="button" className="recibir-sugerenciaBtn" onClick={() => vincularNoReconocido(i, sug)} title={`${sug.nombre} — stock: ${sug.stockActual} ${sug.unidad}`}>
+                            {(u.sugerencias || []).map((sug, j) => (
+                              <button key={j} type="button" className="recibir-sugerenciaBtn" onMouseDown={() => vincularNoReconocido(i, sug)}>
                                 {sug.nombre}
                               </button>
                             ))}
-                            <button type="button" className="recibir-linkBtn" onClick={() => { setSearchingIdx(i); setSearchQuery(""); setSearchResults([]); }}>Otro...</button>
+                            <button type="button" className="recibir-linkBtn" onClick={() => { setSearchingIdx(i); setSearchQuery(u.nombreAlbaran || ""); searchIngrediente(u.nombreAlbaran || ""); }}>
+                              {u.sugerencias?.length ? "Otro..." : "Buscar..."}
+                            </button>
                           </div>
-                        )}
-                        {/* Sin sugerencias o búsqueda manual */}
-                        {(!u.sugerencias?.length && searchingIdx !== i) && (
-                          <button type="button" className="recibir-linkBtn" onClick={() => { setSearchingIdx(i); setSearchQuery(""); setSearchResults([]); }}>Buscar...</button>
-                        )}
-                        {searchingIdx === i && (
+                        ) : (
                           <div className="recibir-searchWrap">
-                            <input type="text" className="recibir-editInput recibir-editInput--wide" placeholder="Buscar ingrediente..." autoFocus value={searchQuery} onChange={e => searchIngrediente(e.target.value)} onBlur={() => setTimeout(() => { if (searchingIdx === i) setSearchingIdx(null); }, 300)} />
+                            <input type="text" className="recibir-editInput recibir-editInput--wide" placeholder="Buscar ingrediente..." autoFocus value={searchQuery} onChange={e => searchIngrediente(e.target.value)} onBlur={() => setTimeout(() => setSearchingIdx(null), 300)} />
                             {searchResults.length > 0 && (
                               <div className="recibir-searchDropdown">
                                 {searchResults.map((ing, j) => (

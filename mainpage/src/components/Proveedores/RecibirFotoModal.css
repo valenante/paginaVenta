@@ -394,3 +394,64 @@
   justify-content: flex-end;
   gap: var(--space-sm);
 }
+
+/* ── Botones ALEF (fallback si ModalCrearMesa.css no está cargado) ── */
+.recibir-footer .alefBtn {
+  border: none;
+  cursor: pointer;
+  font-weight: 700;
+  font-family: var(--font-base);
+  border-radius: var(--radius-pill, 999px);
+  padding: 0.65rem 1.1rem;
+  font-size: var(--font-size-sm);
+  transition: all 0.22s ease;
+}
+
+.recibir-footer .alefBtn.ghost {
+  background: rgba(255,255,255,0.10);
+  border: 1px solid rgba(255,255,255,0.22);
+  color: #fff;
+}
+
+.recibir-footer .alefBtn.ghost:hover {
+  background: rgba(255,255,255,0.16);
+}
+
+.recibir-footer .alefBtn.primary {
+  color: #fff;
+  background: linear-gradient(135deg, var(--color-primario-oscuro, #2f7ed8), var(--color-primario, #60b5ff));
+  box-shadow: 0 4px 12px rgba(96,181,255,0.30);
+}
+
+.recibir-footer .alefBtn.primary:hover {
+  background: linear-gradient(135deg, #2a6fc0, #4da8f7);
+}
+
+.recibir-footer .alefBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ── File info buttons ── */
+.recibir-fileInfo .alefBtn {
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  font-family: var(--font-base);
+  border-radius: var(--radius-pill, 999px);
+  padding: 0.5rem 1rem;
+  font-size: var(--font-size-xs);
+  background: rgba(255,255,255,0.10);
+  border: 1px solid rgba(255,255,255,0.22);
+  color: #fff;
+  transition: all 0.15s;
+}
+
+.recibir-fileInfo .alefBtn:hover {
+  background: rgba(255,255,255,0.16);
+}
+
+/* ── Fix: nombres del albarán visibles en dark mode ── */
+.recibir-table td {
+  color: var(--color-texto, #e2e8f0);
+}

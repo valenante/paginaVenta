@@ -179,25 +179,33 @@
 /* ── Editable input cells ── */
 .recibir-editInput {
   width: 100%;
+  min-width: 60px;
   font-family: var(--font-base);
-  font-size: var(--font-size-sm);
-  padding: 6px 8px;
+  font-size: 0.92rem;
+  padding: 8px 10px;
   border-radius: var(--radius-sm);
-  border: 1px solid var(--color-borde-suave);
-  background: var(--color-fondo-card);
-  color: var(--color-texto);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.06);
+  color: #e2e8f0;
   outline: none;
   text-align: center;
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  -moz-appearance: textfield;
+}
+
+.recibir-editInput::-webkit-inner-spin-button,
+.recibir-editInput::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
 .recibir-editInput:focus {
-  border-color: var(--color-primario);
+  border-color: var(--color-primario, #60b5ff);
   box-shadow: 0 0 0 3px rgba(96, 181, 255, 0.18);
 }
 
 .recibir-editInput--muted {
-  color: var(--color-texto-suave);
+  color: #94a3b8;
 }
 
 /* ── Manual entry ── */

@@ -355,7 +355,7 @@ export default function RecibirFotoModal({ onClose, onDone }) {
                         )}
                         {searchingIdx === i && (
                           <div className="recibir-searchWrap">
-                            <input type="text" className="recibir-editInput recibir-editInput--wide" placeholder="Buscar ingrediente..." autoFocus value={searchQuery} onChange={e => searchIngrediente(e.target.value)} onBlur={() => setTimeout(() => { if (searchingIdx === i) setSearchingIdx(null); }, 200)} />
+                            <input type="text" className="recibir-editInput recibir-editInput--wide" placeholder="Buscar ingrediente..." autoFocus value={searchQuery} onChange={e => searchIngrediente(e.target.value)} onBlur={() => setTimeout(() => { if (searchingIdx === i) setSearchingIdx(null); }, 300)} />
                             {searchResults.length > 0 && (
                               <div className="recibir-searchDropdown">
                                 {searchResults.map((ing, j) => (
@@ -367,8 +367,6 @@ export default function RecibirFotoModal({ onClose, onDone }) {
                               </div>
                             )}
                           </div>
-                        ) : (
-                          <button type="button" className="recibir-linkBtn" onClick={() => { setSearchingIdx(i); setSearchQuery(""); setSearchResults([]); }}>Vincular</button>
                         )}
                       </td>
                     </tr>

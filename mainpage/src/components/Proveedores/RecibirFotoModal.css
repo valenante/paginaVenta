@@ -299,6 +299,35 @@
   color: var(--color-texto-suave);
 }
 
+/* ── Product cell (two lines) ── */
+.recibir-prodCell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.recibir-prodCell-albaran {
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: #e2e8f0;
+}
+
+.recibir-prodCell-alef {
+  font-size: 0.72rem;
+  color: #94a3b8;
+}
+
+.recibir-td--precio {
+  font-weight: 700;
+  color: #e2e8f0 !important;
+  text-align: center;
+}
+
+.recibir-td--muted {
+  color: #94a3b8 !important;
+  text-align: center;
+}
+
 /* ── Wide editable input ── */
 .recibir-editInput--wide {
   text-align: left;

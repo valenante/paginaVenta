@@ -330,36 +330,33 @@ export default function RecibirFotoModal({ onClose, onDone }) {
                 <thead>
                   <tr>
                     <th style={{ width: 30 }}></th>
-                    <th>Del albaran</th>
-                    <th>En ALEF</th>
-                    <th style={{ width: 70 }}>Stock</th>
-                    <th style={{ width: 80 }}>Cant.</th>
-                    <th style={{ width: 90 }}>Precio</th>
-                    <th style={{ width: 80 }}>En DB</th>
-                    <th style={{ width: 50 }}>Diff</th>
-                    <th style={{ width: 30 }}>$</th>
+                    <th>Producto</th>
+                    <th style={{ width: 60 }}>Stock</th>
+                    <th style={{ width: 70 }}>Cant.</th>
+                    <th style={{ width: 85 }}>€/ud fact.</th>
+                    <th style={{ width: 80 }}>€/ud DB</th>
+                    <th style={{ width: 55 }}>Diff</th>
                     <th style={{ width: 30 }}></th>
                   </tr>
                 </thead>
                 <tbody>
                   {editedResult.matched.map((m, i) => {
                     const badge = priceBadge(m);
+                    const precioUd = calcPrecioUnitario(m);
                     return (
                       <tr key={i}>
                         <td><input type="checkbox" checked={selected.has(i)} onChange={() => toggleSelect(i)} /></td>
                         <td>
-                          <input type="text" className="recibir-editInput recibir-editInput--wide" value={m.nombreAlbaran || ""} onChange={e => updateMatched(i, "nombreAlbaran", e.target.value)} />
+                          <div className="recibir-prodCell">
+                            <span className="recibir-prodCell-albaran">{m.nombreAlbaran}</span>
+                            <span className="recibir-prodCell-alef">{m.match?.nombreSistema} <span className="recibir-matchTipo">{m.match?.tipo}</span></span>
+                          </div>
                         </td>
-                        <td className="recibir-table td--match">
-                          {m.match?.nombreSistema}
-                          <span className="recibir-matchTipo">{m.match?.tipo}</span>
-                        </td>
-                        <td className="recibir-table td--muted">{m.match?.stockActual ?? "—"}</td>
-                        <td><input type="number" min="0" step="0.1" className="recibir-editInput" value={m.cantidad ?? ""} onChange={e => updateMatched(i, "cantidad", e.target.value)} /></td>
-                        <td><input type="number" min="0" step="0.01" className="recibir-editInput" value={m.precioTotal ?? ""} onChange={e => updateMatched(i, "precioTotal", e.target.value)} /></td>
-                        <td className="recibir-table td--muted">{m.match?.costeDB != null ? m.match.costeDB.toFixed(2) + "€" : "—"}</td>
+                        <td className="recibir-td--muted">{m.match?.stockActual ?? "—"}</td>
+                        <td><input type="number" min="0" step="1" className="recibir-editInput" value={m.cantidad ?? ""} onChange={e => updateMatched(i, "cantidad", e.target.value)} /></td>
+                        <td className="recibir-td--precio">{precioUd != null ? precioUd.toFixed(2) + "€" : "—"}</td>
+                        <td className="recibir-td--muted">{m.match?.costeDB != null ? m.match.costeDB.toFixed(2) + "€" : "—"}</td>
                         <td>{badge ? <span className={`recibir-badge ${badge.cls}`}>{badge.text}</span> : "—"}</td>
-                        <td>{badge && badge.cls !== "recibir-badge--equal" ? <input type="checkbox" checked={updatePrices.has(i)} onChange={() => toggleUpdatePrice(i)} title="Actualizar precio en DB" /> : null}</td>
                         <td><button type="button" className="recibir-infoBtn" onClick={() => openDetail(m.match?.id)} title="Ver detalle">i</button></td>
                       </tr>
                     );

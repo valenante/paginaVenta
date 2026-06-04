@@ -1,8 +1,10 @@
 import LegalLayout from "./LegalLayout";
+import SEOHead from "../../components/SEO/SEOHead";
 
 export default function Subencargados() {
   return (
     <LegalLayout title="Lista de Subencargados del Tratamiento">
+      <SEOHead title="Subencargados del tratamiento" description="Lista actualizada de proveedores que participan en el tratamiento de datos personales de clientes de ALEF. MongoDB, DigitalOcean, Stripe, OpenAI." path="/subencargados" />
       <p><em>Ultima actualizacion: 28 de abril de 2026</em></p>
 
       <p>De conformidad con el articulo 28 del RGPD y el <a href="/dpa">Acuerdo de Procesamiento de Datos</a>, Alef mantiene esta lista publica de subencargados que participan en el tratamiento de datos personales de los clientes del Servicio.</p>

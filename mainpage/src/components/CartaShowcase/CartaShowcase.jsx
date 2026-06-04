@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import useRevealOnScroll from "../../hooks/useRevealOnScroll";
 import cartaDemo from "../../assets/videos/carta-demo.mp4";
 import "./CartaShowcase.css";
@@ -72,6 +73,10 @@ const CartaShowcase = () => {
               </div>
             ))}
           </div>
+
+          <Link to="/carta-qr-restaurante" className="CartaShow-link">
+            Ver todo lo que hace la carta QR →
+          </Link>
         </div>
       </div>
     </section>

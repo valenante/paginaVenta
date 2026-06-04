@@ -34,6 +34,15 @@
   gap: var(--space-sm);
 }
 
+.Footer-links-title {
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #fff;
+  margin-bottom: 2px;
+}
+
 .Footer-links a {
   color: #c7cbe3;
   font-size: var(--font-size-sm);

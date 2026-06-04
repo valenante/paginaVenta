@@ -1,8 +1,10 @@
 import LegalLayout from "./LegalLayout";
+import SEOHead from "../../components/SEO/SEOHead";
 
 export default function TerminosServicio() {
   return (
     <LegalLayout title="Condiciones Generales del Servicio">
+      <SEOHead title="Condiciones generales del servicio" description="Términos y condiciones de uso de ALEF, plataforma SaaS de gestión para restaurantes. Planes, facturación, cancelación y responsabilidades." path="/terminos" />
       <p><em>Ultima actualizacion: 28 de abril de 2026</em></p>
 
       <h2>1. Identificacion del prestador</h2>

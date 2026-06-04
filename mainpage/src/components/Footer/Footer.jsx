@@ -17,6 +17,16 @@ export default function Footer() {
         </div>
 
         <nav className="Footer-links">
+          <span className="Footer-links-title">Producto</span>
+          <Link to="/carta-qr-restaurante">Carta QR inteligente</Link>
+          <Link to="/facturacion-automatica-restaurante">Facturación automática</Link>
+          <Link to="/stock-predictivo-restaurante">Stock predictivo</Link>
+          <Link to="/automatizacion-restaurante">Automatización con IA</Link>
+          <Link to="/verifactu">Guía VeriFactu</Link>
+        </nav>
+
+        <nav className="Footer-links">
+          <span className="Footer-links-title">Legal</span>
           <Link to="/terminos">Condiciones</Link>
           <Link to="/privacidad">Privacidad</Link>
           <Link to="/dpa">DPA</Link>

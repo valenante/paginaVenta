@@ -1,8 +1,10 @@
 import LegalLayout from "./LegalLayout";
+import SEOHead from "../../components/SEO/SEOHead";
 
 export default function Privacidad() {
   return (
     <LegalLayout title="Politica de Privacidad">
+      <SEOHead title="Política de privacidad" description="Cómo ALEF recoge, trata y protege los datos personales de usuarios y clientes. Cumplimiento RGPD y derechos del interesado." path="/privacidad" />
       <p><em>Ultima actualizacion: 23 de abril de 2026</em></p>
 
       <h2>1. Responsable del tratamiento</h2>

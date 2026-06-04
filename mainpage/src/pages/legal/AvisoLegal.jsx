@@ -1,8 +1,10 @@
 import LegalLayout from "./LegalLayout";
+import SEOHead from "../../components/SEO/SEOHead";
 
 export default function AvisoLegal() {
   return (
     <LegalLayout title="Aviso legal">
+      <SEOHead title="Aviso legal" description="Información legal sobre ALEF, software de gestión para restaurantes. Titularidad, domicilio y propiedad intelectual." path="/aviso-legal" />
       <p>
         En cumplimiento de la Ley 34/2002 (LSSI-CE), se informa que este
         sitio web es titularidad de:

@@ -570,3 +570,51 @@
     padding: 0.6rem 0.4rem;
   }
 }
+
+/* ── Feature page footer with cross-links ── */
+.FP-footer {
+  background: #050815;
+  padding: 2rem 1.5rem;
+  text-align: center;
+}
+.FP-footer-links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+.FP-footer-label {
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.4);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.FP-footer-links a {
+  font-size: 0.88rem;
+  color: #60b5ff;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.15s;
+}
+.FP-footer-links a:hover {
+  color: #93cbff;
+}
+.FP-footer-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  font-size: 0.82rem;
+  color: rgba(255,255,255,0.4);
+}
+.FP-footer-bottom a {
+  color: #60b5ff;
+  text-decoration: none;
+  font-weight: 600;
+}
+.FP-footer-bottom a:hover {
+  color: #93cbff;
+}

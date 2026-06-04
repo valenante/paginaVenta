@@ -169,6 +169,14 @@ export default function TopBar() {
                 Ventajas
               </a>
 
+              <Link to="/carta-qr-restaurante" onClick={cerrarMenu}>
+                Carta QR
+              </Link>
+
+              <Link to="/automatizacion-restaurante" onClick={cerrarMenu}>
+                IA y Autopilot
+              </Link>
+
               <a href="#faq" onClick={cerrarMenu}>
                 FAQ
               </a>

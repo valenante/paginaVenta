@@ -369,12 +369,17 @@ export default function StockPredictivo() {
         </div>
       </section>
 
-      <footer style={{ textAlign: "center", padding: "2rem", background: "#050815", color: "rgba(255,255,255,0.5)", fontSize: "0.85rem" }}>
-        <Link to="/" style={{ color: "var(--color-primario)", textDecoration: "none", fontWeight: 600 }}>
-          Volver a ALEF
-        </Link>
-        <span style={{ margin: "0 1rem" }}>·</span>
-        <span>&copy; {new Date().getFullYear()} ALEF</span>
+      <footer className="FP-footer">
+        <div className="FP-footer-links">
+          <span className="FP-footer-label">Ver también:</span>
+          <Link to="/carta-qr-restaurante">Carta QR inteligente</Link>
+          <Link to="/facturacion-automatica-restaurante">Facturación automática</Link>
+          <Link to="/automatizacion-restaurante">Automatización con IA</Link>
+        </div>
+        <div className="FP-footer-bottom">
+          <Link to="/">Volver a ALEF</Link>
+          <span>&copy; {new Date().getFullYear()} ALEF</span>
+        </div>
       </footer>
     </div>
   );

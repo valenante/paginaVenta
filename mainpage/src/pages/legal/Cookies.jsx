@@ -1,8 +1,10 @@
 import LegalLayout from "./LegalLayout";
+import SEOHead from "../../components/SEO/SEOHead";
 
 export default function Cookies() {
   return (
     <LegalLayout title="Politica de cookies">
+      <SEOHead title="Política de cookies" description="Cookies técnicas y analíticas utilizadas por ALEF. Cómo gestionarlas y revocar el consentimiento." path="/cookies" />
       <p><em>Ultima actualizacion: 24 de abril de 2026</em></p>
 
       <h2>Cookies tecnicas (siempre activas)</h2>

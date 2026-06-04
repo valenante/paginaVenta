@@ -91,6 +91,19 @@
   max-width: 520px;
 }
 
+.CartaShow-link {
+  display: inline-block;
+  margin-top: 1.25rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--color-primario, #60b5ff);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+.CartaShow-link:hover {
+  color: #93cbff;
+}
+
 /* Puntos clave */
 .CartaShow-puntos {
   display: flex;

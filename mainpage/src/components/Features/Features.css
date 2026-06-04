@@ -120,6 +120,19 @@
   line-height: 1.6;
 }
 
+.Feat-card-link {
+  display: inline-block;
+  margin-top: 0.75rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #60b5ff;
+  text-decoration: none;
+  transition: color 0.15s;
+}
+.Feat-card-link:hover {
+  color: #93cbff;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .Feat-card {

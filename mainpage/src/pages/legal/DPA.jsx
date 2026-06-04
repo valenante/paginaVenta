@@ -1,8 +1,10 @@
 import LegalLayout from "./LegalLayout";
+import SEOHead from "../../components/SEO/SEOHead";
 
 export default function DPA() {
   return (
     <LegalLayout title="Acuerdo de Procesamiento de Datos (DPA)">
+      <SEOHead title="Acuerdo de procesamiento de datos (DPA)" description="Data Processing Agreement conforme al artículo 28 del RGPD. Obligaciones de ALEF como encargado del tratamiento de datos personales." path="/dpa" />
       <p><em>Conforme al Articulo 28 del RGPD. Ultima actualizacion: 23 de abril de 2026.</em></p>
 
       <h2>1. Partes</h2>

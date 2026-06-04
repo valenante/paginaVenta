@@ -51,7 +51,7 @@ const posts = [
 
 export default function BlogIndex() {
   return (
-    <div className="FeaturePage BlogIndex">
+    <div className="BlogIndex">
       <TopBar />
       <SEOHead
         title="Blog — Gestión de restaurantes, stock, facturación y automatización"

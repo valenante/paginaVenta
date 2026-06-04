@@ -30,6 +30,14 @@ const FacturacionAutomatica = lazy(() => import("../pages/features/FacturacionAu
 const StockPredictivo = lazy(() => import("../pages/features/StockPredictivo"));
 const AutopilotIA = lazy(() => import("../pages/features/AutopilotIA"));
 
+// Blog
+const BlogIndex = lazy(() => import("../pages/blog/BlogIndex"));
+const PostVerifactu = lazy(() => import("../pages/blog/PostVerifactu"));
+const PostStock = lazy(() => import("../pages/blog/PostStock"));
+const PostMargenes = lazy(() => import("../pages/blog/PostMargenes"));
+const PostFacturacion = lazy(() => import("../pages/blog/PostFacturacion"));
+const PostAutomatizacion = lazy(() => import("../pages/blog/PostAutomatizacion"));
+
 export default function publicRoutes(HomeEntry) {
   return (
     <>
@@ -60,6 +68,14 @@ export default function publicRoutes(HomeEntry) {
       <Route path="/facturacion-automatica-restaurante" element={<FacturacionAutomatica />} />
       <Route path="/stock-predictivo-restaurante" element={<StockPredictivo />} />
       <Route path="/automatizacion-restaurante" element={<AutopilotIA />} />
+
+      {/* BLOG */}
+      <Route path="/blog" element={<BlogIndex />} />
+      <Route path="/blog/que-es-verifactu-restaurantes" element={<PostVerifactu />} />
+      <Route path="/blog/control-stock-restaurante-guia" element={<PostStock />} />
+      <Route path="/blog/calcular-margenes-restaurante" element={<PostMargenes />} />
+      <Route path="/blog/facturacion-electronica-hosteleria" element={<PostFacturacion />} />
+      <Route path="/blog/automatizacion-restaurantes-ia" element={<PostAutomatizacion />} />
 
       {/* LEGAL */}
       <Route path="/aviso-legal" element={<AvisoLegal />} />

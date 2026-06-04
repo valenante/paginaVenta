@@ -177,6 +177,10 @@ export default function TopBar() {
                 IA y Autopilot
               </Link>
 
+              <Link to="/blog" onClick={cerrarMenu}>
+                Blog
+              </Link>
+
               <a href="#faq" onClick={cerrarMenu}>
                 FAQ
               </a>

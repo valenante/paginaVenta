@@ -23,6 +23,7 @@ export default function Footer() {
           <Link to="/stock-predictivo-restaurante">Stock predictivo</Link>
           <Link to="/automatizacion-restaurante">Automatización con IA</Link>
           <Link to="/verifactu">Guía VeriFactu</Link>
+          <Link to="/blog">Blog</Link>
         </nav>
 
         <nav className="Footer-links">

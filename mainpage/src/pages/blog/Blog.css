@@ -1,0 +1,316 @@
+/*****************************************************
+ * BLOG — Layout compartido para posts e índice
+ * Reutiliza variables del design system de features
+ *****************************************************/
+
+/* ── Índice del blog ── */
+.BlogIndex {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #060a18 0%, #0b1020 100%);
+  color: #e2e8f0;
+}
+
+.BlogIndex-hero {
+  text-align: center;
+  padding: 6rem 1.5rem 3rem;
+}
+
+.BlogIndex-hero h1 {
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+  font-weight: 800;
+  background: linear-gradient(135deg, #fff 0%, #60b5ff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin: 0 0 0.75rem;
+}
+
+.BlogIndex-hero p {
+  font-size: 1.05rem;
+  color: #94a3b8;
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.7;
+}
+
+.BlogIndex-grid {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 1.5rem 4rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.BlogIndex-card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+  padding: 1.75rem;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.2s, transform 0.2s;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.BlogIndex-card:hover {
+  border-color: #60b5ff40;
+  transform: translateY(-2px);
+}
+
+.BlogIndex-card-tag {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #60b5ff;
+}
+
+.BlogIndex-card h2 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.BlogIndex-card p {
+  font-size: 0.88rem;
+  color: #94a3b8;
+  margin: 0;
+  line-height: 1.6;
+  flex: 1;
+}
+
+.BlogIndex-card-meta {
+  font-size: 0.75rem;
+  color: #64748b;
+  margin-top: 0.5rem;
+}
+
+/* ── Post individual ── */
+.BlogPost {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #060a18 0%, #0b1020 100%);
+  color: #e2e8f0;
+}
+
+.BlogPost-header {
+  text-align: center;
+  padding: 5rem 1.5rem 2.5rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.BlogPost-tag {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #60b5ff;
+  margin-bottom: 0.75rem;
+  display: block;
+}
+
+.BlogPost-header h1 {
+  font-size: clamp(1.6rem, 4vw, 2.4rem);
+  font-weight: 800;
+  line-height: 1.3;
+  margin: 0 0 1rem;
+}
+
+.BlogPost-header p {
+  font-size: 1.05rem;
+  color: #94a3b8;
+  line-height: 1.7;
+  margin: 0;
+}
+
+.BlogPost-meta {
+  font-size: 0.8rem;
+  color: #64748b;
+  margin-top: 1rem;
+}
+
+/* ── Cuerpo del artículo ── */
+.BlogPost-body {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 0 1.5rem 3rem;
+  font-size: 1rem;
+  line-height: 1.8;
+  color: #cbd5e1;
+}
+
+.BlogPost-body h2 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #f1f5f9;
+  margin: 2.5rem 0 1rem;
+}
+
+.BlogPost-body h3 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #e2e8f0;
+  margin: 2rem 0 0.75rem;
+}
+
+.BlogPost-body p {
+  margin: 0 0 1.25rem;
+}
+
+.BlogPost-body ul,
+.BlogPost-body ol {
+  margin: 0 0 1.25rem;
+  padding-left: 1.5rem;
+}
+
+.BlogPost-body li {
+  margin-bottom: 0.5rem;
+}
+
+.BlogPost-body strong {
+  color: #f1f5f9;
+}
+
+.BlogPost-body a {
+  color: #60b5ff;
+  text-decoration: none;
+}
+.BlogPost-body a:hover {
+  text-decoration: underline;
+}
+
+.BlogPost-body blockquote {
+  border-left: 3px solid #60b5ff;
+  margin: 1.5rem 0;
+  padding: 0.75rem 1.25rem;
+  background: rgba(96,181,255,0.06);
+  border-radius: 0 8px 8px 0;
+  color: #94a3b8;
+  font-style: italic;
+}
+
+.BlogPost-body table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+  font-size: 0.9rem;
+}
+
+.BlogPost-body th {
+  text-align: left;
+  padding: 0.6rem 0.8rem;
+  background: rgba(255,255,255,0.06);
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  color: #f1f5f9;
+  font-weight: 600;
+}
+
+.BlogPost-body td {
+  padding: 0.6rem 0.8rem;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+/* ── CTA final ── */
+.BlogPost-cta {
+  text-align: center;
+  padding: 3rem 1.5rem;
+  background: rgba(96,181,255,0.04);
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+
+.BlogPost-cta h2 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin: 0 0 0.75rem;
+}
+
+.BlogPost-cta p {
+  font-size: 0.95rem;
+  color: #94a3b8;
+  margin: 0 0 1.5rem;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.BlogPost-cta-btns {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.BlogPost-cta-btn {
+  display: inline-block;
+  padding: 0.75rem 1.75rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.BlogPost-cta-btn--primary {
+  background: linear-gradient(135deg, #60b5ff, #3b82f6);
+  color: #fff;
+}
+.BlogPost-cta-btn--primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 20px rgba(96,181,255,0.3);
+}
+
+.BlogPost-cta-btn--ghost {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.15);
+  color: #e2e8f0;
+}
+.BlogPost-cta-btn--ghost:hover {
+  border-color: #60b5ff;
+  color: #60b5ff;
+}
+
+/* ── Related posts ── */
+.BlogPost-related {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 3rem;
+}
+
+.BlogPost-related h3 {
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #64748b;
+  margin: 0 0 1rem;
+}
+
+.BlogPost-related-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.BlogPost-related-card {
+  display: block;
+  padding: 1rem;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 8px;
+  text-decoration: none;
+  color: #e2e8f0;
+  font-size: 0.88rem;
+  font-weight: 600;
+  transition: border-color 0.15s;
+}
+.BlogPost-related-card:hover {
+  border-color: #60b5ff40;
+}
+
+@media (max-width: 640px) {
+  .BlogIndex-grid { grid-template-columns: 1fr; }
+  .BlogPost-cta-btns { flex-direction: column; align-items: center; }
+}

@@ -1,29 +1,32 @@
 import { Link } from "react-router-dom";
+import TopBar from "../../components/TopBar/TopBar";
+import Footer from "../../components/Footer/Footer";
 import SEOHead from "../../components/SEO/SEOHead";
 import { BreadcrumbStructuredData } from "../../components/SEO/StructuredData";
+import "../features/CartaQR.css";
 import "./Blog.css";
 
 const posts = [
   {
     slug: "que-es-verifactu-restaurantes",
     tag: "Legal",
-    title: "Que es VeriFactu y como afecta a tu restaurante en 2027",
-    desc: "Todo lo que necesitas saber sobre la nueva ley de facturacion electronica: plazos, requisitos, multas y como prepararte sin complicaciones.",
+    title: "Qué es VeriFactu y cómo afecta a tu restaurante en 2027",
+    desc: "Todo lo que necesitas saber sobre la nueva ley de facturación electrónica: plazos, requisitos, multas y cómo prepararte sin complicaciones.",
     date: "4 junio 2026",
     readTime: "8 min",
   },
   {
     slug: "control-stock-restaurante-guia",
     tag: "Operaciones",
-    title: "Guia completa de control de stock para restaurantes",
-    desc: "Desde el inventario basico hasta la prediccion con IA. Como pasar de contar a mano a que el sistema pida solo.",
+    title: "Guía completa de control de stock para restaurantes",
+    desc: "Desde el inventario básico hasta la predicción con IA. Cómo pasar de contar a mano a que el sistema pida solo.",
     date: "4 junio 2026",
     readTime: "10 min",
   },
   {
     slug: "calcular-margenes-restaurante",
     tag: "Finanzas",
-    title: "Como calcular los margenes reales de tu restaurante",
+    title: "Cómo calcular los márgenes reales de tu restaurante",
     desc: "El escandallo no basta. Aprende a calcular el coste real por plato, detectar fugas de margen y proteger tu rentabilidad.",
     date: "4 junio 2026",
     readTime: "9 min",
@@ -31,16 +34,16 @@ const posts = [
   {
     slug: "facturacion-electronica-hosteleria",
     tag: "Legal",
-    title: "Facturacion electronica para hosteleria: guia practica",
-    desc: "Que cambia, que necesitas, y como automatizar todo el proceso para que las facturas de tus proveedores se procesen solas.",
+    title: "Facturación electrónica para hostelería: guía práctica",
+    desc: "Qué cambia, qué necesitas, y cómo automatizar todo el proceso para que las facturas de tus proveedores se procesen solas.",
     date: "4 junio 2026",
     readTime: "7 min",
   },
   {
     slug: "automatizacion-restaurantes-ia",
-    tag: "Tecnologia",
-    title: "Automatizacion de restaurantes con IA: que se puede hacer hoy",
-    desc: "Instagram automatico, pedidos a proveedor, respuestas a resenas, prediccion de demanda. Que es real y que es humo.",
+    tag: "Tecnología",
+    title: "Automatización de restaurantes con IA: qué se puede hacer hoy",
+    desc: "Instagram automático, pedidos a proveedor, respuestas a reseñas, predicción de demanda. Qué es real y qué es humo.",
     date: "4 junio 2026",
     readTime: "9 min",
   },
@@ -48,10 +51,11 @@ const posts = [
 
 export default function BlogIndex() {
   return (
-    <div className="BlogIndex">
+    <div className="FeaturePage BlogIndex">
+      <TopBar />
       <SEOHead
-        title="Blog — Gestion de restaurantes, stock, facturacion y automatizacion"
-        description="Articulos sobre gestion de restaurantes: control de stock, margenes, facturacion electronica, VeriFactu, automatizacion con IA y mas. Por el equipo de ALEF."
+        title="Blog — Gestión de restaurantes, stock, facturación y automatización"
+        description="Artículos sobre gestión de restaurantes: control de stock, márgenes, facturación electrónica, VeriFactu, automatización con IA y más. Por el equipo de ALEF."
         path="/blog"
       />
       <BreadcrumbStructuredData items={[{ name: "Inicio", path: "/" }, { name: "Blog", path: "/blog" }]} />
@@ -59,8 +63,8 @@ export default function BlogIndex() {
       <div className="BlogIndex-hero">
         <h1>Blog ALEF</h1>
         <p>
-          Guias practicas sobre gestion de restaurantes, facturacion, stock,
-          margenes y automatizacion. Sin humo, con datos.
+          Guías prácticas sobre gestión de restaurantes, facturación, stock,
+          márgenes y automatización. Sin humo, con datos.
         </p>
       </div>
 
@@ -75,12 +79,7 @@ export default function BlogIndex() {
         ))}
       </div>
 
-      <footer className="FP-footer">
-        <div className="FP-footer-bottom">
-          <Link to="/">Volver a ALEF</Link>
-          <span>&copy; {new Date().getFullYear()} ALEF</span>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

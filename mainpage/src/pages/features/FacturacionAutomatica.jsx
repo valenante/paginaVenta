@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import TopBar from "../../components/TopBar/TopBar";
+import Footer from "../../components/Footer/Footer";
 import SEOHead from "../../components/SEO/SEOHead";
 import {
   FAQStructuredData,
@@ -49,6 +51,7 @@ export default function FacturacionAutomatica() {
 
   return (
     <div className="FeaturePage">
+      <TopBar />
       {/* ── SEO ── */}
       <SEOHead
         title="Facturación automática para restaurantes — VeriFactu incluido"
@@ -445,19 +448,13 @@ export default function FacturacionAutomatica() {
         </div>
       </section>
 
-      {/* ── Footer con cross-links ── */}
-      <footer className="FP-footer">
-        <div className="FP-footer-links">
-          <span className="FP-footer-label">Ver también:</span>
-          <Link to="/carta-qr-restaurante">Carta QR inteligente</Link>
-          <Link to="/stock-predictivo-restaurante">Stock predictivo</Link>
-          <Link to="/automatizacion-restaurante">Automatización con IA</Link>
-        </div>
-        <div className="FP-footer-bottom">
-          <Link to="/">Volver a ALEF</Link>
-          <span>&copy; {new Date().getFullYear()} ALEF</span>
-        </div>
-      </footer>
+      <nav className="FP-crosslinks">
+        <span className="FP-crosslinks-label">Ver también:</span>
+        <Link to="/carta-qr-restaurante">Carta QR inteligente</Link>
+        <Link to="/stock-predictivo-restaurante">Stock predictivo</Link>
+        <Link to="/automatizacion-restaurante">Automatización con IA</Link>
+      </nav>
+      <Footer />
     </div>
   );
 }

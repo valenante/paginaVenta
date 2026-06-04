@@ -1,11 +1,14 @@
 import { Link } from "react-router-dom";
+import TopBar from "../../components/TopBar/TopBar";
+import Footer from "../../components/Footer/Footer";
 import SEOHead from "../../components/SEO/SEOHead";
 import { ArticleStructuredData, BreadcrumbStructuredData } from "../../components/SEO/StructuredData";
 import "./Blog.css";
 
 export default function PostStock() {
   return (
-    <div className="BlogPost">
+    <div className="FeaturePage">
+      <TopBar />
       <SEOHead
         title="Guia completa de control de stock para restaurantes"
         description="Como controlar el inventario de tu restaurante: desde el conteo manual hasta la prediccion con IA. Metodos, errores comunes y como automatizar los pedidos a proveedor."
@@ -84,13 +87,14 @@ export default function PostStock() {
       </section>
 
       <nav className="BlogPost-related">
-        <h3>Articulos relacionados</h3>
+        <h3>Artículos relacionados</h3>
         <div className="BlogPost-related-grid">
-          <Link to="/blog/calcular-margenes-restaurante" className="BlogPost-related-card">Como calcular margenes reales</Link>
-          <Link to="/blog/facturacion-electronica-hosteleria" className="BlogPost-related-card">Facturacion electronica para hosteleria</Link>
-          <Link to="/blog/automatizacion-restaurantes-ia" className="BlogPost-related-card">Automatizacion con IA</Link>
+          <Link to="/blog/calcular-margenes-restaurante" className="BlogPost-related-card">Cómo calcular márgenes reales</Link>
+          <Link to="/blog/facturacion-electronica-hosteleria" className="BlogPost-related-card">Facturación electrónica para hostelería</Link>
+          <Link to="/blog/automatizacion-restaurantes-ia" className="BlogPost-related-card">Automatización con IA</Link>
         </div>
       </nav>
+      <Footer />
     </div>
   );
 }

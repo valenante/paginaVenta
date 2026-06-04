@@ -1,11 +1,14 @@
 import { Link } from "react-router-dom";
+import TopBar from "../../components/TopBar/TopBar";
+import Footer from "../../components/Footer/Footer";
 import SEOHead from "../../components/SEO/SEOHead";
 import { ArticleStructuredData, BreadcrumbStructuredData } from "../../components/SEO/StructuredData";
 import "./Blog.css";
 
 export default function PostFacturacion() {
   return (
-    <div className="BlogPost">
+    <div className="FeaturePage">
+      <TopBar />
       <SEOHead
         title="Facturacion electronica para hosteleria: guia practica"
         description="Que cambia con la facturacion electronica para restaurantes y bares. Requisitos legales, como automatizar el proceso y como dejar de perder horas con facturas de proveedores."
@@ -81,13 +84,14 @@ export default function PostFacturacion() {
       </section>
 
       <nav className="BlogPost-related">
-        <h3>Articulos relacionados</h3>
+        <h3>Artículos relacionados</h3>
         <div className="BlogPost-related-grid">
-          <Link to="/blog/que-es-verifactu-restaurantes" className="BlogPost-related-card">Que es VeriFactu</Link>
-          <Link to="/blog/control-stock-restaurante-guia" className="BlogPost-related-card">Guia de control de stock</Link>
-          <Link to="/blog/automatizacion-restaurantes-ia" className="BlogPost-related-card">Automatizacion con IA</Link>
+          <Link to="/blog/que-es-verifactu-restaurantes" className="BlogPost-related-card">Qué es VeriFactu</Link>
+          <Link to="/blog/control-stock-restaurante-guia" className="BlogPost-related-card">Guía de control de stock</Link>
+          <Link to="/blog/automatizacion-restaurantes-ia" className="BlogPost-related-card">Automatización con IA</Link>
         </div>
       </nav>
+      <Footer />
     </div>
   );
 }

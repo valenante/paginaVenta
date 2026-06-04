@@ -1,11 +1,14 @@
 import { Link } from "react-router-dom";
+import TopBar from "../../components/TopBar/TopBar";
+import Footer from "../../components/Footer/Footer";
 import SEOHead from "../../components/SEO/SEOHead";
 import { ArticleStructuredData, BreadcrumbStructuredData } from "../../components/SEO/StructuredData";
 import "./Blog.css";
 
 export default function PostMargenes() {
   return (
-    <div className="BlogPost">
+    <div className="FeaturePage">
+      <TopBar />
       <SEOHead
         title="Como calcular los margenes reales de tu restaurante"
         description="El escandallo no basta. Aprende a calcular el coste real por plato incluyendo mermas, extras y variaciones de proveedor. Detecta fugas de margen antes de que sea tarde."
@@ -109,13 +112,14 @@ export default function PostMargenes() {
       </section>
 
       <nav className="BlogPost-related">
-        <h3>Articulos relacionados</h3>
+        <h3>Artículos relacionados</h3>
         <div className="BlogPost-related-grid">
-          <Link to="/blog/control-stock-restaurante-guia" className="BlogPost-related-card">Guia de control de stock</Link>
-          <Link to="/blog/facturacion-electronica-hosteleria" className="BlogPost-related-card">Facturacion electronica</Link>
-          <Link to="/blog/que-es-verifactu-restaurantes" className="BlogPost-related-card">Que es VeriFactu</Link>
+          <Link to="/blog/control-stock-restaurante-guia" className="BlogPost-related-card">Guía de control de stock</Link>
+          <Link to="/blog/facturacion-electronica-hosteleria" className="BlogPost-related-card">Facturación electrónica</Link>
+          <Link to="/blog/que-es-verifactu-restaurantes" className="BlogPost-related-card">Qué es VeriFactu</Link>
         </div>
       </nav>
+      <Footer />
     </div>
   );
 }

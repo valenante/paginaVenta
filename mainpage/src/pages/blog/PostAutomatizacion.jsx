@@ -1,11 +1,14 @@
 import { Link } from "react-router-dom";
+import TopBar from "../../components/TopBar/TopBar";
+import Footer from "../../components/Footer/Footer";
 import SEOHead from "../../components/SEO/SEOHead";
 import { ArticleStructuredData, BreadcrumbStructuredData } from "../../components/SEO/StructuredData";
 import "./Blog.css";
 
 export default function PostAutomatizacion() {
   return (
-    <div className="BlogPost">
+    <div className="FeaturePage">
+      <TopBar />
       <SEOHead
         title="Automatizacion de restaurantes con IA: que se puede hacer hoy"
         description="Instagram automatico, pedidos a proveedor, respuestas a resenas de Google, prediccion de demanda. Que funciona de verdad y que es solo marketing."
@@ -92,13 +95,14 @@ export default function PostAutomatizacion() {
       </section>
 
       <nav className="BlogPost-related">
-        <h3>Articulos relacionados</h3>
+        <h3>Artículos relacionados</h3>
         <div className="BlogPost-related-grid">
-          <Link to="/blog/control-stock-restaurante-guia" className="BlogPost-related-card">Guia de control de stock</Link>
-          <Link to="/blog/calcular-margenes-restaurante" className="BlogPost-related-card">Calcular margenes reales</Link>
-          <Link to="/blog/que-es-verifactu-restaurantes" className="BlogPost-related-card">Que es VeriFactu</Link>
+          <Link to="/blog/control-stock-restaurante-guia" className="BlogPost-related-card">Guía de control de stock</Link>
+          <Link to="/blog/calcular-margenes-restaurante" className="BlogPost-related-card">Calcular márgenes reales</Link>
+          <Link to="/blog/que-es-verifactu-restaurantes" className="BlogPost-related-card">Qué es VeriFactu</Link>
         </div>
       </nav>
+      <Footer />
     </div>
   );
 }

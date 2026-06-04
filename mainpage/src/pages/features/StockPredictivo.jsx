@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import TopBar from "../../components/TopBar/TopBar";
+import Footer from "../../components/Footer/Footer";
 import SEOHead from "../../components/SEO/SEOHead";
 import {
   FAQStructuredData,
@@ -44,6 +46,7 @@ export default function StockPredictivo() {
 
   return (
     <div className="FeaturePage">
+      <TopBar />
       <SEOHead
         title="Stock predictivo para restaurantes — pedidos automáticos a proveedor"
         description="ALEF predice cuánto stock necesitas cada día, genera pedidos a proveedor antes de que te falte producto y te avisa si suben los precios. Incluido desde 129€/mes."
@@ -369,18 +372,13 @@ export default function StockPredictivo() {
         </div>
       </section>
 
-      <footer className="FP-footer">
-        <div className="FP-footer-links">
-          <span className="FP-footer-label">Ver también:</span>
-          <Link to="/carta-qr-restaurante">Carta QR inteligente</Link>
-          <Link to="/facturacion-automatica-restaurante">Facturación automática</Link>
-          <Link to="/automatizacion-restaurante">Automatización con IA</Link>
-        </div>
-        <div className="FP-footer-bottom">
-          <Link to="/">Volver a ALEF</Link>
-          <span>&copy; {new Date().getFullYear()} ALEF</span>
-        </div>
-      </footer>
+      <nav className="FP-crosslinks">
+        <span className="FP-crosslinks-label">Ver también:</span>
+        <Link to="/carta-qr-restaurante">Carta QR inteligente</Link>
+        <Link to="/facturacion-automatica-restaurante">Facturación automática</Link>
+        <Link to="/automatizacion-restaurante">Automatización con IA</Link>
+      </nav>
+      <Footer />
     </div>
   );
 }

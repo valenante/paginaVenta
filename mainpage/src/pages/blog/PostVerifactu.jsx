@@ -1,4 +1,6 @@
 import { Link } from "react-router-dom";
+import TopBar from "../../components/TopBar/TopBar";
+import Footer from "../../components/Footer/Footer";
 import SEOHead from "../../components/SEO/SEOHead";
 import { ArticleStructuredData, FAQStructuredData, BreadcrumbStructuredData } from "../../components/SEO/StructuredData";
 import "./Blog.css";
@@ -12,7 +14,8 @@ const faqs = [
 
 export default function PostVerifactu() {
   return (
-    <div className="BlogPost">
+    <div className="FeaturePage">
+      <TopBar />
       <SEOHead
         title="Que es VeriFactu y como afecta a tu restaurante en 2027"
         description="Guia completa sobre VeriFactu: que es, cuando entra en vigor, que requisitos tiene, cuanto cuestan las multas y como preparar tu restaurante sin complicaciones."
@@ -96,13 +99,14 @@ export default function PostVerifactu() {
       </section>
 
       <nav className="BlogPost-related">
-        <h3>Articulos relacionados</h3>
+        <h3>Artículos relacionados</h3>
         <div className="BlogPost-related-grid">
-          <Link to="/blog/facturacion-electronica-hosteleria" className="BlogPost-related-card">Facturacion electronica para hosteleria</Link>
-          <Link to="/blog/calcular-margenes-restaurante" className="BlogPost-related-card">Como calcular margenes reales</Link>
-          <Link to="/blog/control-stock-restaurante-guia" className="BlogPost-related-card">Guia de control de stock</Link>
+          <Link to="/blog/facturacion-electronica-hosteleria" className="BlogPost-related-card">Facturación electrónica para hostelería</Link>
+          <Link to="/blog/calcular-margenes-restaurante" className="BlogPost-related-card">Cómo calcular márgenes reales</Link>
+          <Link to="/blog/control-stock-restaurante-guia" className="BlogPost-related-card">Guía de control de stock</Link>
         </div>
       </nav>
+      <Footer />
     </div>
   );
 }

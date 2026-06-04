@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from "react";
-import logoAlef from "../../assets/imagenes/alef.png";
+import logoAlef from "../../assets/imagenes/alef.webp";
 
 function formatMarkdown(text) {
   if (!text) return "";

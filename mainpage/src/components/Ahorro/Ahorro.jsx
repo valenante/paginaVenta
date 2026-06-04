@@ -29,7 +29,7 @@ export default function Ahorro() {
     <section className="Ahorro" id="ahorro">
       <div className="Ahorro-inner">
         <h2 className="Ahorro-titulo">¿Cuántas horas pierdes cada semana en tareas que no deberían ser tuyas?</h2>
-        <p className="Ahorro-sub">Estos son los problemas reales que ALEF resuelve. No con más herramientas — con un sistema que lo conecta todo.</p>
+        <p className="Ahorro-sub">Estos son los problemas reales que ALEF resuelve en restaurantes, bares y cafeterías. No con más herramientas — con un software de hostelería que lo conecta todo.</p>
 
         <div className="Ahorro-dolores">
           {dolores.map((d, i) => (

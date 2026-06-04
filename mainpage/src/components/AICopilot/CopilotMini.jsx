@@ -1,5 +1,5 @@
 import React from "react";
-import logoAlef from "../../assets/imagenes/alef.png";
+import logoAlef from "../../assets/imagenes/alef.webp";
 import CopilotMessages from "./CopilotMessages";
 import CopilotInput from "./CopilotInput";
 

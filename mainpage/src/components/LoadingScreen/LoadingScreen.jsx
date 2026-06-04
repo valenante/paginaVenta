@@ -1,6 +1,6 @@
 import React from "react";
 import "./LoadingScreen.css";
-import logoAlef from "../../assets/imagenes/alef.png";
+import logoAlef from "../../assets/imagenes/alef.webp";
 
 export default function LoadingScreen() {
   return (

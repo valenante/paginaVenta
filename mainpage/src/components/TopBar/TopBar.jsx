@@ -3,7 +3,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { useFeaturesPlan } from "../../context/FeaturesPlanContext";
 import { useTenant } from "../../context/TenantContext";
-import logoAlef from "../../assets/imagenes/alef.png";
+import logoAlef from "../../assets/imagenes/alef.webp";
 import StockAlertasBell from "./StockAlertasBell.jsx";
 import "./TopBar.css";
 
@@ -161,13 +161,13 @@ export default function TopBar() {
         >
           {!user ? (
             <>
-              <a href="#inicio" onClick={cerrarMenu}>
+              <Link to="/#inicio" onClick={cerrarMenu}>
                 Inicio
-              </a>
+              </Link>
 
-              <a href="#ventajas" onClick={cerrarMenu}>
+              <Link to="/#ventajas" onClick={cerrarMenu}>
                 Ventajas
-              </a>
+              </Link>
 
               <Link to="/carta-qr-restaurante" onClick={cerrarMenu}>
                 Carta QR
@@ -181,13 +181,13 @@ export default function TopBar() {
                 Blog
               </Link>
 
-              <a href="#faq" onClick={cerrarMenu}>
+              <Link to="/#faq" onClick={cerrarMenu}>
                 FAQ
-              </a>
+              </Link>
 
-              <a href="#contacto" onClick={cerrarMenu}>
+              <Link to="/#contacto" onClick={cerrarMenu}>
                 Contacto
-              </a>
+              </Link>
 
               <Link
                 to="/login"

@@ -1,7 +1,7 @@
 import React from "react";
 import "./Introduccion.css";
-import letrasalefsinfondo from "../../assets/imagenes/letrasalefsinfondo.png";
-import verifactuLogo from "../../assets/imagenes/verifactu.png";
+import letrasalefsinfondo from "../../assets/imagenes/letrasalefsinfondo.webp";
+import verifactuLogo from "../../assets/imagenes/verifactu.webp";
 import tpvDemo from "../../assets/videos/tpv-demo.mp4";
 
 const Introduccion = () => {
@@ -29,12 +29,12 @@ const Introduccion = () => {
             </div>
 
             <h1 className="Introduccion-titulo">
-              Controla tu restaurante desde un único sistema.
+              El software de gestión para restaurantes que hace el trabajo por ti.
             </h1>
 
             <p className="Introduccion-subtitulo">
-              Costes, stock, cocina, sala y facturación conectados en una plataforma
-              diseñada para hostelería. Operativo en 24 horas.
+              TPV, stock predictivo, facturación automática, carta QR con IA y
+              cocina conectada en un único sistema para hostelería. Operativo en 24 horas.
             </p>
 
             <div className="Introduccion-highlights">

@@ -1,7 +1,7 @@
 import React from "react";
 import "./Funcionamiento.css";
 import logoZF from "../../assets/imagenes/logo-zabor-feten.png";
-import logoBA from "../../assets/imagenes/logo-bodegon-argentino.png";
+import logoBA from "../../assets/imagenes/logo-bodegon-argentino.webp";
 
 export default function Funcionamiento() {
   return (

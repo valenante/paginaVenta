@@ -2,7 +2,7 @@
 // VeriFactu — ahora sección secundaria de confianza, no hero principal
 import React from "react";
 import "./Hero.css";
-import facturaImg from "../../assets/imagenes/facturacion.png";
+import facturaImg from "../../assets/imagenes/facturacion.webp";
 
 const Hero = () => {
   return (

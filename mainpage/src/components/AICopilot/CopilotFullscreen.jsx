@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { createPortal } from "react-dom";
-import logoAlef from "../../assets/imagenes/alef.png";
+import logoAlef from "../../assets/imagenes/alef.webp";
 import CopilotMessages from "./CopilotMessages";
 import CopilotInput from "./CopilotInput";
 

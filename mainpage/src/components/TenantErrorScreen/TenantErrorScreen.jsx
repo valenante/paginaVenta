@@ -3,7 +3,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useTenant } from "../../context/TenantContext"; // ✅ AÑADIR
 import "./TenantErrorScreen.css";
-import logoAlef from "../../assets/imagenes/alef.png";
+import logoAlef from "../../assets/imagenes/alef.webp";
 
 export default function TenantErrorScreen({
   title = "No se pudo cargar el restaurante",

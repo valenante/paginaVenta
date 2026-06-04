@@ -1,5 +1,5 @@
 import React, { useRef, useCallback } from "react";
-import logoAlef from "../../assets/imagenes/alef.png";
+import logoAlef from "../../assets/imagenes/alef.webp";
 
 /**
  * Orbe IA — respira, cambia color según estado del restaurante,

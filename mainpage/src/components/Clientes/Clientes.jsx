@@ -1,7 +1,7 @@
 import React from "react";
 import "./Clientes.css";
 import logoZF from "../../assets/imagenes/logo-zabor-feten.png";
-import logoBA from "../../assets/imagenes/logo-bodegon-argentino.png";
+import logoBA from "../../assets/imagenes/logo-bodegon-argentino.webp";
 
 const MAIN_DOMAIN = import.meta.env.VITE_MAIN_DOMAIN || "softalef.com";
 

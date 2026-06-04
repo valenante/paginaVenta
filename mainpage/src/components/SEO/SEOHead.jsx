@@ -3,9 +3,9 @@ import { Helmet } from "react-helmet-async";
 const DEFAULTS = {
   siteName: "ALEF",
   siteUrl: "https://softalef.com",
-  defaultTitle: "ALEF | TPV y gestión integral para restaurantes — VeriFactu incluido",
+  defaultTitle: "ALEF | Software de gestión para restaurantes — TPV, stock, facturación y VeriFactu",
   defaultDescription:
-    "Software de gestión para restaurantes con TPV, carta QR inteligente, stock predictivo y facturación automática. Preparado para VeriFactu. Desde 129€/mes sin permanencia.",
+    "Software de hostelería con TPV, carta QR inteligente, stock predictivo, facturación automática y automatización con IA. VeriFactu incluido. Desde 129€/mes sin permanencia.",
   defaultImage: "https://softalef.com/og.png",
   locale: "es_ES",
 };

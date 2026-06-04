@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import logoAlef from "../../assets/imagenes/alef.png";
+import logoAlef from "../../assets/imagenes/alef.webp";
 import "./Legal.css";
 
 export default function LegalLayout({ title, children }) {

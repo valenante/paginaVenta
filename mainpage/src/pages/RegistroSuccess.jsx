@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useSearchParams, useNavigate, useLocation } from "react-router-dom";
 import api from "../utils/api";
 import "../styles/RegistroSuccess.css";
-import logo from "../assets/imagenes/alef.png";
+import logo from "../assets/imagenes/alef.webp";
 
 const STEP_LABELS = [
   ["stripeSubscription", "Verificando suscripción en Stripe"],

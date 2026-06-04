@@ -512,7 +512,7 @@ const StockPage = () => {
 
                     <div className="stock-details">
                       <strong>
-                        {ing.stockActual} {ing.unidad}
+                        {Math.round(ing.stockActual * 100) / 100} {ing.unidad}
                       </strong>
                       <span className="max">
                         máx: {ing.stockMax} {ing.unidad}

@@ -193,11 +193,12 @@ export default function HistorialMovimientosModal({ ingrediente, onClose }) {
         ) : (
           <div className="historial-list">
             {movimientos.map((m) => {
-              const delta =
+              const rawDelta =
                 m.delta ??
                 (m.stockDespues != null && m.stockAntes != null
                   ? m.stockDespues - m.stockAntes
                   : null);
+              const delta = rawDelta != null ? Math.round(rawDelta * 100) / 100 : null;
               const deltaClass = delta > 0 ? "pos" : delta < 0 ? "neg" : "";
 
               return (
@@ -217,11 +218,11 @@ export default function HistorialMovimientosModal({ ingrediente, onClose }) {
 
                   <div className="historial-row-stock">
                     <span className="historial-row-before">
-                      {m.stockAntes ?? "—"}
+                      {m.stockAntes != null ? Math.round(m.stockAntes * 100) / 100 : "—"}
                     </span>
                     <span className="historial-row-arrow">→</span>
                     <span className="historial-row-after">
-                      {m.stockDespues ?? "—"}
+                      {m.stockDespues != null ? Math.round(m.stockDespues * 100) / 100 : "—"}
                     </span>
                     <span className={`historial-row-delta ${deltaClass}`}>
                       {formatDelta(delta)}

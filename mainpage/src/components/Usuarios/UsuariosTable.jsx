@@ -1,3 +1,4 @@
+import { FiEdit2, FiTrash2, FiBarChart2, FiLock } from "react-icons/fi";
 import "./UsuariosTable.css";
 
 export default function UsuariosTable({
@@ -43,19 +44,19 @@ export default function UsuariosTable({
                   <td>
                     <div className="usuarios-acciones">
                       {isPlanEsencial ? (
-                        <button className="usuarios-btn disabled" disabled>🔒</button>
+                        <button className="usuarios-btn disabled" disabled><FiLock aria-hidden /></button>
                       ) : (
-                        <button className="usuarios-btn" onClick={() => onStats(u)}>📊</button>
+                        <button className="usuarios-btn" onClick={() => onStats(u)}><FiBarChart2 aria-hidden /></button>
                       )}
-                      <button className="usuarios-btn" onClick={() => onEditar(u)}>✏️</button>
-                      <button className="usuarios-btn" onClick={() => onPermisos(u)}>🔐</button>
+                      <button className="usuarios-btn" onClick={() => onEditar(u)}><FiEdit2 aria-hidden /></button>
+                      <button className="usuarios-btn" onClick={() => onPermisos(u)}><FiLock aria-hidden /></button>
                       <button
                         className="usuarios-btn danger"
                         onClick={() => onEliminar(u)}
                         disabled={deleting}
                         title={deleting ? "Desactivando..." : "Desactivar usuario"}
                       >
-                        {deleting ? "⏳" : "🗑️"}
+                        {deleting ? "…" : <FiTrash2 aria-hidden />}
                       </button>
                     </div>
                   </td>
@@ -96,16 +97,16 @@ export default function UsuariosTable({
 
               <div className="usuario-actions">
                 {!isPlanEsencial && (
-                  <button onClick={() => onStats(u)}>📊</button>
+                  <button onClick={() => onStats(u)}><FiBarChart2 aria-hidden /></button>
                 )}
-                <button onClick={() => onEditar(u)}>✏️</button>
-                <button onClick={() => onPermisos(u)}>🔐</button>
+                <button onClick={() => onEditar(u)}><FiEdit2 aria-hidden /></button>
+                <button onClick={() => onPermisos(u)}><FiLock aria-hidden /></button>
                 <button
                   className="usuarios-btn danger"
                   onClick={() => onEliminar(u)}
                   disabled={deleting}
                 >
-                  {deleting ? "⏳" : "🗑️"}
+                  {deleting ? "…" : <FiTrash2 aria-hidden />}
                 </button>
               </div>
             </div>

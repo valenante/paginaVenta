@@ -313,7 +313,7 @@ function BorrarTab({ onBorrado }) {
       <h2 className="cli-cuenta-h2 cli-cuenta-h2--danger">Borrar cuenta</h2>
 
       <div className="cli-cuenta-warning">
-        <strong>⚠️ Esta acción es irreversible.</strong>
+        <strong>Esta acción es irreversible.</strong>
         <ul>
           <li>Tu nombre y email se anonimizarán inmediatamente.</li>
           <li>Tu saldo de puntos en todos los restaurantes se perderá.</li>

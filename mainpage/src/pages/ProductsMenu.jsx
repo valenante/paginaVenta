@@ -58,8 +58,7 @@ const ProductsPage = () => {
             type="button"
             className="products-back-btn--productos"
             onClick={resetSelection}
-          >
-            ← Volver
+          >Volver
           </button>
         )}
       </header>
@@ -72,8 +71,7 @@ const ProductsPage = () => {
               type="button"
               onClick={() => setSelectedType("carta")}
               className="products-type-btn--productos categorias"
-            >
-              📋 Carta
+            >Carta
               <span className="products-type-desc--productos">
                 Categorías, platos y bebidas de tu carta.
               </span>
@@ -83,8 +81,7 @@ const ProductsPage = () => {
               type="button"
               onClick={() => setSelectedType("iva")}
               className="products-type-btn--productos iva"
-            >
-              🧾 IVA
+            >IVA
               <span className="products-type-desc--productos">
                 Tipo impositivo por categoría. Obligatorio para VeriFactu.
               </span>
@@ -94,8 +91,7 @@ const ProductsPage = () => {
               type="button"
               onClick={() => setSelectedType("analytics")}
               className="products-type-btn--productos analytics"
-            >
-              📊 Analytics
+            >Analytics
               <span className="products-type-desc--productos">
                 Escaneos, productos vistos, idiomas y conversión.
               </span>
@@ -106,15 +102,14 @@ const ProductsPage = () => {
                 type="button"
                 onClick={() => setSelectedType("costes")}
                 className="products-type-btn--productos costes"
-              >
-                💰 Costes
+              >Costes
                 <span className="products-type-desc--productos">
                   Precio de coste, margen y ganancia por producto.
                 </span>
               </button>
             ) : (
               <div className="products-type-btn--productos costes products-type-btn--locked">
-                <span>🔒 Costes</span>
+                <span>Costes</span>
                 <UpgradeBanner
                   message="Precio de coste, margen y ganancia por producto."
                   cta="Activar Costes"

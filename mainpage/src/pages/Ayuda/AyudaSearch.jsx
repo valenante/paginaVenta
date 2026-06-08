@@ -10,7 +10,7 @@ export default function AyudaSearch({ setArticulo, data }) {
   return (
     <div className="ayuda-search">
       <input
-        placeholder="🔍 Buscar en la ayuda..."
+        placeholder="Buscar en la ayuda..."
         value={query}
         onChange={(e) => setQuery(e.target.value)}
       />

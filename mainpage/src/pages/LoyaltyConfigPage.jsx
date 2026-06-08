@@ -164,8 +164,8 @@ export default function LoyaltyConfigPage() {
       {/* HEADER */}
       <header className="cfg-header">
         <div>
-          <Link to="/dashboard" className="loyalty-back">← Volver al panel</Link>
-          <h1>💳 Programa de fidelización</h1>
+          <Link to="/dashboard" className="loyalty-back">Volver al panel</Link>
+          <h1>Programa de fidelización</h1>
           <p className="text-suave">
             Sistema de puntos para premiar a tus clientes habituales. Configura las
             reglas, las recompensas y consulta los resultados en tiempo real.
@@ -173,7 +173,7 @@ export default function LoyaltyConfigPage() {
         </div>
         <div className="cfg-header-status">
           <span className={`badge ${config?.activo ? "badge-exito" : "badge-aviso"}`}>
-            {config?.activo ? "● Activo" : "○ Inactivo"}
+            {config?.activo ? "Activo" : "Inactivo"}
           </span>
         </div>
       </header>
@@ -389,8 +389,7 @@ function RecompensasTab({ recompensas, onAdd, onEdit, onDelete, onToggle }) {
           </p>
         </div>
         <div>
-          <button className="btn btn-primario" type="button" onClick={onAdd}>
-            ➕ Añadir recompensa
+          <button className="btn btn-primario" type="button" onClick={onAdd}>Añadir recompensa
           </button>
         </div>
       </div>
@@ -401,8 +400,7 @@ function RecompensasTab({ recompensas, onAdd, onEdit, onDelete, onToggle }) {
           <p className="text-suave" style={{ margin: "0.4rem 0 1rem" }}>
             Crea la primera para que tus clientes tengan algo que canjear.
           </p>
-          <button className="btn btn-primario" type="button" onClick={onAdd}>
-            ➕ Crear recompensa
+          <button className="btn btn-primario" type="button" onClick={onAdd}>Crear recompensa
           </button>
         </div>
       ) : (
@@ -476,8 +474,7 @@ function MultiplicadoresTab({ multiplicadores, onAdd, onEdit, onDelete, onToggle
           </p>
         </div>
         <div>
-          <button className="btn btn-primario" type="button" onClick={onAdd}>
-            ➕ Añadir multiplicador
+          <button className="btn btn-primario" type="button" onClick={onAdd}>Añadir multiplicador
           </button>
         </div>
       </div>
@@ -668,8 +665,7 @@ function ClientesTab() {
                 className="btn btn-secundario"
                 disabled={page <= 1}
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
-              >
-                ← Anterior
+              >Anterior
               </button>
               <span className="text-suave">Página {page} de {totalPaginas}</span>
               <button
@@ -1060,8 +1056,7 @@ function AnunciosTab({ reloadKey, onAdd, onEdit, onDeleted }) {
           </p>
         </div>
         <div>
-          <button className="btn btn-primario" type="button" onClick={onAdd}>
-            ➕ Nuevo anuncio
+          <button className="btn btn-primario" type="button" onClick={onAdd}>Nuevo anuncio
           </button>
         </div>
       </div>
@@ -1077,8 +1072,7 @@ function AnunciosTab({ reloadKey, onAdd, onEdit, onDeleted }) {
             Crea el primero para empezar a comunicarte con tus clientes ALEF. Puedes
             programar fechas para que se publique solo durante un periodo.
           </p>
-          <button className="btn btn-primario" type="button" onClick={onAdd}>
-            ➕ Crear primer anuncio
+          <button className="btn btn-primario" type="button" onClick={onAdd}>Crear primer anuncio
           </button>
         </div>
       ) : (
@@ -1112,8 +1106,7 @@ function AnunciosTab({ reloadKey, onAdd, onEdit, onDeleted }) {
                       <div>
                         <strong>{a.titulo}</strong>
                         {a.destacado && (
-                          <span className="badge" style={{ marginLeft: 8, background: "rgba(255, 145, 73, 0.16)", color: "#e86f1c" }}>
-                            ⭐ Destacado
+                          <span className="badge" style={{ marginLeft: 8, background: "rgba(255, 145, 73, 0.16)", color: "#e86f1c" }}>Destacado
                           </span>
                         )}
                       </div>
@@ -1269,7 +1262,7 @@ function AnuncioModal({ anuncio, onClose, onSaved }) {
             checked={form.destacado}
             onChange={(e) => onChange("destacado", e.target.checked)}
           />
-          <span>⭐ Destacado (aparece más arriba y con badge en la lista de restaurantes)</span>
+          <span>Destacado (aparece más arriba y con badge en la lista de restaurantes)</span>
         </label>
 
         <label className="loyalty-check" style={{ marginTop: "var(--space-sm)" }}>

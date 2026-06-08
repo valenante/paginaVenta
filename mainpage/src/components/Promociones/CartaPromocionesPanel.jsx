@@ -16,7 +16,7 @@ export default function CartaPromocionesPanel({ abierto, onClose }) {
     const [confirmData, setConfirmData] = useState(null);
 
     /* ============================
-       📦 Cargar productos
+       Cargar productos
        ============================ */
     useEffect(() => {
         if (!abierto) return;
@@ -46,7 +46,7 @@ export default function CartaPromocionesPanel({ abierto, onClose }) {
     }, [abierto, promoTipo]);
 
     /* ============================
-       🔁 Toggle estado
+       Toggle estado
        ============================ */
     const handleToggleEstado = async (id, campo, valor) => {
         try {
@@ -98,7 +98,7 @@ export default function CartaPromocionesPanel({ abierto, onClose }) {
     };
 
     /* ============================
-       🔍 Filtros
+       Filtros
        ============================ */
     const productosPorTipo = promoProductos.filter((p) => {
         if (promoTipo === "bebida") return p.tipo === "bebida";

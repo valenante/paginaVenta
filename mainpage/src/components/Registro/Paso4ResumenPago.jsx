@@ -66,7 +66,7 @@ export default function Paso4ResumenPago({
       window.location.href = sesion.url;
       // NO pongas setLoading(false) aquí porque ya te vas
     } catch (err) {
-      console.error("❌ Error al procesar pago:", err);
+      console.error("Error al procesar pago:", err);
       setError("Error al procesar el pago. Inténtalo de nuevo.");
       setLoading(false);
     }
@@ -99,12 +99,12 @@ export default function Paso4ResumenPago({
   const hayConfigurables = featuresConfig.length > 0;
   const hayFiltradas = featuresConfigFiltradas.length > 0;
 
-  const tituloNegocio = isShop ? "🏬 Tienda" : "🏪 Restaurante";
+  const tituloNegocio = isShop ? "Tienda" : "Restaurante";
 
   return (
     <section className="paso4-resumen section section--wide">
       <header className="paso4-header">
-        <h2>💳 Resumen y contratación</h2>
+        <h2>Resumen y contratación</h2>
         <p>
           Revisa que todos los datos estén correctos antes de finalizar el
           registro de tu {isShop ? "tienda" : "restaurante"}.
@@ -141,7 +141,7 @@ export default function Paso4ResumenPago({
       {/* === CONFIGURACIÓN INICIAL === */}
       <div className="resumen-bloque card">
         <div className="resumen-bloque-header">
-          <h3>⚙️ Configuración inicial</h3>
+          <h3>Configuración inicial</h3>
           <span className="resumen-tag badge badge-aviso">
             Cómo se crea tu entorno Alef
           </span>
@@ -224,7 +224,7 @@ export default function Paso4ResumenPago({
       {/* === SERVICIOS CONTRATADOS === */}
       <div className="resumen-bloque card">
         <div className="resumen-bloque-header">
-          <h3>🧾 Servicios contratados</h3>
+          <h3>Servicios contratados</h3>
           <span className="resumen-tag badge badge-aviso">Plan y extras</span>
         </div>
 
@@ -368,7 +368,7 @@ export default function Paso4ResumenPago({
 
       {/* === SELECCIÓN MENSUAL / ANUAL === */}
       <div className="resumen-periodo card">
-        <h3>🔁 Tipo de facturación</h3>
+        <h3>Tipo de facturación</h3>
         <p className="periodo-descripcion">Elige cómo deseas pagar tu suscripción Alef.</p>
 
         <div className="periodo-cards">
@@ -387,7 +387,7 @@ export default function Paso4ResumenPago({
           >
             <h4>Pago anual</h4>
             <p className="periodo-precio">{(precioBasePlan * 11).toFixed(2)} €/año</p>
-            <p className="periodo-detalle ahorro">💡 Ahorras 1 mes</p>
+            <p className="periodo-detalle ahorro">Ahorras 1 mes</p>
           </div>
         </div>
       </div>

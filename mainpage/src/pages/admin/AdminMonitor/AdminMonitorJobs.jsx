@@ -136,8 +136,7 @@ export default function AdminMonitorJobs({ q = "", onlyBad = false }) {
             <strong>{stats.down}</strong>
           </small>
 
-          <button className="jobs-btn-refresh" onClick={fetchJobs}>
-            🔄 Actualizar Jobs
+          <button className="jobs-btn-refresh" onClick={fetchJobs}>Actualizar Jobs
           </button>
         </div>
       </div>

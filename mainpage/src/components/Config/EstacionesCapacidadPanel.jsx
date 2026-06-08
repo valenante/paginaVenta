@@ -127,7 +127,7 @@ export default function EstacionesCapacidadPanel({
     <section className="config-card card estaciones-capacidad">
       <header className="config-card-header">
         <div>
-          <h2>🏭 Capacidad por estación (slots físicos)</h2>
+          <h2>Capacidad por estación (slots físicos)</h2>
           <p className="config-card-subtitle">
             Define cuántas <b>unidades físicas</b> puede procesar la estación a la vez
             (ej: plancha 20 burgers ≈ capacidad 20 si “burger” tiene carga=1).

@@ -80,8 +80,7 @@ export default function TabProductos({ periodo }) {
           />
           Incluir sin ventas
         </label>
-        <button className="fin-btn-ghost" onClick={exportCsv}>
-          📥 Exportar CSV
+        <button className="fin-btn-ghost" onClick={exportCsv}>Exportar CSV
         </button>
       </div>
 
@@ -110,8 +109,7 @@ export default function TabProductos({ periodo }) {
                     <td>
                       {p.nombre}
                       {p.sinCoste && (
-                        <span className="fin-tag fin-tag-warn" title="No tiene coste configurado">
-                          ⚠ sin coste
+                        <span className="fin-tag fin-tag-warn" title="No tiene coste configurado">sin coste
                         </span>
                       )}
                     </td>

@@ -10,7 +10,7 @@ export default function ModalReceta({ producto, onClose }) {
         onClick={(e) => e.stopPropagation()}
       >
         <header className="receta-modal-header">
-          <h3>🍳 Receta — {producto.nombre}</h3>
+          <h3>Receta — {producto.nombre}</h3>
 
           <button className="receta-close-btn" onClick={onClose}>
             ✖

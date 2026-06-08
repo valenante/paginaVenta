@@ -138,8 +138,7 @@ export default function AdicionalesEditor({
 
             {ad.consumeStock && (
               <div className="adicional-row__stock-panel--crear">
-                <label className="label--crear adicional-row__label-small--crear">
-                  🔍 Producto del catálogo
+                <label className="label--crear adicional-row__label-small--crear">Producto del catálogo
                   <input
                     list={`adicional-productos-${idx}`}
                     value={rowQuery}
@@ -163,16 +162,14 @@ export default function AdicionalesEditor({
                     ))}
                   </datalist>
                   {linked && linkedProduct ? (
-                    <small className="adicional-row__feedback--crear is-ok">
-                      ✓ Vinculado a <strong>{linkedProduct.nombre}</strong>
+                    <small className="adicional-row__feedback--crear is-ok">Vinculado a <strong>{linkedProduct.nombre}</strong>
                       {linkedProduct.controlStock ? " (stock directo)" : ""}
                       {Array.isArray(linkedProduct.receta) && linkedProduct.receta.length > 0
                         ? " (gestiona por receta)"
                         : ""}
                     </small>
                   ) : rowQuery ? (
-                    <small className="adicional-row__feedback--crear is-err">
-                      ⚠ No se encontró un producto con ese nombre. Escribe el nombre exacto o elige uno de la lista.
+                    <small className="adicional-row__feedback--crear is-err">No se encontró un producto con ese nombre. Escribe el nombre exacto o elige uno de la lista.
                     </small>
                   ) : (
                     <small className="help-text--crear">
@@ -193,7 +190,7 @@ export default function AdicionalesEditor({
                     disabled={disabled}
                   />
                   <small className="help-text--crear">
-                    Ej: "Extra queso" de 30g → pon 30. "1 pan extra" → pon 1.
+                    Ej: "Extra queso" de 30g → pon 30. "1 pan extra"pon 1.
                   </small>
                 </label>
               </div>

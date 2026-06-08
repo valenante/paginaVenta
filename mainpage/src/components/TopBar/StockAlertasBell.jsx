@@ -7,6 +7,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { FiBell } from "react-icons/fi";
 import {
   useStockAlertas,
   useStockAlertasCount,
@@ -67,7 +68,7 @@ export default function StockAlertasBell() {
         aria-label={`${count} alertas de stock`}
         title={`${count} alerta${count === 1 ? "" : "s"} de stock`}
       >
-        <span className="stockBell-icon">🚨</span>
+        <span className="stockBell-icon"><FiBell aria-hidden /></span>
         <span className="stockBell-badge">{count > 99 ? "99+" : count}</span>
       </button>
 
@@ -84,7 +85,7 @@ export default function StockAlertasBell() {
           {loading && !data ? (
             <div className="stockBell-empty">Cargando…</div>
           ) : items.length === 0 ? (
-            <div className="stockBell-empty">Todo en orden. 🎉</div>
+            <div className="stockBell-empty">Todo en orden.</div>
           ) : (
             <ul className="stockBell-lista">
               {preview.map((a) => (

@@ -92,7 +92,7 @@ const AlergenosSelector = ({ alergenos = [], alergenosTrazas = [], raros = [], o
 
       {raros.length > 0 && (
         <div className="alergenos-selector__raros">
-          <strong>⚠️ Valores no estándar detectados:</strong>{" "}
+          <strong>Valores no estándar detectados:</strong>{" "}
           <code>{raros.join(", ")}</code>
           <p>Se mantendrán hasta que guardes. Marca los equivalentes arriba para reemplazarlos.</p>
         </div>

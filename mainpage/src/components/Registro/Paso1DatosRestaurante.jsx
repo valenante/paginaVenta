@@ -22,7 +22,7 @@ export default function Paso1DatosRestaurante({
 
   return (
     <section className="paso1-datos">
-      <h2>🏪 Datos de la {labelNegocio}</h2>
+      <h2>Datos de la {labelNegocio}</h2>
       <p>
         Introduce la información básica de tu {labelNegocio} y del usuario
         administrador.
@@ -51,7 +51,7 @@ export default function Paso1DatosRestaurante({
         />
       </div>
 
-      <h3>👤 Usuario administrador</h3>
+      <h3>Usuario administrador</h3>
 
       <div className="form-group">
         <label>Nombre del administrador</label>
@@ -65,15 +65,13 @@ export default function Paso1DatosRestaurante({
       </div>
 
       <div className="info-box">
-        <p>
-          🔒 Tras completar el pago, te enviaremos un email para crear la contraseña
+        <p>Tras completar el pago, te enviaremos un email para crear la contraseña
           del administrador de forma segura.
         </p>
       </div>
 
       <div className="info-box">
-        <p>
-          🔒 La cuenta de administrador te permitirá gestionar{" "}
+        <p>La cuenta de administrador te permitirá gestionar{" "}
           {isShop
             ? "productos, pedidos y configuraciones de la tienda"
             : "productos, personal y configuraciones del restaurante"}

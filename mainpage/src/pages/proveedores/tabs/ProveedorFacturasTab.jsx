@@ -67,7 +67,7 @@ export default function ProveedorFacturasTab() {
         {/* States */}
         {loading && <div className="factTab-loading">Cargando facturas…</div>}
 
-        {error && <div className="factTab-error">❌ {error}</div>}
+        {error && <div className="factTab-error">{error}</div>}
 
         {!loading && items.length === 0 && !error && (
           <div className="factTab-empty">
@@ -119,8 +119,7 @@ export default function ProveedorFacturasTab() {
                             target="_blank"
                             rel="noopener noreferrer"
                             className="btn btn-ghost"
-                          >
-                            📎 Ver
+                          >Ver
                           </a>
                         )}
 
@@ -188,8 +187,7 @@ export default function ProveedorFacturasTab() {
                         target="_blank"
                         rel="noopener noreferrer"
                         className="btn btn-ghost"
-                      >
-                        📎 Ver
+                      >Ver
                       </a>
                     )}
                     {f.estado === "pendiente" && (

@@ -190,7 +190,7 @@ export default function EstacionesPanel({
   return (
     <section className="config-card card">
       <header className="config-card-header">
-        <h2>🔥 Estaciones de cocina / barra</h2>
+        <h2>Estaciones de cocina / barra</h2>
         <p className="config-card-subtitle">
           Cada estacion representa un puesto de trabajo en cocina o barra
           (plancha, freidora, frio...). Puedes configurar cuantas cosas

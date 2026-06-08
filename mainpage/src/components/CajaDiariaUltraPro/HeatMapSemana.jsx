@@ -120,7 +120,7 @@ const HeatmapSemana = ({ datos = [] }) => {
       </header>
 
       {/* ===============================
-        📱 MÓVIL
+        MÓVIL
        =============================== */}
       {isMobile ? (
         <>
@@ -150,7 +150,7 @@ const HeatmapSemana = ({ datos = [] }) => {
           ) : (
             <div className="heatmap-mobile-full">
               <div className="heatmap-mobile-full-head">
-                <div className="heatmap-insight">🗓️ Mapa completo</div>
+                <div className="heatmap-insight">Mapa completo</div>
 
                 <button
                   type="button"
@@ -167,7 +167,7 @@ const HeatmapSemana = ({ datos = [] }) => {
         </>
       ) : (
         /* ===============================
-           🖥️ DESKTOP — GRID COMPLETO
+           DESKTOP — GRID COMPLETO
          =============================== */
         renderGrid("")
       )}

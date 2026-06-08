@@ -157,7 +157,7 @@ export default function InstagramPage() {
     <div className="sug-root">
       <div className="sug-header">
         <div>
-          <h2>📸 Instagram</h2>
+          <h2>Instagram</h2>
           <p className="sug-header__sub">
             {connected
               ? `Conectado como @${status.username}`
@@ -199,10 +199,10 @@ export default function InstagramPage() {
                 <span className="ig-posts-bar__count">{postsTotal} posts</span>
                 <div className="ig-posts-bar__actions">
                   <button className="sug-btn sug-btn--secondary" onClick={() => handleGenerate("story")} disabled={generating}>
-                    {generating ? "..." : "📱 Story"}
+                    {generating ? "..." : "Story"}
                   </button>
                   <button className="sug-btn sug-btn--primary" onClick={() => handleGenerate("post")} disabled={generating}>
-                    {generating ? "Generando..." : "🤖 Post"}
+                    {generating ? "Generando..." : "Post"}
                   </button>
                 </div>
               </div>
@@ -247,8 +247,8 @@ export default function InstagramPage() {
                             {publishing === post._id ? "..." : "Publicar"}
                           </button>
                         )}
-                        {post.estado === "publicado" && <span className="ig-post-card__status ig-post-card__status--ok">✓ Publicado</span>}
-                        {post.estado === "error" && <span className="ig-post-card__status ig-post-card__status--error">⚠ {post.error}</span>}
+                        {post.estado === "publicado" && <span className="ig-post-card__status ig-post-card__status--ok">Publicado</span>}
+                        {post.estado === "error" && <span className="ig-post-card__status ig-post-card__status--error">{post.error}</span>}
                       </div>
                     </div>
                   </div>

@@ -4,7 +4,7 @@ import "./UpsellEstadisticasUsuarios.css";
 export default function UpsellEstadisticasUsuarios() {
   return (
     <div className="upsellusers-container">
-      <h3 className="upsellusers-title">📊 Estadísticas de empleados</h3>
+      <h3 className="upsellusers-title">Estadísticas de empleados</h3>
 
       <p className="upsellusers-text">
         Descubre quién atiende más mesas, quién genera más ingresos,

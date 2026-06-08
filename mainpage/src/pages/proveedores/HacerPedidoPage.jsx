@@ -325,7 +325,7 @@ export default function HacerPedidoPage() {
 
       <header className="hp-header cfg-header">
         <div>
-          <h1>🛒 Pedido inteligente</h1>
+          <h1>Pedido inteligente</h1>
           <p className="text-suave">
             Basado en tu consumo real por día de semana y el lead time de cada proveedor.
             Ajusta cantidades si quieres y genera los PDFs para enviar.
@@ -358,19 +358,17 @@ export default function HacerPedidoPage() {
                 onClick={fetchSugerencias}
                 disabled={loading}
               >
-                {loading ? "Cargando…" : "🔄 Recalcular"}
+                {loading ? "Cargando…" : "Recalcular"}
               </button>
 
               <button
                 className="btn btn-secundario"
                 type="button"
                 onClick={() => setMostrarUltimos((v) => !v)}
-              >
-                📋 {mostrarUltimos ? "Ocultar" : "Ver"} últimos pedidos
+              >{mostrarUltimos ? "Ocultar" : "Ver"} últimos pedidos
               </button>
 
-              <Link to="/configuracion/proveedores" className="btn btn-secundario">
-                ← Volver a proveedores
+              <Link to="/configuracion/proveedores" className="btn btn-secundario">Volver a proveedores
               </Link>
 
               <button
@@ -382,7 +380,7 @@ export default function HacerPedidoPage() {
               >
                 {enviando
                   ? "Generando…"
-                  : `📄 Generar ${totales.proveedores.length} pedido${
+                  : `Generar ${totales.proveedores.length} pedido${
                       totales.proveedores.length === 1 ? "" : "s"
                     } + PDFs`}
               </button>
@@ -409,7 +407,7 @@ export default function HacerPedidoPage() {
             <section className="card config-card">
               <div className="config-card-header">
                 <div>
-                  <h2>✅ Pedidos listos para enviar</h2>
+                  <h2>Pedidos listos para enviar</h2>
                   <p className="config-card-subtitle">
                     Elige cómo mandar cada pedido a su proveedor. WhatsApp abre la
                     app con el mensaje pre-rellenado.
@@ -420,8 +418,7 @@ export default function HacerPedidoPage() {
                   className="btn btn-secundario"
                   onClick={() => setPedidosCreados([])}
                   title="Cerrar este panel"
-                >
-                  ✕ Limpiar
+                >Limpiar
                 </button>
               </div>
 
@@ -438,8 +435,7 @@ export default function HacerPedidoPage() {
                           {fmtEur(pedido.total)}
                         </span>
                         {!tieneWhatsapp && (
-                          <span className="hp-creado-warn">
-                            ⚠ Sin teléfono — añade uno al proveedor para usar WhatsApp
+                          <span className="hp-creado-warn">Sin teléfono — añade uno al proveedor para usar WhatsApp
                           </span>
                         )}
                       </div>
@@ -455,8 +451,7 @@ export default function HacerPedidoPage() {
                             })
                           }
                           title="Descargar PDF"
-                        >
-                          📄 PDF
+                        >PDF
                         </button>
                         <button
                           type="button"
@@ -470,8 +465,7 @@ export default function HacerPedidoPage() {
                               ? `Abrir WhatsApp a ${proveedor.telefono}`
                               : "Este proveedor no tiene teléfono"
                           }
-                        >
-                          📱 WhatsApp
+                        >WhatsApp
                         </button>
                       </div>
                     </li>
@@ -486,7 +480,7 @@ export default function HacerPedidoPage() {
             <section className="card config-card">
               <div className="config-card-header">
                 <div>
-                  <h2>📋 Últimos pedidos</h2>
+                  <h2>Últimos pedidos</h2>
                   <p className="config-card-subtitle">
                     Los 10 pedidos más recientes a cualquier proveedor.
                   </p>
@@ -572,9 +566,9 @@ export default function HacerPedidoPage() {
                   onChange={(e) => setFiltroTipo(e.target.value)}
                 >
                   <option value="">Todos</option>
-                  <option value="ingrediente">🧂 Ingredientes</option>
-                  <option value="producto">🍽️ Platos</option>
-                  <option value="bebida">🥂 Bebidas</option>
+                  <option value="ingrediente">Ingredientes</option>
+                  <option value="producto">Platos</option>
+                  <option value="bebida">Bebidas</option>
                 </select>
               </div>
               <label className="hp-checkbox-field">
@@ -754,7 +748,7 @@ export default function HacerPedidoPage() {
                                     {a === "sin_principal" && "Sin principal"}
                                     {a === "sin_stock_max" && "Sin objetivo"}
                                     {a === "stock_bajo" && "Stock bajo"}
-                                    {a === "riesgo_rotura" && "⚠ Rotura"}
+                                    {a === "riesgo_rotura" && "Rotura"}
                                   </span>
                                 ))}
                               </td>

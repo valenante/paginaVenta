@@ -95,8 +95,7 @@ export default function MigrationsTenantPage() {
     <div className="mig-tenant-page">
       <header className="mig-tenant-header">
         <div>
-          <button className="mig-btn ghost" onClick={() => navigate("/superadmin/migrations")}>
-            ← Volver
+          <button className="mig-btn ghost" onClick={() => navigate("/superadmin/migrations")}>Volver
           </button>
           <h2>Tenant: <span className="mig-mono">{slug}</span></h2>
           <p className="mig-sub">

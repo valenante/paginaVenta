@@ -115,7 +115,7 @@ export default function TenantModal({ tenant, onClose }) {
 
     try {
       setLoading(true);
-      setAlerta({ tipo: "info", mensaje: "🔎 Buscando impresoras..." });
+      setAlerta({ tipo: "info", mensaje: "Buscando impresoras..." });
 
       const { data } = await api.get(`/impresoras/admin/${tenant._id}/listar`);
       const lista = Array.isArray(data?.impresoras) ? data.impresoras : [];
@@ -370,19 +370,16 @@ export default function TenantModal({ tenant, onClose }) {
         </select>
 
         <div className="impresora-buttons">
-          <button onClick={listarImpresoras} disabled={loading}>
-            🔍 Listar impresoras
+          <button onClick={listarImpresoras} disabled={loading}>Listar impresoras
           </button>
-          <button onClick={guardarConfig} disabled={loading}>
-            💾 Guardar configuración
+          <button onClick={guardarConfig} disabled={loading}>Guardar configuración
           </button>
-          <button onClick={verificarConexion} disabled={loading}>
-            🔄 Verificar conexión
+          <button onClick={verificarConexion} disabled={loading}>Verificar conexión
           </button>
         </div>
 
         <div className="agente-update-box">
-          <h4>🔧 Actualización del agente</h4>
+          <h4>Actualización del agente</h4>
           <label>Release</label>
           <select
             value={selectedReleaseId}
@@ -402,8 +399,7 @@ export default function TenantModal({ tenant, onClose }) {
               className="btn-update-agente"
               onClick={actualizarAgente}
               disabled={estado !== "online" || loading}
-            >
-              🔄 Actualizar agente
+            >Actualizar agente
             </button>
 
             <button
@@ -411,8 +407,7 @@ export default function TenantModal({ tenant, onClose }) {
               onClick={rollbackAgente}
               disabled={estado !== "online" || loading}
               title="Vuelve a la version anterior (previous)"
-            >
-              ↩️ Rollback agente
+            >Rollback agente
             </button>
           </div>
 
@@ -455,8 +450,7 @@ export default function TenantModal({ tenant, onClose }) {
         </div>
 
         <div className="impresora-buttons">
-          <button onClick={() => testPrint(printerName)} disabled={loading}>
-            🧾 Prueba
+          <button onClick={() => testPrint(printerName)} disabled={loading}>Prueba
           </button>
           <button onClick={() => testPrint(impCocina || printerName)} disabled={loading}>
             Cocina
@@ -470,7 +464,7 @@ export default function TenantModal({ tenant, onClose }) {
         </div>
 
         <p className={`estado ${estado}`}>
-          Estado: <strong>{estado === "online" ? "🟢 Online (WebSocket)" : "🔴 Offline"}</strong>
+          Estado: <strong>{estado === "online" ? "Online (WebSocket)" : "Offline"}</strong>
         </p>
 
         <p>

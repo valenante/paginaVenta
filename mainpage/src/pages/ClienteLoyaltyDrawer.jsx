@@ -58,7 +58,7 @@ export default function ClienteLoyaltyDrawer({ clienteId, onClose }) {
         <button type="button" className="cld-close" onClick={onClose} aria-label="Cerrar">×</button>
 
         {loading && <div className="cld-loading">Cargando cliente…</div>}
-        {error && <div className="cld-error">⚠️ {error}</div>}
+        {error && <div className="cld-error">{error}</div>}
 
         {data && <DetalleCliente data={data} />}
       </aside>
@@ -263,8 +263,7 @@ function UltimaVisita({ visita }) {
         </ul>
       )}
       {rec?.recompensaId && (
-        <div className="cld-ultima__rec">
-          🎁 {rec.nombre}{rec.descuento > 0 && ` · −${fmtMoney(rec.descuento)}`}
+        <div className="cld-ultima__rec">{rec.nombre}{rec.descuento > 0 && ` · −${fmtMoney(rec.descuento)}`}
         </div>
       )}
     </div>

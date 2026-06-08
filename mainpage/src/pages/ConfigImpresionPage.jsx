@@ -197,8 +197,7 @@ function TicketDesignModal({ estilo, onChange, onClose, onSave, onTestPrint, loa
           <button type="button" className="btn btn-secundario" onClick={onClose}>
             Cerrar
           </button>
-          <button type="button" className="btn" onClick={onTestPrint} disabled={loading}>
-            🧾 Imprimir prueba
+          <button type="button" className="btn" onClick={onTestPrint} disabled={loading}>Imprimir prueba
           </button>
           <button type="button" className="btn btn-primario" onClick={onSave} disabled={loading}>
             {loading ? "Guardando..." : "Guardar diseño"}

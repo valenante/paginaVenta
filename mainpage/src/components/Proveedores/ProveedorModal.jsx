@@ -169,8 +169,7 @@ export default function ProveedorModal({ mode, proveedor, onClose, onSaved }) {
                         onSubmit={submit}
                     >
                         {error && (
-                            <div className="provModal-alert badge-error">
-                                ❌ {error}
+                            <div className="provModal-alert badge-error">{error}
                             </div>
                         )}
 

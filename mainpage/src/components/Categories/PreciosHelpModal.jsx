@@ -24,15 +24,15 @@ export default function PreciosHelpModal({ open, onClose }) {
         aria-modal="true"
       >
         <div className="help-tabs">
-          <Tab id="precios" label="💰 Variantes de precio" />
-          <Tab id="adicionales" label="➕ Adicionales/Extras" />
-          <Tab id="receta" label="🧪 Receta por variante" />
-          <Tab id="compuesto" label="🧩 Productos compuestos" />
+          <Tab id="precios" label="Variantes de precio" />
+          <Tab id="adicionales" label="Adicionales/Extras" />
+          <Tab id="receta" label="Receta por variante" />
+          <Tab id="compuesto" label="Productos compuestos" />
         </div>
 
         {tab === "precios" && (
           <>
-        <h3>💡 Cómo funcionan las variantes de precio</h3>
+        <h3>Cómo funcionan las variantes de precio</h3>
         <p>
           Cada producto puede tener una o varias variantes (ej: una botella de vino que también
           se vende por copa). Cada variante tiene su precio, su coste y su peso sobre el stock.
@@ -114,7 +114,7 @@ export default function PreciosHelpModal({ open, onClose }) {
 
         {tab === "adicionales" && (
           <>
-            <h3>➕ Adicionales y Extras con stock</h3>
+            <h3>Adicionales y Extras con stock</h3>
             <p>
               Los <strong>adicionales</strong> son opciones que el cliente puede añadir al
               producto: <em>extra queso</em>, <em>pan aparte</em>, <em>sin cebolla</em>…
@@ -178,7 +178,7 @@ export default function PreciosHelpModal({ open, onClose }) {
 
         {tab === "receta" && (
           <>
-            <h3>🧪 Recetas con cantidad por variante</h3>
+            <h3>Recetas con cantidad por variante</h3>
             <p>
               Si tu producto tiene varias variantes (tapa/ración, copa/botella…) con consumos
               distintos, cada ingrediente de la receta puede aplicar a:
@@ -228,7 +228,7 @@ export default function PreciosHelpModal({ open, onClose }) {
 
         {tab === "compuesto" && (
           <>
-            <h3>🧩 Productos compuestos: menús y surtidos</h3>
+            <h3>Productos compuestos: menús y surtidos</h3>
             <p>
               Un producto compuesto agrupa varios productos hijos. El <strong>precio del padre
               manda</strong>; cada hijo descuenta stock de su producto real del catálogo al

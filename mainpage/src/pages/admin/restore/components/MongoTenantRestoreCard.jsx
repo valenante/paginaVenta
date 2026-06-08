@@ -166,8 +166,8 @@ export default function MongoTenantRestoreCard() {
           const warns = data?.warnings?.length || 0;
           setOk(
             warns > 0
-              ? `✅ Restore completado con advertencias (${warns}).`
-              : "✅ Restore completado."
+              ? `Restore completado con advertencias (${warns}).`
+              : "Restore completado."
           );
 
           if (target === "sandbox" && tenantTrim) {
@@ -176,7 +176,7 @@ export default function MongoTenantRestoreCard() {
             window.location.reload();
           }
         } else {
-          setError(data?.error?.message || "❌ Restore falló.");
+          setError(data?.error?.message || "Restore falló.");
         }
       }
 
@@ -232,7 +232,7 @@ export default function MongoTenantRestoreCard() {
 
       // set “live job” y dispara poll
       setJob({ jobId, status: "running" });
-      setOk(`✅ Restore lanzado. jobId=${jobId}`);
+      setOk(`Restore lanzado. jobId=${jobId}`);
 
       // refresca historial y estado
       await fetchJobs();
@@ -248,7 +248,7 @@ export default function MongoTenantRestoreCard() {
     setError("");
     setOk("");
     setJob({ jobId, status: "running" });
-    setOk(`📌 Track jobId=${jobId}`);
+    setOk(`Track jobId=${jobId}`);
     await pollStatus(jobId);
   };
 
@@ -267,7 +267,7 @@ export default function MongoTenantRestoreCard() {
   return (
     <section className="restore-card">
       <div className="restore-card-header">
-        <h3>🧬 MongoDB — Restore por Tenant</h3>
+        <h3>MongoDB — Restore por Tenant</h3>
         <p className="muted" style={{ margin: "6px 0 0" }}>
           Modo actual:{" "}
           {envInfo.mode === "sandbox"
@@ -280,8 +280,7 @@ export default function MongoTenantRestoreCard() {
             onClick={() => pollStatus()}
             disabled={!job?.jobId}
             title={!job?.jobId ? "Primero inicia un restore o elige uno del historial" : "Consultar estado al agent"}
-          >
-            🔄 Estado
+          >Estado
           </button>
 
           <button
@@ -303,8 +302,7 @@ export default function MongoTenantRestoreCard() {
             }}
             disabled={!tenantTrim}
             title={!tenantTrim ? "Escribe un tenant slug arriba" : "Activar SANDBOX para este tenant"}
-          >
-            🟡 SANDBOX
+          >SANDBOX
           </button>
 
           <button
@@ -314,17 +312,16 @@ export default function MongoTenantRestoreCard() {
               window.location.reload();
             }}
             title="Salir del modo sandbox"
-          >
-            🟢 PROD
+          >PROD
           </button>
 
           <button className="rb-btn rb-btn-ghost" onClick={fetchJobs} disabled={jobsLoading}>
-            {jobsLoading ? "Cargando…" : "📜 Historial"}
+            {jobsLoading ? "Cargando…" : "Historial"}
           </button>
         </div>
       </div>
 
-      {error && <div className="rb-alert rb-alert-error">❌ {error}</div>}
+      {error && <div className="rb-alert rb-alert-error">{error}</div>}
       {ok && <div className="rb-alert rb-alert-ok">{ok}</div>}
 
       <p className="muted">
@@ -375,7 +372,7 @@ export default function MongoTenantRestoreCard() {
 
       <div className="rb-actions">
         <button className="rb-btn rb-btn-danger" onClick={startRestore} disabled={loading}>
-          {loading ? "Lanzando…" : "🚀 Iniciar restore"}
+          {loading ? "Lanzando…" : "Iniciar restore"}
         </button>
 
         <button className="rb-btn rb-btn-ghost" onClick={resetForm} disabled={loading}>
@@ -414,11 +411,11 @@ export default function MongoTenantRestoreCard() {
          ========================= */}
       <div style={{ marginTop: 14 }}>
         <div className="restore-card-header" style={{ marginBottom: 8 }}>
-          <h4 style={{ margin: 0 }}>📜 Historial restores Mongo (DB)</h4>
+          <h4 style={{ margin: 0 }}>Historial restores Mongo (DB)</h4>
           <span className="muted">{jobsLoading ? "Actualizando…" : `${jobs.length} items`}</span>
         </div>
 
-        {jobsError && <div className="rb-alert rb-alert-error">❌ {jobsError}</div>}
+        {jobsError && <div className="rb-alert rb-alert-error">{jobsError}</div>}
 
         {!jobsLoading && !jobs.length && <p className="muted">Aún no hay restores registrados.</p>}
 
@@ -459,8 +456,7 @@ export default function MongoTenantRestoreCard() {
                           className="rb-btn rb-btn-ghost"
                           onClick={() => trackJob(jid)}
                           title="Track (consultar estado/tail del agent)"
-                        >
-                          📌 Track
+                        >Track
                         </button>
 
                         {(() => {
@@ -484,8 +480,7 @@ export default function MongoTenantRestoreCard() {
                                 window.location.reload();
                               }}
                               title={`Activar SANDBOX (${slug})`}
-                            >
-                              🟡 Usar sandbox
+                            >Usar sandbox
                             </button>
                           );
                         })()}

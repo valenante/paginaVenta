@@ -160,8 +160,7 @@ export default function ModalCrearMesa({
           </label>
         </div>
 
-        <div className="alefHint">
-          🧭 Posición inicial sugerida:{" "}
+        <div className="alefHint">Posición inicial sugerida:{" "}
           <b>{Math.round(suggestedPos.x)}%</b> / <b>{Math.round(suggestedPos.y)}%</b>
         </div>
 

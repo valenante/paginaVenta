@@ -21,7 +21,7 @@ export default function Paso4Provision({
   return (
     <section className="paso4-resumen section section--wide">
       <header className="paso4-header">
-        <h2>🧰 Resumen y provisión</h2>
+        <h2>Resumen y provisión</h2>
         <p>
           Esto crea el tenant igual que el registro real, pero como superadmin no se paga.
           Se envía email con link de set-password.
@@ -38,7 +38,7 @@ export default function Paso4Provision({
       </div>
 
       <div className="resumen-periodo card" style={{ marginBottom: 12 }}>
-        <h3>🔁 Tipo de facturación (para dejarlo guardado)</h3>
+        <h3>Tipo de facturación (para dejarlo guardado)</h3>
         <div className="periodo-cards">
           <div
             className={`periodo-card ${periodo === "mensual" ? "active" : ""}`}
@@ -54,7 +54,7 @@ export default function Paso4Provision({
           >
             <h4>Anual</h4>
             <p className="periodo-precio">{(precioBasePlan * 11).toFixed(2)} €/año</p>
-            <p className="periodo-detalle ahorro">💡 1 mes gratis</p>
+            <p className="periodo-detalle ahorro">1 mes gratis</p>
           </div>
         </div>
       </div>

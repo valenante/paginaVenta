@@ -5,9 +5,9 @@ import "./UsuarioPermisosModal.css";
  * UsuarioPermisosModal — Tri-state per-user permission overrides
  *
  * For each permission:
- *  - "rol"     → inherited from role (default, no override)
- *  - "extra"   → added via permisosExtra (grants permission not in role)
- *  - "revocado" → revoked via permisosRevocados (removes permission from role)
+ *  - "rol"inherited from role (default, no override)
+ *  - "extra"added via permisosExtra (grants permission not in role)
+ *  - "revocado"revoked via permisosRevocados (removes permission from role)
  *
  * Visual states:
  *  - Permission from role, not revoked → checked (tag "Del rol")

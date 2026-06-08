@@ -93,7 +93,7 @@ export default function EditProductShop({ product, onClose, onSaved }) {
               BLOQUE: Información básica
               ========================= */}
           <section className="form-section--crear">
-            <h4 className="subtitulo--crear">🧾 Información básica</h4>
+            <h4 className="subtitulo--crear">Información básica</h4>
             <p className="help-text--crear">
               Ajusta el nombre y la categoría del producto. La categoría se usa para organizar
               y filtrar el catálogo.
@@ -136,7 +136,7 @@ export default function EditProductShop({ product, onClose, onSaved }) {
               BLOQUE: Identificadores
               ========================= */}
           <section className="form-section--crear">
-            <h4 className="subtitulo--crear">🏷️ Identificadores (opcional)</h4>
+            <h4 className="subtitulo--crear">Identificadores (opcional)</h4>
             <p className="help-text--crear">
               Útiles para control interno (SKU) y escaneo rápido (EAN / código de barras).
             </p>
@@ -180,7 +180,7 @@ export default function EditProductShop({ product, onClose, onSaved }) {
               BLOQUE: Precio
               ========================= */}
           <section className="form-section--crear">
-            <h4 className="subtitulo--crear">💰 Precio</h4>
+            <h4 className="subtitulo--crear">Precio</h4>
             <p className="help-text--crear">
               Precio de venta actual. Si está vacío, se guardará como 0.
             </p>
@@ -210,7 +210,7 @@ export default function EditProductShop({ product, onClose, onSaved }) {
               ========================= */}
           {!esServicio && (
             <section className="form-section--crear">
-              <h4 className="subtitulo--crear">📦 Stock e inventario</h4>
+              <h4 className="subtitulo--crear">Stock e inventario</h4>
               <p className="help-text--crear">
                 Controla existencias y umbrales. Esto permite avisos y una reposición más ordenada.
               </p>

@@ -56,7 +56,7 @@ export default function CrearProductoShopModal({ onClose, onSave }) {
     <div className="alef-modal-overlay">
       <div className="alef-modal-content">
         <div className="crear-ingrediente-modal">
-          <h3>➕ Nuevo producto</h3>
+          <h3>Nuevo producto</h3>
           <p>Registra un nuevo producto de tienda.</p>
 
           <label className="label--editar">

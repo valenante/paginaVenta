@@ -13,7 +13,7 @@ export default function IdentidadNegocioPanel({
     return (
         <section className="config-card card">
             <header className="config-card-header">
-                <h2>🏪 Datos del {esTienda ? "negocio" : "restaurante"}</h2>
+                <h2>Datos del {esTienda ? "negocio" : "restaurante"}</h2>
                 <p className="config-card-subtitle">
                     Información visible en el TPV y el dashboard.
                 </p>
@@ -110,8 +110,7 @@ export default function IdentidadNegocioPanel({
                                     className="identidad-logo-preview"
                                 />
                             ) : (
-                                <p className="identidad-upload-hint">
-                                    📁 Arrastra o haz clic para subir el logo
+                                <p className="identidad-upload-hint">Arrastra o haz clic para subir el logo
                                 </p>
                             )}
                         </div>

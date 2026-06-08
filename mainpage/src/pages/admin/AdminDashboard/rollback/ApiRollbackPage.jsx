@@ -222,8 +222,8 @@ export default function ApiRollbackPage() {
 
       setOkMsg(
         target === "lkg"
-          ? `✅ Rollback a LKG ejecutado. Producción ahora en: ${String(switchedTo).toUpperCase()}`
-          : `✅ Rollback ejecutado. Producción ahora en: ${String(switchedTo).toUpperCase()}`
+          ? `Rollback a LKG ejecutado. Producción ahora en: ${String(switchedTo).toUpperCase()}`
+          : `Rollback ejecutado. Producción ahora en: ${String(switchedTo).toUpperCase()}`
       );
 
       setConfirmText("");
@@ -271,8 +271,7 @@ export default function ApiRollbackPage() {
           </p>
         </div>
 
-        <button className="rb-btn rb-btn-ghost" onClick={fetchStatus} disabled={submitting}>
-          🔄 Actualizar
+        <button className="rb-btn rb-btn-ghost" onClick={fetchStatus} disabled={submitting}>Actualizar
         </button>
       </div>
 
@@ -312,8 +311,7 @@ export default function ApiRollbackPage() {
                   </div>
                 )}
                 {lkgMeta.reason === "bootstrap" && (
-                  <div className="rb-warn-inline">
-                    ⚠️ LKG en "bootstrap" — aún no se ha marcado un deploy real como estable.
+                  <div className="rb-warn-inline">LKG en "bootstrap" — aún no se ha marcado un deploy real como estable.
                   </div>
                 )}
               </div>
@@ -336,7 +334,7 @@ export default function ApiRollbackPage() {
       <section className="rb-card">
         <h3>Ejecutar rollback</h3>
 
-        {err && <div className="rb-alert rb-alert-error">❌ {err}</div>}
+        {err && <div className="rb-alert rb-alert-error">{err}</div>}
         {okMsg && <div className="rb-alert rb-alert-ok">{okMsg}</div>}
 
         <form onSubmit={doRollback} className="rb-form">
@@ -379,8 +377,7 @@ export default function ApiRollbackPage() {
           </label>
 
           {resolvedStale && (
-            <div className="rb-warn-block">
-              ⚠️ El slot <strong>{resolvedTargetSlot?.toUpperCase()}</strong> tiene un
+            <div className="rb-warn-block">El slot <strong>{resolvedTargetSlot?.toUpperCase()}</strong> tiene un
               deploy de hace <strong>{Math.round(resolvedStaleDays)} días</strong>
               {resolvedMeta?.commitSubject && <> ({resolvedMeta.commitSubject})</>}.
               Si la DB ha cambiado de esquema, volver aquí puede romper cosas. Confirma

@@ -128,7 +128,7 @@ export default function FacturaProveedorModal({ onClose, onSaved }) {
           {/* Body */}
           <form className="facturaProvModal-body" onSubmit={submit}>
             {error && (
-              <div className="facturaProvModal-alert">❌ {error}</div>
+              <div className="facturaProvModal-alert">{error}</div>
             )}
 
             {/* Datos factura */}

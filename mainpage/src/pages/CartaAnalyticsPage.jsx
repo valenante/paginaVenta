@@ -156,16 +156,16 @@ export default function CartaAnalyticsPage({ onBack }) {
         <>
           {/* KPIs */}
           <div className="carta-analytics__kpis">
-            <KpiCard value={r.sesiones} label="📱 Abrieron la carta" delta={comp.sesiones?.delta} periodo={periodoLabel} />
-            <KpiCard value={totalVistas} label="👁 Miraron platos" delta={comp.vistas?.delta} periodo={periodoLabel} />
-            <KpiCard value={totalPedidos} label="🛒 Lo añadieron" delta={comp.pedidos?.delta} periodo={periodoLabel} />
-            <KpiCard value={r.eventosRaw || dias.reduce((s, d) => s + (d.eventosRaw || 0), 0)} label="📈 Interacciones" />
+            <KpiCard value={r.sesiones} label="Abrieron la carta" delta={comp.sesiones?.delta} periodo={periodoLabel} />
+            <KpiCard value={totalVistas} label="Miraron platos" delta={comp.vistas?.delta} periodo={periodoLabel} />
+            <KpiCard value={totalPedidos} label="Lo añadieron" delta={comp.pedidos?.delta} periodo={periodoLabel} />
+            <KpiCard value={r.eventosRaw || dias.reduce((s, d) => s + (d.eventosRaw || 0), 0)} label="Interacciones" />
           </div>
 
           {/* Insights */}
           {insights.length > 0 && (
             <div className="carta-analytics__insights">
-              <h3>💡 Lo que ALEF ve</h3>
+              <h3>Lo que ALEF ve</h3>
               {insights.map((ins, i) => (
                 <div key={i} className={`insight-card insight-card--${ins.type}`}>
                   <span className="insight-icon">{ins.icon}</span>

@@ -85,14 +85,13 @@ function UltimaVisitaPanel({ visita }) {
   return (
     <article className="cli-panel cli-panel--ultima">
       <header className="cli-panel__head">
-        <h3>🕒 Tu última visita</h3>
+        <h3>Tu última visita</h3>
         <span className="cli-panel__sub">{cap(fmtDateLong(visita.cierre))} · {fmtTime(visita.cierre)}</span>
       </header>
       <div className="cli-ultima-meta">
         <span className="cli-ultima-meta__chip">Mesa {visita.numero}</span>
         {visita.comensales > 0 && (
-          <span className="cli-ultima-meta__chip">
-            👥 {visita.comensales} {visita.comensales === 1 ? "persona" : "personas"}
+          <span className="cli-ultima-meta__chip">{visita.comensales} {visita.comensales === 1 ? "persona" : "personas"}
           </span>
         )}
         {visita.camarero && <span className="cli-ultima-meta__chip">{visita.camarero}</span>}
@@ -128,8 +127,7 @@ function UltimaVisitaPanel({ visita }) {
         </ul>
       )}
       {tieneRecompensa && (
-        <div className="cli-ultima-recompensa">
-          🎁 Aplicaste <strong>{recompensa.nombre}</strong>
+        <div className="cli-ultima-recompensa">Aplicaste <strong>{recompensa.nombre}</strong>
           {recompensa.descuento > 0 && ` (−${fmtMoney(recompensa.descuento)})`}
         </div>
       )}
@@ -144,7 +142,7 @@ function FavoritosPanel({ favoritos }) {
   return (
     <article className="cli-panel cli-panel--favoritos">
       <header className="cli-panel__head">
-        <h3>⭐ Tus favoritos aquí</h3>
+        <h3>Tus favoritos aquí</h3>
         <span className="cli-panel__sub">Lo que más has pedido.</span>
       </header>
       <ol className="cli-favoritos-list">
@@ -195,7 +193,7 @@ export function TimelineVisitas({ items, total, loading, hasMore, onLoadMore }) 
     <section className="cliente-section">
       <div className="cliente-section__header">
         <div>
-          <h2>📒 Todas tus visitas</h2>
+          <h2>Todas tus visitas</h2>
           <p className="cliente-section__sub">
             {total} {total === 1 ? "visita" : "visitas"} en este restaurante.
           </p>
@@ -239,8 +237,7 @@ export function TimelineVisitas({ items, total, loading, hasMore, onLoadMore }) 
                     </div>
                   ))}
                   {v.loyalty?.recompensaAplicada?.recompensaId && (
-                    <div className="cli-timeline-recompensa">
-                      🎁 {v.loyalty.recompensaAplicada.nombre}
+                    <div className="cli-timeline-recompensa">{v.loyalty.recompensaAplicada.nombre}
                       {v.loyalty.recompensaAplicada.descuento > 0 &&
                         ` · −${fmtMoney(v.loyalty.recompensaAplicada.descuento)}`}
                     </div>

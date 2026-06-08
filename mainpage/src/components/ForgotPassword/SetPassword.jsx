@@ -190,7 +190,7 @@ export default function SetPassword() {
             </div>
 
             {error && <p className="login-error">{error}</p>}
-            {ok && <p className="reset-success">✅ Contraseña creada. Redirigiendo al login…</p>}
+            {ok && <p className="reset-success">Contraseña creada. Redirigiendo al login…</p>}
 
             <button className="btn btn-primario" type="submit" disabled={!canSubmit}>
               {loading ? "Guardando…" : "Guardar contraseña"}

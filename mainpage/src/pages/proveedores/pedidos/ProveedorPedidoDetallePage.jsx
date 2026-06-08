@@ -108,16 +108,14 @@ export default function ProveedorPedidoDetallePage() {
                         <Link
                             className="btn btn-secundario"
                             to={`/configuracion/proveedores/${proveedorId}/pedidos`}
-                        >
-                            ← Volver
+                        >Volver
                         </Link>
 
                         {["borrador", "enviado"].includes(pedido?.estado) && (
                             <button
                                 className="btn btn-primario "
                                 onClick={() => setModalRecibir(true)}
-                            >
-                                📦 Recibir pedido
+                            >Recibir pedido
                             </button>
                         )}
 
@@ -133,7 +131,7 @@ export default function ProveedorPedidoDetallePage() {
                 </div>
             </header>
 
-            {error && <div className="provDet-alert provDet-alert--error">❌ {error}</div>}
+            {error && <div className="provDet-alert provDet-alert--error">{error}</div>}
 
             {/* Body */}
             <section className="provDet-grid">

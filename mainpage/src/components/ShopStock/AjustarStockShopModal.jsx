@@ -43,7 +43,7 @@ const AjustarStockShopModal = ({ producto, onClose, onSave }) => {
       >
         {/* HEADER */}
         <div className="stock-modal-header">
-          <h3>📦 Ajustar stock</h3>
+          <h3>Ajustar stock</h3>
           <p>{producto.nombre}</p>
         </div>
 

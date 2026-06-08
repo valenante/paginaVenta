@@ -58,7 +58,7 @@ export default function NuevoPlanModal({ onClose, onSave }) {
   return (
     <div className="modal-overlay-plans">
       <div className="modal-card-plans">
-        <h2 className="modal-title-plans">➕ Crear Plan</h2>
+        <h2 className="modal-title-plans">Crear Plan</h2>
 
         <form onSubmit={crear} className="modal-form-plans">
 
@@ -93,8 +93,8 @@ export default function NuevoPlanModal({ onClose, onSave }) {
               onChange={handleChange}
               required
             >
-              <option value="restaurante">🍽 Restaurante</option>
-              <option value="shop">🛒 Tienda / Shop</option>
+              <option value="restaurante">Restaurante</option>
+              <option value="shop">Tienda / Shop</option>
             </select>
           </label>
 

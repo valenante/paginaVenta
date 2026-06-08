@@ -399,7 +399,7 @@ export default function ProductoProveedorModal({
                 onClick={handleAiParse}
                 disabled={aiLoading || aiText.trim().length < 5}
               >
-                {aiLoading ? "Analizando..." : "✨ Analizar con IA"}
+                {aiLoading ? "Analizando..." : "Analizar con IA"}
               </button>
             </div>
           )}
@@ -414,38 +414,35 @@ export default function ProductoProveedorModal({
               <div className="ppModal-ai-card">
                 <h3>{aiResult.nombre}</h3>
                 <div className="ppModal-ai-details">
-                  <span>📦 1 {aiResult.unidad} = {aiResult.cantidadPorCompra} {aiResult.unidadContenido}s</span>
+                  <span>1 {aiResult.unidad} = {aiResult.cantidadPorCompra} {aiResult.unidadContenido}s</span>
                   {aiResult.pesoNetoPorItem > 0 && (
-                    <span>⚖️ {aiResult.pesoNetoPorItem}{aiResult.unidadPesoNeto} por {aiResult.unidadContenido}</span>
+                    <span>{aiResult.pesoNetoPorItem}{aiResult.unidadPesoNeto} por {aiResult.unidadContenido}</span>
                   )}
-                  <span>💰 {aiResult.precioBase}€ + IVA {aiResult.iva}% = {aiResult._preview?.precioConIva}€</span>
-                  <span>📊 Coste: {aiResult._preview?.costeUnitarioLabel}</span>
+                  <span>{aiResult.precioBase}€ + IVA {aiResult.iva}% = {aiResult._preview?.precioConIva}€</span>
+                  <span>Coste: {aiResult._preview?.costeUnitarioLabel}</span>
                   {aiResult._preview?.costePorPesoLabel && (
-                    <span>📊 {aiResult._preview.costePorPesoLabel}</span>
+                    <span>{aiResult._preview.costePorPesoLabel}</span>
                   )}
                 </div>
                 {aiResult.formato && <p className="ppModal-ai-formato">{aiResult.formato}</p>}
                 {aiResult.resumen && <p className="ppModal-ai-resumen">{aiResult.resumen}</p>}
               </div>
               <div className="ppModal-ai-actions">
-                <button type="button" className="ppModal-ai-btn ppModal-ai-btn--secondary" onClick={() => setAiResult(null)}>
-                  ✏️ Corregir
+                <button type="button" className="ppModal-ai-btn ppModal-ai-btn--secondary" onClick={() => setAiResult(null)}>Corregir
                 </button>
-                <button type="button" className="ppModal-ai-btn ppModal-ai-btn--primary" onClick={applyAiResult}>
-                  ✅ Usar estos datos
+                <button type="button" className="ppModal-ai-btn ppModal-ai-btn--primary" onClick={applyAiResult}>Usar estos datos
                 </button>
               </div>
             </div>
           )}
 
           {aiApplied && (
-            <div className="ppModal-ai-notice">
-              ⚠️ Datos rellenados por IA — revisa que sean correctos y asocia el producto o ingrediente antes de guardar.
+            <div className="ppModal-ai-notice">Datos rellenados por IA — revisa que sean correctos y asocia el producto o ingrediente antes de guardar.
             </div>
           )}
 
           <form className="ppModal-body" onSubmit={submit}>
-            {error && <div className="ppModal-alert badge-error">❌ {error}</div>}
+            {error && <div className="ppModal-alert badge-error">{error}</div>}
 
             <div className="ppModal-grid">
               <div className="ppModal-field ppModal-field--full">

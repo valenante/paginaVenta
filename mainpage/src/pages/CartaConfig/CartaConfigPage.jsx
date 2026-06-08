@@ -446,7 +446,7 @@ export default function CartaConfigPage() {
 
       <header className="carta-config-header cfg-header">
         <div>
-          <h1>🍽️ Configuración de la carta</h1>
+          <h1>Configuración de la carta</h1>
           <p className="text-suave">
             Ajusta la información pública del restaurante, el contenido del home,
             el orden de la carta y su apariencia visual con una estructura Alef
@@ -467,7 +467,7 @@ export default function CartaConfigPage() {
           <section className="card config-card">
             <div className="config-card-header">
               <div>
-                <h2>📍 Información del restaurante</h2>
+                <h2>Información del restaurante</h2>
                 <p className="config-card-subtitle">
                   Estos datos aparecerán en la carta y en distintos puntos visibles
                   para el cliente.
@@ -548,7 +548,7 @@ export default function CartaConfigPage() {
           <section className="card config-card">
             <div className="config-card-header">
               <div>
-                <h2>🖼️ Imágenes del home</h2>
+                <h2>Imágenes del home</h2>
                 <p className="config-card-subtitle">
                   Gestiona el carrusel principal y las imágenes de secciones
                   destacadas de la home.
@@ -614,8 +614,7 @@ export default function CartaConfigPage() {
                         ev.stopPropagation();
                         openFilePicker(section);
                       }}
-                    >
-                      ➕ Añadir
+                    >Añadir
                     </button>
                   </div>
                 </div>
@@ -635,7 +634,7 @@ export default function CartaConfigPage() {
           <section className="card config-card">
             <div className="config-card-header">
               <div>
-                <h2>📝 Textos del home</h2>
+                <h2>Textos del home</h2>
                 <p className="config-card-subtitle">
                   Mensajes breves para el carrusel y las secciones destacadas.
                 </p>
@@ -678,8 +677,7 @@ export default function CartaConfigPage() {
                           type="button"
                           className="config-btn-add"
                           onClick={() => handleAddText(section)}
-                        >
-                          ➕ Añadir texto
+                        >Añadir texto
                         </button>
                       </li>
                     </ul>
@@ -693,7 +691,7 @@ export default function CartaConfigPage() {
           <section className="card config-card config-card--embedded">
             <div className="config-card-header">
               <div>
-                <h2>📚 Orden y estructura de la carta</h2>
+                <h2>Orden y estructura de la carta</h2>
                 <p className="config-card-subtitle">
                   Define el orden de categorías, destacados, promociones y
                   comportamiento visual del catálogo.
@@ -713,7 +711,7 @@ export default function CartaConfigPage() {
           <section className="card config-card">
             <div className="config-card-header">
               <div>
-                <h2>👋 Mensaje de bienvenida</h2>
+                <h2>Mensaje de bienvenida</h2>
                 <p className="config-card-subtitle">
                   Mensaje que aparece al entrar a la carta después del preMenu.
                   Incluye el logo del restaurante automáticamente.
@@ -878,7 +876,7 @@ export default function CartaConfigPage() {
           <section className="card config-card">
             <div className="config-card-header">
               <div>
-                <h2>⭐ Promociones y destacados</h2>
+                <h2>Promociones y destacados</h2>
                 <p className="config-card-subtitle">
                   Gestiona productos destacados y promociones activas que se
                   muestran en la carta.

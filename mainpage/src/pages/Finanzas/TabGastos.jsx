@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { FiEdit2, FiTrash2 } from "react-icons/fi";
 import { useGastosFijos } from "../../hooks/useFinanzas";
 import { eur, ymd, CATEGORIAS_GASTO } from "./utils";
 
@@ -144,8 +145,8 @@ export default function TabGastos() {
                       </span>
                     </td>
                     <td className="fin-actions">
-                      <button onClick={() => openEditar(g)} title="Editar">✏️</button>
-                      <button onClick={() => handleBorrar(g)} title="Borrar">🗑️</button>
+                      <button onClick={() => openEditar(g)} title="Editar"><FiEdit2 aria-hidden /></button>
+                      <button onClick={() => handleBorrar(g)} title="Borrar"><FiTrash2 aria-hidden /></button>
                     </td>
                   </tr>
                 );

@@ -117,8 +117,7 @@ export default function SetPassword() {
 
             {error && <div className="setpw-alert setpw-alert--error">{error}</div>}
             {ok && (
-              <div className="setpw-alert setpw-alert--ok">
-                ✅ Contraseña creada. Entrando al panel...
+              <div className="setpw-alert setpw-alert--ok">Contraseña creada. Entrando al panel...
               </div>
             )}
 

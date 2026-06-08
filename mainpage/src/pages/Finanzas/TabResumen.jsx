@@ -108,7 +108,7 @@ export default function TabResumen({ periodo }) {
         {/* Top proveedores por gasto */}
         <div className="fin-card-bloque">
           <div className="fin-bloque-head">
-            <h3>🏭 Top proveedores (base imp.)</h3>
+            <h3>Top proveedores (base imp.)</h3>
             <span className="fin-bloque-sub">
               {eur(dash.gastos.proveedoresPagado || 0)} pagado ·{" "}
               {eur(dash.gastos.proveedoresPendiente || 0)} pendiente
@@ -141,8 +141,7 @@ export default function TabResumen({ periodo }) {
         {/* Facturas pendientes / vencidas */}
         <div className="fin-card-bloque">
           <div className="fin-bloque-head">
-            <h3>
-              🧾 Facturas pendientes
+            <h3>Facturas pendientes
               {dash.facturasPendientes?.vencidas > 0 && (
                 <span className="fin-alerta-badge">
                   {dash.facturasPendientes.vencidas} vencida

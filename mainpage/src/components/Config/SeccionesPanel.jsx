@@ -167,7 +167,7 @@ export default function SeccionesPanel({
   return (
     <section className="config-card card secciones-panel">
       <header className="config-card-header">
-        <h2>🧩 Secciones (cocina / barra)</h2>
+        <h2>Secciones (cocina / barra)</h2>
         <p className="config-card-subtitle">
           Define secciones para agrupar la producción (fríos, plancha, postres,
           barra, etc.).
@@ -277,7 +277,7 @@ export default function SeccionesPanel({
                   <strong>{s.nombre}</strong>{" "}
                   <span className="text-suave">
                     ({s.slug}) — {s.destino} — orden {s.orden ?? 0}{" "}
-                    {s.activa === false ? "⛔ Inactiva" : ""}
+                    {s.activa === false ? "Inactiva" : ""}
                   </span>
                 </span>
 

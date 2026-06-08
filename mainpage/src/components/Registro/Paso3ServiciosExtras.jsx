@@ -162,7 +162,7 @@ export default function Paso3ServiciosExtras({
     <section className="paso3-servicios section section--wide">
       <header className="paso3-header">
         <div>
-          <h2>🧾 Servicios y equipamiento</h2>
+          <h2>Servicios y equipamiento</h2>
           <p>
             {isShop
               ? "Selecciona servicios opcionales y el hardware típico para tu tienda."
@@ -179,7 +179,7 @@ export default function Paso3ServiciosExtras({
 
       {/* === Servicios de puesta en marcha === */}
       <div className="servicios-grupo card">
-        <h3>🚀 Puesta en marcha avanzada</h3>
+        <h3>Puesta en marcha avanzada</h3>
         <p className="servicios-help">
           {isShop
             ? "Si quieres, nos mandas tu catálogo y dejamos tu tienda lista para vender."
@@ -326,7 +326,7 @@ export default function Paso3ServiciosExtras({
 
       {/* === Equipamiento físico === */}
       <div className="servicios-grupo card">
-        <h3>🖨️ Equipamiento de hardware</h3>
+        <h3>Equipamiento de hardware</h3>
         <p className="servicios-help">
           {isShop
             ? "Indícanos el hardware típico de tienda que quieres incluir."
@@ -432,9 +432,8 @@ export default function Paso3ServiciosExtras({
                   <span className="servicio-title">Tablet (11")</span>
                   <span className="servicio-price badge badge-aviso">+180 € / ud</span>
                 </div>
-                <p className="servicio-description">
-                  ✅ Más barata, rápida de instalar y portátil.
-                  ⚠️ Menos “pro”, más sensible a grasa/golpes si no va protegida.
+                <p className="servicio-description">Más barata, rápida de instalar y portátil.
+                  Menos “pro”, más sensible a grasa/golpes si no va protegida.
                 </p>
               </div>
             </label>
@@ -452,9 +451,8 @@ export default function Paso3ServiciosExtras({
                   <span className="servicio-title">Pantalla táctil PRO (AIO)</span>
                   <span className="servicio-price badge badge-aviso">+450 € / ud aprox.</span>
                 </div>
-                <p className="servicio-description">
-                  ✅ Más robusta y profesional, fija y siempre lista (tipo TPV).
-                  ⚠️ Más cara y requiere instalación fija (enchufe/soporte).
+                <p className="servicio-description">Más robusta y profesional, fija y siempre lista (tipo TPV).
+                  Más cara y requiere instalación fija (enchufe/soporte).
                 </p>
                 <small className="servicio-helper">
                   Ideal para barra y cocinas con mucho uso.
@@ -521,7 +519,7 @@ export default function Paso3ServiciosExtras({
 
       {/* === Servicios adicionales === */}
       <div className="servicios-grupo card">
-        <h3>🎓 Formación y servicios adicionales</h3>
+        <h3>Formación y servicios adicionales</h3>
         <p className="servicios-help">
           Formación para que el equipo use Alef desde el minuto uno.
         </p>
@@ -588,8 +586,7 @@ export default function Paso3ServiciosExtras({
 
       {/* === Info final === */}
       <div className="servicios-nota card">
-        <p className="servicios-nota-text">
-          💬 Todos los precios incluyen soporte técnico y actualizaciones de Alef.
+        <p className="servicios-nota-text">Todos los precios incluyen soporte técnico y actualizaciones de Alef.
           {" "}
           {servicios.tpvOpcion === "nuevo"
             ? " El TPV nuevo llega ya instalado y listo para conectar."

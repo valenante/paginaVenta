@@ -120,8 +120,7 @@ export default function ProveedorDetalleLayout() {
           <Link
             className="btn btn-ghost"
             to="/configuracion/proveedores"
-          >
-            ← Volver
+          >Volver
           </Link>
 
           <button
@@ -129,8 +128,7 @@ export default function ProveedorDetalleLayout() {
             type="button"
             onClick={() => setModalEdit(true)}
             disabled={loading || !proveedor}
-          >
-            ✏️ Editar
+          >Editar
           </button>
 
           <button
@@ -138,8 +136,7 @@ export default function ProveedorDetalleLayout() {
             type="button"
             onClick={() => setModalDelete(true)}
             disabled={loading || !proveedor}
-          >
-            🗑️ Eliminar
+          >Eliminar
           </button>
         </div>
       </div>
@@ -149,8 +146,7 @@ export default function ProveedorDetalleLayout() {
         Error
     ========================= */}
     {error && (
-      <div className="provDet-alert provDet-alert--error">
-        ❌ {error}
+      <div className="provDet-alert provDet-alert--error">{error}
       </div>
     )}
 

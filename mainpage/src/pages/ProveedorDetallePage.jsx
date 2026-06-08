@@ -160,8 +160,7 @@ export default function ProveedorDetallePage() {
 
         <div className="provDet-headRight">
           <div className="provDet-actions">
-            <Link className="btn-ghost" to="/configuracion/proveedores">
-              ← Volver
+            <Link className="btn-ghost" to="/configuracion/proveedores">Volver
             </Link>
 
             <button
@@ -169,8 +168,7 @@ export default function ProveedorDetallePage() {
               type="button"
               onClick={() => setModalEdit(true)}
               disabled={loading || !proveedor}
-            >
-              ✏️ Editar
+            >Editar
             </button>
 
             <button
@@ -178,8 +176,7 @@ export default function ProveedorDetallePage() {
               type="button"
               onClick={() => setModalDelete(true)}
               disabled={loading || !proveedor}
-            >
-              🗑️ Eliminar
+            >Eliminar
             </button>
           </div>
         </div>

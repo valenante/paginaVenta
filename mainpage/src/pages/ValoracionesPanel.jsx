@@ -89,7 +89,7 @@ export default function ValoracionesPanel() {
       setResumen(items);
       setPage(1); // reset de página al recargar
     } catch (err) {
-      console.error("❌ Error cargando resumen de valoraciones:", err);
+      console.error("Error cargando resumen de valoraciones:", err);
       setError("No se pudieron cargar las valoraciones.");
     } finally {
       setLoading(false);
@@ -118,7 +118,7 @@ export default function ValoracionesPanel() {
       const arr = Array.isArray(data?.valoraciones) ? data.valoraciones : [];
       setValoracionesDetalle(arr);
     } catch (err) {
-      console.error("❌ Error cargando detalle de valoraciones:", err);
+      console.error("Error cargando detalle de valoraciones:", err);
     } finally {
       setDetalleLoading(false);
     }
@@ -183,7 +183,7 @@ export default function ValoracionesPanel() {
       {/* HEADER */}
       <header className="valoraciones-header">
         <div>
-          <h2>⭐ Valoraciones de los clientes</h2>
+          <h2>Valoraciones de los clientes</h2>
           <p>
             Revisa qué platos encantan a tus clientes y cuáles necesitan
             revisión, basado en sus valoraciones reales.
@@ -349,8 +349,7 @@ export default function ValoracionesPanel() {
                     onClick={() =>
                       setPage((prev) => Math.max(1, prev - 1))
                     }
-                  >
-                    ◀ Anterior
+                  >Anterior
                   </button>
 
                   <span>

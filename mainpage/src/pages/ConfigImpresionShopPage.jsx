@@ -33,7 +33,7 @@ export default function ConfigImpresionShopPage() {
   const listarImpresoras = async () => {
     try {
       setLoading(true);
-      setAlerta({ tipo: "info", mensaje: "🔎 Buscando impresoras..." });
+      setAlerta({ tipo: "info", mensaje: "Buscando impresoras..." });
 
       const { data } = await api.get("/impresoras/listar");
       const lista = Array.isArray(data?.impresoras) ? data.impresoras : [];
@@ -43,7 +43,7 @@ export default function ConfigImpresionShopPage() {
 
       setAlerta({
         tipo: "exito",
-        mensaje: `✅ Se detectaron ${lista.length} impresoras`,
+        mensaje: `Se detectaron ${lista.length} impresoras`,
       });
     } catch (e) {
       console.error(e);
@@ -51,7 +51,7 @@ export default function ConfigImpresionShopPage() {
         tipo: "error",
         mensaje:
           e?.response?.data?.error ||
-          "❌ No se pudo obtener la lista de impresoras",
+          "No se pudo obtener la lista de impresoras",
       });
     } finally {
       setLoading(false);
@@ -64,7 +64,7 @@ export default function ConfigImpresionShopPage() {
   const guardar = async () => {
     try {
       setLoading(true);
-      setAlerta({ tipo: "info", mensaje: "💾 Guardando configuración..." });
+      setAlerta({ tipo: "info", mensaje: "Guardando configuración..." });
 
       await api.post("/impresoras/configurar", {
         impresoras: {
@@ -73,13 +73,13 @@ export default function ConfigImpresionShopPage() {
         },
       });
 
-      setAlerta({ tipo: "exito", mensaje: "✅ Configuración guardada" });
+      setAlerta({ tipo: "exito", mensaje: "Configuración guardada" });
     } catch (e) {
       console.error(e);
       setAlerta({
         tipo: "error",
         mensaje:
-          e?.response?.data?.error || "❌ Error al guardar la configuración",
+          e?.response?.data?.error || "Error al guardar la configuración",
       });
     } finally {
       setLoading(false);
@@ -92,7 +92,7 @@ export default function ConfigImpresionShopPage() {
   const testPrint = async (impresora, label) => {
     try {
       setLoading(true);
-      setAlerta({ tipo: "info", mensaje: `🧾 Enviando prueba (${label})...` });
+      setAlerta({ tipo: "info", mensaje: `Enviando prueba (${label})...` });
 
       const { data } = await api.post("/impresoras/test", {
         impresora: impresora || "",
@@ -100,14 +100,14 @@ export default function ConfigImpresionShopPage() {
 
       setAlerta({
         tipo: "exito",
-        mensaje: data?.message || `✅ Prueba enviada (${label})`,
+        mensaje: data?.message || `Prueba enviada (${label})`,
       });
     } catch (e) {
       console.error(e);
       setAlerta({
         tipo: "error",
         mensaje:
-          e?.response?.data?.error || `❌ Error al enviar prueba (${label})`,
+          e?.response?.data?.error || `Error al enviar prueba (${label})`,
       });
     } finally {
       setLoading(false);
@@ -145,7 +145,7 @@ export default function ConfigImpresionShopPage() {
       )}
 
       <div className="card config-impresion">
-        <h1>🖨️ Impresión</h1>
+        <h1>Impresión</h1>
 
         <p className="text-suave">
           Configura las impresoras de la tienda. Si no asignas ninguna, el
@@ -172,16 +172,14 @@ export default function ConfigImpresionShopPage() {
         </div>
 
         <div className="config-impresion__actions">
-          <button className="btn" onClick={listarImpresoras} disabled={loading}>
-            🔍 Listar impresoras
+          <button className="btn" onClick={listarImpresoras} disabled={loading}>Listar impresoras
           </button>
 
           <button
             className="btn btn--primary"
             onClick={guardar}
             disabled={loading}
-          >
-            💾 Guardar
+          >Guardar
           </button>
         </div>
 
@@ -190,16 +188,14 @@ export default function ConfigImpresionShopPage() {
             className="btn"
             onClick={() => testPrint(impCaja, "Caja")}
             disabled={loading}
-          >
-            🧾 Probar Caja
+          >Probar Caja
           </button>
 
           <button
             className="btn"
             onClick={() => testPrint(impTickets, "Tickets")}
             disabled={loading}
-          >
-            🧾 Probar Tickets
+          >Probar Tickets
           </button>
         </div>
 

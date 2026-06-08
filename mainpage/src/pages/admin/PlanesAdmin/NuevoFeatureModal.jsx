@@ -35,7 +35,7 @@ export default function NuevoFeatureModal({ onClose, onSave }) {
   return (
     <div className="modal-overlay-featureCreate">
       <div className="modal-card-featureCreate">
-        <h2 className="modal-title-featureCreate">➕ Nueva Feature</h2>
+        <h2 className="modal-title-featureCreate">Nueva Feature</h2>
 
         <form onSubmit={crear} className="modal-form-featureCreate">
           <label className="form-label-featureCreate">

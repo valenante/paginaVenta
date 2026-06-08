@@ -270,8 +270,7 @@ export default function CajaDiariaUltraPro() {
               onClick={resetFiltros}
               disabled={loading}
               title="Volver al rango por defecto (mes actual)"
-            >
-              ✕ Quitar filtros
+            >Quitar filtros
             </button>
           )}
 

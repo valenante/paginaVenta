@@ -109,8 +109,7 @@ export default function RecibirPedidoProveedorModal({
         ========================= */}
                     <form className="ppRec-body" onSubmit={submit}>
                         {error && (
-                            <div className="ppRec-alert badge-error">
-                                ❌ {error}
+                            <div className="ppRec-alert badge-error">{error}
                             </div>
                         )}
 

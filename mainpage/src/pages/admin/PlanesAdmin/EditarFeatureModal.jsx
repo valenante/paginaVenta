@@ -39,7 +39,7 @@ export default function EditarFeatureModal({ feature, onClose, onSave }) {
   return (
     <div className="modal-overlay-featureEdit">
       <div className="modal-card-featureEdit">
-        <h2 className="modal-title-featureEdit">✏️ Editar Feature</h2>
+        <h2 className="modal-title-featureEdit">Editar Feature</h2>
 
         <form onSubmit={guardar} className="modal-form-featureEdit">
 

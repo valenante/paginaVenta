@@ -70,8 +70,7 @@ export default function ProveedorProductosTab() {
           <button
             className="btn btn-primario "
             onClick={() => setModalProducto({ mode: "create" })}
-          >
-            ➕ Nuevo producto
+          >Nuevo producto
           </button>
         </div>
 

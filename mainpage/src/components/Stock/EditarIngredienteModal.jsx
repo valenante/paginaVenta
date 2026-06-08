@@ -282,8 +282,7 @@ export default function EditarIngredienteModal({ ingrediente, onClose, onSave })
           </label>
         </div>
 
-        <div className="alefHint">
-          📦 Coherencia: <b>crítico ≤ mínimo ≤ máximo</b>. Stock actual:{" "}
+        <div className="alefHint">Coherencia: <b>crítico ≤ mínimo ≤ máximo</b>. Stock actual:{" "}
           <b>
             {toNum(ingrediente.stockActual, 0)} {form.unidad}
           </b>
@@ -369,8 +368,7 @@ export default function EditarIngredienteModal({ ingrediente, onClose, onSave })
               }
               disabled={loading}
               style={{ marginRight: 8 }}
-            />
-            🗄️ Archivar ítem
+            />Archivar ítem
           </span>
         </label>
 

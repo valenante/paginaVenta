@@ -167,49 +167,46 @@ export default function ProveedoresPage() {
                 onClick={fetchProveedores}
                 disabled={loading}
               >
-                {loading ? "Cargando…" : "🔄 Refrescar"}
+                {loading ? "Cargando…" : "Refrescar"}
               </button>
 
               <Link
                 to="/configuracion/proveedores/hacer-pedido"
                 className="btn btn-primario"
                 title="Genera pedidos a partir de stock actual y objetivos"
-              >
-                🛒 Hacer pedido
+              >Hacer pedido
               </Link>
 
               <button
                 className="btn btn-secundario"
                 type="button"
                 onClick={() => setShowRecibirFoto(true)}
-              >
-                📷 Recibir mercancía
+              >Recibir mercancía
               </button>
 
               <button
                 className="btn btn-secundario"
                 type="button"
                 onClick={onCreate}
-              >
-                ➕ Nuevo proveedor
+              >Nuevo proveedor
               </button>
             </div>
 
             <div className="proveedores-config-stats cfg-stats">
               <article className="cfg-stat">
-                <span className="cfg-stat__label">📦 Pedidos automáticos</span>
+                <span className="cfg-stat__label">Pedidos automáticos</span>
                 <span className="text-suave" style={{ fontSize: "0.78rem" }}>ALEF detecta stock bajo y crea pedidos por ti</span>
               </article>
               <article className="cfg-stat">
-                <span className="cfg-stat__label">📊 Predicción de consumo</span>
+                <span className="cfg-stat__label">Predicción de consumo</span>
                 <span className="text-suave" style={{ fontSize: "0.78rem" }}>Calcula cuánto necesitas según día de semana</span>
               </article>
               <article className="cfg-stat">
-                <span className="cfg-stat__label">💰 Control de precios</span>
+                <span className="cfg-stat__label">Control de precios</span>
                 <span className="text-suave" style={{ fontSize: "0.78rem" }}>Alerta si un proveedor sube precios</span>
               </article>
               <article className="cfg-stat">
-                <span className="cfg-stat__label">⏱️ Lead time</span>
+                <span className="cfg-stat__label">Lead time</span>
                 <span className="text-suave" style={{ fontSize: "0.78rem" }}>Pide con tiempo para que llegue antes de que se agote</span>
               </article>
             </div>
@@ -298,8 +295,7 @@ export default function ProveedoresPage() {
                 <div className="proveedores-empty__text">
                   Crea tu primer proveedor para empezar a gestionar pedidos y recepción.
                 </div>
-                <button className="btn btn-primario" type="button" onClick={onCreate}>
-                  ➕ Crear proveedor
+                <button className="btn btn-primario" type="button" onClick={onCreate}>Crear proveedor
                 </button>
               </div>
             ) : (

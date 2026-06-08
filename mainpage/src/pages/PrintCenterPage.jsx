@@ -154,7 +154,7 @@ export default function PrintCenterPage() {
       setLoading(true);
       const printer = printerPick?.[jobId] || "";
       await api.post(`/impresoras/jobs/${jobId}/retry`, printer ? { impresora: printer } : {});
-      setAlerta({ tipo: "success", mensaje: "✅ Reintento encolado" });
+      setAlerta({ tipo: "success", mensaje: "Reintento encolado" });
       await fetchJobs(true);
     } catch (e) {
       setAlerta({
@@ -170,7 +170,7 @@ export default function PrintCenterPage() {
     try {
       setLoading(true);
       await api.post(`/impresoras/jobs/${jobId}/cancel`, {});
-      setAlerta({ tipo: "success", mensaje: "🧹 Job cancelado" });
+      setAlerta({ tipo: "success", mensaje: "Job cancelado" });
       await fetchJobs(true);
     } catch (e) {
       setAlerta({
@@ -183,7 +183,7 @@ export default function PrintCenterPage() {
   };
 
   const agentLabel =
-    estadoAgente === "online" ? "🟢 Online" : estadoAgente === "offline" ? "🔴 Offline" : "🟡 Unknown";
+    estadoAgente === "online" ? "Online" : estadoAgente === "offline" ? "Offline" : "Unknown";
 
   const hasFailed = useMemo(() => jobs.some((j) => j.status === "failed"), [jobs]);
 
@@ -202,7 +202,7 @@ export default function PrintCenterPage() {
       <div className="card pc-card">
         <div className="pc-header">
           <div>
-            <h1>🖨️ Centro de impresión</h1>
+            <h1>Centro de impresión</h1>
             <p className="text-suave">
               Seguimiento de trabajos (jobs) y recuperación rápida: reintentar, cambiar impresora y cancelar.
             </p>
@@ -221,8 +221,7 @@ export default function PrintCenterPage() {
               }}
               disabled={loading}
               title="Refrescar impresoras y jobs"
-            >
-              🔄 Actualizar
+            >Actualizar
             </button>
           </div>
         </div>
@@ -282,7 +281,7 @@ export default function PrintCenterPage() {
           </div>
         </div>
 
-        {hasFailed && <div className="pc-hint pc-hint--warn">⚠️ Hay jobs fallidos. Reintenta o cambia la impresora.</div>}
+        {hasFailed && <div className="pc-hint pc-hint--warn">Hay jobs fallidos. Reintenta o cambia la impresora.</div>}
 
         {/* ======= MOBILE: CARDS (sin scroll horizontal) ======= */}
         {isMobile ? (
@@ -359,12 +358,10 @@ export default function PrintCenterPage() {
                           onClick={() => retryJob(jobId)}
                           disabled={!allowActions}
                           title="Reintentar job"
-                        >
-                          🔁 Reintentar
+                        >Reintentar
                         </button>
 
-                        <button className="btn" onClick={() => cancelJob(jobId)} disabled={!allowActions} title="Cancelar job">
-                          🧹 Cancelar
+                        <button className="btn" onClick={() => cancelJob(jobId)} disabled={!allowActions} title="Cancelar job">Cancelar
                         </button>
                       </div>
                     </div>
@@ -434,12 +431,10 @@ export default function PrintCenterPage() {
                             ))}
                           </select>
 
-                          <button className="btn btn--primario" onClick={() => retryJob(jobId)} disabled={!allowActions}>
-                            🔁 Reintentar
+                          <button className="btn btn--primario" onClick={() => retryJob(jobId)} disabled={!allowActions}>Reintentar
                           </button>
 
-                          <button className="btn" onClick={() => cancelJob(jobId)} disabled={!allowActions}>
-                            🧹 Cancelar
+                          <button className="btn" onClick={() => cancelJob(jobId)} disabled={!allowActions}>Cancelar
                           </button>
                         </div>
 

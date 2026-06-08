@@ -61,15 +61,15 @@ export default function TenantModalShop({ tenant, onClose }) {
 
     try {
       setLoading(true);
-      setMensaje("🔎 Buscando impresoras...");
+      setMensaje("Buscando impresoras...");
 
       const { data } = await api.get(`/impresoras/admin/${tenant._id}/listar`);
       const lista = Array.isArray(data?.impresoras) ? data.impresoras : [];
 
       setImpresoras(lista);
-      setMensaje(`✅ Se detectaron ${lista.length} impresoras`);
+      setMensaje(`Se detectaron ${lista.length} impresoras`);
     } catch {
-      setMensaje("❌ No se pudo obtener la lista de impresoras");
+      setMensaje("No se pudo obtener la lista de impresoras");
     } finally {
       setLoading(false);
     }
@@ -80,7 +80,7 @@ export default function TenantModalShop({ tenant, onClose }) {
 
     try {
       setLoading(true);
-      setMensaje("💾 Guardando configuración...");
+      setMensaje("Guardando configuración...");
 
       const body = {
         printSecret,
@@ -95,9 +95,9 @@ export default function TenantModalShop({ tenant, onClose }) {
       if (ipTailscale) body.ipTailscale = ipTailscale;
       await api.put(`/admin/tenant/${tenant._id}/config-impresion`, body);
 
-      setMensaje("✅ Configuración guardada correctamente");
+      setMensaje("Configuración guardada correctamente");
     } catch {
-      setMensaje("❌ Error al guardar la configuración");
+      setMensaje("Error al guardar la configuración");
     } finally {
       setLoading(false);
     }
@@ -108,7 +108,7 @@ export default function TenantModalShop({ tenant, onClose }) {
 
     try {
       setLoading(true);
-      setMensaje("🧾 Enviando prueba de impresión...");
+      setMensaje("Enviando prueba de impresión...");
 
       const payload = impresora ? { impresora } : {};
       const { data } = await api.post(
@@ -117,10 +117,10 @@ export default function TenantModalShop({ tenant, onClose }) {
       );
 
       setMensaje(
-        data?.message || `✅ Prueba enviada (${impresora || "predeterminada"})`
+        data?.message || `Prueba enviada (${impresora || "predeterminada"})`
       );
     } catch {
-      setMensaje("❌ Error al enviar prueba");
+      setMensaje("Error al enviar prueba");
     } finally {
       setLoading(false);
     }
@@ -138,12 +138,12 @@ export default function TenantModalShop({ tenant, onClose }) {
       setEstado(data?.estado || "offline");
       setMensaje(
         data?.ok
-          ? `🟢 Agente en línea (${data.ms} ms)`
-          : "🔴 Agente fuera de línea"
+          ? `Agente en línea (${data.ms} ms)`
+          : "Agente fuera de línea"
       );
     } catch {
       setEstado("offline");
-      setMensaje("⚠️ No se pudo contactar con el agente");
+      setMensaje("No se pudo contactar con el agente");
     } finally {
       setLoading(false);
     }
@@ -175,7 +175,7 @@ export default function TenantModalShop({ tenant, onClose }) {
       className="tenant-modal"
       overlayClassName="modal-overlay"
     >
-      <h2>🛒 Configuración de impresión – Tienda</h2>
+      <h2>Configuración de impresión – Tienda</h2>
 
       <div className="tenant-info">
         <p><strong>Nombre:</strong> {tenant?.nombre}</p>
@@ -191,7 +191,7 @@ export default function TenantModalShop({ tenant, onClose }) {
 
       <hr />
 
-      <h3>🖨️ Agente de impresión</h3>
+      <h3>Agente de impresión</h3>
 
       <div className="impresora-section">
         <label>Clave secreta (printSecret)</label>
@@ -240,39 +240,33 @@ export default function TenantModalShop({ tenant, onClose }) {
         </select>
 
         <div className="impresora-buttons">
-          <button onClick={listarImpresoras} disabled={loading}>
-            🔍 Listar impresoras
+          <button onClick={listarImpresoras} disabled={loading}>Listar impresoras
           </button>
 
-          <button onClick={guardarConfig} disabled={loading}>
-            💾 Guardar configuración
+          <button onClick={guardarConfig} disabled={loading}>Guardar configuración
           </button>
 
-          <button onClick={verificarConexion} disabled={loading}>
-            🔄 Verificar conexión
+          <button onClick={verificarConexion} disabled={loading}>Verificar conexión
           </button>
         </div>
 
         <div className="impresora-buttons">
-          <button onClick={() => testPrint(printerName)} disabled={loading}>
-            🧾 Prueba (predeterminada)
+          <button onClick={() => testPrint(printerName)} disabled={loading}>Prueba (predeterminada)
           </button>
 
-          <button onClick={() => testPrint(impCaja || printerName)} disabled={loading}>
-            🧾 Probar Caja
+          <button onClick={() => testPrint(impCaja || printerName)} disabled={loading}>Probar Caja
           </button>
 
           <button
             onClick={() => testPrint(impTickets || printerName)}
             disabled={loading}
-          >
-            🧾 Probar Tickets
+          >Probar Tickets
           </button>
         </div>
 
         <p className={`estado ${estado}`}>
           Estado del agente:{" "}
-          <strong>{estado === "online" ? "🟢 Online (WebSocket)" : "🔴 Offline"}</strong>
+          <strong>{estado === "online" ? "Online (WebSocket)" : "Offline"}</strong>
         </p>
 
         {mensaje && <p className="mensaje">{mensaje}</p>}

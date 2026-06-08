@@ -224,10 +224,10 @@ C) Apply
 7. CONCLUSIÓN
 --------------------------------------------------
 Alef dispone de:
-✔ Backups automáticos
-✔ Restore probado (restore drill)
-✔ Rollback inmediato (blue/green)
-✔ Procedimientos documentados
+Backups automáticos
+Restore probado (restore drill)
+Rollback inmediato (blue/green)
+Procedimientos documentados
 
 El sistema está preparado para operación real SaaS.
 `;
@@ -397,7 +397,7 @@ El sistema está preparado para operación real SaaS.
       storeRestoreId(rid);
       setStageOpen(false);
 
-      setOkMsg(`✅ Stage completado. restoreId=${rid}`);
+      setOkMsg(`Stage completado. restoreId=${rid}`);
       if (rid) await fetchDiff(rid);
     } catch (e) {
       setError(e?.response?.data?.message || e?.message || "Stage falló");
@@ -447,8 +447,8 @@ El sistema está preparado para operación real SaaS.
 
       setOkMsg(
         rolledBack
-          ? `⚠️ Apply falló pero se hizo rollback automático. Backup: ${backupPath}`
-          : `✅ Restore aplicado correctamente. Backup: ${backupPath}`
+          ? `Apply falló pero se hizo rollback automático. Backup: ${backupPath}`
+          : `Restore aplicado correctamente. Backup: ${backupPath}`
       );
 
       // Si todo OK y NO hubo rollback, limpiamos staging
@@ -504,7 +504,7 @@ El sistema está preparado para operación real SaaS.
       setSnapshotReason("");
       setSnapshotType("manual");
 
-      setOkMsg(`📸 Snapshot creado correctamente: ${data?.snapshotId || "—"}`);
+      setOkMsg(`Snapshot creado correctamente: ${data?.snapshotId || "—"}`);
 
       // refrescamos lista
       await Promise.all([
@@ -544,8 +544,7 @@ El sistema está preparado para operación real SaaS.
             fetchStatus();
             fetchSnapshots();
           }}
-        >
-          🔄 Actualizar
+        >Actualizar
         </button>
       </header>
 
@@ -591,13 +590,13 @@ El sistema está preparado para operación real SaaS.
         </div>
       </div>
 
-      {error && <div className="rb-alert rb-alert-error">❌ {error}</div>}
+      {error && <div className="rb-alert rb-alert-error">{error}</div>}
       {okMsg && <div className="rb-alert rb-alert-ok">{okMsg}</div>}
 
       {/* ====== STATUS ====== */}
       <section className="restore-card">
         <div className="restore-card-header">
-          <h3>🧠 Estado de backups</h3>
+          <h3>Estado de backups</h3>
           <Badge tone={repoTone}>
             {statusLoading ? "…" : backupStatus?.repoOk ? "REPO OK" : "REPO ?"}
           </Badge>
@@ -625,9 +624,8 @@ El sistema está preparado para operación real SaaS.
       {/* ====== DOCUMENTO ====== */}
       <section className="restore-card">
         <div className="restore-card-header">
-          <h3>📘 Documento oficial — Disaster Recovery</h3>
-          <button className="rb-btn rb-btn-primary" onClick={downloadDoc}>
-            📥 Descargar .txt
+          <h3>Documento oficial — Disaster Recovery</h3>
+          <button className="rb-btn rb-btn-primary" onClick={downloadDoc}>Descargar .txt
           </button>
         </div>
 
@@ -650,7 +648,7 @@ El sistema está preparado para operación real SaaS.
       {/* ====== SNAPSHOTS ====== */}
       <section className="restore-card">
         <div className="restore-card-header">
-          <h3>🗂 Snapshots disponibles</h3>
+          <h3>Snapshots disponibles</h3>
 
           <div className="restore-right-actions">
             <span className="muted">Selecciona uno para hacer <strong>Stage</strong>.</span>
@@ -665,8 +663,7 @@ El sistema está preparado para operación real SaaS.
                 setSnapshotType("manual");
                 setSnapshotOpen(true);
               }}
-            >
-              📸 Crear snapshot
+            >Crear snapshot
             </button>
           </div>
         </div>
@@ -707,8 +704,7 @@ El sistema está preparado para operación real SaaS.
                         className="rb-btn rb-btn-danger"
                         onClick={() => openStageModal(s)}
                         disabled={staging}
-                      >
-                        🧪 Stage
+                      >Stage
                       </button>
                     </td>
                   </tr>
@@ -722,7 +718,7 @@ El sistema está preparado para operación real SaaS.
       {/* ====== DIFF ====== */}
       <section className="restore-card">
         <div className="restore-card-header">
-          <h3>🔍 Diff (staged vs live)</h3>
+          <h3>Diff (staged vs live)</h3>
 
           <div className="restore-right-actions">
             <Badge tone={restoreId ? "ok" : "neutral"}>{restoreId ? `RESTORE ID: ${restoreId}` : "SIN STAGING"}</Badge>
@@ -731,8 +727,7 @@ El sistema está preparado para operación real SaaS.
               onClick={() => fetchDiff(restoreId)}
               disabled={!restoreId || diffLoading}
               title={!restoreId ? "Primero ejecuta Stage" : "Actualizar diff"}
-            >
-              🔄 Refrescar diff
+            >Refrescar diff
             </button>
 
             <button
@@ -743,12 +738,11 @@ El sistema está preparado para operación real SaaS.
                 setRestoreId("");
                 setDiffs([]);
                 setExpanded(new Set());
-                setOkMsg("🧹 Staging limpiado.");
+                setOkMsg("Staging limpiado.");
                 setError("");
               }}
               title="Borra el restoreId guardado y limpia la vista"
-            >
-              🧹 Limpiar staging
+            >Limpiar staging
             </button>
 
             <button
@@ -756,8 +750,7 @@ El sistema está preparado para operación real SaaS.
               onClick={openApplyModal}
               disabled={!restoreId || applying}
               title={!restoreId ? "Primero ejecuta Stage" : "Aplicar restore"}
-            >
-              ✅ Apply
+            >Apply
             </button>
           </div>
         </div>
@@ -825,8 +818,8 @@ El sistema está preparado para operación real SaaS.
 
             <p className="muted" style={{ marginTop: 10 }}>
               {hasChanges
-                ? "⚠️ Hay cambios. Antes de Apply revisa especialmente /etc/nginx y scripts."
-                : "✅ No hay cambios detectados en targets (o el staging coincide)."}
+                ? "Hay cambios. Antes de Apply revisa especialmente /etc/nginx y scripts."
+                : "No hay cambios detectados en targets (o el staging coincide)."}
             </p>
           </>
         )}
@@ -882,8 +875,7 @@ El sistema está preparado para operación real SaaS.
         title={`Apply restore: ${restoreId || "—"}`}
         onClose={() => (applying ? null : setApplyOpen(false))}
       >
-        <p className="muted">
-          ⚠️ Esto aplica el restore a targets whitelisted y recarga Nginx. Se crea un backup local previo.
+        <p className="muted">Esto aplica el restore a targets whitelisted y recarga Nginx. Se crea un backup local previo.
         </p>
 
         <label className="rb-label">

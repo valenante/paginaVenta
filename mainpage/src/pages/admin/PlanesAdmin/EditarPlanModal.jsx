@@ -51,7 +51,7 @@ export default function EditarPlanModal({ plan, onClose, onSave, features = [] }
   return(
     <div className="modal-overlay-plansEdit">
       <div className="modal-card-plansEdit">
-        <h2 className="modal-title-plansEdit">✏️ Editar Plan</h2>
+        <h2 className="modal-title-plansEdit">Editar Plan</h2>
 
         <form onSubmit={actualizar} className="modal-form-plansEdit">
 

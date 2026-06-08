@@ -102,7 +102,7 @@ function JobDetail({ job, onClose, onAction }) {
                     {l.matchEstado === "sugerido" && <span className="finv-badge badge--warn">Sugerido</span>}
                     {l.matchEstado === "nuevo" && <span className="finv-badge badge--info">Nuevo</span>}
                     {l.matchEstado === "pendiente" && <span className="finv-badge badge--muted">—</span>}
-                    {l.precioCambio && <span className="finv-price-change">⚠ {l.precioAnterior?.toFixed(2)}→{l.precioUnitario?.toFixed(2)}€</span>}
+                    {l.precioCambio && <span className="finv-price-change">{l.precioAnterior?.toFixed(2)}→{l.precioUnitario?.toFixed(2)}€</span>}
                   </span>
                   <span style={{fontWeight:600, color: l._stockPreview ? "#e2e8f0" : "#64748b"}}>
                     {l._stockPreview ? l._stockPreview.productoNombre : "—"}
@@ -112,7 +112,7 @@ function JobDetail({ job, onClose, onAction }) {
                       <span style={{fontSize:"0.75rem"}}>
                         <span style={{color:"#64748b"}}>{l._stockPreview.stockActual}</span>
                         <span style={{color:"#22c55e", fontWeight:700}}> +{l._stockPreview.deltaStock}</span>
-                        <span style={{color:"#64748b"}}> → {l._stockPreview.stockNuevo}</span>
+                        <span style={{color:"#64748b"}}>{l._stockPreview.stockNuevo}</span>
                       </span>
                     ) : "—"}
                   </span>
@@ -127,8 +127,7 @@ function JobDetail({ job, onClose, onAction }) {
               <h4>Adjuntos</h4>
               <div className="finv-modal__attachments">
                 {job.attachments.map((a, i) => (
-                  <a key={i} href={a.r2Url} target="_blank" rel="noopener noreferrer" className="finv-modal__attachment">
-                    📎 {a.originalFilename} ({(a.sizeBytes / 1024).toFixed(0)}KB)
+                  <a key={i} href={a.r2Url} target="_blank" rel="noopener noreferrer" className="finv-modal__attachment">{a.originalFilename} ({(a.sizeBytes / 1024).toFixed(0)}KB)
                   </a>
                 ))}
               </div>

@@ -24,7 +24,7 @@ const StockShopPage = () => {
     const [totalPages, setTotalPages] = useState(1);
 
     /* =====================================================
-       📦 CARGAR STOCK SHOP
+       CARGAR STOCK SHOP
     ===================================================== */
     const fetchStock = async () => {
         try {
@@ -43,7 +43,7 @@ const StockShopPage = () => {
             setError("");
         } catch (err) {
             console.error(err);
-            setError("⚠ No se pudo cargar el stock de productos.");
+            setError("No se pudo cargar el stock de productos.");
         } finally {
             setLoading(false);
         }
@@ -54,7 +54,7 @@ const StockShopPage = () => {
     }, [page, search]);
 
     /* =====================================================
-       🚦 ESTADO STOCK
+       ESTADO STOCK
     ===================================================== */
     const getEstado = (p) => {
         const stock = p.inventario?.stock ?? 0;
@@ -67,7 +67,7 @@ const StockShopPage = () => {
     };
 
     /* =====================================================
-       🗑 ELIMINAR PRODUCTO
+       ELIMINAR PRODUCTO
     ===================================================== */
     const eliminarProducto = async (id) => {
         try {
@@ -84,7 +84,7 @@ const StockShopPage = () => {
             {/* ================= HEADER ================= */}
             <header className="stock-header">
                 <div>
-                    <h2>📦 Stock de productos</h2>
+                    <h2>Stock de productos</h2>
                     <p>Control de inventario de la tienda.</p>
                 </div>
 
@@ -92,8 +92,7 @@ const StockShopPage = () => {
                     <button
                         className="btn-nuevo"
                         onClick={() => setModal({ type: "crear" })}
-                    >
-                        ➕ Nuevo producto
+                    >Nuevo producto
                     </button>
 
                     <input
@@ -142,9 +141,9 @@ const StockShopPage = () => {
                                 <div className="stock-card-header">
                                     <span className="stock-name">{prod.nombre}</span>
                                     <span className={`estado-badge ${estado}`}>
-                                        {estado === "ok" && "🟢 Óptimo"}
-                                        {estado === "bajo" && "🟠 Bajo"}
-                                        {estado === "critico" && "🔴 Crítico"}
+                                        {estado === "ok" && "Óptimo"}
+                                        {estado === "bajo" && "Bajo"}
+                                        {estado === "critico" && "Crítico"}
                                     </span>
                                 </div>
 
@@ -180,8 +179,7 @@ const StockShopPage = () => {
                     <button
                         disabled={page === 1}
                         onClick={() => setPage((p) => p - 1)}
-                    >
-                        ◀ Anterior
+                    >Anterior
                     </button>
 
                     <span>

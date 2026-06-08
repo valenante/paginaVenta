@@ -72,8 +72,7 @@ return (
         <button
           className="btn btn-primario "
           onClick={() => setModalNuevo(true)}
-        >
-          ➕ Nuevo pedido
+        >Nuevo pedido
         </button>
       </div>
 
@@ -83,8 +82,7 @@ return (
       )}
 
       {error && (
-        <div className="provDet-alert provDet-alert--error">
-          ❌ {error}
+        <div className="provDet-alert provDet-alert--error">{error}
         </div>
       )}
 

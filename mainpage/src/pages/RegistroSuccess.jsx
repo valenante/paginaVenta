@@ -236,7 +236,7 @@ export default function RegistroSuccess() {
 
         {view === "pendientePago" && (
           <>
-            <h1 className="success-title">⏳ Pago pendiente</h1>
+            <h1 className="success-title">Pago pendiente</h1>
             <p className="success-text">
               El pago todavía no aparece como completado. Si acabas de pagar, espera unos segundos.
             </p>
@@ -249,7 +249,7 @@ export default function RegistroSuccess() {
         {view === "provisioning" && (
           <>
             <div className="success-spinner" />
-            <h1 className="success-title">⚙️ Creando tu entorno...</h1>
+            <h1 className="success-title">Creando tu entorno...</h1>
 
             <p className="success-text">
               {tenantNombre ? (
@@ -277,7 +277,7 @@ export default function RegistroSuccess() {
 
             {hasWarnings && (
               <div className="success-warnings">
-                <h3 className="success-warnings-title">⚠️ Avisos</h3>
+                <h3 className="success-warnings-title">Avisos</h3>
                 <ul className="success-warnings-list">
                   {Object.entries(warnings).map(([k, v]) => (
                     <li key={k}>
@@ -292,7 +292,7 @@ export default function RegistroSuccess() {
 
         {view === "activo" && (
           <>
-            <h1 className="success-title">🎉 ¡Todo listo!</h1>
+            <h1 className="success-title">¡Todo listo!</h1>
 
             <p className="success-text">
               {tenantNombre ? (
@@ -318,14 +318,14 @@ export default function RegistroSuccess() {
 
         {view === "warning" && (
           <>
-            <h1 className="success-title">✅ Entorno creado (con avisos)</h1>
+            <h1 className="success-title">Entorno creado (con avisos)</h1>
             <p className="success-text">
               Está operativo, pero hubo algún aviso (por ejemplo: email). Si necesitas ayuda, lo tenemos registrado.
             </p>
 
             {hasWarnings && (
               <div className="success-warnings">
-                <h3 className="success-warnings-title">⚠️ Avisos</h3>
+                <h3 className="success-warnings-title">Avisos</h3>
                 <ul className="success-warnings-list">
                   {Object.entries(warnings).map(([k, v]) => (
                     <li key={k}>
@@ -350,7 +350,7 @@ export default function RegistroSuccess() {
 
         {view === "failed" && (
           <>
-            <h1 className="success-title error">❌ Hubo un problema</h1>
+            <h1 className="success-title error">Hubo un problema</h1>
             <p className="success-text">{failMsg || "Error desconocido"}</p>
             <p className="success-text">
               El pago está registrado. Puedes reintentar el alta ahora mismo.
@@ -372,7 +372,7 @@ export default function RegistroSuccess() {
 
         {view === "error" && (
           <>
-            <h1 className="success-title error">❌ Error</h1>
+            <h1 className="success-title error">Error</h1>
             <p className="success-text">No se pudo verificar el estado.</p>
             <button className="success-btn" onClick={() => navigate("/")}>
               Volver al inicio

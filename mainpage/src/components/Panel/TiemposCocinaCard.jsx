@@ -8,8 +8,8 @@ const fmtMin = (v) => {
 };
 
 const TABS = [
-  { key: "platos", label: "🍽 Platos" },
-  { key: "bebidas", label: "🍺 Bebidas" },
+  { key: "platos", label: "Platos" },
+  { key: "bebidas", label: "Bebidas" },
 ];
 
 export default function TiemposCocinaCard({

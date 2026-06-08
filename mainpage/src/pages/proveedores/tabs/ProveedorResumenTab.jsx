@@ -179,7 +179,7 @@ export default function ProveedorResumenTab() {
       {/* === Analytics enriquecido === */}
       <div className="card provDet-card provDet-card--full">
         <div className="provDet-analytics-head">
-          <h2 className="provDet-cardTitle">📊 Analytics del periodo</h2>
+          <h2 className="provDet-cardTitle">Analytics del periodo</h2>
           <div className="provDet-analytics-filtros">
             <label>
               Desde

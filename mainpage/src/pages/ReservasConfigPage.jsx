@@ -180,26 +180,26 @@ export default function ReservasConfigPage() {
           {/* Toolbar + Intelligence */}
           <section className="card config-card">
             <div className="cfg-toolbar">
-              <button className="btn btn-secundario" onClick={() => setShowAjustes(true)}>⚙️ Configuración</button>
-              <button className="btn btn-secundario" onClick={cargarReservas} disabled={loading}>{loading ? "Cargando..." : "🔄 Refrescar"}</button>
+              <button className="btn btn-secundario" onClick={() => setShowAjustes(true)}>Configuración</button>
+              <button className="btn btn-secundario" onClick={cargarReservas} disabled={loading}>{loading ? "Cargando..." : "Refrescar"}</button>
               <button className="btn btn-primario" onClick={() => setModal({ tipo: "nueva" })}>+ Nueva reserva</button>
             </div>
 
             <div className="cfg-stats">
               <article className="cfg-stat">
-                <span className="cfg-stat__label">✅ Confirmación automática</span>
+                <span className="cfg-stat__label">Confirmación automática</span>
                 <span className="text-suave" style={{ fontSize: "0.78rem" }}>Se confirman solas si cumplen los criterios</span>
               </article>
               <article className="cfg-stat">
-                <span className="cfg-stat__label">📩 Recordatorio 24h</span>
+                <span className="cfg-stat__label">Recordatorio 24h</span>
                 <span className="text-suave" style={{ fontSize: "0.78rem" }}>Email automático al cliente el día antes</span>
               </article>
               <article className="cfg-stat">
-                <span className="cfg-stat__label">⏰ Detección de ausencias</span>
+                <span className="cfg-stat__label">Detección de ausencias</span>
                 <span className="text-suave" style={{ fontSize: "0.78rem" }}>Si no llega en 30 min, ALEF lo marca</span>
               </article>
               <article className="cfg-stat">
-                <span className="cfg-stat__label">📈 Overbooking inteligente</span>
+                <span className="cfg-stat__label">Overbooking inteligente</span>
                 <span className="text-suave" style={{ fontSize: "0.78rem" }}>Acepta reservas extra según tasa de ausencias</span>
               </article>
             </div>

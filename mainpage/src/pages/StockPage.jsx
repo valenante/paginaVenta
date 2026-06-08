@@ -321,8 +321,7 @@ const StockPage = () => {
             className="alefBtn primary"
             style={{ margin: "0.75rem 0" }}
             onClick={() => setShowUmbralesModal(true)}
-          >
-            🤖 {sugerenciasList.filter(s => s.cambio && !s.umbralManual).length} umbrales sugeridos — Revisar
+          >{sugerenciasList.filter(s => s.cambio && !s.umbralManual).length} umbrales sugeridos — Revisar
           </button>
         )}
 
@@ -385,8 +384,7 @@ const StockPage = () => {
                 className="btn-nuevo"
                 onClick={() => setShowUmbralesModal(true)}
                 title="ALEF sugiere umbrales para tus productos"
-              >
-                🤖 Umbrales inteligentes ({sugerenciasList.filter(s => s.cambio && !s.umbralManual).length})
+              >Umbrales inteligentes ({sugerenciasList.filter(s => s.cambio && !s.umbralManual).length})
               </button>
             )}
 
@@ -483,8 +481,7 @@ const StockPage = () => {
                             className="stock-lote-badge stock-lote-badge--rojo"
                             onClick={() => setTab("lotes")}
                             title="Ver en pestaña Lotes"
-                          >
-                            🧪 {info.caducados} lote{info.caducados === 1 ? "" : "s"} caducado{info.caducados === 1 ? "" : "s"}
+                          >{info.caducados} lote{info.caducados === 1 ? "" : "s"} caducado{info.caducados === 1 ? "" : "s"}
                           </button>
                         );
                       }
@@ -495,8 +492,7 @@ const StockPage = () => {
                             className="stock-lote-badge stock-lote-badge--amber"
                             onClick={() => setTab("lotes")}
                             title="Ver en pestaña Lotes"
-                          >
-                            🧪 {info.proximos} lote{info.proximos === 1 ? "" : "s"} en {info.proxMinDias}d
+                          >{info.proximos} lote{info.proximos === 1 ? "" : "s"} en {info.proxMinDias}d
                           </button>
                         );
                       }
@@ -532,14 +528,14 @@ const StockPage = () => {
                       if (thresholdsMode === "auto") {
                         return (
                           <div className="stock-sug stock-sug--auto">
-                            <span className="stock-sug__label">🤖 Gestionado por ALEF</span>
+                            <span className="stock-sug__label">Gestionado por ALEF</span>
                             <span className="stock-sug__detail">mín {sug.sugerido.minimo} | máx {sug.sugerido.maximo} ({sug.consumoDiario}/día)</span>
                           </div>
                         );
                       }
                       return (
                         <div className="stock-sug">
-                          <span className="stock-sug__label">🤖 ALEF sugiere: mín {sug.sugerido.minimo} | máx {sug.sugerido.maximo}</span>
+                          <span className="stock-sug__label">ALEF sugiere: mín {sug.sugerido.minimo} | máx {sug.sugerido.maximo}</span>
                           <span className="stock-sug__detail">{sug.consumoDiario}/día × {sug.leadTime}d lead time</span>
                           <div className="stock-sug__actions">
                             <button className="stock-sug__btn stock-sug__btn--apply" onClick={() => aplicarUmbral(sug)}>Aplicar</button>
@@ -626,7 +622,7 @@ const StockPage = () => {
           )}
           {modal?.type === "eliminar-deps" && (
             <ModalConfirmacion
-              titulo="⚠️ Ingrediente en uso"
+              titulo="Ingrediente en uso"
               mensaje={
                 `"${modal.ingrediente.nombre}" está en uso:\n\n` +
                 (modal.deps?.recetas?.length > 0
@@ -672,7 +668,7 @@ const StockPage = () => {
       {showUmbralesModal && (
         <ModalBase
           open={true}
-          title="🤖 Umbrales inteligentes"
+          title="Umbrales inteligentes"
           subtitle="Basado en consumo real (8 semanas) × lead time del proveedor."
           onClose={closeUmbralesModal}
           width={900}
@@ -742,7 +738,7 @@ const StockPage = () => {
 
           {umbralTotalPages > 1 && (
             <div className="stock-pagination">
-              <button className="stock-pagination-btn" disabled={umbralPage <= 1} onClick={() => setUmbralPage(p => p - 1)}>← Anterior</button>
+              <button className="stock-pagination-btn" disabled={umbralPage <= 1} onClick={() => setUmbralPage(p => p - 1)}>Anterior</button>
               <span className="stock-pagination-info">{umbralPage} / {umbralTotalPages}</span>
               <button className="stock-pagination-btn" disabled={umbralPage >= umbralTotalPages} onClick={() => setUmbralPage(p => p + 1)}>Siguiente →</button>
             </div>

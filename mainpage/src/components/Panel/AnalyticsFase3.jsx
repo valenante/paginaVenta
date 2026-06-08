@@ -195,9 +195,9 @@ export function AlertasCard() {
             <p>Patrones que requieren tu atención, detectados automáticamente.</p>
             <h4>Qué detecta</h4>
             <ul>
-              <li><strong>🔴 Mesa larga</strong> — mesas abiertas más de 2 horas (3h = alta)</li>
-              <li><strong>🟡 Ticket descendente</strong> — ticket medio bajando 3 semanas seguidas del mismo día</li>
-              <li><strong>🔵 Ventas bajas</strong> — si hoy (después de las 16h) estás al &lt;50% de la media del día</li>
+              <li><strong>Mesa larga</strong> — mesas abiertas más de 2 horas (3h = alta)</li>
+              <li><strong>Ticket descendente</strong> — ticket medio bajando 3 semanas seguidas del mismo día</li>
+              <li><strong>Ventas bajas</strong> — si hoy (después de las 16h) estás al &lt;50% de la media del día</li>
             </ul>
             <h4>Para qué sirve</h4>
             <p>No tener que mirar el dashboard constantemente. Las alertas te avisan cuando algo necesita atención.</p>

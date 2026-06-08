@@ -23,6 +23,7 @@ const CategoriasPanel = ({ onBack }) => {
   const [catModal, setCatModal] = useState({ open: false, categoria: null });
   const [confirmDelete, setConfirmDelete] = useState(null);
   const [crearProductoTipo, setCrearProductoTipo] = useState(null); // "plato" | "bebida" | null
+  const [nuevoExtraSignal, setNuevoExtraSignal] = useState(0); // dispara el modal "Nuevo extra" en ExtrasPanel
   const [expandedCats, setExpandedCats] = useState(new Set());
   const [productsByCat, setProductsByCat] = useState({}); // { catName: [...products] }
   const [loadingProducts, setLoadingProducts] = useState(new Set());
@@ -338,6 +339,18 @@ const CategoriasPanel = ({ onBack }) => {
             </button>
           </div>
         )}
+
+        {tab === "extra" && (
+          <div className="catpanel-header-actions">
+            <button
+              type="button"
+              className="catpanel-btn-new catpanel-btn-new--bebida"
+              onClick={() => setNuevoExtraSignal((s) => s + 1)}
+            >
+              + Nuevo extra
+            </button>
+          </div>
+        )}
       </header>
 
       {/* Tabs */}
@@ -349,7 +362,7 @@ const CategoriasPanel = ({ onBack }) => {
             className={`catpanel-tab ${tab === t.key ? "is-active" : ""}`}
             onClick={() => setTab(t.key)}
           >
-            {t.emoji} {t.label}
+            {t.label}
             <span className="catpanel-tab-count">
               {t.key === "extra" ? extrasCount : (categoryObjectsByTipo[t.key] || []).length}
             </span>
@@ -362,6 +375,7 @@ const CategoriasPanel = ({ onBack }) => {
         <ExtrasPanel
           inline
           onExtrasCountChange={(count) => setExtrasCount(count)}
+          nuevoExtraSignal={nuevoExtraSignal}
         />
       )}
 

@@ -29,21 +29,19 @@ export default function RecuperarPasswordCliente() {
             <a
               className="cliente-btn cliente-btn--primary"
               href="mailto:contacto@softalef.com?subject=Recuperar%20cuenta%20ALEF&body=Hola%2C%20no%20recuerdo%20la%20contrase%C3%B1a%20de%20mi%20cuenta%20ALEF.%20Mi%20email%20es%3A%20"
-            >
-              ✉ Escribir a soporte
+            >Escribir a soporte
             </a>
             <a
               className="cliente-btn cliente-btn--ghost"
               href="https://wa.me/34000000000?text=Hola%2C%20no%20recuerdo%20la%20contrase%C3%B1a%20de%20mi%20cuenta%20ALEF"
               target="_blank"
               rel="noopener noreferrer"
-            >
-              💬 WhatsApp
+            >WhatsApp
             </a>
           </div>
 
           <div className="cliente-auth-card__alt">
-            <Link to="/cliente/login">← Volver a inicio de sesión</Link>
+            <Link to="/cliente/login">Volver a inicio de sesión</Link>
           </div>
         </div>
       </div>

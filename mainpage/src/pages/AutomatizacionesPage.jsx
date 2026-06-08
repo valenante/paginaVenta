@@ -164,7 +164,7 @@ export default function AutomatizacionesPage() {
     <div className="auto-root">
       <div className="auto-header">
         <div>
-          <h2>🤖 Automatizaciones</h2>
+          <h2>Automatizaciones</h2>
           <p className="auto-subtitle">
             Configura qué procesos se ejecutan solos. Todo se envía al email del restaurante.
           </p>

@@ -152,7 +152,7 @@ export default function UsuariosPage() {
 
         <div className="usuarios-info-cards">
           <article className="usuarios-info-card">
-            <h3>➕ Crear usuarios</h3>
+            <h3>Crear usuarios</h3>
             <p>
               Da de alta a camareros, cocina, barra o administración. El usuario podrá iniciar sesión
               y acceder según el rol y permisos asignados.
@@ -163,7 +163,7 @@ export default function UsuariosPage() {
           </article>
 
           <article className="usuarios-info-card">
-            <h3>✏️ Editar usuarios</h3>
+            <h3>Editar usuarios</h3>
             <p>
               Modifica nombre, rol o permisos cuando cambie la operativa del equipo. Los cambios se aplican
               al instante en el TPV.
@@ -174,7 +174,7 @@ export default function UsuariosPage() {
           </article>
 
           <article className="usuarios-info-card">
-            <h3>🗑️ Eliminar usuarios</h3>
+            <h3>Eliminar usuarios</h3>
             <p>
               Elimina accesos cuando alguien deja de trabajar o ya no necesita entrar al sistema.
               Esta acción es irreversible.
@@ -185,7 +185,7 @@ export default function UsuariosPage() {
           </article>
 
           <article className="usuarios-info-card">
-            <h3>📊 Ver estadísticas</h3>
+            <h3>Ver estadísticas</h3>
             <p>
               Revisa estadísticas individuales para entender el rendimiento y la actividad:
               quién gestiona más acciones, uso del TPV y métricas disponibles por usuario.

@@ -38,10 +38,10 @@ const Introduccion = () => {
             </p>
 
             <div className="Introduccion-highlights">
-              <span>📈 Margen real de cada plato — calculado automáticamente</span>
-              <span>📦 Stock que se repone solo — pedidos a proveedor automáticos</span>
-              <span>📄 Facturas procesadas sin tocar nada — desde email o cámara</span>
-              <span>✅ VeriFactu incluido — obligatorio desde julio 2027</span>
+              <span>Margen real de cada plato — calculado automáticamente</span>
+              <span>Stock que se repone solo — pedidos a proveedor automáticos</span>
+              <span>Facturas procesadas sin tocar nada — desde email o cámara</span>
+              <span>VeriFactu incluido — obligatorio desde julio 2027</span>
             </div>
 
             <div className="Introduccion-botones">
@@ -78,14 +78,11 @@ const Introduccion = () => {
         {/* ======= COLUMNA VISUAL ======= */}
         <div className="Introduccion-right">
           <div className="hero-orbit">
-            <div className="hero-pill pill-voz">
-              📸 Post de Instagram publicado automáticamente
+            <div className="hero-pill pill-voz">Post de Instagram publicado automáticamente
             </div>
-            <div className="hero-pill pill-cocina">
-              📦 Stock bajo → pedido a proveedor generado
+            <div className="hero-pill pill-cocina">Stock bajo → pedido a proveedor generado
             </div>
-            <div className="hero-pill pill-carta">
-              📄 Factura de proveedor procesada → stock actualizado
+            <div className="hero-pill pill-carta">Factura de proveedor procesada → stock actualizado
             </div>
 
             <div className="hero-stack">

@@ -113,6 +113,25 @@
 .adm__kpi--cancelados:hover { background: rgba(239, 68, 68, 0.08); }
 .adm__kpi--duracion { border-left: 3px solid #06b6d4; }
 
+/* Toggle "Ver más / Ver menos" de los KPIs secundarios */
+.adm__kpis-toggle {
+  display: block;
+  margin: -4px auto 6px;
+  padding: 7px 18px;
+  border-radius: 999px;
+  border: 1px solid var(--dash-glass-border);
+  background: var(--dash-glass-bg);
+  color: var(--dash-text-soft);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.adm__kpis-toggle:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--dash-text);
+}
+
 /* ── Tarjetas secundarias ── */
 .adm__cards {
   display: grid;

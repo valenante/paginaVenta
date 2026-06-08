@@ -339,7 +339,7 @@ export default function MiCuentaPage() {
 
       <header className="micuenta-config-header cfg-header">
         <div>
-          <h1>👤 Mi cuenta</h1>
+          <h1>Mi cuenta</h1>
           <p className="text-suave">
             Gestiona tu suscripción, la firma digital, los datos fiscales y el
             estado de cumplimiento legal desde una vista clara y profesional.

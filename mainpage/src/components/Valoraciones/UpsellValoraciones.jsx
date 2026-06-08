@@ -5,8 +5,7 @@ import "./UpsellValoraciones.css";
 export default function UpsellValoraciones() {
   return (
     <div className="upsell-valoraciones-container">
-      <h2 className="upsell-valoraciones-title">
-        ⭐ Módulo de valoraciones disponible en el plan Premium
+      <h2 className="upsell-valoraciones-title">Módulo de valoraciones disponible en el plan Premium
       </h2>
 
       <p className="upsell-valoraciones-text">

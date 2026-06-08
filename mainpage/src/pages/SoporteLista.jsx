@@ -265,8 +265,7 @@ export default function SoporteLista() {
           {/* PAGINACIÓN */}
           {pages > 1 && (
             <div className="soporte-paginacion">
-              <button disabled={page === 1} onClick={() => cambiarPagina(page - 1)}>
-                ← Anterior
+              <button disabled={page === 1} onClick={() => cambiarPagina(page - 1)}>Anterior
               </button>
               <span>
                 Página {page} de {pages}

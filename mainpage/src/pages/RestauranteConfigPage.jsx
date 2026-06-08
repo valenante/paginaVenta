@@ -328,7 +328,7 @@ export default function RestauranteConfigPage() {
       {/* Header global */}
       <header className="rest-config-header cfg-header">
         <div>
-          <h1>⚙️ Configuración {esTienda ? "de la shop" : "del restaurante"}</h1>
+          <h1>Configuración {esTienda ? "de la shop" : "del restaurante"}</h1>
           <p className="text-suave">
             Define la identidad visual y las funcionalidades de tu entorno Alef.
           </p>

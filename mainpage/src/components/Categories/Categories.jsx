@@ -117,8 +117,7 @@ const Categories = ({ category, tipo }) => {
             onClick={() => setMostrarFormulario(true)}
             className="btn-crear-header--categories"
             type="button"
-          >
-            ➕ Nuevo producto
+          >Nuevo producto
           </button>
         )}
       </header>
@@ -204,16 +203,14 @@ const Categories = ({ category, tipo }) => {
                             opacity: 0.45,
                             cursor: "not-allowed",
                           }}
-                        >
-                          🔒 Receta
+                        >Receta
                         </button>
                       ) : (
                         <button
                           onClick={() => setProductoReceta(product)}
                           className="boton-receta--categories"
                           type="button"
-                        >
-                          🍳 Receta
+                        >Receta
                         </button>
                       )}
 
@@ -240,8 +237,7 @@ const Categories = ({ category, tipo }) => {
             onClick={() => setMostrarFormulario(true)}
             className="boton-crear--categories"
             type="button"
-          >
-            ➕ Crear producto
+          >Crear producto
           </button>
         </div>
       )}

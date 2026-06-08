@@ -7,7 +7,7 @@ export default function CartaOrdenSection({ form, handleChange }) {
   return (
     <section className="config-section">
       <div className="config-section-header">
-        <h3 className="section-title">🍽 Opciones de la carta</h3>
+        <h3 className="section-title">Opciones de la carta</h3>
         <p className="section-description">
           Define qué información se muestra y el orden de visualización.
         </p>

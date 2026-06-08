@@ -260,7 +260,7 @@ const EditProduct = ({
         setEstaciones(Array.isArray(items) ? items : []);
       })
       .catch((err) =>
-        console.error("❌ Error cargando estaciones:", err)
+        console.error("Error cargando estaciones:", err)
       );
   }, [formData.tipo]);
 
@@ -515,7 +515,7 @@ const EditProduct = ({
                 </label>
 
                 {/* === ALÉRGENOS === */}
-                <h4 className="subtitulo--crear">⚠️ Alérgenos</h4>
+                <h4 className="subtitulo--crear">Alérgenos</h4>
                 <p className="help-text--crear">
                   Marca <strong>Contiene</strong> si el alérgeno está en el plato y{" "}
                   <strong>Puede contener</strong> si hay riesgo de contaminación cruzada en cocina.
@@ -528,7 +528,7 @@ const EditProduct = ({
                 />
 
                 {/* === BLOQUE TRADUCCIONES === */}
-                <h4 className="subtitulo--crear">🌍 Traducciones para la carta</h4>
+                <h4 className="subtitulo--crear">Traducciones para la carta</h4>
                 <p className="help-text--crear">
                   Se mostrarán automáticamente cuando el cliente cambie el idioma
                   en la carta.
@@ -640,8 +640,7 @@ const EditProduct = ({
                             setUsarOtraCategoria(false);
                             setFormData((prev) => ({ ...prev, categoria: "" }));
                           }}
-                        >
-                          ← Elegir categoría existente
+                        >Elegir categoría existente
                         </button>
                       )}
                     </>
@@ -755,8 +754,7 @@ const EditProduct = ({
                     type="button"
                     className="btn-ayuda--crear"
                     onClick={() => setShowPreciosHelp(true)}
-                  >
-                    💡 Ayuda
+                  >Ayuda
                   </button>
                 </div>
 
@@ -903,7 +901,7 @@ const EditProduct = ({
           <section className="form-section--crear">
             <div className="form-group--crear">
               {/* === IMAGEN === */}
-              <h4 className="subtitulo--crear">🖼️ Imagen del producto</h4>
+              <h4 className="subtitulo--crear">Imagen del producto</h4>
               <p className="help-text--crear">
                 Puedes mantener la imagen actual o reemplazarla subiendo una nueva.
               </p>
@@ -936,7 +934,7 @@ const EditProduct = ({
                   className="hidden-file-input"
                 />
 
-                {imageFile && <p>📂 {imageFile.name}</p>}
+                {imageFile && <p>{imageFile.name}</p>}
               </div>
 
               {previewUrl && (
@@ -946,7 +944,7 @@ const EditProduct = ({
               )}
 
               {/* === VOZ (aliases) === */}
-              <h4 className="subtitulo--crear">🎙️ Aliases para comandas por voz</h4>
+              <h4 className="subtitulo--crear">Aliases para comandas por voz</h4>
               <p className="help-text--crear">
                 Añade formas habituales de pedirlo (ej: "croqueta", "croquetas de
                 jamón", "jamón").
@@ -973,8 +971,7 @@ const EditProduct = ({
 
           {/* === STOCK DIRECTO === */}
           <fieldset className="fieldset--crear">
-            <legend className="legend--crear">
-              📦 Stock directo del producto
+            <legend className="legend--crear">Stock directo del producto
             </legend>
 
             <p className="help-text--crear">
@@ -1024,7 +1021,7 @@ const EditProduct = ({
 
           {/* === OPCIONES TPV === */}
           <fieldset className="fieldset--crear">
-            <legend className="legend--crear">⚙️ Opciones de TPV</legend>
+            <legend className="legend--crear">Opciones de TPV</legend>
 
             <div className="stock-directo-row--crear">
               <label className="toggle-stock--crear">
@@ -1107,8 +1104,7 @@ const EditProduct = ({
             </div>
 
             <div className="stock-directo-row--crear" style={{ marginTop: "12px" }}>
-              <span className="toggle-stock-label--crear" style={{ fontWeight: 700 }}>
-                💬 Mensajes predefinidos
+              <span className="toggle-stock-label--crear" style={{ fontWeight: 700 }}>Mensajes predefinidos
               </span>
               <p className="help-text--crear" style={{ marginTop: "4px" }}>
                 Mensajes rápidos que el camarero puede seleccionar al añadir este producto.
@@ -1179,11 +1175,9 @@ const EditProduct = ({
 
           {/* === RECETA === */}
           <fieldset className="fieldset--crear">
-            <legend className="legend--crear">
-              🧪 Receta y control de stock
+            <legend className="legend--crear">Receta y control de stock
               {isPlanEsencial && (
-                <span style={{ marginLeft: 8, fontSize: "14px", color: "#ff6700" }}>
-                  🔒 Solo en plan Premium
+                <span style={{ marginLeft: 8, fontSize: "14px", color: "#ff6700" }}>Solo en plan Premium
                 </span>
               )}
             </legend>
@@ -1329,8 +1323,7 @@ const EditProduct = ({
                     nuevaClavePrecio: "",
                   }));
                 }}
-              >
-                ➕ Añadir
+              >Añadir
               </button>
             </div>
 

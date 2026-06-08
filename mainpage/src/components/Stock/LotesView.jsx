@@ -129,8 +129,7 @@ export default function LotesView({ filtroItemId = null, onChange }) {
             className="lotesView-btn lotesView-btn--ghost"
             onClick={fetchLotes}
             disabled={loading}
-          >
-            🔄 Refrescar
+          >Refrescar
           </button>
         </div>
 
@@ -281,8 +280,7 @@ export default function LotesView({ filtroItemId = null, onChange }) {
           }
         >
           <div className="alefForm">
-            <div className="alefHint">
-              📦 Disponible:{" "}
+            <div className="alefHint">Disponible:{" "}
               <b>
                 {mermaAction.lote.cantidadDisponible}{" "}
                 {mermaAction.lote.itemUnidad}
@@ -329,8 +327,7 @@ export default function LotesView({ filtroItemId = null, onChange }) {
               </select>
             </label>
 
-            <div className="alefHint">
-              💰 Valor estimado:{" "}
+            <div className="alefHint">Valor estimado:{" "}
               <b style={{ color: "#fcd34d" }}>
                 {eur(
                   Number(mermaAction.cantidad || 0) *

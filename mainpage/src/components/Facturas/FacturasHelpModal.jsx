@@ -26,7 +26,7 @@ export default function FacturasHelpModal({ onClose }) {
 
             <div className="facturashelp-grid">
               <article className="facturashelp-card">
-                <h4>🔎 Buscar y filtrar</h4>
+                <h4>Buscar y filtrar</h4>
                 <p>
                   Filtra por <strong>año</strong> o por <strong>rango de fechas</strong>. También
                   puedes buscar por <strong>número de factura</strong>, <strong>NIF</strong> o{" "}
@@ -35,7 +35,7 @@ export default function FacturasHelpModal({ onClose }) {
               </article>
 
               <article className="facturashelp-card">
-                <h4>📤 Exportar (CSV / PDF)</h4>
+                <h4>Exportar (CSV / PDF)</h4>
                 <p>
                   Exporta el listado actual respetando los filtros. El CSV sirve para Excel; el PDF
                   es ideal para compartir o archivar.
@@ -43,7 +43,7 @@ export default function FacturasHelpModal({ onClose }) {
               </article>
 
               <article className="facturashelp-card">
-                <h4>✏️ Rectificar</h4>
+                <h4>Rectificar</h4>
                 <p>
                   Crea una <strong>factura rectificativa</strong> asociada a una factura anterior
                   para corregir datos o importes.
@@ -54,7 +54,7 @@ export default function FacturasHelpModal({ onClose }) {
               </article>
 
               <article className="facturashelp-card">
-                <h4>🗑 Anular</h4>
+                <h4>Anular</h4>
                 <p>
                   Marca una factura como <strong>anulada</strong>. Es una acción irreversible, pensada
                   para casos de emisión errónea o invalidación interna del registro.
@@ -62,7 +62,7 @@ export default function FacturasHelpModal({ onClose }) {
               </article>
 
               <article className="facturashelp-card">
-                <h4>📄 Ver XML</h4>
+                <h4>Ver XML</h4>
                 <p>
                   Abre el <strong>XML firmado</strong> (si existe). Es el documento técnico que
                   respalda la trazabilidad y la integridad del registro.
@@ -70,7 +70,7 @@ export default function FacturasHelpModal({ onClose }) {
               </article>
 
               <article className="facturashelp-card">
-                <h4>🏛 Ver respuesta AEAT</h4>
+                <h4>Ver respuesta AEAT</h4>
                 <p>
                   Si existe, muestra la respuesta asociada a la comunicación con la <strong>AEAT</strong>.
                   Útil para auditorías o trazabilidad del envío.

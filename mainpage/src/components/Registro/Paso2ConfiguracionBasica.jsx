@@ -2,15 +2,15 @@ import React, { useMemo, useState } from "react";
 import "./Paso2ConfiguracionBasica.css";
 
 const TITULOS_CATEGORIA = {
-  legal: "🧾 Fiscalidad y VeriFactu",
-  tpv: "🧾 TPV y caja",
-  carta: "📋 Carta digital",
-  cocina: "🍳 Cocina / barra",
-  reservas: "📅 Reservas",
-  reporting: "📊 Informes y estadísticas",
-  soporte: "🛟 Soporte",
-  hardware: "🖨 Impresoras y hardware",
-  general: "🔧 Opciones generales",
+  legal: "Fiscalidad y VeriFactu",
+  tpv: "TPV y caja",
+  carta: "Carta digital",
+  cocina: "Cocina / barra",
+  reservas: "Reservas",
+  reporting: "Informes y estadísticas",
+  soporte: "Soporte",
+  hardware: "Impresoras y hardware",
+  general: "Opciones generales",
 };
 
 function getTituloCategoria(cat) {
@@ -85,7 +85,7 @@ export default function Paso2ConfiguracionBasica({
     <section className="paso2-config section section--wide">
       <header className="paso2-header">
         <div className="paso2-header-text">
-          <h2>⚙️ Configuración inicial</h2>
+          <h2>Configuración inicial</h2>
           <p>
             {isShop ? (
               <>
@@ -273,7 +273,7 @@ export default function Paso2ConfiguracionBasica({
 
       {/* === Colores básicos (igual) === */}
       <div className="config-colores card">
-        <h3>🎨 Paleta de colores</h3>
+        <h3>Paleta de colores</h3>
         <p className="config-help">
           Elige los colores principales de tu marca. Podrás ajustarlos más
           adelante desde el panel.
@@ -310,7 +310,7 @@ export default function Paso2ConfiguracionBasica({
 
       {/* === Información básica (solo cambia texto, no la estructura) === */}
       <div className="config-info card">
-        <h3>📞 Información básica de {labelNegocio}</h3>
+        <h3>Información básica de {labelNegocio}</h3>
         <p className="config-help">
           {isShop ? (
             <>

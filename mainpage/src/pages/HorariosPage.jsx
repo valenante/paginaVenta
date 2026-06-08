@@ -138,7 +138,7 @@ export default function HorariosPage() {
           <p className="sug-header__sub">Planifica los turnos de tu personal semana a semana.</p>
         </div>
         <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-          <button className="sug-btn sug-btn--secondary" onClick={() => setWeekOffset(w => w - 1)}>← Anterior</button>
+          <button className="sug-btn sug-btn--secondary" onClick={() => setWeekOffset(w => w - 1)}>Anterior</button>
           <button className="sug-btn sug-btn--secondary" onClick={() => setWeekOffset(0)}>Hoy</button>
           <button className="sug-btn sug-btn--secondary" onClick={() => setWeekOffset(w => w + 1)}>Siguiente →</button>
           <button className="sug-btn sug-btn--primary" onClick={handlePublish} disabled={publishing}>
@@ -157,7 +157,7 @@ export default function HorariosPage() {
       {/* Conflictos */}
       {conflictos.length > 0 && (
         <div className="hor-conflictos">
-          <strong>⚠ Conflictos ({conflictos.length}):</strong>
+          <strong>Conflictos ({conflictos.length}):</strong>
           {conflictos.map((c, i) => (
             <span key={i} className="hor-conflicto-item">{c.mensaje}</span>
           ))}
@@ -261,8 +261,7 @@ export default function HorariosPage() {
                         <button
                           className="hor-assign-option hor-assign-option--all"
                           onClick={() => handleAssignAll(emp.usuario._id, dia)}
-                        >
-                          📋 Todo el día
+                        >Todo el día
                         </button>
                       )}
                       {turnos.map(t => (

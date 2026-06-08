@@ -30,8 +30,7 @@ export default function DiasPeriodo({ dias }) {
 
               <div className="dia-mensaje-col">
                 {d.mensajeCierre && (
-                  <div className="mensaje-cierre" title={d.mensajeCierre}>
-                    📝 {d.mensajeCierre}
+                  <div className="mensaje-cierre" title={d.mensajeCierre}>{d.mensajeCierre}
                   </div>
                 )}
               </div>

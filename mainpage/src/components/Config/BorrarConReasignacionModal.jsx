@@ -107,8 +107,7 @@ const BorrarConReasignacionModal = ({ tipo, item, onClose, onEliminado }) => {
         {!cargando && resumen && (
           <div className="br-body">
             {resumen.esCentral && (
-              <div className="br-warning">
-                ⭐ Esta es una <strong>estación central</strong>. Al borrarla se designará otra como central automáticamente
+              <div className="br-warning">Esta es una <strong>estación central</strong>. Al borrarla se designará otra como central automáticamente
                 {reassignTo ? ` (${reassignTo})` : ""}.
               </div>
             )}

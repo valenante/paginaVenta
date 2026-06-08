@@ -17,7 +17,7 @@ const StatsResumenCategoria = ({
     <section className="stats-card-glass stats-resumen">
       <header className="stats-resumen-header">
         <div className="stats-resumen-titles">
-          <h3 className="stats-title">📊 Resumen de la categoría</h3>
+          <h3 className="stats-title">Resumen de la categoría</h3>
           <p className="stats-subtitle">
             Ventas de <strong>{category}</strong> para{" "}
             <strong>{fechaTexto}</strong>.

@@ -289,7 +289,7 @@ export default function RecibirFotoModal({ onClose, onDone }) {
             </div>
           ) : (
             <div className="recibir-fileInfo">
-              <div className="recibir-fileName">📎 {image.name}</div>
+              <div className="recibir-fileName">{image.name}</div>
               <button type="button" className="alefBtn ghost" onClick={() => { setImage(null); fileRef.current.value = ""; }}>Cambiar imagen</button>
             </div>
           )}

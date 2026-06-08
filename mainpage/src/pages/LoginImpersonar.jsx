@@ -28,11 +28,11 @@ export default function LoginImpersonar() {
 
           navigate(`/tpv/${tenantId}/dashboard`);
         } else {
-          console.warn("🚫 Token inválido o expirado.");
+          console.warn("Token inválido o expirado.");
           navigate("/login");
         }
       } catch (err) {
-        console.error("❌ Error al validar impersonación:", err);
+        console.error("Error al validar impersonación:", err);
         navigate("/login");
       }
     };

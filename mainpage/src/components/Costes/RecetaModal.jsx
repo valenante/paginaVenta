@@ -212,7 +212,7 @@ export default function RecetaModal({ productoId, productoNombre, onClose, onSav
     <div className="rec-overlay">
       <div className="rec-modal">
         <div className="rec-header">
-          <h3>📋 Receta: {productoNombre}</h3>
+          <h3>Receta: {productoNombre}</h3>
           <button className="rec-close" onClick={onClose}>✕</button>
         </div>
 

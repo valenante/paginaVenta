@@ -1,7 +1,7 @@
 import React from "react";
 
 /* =====================================================
-   🎨 FILA DE COLOR
+   FILA DE COLOR
 ===================================================== */
 const ColorRow = ({ label, value, onChange, help }) => (
   <div className="tema-item">
@@ -25,7 +25,7 @@ const ColorRow = ({ label, value, onChange, help }) => (
 );
 
 /* =====================================================
-   🛒 PANEL DE APARIENCIA SHOP
+   PANEL DE APARIENCIA SHOP
 ===================================================== */
 export default function TemaShopPanel({ temaShop, setTemaShop }) {
   const setField = (key, val) =>
@@ -37,7 +37,7 @@ export default function TemaShopPanel({ temaShop, setTemaShop }) {
   return (
     <section className="config-card card config-card--tema">
       <header className="config-card-header">
-        <h2>🛒 Apariencia de la tienda</h2>
+        <h2>Apariencia de la tienda</h2>
         <p className="config-card-subtitle">
           Personaliza los colores del panel de tienda y del backoffice.
         </p>

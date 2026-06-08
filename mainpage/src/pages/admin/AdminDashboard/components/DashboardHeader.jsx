@@ -35,8 +35,8 @@ export default function DashboardHeader({
           onChange={(e) => setTipoFilter(e.target.value)}
         >
           <option value="all">Todos los negocios</option>
-          <option value="restaurante">🍽 Restaurantes</option>
-          <option value="shop">🛒 Tiendas</option>
+          <option value="restaurante">Restaurantes</option>
+          <option value="shop">Tiendas</option>
         </select>
 
         {/* 🟦 Plan */}

@@ -285,7 +285,7 @@ export default function LogsPage() {
       {/* Pagination */}
       {!loading && logs.length > 0 && (
         <nav className="logs-pagination">
-          <button disabled={page === 1} onClick={() => setPage(p => p - 1)}>← Anterior</button>
+          <button disabled={page === 1} onClick={() => setPage(p => p - 1)}>Anterior</button>
           <span>Página <strong>{page}</strong> de <strong>{totalPages}</strong></span>
           <button disabled={page === totalPages} onClick={() => setPage(p => p + 1)}>Siguiente →</button>
         </nav>

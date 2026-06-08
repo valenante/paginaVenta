@@ -92,7 +92,7 @@ export default function CompuestosEditor({
 
   return (
     <fieldset className="fieldset--crear">
-      <legend className="legend--crear">🧩 Producto compuesto (opcional)</legend>
+      <legend className="legend--crear">Producto compuesto (opcional)</legend>
       <p className="help-text--crear">
         Define este producto como combo: <strong>componentes fijos</strong> (siempre van juntos,
         ej: menú del día) o <strong>grupos seleccionables</strong> (el cliente elige, ej: surtido
@@ -123,8 +123,7 @@ export default function CompuestosEditor({
           const escribioAlgo = qVal.trim().length > 0;
           return (
             <div key={idx} className="compuesto-row--crear">
-              <label className="label--crear compuesto-row__label-small--crear">
-                🔍 Producto del catálogo
+              <label className="label--crear compuesto-row__label-small--crear">Producto del catálogo
                 <input
                   list={`comp-opts-${idx}`}
                   value={qVal}
@@ -148,12 +147,10 @@ export default function CompuestosEditor({
                   ))}
                 </datalist>
                 {vinculado ? (
-                  <small className="adicional-row__feedback--crear is-ok">
-                    ✓ Vinculado a <strong>{vinculado.nombre}</strong>
+                  <small className="adicional-row__feedback--crear is-ok">Vinculado a <strong>{vinculado.nombre}</strong>
                   </small>
                 ) : escribioAlgo ? (
-                  <small className="adicional-row__feedback--crear is-err">
-                    ⚠ No se encontró ningún producto con ese nombre. Escribe el nombre exacto o elige de la lista desplegable.
+                  <small className="adicional-row__feedback--crear is-err">No se encontró ningún producto con ese nombre. Escribe el nombre exacto o elige de la lista desplegable.
                   </small>
                 ) : (
                   <small className="help-text--crear">
@@ -318,8 +315,7 @@ export default function CompuestosEditor({
                 const escribioAlgo = qVal.trim().length > 0;
                 return (
                   <div key={opIdx} className="compuesto-opcion-row--crear">
-                    <label className="label--crear compuesto-row__label-small--crear">
-                      🔍 Producto del catálogo
+                    <label className="label--crear compuesto-row__label-small--crear">Producto del catálogo
                       <input
                         list={`op-opts-${selIdx}-${opIdx}`}
                         value={qVal}
@@ -349,8 +345,7 @@ export default function CompuestosEditor({
                           ✓ <strong>{vinc.nombre}</strong>
                         </small>
                       ) : escribioAlgo ? (
-                        <small className="adicional-row__feedback--crear is-err">
-                          ⚠ No se encontró. Escribe el nombre exacto.
+                        <small className="adicional-row__feedback--crear is-err">No se encontró. Escribe el nombre exacto.
                         </small>
                       ) : null}
                     </label>

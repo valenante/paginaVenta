@@ -96,8 +96,7 @@ export default function DetalleRestauranteCliente() {
         <div className="cliente-empty">
           <div className="cliente-empty__icon">⚠️</div>
           <h3>{error || "Restaurante no encontrado"}</h3>
-          <Link to="/cliente/restaurantes" className="cliente-btn cliente-btn--ghost">
-            ← Volver a restaurantes
+          <Link to="/cliente/restaurantes" className="cliente-btn cliente-btn--ghost">Volver a restaurantes
           </Link>
         </div>
       </ClienteLayout>
@@ -117,8 +116,7 @@ export default function DetalleRestauranteCliente() {
             <span className="cli-hero__welcome">Restaurante Alef</span>
             <h1>{restaurante.nombre}</h1>
             {(restaurante.direccion || restaurante.ciudad) && (
-              <p className="cli-hero__email">
-                📍 {restaurante.direccion}{restaurante.direccion && restaurante.ciudad ? " · " : ""}{restaurante.ciudad}
+              <p className="cli-hero__email">{restaurante.direccion}{restaurante.direccion && restaurante.ciudad ? " · " : ""}{restaurante.ciudad}
               </p>
             )}
             <HeaderKPIs stats={resumen?.stats} />
@@ -163,7 +161,7 @@ export default function DetalleRestauranteCliente() {
 
   return (
     <ClienteLayout hero={hero}>
-      <Link to="/cliente/restaurantes" className="cliente-back">← Volver a Restaurantes</Link>
+      <Link to="/cliente/restaurantes" className="cliente-back">Volver a Restaurantes</Link>
 
       <div className="cli-acciones-rest">
         <a
@@ -171,16 +169,14 @@ export default function DetalleRestauranteCliente() {
           target="_blank"
           rel="noopener noreferrer"
           className="cliente-btn cliente-btn--primary"
-        >
-          📋 Ver carta digital
+        >Ver carta digital
         </a>
         <a
           href={reservasUrl}
           target="_blank"
           rel="noopener noreferrer"
           className="cliente-btn cliente-btn--accent"
-        >
-          📅 Reservar mesa
+        >Reservar mesa
         </a>
         {mapsUrl && (
           <a
@@ -189,8 +185,7 @@ export default function DetalleRestauranteCliente() {
             rel="noopener noreferrer"
             className="cliente-btn cliente-btn--ghost"
             title={direccionFull}
-          >
-            📍 Cómo llegar
+          >Cómo llegar
           </a>
         )}
       </div>
@@ -224,7 +219,7 @@ export default function DetalleRestauranteCliente() {
         <section className="cliente-section">
           <div className="cliente-section__header">
             <div>
-              <h2>🎁 Recompensas</h2>
+              <h2>Recompensas</h2>
               <p className="cliente-section__sub">
                 Pide al camarero canjear cuando hayas decidido. El descuento se aplica al cobrar.
               </p>
@@ -249,7 +244,7 @@ export default function DetalleRestauranteCliente() {
                     <strong>{r.coste}</strong> pts
                   </div>
                   {r.puedoCanjear ? (
-                    <span className="cliente-recompensa__chip cliente-recompensa__chip--ok">✓ Puedes canjear</span>
+                    <span className="cliente-recompensa__chip cliente-recompensa__chip--ok">Puedes canjear</span>
                   ) : (
                     <span className="cliente-recompensa__chip">
                       Te faltan <strong>{Math.max(0, r.coste - saldo)}</strong> pts
@@ -267,7 +262,7 @@ export default function DetalleRestauranteCliente() {
         <section className="cliente-section">
           <div className="cliente-section__header">
             <div>
-              <h2>⏱️ Horas con puntos extra</h2>
+              <h2>Horas con puntos extra</h2>
               <p className="cliente-section__sub">
                 En estas franjas tus puntos se multiplican.
               </p>

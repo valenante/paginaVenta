@@ -2,6 +2,7 @@
 // Panel CRUD de clientes fiscales — datos guardados automáticamente al emitir factura nominativa.
 
 import React, { useCallback, useEffect, useState } from "react";
+import { FiEdit2, FiTrash2 } from "react-icons/fi";
 import api from "../../utils/api";
 import "./ClientesFiscalesPanel.css";
 
@@ -133,8 +134,8 @@ export default function ClientesFiscalesPanel() {
                 <span className="cf-usos">{c.usoCount || 1}</span>
                 <span className="cf-fecha">{c.ultimoUso ? new Date(c.ultimoUso).toLocaleDateString("es-ES") : "—"}</span>
                 <span className="cf-actions">
-                  <button className="cf-btn-sm" onClick={() => setEditing({ _id: c._id, nif: c.nif, nombre: c.nombre, direccion: c.direccion || "" })} title="Editar">✏️</button>
-                  <button className="cf-btn-sm cf-btn-sm--danger" onClick={() => handleDelete(c._id, c.nombre)} title="Eliminar">🗑️</button>
+                  <button className="cf-btn-sm" onClick={() => setEditing({ _id: c._id, nif: c.nif, nombre: c.nombre, direccion: c.direccion || "" })} title="Editar"><FiEdit2 aria-hidden /></button>
+                  <button className="cf-btn-sm cf-btn-sm--danger" onClick={() => handleDelete(c._id, c.nombre)} title="Eliminar"><FiTrash2 aria-hidden /></button>
                 </span>
               </div>
             ))}
@@ -142,7 +143,7 @@ export default function ClientesFiscalesPanel() {
 
           {totalPages > 1 && (
             <div className="cf-pagination">
-              <button disabled={page <= 1} onClick={() => setPage(page - 1)}>← Anterior</button>
+              <button disabled={page <= 1} onClick={() => setPage(page - 1)}>Anterior</button>
               <span>Página {page} de {totalPages}</span>
               <button disabled={page >= totalPages} onClick={() => setPage(page + 1)}>Siguiente →</button>
             </div>

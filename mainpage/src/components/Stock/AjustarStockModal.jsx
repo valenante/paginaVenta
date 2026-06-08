@@ -101,8 +101,7 @@ const AjustarStockModal = ({ ingrediente, onClose, onSave }) => {
       width={600}
     >
       <div className="alefForm">
-        <div className="alefHint">
-          📦 Stock actual: <b>{stockInicial}</b> {unidad}
+        <div className="alefHint">Stock actual: <b>{stockInicial}</b> {unidad}
         </div>
 
         <div className="ajuste-stepRow">

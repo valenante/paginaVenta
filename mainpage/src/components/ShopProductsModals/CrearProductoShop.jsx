@@ -75,7 +75,7 @@ export default function CrearProductoShop({ defaultCategory, onClose, onCreated 
               BLOQUE: Información básica
               ========================= */}
           <section className="form-section--crear">
-            <h4 className="subtitulo--crear">🧾 Información básica</h4>
+            <h4 className="subtitulo--crear">Información básica</h4>
             <p className="help-text--crear">
               Estos datos son los que usarás para identificar el producto dentro del catálogo.
               La categoría sirve para agrupar y filtrar productos.
@@ -118,7 +118,7 @@ export default function CrearProductoShop({ defaultCategory, onClose, onCreated 
               BLOQUE: Identificadores
               ========================= */}
           <section className="form-section--crear">
-            <h4 className="subtitulo--crear">🏷️ Identificadores (opcional)</h4>
+            <h4 className="subtitulo--crear">Identificadores (opcional)</h4>
             <p className="help-text--crear">
               Sirven para control interno, inventario y escaneo rápido en caja.
             </p>
@@ -158,7 +158,7 @@ export default function CrearProductoShop({ defaultCategory, onClose, onCreated 
               BLOQUE: Precio de venta
               ========================= */}
           <section className="form-section--crear">
-            <h4 className="subtitulo--crear">💰 Precio</h4>
+            <h4 className="subtitulo--crear">Precio</h4>
             <p className="help-text--crear">
               Este es el precio de venta que verá el cliente o que se usará en caja.
             </p>
@@ -188,7 +188,7 @@ export default function CrearProductoShop({ defaultCategory, onClose, onCreated 
               BLOQUE: Stock / Inventario
               ========================= */}
           <section className="form-section--crear">
-            <h4 className="subtitulo--crear">📦 Stock e inventario</h4>
+            <h4 className="subtitulo--crear">Stock e inventario</h4>
             <p className="help-text--crear">
               Define el stock actual y los umbrales. Útil para avisos y control de reposición.
             </p>

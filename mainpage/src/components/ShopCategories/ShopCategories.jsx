@@ -56,8 +56,7 @@ export default function ShopCategories({ category, type }) {
             className="btn-secondary"
             type="button"
             onClick={() => setMostrarCrear(true)}
-          >
-            ➕ Nuevo
+          >Nuevo
           </button>
         )}
       </header>

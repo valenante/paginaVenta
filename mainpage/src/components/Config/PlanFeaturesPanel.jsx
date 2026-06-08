@@ -169,7 +169,7 @@ export default function PlanFeaturesPanel({ onAlert }) {
         <section className="config-card card">
             <header className="config-card-header">
                 <div>
-                    <h2>🧩 Funcionalidades del plan</h2>
+                    <h2>Funcionalidades del plan</h2>
                     <p className="config-card-subtitle">
                         Activa o desactiva opciones del sistema. Usa el buscador para encontrarlas rápido.
                     </p>

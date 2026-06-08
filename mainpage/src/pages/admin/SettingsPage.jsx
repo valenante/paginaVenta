@@ -211,12 +211,12 @@ export default function SettingsPage() {
   if (!config || !status) return <p>Cargando configuración...</p>;
 
   const estado = (ok) => (
-    <span className={ok ? "estado ok" : "estado fail"}>● {ok ? "OK" : "ERROR"}</span>
+    <span className={ok ? "estado ok" : "estado fail"}>{ok ? "OK" : "ERROR"}</span>
   );
 
   return (
     <div className="settings-wrapper-settingsAdmin">
-      <h1 className="settings-title-settingsAdmin">⚙️ Ajustes del Sistema</h1>
+      <h1 className="settings-title-settingsAdmin">Ajustes del Sistema</h1>
       <p className="settings-subtitle-settingsAdmin">
         Configuración global del SaaS Alef.
       </p>
@@ -262,7 +262,7 @@ export default function SettingsPage() {
       {/* --------- PANEL GENERAL --------- */}
       {tab === "general" && (
         <div className="settings-panel-settingsAdmin">
-          <h2 className="settings-panel-title-settingsAdmin">🛠 Estado del sistema</h2>
+          <h2 className="settings-panel-title-settingsAdmin">Estado del sistema</h2>
 
           <div className="settings-status-grid-settingsAdmin">
             <p>MongoDB: {estado(status.mongo)}</p>
@@ -297,7 +297,7 @@ export default function SettingsPage() {
       {/* --------- SMTP --------- */}
       {tab === "smtp" && (
         <div className="settings-panel-settingsAdmin">
-          <h2 className="settings-panel-title-settingsAdmin">📧 Configuración SMTP</h2>
+          <h2 className="settings-panel-title-settingsAdmin">Configuración SMTP</h2>
 
           <small className="settings-small-settingsAdmin">
             SMTP permite a Alef enviar correos: bienvenida, recuperación, avisos, facturas, etc.
@@ -377,7 +377,7 @@ export default function SettingsPage() {
       {/* --------- STRIPE --------- */}
       {tab === "stripe" && (
         <div className="settings-panel-settingsAdmin">
-          <h2 className="settings-panel-title-settingsAdmin">💳 Stripe</h2>
+          <h2 className="settings-panel-title-settingsAdmin">Stripe</h2>
 
           <label className="settings-label-settingsAdmin">Clave Pública</label>
           <input
@@ -420,7 +420,7 @@ export default function SettingsPage() {
       {/* --------- CLOUDFLARE --------- */}
       {tab === "cloudflare" && (
         <div className="settings-panel-settingsAdmin">
-          <h2 className="settings-panel-title-settingsAdmin">🌐 Cloudflare</h2>
+          <h2 className="settings-panel-title-settingsAdmin">Cloudflare</h2>
 
           <label className="settings-label-settingsAdmin">Zone ID</label>
           <input
@@ -459,7 +459,7 @@ export default function SettingsPage() {
       {/* --------- R2 STORAGE --------- */}
       {tab === "r2" && (
         <div className="settings-panel-settingsAdmin">
-          <h2 className="settings-panel-title-settingsAdmin">📦 R2 Storage</h2>
+          <h2 className="settings-panel-title-settingsAdmin">R2 Storage</h2>
 
           <label className="settings-label-settingsAdmin">Account ID</label>
           <input

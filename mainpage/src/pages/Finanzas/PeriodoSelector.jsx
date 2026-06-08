@@ -32,8 +32,7 @@ export default function PeriodoSelector({ value, onChange }) {
           type="button"
           className={`fin-periodo-btn ${custom ? "active" : ""}`}
           onClick={() => setCustom((v) => !v)}
-        >
-          📅 Custom
+        >Custom
         </button>
       </div>
 

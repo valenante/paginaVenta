@@ -41,8 +41,7 @@ export default function ShopProducts({ categories }) {
             type="button"
             className="boton-crear--products boton-crear-main--products"
             onClick={() => setMostrarFormulario(true)}
-          >
-            ➕ Nuevo producto
+          >Nuevo producto
           </button>
         )}
       </header>
@@ -60,8 +59,7 @@ export default function ShopProducts({ categories }) {
               <button
                 className="boton-crear--products boton-crear-secundario--products"
                 onClick={() => setMostrarFormulario(true)}
-              >
-                ➕ Crear primer producto
+              >Crear primer producto
               </button>
             </div>
           ) : (
@@ -86,8 +84,7 @@ export default function ShopProducts({ categories }) {
                 <button
                   className="boton-crear--products boton-crear-secundario--products"
                   onClick={() => setMostrarFormulario(true)}
-                >
-                  ➕ Crear producto en cualquier categoría
+                >Crear producto en cualquier categoría
                 </button>
               </div>
             </div>
@@ -100,8 +97,7 @@ export default function ShopProducts({ categories }) {
               type="button"
               className="volver-categorias--products"
               onClick={() => setSelectedCategory(null)}
-            >
-              ← Volver a categorías
+            >Volver a categorías
             </button>
             <h3>{selectedCategory}</h3>
           </div>

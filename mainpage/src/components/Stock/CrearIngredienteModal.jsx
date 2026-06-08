@@ -216,8 +216,7 @@ export default function CrearIngredienteModal({ onClose, onSave }) {
           </label>
         </div>
 
-        <div className="alefHint">
-          📦 Coherencia: <b>crítico ≤ mínimo ≤ máximo</b>.
+        <div className="alefHint">Coherencia: <b>crítico ≤ mínimo ≤ máximo</b>.
         </div>
 
         {esConsumible && (

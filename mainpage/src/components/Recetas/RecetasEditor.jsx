@@ -152,8 +152,7 @@ export default function RecetaEditor({ producto }) {
                 />
             </label>
 
-            <button className="receta-add-btn" onClick={agregarIngrediente}>
-                ➕ Agregar a la receta
+            <button className="receta-add-btn" onClick={agregarIngrediente}>Agregar a la receta
             </button>
         </div>
     );

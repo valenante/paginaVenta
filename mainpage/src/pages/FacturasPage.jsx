@@ -472,7 +472,7 @@ export default function FacturasPage() {
       <header className="facturaspage-header">
         <div className="facturaspage-header-row">
           <div>
-            <h1>📄 Facturas Encadenadas</h1>
+            <h1>Facturas Encadenadas</h1>
             <p>Consulta, exporta y gestiona tu historial fiscal.</p>
 
             <div className="facturaspage-meta">
@@ -571,10 +571,10 @@ export default function FacturasPage() {
       {/* ACCIONES */}
       <section className="facturaspage-actions">
         <button className="btn btn-secundario" onClick={exportarCSV} disabled={exportLoading}>
-          {exportLoading ? "📤 Exportando…" : "📤 Exportar CSV"}
+          {exportLoading ? "Exportando…" : "Exportar CSV"}
         </button>
         <button className="btn btn-primario" onClick={exportarPDF} disabled={exportLoading}>
-          {exportLoading ? "📄 Generando…" : "📄 Exportar PDF"}
+          {exportLoading ? "Generando…" : "Exportar PDF"}
         </button>
       </section>
 
@@ -624,8 +624,7 @@ export default function FacturasPage() {
 
                   <td className="acciones-sticky">
                     <div className="facturaspage-table-actions">
-                      <button onClick={() => abrirModalRectificacion(f)} disabled={loadingList}>
-                        ✏️ Rectificar
+                      <button onClick={() => abrirModalRectificacion(f)} disabled={loadingList}>Rectificar
                       </button>
 
                       {f.estado !== "anulada" && (
@@ -634,7 +633,7 @@ export default function FacturasPage() {
                           onClick={() => solicitarAnulacion(f)}
                           disabled={anulandoId === f._id}
                         >
-                          {anulandoId === f._id ? "Anulando…" : "🗑 Anular"}
+                          {anulandoId === f._id ? "Anulando…" : "Anular"}
                         </button>
                       )}
 
@@ -643,17 +642,16 @@ export default function FacturasPage() {
                         disabled={descargandoPdfId === f._id}
                         title="Descargar PDF"
                       >
-                        {descargandoPdfId === f._id ? "⏳" : "📥 PDF"}
+                        {descargandoPdfId === f._id ? "⏳" : "PDF"}
                       </button>
 
-                      <button onClick={() => verXML(f.xmlFirmado)} disabled={!f.xmlFirmado}>
-                        📄 XML
+                      <button onClick={() => verXML(f.xmlFirmado)} disabled={!f.xmlFirmado}>XML
                       </button>
 
                       {f.respuestaAEAT ? (
-                        <button onClick={() => verRespuestaAEAT(f.respuestaAEAT)}>🏛 AEAT</button>
+                        <button onClick={() => verRespuestaAEAT(f.respuestaAEAT)}>AEAT</button>
                       ) : (
-                        <button disabled title="Sin respuesta AEAT">🏛 AEAT</button>
+                        <button disabled title="Sin respuesta AEAT">AEAT</button>
                       )}
                     </div>
                   </td>
@@ -664,8 +662,7 @@ export default function FacturasPage() {
 
           {totalPaginas > 1 && (
             <div className="facturaspage-pagination">
-              <button disabled={pagina === 1 || loadingList} onClick={() => setPagina(pagina - 1)}>
-                ← Anterior
+              <button disabled={pagina === 1 || loadingList} onClick={() => setPagina(pagina - 1)}>Anterior
               </button>
               <span>
                 Página {pagina} de {totalPaginas}
@@ -706,8 +703,7 @@ export default function FacturasPage() {
             </div>
 
             <div className="factura-card-actions">
-              <button onClick={() => abrirModalRectificacion(f)} disabled={loadingList}>
-                ✏️ Rectificar
+              <button onClick={() => abrirModalRectificacion(f)} disabled={loadingList}>Rectificar
               </button>
 
               {f.estado !== "anulada" && (
@@ -716,7 +712,7 @@ export default function FacturasPage() {
                   onClick={() => solicitarAnulacion(f)}
                   disabled={anulandoId === f._id}
                 >
-                  {anulandoId === f._id ? "Anulando…" : "🗑 Anular"}
+                  {anulandoId === f._id ? "Anulando…" : "Anular"}
                 </button>
               )}
 
@@ -724,17 +720,16 @@ export default function FacturasPage() {
                 onClick={() => descargarPDFFactura(f)}
                 disabled={descargandoPdfId === f._id}
               >
-                {descargandoPdfId === f._id ? "⏳" : "📥 PDF"}
+                {descargandoPdfId === f._id ? "⏳" : "PDF"}
               </button>
 
-              <button onClick={() => verXML(f.xmlFirmado)} disabled={!f.xmlFirmado}>
-                📄 XML
+              <button onClick={() => verXML(f.xmlFirmado)} disabled={!f.xmlFirmado}>XML
               </button>
 
               {f.respuestaAEAT ? (
-                <button onClick={() => verRespuestaAEAT(f.respuestaAEAT)}>🏛 AEAT</button>
+                <button onClick={() => verRespuestaAEAT(f.respuestaAEAT)}>AEAT</button>
               ) : (
-                <button disabled>🏛 AEAT</button>
+                <button disabled>AEAT</button>
               )}
             </div>
           </div>

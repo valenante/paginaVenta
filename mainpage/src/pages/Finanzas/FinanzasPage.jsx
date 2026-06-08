@@ -8,10 +8,10 @@ import { PERIODOS } from "./utils";
 import "./Finanzas.css";
 
 const TABS = [
-  { key: "resumen", label: "📊 Resumen" },
-  { key: "productos", label: "🍽️ Productos" },
-  { key: "gastos", label: "🧾 Gastos fijos" },
-  { key: "cortesias", label: "🎁 Cortesías" },
+  { key: "resumen", label: "Resumen" },
+  { key: "productos", label: "Productos" },
+  { key: "gastos", label: "Gastos fijos" },
+  { key: "cortesias", label: "Cortesías" },
 ];
 
 function FinanzasHelpModal({ onClose }) {

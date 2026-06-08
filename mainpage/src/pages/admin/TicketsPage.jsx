@@ -167,7 +167,7 @@ export default function TicketsPage() {
     <section className="tickets">
       <header className="tickets__header">
         <div>
-          <h1 className="tickets__title">🎫 Tickets de soporte</h1>
+          <h1 className="tickets__title">Tickets de soporte</h1>
           <p className="tickets__subtitle">Filtra, prioriza y responde rápido.</p>
         </div>
       </header>
@@ -327,7 +327,7 @@ export default function TicketsPage() {
 
               {/* Delete */}
               {!confirmDelete ? (
-                <button className="tickets-dangerBtn" onClick={() => setConfirmDelete(true)} type="button">🗑 Eliminar ticket</button>
+                <button className="tickets-dangerBtn" onClick={() => setConfirmDelete(true)} type="button">Eliminar ticket</button>
               ) : (
                 <div className="tickets-confirmDelete">
                   <p>¿Eliminar este ticket permanentemente?</p>

@@ -358,8 +358,7 @@ function ProductoCard({ producto, dirty, onChangeCoste, onSave, onDiscard, savin
             className={`costes-receta-btn ${tieneReceta ? "costes-receta-btn--active" : ""}`}
             onClick={() => onReceta(producto)}
             title={tieneReceta ? `Receta (${producto.receta.length} ingredientes)` : "Crear receta"}
-          >
-            📋 {tieneReceta ? producto.receta.length : ""}
+          >{tieneReceta ? producto.receta.length : ""}
           </button>
           {producto.costeActualizadoAt && (
             <div className="costes-card__meta">
@@ -404,7 +403,7 @@ function ProductoCard({ producto, dirty, onChangeCoste, onSave, onDiscard, savin
               <div className={`costes-variant__margen ${cls}`}>
                 <span className="costes-variant__margen-unit">{fmtMoney(unit)}</span>
                 <span className="costes-variant__margen-pct">{fmtPct(pct)}</span>
-                {negativo && <span className="costes-variant__warn">⚠ Precio &lt; coste</span>}
+                {negativo && <span className="costes-variant__warn">Precio &lt; coste</span>}
               </div>
             </div>
           );

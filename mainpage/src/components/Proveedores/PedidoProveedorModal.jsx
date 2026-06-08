@@ -493,8 +493,7 @@ export default function PedidoProveedorModal({ onClose, onSaved, mode = "create"
                   className="btn btn-ghost"
                   onClick={addLinea}
                   disabled={saving}
-                >
-                  ➕ Añadir línea
+                >Añadir línea
                 </button>
               </div>
 
@@ -607,8 +606,7 @@ export default function PedidoProveedorModal({ onClose, onSaved, mode = "create"
                 className="btn btn-secundario"
                 onClick={generarPDF}
                 disabled={saving || !form.lineas?.some((l) => l.productoProveedorId)}
-              >
-                📄 Descargar PDF
+              >Descargar PDF
               </button>
 
               <div className="pedProvModal-footRight">

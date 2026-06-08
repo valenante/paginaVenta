@@ -43,29 +43,29 @@ import ChangelogModal from "../components/Changelog/ChangelogModal";
 
 const PANEL_BY_TIPO = {
   restaurante: [
-    { key: "mapa", label: "🗺️ Mapa del restaurante", permiso: "mapa.manage", render: () => <MapaEditor /> },
-    { key: "productos", label: "🧾 Carta y productos", permiso: "productos.manage", render: () => <ProductsMenu /> },
-    { key: "caja", label: "💶 Caja diaria", permiso: "caja.manage", render: () => <CajaDiaria /> },
-    { key: "stock", label: "📦 Stock", permiso: "stock.manage", feature: "stock_basico", render: () => <StockPage /> },
+    { key: "mapa", label: "Mapa del restaurante", permiso: "mapa.manage", render: () => <MapaEditor /> },
+    { key: "productos", label: "Carta y productos", permiso: "productos.manage", render: () => <ProductsMenu /> },
+    { key: "caja", label: "Caja diaria", permiso: "caja.manage", render: () => <CajaDiaria /> },
+    { key: "stock", label: "Stock", permiso: "stock.manage", feature: "stock_basico", render: () => <StockPage /> },
     // Valoraciones eliminado — sin uso real
-    { key: "estadisticas", label: "📊 Estadísticas", permiso: "estadisticas.manage", feature: "estadisticas_avanzadas", render: () => <EstadisticasPage type="plato" /> },
-    { key: "finanzas", label: "💰 Finanzas", permiso: "finanzas.view", feature: "finanzas_view", render: () => <FinanzasPage /> },
-    { key: "horarios", label: "📅 Horarios", permiso: "horarios.view", render: () => <HorariosPage /> },
-    { key: "turnos", label: "🔐 Control turnos", permiso: "turnos.manage", render: () => <ControlTurnosPanel /> },
-    { key: "otros", label: "⚙️ Otros", permiso: "herramientas.avanzadas", render: () => <OtrosPage /> },
+    { key: "estadisticas", label: "Estadísticas", permiso: "estadisticas.manage", feature: "estadisticas_avanzadas", render: () => <EstadisticasPage type="plato" /> },
+    { key: "finanzas", label: "Finanzas", permiso: "finanzas.view", feature: "finanzas_view", render: () => <FinanzasPage /> },
+    { key: "horarios", label: "Horarios", permiso: "horarios.view", render: () => <HorariosPage /> },
+    { key: "turnos", label: "Control turnos", permiso: "turnos.manage", render: () => <ControlTurnosPanel /> },
+    { key: "otros", label: "Otros", permiso: "herramientas.avanzadas", render: () => <OtrosPage /> },
   ],
 
   shop: [
-    { key: "productos", label: "🏷️ Productos", permiso: "productos.manage", render: () => <ProductosPageShop /> },
-    { key: "caja", label: "💶 Caja", permiso: "caja.manage", render: () => <CajaDiaria /> },
-    { key: "stock", label: "📦 Stock", permiso: "stock.manage", render: () => <StockPageShop /> },
-    { key: "ventas", label: "📈 Ventas", permiso: "ventas.manage", render: () => <VentasPageShop /> },
+    { key: "productos", label: "Productos", permiso: "productos.manage", render: () => <ProductosPageShop /> },
+    { key: "caja", label: "Caja", permiso: "caja.manage", render: () => <CajaDiaria /> },
+    { key: "stock", label: "Stock", permiso: "stock.manage", render: () => <StockPageShop /> },
+    { key: "ventas", label: "Ventas", permiso: "ventas.manage", render: () => <VentasPageShop /> },
   ],
 };
 
 const STAFF_TAB = {
   key: "staff",
-  label: "📊 Panel operativo",
+  label: "Panel operativo",
   permiso: "dashboard.view",
   render: () => <StaffPanel />,
 };

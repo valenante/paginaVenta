@@ -53,7 +53,7 @@ export default function CopilotInput({ onSend, loading, fullscreen }) {
     <div className="copilot-input">
       {image && (
         <div className="copilot-input__preview">
-          <span className="copilot-input__preview-name">📎 {image.name}</span>
+          <span className="copilot-input__preview-name">{image.name}</span>
           <button className="copilot-input__preview-remove" onClick={() => setImage(null)}>✕</button>
         </div>
       )}

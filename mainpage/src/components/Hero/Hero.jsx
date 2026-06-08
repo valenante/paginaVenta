@@ -25,9 +25,9 @@ const Hero = () => {
           </p>
 
           <ul className="Hero-lista">
-            <li>📌 Numeración encadenada e inalterable en cada ticket y factura.</li>
-            <li>📌 Hash antifraude que garantiza que nadie modifica los datos.</li>
-            <li>📌 Preparado para envío automático a la AEAT.</li>
+            <li>Numeración encadenada e inalterable en cada ticket y factura.</li>
+            <li>Hash antifraude que garantiza que nadie modifica los datos.</li>
+            <li>Preparado para envío automático a la AEAT.</li>
           </ul>
 
           <p className="Hero-aviso">

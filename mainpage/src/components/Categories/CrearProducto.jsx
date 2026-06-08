@@ -267,7 +267,7 @@ const CrearProducto = ({ onClose, onCreated, initialTipo, cloneFrom }) => {
         setSecciones(Array.isArray(seccionesDB) ? seccionesDB : []);
         setEstaciones(Array.isArray(estacionesDB) ? estacionesDB : []);
       } catch (err) {
-        logger.error("❌ Error cargando secciones/estaciones:", err);
+        logger.error("Error cargando secciones/estaciones:", err);
       }
     };
 
@@ -485,7 +485,7 @@ const CrearProducto = ({ onClose, onCreated, initialTipo, cloneFrom }) => {
                 </label>
 
                 {/* === ALÉRGENOS === */}
-                <h4 className="subtitulo--crear">⚠️ Alérgenos</h4>
+                <h4 className="subtitulo--crear">Alérgenos</h4>
                 <p className="help-text--crear">
                   Marca <strong>Contiene</strong> si el alérgeno está en el plato y{" "}
                   <strong>Puede contener</strong> si hay riesgo de contaminación cruzada en cocina.
@@ -500,7 +500,7 @@ const CrearProducto = ({ onClose, onCreated, initialTipo, cloneFrom }) => {
                 />
 
                 {/* === BLOQUE TRADUCCIONES === */}
-                <h4 className="subtitulo--crear">🌍 Traducciones para la carta</h4>
+                <h4 className="subtitulo--crear">Traducciones para la carta</h4>
                 <p className="help-text--crear">
                   Estos textos se mostrarán automáticamente cuando el cliente
                   cambie el idioma en la carta.
@@ -650,8 +650,7 @@ const CrearProducto = ({ onClose, onCreated, initialTipo, cloneFrom }) => {
                             setUsarOtraCategoria(false);
                             setFormData((prev) => ({ ...prev, categoria: "" }));
                           }}
-                        >
-                          ← Elegir categoría existente
+                        >Elegir categoría existente
                         </button>
                       )}
                     </>
@@ -772,8 +771,7 @@ const CrearProducto = ({ onClose, onCreated, initialTipo, cloneFrom }) => {
                     type="button"
                     className="btn-ayuda--crear"
                     onClick={() => setShowPreciosHelp(true)}
-                  >
-                    💡 Ayuda
+                  >Ayuda
                   </button>
                 </div>
 
@@ -920,7 +918,7 @@ const CrearProducto = ({ onClose, onCreated, initialTipo, cloneFrom }) => {
           <section className="form-section--crear">
             <div className="form-group--crear">
               {/* === IMAGEN === */}
-              <h4 className="subtitulo--crear">🖼️ Imagen del producto</h4>
+              <h4 className="subtitulo--crear">Imagen del producto</h4>
               <p className="help-text--crear">
                 Esta imagen se mostrará en la carta digital para los clientes.
                 Recomendamos usar una imagen clara y bien iluminada.
@@ -958,7 +956,7 @@ const CrearProducto = ({ onClose, onCreated, initialTipo, cloneFrom }) => {
                   className="hidden-file-input"
                 />
 
-                {imageFile && <p>📂 {imageFile.name}</p>}
+                {imageFile && <p>{imageFile.name}</p>}
               </div>
 
               {previewUrl && (
@@ -972,7 +970,7 @@ const CrearProducto = ({ onClose, onCreated, initialTipo, cloneFrom }) => {
               )}
 
               {/* === VOZ (aliases) === */}
-              <h4 className="subtitulo--crear">🎙️ Aliases para comandas por voz</h4>
+              <h4 className="subtitulo--crear">Aliases para comandas por voz</h4>
               <p className="help-text--crear">
                 Los aliases son "subnombres" que el sistema utiliza para reconocer
                 este producto en las comandas por voz. Añade formas habituales de
@@ -1012,8 +1010,7 @@ const CrearProducto = ({ onClose, onCreated, initialTipo, cloneFrom }) => {
 
           {/* === STOCK DIRECTO === */}
           <fieldset className="fieldset--crear">
-            <legend className="legend--crear">
-              📦 Stock directo del producto
+            <legend className="legend--crear">Stock directo del producto
             </legend>
 
             <p className="help-text--crear">
@@ -1063,7 +1060,7 @@ const CrearProducto = ({ onClose, onCreated, initialTipo, cloneFrom }) => {
 
           {/* === OPCIONES TPV === */}
           <fieldset className="fieldset--crear">
-            <legend className="legend--crear">⚙️ Opciones de TPV</legend>
+            <legend className="legend--crear">Opciones de TPV</legend>
 
             <div className="stock-directo-row--crear">
               <label className="toggle-stock--crear">
@@ -1146,8 +1143,7 @@ const CrearProducto = ({ onClose, onCreated, initialTipo, cloneFrom }) => {
             </div>
 
             <div className="stock-directo-row--crear" style={{ marginTop: "12px" }}>
-              <span className="toggle-stock-label--crear" style={{ fontWeight: 700 }}>
-                💬 Mensajes predefinidos
+              <span className="toggle-stock-label--crear" style={{ fontWeight: 700 }}>Mensajes predefinidos
               </span>
               <p className="help-text--crear" style={{ marginTop: "4px" }}>
                 Mensajes rápidos que el camarero puede seleccionar al añadir este producto.
@@ -1218,11 +1214,9 @@ const CrearProducto = ({ onClose, onCreated, initialTipo, cloneFrom }) => {
 
           {/* === RECETA OPCIONAL === */}
           <fieldset className="fieldset--crear">
-            <legend className="legend--crear">
-              🧪 Receta y control de stock
+            <legend className="legend--crear">Receta y control de stock
               {isPlanEsencial && (
-                <span style={{ marginLeft: 8, fontSize: "14px", color: "#ff6700" }}>
-                  🔒 Solo en plan Premium
+                <span style={{ marginLeft: 8, fontSize: "14px", color: "#ff6700" }}>Solo en plan Premium
                 </span>
               )}
             </legend>
@@ -1372,8 +1366,7 @@ const CrearProducto = ({ onClose, onCreated, initialTipo, cloneFrom }) => {
                     nuevaClavePrecio: "",
                   }));
                 }}
-              >
-                ➕ Añadir
+              >Añadir
               </button>
             </div>
 

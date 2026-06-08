@@ -156,7 +156,7 @@ function VentasPageShopInner() {
         </div>
 
         {/* Mensajes */}
-        {error && <div className="shops-alert shops-alert--error">❌ {error}</div>}
+        {error && <div className="shops-alert shops-alert--error">{error}</div>}
         {!error && info && <div className="shops-alert shops-alert--info">{info}</div>}
 
         {/* Tabla */}
@@ -242,7 +242,7 @@ export default function VentasPageShop() {
   const tenantId = tenantIdParam || tenantIdCtx;
 
   if (!tenantId) {
-    return <div style={{ padding: 16 }}>❌ No hay tenantId (ni en URL ni en TenantContext)</div>;
+    return <div style={{ padding: 16 }}>No hay tenantId (ni en URL ni en TenantContext)</div>;
   }
 
   return (

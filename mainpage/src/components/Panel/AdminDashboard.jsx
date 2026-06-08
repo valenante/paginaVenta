@@ -1,6 +1,6 @@
 // src/components/Panel/AdminDashboard.jsx
 import React, { useState, useMemo } from "react";
-import { useAdminDashboard } from "../../hooks/useAdminDashboard";
+import { useAdminDashboard } from "../../Hooks/useAdminDashboard";
 import { useFeature } from "../../Hooks/useFeature";
 import { useConfig } from "../../context/ConfigContext";
 import { ComparativaCard, RatioTipoCard, VentasPorHoraCard } from "./AnalyticsFase2";
@@ -48,6 +48,7 @@ export default function AdminDashboard() {
   const [modal, setModal] = useState(null); // "stock" | "reservas" | "eliminaciones" | null
   const [topTab, setTopTab] = useState("plato"); // "plato" | "bebida"
   const [topSort, setTopSort] = useState("cantidad"); // "cantidad" | "importe"
+  const [verMas, setVerMas] = useState(false); // KPIs secundarios colapsados
 
   const { resumen, caja, topProductos, staff, eliminaciones, reservas } = data;
 
@@ -134,43 +135,55 @@ export default function AdminDashboard() {
           <span className="adm__kpi-value">{(caja?.mesasCerradas ?? 0) + (caja?.mesasAbiertas ?? 0)}</span>
           <span className="adm__kpi-label">Mesas del día{esHoy && caja?.mesasAbiertas > 0 ? ` (${caja.mesasAbiertas} abiertas)` : ""}</span>
         </div>
-        {esHoy && caja?.mesasAbiertas > 0 && (
-          <div className="adm__kpi adm__kpi--mesas">
-            <span className="adm__kpi-value">{fmt(caja?.enMesasAbiertas)} €</span>
-            <span className="adm__kpi-label">En mesas abiertas</span>
-          </div>
-        )}
         <div className="adm__kpi adm__kpi--comensales">
           <span className="adm__kpi-value">{resumen?.comensalesHoy ?? "--"}</span>
           <span className="adm__kpi-label">Comensales hoy</span>
         </div>
-        <div className="adm__kpi adm__kpi--ticket">
-          <span className="adm__kpi-value">{fmt(resumen?.ticketMedioMesa)} €</span>
-          <span className="adm__kpi-label">Ticket medio / mesa</span>
-        </div>
-        <div className="adm__kpi adm__kpi--ticket-com">
-          <span className="adm__kpi-value">{fmt(resumen?.ticketMedioComensal)} €</span>
-          <span className="adm__kpi-label">Ticket medio / comensal</span>
-        </div>
-        <div className="adm__kpi adm__kpi--pedidos">
-          <span className="adm__kpi-value">{resumen?.pedidosHoy ?? 0}</span>
-          <span className="adm__kpi-label">Pedidos</span>
-        </div>
-        <button className="adm__kpi adm__kpi--cancelados" onClick={() => setModal("eliminaciones")}>
-          <span className="adm__kpi-value">{elimItems.length}</span>
-          <span className="adm__kpi-label">Cancelados</span>
-        </button>
-        {resumen?.duracionMediaMin != null && (
-          <div className="adm__kpi adm__kpi--duracion">
-            <span className="adm__kpi-value">
-              {resumen.duracionMediaMin >= 60
-                ? `${Math.floor(resumen.duracionMediaMin / 60)}h ${resumen.duracionMediaMin % 60}m`
-                : `${resumen.duracionMediaMin} min`}
-            </span>
-            <span className="adm__kpi-label">Tiempo medio / mesa</span>
-          </div>
+
+        {verMas && (
+          <>
+            {esHoy && caja?.mesasAbiertas > 0 && (
+              <div className="adm__kpi adm__kpi--mesas">
+                <span className="adm__kpi-value">{fmt(caja?.enMesasAbiertas)} €</span>
+                <span className="adm__kpi-label">En mesas abiertas</span>
+              </div>
+            )}
+            <div className="adm__kpi adm__kpi--ticket">
+              <span className="adm__kpi-value">{fmt(resumen?.ticketMedioMesa)} €</span>
+              <span className="adm__kpi-label">Ticket medio / mesa</span>
+            </div>
+            <div className="adm__kpi adm__kpi--ticket-com">
+              <span className="adm__kpi-value">{fmt(resumen?.ticketMedioComensal)} €</span>
+              <span className="adm__kpi-label">Ticket medio / comensal</span>
+            </div>
+            <div className="adm__kpi adm__kpi--pedidos">
+              <span className="adm__kpi-value">{resumen?.pedidosHoy ?? 0}</span>
+              <span className="adm__kpi-label">Pedidos</span>
+            </div>
+            <button className="adm__kpi adm__kpi--cancelados" onClick={() => setModal("eliminaciones")}>
+              <span className="adm__kpi-value">{elimItems.length}</span>
+              <span className="adm__kpi-label">Cancelados</span>
+            </button>
+            {resumen?.duracionMediaMin != null && (
+              <div className="adm__kpi adm__kpi--duracion">
+                <span className="adm__kpi-value">
+                  {resumen.duracionMediaMin >= 60
+                    ? `${Math.floor(resumen.duracionMediaMin / 60)}h ${resumen.duracionMediaMin % 60}m`
+                    : `${resumen.duracionMediaMin} min`}
+                </span>
+                <span className="adm__kpi-label">Tiempo medio / mesa</span>
+              </div>
+            )}
+          </>
         )}
       </div>
+      <button
+        className="adm__kpis-toggle"
+        onClick={() => setVerMas((v) => !v)}
+        aria-expanded={verMas}
+      >
+        {verMas ? "Ver menos ▲" : "Ver más ▼"}
+      </button>
 
       {/* ── Tarjetas secundarias (clickables) ── */}
       <div className="adm__cards">
@@ -221,14 +234,12 @@ export default function AdminDashboard() {
               <button
                 className={`adm__tab ${topTab === "plato" ? "adm__tab--active" : ""}`}
                 onClick={() => setTopTab("plato")}
-              >
-                🍽 Platos
+              >Platos
               </button>
               <button
                 className={`adm__tab ${topTab === "bebida" ? "adm__tab--active" : ""}`}
                 onClick={() => setTopTab("bebida")}
-              >
-                🍺 Bebidas
+              >Bebidas
               </button>
               <span className="adm__tabs-sep">|</span>
               <button

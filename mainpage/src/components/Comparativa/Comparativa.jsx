@@ -16,8 +16,8 @@ const filas = [
 ];
 
 function renderCell(val) {
-  if (val === "Incluido" || val === "Con predicción") return <span className="Comp-check">✓ {val}</span>;
-  if (val === "No existe" || val === "Imposible" || val === "No incluido") return <span className="Comp-cross">✗ {val}</span>;
+  if (val === "Incluido" || val === "Con predicción") return <span className="Comp-check">{val}</span>;
+  if (val === "No existe" || val === "Imposible" || val === "No incluido") return <span className="Comp-cross">{val}</span>;
   const isCoste = val.includes("€");
   return <span className={isCoste ? "Comp-cost" : "Comp-text"}>{val}</span>;
 }

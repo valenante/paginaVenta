@@ -7,7 +7,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { FiBell } from "react-icons/fi";
+import { IoNotifications } from "react-icons/io5";
 import {
   useStockAlertas,
   useStockAlertasCount,
@@ -68,7 +68,7 @@ export default function StockAlertasBell() {
         aria-label={`${count} alertas de stock`}
         title={`${count} alerta${count === 1 ? "" : "s"} de stock`}
       >
-        <span className="stockBell-icon"><FiBell aria-hidden /></span>
+        <span className="stockBell-icon"><IoNotifications aria-hidden /></span>
         <span className="stockBell-badge">{count > 99 ? "99+" : count}</span>
       </button>
 

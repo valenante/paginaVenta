@@ -147,13 +147,13 @@ export default function EquipoDashboard() {
 
           {/* Insights */}
           {ranking.length >= 2 && (() => {
-            const mejor = ranking[0];
+            const mejorTicket = [...ranking].sort((a, b) => b.ticketMedio - a.ticketMedio)[0];
             const mayorCancel = [...ranking].sort((a, b) => b.cancelaciones - a.cancelaciones)[0];
             const mejorUpsell = [...ranking].sort((a, b) => b.pctAdicionales - a.pctAdicionales)[0];
             const insights = [];
 
-            if (mejor.ticketMedio > prom.ticketMedio * 1.1) {
-              insights.push(`${mejor.nombre} tiene el mejor ticket medio (${mejor.ticketMedio.toFixed(2)}€, +${Math.round(((mejor.ticketMedio - prom.ticketMedio) / prom.ticketMedio) * 100)}% vs media).`);
+            if (mejorTicket.ticketMedio > prom.ticketMedio * 1.1) {
+              insights.push(`${mejorTicket.nombre} tiene el mejor ticket medio (${mejorTicket.ticketMedio.toFixed(2)}€, +${Math.round(((mejorTicket.ticketMedio - prom.ticketMedio) / prom.ticketMedio) * 100)}% vs media).`);
             }
             if (mejorUpsell.pctAdicionales > 5) {
               insights.push(`${mejorUpsell.nombre} lidera en upselling con ${mejorUpsell.pctAdicionales.toFixed(0)}% de adicionales.`);

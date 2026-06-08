@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
+import { FiGrid, FiSettings, FiMonitor, FiBookOpen, FiHelpCircle, FiLifeBuoy, FiLogOut, FiShield, FiShoppingBag } from "react-icons/fi";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { useFeaturesPlan } from "../../context/FeaturesPlanContext";
 import { useTenant } from "../../context/TenantContext";
@@ -215,7 +216,7 @@ export default function TopBar() {
                     className={`TopBar-btn special ${isActive("/superadmin") ? "active" : ""}`}
                     onClick={cerrarMenu}
                   >
-                    Panel SuperAdmin
+                    <FiShield aria-hidden /> Panel SuperAdmin
                   </Link>
 
                   <button
@@ -226,7 +227,7 @@ export default function TopBar() {
                     }}
                     className={`TopBar-btn login ${isActive("/configuracion") ? "active" : ""}`}
                   >
-                    Configuración
+                    <FiSettings aria-hidden /> Configuración
                   </button>
 
                   {!esTienda ? (
@@ -236,7 +237,7 @@ export default function TopBar() {
                         onClick={() => abrirEnNuevaPestana(tpvURL)}
                         className="TopBar-btn login"
                       >
-                        TPV
+                        <FiMonitor aria-hidden /> TPV
                       </button>
 
                       <button
@@ -244,7 +245,7 @@ export default function TopBar() {
                         onClick={() => abrirEnNuevaPestana(cartaURL)}
                         className="TopBar-btn login"
                       >
-                        Carta
+                        <FiBookOpen aria-hidden /> Carta
                       </button>
                     </>
                   ) : (
@@ -253,7 +254,7 @@ export default function TopBar() {
                       onClick={() => abrirEnNuevaPestana(shopsURL)}
                       className="TopBar-btn login"
                     >
-                      Alef Shops
+                      <FiShoppingBag aria-hidden /> Alef Shops
                     </button>
                   )}
                 </>
@@ -272,7 +273,7 @@ export default function TopBar() {
                       : ""
                     }`}
                 >
-                  Panel de Gestión
+                  <FiGrid aria-hidden /> Panel de Gestión
                 </button>
               )}
 
@@ -292,7 +293,7 @@ export default function TopBar() {
                     }}
                     className={`TopBar-btn login ${isActive("/configuracion") ? "active" : ""}`}
                   >
-                    Configuración
+                    <FiSettings aria-hidden /> Configuración
                   </button>
                 )}
 
@@ -306,7 +307,7 @@ export default function TopBar() {
                         onClick={() => abrirEnNuevaPestana(tpvURL)}
                         className="TopBar-btn login"
                       >
-                        TPV
+                        <FiMonitor aria-hidden /> TPV
                       </button>
 
                       {!isPlanEsencial && (
@@ -315,7 +316,7 @@ export default function TopBar() {
                           onClick={() => abrirEnNuevaPestana(cartaURL)}
                           className="TopBar-btn login"
                         >
-                          Carta
+                          <FiBookOpen aria-hidden /> Carta
                         </button>
                       )}
                     </>
@@ -325,7 +326,7 @@ export default function TopBar() {
                       onClick={() => abrirEnNuevaPestana(shopsURL)}
                       className="TopBar-btn login"
                     >
-                      Shop
+                      <FiShoppingBag aria-hidden /> Shop
                     </button>
                   )}
                 </>
@@ -339,7 +340,7 @@ export default function TopBar() {
                     onClick={cerrarMenu}
                     className={`TopBar-btn login ${isActive("/ayuda") ? "active" : ""}`}
                   >
-                    Ayuda
+                    <FiHelpCircle aria-hidden /> Ayuda
                   </Link>
 
                   <Link
@@ -347,7 +348,7 @@ export default function TopBar() {
                     onClick={cerrarMenu}
                     className={`TopBar-btn login ${isActive("/soporte") ? "active" : ""}`}
                   >
-                    Soporte
+                    <FiLifeBuoy aria-hidden /> Soporte
                   </Link>
                 </>
               )}
@@ -357,7 +358,7 @@ export default function TopBar() {
                 onClick={logout}
                 className="TopBar-btn cta"
               >
-                Cerrar sesión
+                <FiLogOut aria-hidden /> Cerrar sesión
               </button>
             </>
           )}

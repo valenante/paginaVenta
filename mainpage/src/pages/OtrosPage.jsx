@@ -7,53 +7,64 @@ import SugerenciasConfigPage from "./SugerenciasConfigPage";
 import AprendizajeIAPage from "./AprendizajeIAPage";
 import FacturasAutomaticasPage from "./FacturasAutomaticasPage";
 import InstagramPage from "./InstagramPage";
+import {
+  FiClock, FiRotateCcw, FiZap, FiStar, FiThumbsUp, FiCpu, FiFileText, FiInstagram,
+} from "react-icons/fi";
 import "./OtrosPage.css";
 
 const MODULES = [
   {
     key: "tiempos",
+    icon: FiClock,
     label: "Tiempos cocina",
     description: "Configura tiempos, simulador, alertas y análisis del motor adaptativo.",
     component: TiemposCocina,
   },
   {
     key: "replay",
+    icon: FiRotateCcw,
     label: "Replay del día",
     description: "Revive el servicio del día: pedidos, tiempos y flujo de cocina.",
     component: DayReplay,
   },
   {
     key: "automatizaciones",
+    icon: FiZap,
     label: "Automatizaciones",
     description: "Pedidos a proveedores, alertas de margen, predicción de stock y más.",
     component: AutomatizacionesPage,
   },
   {
     key: "google-reviews",
+    icon: FiStar,
     label: "Google Reviews",
     description: "Gestiona reseñas de Google Business con respuestas automáticas por IA.",
     component: GoogleReviewsPage,
   },
   {
     key: "sugerencias",
+    icon: FiThumbsUp,
     label: "Sugerencias inteligentes",
     description: "Configura recomendaciones automáticas, reglas fijas y flujo de comida.",
     component: SugerenciasConfigPage,
   },
   {
     key: "aprendizaje-ia",
+    icon: FiCpu,
     label: "Aprendizaje IA",
     description: "Métricas del asistente IA en carta: scores de productos, propuestas y tendencias.",
     component: AprendizajeIAPage,
   },
   {
     key: "facturas-automaticas",
+    icon: FiFileText,
     label: "Facturas automáticas",
     description: "Lee facturas de tu email y las procesa automáticamente con IA.",
     component: FacturasAutomaticasPage,
   },
   {
     key: "instagram",
+    icon: FiInstagram,
     label: "Instagram",
     description: "Publica automáticamente en Instagram con contenido generado por IA basado en tus datos.",
     component: InstagramPage,
@@ -95,6 +106,11 @@ export default function OtrosPage() {
             onClick={() => mod.component && setActiveModule(mod.key)}
             disabled={!mod.component}
           >
+            {mod.icon && (
+              <span className="otros-card__icon">
+                <mod.icon aria-hidden />
+              </span>
+            )}
             <div className="otros-card__body">
               <span className="otros-card__label">{mod.label}</span>
               <span className="otros-card__desc">{mod.description}</span>

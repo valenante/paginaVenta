@@ -1,5 +1,9 @@
 // src/pages/PanelPro.jsx
 import React, { useMemo, useState, useEffect, useRef } from "react";
+import {
+  FiMap, FiBookOpen, FiDollarSign, FiPackage, FiBarChart2, FiPieChart,
+  FiCalendar, FiClock, FiGrid, FiTag, FiTrendingUp, FiActivity,
+} from "react-icons/fi";
 import "../styles/PanelPro.css";
 
 
@@ -43,28 +47,29 @@ import ChangelogModal from "../components/Changelog/ChangelogModal";
 
 const PANEL_BY_TIPO = {
   restaurante: [
-    { key: "mapa", label: "Mapa del restaurante", permiso: "mapa.manage", render: () => <MapaEditor /> },
-    { key: "productos", label: "Carta y productos", permiso: "productos.manage", render: () => <ProductsMenu /> },
-    { key: "caja", label: "Caja diaria", permiso: "caja.manage", render: () => <CajaDiaria /> },
-    { key: "stock", label: "Stock", permiso: "stock.manage", feature: "stock_basico", render: () => <StockPage /> },
+    { key: "mapa", icon: FiMap, label: "Mapa del restaurante", permiso: "mapa.manage", render: () => <MapaEditor /> },
+    { key: "productos", icon: FiBookOpen, label: "Carta y productos", permiso: "productos.manage", render: () => <ProductsMenu /> },
+    { key: "caja", icon: FiDollarSign, label: "Caja diaria", permiso: "caja.manage", render: () => <CajaDiaria /> },
+    { key: "stock", icon: FiPackage, label: "Stock", permiso: "stock.manage", feature: "stock_basico", render: () => <StockPage /> },
     // Valoraciones eliminado — sin uso real
-    { key: "estadisticas", label: "Estadísticas", permiso: "estadisticas.manage", feature: "estadisticas_avanzadas", render: () => <EstadisticasPage type="plato" /> },
-    { key: "finanzas", label: "Finanzas", permiso: "finanzas.view", feature: "finanzas_view", render: () => <FinanzasPage /> },
-    { key: "horarios", label: "Horarios", permiso: "horarios.view", render: () => <HorariosPage /> },
-    { key: "turnos", label: "Control turnos", permiso: "turnos.manage", render: () => <ControlTurnosPanel /> },
-    { key: "otros", label: "Otros", permiso: "herramientas.avanzadas", render: () => <OtrosPage /> },
+    { key: "estadisticas", icon: FiBarChart2, label: "Estadísticas", permiso: "estadisticas.manage", feature: "estadisticas_avanzadas", render: () => <EstadisticasPage type="plato" /> },
+    { key: "finanzas", icon: FiPieChart, label: "Finanzas", permiso: "finanzas.view", feature: "finanzas_view", render: () => <FinanzasPage /> },
+    { key: "horarios", icon: FiCalendar, label: "Horarios", permiso: "horarios.view", render: () => <HorariosPage /> },
+    { key: "turnos", icon: FiClock, label: "Control turnos", permiso: "turnos.manage", render: () => <ControlTurnosPanel /> },
+    { key: "otros", icon: FiGrid, label: "Otros", permiso: "herramientas.avanzadas", render: () => <OtrosPage /> },
   ],
 
   shop: [
-    { key: "productos", label: "Productos", permiso: "productos.manage", render: () => <ProductosPageShop /> },
-    { key: "caja", label: "Caja", permiso: "caja.manage", render: () => <CajaDiaria /> },
-    { key: "stock", label: "Stock", permiso: "stock.manage", render: () => <StockPageShop /> },
-    { key: "ventas", label: "Ventas", permiso: "ventas.manage", render: () => <VentasPageShop /> },
+    { key: "productos", icon: FiTag, label: "Productos", permiso: "productos.manage", render: () => <ProductosPageShop /> },
+    { key: "caja", icon: FiDollarSign, label: "Caja", permiso: "caja.manage", render: () => <CajaDiaria /> },
+    { key: "stock", icon: FiPackage, label: "Stock", permiso: "stock.manage", render: () => <StockPageShop /> },
+    { key: "ventas", icon: FiTrendingUp, label: "Ventas", permiso: "ventas.manage", render: () => <VentasPageShop /> },
   ],
 };
 
 const STAFF_TAB = {
   key: "staff",
+  icon: FiActivity,
   label: "Panel operativo",
   permiso: "dashboard.view",
   render: () => <StaffPanel />,
@@ -167,6 +172,7 @@ export default function PanelPro() {
               className={active === t.key ? "active" : ""}
               onClick={() => setActive(t.key)}
             >
+              {t.icon && <t.icon className="panelpro-tab-ico" aria-hidden />}
               {t.label}
             </button>
           ))}

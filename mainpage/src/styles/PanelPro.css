@@ -46,8 +46,15 @@
 }
 
 /* ===== TABS BUTTON ===== */
+.panelpro-tab-ico {
+  font-size: 1.05em;
+  flex-shrink: 0;
+}
 .panelpro-tabs button {
-  white-space: nowrap;         /* ⭐ Evita ruptura de texto */
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  white-space: nowrap;         /* Evita ruptura de texto */
   padding: 0.55rem 1.2rem;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.06);

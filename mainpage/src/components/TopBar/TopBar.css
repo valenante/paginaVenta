@@ -230,6 +230,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 0.4rem;
 
   padding: 0.52rem 1.05rem;
   border-radius: 999px;

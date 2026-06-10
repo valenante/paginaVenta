@@ -11,7 +11,7 @@ const PROMO = {
   planes: [
     {
       nombre: "Esencial",
-      precioOriginal: 129,
+      precioOriginal: 79.99,
       precioPromo: 59.99,
       features: [
         "TPV tactil completo",
@@ -23,7 +23,7 @@ const PROMO = {
     },
     {
       nombre: "Premium",
-      precioOriginal: 199,
+      precioOriginal: 129.99,
       precioPromo: 109.99,
       destacado: true,
       features: [
@@ -85,7 +85,7 @@ const PromoLanzamiento = () => {
 
               <div className="PromoCard-precio">
                 <span className="PromoCard-precio-original">
-                  {plan.precioOriginal} euros/mes
+                  {plan.precioOriginal.toFixed(2).replace(".", ",")} euros/mes
                 </span>
                 <span className="PromoCard-precio-promo">
                   {plan.precioPromo.toFixed(2).replace(".", ",")}

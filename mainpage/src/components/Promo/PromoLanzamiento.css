@@ -143,6 +143,41 @@
   color: rgba(226, 232, 240, 0.55);
 }
 
+/* ── Instalacion bonificada ── */
+
+.PromoCard-instalacion {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.6rem 0.8rem;
+  border-radius: var(--radius-sm);
+  background: rgba(16, 185, 129, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.15);
+}
+
+.PromoCard-instalacion-label {
+  font-size: var(--font-size-sm);
+  color: rgba(226, 232, 240, 0.7);
+}
+
+.PromoCard-instalacion-valores {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.PromoCard-instalacion-precio {
+  font-size: var(--font-size-sm);
+  color: rgba(226, 232, 240, 0.35);
+  text-decoration: line-through;
+}
+
+.PromoCard-instalacion-gratis {
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: var(--color-exito);
+}
+
 /* ── Features dentro de cada card ── */
 
 .PromoCard-features {
@@ -200,7 +235,6 @@
   color: var(--color-exito);
   letter-spacing: 0.02em;
   white-space: nowrap;
-  margin-left: 1rem;
 }
 
 /* ── Social proof ── */

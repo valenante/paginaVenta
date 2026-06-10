@@ -13,6 +13,7 @@ const PROMO = {
       nombre: "Esencial",
       precioOriginal: 79.99,
       precioPromo: 59.99,
+      instalacion: 279.99,
       features: [
         "TPV tactil completo",
         "Carta QR con IA",
@@ -25,6 +26,7 @@ const PROMO = {
       nombre: "Premium",
       precioOriginal: 129.99,
       precioPromo: 109.99,
+      instalacion: 479.99,
       destacado: true,
       features: [
         "Todo lo de Esencial",
@@ -37,7 +39,6 @@ const PROMO = {
     },
   ],
   extras: [
-    { label: "Instalacion y puesta en marcha", valor: "GRATIS" },
     { label: "Carga de tu carta y datos", valor: "GRATIS" },
     { label: "Formacion personalizada", valor: "GRATIS" },
     { label: "Sin permanencia", valor: "Cancela cuando quieras" },
@@ -90,6 +91,16 @@ const PromoLanzamiento = () => {
                 <span className="PromoCard-precio-promo">
                   {plan.precioPromo.toFixed(2).replace(".", ",")}
                   <span className="PromoCard-precio-unidad"> euros/mes</span>
+                </span>
+              </div>
+
+              <div className="PromoCard-instalacion">
+                <span className="PromoCard-instalacion-label">Instalacion bonificada</span>
+                <span className="PromoCard-instalacion-valores">
+                  <span className="PromoCard-instalacion-precio">
+                    {plan.instalacion.toFixed(2).replace(".", ",")} euros
+                  </span>
+                  <span className="PromoCard-instalacion-gratis">GRATIS</span>
                 </span>
               </div>
 

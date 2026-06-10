@@ -6,7 +6,7 @@ const PROMO = {
   ciudad: "Torremolinos",
   plazasTotal: 10,
   plazasOcupadas: 2,
-  clientes: ["Zabor Feten", "Bodegon Argentino"],
+  clientes: ["Zabor Fetén", "Bodegón Argentino"],
   whatsapp: "623754328",
   planes: [
     {
@@ -15,9 +15,9 @@ const PROMO = {
       precioPromo: 59.99,
       instalacion: 279.99,
       features: [
-        "TPV tactil completo",
+        "TPV táctil completo",
         "Carta QR con IA",
-        "Facturacion VeriFactu",
+        "Facturación VeriFactu",
         "Stock y proveedores",
         "Soporte incluido",
       ],
@@ -32,15 +32,15 @@ const PROMO = {
         "Todo lo de Esencial",
         "Copiloto IA avanzado",
         "Automatizaciones",
-        "Instagram y resenas con IA",
+        "Instagram y reseñas con IA",
         "Cocina y barra conectadas",
-        "Analitica de margenes",
+        "Analítica de márgenes",
       ],
     },
   ],
   extras: [
     { label: "Carga de tu carta y datos", valor: "GRATIS" },
-    { label: "Formacion personalizada", valor: "GRATIS" },
+    { label: "Formación personalizada", valor: "GRATIS" },
     { label: "Sin permanencia", valor: "Cancela cuando quieras" },
   ],
 };
@@ -59,7 +59,7 @@ const PromoLanzamiento = () => {
     <section className="Promo reveal" id="promo">
       <div className="Promo-inner section--wide">
         <span className="Promo-badge">
-          Promocion {PROMO.ciudad}
+          Promoción {PROMO.ciudad}
         </span>
 
         <h2 className="Promo-titulo">
@@ -68,8 +68,8 @@ const PromoLanzamiento = () => {
 
         <p className="Promo-subtitulo">
           Precio de lanzamiento exclusivo para los primeros{" "}
-          {PROMO.plazasTotal} restaurantes. Instalacion, carga de datos y
-          formacion incluidas sin coste.
+          {PROMO.plazasTotal} restaurantes. Instalación, carga de datos y
+          formación incluidas sin coste.
         </p>
 
         <div className="Promo-cards">
@@ -95,7 +95,7 @@ const PromoLanzamiento = () => {
               </div>
 
               <div className="PromoCard-instalacion">
-                <span className="PromoCard-instalacion-label">Instalacion bonificada</span>
+                <span className="PromoCard-instalacion-label">Instalación bonificada</span>
                 <span className="PromoCard-instalacion-valores">
                   <span className="PromoCard-instalacion-precio">
                     {plan.instalacion.toFixed(2).replace(".", ",")} euros
@@ -123,7 +123,7 @@ const PromoLanzamiento = () => {
         </div>
 
         <p className="Promo-social">
-          Ya confian en ALEF:{" "}
+          Ya confían en ALEF:{" "}
           <strong>{PROMO.clientes.join(" · ")}</strong>
         </p>
 

@@ -1,0 +1,342 @@
+/* =========================================================
+   PROMO LANZAMIENTO — seccion dark de oferta local
+   ========================================================= */
+
+.Promo {
+  padding: var(--space-2xl) var(--space-lg);
+  background:
+    radial-gradient(circle at 20% 50%, rgba(255, 145, 73, 0.10) 0, transparent 55%),
+    radial-gradient(circle at 80% 30%, rgba(96, 181, 255, 0.08) 0, transparent 50%),
+    linear-gradient(170deg, #070c1e 0%, #0b1020 50%, #10132a 100%);
+  color: #e2e8f0;
+  text-align: center;
+}
+
+.Promo-inner {
+  max-width: 820px;
+  margin: 0 auto;
+}
+
+/* ── Badge ── */
+
+.Promo-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.3rem 1rem;
+  border-radius: var(--radius-pill);
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  background: rgba(255, 145, 73, 0.15);
+  color: var(--color-secundario);
+  margin-bottom: 1rem;
+}
+
+/* ── Titulo + subtitulo ── */
+
+.Promo-titulo {
+  margin: 0 0 0.8rem;
+  font-size: var(--font-size-3xl);
+  font-weight: 800;
+  line-height: 1.1;
+  color: #ffffff;
+}
+
+.Promo-subtitulo {
+  margin: 0 auto 2.2rem;
+  font-size: var(--font-size-md);
+  line-height: 1.65;
+  color: rgba(226, 232, 240, 0.8);
+  max-width: 580px;
+}
+
+/* ── Cards de precios (grid 2-col) ── */
+
+.Promo-cards {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.PromoCard {
+  position: relative;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(148, 163, 184, 0.15);
+  border-radius: var(--radius-lg);
+  padding: 1.8rem 1.4rem 1.4rem;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  transition:
+    transform 0.18s ease,
+    border-color 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.PromoCard:hover {
+  transform: translateY(-3px);
+  border-color: rgba(96, 181, 255, 0.4);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.3);
+}
+
+/* Card destacada */
+
+.PromoCard--destacado {
+  border-color: var(--color-primario);
+  border-width: 2px;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(96, 181, 255, 0.06) 0%,
+      rgba(255, 255, 255, 0.03) 100%
+    );
+}
+
+.PromoCard-ribbon {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  padding: 0.2rem 0.65rem;
+  border-radius: var(--radius-pill);
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  background: var(--color-secundario);
+  color: #fff;
+}
+
+.PromoCard-nombre {
+  margin: 0;
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  color: #fff;
+}
+
+/* ── Precios ── */
+
+.PromoCard-precio {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.PromoCard-precio-original {
+  font-size: var(--font-size-sm);
+  color: rgba(226, 232, 240, 0.4);
+  text-decoration: line-through;
+}
+
+.PromoCard-precio-promo {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1.1;
+}
+
+.PromoCard-precio-unidad {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: rgba(226, 232, 240, 0.55);
+}
+
+/* ── Features dentro de cada card ── */
+
+.PromoCard-features {
+  list-style: none;
+  padding: 0;
+  margin: 0.4rem 0 0;
+  font-size: var(--font-size-sm);
+  color: rgba(226, 232, 240, 0.85);
+}
+
+.PromoCard-features li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.4rem;
+  margin-bottom: 0.35rem;
+}
+
+.PromoCard-features li::before {
+  content: "\2713";
+  font-weight: 700;
+  color: var(--color-primario);
+  flex-shrink: 0;
+}
+
+/* ── Extras incluidos (tabla apilada) ── */
+
+.Promo-extras {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1.5rem;
+  border: 1px solid rgba(148, 163, 184, 0.12);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.Promo-extra-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1.2rem;
+  font-size: var(--font-size-sm);
+}
+
+.Promo-extra-row + .Promo-extra-row {
+  border-top: 1px solid rgba(148, 163, 184, 0.08);
+}
+
+.Promo-extra-label {
+  color: rgba(226, 232, 240, 0.8);
+  text-align: left;
+}
+
+.Promo-extra-valor {
+  font-weight: 700;
+  color: var(--color-exito);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  margin-left: 1rem;
+}
+
+/* ── Social proof ── */
+
+.Promo-social {
+  margin: 0 0 1.5rem;
+  font-size: var(--font-size-sm);
+  color: rgba(226, 232, 240, 0.65);
+}
+
+.Promo-social strong {
+  color: #ffffff;
+}
+
+/* ── Barra de plazas ── */
+
+.Promo-plazas {
+  max-width: 400px;
+  margin: 0 auto 2rem;
+}
+
+.Promo-plazas-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: var(--font-size-sm);
+  color: rgba(226, 232, 240, 0.65);
+  margin-bottom: 0.5rem;
+}
+
+.Promo-plazas-info strong {
+  color: #ffffff;
+}
+
+.Promo-plazas-restantes {
+  font-weight: 600;
+  color: var(--color-secundario);
+}
+
+.Promo-plazas-bar {
+  height: 8px;
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+.Promo-plazas-fill {
+  height: 100%;
+  border-radius: var(--radius-pill);
+  background: linear-gradient(90deg, var(--color-primario), var(--color-secundario));
+  transition: width 0.6s ease-out;
+}
+
+/* ── CTA ── */
+
+.Promo-cta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.Promo-boton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.85rem 2rem;
+  border-radius: var(--radius-pill);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  text-decoration: none;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition:
+    transform 0.16s ease,
+    box-shadow 0.16s ease,
+    background 0.16s ease;
+}
+
+.Promo-boton.principal {
+  background: var(--color-secundario);
+  color: #ffffff;
+  box-shadow: 0 12px 30px rgba(255, 145, 73, 0.25);
+}
+
+.Promo-boton.principal:hover {
+  background: var(--color-secundario-oscuro);
+  transform: translateY(-1px);
+  box-shadow: 0 18px 40px rgba(255, 145, 73, 0.35);
+}
+
+.Promo-boton.whatsapp {
+  background: rgba(37, 211, 102, 0.12);
+  color: #25d366;
+  border-color: rgba(37, 211, 102, 0.3);
+}
+
+.Promo-boton.whatsapp:hover {
+  background: rgba(37, 211, 102, 0.2);
+  transform: translateY(-1px);
+}
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 640px) {
+  .Promo-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .Promo-titulo {
+    font-size: var(--font-size-2xl);
+  }
+
+  .PromoCard-precio-promo {
+    font-size: 1.8rem;
+  }
+
+  .Promo-cta {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .Promo-extra-row {
+    padding: 0.65rem 0.9rem;
+    font-size: var(--font-size-xs);
+  }
+}
+
+@media (max-width: 420px) {
+  .Promo {
+    padding: var(--space-xl) var(--space-sm);
+  }
+
+  .PromoCard {
+    padding: 1.4rem 1rem 1.2rem;
+  }
+}

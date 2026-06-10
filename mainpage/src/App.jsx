@@ -14,6 +14,7 @@ import SocialAuto from "./components/SocialAuto/SocialAuto";
 import FeaturesGrid from "./components/FeaturesGrid/FeaturesGrid";
 import CartaShowcase from "./components/CartaShowcase/CartaShowcase";
 import Packs from "./components/Packs/Packs";
+import PromoLanzamiento from "./components/Promo/PromoLanzamiento";
 import FAQ from "./components/FAQ/FAQ";
 import Contact from "./components/Contact/Contact";
 import Footer from "./components/Footer/Footer";
@@ -71,6 +72,8 @@ function LandingPage() {
       <SEOHead path="/" />
       <HomeStructuredData />
       <TopBar />
+      {/* Promo lanzamiento local — temporal, primera seccion */}
+      <PromoLanzamiento />
       {/* B1: Hero */}
       <Introduccion />
       {/* B2: Dolor con números */}

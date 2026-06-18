@@ -129,6 +129,7 @@ export default function Registro() {
   const handleNext = useCallback(() => {
     if (!validateStep(paso)) return;
     setValidationError("");
+    if (paso === 1 && typeof fbq === "function") fbq("track", "Lead");
     setPaso(paso + 1);
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [paso, validateStep]);

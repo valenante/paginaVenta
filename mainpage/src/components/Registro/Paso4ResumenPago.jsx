@@ -63,6 +63,7 @@ export default function Paso4ResumenPago({
 
       // Limpiar borrador del registro antes de salir a Stripe
       try { localStorage.removeItem("alef_registro_draft"); } catch {}
+      if (typeof fbq === "function") fbq("track", "InitiateCheckout", { currency: "EUR", value: precio });
       window.location.href = sesion.url;
       // NO pongas setLoading(false) aquí porque ya te vas
     } catch (err) {

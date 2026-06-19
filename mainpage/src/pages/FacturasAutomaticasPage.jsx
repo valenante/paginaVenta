@@ -108,6 +108,15 @@ function JobDetail({ job, onClose, onAction }) {
                     {l.matchEstado === "nuevo" && <span className="finv-badge badge--info">Nuevo</span>}
                     {l.matchEstado === "pendiente" && <span className="finv-badge badge--muted">—</span>}
                     {l.precioCambio && <span className="finv-price-change">{l.precioAnterior?.toFixed(2)}→{l.precioUnitario?.toFixed(2)}€</span>}
+                    {(l.sospecha || []).map((s) => (
+                      <span
+                        key={s}
+                        className="finv-badge badge--error finv-sospecha"
+                        title="Posible error de lectura — revísalo antes de aprobar"
+                      >
+                        {s === "linea_no_cuadra" ? "⚠ No cuadra" : s === "precio_atipico" ? "⚠ Precio atípico" : `⚠ ${s}`}
+                      </span>
+                    ))}
                   </span>
                   <span style={{fontWeight:600, color: l._stockPreview ? "#e2e8f0" : "#64748b"}}>
                     {l._stockPreview ? l._stockPreview.productoNombre : "—"}

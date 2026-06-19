@@ -233,14 +233,23 @@ export default function HistorialMovimientosModal({ ingrediente, onClose }) {
                     <span className="historial-row-actor">
                       {m.actor?.name || m.actor?.email || "Sistema"}
                     </span>
-                    {m.referencia && (
-                      <span className="historial-row-ref">
-                        {m.referencia
-                          .replace(/Pedido\s+[0-9a-f]{24}/gi, "Venta")
-                          .replace(/[0-9a-f]{24}/gi, "")
-                          .replace(/\s{2,}/g, " ")
-                          .trim()}
+                    {(m.mesaNumero || (m.tipoPrecio && m.tipoPrecio !== "precioBase")) ? (
+                      <span className="historial-row-chips">
+                        {m.mesaNumero && <span className="historial-chip">Mesa {m.mesaNumero}</span>}
+                        {m.tipoPrecio && m.tipoPrecio !== "precioBase" && (
+                          <span className="historial-chip historial-chip--tipo">{m.tipoPrecio}</span>
+                        )}
                       </span>
+                    ) : (
+                      m.referencia && (
+                        <span className="historial-row-ref">
+                          {m.referencia
+                            .replace(/Pedido\s+[0-9a-f]{24}/gi, "Venta")
+                            .replace(/[0-9a-f]{24}/gi, "")
+                            .replace(/\s{2,}/g, " ")
+                            .trim()}
+                        </span>
+                      )
                     )}
                   </div>
                 </div>

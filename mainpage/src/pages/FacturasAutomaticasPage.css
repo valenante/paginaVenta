@@ -47,6 +47,8 @@
 .badge--error { color: #ef4444; background: rgba(239,68,68,0.1); }
 .badge--info { color: var(--color-primario, #60b5ff); background: rgba(255,103,0,0.1); }
 .badge--muted { color: #64748b; background: rgba(100,116,139,0.1); }
+/* Sospecha (Fase 0): chip de aviso junto al estado de la línea */
+.finv-sospecha { margin-left: 6px; border: 1px solid rgba(239,68,68,0.35); }
 
 /* Job list */
 .finv-list { display: flex; flex-direction: column; }

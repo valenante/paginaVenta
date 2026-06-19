@@ -192,6 +192,8 @@ export default function FacturasAutomaticasPage() {
   const resumenCaja = useResumenCajaGestor();
   const rc = resumenCaja.config; // shortcut (resumen mensual de caja)
   const emailResumenEfectivo = rc.email || resumenCaja.gestorEmailFallback || "";
+  const metodosResumenLabel =
+    [rc.incluirEfectivo && "efectivo", rc.incluirTarjeta && "tarjeta"].filter(Boolean).join(" y ") || "ningún método";
 
   const handleToggleAutoAprobar = async () => {
     try {
@@ -559,8 +561,8 @@ export default function FacturasAutomaticasPage() {
             <span className="sug-toggle-label">Resumen mensual de caja al gestor</span>
             <span className="sug-toggle-desc">
               {rc.activo
-                ? `El día ${rc.diaMes} de cada mes se envía el resumen del mes anterior (efectivo y tarjeta) a ${emailResumenEfectivo || "—"}`
-                : "Envía cada mes a tu gestoría los totales de efectivo y tarjeta, en PDF y CSV."}
+                ? `El día ${rc.diaMes} de cada mes se envía el resumen del mes anterior (${metodosResumenLabel}) a ${emailResumenEfectivo || "—"}`
+                : "Envía cada mes a tu gestoría los totales por método de pago (efectivo y/o tarjeta), en PDF y CSV."}
             </span>
           </div>
           <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
@@ -597,6 +599,28 @@ export default function FacturasAutomaticasPage() {
                   Si lo dejas vacío, se usa el del envío de facturas ({resumenCaja.gestorEmailFallback}).
                 </span>
               )}
+            </div>
+
+            {/* Métodos a incluir (independientes; las propinas no se envían) */}
+            <div className="finv-gestor__field">
+              <label className="finv-gestor__label">Métodos a incluir</label>
+              <div className="finv-gestor__chips">
+                <button
+                  type="button"
+                  className={`finv-gestor__chip ${rc.incluirEfectivo ? "finv-gestor__chip--active" : ""}`}
+                  onClick={() => handleResumenFieldChange("incluirEfectivo", !rc.incluirEfectivo)}
+                >
+                  Efectivo
+                </button>
+                <button
+                  type="button"
+                  className={`finv-gestor__chip ${rc.incluirTarjeta ? "finv-gestor__chip--active" : ""}`}
+                  onClick={() => handleResumenFieldChange("incluirTarjeta", !rc.incluirTarjeta)}
+                >
+                  Tarjeta
+                </button>
+              </div>
+              <span className="finv-gestor__hint">Las propinas no se incluyen en este informe.</span>
             </div>
 
             {/* Día del mes + hora */}

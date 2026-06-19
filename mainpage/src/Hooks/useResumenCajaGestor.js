@@ -7,6 +7,8 @@ import api from "../utils/api";
 const DEFAULT = {
   activo: false,
   email: "",
+  incluirEfectivo: true,
+  incluirTarjeta: true,
   diaMes: 1,
   hora: "08:00",
   ultimoEnvio: null,

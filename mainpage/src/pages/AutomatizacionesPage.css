@@ -194,6 +194,35 @@
   line-height: 1.4;
 }
 
+/* Selector de hora (cierre automático de caja) */
+.auto-card__hour {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 12px;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+}
+
+.auto-card__hour-label {
+  font-size: 0.8rem;
+  color: #cbd5e1;
+  font-weight: 600;
+}
+
+.auto-card__hour-select {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 6px 10px;
+  color: #f1f5f9;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
 /* Link (for reservas) */
 .auto-card__link {
   padding: 10px 14px;

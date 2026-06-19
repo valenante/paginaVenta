@@ -18,6 +18,11 @@ import {
   updateFacturasConfig,
   enviarGestorManual,
 } from "../Hooks/useFacturasAutomaticas";
+import {
+  useResumenCajaGestor,
+  updateResumenCajaGestor,
+  enviarResumenCajaAhora,
+} from "../Hooks/useResumenCajaGestor";
 import "./FacturasAutomaticasPage.css";
 
 // ── Status badge ───────────────────────────────────────────
@@ -174,6 +179,8 @@ export default function FacturasAutomaticasPage() {
   const [syncing, setSyncing] = useState(false);
   const [enviandoGestor, setEnviandoGestor] = useState(false);
   const [gestorExpanded, setGestorExpanded] = useState(false);
+  const [enviandoResumen, setEnviandoResumen] = useState(false);
+  const [resumenExpanded, setResumenExpanded] = useState(false);
 
   const estadoFilter = tab === "pending" ? "pending_review" : tab === "completed" ? "" : "";
   const { items, total, pages, loading, refetch } = useInboundJobs({ estado: estadoFilter, page });
@@ -181,6 +188,10 @@ export default function FacturasAutomaticasPage() {
   const gmail = useGmailStatus();
   const facturasConfig = useFacturasConfig();
   const gc = facturasConfig.config; // shortcut
+
+  const resumenCaja = useResumenCajaGestor();
+  const rc = resumenCaja.config; // shortcut (resumen mensual de caja)
+  const emailResumenEfectivo = rc.email || resumenCaja.gestorEmailFallback || "";
 
   const handleToggleAutoAprobar = async () => {
     try {
@@ -237,6 +248,60 @@ export default function FacturasAutomaticasPage() {
       return;
     }
     await handleGestorFieldChange("gestorEmail", email);
+  };
+
+  // ── Resumen mensual de caja handlers ──
+  const handleResumenFieldChange = async (field, value) => {
+    try {
+      await updateResumenCajaGestor({ [field]: value });
+      resumenCaja.refetch();
+    } catch (err) {
+      setMsg({ t: "error", m: err?.response?.data?.message || "Error al guardar" });
+    }
+  };
+
+  const handleToggleResumenActivo = async () => {
+    if (!rc.activo && !emailResumenEfectivo) {
+      setMsg({ t: "error", m: "Configura el email del gestor antes de activar" });
+      return;
+    }
+    try {
+      await updateResumenCajaGestor({ activo: !rc.activo });
+      resumenCaja.refetch();
+      setMsg({ t: "ok", m: rc.activo ? "Resumen de caja desactivado" : "Resumen de caja activado" });
+    } catch (err) {
+      setMsg({ t: "error", m: err?.response?.data?.message || "Error al actualizar config" });
+    }
+  };
+
+  const handleResumenEmailBlur = async (e) => {
+    const email = e.target.value.trim();
+    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setMsg({ t: "error", m: "Email del gestor no válido" });
+      return;
+    }
+    await handleResumenFieldChange("email", email);
+  };
+
+  const handleEnviarResumenAhora = async () => {
+    if (!emailResumenEfectivo) {
+      setMsg({ t: "error", m: "Configura el email del gestor primero" });
+      return;
+    }
+    setEnviandoResumen(true);
+    try {
+      const result = await enviarResumenCajaAhora();
+      if (result.enviado) {
+        setMsg({ t: "ok", m: `Resumen de caja enviado a ${result.email}` });
+      } else {
+        setMsg({ t: "ok", m: "El mes anterior no tiene cierres de caja, no se envió" });
+      }
+      resumenCaja.refetch();
+    } catch (err) {
+      setMsg({ t: "error", m: err?.response?.data?.message || "Error al enviar" });
+    } finally {
+      setEnviandoResumen(false);
+    }
   };
 
   const handleConnectGmail = async () => {
@@ -481,6 +546,102 @@ export default function FacturasAutomaticasPage() {
                 disabled={enviandoGestor || !gc.gestorEmail}
               >
                 {enviandoGestor ? "Enviando..." : "Enviar ahora"}
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* ── Resumen mensual de caja al gestor ── */}
+      <div className="sug-section">
+        <div className="sug-toggle-row">
+          <div>
+            <span className="sug-toggle-label">Resumen mensual de caja al gestor</span>
+            <span className="sug-toggle-desc">
+              {rc.activo
+                ? `El día ${rc.diaMes} de cada mes se envía el resumen del mes anterior (efectivo y tarjeta) a ${emailResumenEfectivo || "—"}`
+                : "Envía cada mes a tu gestoría los totales de efectivo y tarjeta, en PDF y CSV."}
+            </span>
+          </div>
+          <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+            <button
+              className="finv-gestor__expand"
+              onClick={() => setResumenExpanded(!resumenExpanded)}
+              title="Configurar"
+            >
+              {resumenExpanded ? "▲" : "▼"}
+            </button>
+            <button
+              className={`sug-toggle ${rc.activo ? "sug-toggle--on" : ""}`}
+              onClick={handleToggleResumenActivo}
+            >
+              <span className="sug-toggle__knob" />
+            </button>
+          </div>
+        </div>
+
+        {resumenExpanded && (
+          <div className="finv-gestor">
+            {/* Email gestor (hereda del de arriba si se deja vacío) */}
+            <div className="finv-gestor__field">
+              <label className="finv-gestor__label">Email del gestor / asesoría</label>
+              <input
+                type="email"
+                className="finv-gestor__input"
+                placeholder={resumenCaja.gestorEmailFallback || "gestor@asesoria.com"}
+                defaultValue={rc.email || ""}
+                onBlur={handleResumenEmailBlur}
+              />
+              {!rc.email && resumenCaja.gestorEmailFallback && (
+                <span className="finv-gestor__hint">
+                  Si lo dejas vacío, se usa el del envío de facturas ({resumenCaja.gestorEmailFallback}).
+                </span>
+              )}
+            </div>
+
+            {/* Día del mes + hora */}
+            <div className="finv-gestor__row">
+              <div className="finv-gestor__field">
+                <label className="finv-gestor__label">Día del mes</label>
+                <select
+                  className="finv-gestor__select"
+                  value={rc.diaMes ?? 1}
+                  onChange={e => handleResumenFieldChange("diaMes", Number(e.target.value))}
+                >
+                  {Array.from({ length: 28 }, (_, i) => (
+                    <option key={i + 1} value={i + 1}>{i + 1}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="finv-gestor__field">
+                <label className="finv-gestor__label">Hora de envío</label>
+                <select
+                  className="finv-gestor__select"
+                  value={rc.hora || "08:00"}
+                  onChange={e => handleResumenFieldChange("hora", e.target.value)}
+                >
+                  {Array.from({ length: 24 }, (_, h) => {
+                    const hh = String(h).padStart(2, "0");
+                    return <option key={h} value={`${hh}:00`}>{hh}:00</option>;
+                  })}
+                </select>
+              </div>
+            </div>
+
+            {/* Último envío + botón manual */}
+            <div className="finv-gestor__footer">
+              <span className="finv-gestor__last">
+                {rc.ultimoEnvio
+                  ? `Último envío: ${new Date(rc.ultimoEnvio).toLocaleString("es-ES", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" })}`
+                  : "Aún no se ha enviado ningún resumen"}
+              </span>
+              <button
+                className="sug-btn sug-btn--primary"
+                onClick={handleEnviarResumenAhora}
+                disabled={enviandoResumen || !emailResumenEfectivo}
+              >
+                {enviandoResumen ? "Enviando..." : "Enviar mes anterior"}
               </button>
             </div>
           </div>

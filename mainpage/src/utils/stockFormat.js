@@ -9,6 +9,18 @@
 // - Si no hay padre (todas <1), usa la mayor como padre.
 // - Stock negativo: usa el formato simple con el número.
 
+// Formatea una cantidad de stock "en limpio": elimina el ruido de coma flotante
+// (p. ej. 0.6999999999999986 → 0.7, -4.800000030000001 → -4.8) y quita los ceros
+// decimales sobrantes (5 → "5", 0.20 → "0.2"). Mantiene el signo de los negativos
+// (stock sobrevendido). Es la forma recomendada de pintar `stockActual`/`stockMinimo`.
+export function formatCantidad(value, maxDecimals = 2) {
+  const n = Number(value);
+  if (!Number.isFinite(n)) return "0";
+  // toFixed redondea a la precisión deseada y elimina el error binario; Number()
+  // vuelve a número quitando ceros sobrantes; String() lo pasa a texto sin notación.
+  return String(Number(n.toFixed(maxDecimals)));
+}
+
 function pluralize(label, n) {
   if (!label) return "";
   if (n === 1) return label;

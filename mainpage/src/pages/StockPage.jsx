@@ -13,6 +13,7 @@ import EditarIngredienteModal from "../components/Stock/EditarIngredienteModal";
 import HistorialMovimientosModal from "../components/Stock/HistorialMovimientosModal";
 import LotesView from "../components/Stock/LotesView.jsx";
 import ModalBase from "../components/MapaEditor/ModalBase";
+import { formatCantidad } from "../utils/stockFormat";
 import "../styles/StockPage.css";
 
 const ITEMS_PER_PAGE = 12;
@@ -508,7 +509,7 @@ const StockPage = () => {
 
                     <div className="stock-details">
                       <strong>
-                        {Math.round(ing.stockActual * 100) / 100} {ing.unidad}
+                        {formatCantidad(ing.stockActual)} {ing.unidad}
                       </strong>
                       <span className="max">
                         máx: {ing.stockMax} {ing.unidad}
@@ -750,7 +751,7 @@ const StockPage = () => {
         <ModalBase
           open={true}
           title={`📊 ${consumoDetail.nombre}`}
-          subtitle={`${consumoDetail.stockActual} ${consumoDetail.unidad} en stock`}
+          subtitle={`${formatCantidad(consumoDetail.stockActual)} ${consumoDetail.unidad} en stock`}
           onClose={() => setConsumoDetail(null)}
           width={640}
           footer={

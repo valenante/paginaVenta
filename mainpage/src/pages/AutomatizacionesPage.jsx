@@ -102,6 +102,20 @@ const MODULES = [
     info: "Requiere programa de fidelización activo. Cooldown 14 días por cliente.",
   },
   {
+    id: "cierreCaja",
+    icon: "🔒",
+    title: "Cierre automático de caja",
+    description: "Cierra la caja a una hora fija si te olvidaste, siempre que no queden mesas abiertas.",
+    configKey: "cierreCajaMode",
+    options: [
+      { value: "off", label: "Desactivado", desc: "Cierras la caja siempre a mano" },
+      { value: "approval", label: "Semiautomático", desc: "A la hora fijada te propone cerrar y lo apruebas tú" },
+      { value: "auto", label: "Automático", desc: "A la hora fijada cierra sola, sin intervención" },
+    ],
+    hourConfigKey: "cierreCajaHora",
+    info: "Solo actúa si la caja sigue abierta y no quedan mesas abiertas. Si hay mesas abiertas, se salta ese día.",
+  },
+  {
     id: "reservas",
     icon: "📅",
     title: "Reservas automáticas",
@@ -153,8 +167,10 @@ export default function AutomatizacionesPage() {
     if (!key) return null;
     const val = config[key];
     if (val === undefined || val === null) {
-      // Defaults: pedidos=semi, rest=on
+      // Defaults: pedidos=semi, cierre de caja=semiautomático a las 4:00, rest=on
       if (key === "autoReorderMode") return "semi";
+      if (key === "cierreCajaMode") return "approval";
+      if (key === "cierreCajaHora") return 4;
       return "on";
     }
     return val;
@@ -221,6 +237,22 @@ export default function AutomatizacionesPage() {
                     <span className="auto-card__link-text">Se configura en la sección de Reservas</span>
                   </div>
                 ) : null}
+
+                {mod.hourConfigKey && currentValue !== "off" && (
+                  <div className="auto-card__hour">
+                    <label className="auto-card__hour-label">Hora de cierre</label>
+                    <select
+                      className="auto-card__hour-select"
+                      value={getValue(mod.hourConfigKey)}
+                      onChange={(e) => handleChange(mod.hourConfigKey, Number(e.target.value))}
+                      disabled={saving === mod.hourConfigKey}
+                    >
+                      {Array.from({ length: 24 }, (_, h) => (
+                        <option key={h} value={h}>{String(h).padStart(2, "0")}:00</option>
+                      ))}
+                    </select>
+                  </div>
+                )}
 
                 <div className="auto-card__footer">
                   <span className="auto-card__info">{mod.info}</span>

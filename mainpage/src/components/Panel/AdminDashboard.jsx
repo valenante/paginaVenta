@@ -7,6 +7,7 @@ import { ComparativaCard, RatioTipoCard, VentasPorHoraCard } from "./AnalyticsFa
 import { CorrelacionCard, AlertasCard } from "./AnalyticsFase3";
 import TiemposCocinaCard from "./TiemposCocinaCard";
 import UpsellEstadisticasPro from "../Estadisticas/UpsellEstadisticasPro";
+import { formatCantidad } from "../../utils/stockFormat";
 import "./AdminDashboard.css";
 
 const fmt = (v) => Number(v || 0).toFixed(2);
@@ -430,8 +431,8 @@ export default function AdminDashboard() {
                   {resumen.stockBajoItems.map((item, i) => (
                     <div key={i} className="adm__modal-list-row">
                       <span>{item.nombre}</span>
-                      <span className="adm__modal-danger">{item.actual}</span>
-                      <span>{item.minimo}</span>
+                      <span className="adm__modal-danger">{formatCantidad(item.actual)}</span>
+                      <span>{formatCantidad(item.minimo)}</span>
                     </div>
                   ))}
                 </div>

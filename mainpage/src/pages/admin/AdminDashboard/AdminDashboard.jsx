@@ -8,6 +8,7 @@ import {
   FiCheckCircle, FiUnlock, FiXCircle, FiUserX,
 } from "react-icons/fi";
 import api from "../../../utils/api";
+import { useToast } from "../../../context/ToastContext";
 import useTenantsData from "../../../hooks/useTenantsData";
 import TenantTable from "./components/TenantTable";
 import "../../../styles/AdminDashboard.css";
@@ -24,6 +25,7 @@ function money(n) { return n != null ? `${Number(n).toLocaleString("es-ES", { mi
    ══════════════════════════════════════════ */
 export default function AdminDashboard() {
   const navigate = useNavigate();
+  const { showToast } = useToast();
   const [billing, setBilling] = useState(null);
   const [incidents, setIncidents] = useState(null);
   const [deploy, setDeploy] = useState(null);
@@ -112,7 +114,7 @@ export default function AdminDashboard() {
         <div className="dash-kpi">
           <FiUsers className="dash-kpi__icon" />
           <div className="dash-kpi__body">
-            <span className="dash-kpi__value">{filtered?.length || 0}</span>
+            <span className="dash-kpi__value">{total ?? 0}</span>
             <span className="dash-kpi__label">Tenants</span>
           </div>
         </div>
@@ -176,14 +178,14 @@ export default function AdminDashboard() {
           <button className="dash-action" onClick={async () => {
             const { data } = await api.get("/admin/superadminMonitor/tenants?limit=100");
             const items = data?.data?.items || data?.items || [];
-            alert(`Print Agents: ${items.filter(i => i.ok).length} OK, ${items.filter(i => !i.ok).length} DOWN`);
+            showToast(`Print Agents: ${items.filter(i => i.ok).length} OK, ${items.filter(i => !i.ok).length} DOWN`, "info");
           }}><FiPrinter /> Check Print Agents</button>
           <button className="dash-action" onClick={async () => {
             const { data } = await api.get("/admin/superadminMonitor/incidents?status=open&limit=50");
             const items = data?.data?.items || data?.items || [];
             const stale = items.filter(i => (Date.now() - new Date(i.lastSeenAt).getTime()) > 7 * 86400000);
             for (const i of stale) await api.patch(`/admin/superadminMonitor/incidents/${i._id}/resolve`, { resolution: "stale >7d" });
-            alert(stale.length > 0 ? `${stale.length} stale resueltos` : "Sin stale");
+            showToast(stale.length > 0 ? `${stale.length} stale resueltos` : "Sin stale", stale.length > 0 ? "success" : "info");
           }}><FiCheckCircle /> Resolver stale</button>
           <button className="dash-action dash-action--primary" onClick={() => navigate("/superadmin/tenants/nuevo")}><FiPlus /> Nuevo negocio</button>
         </div>

@@ -110,11 +110,6 @@ export default function RestorePage() {
   // ---- Diff expand/collapse
   const [expanded, setExpanded] = useState(() => new Set());
 
-  // ---- RGPD Export
-  const [rgpdTenant, setRgpdTenant] = useState("");
-  const [rgpdOpen, setRgpdOpen] = useState(false);
-  const [rgpdExporting, setRgpdExporting] = useState(false);
-
   // ---- Snapshot workflow
   const [snapshotOpen, setSnapshotOpen] = useState(false);
   const [snapshotReason, setSnapshotReason] = useState("");

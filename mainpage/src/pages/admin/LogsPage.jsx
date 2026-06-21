@@ -1,7 +1,7 @@
 // src/pages/admin/LogsPage.jsx — Rediseñado v2
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { FiFileText, FiAlertTriangle, FiFilter, FiDownload, FiTrash2, FiX, FiSearch } from "react-icons/fi";
+import { FiFileText, FiAlertTriangle, FiDownload, FiTrash2, FiX, FiSearch } from "react-icons/fi";
 import api from "../../utils/api";
 import EmptyState from "../../components/ui/EmptyState";
 import { useToast } from "../../context/ToastContext";

@@ -1,8 +1,6 @@
 import { useMemo, useState } from "react";
 import "../../../../styles/EditEstadoModal.css";
 
-const ESTADOS_PERMITIDOS = ["trial", "activo", "impago", "suspendido", "cancelado"];
-
 const TRANSICIONES = {
   trial: ["activo", "suspendido", "cancelado"],
   activo: ["impago", "suspendido", "cancelado"],

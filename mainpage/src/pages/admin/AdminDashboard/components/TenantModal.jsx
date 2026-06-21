@@ -42,24 +42,31 @@ export default function TenantModal({ tenant, onClose }) {
   const [selectedReleaseId, setSelectedReleaseId] = useState("");
   const rollbackTimerRef = useRef(null);
   const pollRef = useRef(null);
+  const timeoutRef = useRef(null);
   const [otaProgress, setOtaProgress] = useState(null); // { action, status, startedAt, error }
 
-  // Cleanup timers on unmount
+  // Cleanup all timers on unmount
   useEffect(() => {
-    return () => { clearTimeout(rollbackTimerRef.current); clearInterval(pollRef.current); };
+    return () => {
+      clearTimeout(rollbackTimerRef.current);
+      clearInterval(pollRef.current);
+      clearTimeout(timeoutRef.current);
+    };
   }, []);
 
   // Poll agent status while OTA is running
   const startPolling = (action) => {
     setOtaProgress({ action, status: "running", startedAt: Date.now(), error: null });
     clearInterval(pollRef.current);
+    clearTimeout(timeoutRef.current);
+
     pollRef.current = setInterval(async () => {
       try {
         const { data } = await api.get(`/admin/tenant/${tenant._id}/agente/status`);
         const update = data?.update;
         if (update?.status === "success") {
           clearInterval(pollRef.current);
-          // OTA done — restart the service externally via SSH
+          clearTimeout(timeoutRef.current);
           setOtaProgress((p) => ({ ...p, status: "restarting" }));
           try {
             await api.post(`/admin/tenant/${tenant._id}/restart-agente`);
@@ -71,21 +78,22 @@ export default function TenantModal({ tenant, onClose }) {
         } else if (update?.status === "failed") {
           setOtaProgress((p) => ({ ...p, status: "failed", error: update?.error || "Error desconocido" }));
           clearInterval(pollRef.current);
+          clearTimeout(timeoutRef.current);
           setLoading(false);
         }
-        // else still running — keep polling
       } catch {
         // SSH/connection error — keep trying
       }
     }, 3000);
 
-    // Timeout after 2 minutes
-    setTimeout(() => {
-      if (otaProgress?.status === "running") {
+    // Timeout after 2 minutes — uses functional setState to read current status
+    timeoutRef.current = setTimeout(() => {
+      setOtaProgress((p) => {
+        if (p?.status !== "running") return p;
         clearInterval(pollRef.current);
-        setOtaProgress((p) => p?.status === "running" ? { ...p, status: "timeout", error: "Tiempo agotado. Verifica manualmente." } : p);
         setLoading(false);
-      }
+        return { ...p, status: "timeout", error: "Tiempo agotado. Verifica manualmente." };
+      });
     }, 120000);
   };
 
@@ -321,6 +329,14 @@ export default function TenantModal({ tenant, onClose }) {
       <h2>Detalles del Restaurante</h2>
 
       <div className="impresora-section">
+        <label>IP Tailscale</label>
+        <input
+          value={ipTailscale}
+          onChange={(e) => setIpTailscale(e.target.value)}
+          placeholder="100.x.x.x"
+          disabled={loading}
+        />
+
         <label>Clave secreta</label>
         <input
           value={printSecret}

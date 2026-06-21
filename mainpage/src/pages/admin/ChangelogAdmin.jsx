@@ -20,6 +20,7 @@ export default function ChangelogAdmin() {
     items: [{ tipo: "nueva", texto: "" }],
   });
   const [editId, setEditId] = useState(null);
+  const [confirmDeleteId, setConfirmDeleteId] = useState(null);
 
   const fetchEntries = useCallback(async () => {
     try {
@@ -89,9 +90,9 @@ export default function ChangelogAdmin() {
   };
 
   const handleDelete = async (id) => {
-    if (!confirm("Eliminar esta entrada?")) return;
     try {
       await api.delete(`/admin/superadmin/changelog/${id}`);
+      setConfirmDeleteId(null);
       await fetchEntries();
     } catch {
       setError("Error eliminando");
@@ -221,7 +222,14 @@ export default function ChangelogAdmin() {
                   {entry.publicado ? "Despublicar" : "Publicar"}
                 </button>
                 <button onClick={() => handleEdit(entry)}>Editar</button>
-                <button className="cla-btn--danger" onClick={() => handleDelete(entry._id)}>Eliminar</button>
+                {confirmDeleteId === entry._id ? (
+                  <>
+                    <button className="cla-btn--danger" onClick={() => handleDelete(entry._id)}>Confirmar</button>
+                    <button onClick={() => setConfirmDeleteId(null)}>Cancelar</button>
+                  </>
+                ) : (
+                  <button className="cla-btn--danger" onClick={() => setConfirmDeleteId(entry._id)}>Eliminar</button>
+                )}
               </div>
             </div>
             {entry.items?.length > 0 && (

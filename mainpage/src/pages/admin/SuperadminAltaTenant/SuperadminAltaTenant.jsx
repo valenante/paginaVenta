@@ -78,7 +78,7 @@ export default function SuperadminAltaTenant() {
 
     try {
       // 1. Precheckout
-      const preRes = await api.post("/superadmin/onboarding/precheckout", {
+      const preRes = await api.post("/admin/superadmin/onboarding/precheckout", {
         tenant: {
           nombre: form.nombre.trim(),
           email: form.email.trim().toLowerCase(),
@@ -100,7 +100,7 @@ export default function SuperadminAltaTenant() {
       if (!precheckoutId) throw new Error("No se recibió precheckoutId");
 
       // 2. Provision
-      const provRes = await api.post("/superadmin/onboarding/provision", { precheckoutId });
+      const provRes = await api.post("/admin/superadmin/onboarding/provision", { precheckoutId });
       const d = provRes.data?.data || provRes.data;
 
       if (d?.passwordSetupUrl) {

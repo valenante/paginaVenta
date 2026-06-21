@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { FiChevronLeft, FiChevronRight, FiCreditCard, FiRepeat, FiExternalLink, FiRotateCw, FiCornerDownLeft, FiAlertTriangle } from "react-icons/fi";
+import { FiChevronLeft, FiChevronRight, FiCreditCard, FiRepeat, FiExternalLink, FiRotateCw, FiCornerDownLeft } from "react-icons/fi";
 import api from "../../utils/api";
 import EmptyState from "../../components/ui/EmptyState";
 import { useToast } from "../../context/ToastContext";

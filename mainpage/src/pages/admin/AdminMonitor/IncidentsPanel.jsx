@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { FiCheck, FiEye, FiVolumeX, FiRefreshCw } from "react-icons/fi";
 import api from "../../../utils/api";
+import { useToast } from "../../../context/ToastContext";
 
 function fmt(d) {
   if (!d) return "—";
@@ -19,6 +20,7 @@ function timeSince(d) {
 }
 
 export default function IncidentsPanel() {
+  const { showToast } = useToast();
   const [incidents, setIncidents] = useState([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -43,7 +45,7 @@ export default function IncidentsPanel() {
       await api.patch(`/admin/superadminMonitor/incidents/${id}/${action}`, body);
       await fetchIncidents();
     } catch (e) {
-      alert(`Error: ${e?.response?.data?.message || e.message}`);
+      showToast(e?.response?.data?.message || e.message, "error");
     }
     setActing(null);
   };

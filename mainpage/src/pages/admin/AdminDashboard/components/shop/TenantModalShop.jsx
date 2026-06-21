@@ -112,7 +112,7 @@ export default function TenantModalShop({ tenant, onClose }) {
 
       const payload = impresora ? { impresora } : {};
       const { data } = await api.post(
-        `/impresoras/${tenant._id}/test`,
+        `/impresoras/admin/${tenant._id}/test`,
         payload
       );
 
@@ -132,7 +132,7 @@ export default function TenantModalShop({ tenant, onClose }) {
     try {
       setLoading(true);
       const { data } = await api.get(
-        `/tenants/${tenant._id}/ping-agente`
+        `/admin/tenant/${tenant._id}/ping-agente`
       );
 
       setEstado(data?.estado || "offline");
@@ -194,6 +194,14 @@ export default function TenantModalShop({ tenant, onClose }) {
       <h3>Agente de impresión</h3>
 
       <div className="impresora-section">
+        <label>IP Tailscale</label>
+        <input
+          type="text"
+          value={ipTailscale}
+          onChange={(e) => setIpTailscale(e.target.value)}
+          placeholder="100.x.x.x"
+        />
+
         <label>Clave secreta (printSecret)</label>
         <input
           type="text"

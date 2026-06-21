@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { FiArrowLeft, FiExternalLink, FiRefreshCw, FiUser, FiActivity } from "react-icons/fi";
 import api from "../../../utils/api";
+import { useToast } from "../../../context/ToastContext";
 import "../../../styles/TenantDetail.css";
 
 function fmt(d) {
@@ -24,6 +25,7 @@ function Badge({ color, children }) {
 export default function TenantDetailPage() {
   const { slug } = useParams();
   const navigate = useNavigate();
+  const { showToast } = useToast();
   const [tenant, setTenant] = useState(null);
   const [health, setHealth] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -56,9 +58,10 @@ export default function TenantDetailPage() {
         reasonCategory: "soporte",
         reasonText: `Acceso superadmin al tenant ${slug} desde panel AlefAdmin`,
       });
-      window.open(`https://${slug}-tpv.softalef.com`, "_blank");
+      const domain = import.meta.env.VITE_MAIN_DOMAIN || "softalef.com";
+      window.open(`https://${slug}-tpv.${domain}`, "_blank");
     } catch (e) {
-      alert(`Error: ${e?.response?.data?.message || e.message}`);
+      showToast(e?.response?.data?.message || e.message, "error");
     }
   };
 

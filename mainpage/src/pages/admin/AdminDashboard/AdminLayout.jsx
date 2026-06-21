@@ -15,7 +15,6 @@ import {
   FiDownload,
   FiMenu,
   FiX,
-  FiAlertTriangle,
 } from "react-icons/fi";
 import api from "../../../utils/api";
 import CommandPalette from "./components/CommandPalette";

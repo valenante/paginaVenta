@@ -91,9 +91,8 @@ export default function AdminMonitorJobs({ q = "", onlyBad = false }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const nowMs = Date.now();
-
   const jobsList = useMemo(() => {
+    const now = Date.now();
     const jobsObj = data?.jobs || {};
     const arr = Object.values(jobsObj);
 
@@ -103,10 +102,10 @@ export default function AdminMonitorJobs({ q = "", onlyBad = false }) {
       : arr;
 
     filtered = filtered.map((j) => {
-      const state = computeState(j, nowMs);
+      const state = computeState(j, now);
       const policy = stalePolicyFor(j.unit);
       const lastOkMs = j?.last_ok_ts ? Number(j.last_ok_ts) * 1000 : null;
-      const ageMs = lastOkMs ? nowMs - lastOkMs : null;
+      const ageMs = lastOkMs ? now - lastOkMs : null;
 
       return { ...j, state, policyLabel: policy.label, staleSec: policy.staleSec, ageMs };
     });
@@ -117,7 +116,7 @@ export default function AdminMonitorJobs({ q = "", onlyBad = false }) {
     filtered.sort((a, b) => weight(a.state) - weight(b.state));
 
     return filtered;
-  }, [data, q, onlyBad, nowMs]);
+  }, [data, q, onlyBad]);
 
   const stats = useMemo(() => {
     const c = { ok: 0, degraded: 0, down: 0 };

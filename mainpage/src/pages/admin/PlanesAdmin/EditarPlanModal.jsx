@@ -7,10 +7,10 @@ import { useToast } from "../../../context/ToastContext";
 export default function EditarPlanModal({ plan, onClose, onSave, features = [] }) {
   const { showToast } = useToast();
   const [form, setForm] = useState({
-    nombre: plan.nombre || "",
-    precioMensual: plan.precioMensual || "",
-    precioAnual: plan.precioAnual || "",
-    descripcion: plan.descripcion || "",
+    nombre: plan.nombre ?? "",
+    precioMensual: plan.precioMensual ?? "",
+    precioAnual: plan.precioAnual ?? "",
+    descripcion: plan.descripcion ?? "",
   });
 
   const [loading, setLoading] = useState(false);

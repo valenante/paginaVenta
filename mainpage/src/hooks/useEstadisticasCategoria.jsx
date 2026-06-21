@@ -2,6 +2,8 @@
 import { useEffect, useMemo, useState, useRef, useCallback } from "react";
 import api from "../utils/api";
 
+const capitalize = (s) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : "");
+
 /**
  * Carga estadísticas agregadas SERVER-SIDE via GET /reportes/estadisticas-categoria.
  * Un solo request con $facet en MongoDB — no carga ventas individuales.
@@ -24,6 +26,19 @@ export const useEstadisticasCategoria = (products, filters = {}) => {
     return products.map((p) => p._id).join(",");
   }, [products]);
 
+  // Label map: productoId → clavePrecio → label humano
+  const labelMap = useMemo(() => {
+    const map = {};
+    for (const p of products || []) {
+      const pid = String(p._id);
+      map[pid] = {};
+      for (const pr of p.precios || []) {
+        if (pr.clave) map[pid][pr.clave] = pr.label || capitalize(pr.clave);
+      }
+    }
+    return map;
+  }, [products]);
+
   const fetchStats = useCallback(async () => {
     if (!productoIds) {
       setData(null);
@@ -44,7 +59,6 @@ export const useEstadisticasCategoria = (products, filters = {}) => {
       if (startDate) {
         const d = startDate instanceof Date ? startDate : new Date(startDate);
         if (!Number.isNaN(d.getTime())) {
-          // Usar formato local YYYY-MM-DD sin conversión UTC (evita desfase de día)
           params.desde = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
         }
       }
@@ -57,13 +71,13 @@ export const useEstadisticasCategoria = (products, filters = {}) => {
 
       const [res, resPromedios] = await Promise.all([
         api.get("/reportes/estadisticas-categoria", { params, signal: controller.signal }),
-        api.get("/reportes/promedios-dia-semana", { params: { productoIds }, signal: controller.signal }),
+        api.get("/reportes/promedios-dia-semana", { params, signal: controller.signal }),
       ]);
 
       if (controller.signal.aborted) return;
 
       setData(res.data || null);
-      setPromediosDia(resPromedios?.data?.data || resPromedios?.data || null);
+      setPromediosDia(resPromedios?.data || null);
     } catch (err) {
       if (err?.name === "CanceledError" || err?.code === "ERR_CANCELED") return;
       setError("No se pudieron cargar las estadísticas.");
@@ -87,28 +101,30 @@ export const useEstadisticasCategoria = (products, filters = {}) => {
     return data.resumen;
   }, [data]);
 
-  // porProducto ya viene con nombre, productoId, totalCantidad, totalIngresos
   const productosConStats = useMemo(() => {
-    if (!data?.porProducto || !products) return [];
+    if (!data?.porProducto) return [];
 
-    // Mapear datos del backend a los productos originales (mantener campos extra del producto)
-    const statsMap = {};
-    for (const s of data.porProducto) {
-      statsMap[String(s.productoId)] = s;
-    }
+    return data.porProducto.map((s) => {
+      const pid = String(s.productoId);
+      const clave = s.clavePrecio || "precioBase";
+      const isPrecioBase = clave === "precioBase";
+      const variantLabel = labelMap[pid]?.[clave] || capitalize(clave);
 
-    return products.map((p) => {
-      const stats = statsMap[String(p._id)];
       return {
-        ...p,
-        totalCantidad: stats?.totalCantidad || 0,
-        totalIngresos: stats?.totalIngresos || 0,
-        ingresosBase: stats?.ingresosBase ?? null,
-        ingresosAdicionales: stats?.ingresosAdicionales ?? 0,
-        tieneDesglose: !!stats?.tieneDesglose,
+        _id: isPrecioBase ? pid : `${pid}_${clave}`,
+        productoId: s.productoId,
+        clavePrecio: clave,
+        nombre: isPrecioBase ? s.nombre : `${s.nombre} (${variantLabel})`,
+        categoria: s.categoria,
+        tipo: s.tipo,
+        totalCantidad: s.totalCantidad || 0,
+        totalIngresos: s.totalIngresos || 0,
+        ingresosBase: s.ingresosBase ?? null,
+        ingresosAdicionales: s.ingresosAdicionales ?? 0,
+        tieneDesglose: !!s.tieneDesglose,
       };
     });
-  }, [data, products]);
+  }, [data, labelMap]);
 
   const topProductos = useMemo(
     () => [...productosConStats].sort((a, b) => b.totalIngresos - a.totalIngresos).slice(0, 5),
@@ -142,23 +158,27 @@ export const useEstadisticasCategoria = (products, filters = {}) => {
    * MongoDB $dayOfWeek: 1=Dom, 2=Lun, 3=Mar, 4=Mié, 5=Jue, 6=Vie, 7=Sáb
    * ===================================================== */
   const promedioDiaSemana = useMemo(() => {
-    if (!promediosDia || !products) return null;
+    if (!promediosDia) return null;
 
     const porProductoYDia = promediosDia.porProductoYDia || [];
     const diasActivos = promediosDia.diasActivosPorSemana || {};
 
-    // Agrupar por producto
     const porProducto = {};
     for (const row of porProductoYDia) {
-      const pid = String(row.productoId);
-      if (!porProducto[pid]) porProducto[pid] = {};
-      porProducto[pid][String(row.dia)] = row.totalCantidad;
+      const clave = row.clavePrecio || "precioBase";
+      const isPrecioBase = clave === "precioBase";
+      const key = isPrecioBase ? String(row.productoId) : `${row.productoId}_${clave}`;
+      if (!porProducto[key]) porProducto[key] = {};
+      porProducto[key][String(row.dia)] = row.totalCantidad;
     }
 
-    const productosConPromedio = products.map((p) => {
-      const pid = String(p._id);
-      const diasData = porProducto[pid] || {};
-      const promedios = {}; // { "1": avg, ..., "7": avg }
+    const nameMap = {};
+    for (const p of productosConStats) {
+      nameMap[p._id] = p.nombre;
+    }
+
+    const productosConPromedio = Object.entries(porProducto).map(([key, diasData]) => {
+      const promedios = {};
       let totalSemana = 0;
       for (let dia = 1; dia <= 7; dia++) {
         const total = diasData[String(dia)] || 0;
@@ -168,8 +188,8 @@ export const useEstadisticasCategoria = (products, filters = {}) => {
         totalSemana += avg;
       }
       return {
-        productoId: pid,
-        nombre: p.nombre,
+        productoId: key,
+        nombre: nameMap[key] || key,
         promedios,
         totalSemana,
       };
@@ -179,7 +199,7 @@ export const useEstadisticasCategoria = (products, filters = {}) => {
       productos: productosConPromedio,
       diasActivos,
     };
-  }, [promediosDia, products]);
+  }, [promediosDia, productosConStats]);
 
   return {
     loading,

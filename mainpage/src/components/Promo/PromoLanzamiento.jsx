@@ -4,7 +4,7 @@ import "./PromoLanzamiento.css";
 
 const PROMO = {
   ciudad: "Torremolinos",
-  plazasTotal: 10,
+  plazasTotal: 5,
   plazasOcupadas: 2,
   clientes: ["Zabor Fetén", "Bodegón Argentino"],
   whatsapp: "623754328",

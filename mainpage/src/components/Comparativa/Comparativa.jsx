@@ -30,7 +30,7 @@ export default function Comparativa() {
           <span className="Comp-kicker">¿Cuánto pagas hoy?</span>
           <h2>ALEF vs lo que hay en el mercado</h2>
           <p>
-            Comparativa honesta con otros TPVs (Last.app, Revo, Ágora) y con hacer todo a mano.
+            Comparativa honesta con otros TPVs del mercado y con hacer todo a mano.
           </p>
         </div>
 

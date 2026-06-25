@@ -1,5 +1,6 @@
 import React, { useCallback, useState } from "react";
 import { trackEvent } from "../../utils/trackEvent";
+import api from "../../utils/api";
 import "./Contact.css";
 
 const WHATSAPP_NUMBER = "34623754328";
@@ -14,13 +15,8 @@ const Contact = () => {
     window.open(url, "_blank", "noopener,noreferrer");
   }, []);
 
-  const openEmailFallback = useCallback((subject, body) => {
-    const mailto = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    window.location.href = mailto;
-  }, []);
-
   const handleSubmit = useCallback(
-    (e) => {
+    async (e) => {
       e.preventDefault();
       const form = e.currentTarget;
       const data = new FormData(form);
@@ -29,6 +25,7 @@ const Contact = () => {
       const email = String(data.get("email") || "").trim();
       const negocio = String(data.get("negocio") || "").trim();
       const mensaje = String(data.get("mensaje") || "").trim();
+      const website = String(data.get("website") || "").trim();
 
       if (!nombre || !email || !mensaje) return;
 
@@ -45,17 +42,20 @@ const Contact = () => {
       ].join("\n");
 
       try {
+        await api.post("/leads", { nombre, email, negocio, mensaje, website });
         trackEvent("lead_form_submit", { negocio: negocio || "sin nombre" });
-        openWhatsApp(`${subject}\n\n${body}`);
         setSentOk(true);
         form.reset();
       } catch {
-        openEmailFallback(subject, body);
+        trackEvent("lead_form_submit", { negocio: negocio || "sin nombre", fallback: "whatsapp" });
+        openWhatsApp(`${subject}\n\n${body}`);
+        setSentOk(true);
+        form.reset();
       } finally {
         setSending(false);
       }
     },
-    [openWhatsApp, openEmailFallback]
+    [openWhatsApp]
   );
 
   return (
@@ -122,6 +122,8 @@ const Contact = () => {
               <p>Te contactaremos en menos de 24 horas.</p>
             </div>
 
+            <input type="text" name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" style={{position:"absolute",left:"-9999px",width:1,height:1,opacity:0}} />
+
             <div className="Contact-field">
               <label htmlFor="contact-nombre">Nombre</label>
               <input id="contact-nombre" name="nombre" type="text" placeholder="Tu nombre" required autoComplete="name" />
@@ -150,6 +152,12 @@ const Contact = () => {
             <button type="submit" className="btn btn-primario Contact-submit" disabled={sending}>
               {sending ? "Enviando…" : "Enviar consulta"}
             </button>
+
+            {sentOk && (
+              <p className="Contact-success" role="status">
+                ¡Gracias! Hemos recibido tu solicitud. Te contactaremos en menos de 24 horas.
+              </p>
+            )}
           </form>
         </div>
       </div>

@@ -25,7 +25,7 @@ const PROMO = {
     {
       nombre: "Premium",
       precioOriginal: 129.99,
-      precioPromo: 109.99,
+      precioPromo: 89.99,
       instalacion: 479.99,
       destacado: true,
       features: [

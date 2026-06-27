@@ -23,11 +23,13 @@ const Contact = () => {
 
       const nombre = String(data.get("nombre") || "").trim();
       const email = String(data.get("email") || "").trim();
+      const telefono = String(data.get("telefono") || "").trim();
       const negocio = String(data.get("negocio") || "").trim();
-      const mensaje = String(data.get("mensaje") || "").trim();
+      const zona = String(data.get("zona") || "").trim();
+      const problema = String(data.get("problema") || "").trim();
       const website = String(data.get("website") || "").trim();
 
-      if (!nombre || !email || !mensaje) return;
+      if (!nombre || !email || !telefono) return;
 
       setSending(true);
       setSentOk(false);
@@ -35,14 +37,15 @@ const Contact = () => {
       const subject = `Quiero automatizar mi restaurante — ${negocio || "Negocio sin nombre"}`;
       const body = [
         `Hola! Soy ${nombre}.`,
+        `Teléfono: ${telefono}`,
         `Email: ${email}`,
         `Negocio: ${negocio || "—"}`,
-        "",
-        mensaje,
+        `Zona: ${zona || "—"}`,
+        `Problema: ${problema || "—"}`,
       ].join("\n");
 
       try {
-        await api.post("/leads", { nombre, email, negocio, mensaje, website });
+        await api.post("/leads", { nombre, email, telefono, negocio, zona, problema, website });
         trackEvent("lead_form_submit", { negocio: negocio || "sin nombre" });
         setSentOk(true);
         form.reset();
@@ -130,18 +133,43 @@ const Contact = () => {
             </div>
 
             <div className="Contact-field">
+              <label htmlFor="contact-negocio">Restaurante</label>
+              <input id="contact-negocio" name="negocio" type="text" placeholder="Nombre de tu restaurante o bar" required autoComplete="organization" />
+            </div>
+
+            <div className="Contact-field">
+              <label htmlFor="contact-telefono">WhatsApp / Teléfono</label>
+              <input id="contact-telefono" name="telefono" type="tel" placeholder="623 456 789" required autoComplete="tel" />
+            </div>
+
+            <div className="Contact-field">
               <label htmlFor="contact-email">Correo electrónico</label>
               <input id="contact-email" name="email" type="email" placeholder="tucorreo@ejemplo.com" required autoComplete="email" />
             </div>
 
             <div className="Contact-field">
-              <label htmlFor="contact-negocio">Nombre del negocio (opcional)</label>
-              <input id="contact-negocio" name="negocio" type="text" placeholder="Restaurante, gastrobar, chiringuito..." autoComplete="organization" />
+              <label htmlFor="contact-zona">Zona</label>
+              <select id="contact-zona" name="zona">
+                <option value="">Selecciona tu zona</option>
+                <option value="Torremolinos">Torremolinos</option>
+                <option value="Benalmádena">Benalmádena</option>
+                <option value="Málaga">Málaga</option>
+                <option value="Fuengirola">Fuengirola</option>
+                <option value="Otra">Otra zona</option>
+              </select>
             </div>
 
             <div className="Contact-field">
-              <label htmlFor="contact-mensaje">¿Qué te gustaría automatizar?</label>
-              <textarea id="contact-mensaje" name="mensaje" placeholder="Cuéntanos cómo trabajas ahora y qué procesos te gustaría que se hicieran solos." required rows={5} />
+              <label htmlFor="contact-problema">¿Qué te da más problemas?</label>
+              <select id="contact-problema" name="problema">
+                <option value="">Selecciona una opción</option>
+                <option value="Cocina desconectada">Cocina desconectada de sala</option>
+                <option value="No sé cuánto gano">No sé cuánto gano realmente</option>
+                <option value="Proveedores y stock">Proveedores y control de stock</option>
+                <option value="Facturación">Facturación y gestoría</option>
+                <option value="Todo manual">Todo es manual y me quita horas</option>
+                <option value="Otro">Otro</option>
+              </select>
             </div>
 
             <p className="Contact-legal">

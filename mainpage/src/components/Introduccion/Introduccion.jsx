@@ -34,7 +34,7 @@ const Introduccion = () => {
 
             <p className="Introduccion-subtitulo">
               TPV, stock predictivo, facturación automática, carta QR con IA y
-              cocina conectada en un único sistema para hostelería. Operativo en 24 horas.
+              cocina conectada en un único sistema para hostelería. Puesta en marcha rápida.
             </p>
 
             <div className="Introduccion-highlights">
@@ -68,8 +68,8 @@ const Introduccion = () => {
                 <span>te acompañamos siempre</span>
               </div>
               <div>
-                <strong>Operativo en 1 día</strong>
-                <span>sin instalaciones</span>
+                <strong>Puesta en marcha rápida</strong>
+                <span>nosotros configuramos todo</span>
               </div>
             </div>
           </div>

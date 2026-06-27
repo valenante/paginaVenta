@@ -15,14 +15,14 @@ export default function PostMargenes() {
         path="/blog/calcular-margenes-restaurante"
         type="article"
       />
-      <ArticleStructuredData title="Cómo calcular los márgenes reales de tu restaurante" description="Guía práctica de cálculo de márgenes en hostelería: food cost, escandallo, mermas, pricing y protección de rentabilidad." path="/blog/calcular-margenes-restaurante" datePublished="2026-06-04" dateModified="2026-06-04" />
+      <ArticleStructuredData title="Cómo calcular los márgenes reales de tu restaurante" description="Guía práctica de cálculo de márgenes en hostelería: food cost, escandallo, mermas, pricing y protección de rentabilidad." path="/blog/calcular-margenes-restaurante" datePublished="2026-06-03" dateModified="2026-06-03" />
       <BreadcrumbStructuredData items={[{ name: "Inicio", path: "/" }, { name: "Blog", path: "/blog" }, { name: "Márgenes de restaurante", path: "/blog/calcular-margenes-restaurante" }]} />
 
       <header className="BlogPost-header">
         <span className="BlogPost-tag">Finanzas</span>
         <h1>Cómo calcular los márgenes reales de tu restaurante</h1>
         <p>La diferencia entre un restaurante rentable y uno que cierra en 3 años suele estar en los márgenes. Y la mayoría no los calcula bien.</p>
-        <div className="BlogPost-meta">4 junio 2026 · 9 min lectura</div>
+        <div className="BlogPost-meta">3 junio 2026 · 9 min lectura</div>
       </header>
 
       <article className="BlogPost-body">

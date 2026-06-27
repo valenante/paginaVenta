@@ -8,7 +8,7 @@ export default function Funcionamiento() {
     <section className="Fn" aria-labelledby="fn-title">
       <div className="Fn-inner">
         <header className="Fn-header">
-          <span className="Fn-badge">Operativo en 24 horas</span>
+          <span className="Fn-badge">Puesta en marcha rápida</span>
           <h2 id="fn-title">Así de rápido empiezas con ALEF</h2>
           <p>
             Sin técnicos, sin instalaciones complicadas, sin semanas de espera.

@@ -9,7 +9,7 @@ const dolores = [
   },
   {
     titulo: "No saber cuánto ganas realmente",
-    antes: "Facturas 15.000€/mes pero no sabes qué platos te dan dinero. Un proveedor sube un 12% y no te enteras hasta que cierras caja.",
+    antes: "Facturas 15.000€/mes pero no sabes qué platos te dan dinero. Un proveedor sube un 10% y no te enteras hasta que cierras caja.",
     conAlef: "Margen real de cada plato en tiempo real. Si un proveedor sube precio, el sistema te avisa y te dice qué platos se ven afectados. Sabes qué vender más y qué sacar.",
   },
   {

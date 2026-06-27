@@ -15,14 +15,14 @@ export default function PostFacturacion() {
         path="/blog/facturacion-electronica-hosteleria"
         type="article"
       />
-      <ArticleStructuredData title="Facturación electrónica para hostelería: guía práctica" description="Guía sobre facturación electrónica en restaurantes: normativa, automatización, gestión de proveedores y envío a gestoría." path="/blog/facturacion-electronica-hosteleria" datePublished="2026-06-04" dateModified="2026-06-04" />
+      <ArticleStructuredData title="Facturación electrónica para hostelería: guía práctica" description="Guía sobre facturación electrónica en restaurantes: normativa, automatización, gestión de proveedores y envío a gestoría." path="/blog/facturacion-electronica-hosteleria" datePublished="2026-06-10" dateModified="2026-06-10" />
       <BreadcrumbStructuredData items={[{ name: "Inicio", path: "/" }, { name: "Blog", path: "/blog" }, { name: "Facturación electrónica", path: "/blog/facturacion-electronica-hosteleria" }]} />
 
       <header className="BlogPost-header">
         <span className="BlogPost-tag">Legal</span>
         <h1>Facturación electrónica para hostelería: guía práctica</h1>
         <p>Las facturas de proveedores, los tickets de venta, el envío a gestoría — todo está cambiando. Esto es lo que necesitas saber y hacer.</p>
-        <div className="BlogPost-meta">4 junio 2026 · 7 min lectura</div>
+        <div className="BlogPost-meta">10 junio 2026 · 7 min lectura</div>
       </header>
 
       <article className="BlogPost-body">

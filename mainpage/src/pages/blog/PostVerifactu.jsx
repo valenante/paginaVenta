@@ -22,7 +22,7 @@ export default function PostVerifactu() {
         path="/blog/que-es-verifactu-restaurantes"
         type="article"
       />
-      <ArticleStructuredData title="Qué es VeriFactu y cómo afecta a tu restaurante en 2027" description="Guía completa sobre la nueva ley de facturación electrónica VeriFactu para restaurantes y hostelería." path="/blog/que-es-verifactu-restaurantes" datePublished="2026-06-04" dateModified="2026-06-04" />
+      <ArticleStructuredData title="Qué es VeriFactu y cómo afecta a tu restaurante en 2027" description="Guía completa sobre la nueva ley de facturación electrónica VeriFactu para restaurantes y hostelería." path="/blog/que-es-verifactu-restaurantes" datePublished="2026-05-21" dateModified="2026-05-21" />
       <FAQStructuredData faqs={faqs} />
       <BreadcrumbStructuredData items={[{ name: "Inicio", path: "/" }, { name: "Blog", path: "/blog" }, { name: "VeriFactu para restaurantes", path: "/blog/que-es-verifactu-restaurantes" }]} />
 
@@ -30,7 +30,7 @@ export default function PostVerifactu() {
         <span className="BlogPost-tag">Legal</span>
         <h1>Qué es VeriFactu y cómo afecta a tu restaurante en 2027</h1>
         <p>La nueva ley de facturación electrónica ya tiene fecha. Si tienes un restaurante, bar o cafetería en España, esto te afecta directamente.</p>
-        <div className="BlogPost-meta">4 junio 2026 · 8 min lectura</div>
+        <div className="BlogPost-meta">21 mayo 2026 · 8 min lectura</div>
       </header>
 
       <article className="BlogPost-body">

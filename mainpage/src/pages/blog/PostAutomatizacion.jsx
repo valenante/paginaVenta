@@ -15,14 +15,14 @@ export default function PostAutomatizacion() {
         path="/blog/automatizacion-restaurantes-ia"
         type="article"
       />
-      <ArticleStructuredData title="Automatización de restaurantes con IA: qué se puede hacer hoy" description="Análisis real de las automatizaciones disponibles para restaurantes: qué funciona, qué no, y qué esperar de la IA en hostelería." path="/blog/automatizacion-restaurantes-ia" datePublished="2026-06-04" dateModified="2026-06-04" />
+      <ArticleStructuredData title="Automatización de restaurantes con IA: qué se puede hacer hoy" description="Análisis real de las automatizaciones disponibles para restaurantes: qué funciona, qué no, y qué esperar de la IA en hostelería." path="/blog/automatizacion-restaurantes-ia" datePublished="2026-06-17" dateModified="2026-06-17" />
       <BreadcrumbStructuredData items={[{ name: "Inicio", path: "/" }, { name: "Blog", path: "/blog" }, { name: "Automatización con IA", path: "/blog/automatizacion-restaurantes-ia" }]} />
 
       <header className="BlogPost-header">
         <span className="BlogPost-tag">Tecnología</span>
         <h1>Automatización de restaurantes con IA: qué se puede hacer hoy</h1>
         <p>La IA en hostelería no es ciencia ficción. Hay cosas que ya funcionan, cosas que casi funcionan, y cosas que son puro humo. Vamos a separar la paja del grano.</p>
-        <div className="BlogPost-meta">4 junio 2026 · 9 min lectura</div>
+        <div className="BlogPost-meta">17 junio 2026 · 9 min lectura</div>
       </header>
 
       <article className="BlogPost-body">

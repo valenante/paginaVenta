@@ -15,14 +15,14 @@ export default function PostStock() {
         path="/blog/control-stock-restaurante-guia"
         type="article"
       />
-      <ArticleStructuredData title="Guía completa de control de stock para restaurantes" description="Todo sobre control de inventario en hostelería: métodos, frecuencia, errores y automatización." path="/blog/control-stock-restaurante-guia" datePublished="2026-06-04" dateModified="2026-06-04" />
+      <ArticleStructuredData title="Guía completa de control de stock para restaurantes" description="Todo sobre control de inventario en hostelería: métodos, frecuencia, errores y automatización." path="/blog/control-stock-restaurante-guia" datePublished="2026-05-27" dateModified="2026-05-27" />
       <BreadcrumbStructuredData items={[{ name: "Inicio", path: "/" }, { name: "Blog", path: "/blog" }, { name: "Control de stock", path: "/blog/control-stock-restaurante-guia" }]} />
 
       <header className="BlogPost-header">
         <span className="BlogPost-tag">Operaciones</span>
         <h1>Guía completa de control de stock para restaurantes</h1>
         <p>El stock es donde más dinero se pierde en un restaurante sin que nadie se dé cuenta. Esta guía te explica cómo pasar del caos al control.</p>
-        <div className="BlogPost-meta">4 junio 2026 · 10 min lectura</div>
+        <div className="BlogPost-meta">27 mayo 2026 · 10 min lectura</div>
       </header>
 
       <article className="BlogPost-body">

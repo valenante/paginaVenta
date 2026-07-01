@@ -5,6 +5,7 @@ import AlefSelect from "../AlefSelect/AlefSelect";
 import ModalBase from "../MapaEditor/ModalBase";
 import "../MapaEditor/ModalCrearMesa.css"; // trae clases .alef* compartidas
 import { toNum } from "./stockHelpers";
+import { useAutoFocus } from "../../hooks/useAutoFocus";
 
 const unidades = ["g", "kg", "ml", "l", "uds", "caja", "pack", "botella"];
 const tipos = [
@@ -28,6 +29,8 @@ export default function CrearIngredienteModal({ onClose, onSave }) {
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  const autoFocusRef = useAutoFocus();
 
   const esConsumible = form.tipoItem === "consumible";
 
@@ -122,12 +125,12 @@ export default function CrearIngredienteModal({ onClose, onSave }) {
           <label className="alefField">
             <span className="alefField-label">Nombre</span>
             <input
+              ref={autoFocusRef}
               className="alefField-input"
               name="nombre"
               value={form.nombre}
               onChange={update}
               placeholder="Ej: Harina, Servilletas…"
-              autoFocus
               autoComplete="off"
               required
             />

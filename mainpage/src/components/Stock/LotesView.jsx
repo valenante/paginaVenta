@@ -18,6 +18,7 @@ import { normalizeApiError } from "../../utils/normalizeApiError.js";
 import ModalBase from "../MapaEditor/ModalBase";
 import "../MapaEditor/ModalCrearMesa.css";
 import "./LotesView.css";
+import { useAutoFocus } from "../../hooks/useAutoFocus";
 
 const eur = (n) =>
   `${Number(n || 0).toLocaleString("es-ES", {
@@ -41,6 +42,8 @@ export default function LotesView({ filtroItemId = null, onChange }) {
   const [filtroEstado, setFiltroEstado] = useState("activo");
   const [diasCaducidad, setDiasCaducidad] = useState("");
   const [mermaAction, setMermaAction] = useState(null);
+
+  const autoFocusRef = useAutoFocus();
 
   const fetchLotes = useCallback(async () => {
     try {
@@ -292,6 +295,7 @@ export default function LotesView({ filtroItemId = null, onChange }) {
                 Cantidad ({mermaAction.lote.itemUnidad})
               </span>
               <input
+                ref={autoFocusRef}
                 className="alefField-input"
                 type="number"
                 min="0"
@@ -304,7 +308,6 @@ export default function LotesView({ filtroItemId = null, onChange }) {
                     cantidad: Number(e.target.value),
                   }))
                 }
-                autoFocus
               />
             </label>
 

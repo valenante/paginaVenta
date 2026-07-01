@@ -63,7 +63,7 @@ const Admin = () => {
   };
 
   const handleDescargarDeclaracion = () => {
-    window.open(`${process.env.REACT_APP_API_URL}/firma/declaracion-responsable`, '_blank');
+    window.open(`${api.defaults.baseURL}/firma/declaracion-responsable`, '_blank');
   };
 
   return (

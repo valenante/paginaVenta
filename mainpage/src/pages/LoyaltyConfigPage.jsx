@@ -11,6 +11,7 @@ import {
   eliminarAnuncio,
 } from "../services/loyaltyAdminService";
 import ClienteLoyaltyDrawer from "./ClienteLoyaltyDrawer";
+import { useAutoFocus } from "../hooks/useAutoFocus";
 import "./LoyaltyConfigPage.css";
 
 /* =====================================================
@@ -1166,6 +1167,8 @@ function AnuncioModal({ anuncio, onClose, onSaved }) {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
 
+  const autoFocusRef = useAutoFocus();
+
   const onChange = (k, v) => setForm((f) => ({ ...f, [k]: v }));
 
   const submit = async (e) => {
@@ -1198,13 +1201,13 @@ function AnuncioModal({ anuncio, onClose, onSaved }) {
         <div className="config-field" style={{ marginBottom: "var(--space-md)" }}>
           <label>Título</label>
           <input
+            ref={autoFocusRef}
             type="text"
             value={form.titulo}
             onChange={(e) => onChange("titulo", e.target.value)}
             required
             maxLength={120}
             placeholder="Ej: Lunes 2x1 en hamburguesas"
-            autoFocus
           />
         </div>
 

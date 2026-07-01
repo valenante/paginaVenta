@@ -4,6 +4,7 @@ import { toNum, clampMin } from "./stockHelpers";
 import ModalBase from "../MapaEditor/ModalBase";
 import "../MapaEditor/ModalCrearMesa.css";
 import "./AjustarStockModal.css"; // overrides específicos (stepper, summary)
+import { useAutoFocus } from "../../hooks/useAutoFocus";
 
 const AjustarStockModal = ({ ingrediente, onClose, onSave }) => {
   const stockInicial = useMemo(
@@ -14,6 +15,8 @@ const AjustarStockModal = ({ ingrediente, onClose, onSave }) => {
   const [cantidad, setCantidad] = useState(String(stockInicial));
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  const autoFocusRef = useAutoFocus();
 
   const unidad = ingrediente?.unidad || "";
 
@@ -132,6 +135,7 @@ const AjustarStockModal = ({ ingrediente, onClose, onSave }) => {
 
           <div className="ajuste-inputWrap">
             <input
+              ref={autoFocusRef}
               type="number"
               className="alefField-input ajuste-input"
               value={cantidad}
@@ -145,7 +149,6 @@ const AjustarStockModal = ({ ingrediente, onClose, onSave }) => {
                 setCantidad(String(clampMin(toNum(cantidad, stockInicial), 0)))
               }
               disabled={loading}
-              autoFocus
             />
             <span className="ajuste-unit">{unidad}</span>
           </div>

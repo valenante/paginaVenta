@@ -1,6 +1,7 @@
 // src/components/Categories/CategoriaFormModal.jsx
 import React, { useState, useEffect, useCallback } from "react";
 import Portal from "../ui/Portal";
+import { useAutoFocus } from "../../hooks/useAutoFocus";
 import "./CategoriaFormModal.css";
 
 const ICONOS_SUGERIDOS = [
@@ -21,6 +22,8 @@ const CategoriaFormModal = ({ categoria, tipo, onClose, onSave }) => {
   const [orden, setOrden] = useState(categoria?.orden ?? 0);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
+
+  const autoFocusRef = useAutoFocus();
 
   // Traducciones
   const [trEN, setTrEN] = useState({
@@ -110,13 +113,13 @@ const CategoriaFormModal = ({ categoria, tipo, onClose, onSave }) => {
             <label className="catmodal-label">
               Nombre
               <input
+                ref={autoFocusRef}
                 className="catmodal-input"
                 type="text"
                 value={nombre}
                 onChange={(e) => setNombre(e.target.value)}
                 placeholder="Ej: Entrantes, Vinos tintos…"
                 maxLength={100}
-                autoFocus
               />
             </label>
 

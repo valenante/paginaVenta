@@ -6,6 +6,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { createPortal } from "react-dom";
 import { useReceta, guardarReceta, buscarIngredientes } from "../../Hooks/useRecetas";
+import { useAutoFocus } from "../../hooks/useAutoFocus";
 import "./RecetaModal.css";
 
 const UNIDADES = ["ud", "g", "kg", "ml", "cl", "litro"];
@@ -18,6 +19,8 @@ export default function RecetaModal({ productoId, productoNombre, onClose, onSav
   const [searchResults, setSearchResults] = useState([]);
   const [searching, setSearching] = useState(false);
   const [searchForVariant, setSearchForVariant] = useState(null); // null = no search, string = clavePrecio
+
+  const autoFocusRef = useAutoFocus();
 
   const precios = data?.precios || [];
   const multiVariante = precios.length > 1;
@@ -163,12 +166,12 @@ export default function RecetaModal({ productoId, productoNombre, onClose, onSav
     return (
       <div className="rec-search">
         <input
+          ref={autoFocusRef}
           type="text"
           className="rec-search__input"
           placeholder="Buscar ingrediente..."
           value={searchQ}
           onChange={e => setSearchQ(e.target.value)}
-          autoFocus
         />
         {searching && <div className="rec-search__loading">Buscando...</div>}
         {searchResults.length > 0 && (

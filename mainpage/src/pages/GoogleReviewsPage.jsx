@@ -1,5 +1,6 @@
-import React, { useState, useCallback } from "react";
+import React, { useState } from "react";
 import ModalConfirmacion from "../components/Modal/ModalConfirmacion.jsx";
+import { useAutoFocus } from "../hooks/useAutoFocus";
 import {
   useGoogleStatus,
   useGoogleReviews,
@@ -182,6 +183,8 @@ function TabPending() {
   const [rejectReason, setRejectReason] = useState("");
   const [msg, setMsg] = useState(null);
 
+  const autoFocusRef = useAutoFocus();
+
   const reviews = data?.reviews || [];
 
   const handleApprove = async (id) => {
@@ -271,13 +274,13 @@ function TabPending() {
               {rejectingId === r._id ? (
                 <div className="grev-reject-form">
                   <input
+                    ref={autoFocusRef}
                     type="text"
                     className="grev-reject-input"
                     placeholder="Motivo del rechazo..."
                     value={rejectReason}
                     onChange={(e) => setRejectReason(e.target.value)}
                     onKeyDown={(e) => e.key === "Enter" && handleReject(r._id)}
-                    autoFocus
                   />
                   <button
                     className="grev-btn grev-btn--reject-confirm"

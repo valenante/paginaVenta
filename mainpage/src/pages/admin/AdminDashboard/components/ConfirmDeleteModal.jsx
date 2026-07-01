@@ -2,10 +2,12 @@
 import { useState } from "react";
 import Modal from "react-modal";
 Modal.setAppElement("#root");
+import { useAutoFocus } from "../../../../hooks/useAutoFocus";
 import "./ConfirmDeleteModal.css";
 
 export default function ConfirmDeleteModal({ tenant, onCancel, onConfirm }) {
   const [typed, setTyped] = useState("");
+  const autoFocusRef = useAutoFocus();
   const expected = tenant?.nombre || "";
   const matches = typed.trim() === expected.trim();
 
@@ -25,12 +27,12 @@ export default function ConfirmDeleteModal({ tenant, onCancel, onConfirm }) {
         Escribe <strong>{expected}</strong> para confirmar:
       </p>
       <input
+        ref={autoFocusRef}
         type="text"
         className="confirm-modal__input"
         value={typed}
         onChange={(e) => setTyped(e.target.value)}
         placeholder={expected}
-        autoFocus
       />
       <div className="buttons">
         <button onClick={onCancel}>Cancelar</button>

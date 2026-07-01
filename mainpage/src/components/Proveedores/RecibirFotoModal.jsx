@@ -2,13 +2,14 @@ import React, { useState, useRef } from "react";
 import { createPortal } from "react-dom";
 import api from "../../utils/api";
 import ModalBase from "../MapaEditor/ModalBase";
+import { useAutoFocus } from "../../hooks/useAutoFocus";
 import "./RecibirFotoModal.css";
 
 export default function RecibirFotoModal({ onClose, onDone }) {
   const [mode, setMode] = useState("foto");
   const [step, setStep] = useState("upload");
   const [image, setImage] = useState(null);
-  const [result, setResult] = useState(null);
+  const [, setResult] = useState(null);
   const [editedResult, setEditedResult] = useState(null);
   const [error, setError] = useState(null);
   const [selected, setSelected] = useState(new Set());
@@ -19,7 +20,7 @@ export default function RecibirFotoModal({ onClose, onDone }) {
 
   // Detalle ingrediente
   const [detailData, setDetailData] = useState(null);
-  const [detailLoading, setDetailLoading] = useState(false);
+  const [, setDetailLoading] = useState(false);
 
   const openDetail = async (ingredienteId) => {
     if (!ingredienteId) return;
@@ -38,6 +39,8 @@ export default function RecibirFotoModal({ onClose, onDone }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [searchingIdx, setSearchingIdx] = useState(null);
+
+  const autoFocusRef = useAutoFocus();
 
   const handleFile = (file) => {
     if (!file) return;
@@ -96,7 +99,7 @@ export default function RecibirFotoModal({ onClose, onDone }) {
       const items = editedResult.matched
         .filter((_, i) => selected.has(i))
         .filter((m) => m.match?.tipo === "ingrediente")
-        .map((m, i) => {
+        .map((m) => {
           const base = {
             ingredienteId: m.match.id,
             cantidad: Number(m.cantidad) || 0,
@@ -146,7 +149,10 @@ export default function RecibirFotoModal({ onClose, onDone }) {
     setSelected(prev => { const n = new Set(prev); if (n.has(i)) n.delete(i); else n.add(i); return n; });
   };
 
-  const toggleUpdatePrice = (i) => {
+  // TODO: feature "actualizar precio al recibir" a medio cablear — este toggle
+  // nunca se conecta a la UI (updatePrices se lee abajo pero nunca se escribe).
+  // Prefijo _ = retenido pero sin usar. Wirear a un checkbox por ítem o borrar.
+  const _toggleUpdatePrice = (i) => {
     setUpdatePrices(prev => { const n = new Set(prev); if (n.has(i)) n.delete(i); else n.add(i); return n; });
   };
 
@@ -398,7 +404,7 @@ export default function RecibirFotoModal({ onClose, onDone }) {
                           </div>
                         ) : (
                           <div className="recibir-searchWrap">
-                            <input type="text" className="recibir-editInput recibir-editInput--wide" placeholder="Buscar ingrediente..." autoFocus value={searchQuery} onChange={e => searchIngrediente(e.target.value)} onBlur={() => setTimeout(() => setSearchingIdx(null), 300)} />
+                            <input ref={autoFocusRef} type="text" className="recibir-editInput recibir-editInput--wide" placeholder="Buscar ingrediente..." value={searchQuery} onChange={e => searchIngrediente(e.target.value)} onBlur={() => setTimeout(() => setSearchingIdx(null), 300)} />
                             {searchResults.length > 0 && (
                               <div className="recibir-searchDropdown">
                                 {searchResults.map((ing, j) => (

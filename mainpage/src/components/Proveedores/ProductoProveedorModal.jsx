@@ -1,8 +1,9 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import api from "../../utils/api";
 import { useTenant } from "../../context/TenantContext";
 import Portal from "../ui/Portal";
+import { useAutoFocus } from "../../hooks/useAutoFocus";
 import "./ProductoProveedorModal.css";
 
 const DEFAULT = {
@@ -180,6 +181,8 @@ export default function ProductoProveedorModal({
   };
 
   const [aiApplied, setAiApplied] = useState(false);
+
+  const autoFocusRef = useAutoFocus();
 
   const isRest = tenant?.tipoNegocio === "restaurante";
   const isShop = tenant?.tipoNegocio === "shop";
@@ -448,9 +451,9 @@ export default function ProductoProveedorModal({
               <div className="ppModal-field ppModal-field--full">
                 <label>Nombre *</label>
                 <input
+                  ref={autoFocusRef}
                   value={form.nombre}
                   onChange={(e) => set("nombre", e.target.value)}
-                  autoFocus
                 />
               </div>
 

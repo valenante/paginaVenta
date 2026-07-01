@@ -18,19 +18,11 @@ const PAGE_SIZE_DEFAULT = 12;
 export default function ProveedoresPage() {
   const { tenantId } = useTenant();
   const { hasFeature } = useFeaturesPlan();
-
-  if (!hasFeature("finanzas_view")) {
-    return (
-      <div style={{ padding: "2rem" }}>
-        <UpgradeBanner
-          title="Gestión de proveedores"
-          message="Gestiona proveedores, productos, pedidos y costes con el plan Premium."
-          cta="Activar Proveedores"
-          waText="Hola, soy de {nombre}. Me interesa activar el módulo de Proveedores en Alef."
-        />
-      </div>
-    );
-  }
+  // El gate de feature se EVALÚA aquí pero el return va al FINAL, tras todos los
+  // hooks. Un return temprano dejaría los hooks de abajo "condicionales": cuando
+  // las features cargan async (false→true) el nº de hooks cambia entre renders y
+  // React crashea ("rendered more hooks than during the previous render").
+  const canView = hasFeature("finanzas_view");
 
   const [items, setItems] = useState([]);
   const [total, setTotal] = useState(0);
@@ -94,8 +86,9 @@ export default function ProveedoresPage() {
   }, [headersTenant, q, page, pageSize, tipoFiltro]);
 
   useEffect(() => {
+    if (!canView) return; // no cargar datos si el tenant no tiene la feature
     fetchProveedores();
-  }, [fetchProveedores, tenantId]);
+  }, [fetchProveedores, tenantId, canView]);
 
   const onCreate = () => setModal({ type: "create" });
   const onEdit = (p) => setModal({ type: "edit", proveedor: p });
@@ -122,6 +115,21 @@ export default function ProveedoresPage() {
     },
     [headersTenant, fetchProveedores, showAlert]
   );
+
+  // Gate DESPUÉS de todos los hooks → el orden de hooks es estable en todos los
+  // renders (sin esto, crash al cargar /proveedores con las features async).
+  if (!canView) {
+    return (
+      <div style={{ padding: "2rem" }}>
+        <UpgradeBanner
+          title="Gestión de proveedores"
+          message="Gestiona proveedores, productos, pedidos y costes con el plan Premium."
+          cta="Activar Proveedores"
+          waText="Hola, soy de {nombre}. Me interesa activar el módulo de Proveedores en Alef."
+        />
+      </div>
+    );
+  }
 
   return (
     <main className="proveedores-config-page cfg-page section section--wide">

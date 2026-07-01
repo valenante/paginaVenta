@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import LightSelect from "./LightSelect";
 import { useRoles } from "../../hooks/useRoles";
 import { useEstaciones } from "../../hooks/useEstaciones";
+import { useAutoFocus } from "../../hooks/useAutoFocus";
 import "./UsuarioEditModal.css";
 
 export default function UsuarioEditModal({
@@ -21,6 +22,8 @@ export default function UsuarioEditModal({
   const [errors, setErrors] = useState({});
   const [saving, setSaving] = useState(false);
   const [serverError, setServerError] = useState("");
+
+  const autoFocusRef = useAutoFocus();
 
   const validate = () => {
     const e = {};
@@ -103,10 +106,10 @@ export default function UsuarioEditModal({
           <div className="userEditModal-field">
             <label>Nombre</label>
             <input
+              ref={autoFocusRef}
               value={form.name}
               onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))}
               placeholder="Nombre y apellido"
-              autoFocus
             />
             {errors.name && <p className="userEditModal-error">{errors.name}</p>}
           </div>

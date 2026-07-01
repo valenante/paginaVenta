@@ -5,6 +5,7 @@ import { useAuth } from "../context/AuthContext";
 
 import ErrorToast from "../components/common/ErrorToast";
 import { normalizeApiError } from "../utils/normalizeApiError";
+import { useAutoFocus } from "../hooks/useAutoFocus";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -23,6 +24,8 @@ export default function Login() {
   const [mfaEmail, setMfaEmail] = useState("");
   const [mfaCode, setMfaCode] = useState("");
 
+  const autoFocusRef = useAutoFocus();
+
   useEffect(() => {
     try {
       const raw = sessionStorage.getItem("tenantBlockedMsg");
@@ -30,7 +33,7 @@ export default function Login() {
         setBlockedMsg(JSON.parse(raw));
         sessionStorage.removeItem("tenantBlockedMsg");
       }
-    } catch {}
+    } catch { /* sessionStorage no disponible */ }
   }, []);
 
   const handleChange = (e) => {
@@ -171,6 +174,7 @@ export default function Login() {
               <div className="login-field">
                 <label htmlFor="mfa-code">Código de verificación</label>
                 <input
+                  ref={autoFocusRef}
                   id="mfa-code"
                   type="text"
                   inputMode="numeric"
@@ -179,7 +183,6 @@ export default function Login() {
                   value={mfaCode}
                   onChange={(e) => setMfaCode(e.target.value.replace(/\D/g, ""))}
                   autoComplete="one-time-code"
-                  autoFocus
                   required
                   className="login-mfa-input"
                 />

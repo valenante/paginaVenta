@@ -5,6 +5,7 @@ import AlefSelect from "../AlefSelect/AlefSelect";
 import ModalBase from "../MapaEditor/ModalBase";
 import "../MapaEditor/ModalCrearMesa.css";
 import { toNum, clampMin } from "./stockHelpers";
+import { useAutoFocus } from "../../hooks/useAutoFocus";
 
 const unidades = ["g", "kg", "ml", "l", "uds", "caja", "pack", "botella"];
 const tipos = [
@@ -78,6 +79,8 @@ export default function EditarIngredienteModal({ ingrediente, onClose, onSave })
   const [form, setForm] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  const autoFocusRef = useAutoFocus();
 
   const initialForm = useMemo(
     () => (ingrediente ? buildFormFromIngrediente(ingrediente) : null),
@@ -193,6 +196,7 @@ export default function EditarIngredienteModal({ ingrediente, onClose, onSave })
           <label className="alefField">
             <span className="alefField-label">Nombre</span>
             <input
+              ref={autoFocusRef}
               className="alefField-input"
               value={form.nombre}
               onChange={(e) => {
@@ -201,7 +205,6 @@ export default function EditarIngredienteModal({ ingrediente, onClose, onSave })
               }}
               placeholder="Ej: Harina, Aceite…"
               disabled={loading}
-              autoFocus
             />
           </label>
 

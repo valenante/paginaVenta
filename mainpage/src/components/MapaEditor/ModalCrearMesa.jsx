@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import ModalBase from "./ModalBase";
 import api from "../../utils/api";
+import { useAutoFocus } from "../../hooks/useAutoFocus";
 import "./ModalCrearMesa.css";
 
 function suggestPositionPct(mesasZona) {
@@ -38,6 +39,8 @@ export default function ModalCrearMesa({
 
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState("");
+
+  const autoFocusRef = useAutoFocus();
 
   useEffect(() => {
     if (!open) return;
@@ -120,6 +123,7 @@ export default function ModalCrearMesa({
           <label className="alefField">
             <span className="alefField-label">Número</span>
             <input
+              ref={autoFocusRef}
               className="alefField-input"
               type="text"
               inputMode="text"
@@ -128,7 +132,6 @@ export default function ModalCrearMesa({
               value={numero}
               onChange={(e) => setNumero(e.target.value)}
               required
-              autoFocus
               placeholder="Ej: 12, S1, T2, R1"
               title="Solo dígitos o letra+número (s1, t2, rec1)"
             />

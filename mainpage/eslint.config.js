@@ -2,6 +2,7 @@ import js from '@eslint/js'
 import globals from 'globals'
 import reactHooks from 'eslint-plugin-react-hooks'
 import reactRefresh from 'eslint-plugin-react-refresh'
+import jsxA11y from 'eslint-plugin-jsx-a11y'
 
 export default [
   { ignores: ['dist'] },
@@ -19,6 +20,7 @@ export default [
     plugins: {
       'react-hooks': reactHooks,
       'react-refresh': reactRefresh,
+      'jsx-a11y': jsxA11y,
     },
     rules: {
       ...js.configs.recommended.rules,
@@ -28,6 +30,9 @@ export default [
         'warn',
         { allowConstantExport: true },
       ],
+      // Prohíbe el atributo nativo `autoFocus`: en táctil rompe el teclado en
+      // pantalla y es malo para accesibilidad. Usar el hook useAutoFocus.
+      'jsx-a11y/no-autofocus': 'error',
     },
   },
 ]

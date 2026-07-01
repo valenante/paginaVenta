@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import api from "../../utils/api";
 import { useTenant } from "../../context/TenantContext";
 import Portal from "../ui/Portal";
+import { useAutoFocus } from "../../hooks/useAutoFocus";
 import "./FacturaProveedorModal.css";
 
 const IVA_OPTIONS = [
@@ -34,6 +35,8 @@ export default function FacturaProveedorModal({ onClose, onSaved }) {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [archivo, setArchivo] = useState(null);
+
+  const autoFocusRef = useAutoFocus();
 
   const set = (k, v) => setForm((s) => ({ ...s, [k]: v }));
 
@@ -139,10 +142,10 @@ export default function FacturaProveedorModal({ onClose, onSaved }) {
                 <div className="facturaProvModal-field">
                   <label>Nº Factura *</label>
                   <input
+                    ref={autoFocusRef}
                     value={form.numeroFactura}
                     onChange={(e) => set("numeroFactura", e.target.value)}
                     placeholder="F-2026/001"
-                    autoFocus
                   />
                 </div>
 

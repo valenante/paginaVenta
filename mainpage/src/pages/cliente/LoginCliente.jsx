@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate, Link, Navigate } from "react-router-dom";
 import { useClienteAuth } from "../../context/ClienteAuthContext";
 import ClienteLayout from "./ClienteLayout";
+import { useAutoFocus } from "../../hooks/useAutoFocus";
 import "./cliente.css";
 
 export default function LoginCliente() {
@@ -11,6 +12,8 @@ export default function LoginCliente() {
   const [submitting, setSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState(null);
+
+  const autoFocusRef = useAutoFocus();
 
   if (!loading && isAuthenticated) return <Navigate to="/cliente/perfil" replace />;
 
@@ -60,6 +63,7 @@ export default function LoginCliente() {
               <div className="cli-login-field">
                 <label htmlFor="cli-login-email">Correo electrónico</label>
                 <input
+                  ref={autoFocusRef}
                   id="cli-login-email"
                   name="email"
                   type="email"
@@ -68,7 +72,6 @@ export default function LoginCliente() {
                   autoComplete="email"
                   inputMode="email"
                   required
-                  autoFocus
                 />
               </div>
 

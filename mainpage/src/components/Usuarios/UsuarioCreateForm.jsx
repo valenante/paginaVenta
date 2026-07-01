@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import LightSelect from "./LightSelect";
 import { useRoles } from "../../hooks/useRoles";
 import { useEstaciones } from "../../hooks/useEstaciones";
+import { useAutoFocus } from "../../hooks/useAutoFocus";
 import "./UsuarioCreateForm.css";
 
 export default function UsuarioCreateForm({ onCrear, onClose }) {
@@ -21,6 +22,8 @@ export default function UsuarioCreateForm({ onCrear, onClose }) {
   const [saving, setSaving] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+
+  const autoFocusRef = useAutoFocus();
 
   const validate = () => {
     const e = {};
@@ -107,10 +110,10 @@ export default function UsuarioCreateForm({ onCrear, onClose }) {
             <div className="userCreateModal-field">
               <label>Nombre</label>
               <input
+                ref={autoFocusRef}
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
                 placeholder="Ej. Camarero 1"
-                autoFocus
               />
               {errors.name && <p className="userCreateModal-error">{errors.name}</p>}
             </div>

@@ -41,7 +41,7 @@
   border: none;
   font-size: 0.85rem;
   font-weight: 600;
-  background: linear-gradient(135deg, #a855f7, #f97316);
+  background: var(--color-primario, #60b5ff);
   color: #0b1120;
   cursor: pointer;
   box-shadow:

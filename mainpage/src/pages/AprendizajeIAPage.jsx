@@ -3,6 +3,9 @@
 
 import React, { useState, useEffect } from "react";
 import api from "../utils/api";
+import {
+  FiMessageSquare, FiFileText, FiBarChart2, FiClipboard, FiCheckCircle, FiShoppingCart,
+} from "react-icons/fi";
 import "./AprendizajeIAPage.css";
 
 export default function AprendizajeIAPage() {
@@ -41,12 +44,12 @@ export default function AprendizajeIAPage() {
 
       {/* KPIs */}
       <div className="ia-learn__kpis">
-        <KPI label="Sesiones (30d)" value={totales.sesiones} icon="💬" />
-        <KPI label="Mensajes" value={totales.mensajes} icon="📝" />
-        <KPI label="Msg/Sesión" value={totales.mensajesPorSesion} icon="📊" />
-        <KPI label="Propuestas" value={totales.propuestasGeneradas} icon="📋" />
-        <KPI label="Aceptación" value={`${totales.tasaAceptacion}%`} icon="✅" color={totales.tasaAceptacion >= 50 ? "#22c55e" : "#f59e0b"} />
-        <KPI label="Items añadidos" value={totales.itemsAnadidos} icon="🛒" />
+        <KPI label="Sesiones (30d)" value={totales.sesiones} icon={FiMessageSquare} />
+        <KPI label="Mensajes" value={totales.mensajes} icon={FiFileText} />
+        <KPI label="Msg/Sesión" value={totales.mensajesPorSesion} icon={FiBarChart2} />
+        <KPI label="Propuestas" value={totales.propuestasGeneradas} icon={FiClipboard} />
+        <KPI label="Aceptación" value={`${totales.tasaAceptacion}%`} icon={FiCheckCircle} estado={totales.tasaAceptacion >= 50 ? "ok" : "warn"} />
+        <KPI label="Items añadidos" value={totales.itemsAnadidos} icon={FiShoppingCart} />
       </div>
 
       {/* Timeline */}
@@ -98,7 +101,7 @@ export default function AprendizajeIAPage() {
             </div>
           </div>
 
-          <div className="ia-learn__propuestas-stats" style={{ marginTop: "16px" }}>
+          <div className="ia-learn__propuestas-stats">
             <h4>Propuestas de pedido</h4>
             <div className="ia-learn__prop-row">
               <span>Aceptadas</span><strong>{totales.propuestasAceptadas}</strong>
@@ -182,11 +185,11 @@ export default function AprendizajeIAPage() {
   );
 }
 
-function KPI({ label, value, icon, color }) {
+function KPI({ label, value, icon: Icon, estado }) {
   return (
     <div className="ia-learn__kpi">
-      <span className="ia-learn__kpi-icon">{icon}</span>
-      <span className="ia-learn__kpi-value" style={color ? { color } : undefined}>{value}</span>
+      <span className="ia-learn__kpi-icon">{Icon && <Icon aria-hidden />}</span>
+      <span className={`ia-learn__kpi-value${estado ? ` ia-learn__kpi-value--${estado}` : ""}`}>{value}</span>
       <span className="ia-learn__kpi-label">{label}</span>
     </div>
   );

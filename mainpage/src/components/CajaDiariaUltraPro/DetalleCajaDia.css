@@ -31,8 +31,20 @@
   padding: 1.25rem 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.06);
 }
 .dcj-modal__head h2 { font-size: 1.1rem; color: #fff; margin: 0; font-weight: 700; }
+.dcj-modal__actions { display: flex; align-items: center; gap: 0.6rem; }
+.dcj-modal__pdf {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(96,165,250,0.12); color: #60a5fa;
+  border: 1px solid rgba(96,165,250,0.25); border-radius: 8px;
+  padding: 6px 12px; font-size: 0.8rem; font-weight: 600; cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.dcj-modal__pdf:hover:not(:disabled) { background: rgba(96,165,250,0.2); color: #93c5fd; }
+.dcj-modal__pdf:disabled { opacity: 0.55; cursor: default; }
+.dcj-modal__pdf svg { width: 15px; height: 15px; }
 .dcj-modal__close { background: none; border: none; color: #9ca3af; cursor: pointer; font-size: 18px; padding: 4px; }
 .dcj-modal__close:hover { color: #fff; }
+.dcj__pdf-error { color: #f87171; font-size: 0.82rem; margin: 0 0 0.75rem; text-align: center; }
 
 .dcj-modal__body {
   padding: 1.5rem; overflow-y: auto; flex: 1;

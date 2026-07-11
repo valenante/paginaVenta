@@ -281,9 +281,30 @@
   border-top: 1px solid rgba(255,255,255,0.04);
   margin-top: 4px;
 }
+.finv-gestor__actions { display: flex; gap: 8px; align-items: center; }
 .finv-gestor__last {
   font-size: 0.75rem;
   color: #64748b;
+}
+
+/* Bloques del gestor lado a lado (50/50) — colapsan a 1 columna en móvil */
+.finv-gestor-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  align-items: start;
+  margin-bottom: 12px;
+}
+.finv-gestor-grid > .sug-section { margin-bottom: 0; }
+
+/* Vista previa del envío al gestor (HTML del email sobre fondo blanco) */
+.finv-gestor-preview__meta { font-size: 0.85rem; color: #94a3b8; margin: 0 0 12px; }
+.finv-gestor-preview__html {
+  background: #fff;
+  color: #1e293b;
+  border-radius: 8px;
+  padding: 16px;
+  overflow-x: auto;
 }
 
 /* Responsive gestor */
@@ -453,4 +474,5 @@
   .finv-list__head, .finv-list__row { grid-template-columns: 0.6fr 1.5fr 1fr 0.6fr 1fr; font-size: 0.72rem; }
   .finv-modal { width: 98%; max-height: 90vh; }
   .finv-modal__grid2 { grid-template-columns: 1fr; }
+  .finv-gestor-grid { grid-template-columns: 1fr; }
 }

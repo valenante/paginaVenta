@@ -2,7 +2,7 @@
 // Modal portal con detalle de auditoría de caja: quién abrió/cerró, movimientos, arqueo.
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import { FiX } from "react-icons/fi";
+import { FiX, FiDownload } from "react-icons/fi";
 import api from "../../utils/api";
 import "./DetalleCajaDia.css";
 
@@ -28,10 +28,33 @@ export default function DetalleCajaDia({ fecha, autoOpen = false, onClose }) {
   const [open, setOpen] = useState(autoOpen);
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [descargando, setDescargando] = useState(false);
+  const [pdfError, setPdfError] = useState(null);
 
   useEffect(() => { if (autoOpen) setOpen(true); }, [autoOpen]);
 
   const close = () => { setOpen(false); if (onClose) onClose(); };
+
+  // Descarga el PDF oficial de cierre de ESTA caja (reutiliza GET /caja/:cajaId/pdf-cierre).
+  const descargarPDF = async () => {
+    const cajaId = data?.caja?._id;
+    if (!cajaId) return;
+    try {
+      setDescargando(true);
+      setPdfError(null);
+      const { data: blob } = await api.get(`/caja/${cajaId}/pdf-cierre`, { responseType: "blob" });
+      const url = URL.createObjectURL(new Blob([blob], { type: "application/pdf" }));
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `cierre-caja-${fecha}.pdf`;
+      link.click();
+      setTimeout(() => URL.revokeObjectURL(url), 4000);
+    } catch {
+      setPdfError("No se pudo generar el PDF de cierre.");
+    } finally {
+      setDescargando(false);
+    }
+  };
 
   useEffect(() => {
     if (!open || !fecha) return;
@@ -57,10 +80,24 @@ export default function DetalleCajaDia({ fecha, autoOpen = false, onClose }) {
       <div className="dcj-modal" onClick={e => e.stopPropagation()}>
         <div className="dcj-modal__head">
           <h2>Detalle de caja — {fecha}</h2>
-          <button className="dcj-modal__close" onClick={close}><FiX /></button>
+          <div className="dcj-modal__actions">
+            {data?.found && data.caja?._id && (
+              <button
+                className="dcj-modal__pdf"
+                onClick={descargarPDF}
+                disabled={descargando}
+                title="Descargar PDF de cierre"
+              >
+                <FiDownload />
+                {descargando ? "Generando…" : "Descargar PDF"}
+              </button>
+            )}
+            <button className="dcj-modal__close" onClick={close}><FiX /></button>
+          </div>
         </div>
 
         <div className="dcj-modal__body">
+          {pdfError && <p className="dcj__pdf-error">{pdfError}</p>}
           {loading ? (
             <p className="dcj__loading">Cargando...</p>
           ) : !data?.found ? (

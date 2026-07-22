@@ -15,7 +15,9 @@ const TABS = [
   { key: "cortesias", label: "Cortesías" },
 ];
 
-function FinanzasHelpModal({ onClose, currencySymbol = "€" }) {
+function FinanzasHelpModal({ onClose }) {
+  const { currencySymbol, taxAuthority, taxRates } = useLocale();
+
   useEffect(() => {
     const onKey = (e) => { if (e.key === "Escape") onClose(); };
     window.addEventListener("keydown", onKey);
@@ -36,10 +38,10 @@ function FinanzasHelpModal({ onClose, currencySymbol = "€" }) {
             </p>
             <p>
               <strong>Finanzas</strong> muestra el rendimiento real del negocio: ingresos <strong>sin IVA</strong> (base imponible),
-              menos todos los costes. El IVA no es tuyo — es un impuesto que recaudas para Hacienda.
+              menos todos los costes. El IVA no es tuyo — es un impuesto que recaudas para {taxAuthority}.
             </p>
             <p className="fin-help-example">
-              Si en Caja ves 2.200{currencySymbol} y en Finanzas ves 2.000{currencySymbol}, la diferencia es el IVA (~10% comida, ~21% alcohol).
+              Si en Caja ves 2.200{currencySymbol} y en Finanzas ves 2.000{currencySymbol}, la diferencia es el IVA (~{taxRates.comida}% comida, ~{taxRates.alcohol}% alcohol).
             </p>
           </div>
 
@@ -47,7 +49,7 @@ function FinanzasHelpModal({ onClose, currencySymbol = "€" }) {
             <h4>Ingresos (sin IVA)</h4>
             <p>
               Suma de todas las ventas del periodo, quitando el IVA de cada producto segun su tipo impositivo
-              (10% comida, 21% alcohol). Las cortesias (invitaciones) no se cuentan como ingreso.
+              ({taxRates.comida}% comida, {taxRates.alcohol}% alcohol). Las cortesias (invitaciones) no se cuentan como ingreso.
             </p>
           </div>
 
@@ -151,7 +153,7 @@ export default function FinanzasPage() {
         {tab === "cortesias" && <CortesiasPage />}
       </div>
 
-      {showHelp && <FinanzasHelpModal onClose={() => setShowHelp(false)} currencySymbol={currencySymbol} />}
+      {showHelp && <FinanzasHelpModal onClose={() => setShowHelp(false)} />}
     </div>
   );
 }

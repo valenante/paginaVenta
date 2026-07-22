@@ -12,7 +12,17 @@ const verifactuFaqs = [
 ];
 
 export default function GuiaVerifactu() {
-  const { currencySymbol } = useLocale();
+  const { currencySymbol, isSpain } = useLocale();
+
+  if (!isSpain) {
+    return (
+      <LegalLayout title="Facturación electrónica">
+        <p>Esta sección aplica exclusivamente a negocios en España (normativa VeriFactu / AEAT).</p>
+        <p>Si operas en otro país, la facturación electrónica se rige por la normativa local de tu jurisdicción.</p>
+      </LegalLayout>
+    );
+  }
+
   return (
     <LegalLayout title="VERI*FACTU: Lo que tu restaurante necesita saber">
       <SEOHead

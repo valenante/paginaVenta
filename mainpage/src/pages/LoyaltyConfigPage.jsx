@@ -52,7 +52,7 @@ const TIPOS_ANUNCIO = [
 ];
 
 const fmtMoney = (n, sym = "€") => `${Number(n || 0).toFixed(2).replace(".", ",")} ${sym}`;
-const fmtDate = (d) => d ? new Date(d).toLocaleDateString("es") : "—";
+const fmtDate = (d, locale = "es") => d ? new Date(d).toLocaleDateString(locale) : "—";
 
 /* =====================================================
    Componente principal
@@ -296,7 +296,7 @@ export default function LoyaltyConfigPage() {
 ===================================================== */
 
 function ConfigTab({ config, setConfig, saving, onSave }) {
-  const { currencySymbol } = useLocale();
+  const { currencySymbol, currencyName } = useLocale();
   return (
     <>
       <section className="card config-card">
@@ -331,14 +331,14 @@ function ConfigTab({ config, setConfig, saving, onSave }) {
           <div>
             <h2>Reglas básicas</h2>
             <p className="config-card-subtitle">
-              Define cuántos puntos suma cada euro consumido y cuándo el cliente puede canjear.
+              Define cuántos puntos suma cada {currencyName} consumido y cuándo el cliente puede canjear.
             </p>
           </div>
         </div>
 
         <div className="cfg-form-grid">
           <div className="config-field">
-            <label>Puntos por euro</label>
+            <label>Puntos por {currencyName}</label>
             <input
               type="number"
               min="0"
@@ -551,6 +551,7 @@ function MultiplicadoresTab({ multiplicadores, onAdd, onEdit, onDelete, onToggle
 }
 
 function ClientesTab() {
+  const { locale } = useLocale();
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [data, setData] = useState({ items: [], total: 0 });
@@ -652,9 +653,9 @@ function ClientesTab() {
                       {c.telefono && <div className="text-suave" style={{ fontSize: "0.8rem" }}>{c.telefono}</div>}
                     </td>
                     <td data-label="Puntos"><strong className="loyalty-puntos">{c.puntos}</strong> pts</td>
-                    <td data-label="Primera visita">{fmtDate(c.firstVisit)}</td>
+                    <td data-label="Primera visita">{fmtDate(c.firstVisit, locale)}</td>
                     <td data-label="Última visita">
-                      <div>{fmtDate(c.lastVisit)}</div>
+                      <div>{fmtDate(c.lastVisit, locale)}</div>
                       <div style={{ marginTop: 4 }}>{recenciaBadge(c.lastVisit)}</div>
                     </td>
                     <td className="text-suave cli-row-arrow" aria-hidden="true">›</td>
@@ -1016,6 +1017,7 @@ function MultiplicadorModal({ multiplicador, onClose, onSave }) {
 ===================================================== */
 
 function AnunciosTab({ reloadKey, onAdd, onEdit, onDeleted }) {
+  const { locale } = useLocale();
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -1125,8 +1127,8 @@ function AnunciosTab({ reloadKey, onAdd, onEdit, onDeleted }) {
                     <td data-label="Tipo">{tipoInfo?.label || a.tipo}</td>
                     <td data-label="Vigencia" style={{ fontSize: "0.85rem" }}>
                       {!inicio && !fin && <span className="text-suave">Indefinida</span>}
-                      {inicio && <div>Desde: {inicio.toLocaleDateString("es")}</div>}
-                      {fin && <div>Hasta: {fin.toLocaleDateString("es")}</div>}
+                      {inicio && <div>Desde: {inicio.toLocaleDateString(locale)}</div>}
+                      {fin && <div>Hasta: {fin.toLocaleDateString(locale)}</div>}
                       {yaCaducado && <span style={{ color: "#b91c1c" }}>· Caducado</span>}
                       {aunNoEmpezo && <span style={{ color: "#b45309" }}>· Pendiente</span>}
                     </td>

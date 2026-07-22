@@ -7,6 +7,7 @@ import AlertaMensaje from "../components/AlertaMensaje/AlertaMensaje";
 import { normalizeApiError } from "../utils/normalizeApiError.js";
 import ErrorToast from "../components/common/ErrorToast.jsx";
 import TicketPreview from "../components/Config/TicketPreview.jsx";
+import { useLocale } from "../hooks/useLocale";
 
 const DEFAULT_ESTILO = {
   logoEnTicket: false,
@@ -29,6 +30,7 @@ const DEFAULT_ESTILO = {
    MODAL: Diseño del ticket
    ================================================================ */
 function TicketDesignModal({ estilo, onChange, onClose, onSave, onTestPrint, loading, config, tipoPreview, setTipoPreview }) {
+  const { taxIdLabel } = useLocale();
   const update = (key, value) => onChange({ ...estilo, [key]: value });
 
   // Cerrar con ESC
@@ -99,7 +101,7 @@ function TicketDesignModal({ estilo, onChange, onClose, onSave, onTestPrint, loa
               <div className="config-field">
                 <label className="config-checkbox">
                   <input type="checkbox" checked={estilo.mostrarDireccion} onChange={(e) => update("mostrarDireccion", e.target.checked)} disabled={loading} />
-                  Direccion y NIF
+                  Dirección y {taxIdLabel}
                 </label>
               </div>
               <div className="config-field">

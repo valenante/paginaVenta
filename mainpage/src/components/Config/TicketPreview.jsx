@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { useLocale } from "../../hooks/useLocale";
 import "./TicketPreview.css";
 
 const SEPARATORS = {
@@ -43,6 +44,8 @@ export default function TicketPreview({
   logoUrl = null,
   nombreRestaurante = "",
 }) {
+  const { taxIdLabel, taxRates, taxAuthorityCode, taxIdPlaceholder, addressPlaceholder } = useLocale();
+
   const is58 = estilo.anchoPapel === "58mm";
   const width = is58 ? 32 : 48;
   const sep = hr(estilo.estiloSeparador, width);
@@ -53,8 +56,8 @@ export default function TicketPreview({
   const sizeTotal = SIZE_CLASS[estilo.tamanoTotal] || "tp-size-dhw";
 
   const razonSocial = fiscal?.razonSocial || fiscal?.nombreComercial || nombreRestaurante || "Mi Restaurante";
-  const direccion = fiscal?.direccion || "Calle Ejemplo 12";
-  const nif = fiscal?.nif || fiscal?.cif || "B12345678";
+  const direccion = fiscal?.direccion || addressPlaceholder;
+  const nif = fiscal?.nif || fiscal?.cif || taxIdPlaceholder;
 
   const total = useMemo(
     () => DUMMY_PRODUCTOS.reduce((acc, p) => acc + p.cantidad * p.precio, 0),
@@ -87,7 +90,7 @@ export default function TicketPreview({
         {estilo.mostrarDireccion !== false && (
           <>
             <div className="tp-center">{direccion}</div>
-            <div className="tp-center">NIF: {nif}</div>
+            <div className="tp-center">{taxIdLabel}: {nif}</div>
           </>
         )}
 
@@ -180,7 +183,7 @@ export default function TicketPreview({
             <div className="tp-sep">{sep}</div>
             <div className="tp-center tp-bold">Datos del cliente</div>
             <div className="tp-center">Juan Garcia Lopez</div>
-            <div className="tp-center">NIF: 12345678A</div>
+            <div className="tp-center">{taxIdLabel}: {taxIdPlaceholder}</div>
             <div className="tp-sep">{sep}</div>
             <div className="tp-row">
               <span>Factura: 2026-0042</span>
@@ -203,11 +206,11 @@ export default function TicketPreview({
             <div className="tp-sep">{sep}</div>
             <div className="tp-row">
               <span>Base imponible:</span>
-              <span>{fmtPrice(total / 1.1)}</span>
+              <span>{fmtPrice(total / (1 + taxRates.comida / 100))}</span>
             </div>
             <div className="tp-row">
-              <span>IVA 10% (incluido):</span>
-              <span>{fmtPrice(total - total / 1.1)}</span>
+              <span>IVA {taxRates.comida}% (incluido):</span>
+              <span>{fmtPrice(total - total / (1 + taxRates.comida / 100))}</span>
             </div>
             <div className={`tp-row tp-bold ${sizeTotal}`}>
               <span>TOTAL:</span>
@@ -221,7 +224,7 @@ export default function TicketPreview({
             {/* QR placeholder */}
             <div className="tp-qr-placeholder">
               <div className="tp-qr-box">QR</div>
-              <div className="tp-small">QR tributario AEAT</div>
+              <div className="tp-small">QR tributario {taxAuthorityCode}</div>
             </div>
           </>
         )}

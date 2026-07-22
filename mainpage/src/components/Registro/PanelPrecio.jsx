@@ -2,7 +2,7 @@ import "./PanelPrecio.css";
 import { useLocale } from "../../hooks/useLocale";
 
 export default function PanelPrecio({ precio, periodo = "mensual" }) {
-  const { currencySymbol } = useLocale();
+  const { currencySymbol, currencyEmoji } = useLocale();
   // 👉 Precio anual calculado si no viene desde backend:
   const precioAnual = precio.mensual * 11; // 1 mes gratis
 
@@ -16,7 +16,7 @@ export default function PanelPrecio({ precio, periodo = "mensual" }) {
     <aside className="panel-precio card">
       <header className="panel-precio-header">
         <div className="panel-precio-title">
-          <div className="panel-precio-icon">💶</div>
+          <div className="panel-precio-icon">{currencyEmoji}</div>
           <div>
             <h3>Resumen de precios</h3>
             <p className="panel-precio-sub">

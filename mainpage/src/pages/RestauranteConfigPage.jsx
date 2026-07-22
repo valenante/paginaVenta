@@ -16,6 +16,7 @@ import ErrorToast from "../components/common/ErrorToast.jsx";
 import { normalizeApiError } from "../utils/normalizeApiError.js";
 import { DEFAULT_TEMA_TPV, normalizarTemaTpv } from "../utils/tema";
 import { DEFAULT_TEMA_SHOP, normalizarTemaShop } from "../utils/temaShop";
+import { useLocale } from "../hooks/useLocale";
 import TemaTpvPanel from "../components/Tema/TemaTpvPanel.jsx";
 import TemaShopPanel from "../components/Tema/TemaShopPanel.jsx";
 
@@ -35,6 +36,7 @@ export default function RestauranteConfigPage() {
     user?.role === "admin_shop";
 
   const { hasFeature } = useFeaturesPlan();
+  const { isSpain } = useLocale();
   const isPlanEsencial = !hasFeature("motor_adaptativo_cocina");
 
   const [form, setForm] = useState({
@@ -264,7 +266,7 @@ export default function RestauranteConfigPage() {
   const openRollbackConfirm = () => setConfirm({ mode: "rollback", reason: "" });
 
   const verifactuBadge =
-    verifactuLoaded &&
+    isSpain && verifactuLoaded &&
     (verifactuEnabled ? (
       <span className="badge badge-exito">VeriFactu activo</span>
     ) : (

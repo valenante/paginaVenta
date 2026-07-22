@@ -13,7 +13,7 @@ import {
 import "./CajaIngresosChart.css";
 
 export default function CajaIngresosChart({ datosDiarios, onDiaClick, diaSeleccionado }) {
-  const { currencySymbol } = useLocale();
+  const { currencySymbol, locale } = useLocale();
   // Fix #4: isMobile reactivo
   const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768);
 
@@ -26,7 +26,7 @@ export default function CajaIngresosChart({ datosDiarios, onDiaClick, diaSelecci
   const data = useMemo(() => {
     const slice = isMobile ? datosDiarios.slice(-7) : datosDiarios;
     return slice.map((d) => ({
-      fecha: new Date(d.fecha).toLocaleDateString("es-ES", {
+      fecha: new Date(d.fecha).toLocaleDateString(locale, {
         day: "2-digit",
         month: "short",
       }),

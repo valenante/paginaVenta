@@ -32,7 +32,7 @@ export function etiquetaMovimiento(m) {
  * Formatea una fecha en relativa ("hace 5 min", "ayer", "hace 3 días")
  * y absoluta cuando supera la semana.
  */
-export function fechaRelativa(fecha) {
+export function fechaRelativa(fecha, locale = "es") {
   if (!fecha) return "";
   const d = new Date(fecha);
   const ahora = new Date();
@@ -46,5 +46,5 @@ export function fechaRelativa(fecha) {
   if (diffH < 24) return `Hace ${diffH} h`;
   if (diffD === 1) return "Ayer";
   if (diffD < 7) return `Hace ${diffD} días`;
-  return d.toLocaleDateString("es", { day: "numeric", month: "short", year: "numeric" });
+  return d.toLocaleDateString(locale, { day: "numeric", month: "short", year: "numeric" });
 }

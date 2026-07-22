@@ -4,11 +4,11 @@ import { useLocale } from "../hooks/useLocale";
 import "./ClienteLoyaltyDrawer.css";
 
 const fmtMoney = (n, sym = "€") => `${Number(n || 0).toFixed(2).replace(".", ",")} ${sym}`;
-const fmtDate = (iso) => (iso ? new Date(iso).toLocaleDateString("es") : "—");
-const fmtDateTime = (iso) => {
+const fmtDate = (iso, locale = "es") => (iso ? new Date(iso).toLocaleDateString(locale) : "—");
+const fmtDateTime = (iso, locale = "es") => {
   if (!iso) return "—";
   const d = new Date(iso);
-  return `${d.toLocaleDateString("es")} ${d.toLocaleTimeString("es", { hour: "2-digit", minute: "2-digit" })}`;
+  return `${d.toLocaleDateString(locale)} ${d.toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit" })}`;
 };
 const cap = (s) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : "—");
 
@@ -27,7 +27,7 @@ const TIPO_MOV = {
 };
 
 export default function ClienteLoyaltyDrawer({ clienteId, onClose }) {
-  const { currencySymbol } = useLocale();
+  const { currencySymbol, locale } = useLocale();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -62,13 +62,13 @@ export default function ClienteLoyaltyDrawer({ clienteId, onClose }) {
         {loading && <div className="cld-loading">Cargando cliente…</div>}
         {error && <div className="cld-error">{error}</div>}
 
-        {data && <DetalleCliente data={data} currencySymbol={currencySymbol} />}
+        {data && <DetalleCliente data={data} currencySymbol={currencySymbol} locale={locale} />}
       </aside>
     </div>
   );
 }
 
-function DetalleCliente({ data, currencySymbol }) {
+function DetalleCliente({ data, currencySymbol, locale }) {
   const { cliente, saldo, resumen, visitasRecientes, movimientos } = data;
   const stats = resumen?.stats;
   const nivel = NIVELES[stats?.nivel || "nuevo"];
@@ -102,7 +102,7 @@ function DetalleCliente({ data, currencySymbol }) {
             </div>
           </div>
           <div className="cld-saldo">
-            <div className="cld-saldo__num">{Number(saldo).toLocaleString("es")}</div>
+            <div className="cld-saldo__num">{Number(saldo).toLocaleString(locale)}</div>
             <div className="cld-saldo__label">puntos</div>
           </div>
         </div>
@@ -133,15 +133,15 @@ function DetalleCliente({ data, currencySymbol }) {
             <Stat label="Visitas"        value={stats.visitas} />
             <Stat label="Gasto total"    value={fmtMoney(stats.gastoTotal, currencySymbol)} />
             <Stat label="Ticket medio"   value={fmtMoney(stats.gastoMedio, currencySymbol)} />
-            <Stat label="Cliente desde"  value={fmtDate(stats.primeraVisita)} />
+            <Stat label="Cliente desde"  value={fmtDate(stats.primeraVisita, locale)} />
             <Stat label="Día favorito"   value={cap(stats.diaFavorito)} />
             <Stat label="Hora favorita"  value={stats.horaFavorita || "—"} />
             {stats.comensalesPromedio > 0 && (
               <Stat label="Mesa media" value={`${stats.comensalesPromedio} pers.`} />
             )}
-            <Stat label="Puntos ganados" value={Number(stats.puntosGanadosTotal).toLocaleString("es")} />
+            <Stat label="Puntos ganados" value={Number(stats.puntosGanadosTotal).toLocaleString(locale)} />
             {stats.puntosCanjeadosTotal > 0 && (
-              <Stat label="Puntos canjeados" value={`${Number(stats.puntosCanjeadosTotal).toLocaleString("es")} (${stats.tasaCanjeo}%)`} />
+              <Stat label="Puntos canjeados" value={`${Number(stats.puntosCanjeadosTotal).toLocaleString(locale)} (${stats.tasaCanjeo}%)`} />
             )}
           </div>
         </section>
@@ -155,7 +155,7 @@ function DetalleCliente({ data, currencySymbol }) {
       {resumen?.ultimaVisita && (
         <section className="cld-section">
           <h3>Última visita</h3>
-          <UltimaVisita visita={resumen.ultimaVisita} currencySymbol={currencySymbol} />
+          <UltimaVisita visita={resumen.ultimaVisita} currencySymbol={currencySymbol} locale={locale} />
         </section>
       )}
 
@@ -175,7 +175,7 @@ function DetalleCliente({ data, currencySymbol }) {
             {visitasRecientes.items.map((v) => (
               <li key={v._id} className="cld-visita">
                 <div className="cld-visita__head">
-                  <span className="cld-visita__fecha">{fmtDateTime(v.cierre)}</span>
+                  <span className="cld-visita__fecha">{fmtDateTime(v.cierre, locale)}</span>
                   <span className="cld-visita__total">{fmtMoney(v.total, currencySymbol)}</span>
                 </div>
                 <div className="cld-visita__meta">
@@ -208,10 +208,10 @@ function DetalleCliente({ data, currencySymbol }) {
                   <span className="cld-mov__icon">{t.icon}</span>
                   <div className="cld-mov__body">
                     <div className="cld-mov__title">{t.label}{m.nota ? ` · ${m.nota}` : ""}</div>
-                    <div className="cld-mov__fecha">{fmtDateTime(m.createdAt)}</div>
+                    <div className="cld-mov__fecha">{fmtDateTime(m.createdAt, locale)}</div>
                   </div>
                   <div className={`cld-mov__pts ${pos ? "is-pos" : "is-neg"}`}>
-                    {pos ? "+" : ""}{Number(m.puntos).toLocaleString("es")}
+                    {pos ? "+" : ""}{Number(m.puntos).toLocaleString(locale)}
                   </div>
                 </li>
               );
@@ -232,14 +232,14 @@ function Stat({ label, value }) {
   );
 }
 
-function UltimaVisita({ visita, currencySymbol }) {
+function UltimaVisita({ visita, currencySymbol, locale }) {
   const items = visita.itemsSnapshot || [];
   const rec = visita.loyalty?.recompensaAplicada;
   return (
     <div className="cld-ultima">
       <div className="cld-ultima__head">
         <div>
-          <strong>{fmtDateTime(visita.cierre)}</strong>
+          <strong>{fmtDateTime(visita.cierre, locale)}</strong>
           <div className="cld-ultima__meta">
             Mesa {visita.numero}
             {visita.comensales > 0 && ` · ${visita.comensales} pers.`}

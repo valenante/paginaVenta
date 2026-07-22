@@ -53,7 +53,7 @@ export default function CajaDiariaUltraPro() {
   const { user } = useAuth();
   const { tenant } = useTenant();
   const { hasFeature } = useFeaturesPlan();
-  const { currencySymbol } = useLocale();
+  const { currencySymbol, locale } = useLocale();
   const tipoNegocio = tenant?.tipoNegocio || "restaurante";
   const isPlanEsencial = !hasFeature("estadisticas_avanzadas");
 
@@ -366,7 +366,7 @@ export default function CajaDiariaUltraPro() {
         const diaTicketMedioMesa = diaData.numTickets > 0 ? diaData.total / diaData.numTickets : 0;
         const diaTicketMedioComensal = diaData.numComensales > 0 ? diaData.total / diaData.numComensales : 0;
         const avgTicketMedioComensal = totalComensales > 0 ? totalIngresos / totalComensales : 0;
-        const fechaLabel = new Date(diaData.fecha).toLocaleDateString("es-ES", { weekday: "long", day: "numeric", month: "short" });
+        const fechaLabel = new Date(diaData.fecha).toLocaleDateString(locale, { weekday: "long", day: "numeric", month: "short" });
 
         const fmtDuracion = (min) => min >= 60
           ? `${Math.floor(min / 60)}h ${min % 60}m`

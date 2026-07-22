@@ -22,7 +22,7 @@ const ESTADO_BADGE = {
 export default function ProveedorFacturasTab() {
   const { proveedorId } = useParams();
   const { headersTenant } = useOutletContext();
-  const { currencySymbol } = useLocale();
+  const { currencySymbol, locale } = useLocale();
 
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -97,12 +97,12 @@ export default function ProveedorFacturasTab() {
                     <td>{f.numeroFactura || "—"}</td>
                     <td>
                       {f.fechaFactura
-                        ? new Date(f.fechaFactura).toLocaleDateString("es-ES")
+                        ? new Date(f.fechaFactura).toLocaleDateString(locale)
                         : "—"}
                     </td>
                     <td>
                       {f.fechaVencimiento
-                        ? new Date(f.fechaVencimiento).toLocaleDateString("es-ES")
+                        ? new Date(f.fechaVencimiento).toLocaleDateString(locale)
                         : "—"}
                     </td>
                     <td className="factTab-total">
@@ -162,7 +162,7 @@ export default function ProveedorFacturasTab() {
                       <span className="k">Fecha</span>
                       <span className="v">
                         {f.fechaFactura
-                          ? new Date(f.fechaFactura).toLocaleDateString("es-ES")
+                          ? new Date(f.fechaFactura).toLocaleDateString(locale)
                           : "—"}
                       </span>
                     </div>
@@ -170,7 +170,7 @@ export default function ProveedorFacturasTab() {
                       <span className="k">Vencimiento</span>
                       <span className="v">
                         {f.fechaVencimiento
-                          ? new Date(f.fechaVencimiento).toLocaleDateString("es-ES")
+                          ? new Date(f.fechaVencimiento).toLocaleDateString(locale)
                           : "—"}
                       </span>
                     </div>

@@ -2,11 +2,15 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import api from "../../utils/api";
+import { useLocale } from "../../hooks/useLocale";
 import "./VerifactuGlobalModal.css";
 
 const VF_COOLDOWN_MS = 10 * 60 * 1000; // 10 minutos
 
 export default function VerifactuGlobalModal() {
+  const { isSpain } = useLocale();
+  if (!isSpain) return null;
+
   // DESACTIVADO hasta 1 enero 2027 — VeriFactu no es obligatorio aún
   return null;
 

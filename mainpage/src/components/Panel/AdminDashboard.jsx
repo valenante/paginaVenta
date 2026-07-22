@@ -12,10 +12,10 @@ import { useLocale } from "../../hooks/useLocale";
 import "./AdminDashboard.css";
 
 const fmt = (v) => Number(v || 0).toFixed(2);
-const fmtHora = (d) => {
+const fmtHora = (d, locale = "es-ES") => {
   if (!d) return "--";
   try {
-    return new Date(d).toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" });
+    return new Date(d).toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit" });
   } catch { return "--"; }
 };
 
@@ -28,11 +28,11 @@ function fechaOperativaHoy() {
   return d.toISOString().slice(0, 10);
 }
 
-function fmtFechaLabel(fechaStr) {
+function fmtFechaLabel(fechaStr, locale = "es-ES") {
   try {
     const [y, m, day] = fechaStr.split("-").map(Number);
     const d = new Date(y, m - 1, day);
-    return d.toLocaleDateString("es-ES", { weekday: "long", day: "numeric", month: "long" });
+    return d.toLocaleDateString(locale, { weekday: "long", day: "numeric", month: "long" });
   } catch { return fechaStr; }
 }
 
@@ -43,7 +43,7 @@ export default function AdminDashboard() {
   const esHoy = fechaSeleccionada === hoy;
   const isPremium = useFeature("estadisticas_avanzadas");
   const { config } = useConfig();
-  const { currencySymbol } = useLocale();
+  const { currencySymbol, locale } = useLocale();
   const turnos = config?.diaOperativo?.turnos || [];
 
   // Siempre pasamos la fecha operativa al backend para garantizar filtro correcto
@@ -87,7 +87,7 @@ export default function AdminDashboard() {
       {/* ── Header con selector de fecha ── */}
       <header className="adm__header">
         <div className="adm__header-info">
-          <span className="adm__header-title">{fmtFechaLabel(fechaSeleccionada)}</span>
+          <span className="adm__header-title">{fmtFechaLabel(fechaSeleccionada, locale)}</span>
           {esHoy ? (
             <span className="adm__badge-hoy">HOY</span>
           ) : (
@@ -369,7 +369,7 @@ export default function AdminDashboard() {
                   <span className="adm__elim-name">{e.producto?.nombre || "Producto"}</span>
                   <span className="adm__elim-mesa">Mesa {e.mesa?.numero ?? "--"}</span>
                   <span className="adm__elim-who">{e.nombreUsuario || "--"}</span>
-                  <span className="adm__elim-time">{fmtHora(e.fecha)}</span>
+                  <span className="adm__elim-time">{fmtHora(e.fecha, locale)}</span>
                 </div>
               ))}
             </div>
@@ -464,7 +464,7 @@ export default function AdminDashboard() {
                   </div>
                   {reservasList.map((r, i) => (
                     <div key={i} className="adm__modal-list-row">
-                      <span>{fmtHora(r.hora || r.fecha)}</span>
+                      <span>{fmtHora(r.hora || r.fecha, locale)}</span>
                       <span>{r.nombre || r.cliente?.nombre || "--"}</span>
                       <span>{r.comensales || r.personas || "--"}</span>
                       <span className={`adm__badge adm__badge--${r.estado}`}>{r.estado}</span>
@@ -502,7 +502,7 @@ export default function AdminDashboard() {
                       <span>{e.mesa?.numero ?? "--"}</span>
                       <span>{e.cantidad || 1}</span>
                       <span>{e.nombreUsuario || "--"}</span>
-                      <span>{fmtHora(e.fecha)}</span>
+                      <span>{fmtHora(e.fecha, locale)}</span>
                     </div>
                   ))}
                 </div>

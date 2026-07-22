@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useLocale } from "../../hooks/useLocale";
 import TopBar from "../../components/TopBar/TopBar";
 import Footer from "../../components/Footer/Footer";
 import SEOHead from "../../components/SEO/SEOHead";
@@ -6,6 +7,8 @@ import { ArticleStructuredData, BreadcrumbStructuredData } from "../../component
 import "./Blog.css";
 
 export default function PostFacturacion() {
+  const { taxAuthority } = useLocale();
+
   return (
     <div className="BlogPost">
       <TopBar />
@@ -38,7 +41,7 @@ export default function PostFacturacion() {
         <p>Hay dos grandes cambios normativos en marcha:</p>
 
         <h3>VeriFactu (julio 2027)</h3>
-        <p>Afecta a las <strong>facturas que emites</strong> (tickets de venta). Tu software tiene que generar un registro electrónico firmado y encadenado por cada operación, y enviarlo a Hacienda. <Link to="/blog/que-es-verifactu-restaurantes">Lee la guía completa de VeriFactu</Link>.</p>
+        <p>Afecta a las <strong>facturas que emites</strong> (tickets de venta). Tu software tiene que generar un registro electrónico firmado y encadenado por cada operación, y enviarlo a {taxAuthority}. <Link to="/blog/que-es-verifactu-restaurantes">Lee la guía completa de VeriFactu</Link>.</p>
 
         <h3>Factura electrónica B2B (en desarrollo)</h3>
         <p>Afectará a las <strong>facturas entre empresas</strong>. Tus proveedores tendrán que enviarte facturas en formato electrónico estándar (Facturae). Todavía no hay fecha firme, pero el ecosistema se está preparando.</p>

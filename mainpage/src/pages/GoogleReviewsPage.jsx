@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import ModalConfirmacion from "../components/Modal/ModalConfirmacion.jsx";
 import { useAutoFocus } from "../hooks/useAutoFocus";
+import { useLocale } from "../hooks/useLocale";
 import {
   useGoogleStatus,
   useGoogleReviews,
@@ -70,10 +71,10 @@ function StatusBadge({ status }) {
   return <span className={`grev-badge grev-badge--${s.cls}`}>{s.label}</span>;
 }
 
-function formatDate(iso) {
+function formatDate(iso, locale = "es-ES") {
   if (!iso) return "";
   const d = new Date(iso);
-  return d.toLocaleDateString("es-ES", { day: "2-digit", month: "short", year: "numeric" });
+  return d.toLocaleDateString(locale, { day: "2-digit", month: "short", year: "numeric" });
 }
 
 // ─── Tab: Resenas ────────────────────────────────────────
@@ -129,6 +130,7 @@ function TabReviews() {
 }
 
 function ReviewCard({ review }) {
+  const { locale } = useLocale();
   const [expanded, setExpanded] = useState(false);
 
   return (
@@ -137,7 +139,7 @@ function ReviewCard({ review }) {
         <div className="grev-review__meta">
           <span className="grev-review__author">{review.authorName}</span>
           <Stars rating={review.rating} />
-          <span className="grev-review__date">{formatDate(review.publishedAt)}</span>
+          <span className="grev-review__date">{formatDate(review.publishedAt, locale)}</span>
         </div>
         <StatusBadge status={review.status} />
       </div>
@@ -177,6 +179,7 @@ function ReviewCard({ review }) {
 
 // ─── Tab: Pendientes ─────────────────────────────────────
 function TabPending() {
+  const { locale } = useLocale();
   const { data, loading, error, refetch } = useGooglePending();
   const [actionLoading, setActionLoading] = useState(null);
   const [rejectingId, setRejectingId] = useState(null);
@@ -246,7 +249,7 @@ function TabPending() {
               <div className="grev-review__meta">
                 <span className="grev-review__author">{r.authorName}</span>
                 <Stars rating={r.rating} />
-                <span className="grev-review__date">{formatDate(r.publishedAt)}</span>
+                <span className="grev-review__date">{formatDate(r.publishedAt, locale)}</span>
               </div>
             </div>
 

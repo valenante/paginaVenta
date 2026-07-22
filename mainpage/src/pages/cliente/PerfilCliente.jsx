@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { Navigate, Link } from "react-router-dom";
 import { useClienteAuth } from "../../context/ClienteAuthContext";
+import { useLocale } from "../../hooks/useLocale";
 import { getMiLoyaltyPerfil, getMiHistorialLoyalty } from "../../services/loyaltyService";
 import ClienteLayout from "./ClienteLayout";
 import RestaurantLogo from "./RestaurantLogo";
@@ -9,6 +10,7 @@ import "./cliente.css";
 
 export default function PerfilCliente() {
   const { cliente, loading: loadingAuth } = useClienteAuth();
+  const { locale } = useLocale();
   const [perfilLoyalty, setPerfilLoyalty] = useState(null);
   const [tenantSeleccionado, setTenantSeleccionado] = useState(null);
   const [historial, setHistorial] = useState(null);
@@ -74,7 +76,7 @@ export default function PerfilCliente() {
           </div>
         </div>
         <div className="cli-hero__saldo-box">
-          <div className="cli-hero__saldo-num">{totalPuntos.toLocaleString("es")}</div>
+          <div className="cli-hero__saldo-num">{totalPuntos.toLocaleString(locale)}</div>
           <div className="cli-hero__saldo-label">puntos acumulados</div>
           {tenants.length > 0 && (
             <div className="cli-hero__saldo-sub">
@@ -130,13 +132,13 @@ export default function PerfilCliente() {
                   <div className="cliente-restaurante-card__top-info">
                     <div className="cliente-restaurante-card__nombre">{t.nombre}</div>
                     <div className="cliente-restaurante-card__visita">
-                      Última visita: {t.lastVisit ? new Date(t.lastVisit).toLocaleDateString("es") : "—"}
+                      Última visita: {t.lastVisit ? new Date(t.lastVisit).toLocaleDateString(locale) : "—"}
                     </div>
                   </div>
                   {tenantSeleccionado === t.slug && <span className="cliente-restaurante-card__pin">Activo</span>}
                 </div>
                 <div className="cliente-restaurante-card__puntos">
-                  <span className="cliente-restaurante-card__puntos-num">{t.puntos.toLocaleString("es")}</span>
+                  <span className="cliente-restaurante-card__puntos-num">{t.puntos.toLocaleString(locale)}</span>
                   <span className="cliente-restaurante-card__puntos-label">pts</span>
                 </div>
                 <Link
@@ -190,7 +192,7 @@ export default function PerfilCliente() {
                       <div className="cliente-mov__fecha">{fechaRelativa(m.createdAt)}</div>
                     </div>
                     <div className={`cliente-mov__pts ${positivo ? "is-pos" : "is-neg"}`}>
-                      {positivo ? "+" : ""}{m.puntos.toLocaleString("es")}
+                      {positivo ? "+" : ""}{m.puntos.toLocaleString(locale)}
                       <span> pts</span>
                     </div>
                   </li>

@@ -1,7 +1,9 @@
 import React from "react";
+import { useLocale } from "../../hooks/useLocale";
 import "./FacturasHelpModal.css";
 
 export default function FacturasHelpModal({ onClose }) {
+  const { taxAuthorityCode, isSpain } = useLocale();
   return (
     <div className="facturashelp-overlay" onClick={onClose}>
       <div className="facturashelp-modal" onClick={(e) => e.stopPropagation()}>
@@ -10,7 +12,7 @@ export default function FacturasHelpModal({ onClose }) {
             <h2>Ayuda — Facturas Encadenadas</h2>
             <p>
               Aquí tienes una guía rápida para entender qué puedes hacer en esta pantalla y cómo
-              funcionan las rectificaciones según criterios habituales de la AEAT.
+              funcionan las rectificaciones según criterios habituales de la {taxAuthorityCode}.
             </p>
           </div>
 
@@ -70,9 +72,9 @@ export default function FacturasHelpModal({ onClose }) {
               </article>
 
               <article className="facturashelp-card">
-                <h4>Ver respuesta AEAT</h4>
+                <h4>Ver respuesta {taxAuthorityCode}</h4>
                 <p>
-                  Si existe, muestra la respuesta asociada a la comunicación con la <strong>AEAT</strong>.
+                  Si existe, muestra la respuesta asociada a la comunicación con la <strong>{taxAuthorityCode}</strong>.
                   Útil para auditorías o trazabilidad del envío.
                 </p>
               </article>
@@ -94,9 +96,10 @@ export default function FacturasHelpModal({ onClose }) {
             </p>
           </section>
 
-          {/* BLOQUE: TIPOS AEAT */}
+          {/* BLOQUE: TIPOS AEAT — solo para España */}
+          {isSpain && (
           <section className="facturashelp-section">
-            <h3>Tipos de rectificación (AEAT) — R1 a R5</h3>
+            <h3>Tipos de rectificación ({taxAuthorityCode}) — R1 a R5</h3>
             <p className="facturashelp-muted">
               En la rectificación eliges el tipo según el motivo. Estos códigos se usan de forma habitual
               en sistemas fiscales. Si tienes dudas en un caso real, consulta con tu asesoría.
@@ -171,6 +174,7 @@ export default function FacturasHelpModal({ onClose }) {
               </ul>
             </div>
           </section>
+          )}
 
           {/* FOOTER */}
           <footer className="facturashelp-footer">

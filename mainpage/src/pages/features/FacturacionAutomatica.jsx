@@ -36,6 +36,7 @@ const faqs = [
   {
     q: "¿Qué es VeriFactu y por qué me importa?",
     a: "Es el nuevo sistema de facturación electrónica de Hacienda. A partir de julio de 2027, todos los restaurantes deben usar software certificado. Las multas llegan hasta 50.000 euros. ALEF ya cumple con todos los requisitos, incluido de serie en todos los planes.",
+    esOnly: true,
   },
   {
     q: "¿Cuánto tiempo ahorro con esto?",
@@ -48,8 +49,9 @@ const faqs = [
 ];
 
 export default function FacturacionAutomatica() {
-  const { currencySymbol } = useLocale();
+  const { currencySymbol, taxAuthorityCode, isSpain } = useLocale();
   const [faqOpen, setFaqOpen] = useState(null);
+  const visibleFaqs = faqs.filter((f) => !f.esOnly || isSpain);
 
   return (
     <div className="FeaturePage">
@@ -69,7 +71,7 @@ export default function FacturacionAutomatica() {
         dateModified="2026-06-02"
       />
       <FAQStructuredData
-        faqs={faqs.map((f) => ({ question: f.q, answer: f.a }))}
+        faqs={visibleFaqs.map((f) => ({ question: f.q, answer: f.a }))}
       />
       <BreadcrumbStructuredData
         items={[
@@ -275,8 +277,9 @@ export default function FacturacionAutomatica() {
       </section>
 
       {/* ══════════════════════════════════════
-         VERIFACTU (oscuro)
+         VERIFACTU (oscuro) — solo España
          ══════════════════════════════════════ */}
+      {isSpain && (
       <section className="FP-section FP-section--dark">
         <div className="FP-section-inner">
           <div className="FP-section-header">
@@ -304,9 +307,9 @@ export default function FacturacionAutomatica() {
               </span>
             </div>
             <div className="FP-pain-card" style={{ background: "rgba(255,255,255,0.04)", borderColor: "rgba(148,163,184,0.15)", borderLeftColor: "var(--color-primario)" }}>
-              <strong style={{ color: "#fff" }}>Preparado para la AEAT</strong>
+              <strong style={{ color: "#fff" }}>Preparado para la {taxAuthorityCode}</strong>
               <span style={{ color: "rgba(226,232,240,0.75)" }}>
-                Cuando Hacienda active el envío automático,
+                Cuando {taxAuthorityCode} active el envío automático,
                 ALEF estará listo desde el primer día.
               </span>
             </div>
@@ -326,6 +329,7 @@ export default function FacturacionAutomatica() {
           </div>
         </div>
       </section>
+      )}
 
       {/* ══════════════════════════════════════
          COMPARATIVA (claro)
@@ -383,12 +387,14 @@ export default function FacturacionAutomatica() {
                 <td className="FP-cross">No</td>
                 <td className="FP-cross">Tú a mano</td>
               </tr>
+              {isSpain && (
               <tr>
                 <td>VeriFactu</td>
                 <td className="FP-compare-alef FP-check">Incluido</td>
                 <td className="FP-partial">Coste extra</td>
                 <td className="FP-cross">No cumple</td>
               </tr>
+              )}
               <tr>
                 <td>Tiempo diario</td>
                 <td className="FP-compare-alef FP-check">5-10 min</td>
@@ -410,7 +416,7 @@ export default function FacturacionAutomatica() {
           </div>
 
           <div className="FP-faq-list">
-            {faqs.map((f, i) => (
+            {visibleFaqs.map((f, i) => (
               <div className={`FP-faq-item ${faqOpen === i ? "FP-faq-item--open" : ""}`} key={i}>
                 <button
                   className="FP-faq-q"

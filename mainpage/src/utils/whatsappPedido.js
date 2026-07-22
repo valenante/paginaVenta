@@ -47,7 +47,7 @@ function formatUnidad(cantidad, formato, unidad) {
  * Construye el cuerpo de mensaje del pedido.
  * Markdown mínimo de WhatsApp (*negrita*). Emojis discretos.
  */
-export function construirMensajePedido({ emisor, proveedor, pedido, currencySymbol = "€" }) {
+export function construirMensajePedido({ emisor, proveedor, pedido, currencySymbol = "€", locale = "es-ES" }) {
   const lineas = (pedido?.lineas || [])
     .map((l) => {
       const u = formatUnidad(l.cantidad, l.formato, l.unidad);
@@ -60,7 +60,7 @@ export function construirMensajePedido({ emisor, proveedor, pedido, currencySymb
     pedido?.numeroPedido || String(pedido?._id || "").slice(-6).toUpperCase();
 
   const fechaEsp = pedido?.fechaEsperada
-    ? new Date(pedido.fechaEsperada).toLocaleDateString("es-ES", {
+    ? new Date(pedido.fechaEsperada).toLocaleDateString(locale, {
         day: "2-digit",
         month: "long",
       })

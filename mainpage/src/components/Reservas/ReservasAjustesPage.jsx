@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState, useCallback, useRef } from "react";
+import { useLocale } from "../../hooks/useLocale";
 import api from "../../utils/api";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -46,6 +47,7 @@ const normalizeDias = (input) => {
 };
 
 export default function ReservasAjustesPage({ onClose }) {
+  const { locale } = useLocale();
   const dialogRef = useRef(null);
 
   const [fechaSeleccionada, setFechaSeleccionada] = useState(new Date());
@@ -227,7 +229,7 @@ export default function ReservasAjustesPage({ onClose }) {
 
   const fechaPretty = useMemo(() => {
     try {
-      return fechaSeleccionada.toLocaleDateString("es-ES", {
+      return fechaSeleccionada.toLocaleDateString(locale, {
         weekday: "long", day: "2-digit", month: "2-digit", year: "numeric",
       });
     } catch { return fechaISO; }

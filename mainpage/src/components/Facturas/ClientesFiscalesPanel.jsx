@@ -4,9 +4,11 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { FiEdit2, FiTrash2 } from "react-icons/fi";
 import api from "../../utils/api";
+import { useLocale } from "../../hooks/useLocale";
 import "./ClientesFiscalesPanel.css";
 
 export default function ClientesFiscalesPanel() {
+  const { locale } = useLocale();
   const [items, setItems] = useState([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
@@ -132,7 +134,7 @@ export default function ClientesFiscalesPanel() {
                 <span className="cf-nombre">{c.nombre}</span>
                 <span className="cf-dir">{c.direccion || "—"}</span>
                 <span className="cf-usos">{c.usoCount || 1}</span>
-                <span className="cf-fecha">{c.ultimoUso ? new Date(c.ultimoUso).toLocaleDateString("es-ES") : "—"}</span>
+                <span className="cf-fecha">{c.ultimoUso ? new Date(c.ultimoUso).toLocaleDateString(locale) : "—"}</span>
                 <span className="cf-actions">
                   <button className="cf-btn-sm" onClick={() => setEditing({ _id: c._id, nif: c.nif, nombre: c.nombre, direccion: c.direccion || "" })} title="Editar"><FiEdit2 aria-hidden /></button>
                   <button className="cf-btn-sm cf-btn-sm--danger" onClick={() => handleDelete(c._id, c.nombre)} title="Eliminar"><FiTrash2 aria-hidden /></button>

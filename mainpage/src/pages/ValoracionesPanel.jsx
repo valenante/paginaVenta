@@ -2,15 +2,16 @@
 import React, { useEffect, useState } from "react";
 import api from "../utils/api";
 import { useAuth } from "../context/AuthContext";
+import { useLocale } from "../hooks/useLocale";
 import { useFeaturesPlan } from "../context/FeaturesPlanContext";
 import UpsellValoraciones from "../components/Valoraciones/UpsellValoraciones"; // 👈 NUEVO
 import "../styles/ValoracionesPanel.css";
 
 const PAGE_SIZE = 10;
 
-const formatearFecha = (iso) => {
+const formatearFecha = (iso, locale = "es-ES") => {
   if (!iso) return "-";
-  return new Date(iso).toLocaleDateString("es-ES", {
+  return new Date(iso).toLocaleDateString(locale, {
     day: "2-digit",
     month: "short",
     year: "numeric",
@@ -43,6 +44,7 @@ export default function ValoracionesPanel() {
 
   // 🔐 Feature gate
   const { user } = useAuth();
+  const { locale } = useLocale();
   const { hasFeature } = useFeaturesPlan();
   const isPlanEsencial = !hasFeature("carta_valoraciones");
 
@@ -326,7 +328,7 @@ export default function ValoracionesPanel() {
                             )}
                           </td>
                           <td className="center">{p.totalValoraciones}</td>
-                          <td>{formatearFecha(p.ultimaFecha)}</td>
+                          <td>{formatearFecha(p.ultimaFecha, locale)}</td>
                           <td className="center">
                             <button
                               className="btn-detalle-valoraciones"
@@ -409,7 +411,7 @@ export default function ValoracionesPanel() {
                         <div className="detalle-top">
                           <Stars value={v.puntuacion} />
                           <span className="detalle-fecha">
-                            {formatearFecha(v.fecha)}
+                            {formatearFecha(v.fecha, locale)}
                           </span>
                         </div>
                         {v.comentario ? (

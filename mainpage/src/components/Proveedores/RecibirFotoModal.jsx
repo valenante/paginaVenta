@@ -7,7 +7,7 @@ import { useLocale } from "../../hooks/useLocale";
 import "./RecibirFotoModal.css";
 
 export default function RecibirFotoModal({ onClose, onDone }) {
-  const { currencySymbol } = useLocale();
+  const { currencySymbol, locale } = useLocale();
   const [mode, setMode] = useState("foto");
   const [step, setStep] = useState("upload");
   const [image, setImage] = useState(null);
@@ -495,7 +495,7 @@ export default function RecibirFotoModal({ onClose, onDone }) {
                       <span className={`recibir-detailMov-delta ${m.delta > 0 ? "recibir-detailMov--pos" : "recibir-detailMov--neg"}`}>{m.delta > 0 ? "+" : ""}{m.delta}</span>
                       <span className="recibir-detailMov-tipo">{m.tipo}</span>
                       <span className="recibir-detailMov-ref">{m.referencia}</span>
-                      <span className="recibir-detailMov-fecha">{m.fecha ? new Date(m.fecha).toLocaleDateString("es-ES") : ""}</span>
+                      <span className="recibir-detailMov-fecha">{m.fecha ? new Date(m.fecha).toLocaleDateString(locale) : ""}</span>
                     </div>
                   ))}
                 </div>

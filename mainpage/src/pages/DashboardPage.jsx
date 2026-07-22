@@ -5,6 +5,7 @@ import { useAuth } from "../context/AuthContext.jsx";
 import { useFeaturesPlan } from "../context/FeaturesPlanContext";
 import { Link } from "react-router-dom";
 import LoadingScreen from "../components/LoadingScreen/LoadingScreen";
+import { useLocale } from "../hooks/useLocale";
 import "../styles/DashboardPage.css";
 
 export default function DashboardPage() {
@@ -14,6 +15,7 @@ export default function DashboardPage() {
   const tipoNegocio = tenant?.tipoNegocio || "restaurante";
 
   const { hasFeature } = useFeaturesPlan();
+  const { taxAuthorityCode } = useLocale();
   const tieneReservas = hasFeature("reservas_online");
 
   const labelNegocio = tipoNegocio === "shop" ? "shop" : "restaurante";
@@ -156,7 +158,7 @@ export default function DashboardPage() {
           <Link to="/facturas" className="dashboard-tile card">
             <div className="dashboard-tile-icon">🧾</div>
             <h2>Facturas</h2>
-            <p>Visualiza facturas encadenadas, XML firmados y envíos AEAT.</p>
+            <p>Visualiza facturas encadenadas, XML firmados y envíos {taxAuthorityCode}.</p>
           </Link>
         )}
 

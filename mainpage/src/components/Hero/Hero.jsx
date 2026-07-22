@@ -1,10 +1,15 @@
 // src/components/Hero/Hero.jsx
 // VeriFactu — ahora sección secundaria de confianza, no hero principal
 import React from "react";
+import { useLocale } from "../../hooks/useLocale";
 import "./Hero.css";
 import facturaImg from "../../assets/imagenes/facturacion.webp";
 
 const Hero = () => {
+  const { isSpain, taxAuthorityCode } = useLocale();
+
+  if (!isSpain) return null;
+
   return (
     <section className="Hero section reveal" id="verifactu">
       <div className="Hero-inner section--wide">
@@ -27,7 +32,7 @@ const Hero = () => {
           <ul className="Hero-lista">
             <li>Numeración encadenada e inalterable en cada ticket y factura.</li>
             <li>Hash antifraude que garantiza que nadie modifica los datos.</li>
-            <li>Preparado para envío automático a la AEAT.</li>
+            <li>Preparado para envío automático a la {taxAuthorityCode}.</li>
           </ul>
 
           <p className="Hero-aviso">

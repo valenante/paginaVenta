@@ -1,11 +1,13 @@
 import React, { useEffect } from "react";
 import { createPortal } from "react-dom";
+import { useLocale } from "../../hooks/useLocale";
 import logoAlef from "../../assets/imagenes/alef.webp";
 import CopilotMessages from "./CopilotMessages";
 import CopilotInput from "./CopilotInput";
 
 function ConversationItem({ conv, isActive, onSelect, onDelete }) {
-  const date = conv.updatedAt ? new Date(conv.updatedAt).toLocaleDateString("es-ES", { day: "numeric", month: "short" }) : "";
+  const { locale } = useLocale();
+  const date = conv.updatedAt ? new Date(conv.updatedAt).toLocaleDateString(locale, { day: "numeric", month: "short" }) : "";
   return (
     <div className={`copilot-fs__conv ${isActive ? "is-active" : ""}`} onClick={() => onSelect(conv.conversationId)}>
       <div className="copilot-fs__conv-title">{conv.title || "Sin título"}</div>

@@ -80,7 +80,7 @@ function JobDetail({ job, onClose, onAction, currencySymbol = "€" }) {
             <h4>Datos de factura</h4>
             <div className="finv-modal__grid2">
               <div><strong>Nº Factura:</strong> {datos.numeroFactura || "—"}</div>
-              <div><strong>Fecha:</strong> {datos.fechaFactura ? new Date(datos.fechaFactura).toLocaleDateString("es") : "—"}</div>
+              <div><strong>Fecha:</strong> {datos.fechaFactura ? new Date(datos.fechaFactura).toLocaleDateString(locale) : "—"}</div>
               <div><strong>Total:</strong> {(datos.total || 0).toFixed(2)}{currencySymbol}</div>
               <div><strong>IVA:</strong> {(datos.totalIva || 0).toFixed(2)}{currencySymbol}</div>
             </div>
@@ -181,7 +181,7 @@ function JobDetail({ job, onClose, onAction, currencySymbol = "€" }) {
 
 // ── Main page ──────────────────────────────────────────────
 export default function FacturasAutomaticasPage() {
-  const { currencySymbol } = useLocale();
+  const { currencySymbol, locale } = useLocale();
   const [tab, setTab] = useState("pending");
   const [page, setPage] = useState(1);
   const [selectedJob, setSelectedJob] = useState(null);
@@ -392,7 +392,7 @@ export default function FacturasAutomaticasPage() {
             <span className="sug-toggle-label">Conexión Gmail</span>
             <span className="sug-toggle-desc">
               {gmail.connected
-                ? `Conectado a ${gmail.emailAddress || "—"}. Última sincronización: ${gmail.lastSyncAt ? new Date(gmail.lastSyncAt).toLocaleString("es") : "nunca"}`
+                ? `Conectado a ${gmail.emailAddress || "—"}. Última sincronización: ${gmail.lastSyncAt ? new Date(gmail.lastSyncAt).toLocaleString(locale) : "nunca"}`
                 : "Conecta el email del restaurante para que ALEF lea las facturas automáticamente."}
             </span>
           </div>
@@ -550,7 +550,7 @@ export default function FacturasAutomaticasPage() {
             <div className="finv-gestor__footer">
               <span className="finv-gestor__last">
                 {gc.ultimoEnvioGestor
-                  ? `Último envío: ${new Date(gc.ultimoEnvioGestor).toLocaleString("es-ES", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" })}`
+                  ? `Último envío: ${new Date(gc.ultimoEnvioGestor).toLocaleString(locale, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" })}`
                   : "Aún no se ha enviado ningún resumen"}
               </span>
               <button
@@ -668,7 +668,7 @@ export default function FacturasAutomaticasPage() {
             <div className="finv-gestor__footer">
               <span className="finv-gestor__last">
                 {rc.ultimoEnvio
-                  ? `Último envío: ${new Date(rc.ultimoEnvio).toLocaleString("es-ES", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" })}`
+                  ? `Último envío: ${new Date(rc.ultimoEnvio).toLocaleString(locale, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" })}`
                   : "Aún no se ha enviado ningún resumen"}
               </span>
               <button
@@ -739,7 +739,7 @@ export default function FacturasAutomaticasPage() {
                   setSelectedJob(data.job);
                 } catch { setSelectedJob(job); }
               }}>
-                <span>{new Date(job.createdAt).toLocaleDateString("es")}</span>
+                <span>{new Date(job.createdAt).toLocaleDateString(locale)}</span>
                 <span className="finv-list__prov">
                   {job.datosExtraidos?.emisor?.nombre || job.emailFrom || "—"}
                 </span>

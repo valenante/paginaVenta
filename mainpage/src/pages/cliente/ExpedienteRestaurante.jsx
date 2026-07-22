@@ -2,15 +2,15 @@ import React, { useState } from "react";
 import { useLocale } from "../../hooks/useLocale";
 
 const fmtMoney = (n, cs = "€") => `${Number(n || 0).toFixed(2).replace(".", ",")} ${cs}`;
-const fmtMonthYear = (iso) => {
+const fmtMonthYear = (iso, locale = "es") => {
   if (!iso) return "—";
   const d = new Date(iso);
-  return d.toLocaleDateString("es", { month: "short", year: "numeric" });
+  return d.toLocaleDateString(locale, { month: "short", year: "numeric" });
 };
-const fmtDateLong = (iso) => {
+const fmtDateLong = (iso, locale = "es") => {
   if (!iso) return "—";
   const d = new Date(iso);
-  return d.toLocaleDateString("es", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+  return d.toLocaleDateString(locale, { weekday: "long", day: "numeric", month: "long", year: "numeric" });
 };
 const fmtTime = (iso) => {
   if (!iso) return "";
@@ -21,6 +21,7 @@ const cap = (s) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : "");
 
 // ── KPIs compactos para el hero ───────────────────────────────────────────────
 export function HeaderKPIs({ stats }) {
+  const { locale } = useLocale();
   if (!stats || stats.visitas === 0) return null;
   const items = [
     { icon: "🍽️", label: stats.visitas === 1 ? "visita" : "visitas", value: stats.visitas },
@@ -31,7 +32,7 @@ export function HeaderKPIs({ stats }) {
       label: "mesa",
       value: `${stats.comensalesPromedio}p`,
     },
-    stats.primeraVisita && { icon: "📅", label: "desde", value: cap(fmtMonthYear(stats.primeraVisita)) },
+    stats.primeraVisita && { icon: "📅", label: "desde", value: cap(fmtMonthYear(stats.primeraVisita, locale)) },
   ].filter(Boolean);
   return (
     <div className="cli-hero-kpis">
@@ -79,7 +80,7 @@ export function ProximaRecompensaBanner({ proxima, saldo }) {
 
 // ── Tarjeta cliente: última visita + favoritos lado a lado ───────────────────
 function UltimaVisitaPanel({ visita }) {
-  const { currencySymbol } = useLocale();
+  const { currencySymbol, locale } = useLocale();
   if (!visita) return null;
   const items = visita.itemsSnapshot || [];
   const recompensa = visita.loyalty?.recompensaAplicada;
@@ -88,7 +89,7 @@ function UltimaVisitaPanel({ visita }) {
     <article className="cli-panel cli-panel--ultima">
       <header className="cli-panel__head">
         <h3>Tu última visita</h3>
-        <span className="cli-panel__sub">{cap(fmtDateLong(visita.cierre))} · {fmtTime(visita.cierre)}</span>
+        <span className="cli-panel__sub">{cap(fmtDateLong(visita.cierre, locale))} · {fmtTime(visita.cierre)}</span>
       </header>
       <div className="cli-ultima-meta">
         <span className="cli-ultima-meta__chip">Mesa {visita.numero}</span>
@@ -189,7 +190,7 @@ export function TarjetaCliente({ resumen }) {
 
 // ── Timeline expandible ──────────────────────────────────────────────────────
 export function TimelineVisitas({ items, total, loading, hasMore, onLoadMore }) {
-  const { currencySymbol } = useLocale();
+  const { currencySymbol, locale } = useLocale();
   const [openId, setOpenId] = useState(null);
   if (!loading && (!items || items.length === 0)) return null;
   return (
@@ -214,7 +215,7 @@ export function TimelineVisitas({ items, total, loading, hasMore, onLoadMore }) 
                 aria-expanded={open}
               >
                 <span className="cli-timeline-row__fecha">
-                  {cap(fmtDateLong(v.cierre))} · {fmtTime(v.cierre)}
+                  {cap(fmtDateLong(v.cierre, locale))} · {fmtTime(v.cierre)}
                 </span>
                 <span className="cli-timeline-row__meta">
                   Mesa {v.numero}

@@ -3,6 +3,7 @@
 
 import React, { useState, useMemo } from "react";
 import { useSemana, useConflictos, asignarTurno, eliminarAsignacion, editarAsignacion, publicarSemana } from "../Hooks/useHorarios";
+import { useLocale } from "../hooks/useLocale";
 import ControlTurnosPanel from "../components/Turnos/ControlTurnosPanel";
 import "./HorariosPage.css";
 
@@ -16,12 +17,13 @@ function getLunesFecha(offset = 0) {
   return d.toISOString().slice(0, 10);
 }
 
-function formatFecha(dateStr) {
+function formatFecha(dateStr, locale = "es") {
   const d = new Date(dateStr);
-  return d.toLocaleDateString("es", { day: "numeric", month: "short" });
+  return d.toLocaleDateString(locale, { day: "numeric", month: "short" });
 }
 
 export default function HorariosPage() {
+  const { locale } = useLocale();
   const [showTurnos, setShowTurnos] = useState(false);
   const [weekOffset, setWeekOffset] = useState(0);
   const fecha = useMemo(() => getLunesFecha(weekOffset), [weekOffset]);

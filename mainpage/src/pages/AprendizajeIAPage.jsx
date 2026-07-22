@@ -3,9 +3,11 @@
 
 import React, { useState, useEffect } from "react";
 import api from "../utils/api";
+import { useLocale } from "../hooks/useLocale";
 import "./AprendizajeIAPage.css";
 
 export default function AprendizajeIAPage() {
+  const { locale } = useLocale();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -60,7 +62,7 @@ export default function AprendizajeIAPage() {
                   <span className="ia-learn__bar-val">{t.sesiones}</span>
                 </div>
                 <span className="ia-learn__bar-label">
-                  {new Date(t.fecha).toLocaleDateString("es", { day: "numeric", month: "short" })}
+                  {new Date(t.fecha).toLocaleDateString(locale, { day: "numeric", month: "short" })}
                 </span>
               </div>
             ))}

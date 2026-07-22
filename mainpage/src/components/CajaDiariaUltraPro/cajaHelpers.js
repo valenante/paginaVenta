@@ -1,7 +1,7 @@
-export function formatFechaUI(iso) {
+export function formatFechaUI(iso, locale = "es-ES") {
   if (!iso) return "—";
   const d = new Date(`${iso}T00:00:00`);
-  return Number.isNaN(d.getTime()) ? "—" : d.toLocaleDateString("es-ES");
+  return Number.isNaN(d.getTime()) ? "—" : d.toLocaleDateString(locale);
 }
 
 export function toISODateKey(value) {

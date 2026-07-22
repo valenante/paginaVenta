@@ -34,7 +34,7 @@ export default function PedidoProveedorModal({ onClose, onSaved, mode = "create"
   const { proveedorId } = useParams();
   const { tenant } = useTenant();
   const isEdit = mode === "edit";
-  const { currencySymbol } = useLocale();
+  const { currencySymbol, taxIdLabel, locale } = useLocale();
 
   const [productos, setProductos] = useState([]);
   const [loadingProductos, setLoadingProductos] = useState(true);
@@ -261,11 +261,11 @@ export default function PedidoProveedorModal({ onClose, onSaved, mode = "create"
       ].filter(Boolean).join(", "),
     };
 
-    const fechaPedido = new Date().toLocaleDateString("es-ES", {
+    const fechaPedido = new Date().toLocaleDateString(locale, {
       day: "2-digit", month: "long", year: "numeric",
     });
     const fechaEsp = form.fechaEsperada
-      ? new Date(form.fechaEsperada + "T00:00:00").toLocaleDateString("es-ES", {
+      ? new Date(form.fechaEsperada + "T00:00:00").toLocaleDateString(locale, {
           day: "2-digit", month: "long", year: "numeric",
         })
       : "—";
@@ -309,7 +309,7 @@ export default function PedidoProveedorModal({ onClose, onSaved, mode = "create"
       doc.setFont(undefined, "normal");
       doc.setTextColor(...grayText);
       let lineY = y + 12;
-      if (data.nif) { doc.text(`NIF/CIF: ${data.nif}`, x, lineY); lineY += 4.5; }
+      if (data.nif) { doc.text(`${taxIdLabel}: ${data.nif}`, x, lineY); lineY += 4.5; }
       if (data.direccion) {
         const lines = doc.splitTextToSize(data.direccion, maxW);
         doc.text(lines, x, lineY);
@@ -414,7 +414,7 @@ export default function PedidoProveedorModal({ onClose, onSaved, mode = "create"
     doc.setFontSize(7.5);
     doc.setTextColor(180);
     doc.text(
-      `Generado el ${new Date().toLocaleString("es-ES")} — ${emisor.nombre}`,
+      `Generado el ${new Date().toLocaleString(locale)} — ${emisor.nombre}`,
       margin,
       pageH - 8
     );

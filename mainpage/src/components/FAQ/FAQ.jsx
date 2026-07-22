@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useLocale } from "../../hooks/useLocale";
 import { FAQStructuredData } from "../SEO/StructuredData";
 import "./FAQ.css";
 
@@ -26,6 +27,7 @@ const preguntas = [
   {
     q: "¿Qué es VeriFactu y me afecta?",
     a: "Es el nuevo sistema de facturación electrónica de Hacienda. A partir de julio 2027, todos los negocios de hostelería deben usar software certificado. ALEF ya cumple — no tienes que contratar nada extra.",
+    esOnly: true,
   },
   {
     q: "¿Cómo funciona lo de las facturas automáticas?",
@@ -38,12 +40,14 @@ const preguntas = [
 ];
 
 export default function FAQ() {
+  const { isSpain } = useLocale();
   const [abierta, setAbierta] = useState(null);
+  const visiblePreguntas = preguntas.filter((p) => !p.esOnly || isSpain);
 
   return (
     <section className="FAQ" id="faq">
       <FAQStructuredData
-        faqs={preguntas.map((p) => ({ question: p.q, answer: p.a }))}
+        faqs={visiblePreguntas.map((p) => ({ question: p.q, answer: p.a }))}
       />
       <div className="FAQ-inner">
         <div className="FAQ-header">
@@ -51,7 +55,7 @@ export default function FAQ() {
         </div>
 
         <div className="FAQ-list">
-          {preguntas.map((p, i) => (
+          {visiblePreguntas.map((p, i) => (
             <div
               key={i}
               className={`FAQ-item ${abierta === i ? "FAQ-item--open" : ""}`}

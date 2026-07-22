@@ -19,7 +19,7 @@ import { useLocale } from "../../hooks/useLocale";
 import "./HacerPedidoPage.css";
 
 export default function HacerPedidoPage() {
-  const { currencySymbol } = useLocale();
+  const { currencySymbol, locale } = useLocale();
   const fmtEur = (v) => `${Number(v || 0).toFixed(2)} ${currencySymbol}`;
   const { tenantId, tenant } = useTenant();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -501,7 +501,7 @@ export default function HacerPedidoPage() {
                         <span className="hp-ultimo-fecha">
                           {new Date(
                             p.fechaPedido || p.createdAt
-                          ).toLocaleDateString("es-ES")}
+                          ).toLocaleDateString(locale)}
                         </span>
                       </div>
                       <div className="hp-ultimo-right">

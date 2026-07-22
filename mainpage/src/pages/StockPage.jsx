@@ -36,7 +36,7 @@ const StockPage = () => {
   const { user } = useAuth();
   const { showToast } = useToast();
   const { hasFeature } = useFeaturesPlan();
-  const { currencySymbol } = useLocale();
+  const { currencySymbol, locale } = useLocale();
   const hasStockAvanzado = hasFeature("stock_avanzado");
 
   // ── Tab ──
@@ -842,7 +842,7 @@ const StockPage = () => {
                       </span>
                       <span className="consumo-detail__mov-ref">{m.referencia || m.actor}</span>
                       <span className="consumo-detail__mov-fecha">
-                        {m.fecha ? new Date(m.fecha).toLocaleDateString("es-ES", { day: "2-digit", month: "short" }) : ""}
+                        {m.fecha ? new Date(m.fecha).toLocaleDateString(locale, { day: "2-digit", month: "short" }) : ""}
                       </span>
                     </div>
                   ))}

@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { createPortal } from "react-dom";
+import { useLocale } from "../../hooks/useLocale";
 import api from "../../utils/api";
 import "./ChangelogModal.css";
 
@@ -13,6 +14,7 @@ const TIPO_LABELS = {
 };
 
 export default function ChangelogModal() {
+  const { locale } = useLocale();
   const [entry, setEntry] = useState(null);
   const [visible, setVisible] = useState(false);
 
@@ -70,7 +72,7 @@ export default function ChangelogModal() {
             <span className="changelog-version">v{entry.version}</span>
             {entry.fecha && (
               <span className="changelog-date">
-                {new Date(entry.fecha).toLocaleDateString("es-ES", {
+                {new Date(entry.fecha).toLocaleDateString(locale, {
                   day: "numeric", month: "long", year: "numeric",
                 })}
               </span>

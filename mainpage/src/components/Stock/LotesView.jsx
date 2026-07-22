@@ -21,18 +21,18 @@ import "../MapaEditor/ModalCrearMesa.css";
 import "./LotesView.css";
 import { useAutoFocus } from "../../hooks/useAutoFocus";
 
-function fmtFecha(v) {
+function fmtFecha(v, locale = "es-ES") {
   if (!v) return "—";
   const d = new Date(v);
   if (Number.isNaN(d.getTime())) return "—";
-  return d.toLocaleDateString("es-ES");
+  return d.toLocaleDateString(locale);
 }
 
 export default function LotesView({ filtroItemId = null, onChange }) {
-  const { currencySymbol } = useLocale();
+  const { currencySymbol, locale } = useLocale();
 
   const eur = (n) =>
-    `${Number(n || 0).toLocaleString("es-ES", {
+    `${Number(n || 0).toLocaleString(locale, {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
     })} ${currencySymbol}`;
@@ -198,9 +198,9 @@ export default function LotesView({ filtroItemId = null, onChange }) {
                     </code>
                   </td>
                   <td data-label="Proveedor">{l.proveedor?.nombre || "—"}</td>
-                  <td data-label="Recibido">{fmtFecha(l.fechaRecepcion)}</td>
+                  <td data-label="Recibido">{fmtFecha(l.fechaRecepcion, locale)}</td>
                   <td data-label="Caducidad">
-                    {fmtFecha(l.fechaCaducidad)}
+                    {fmtFecha(l.fechaCaducidad, locale)}
                     {l.diasHastaCaducidad != null && (
                       <div
                         className={`lotesView-dias lotesView-dias--${l.estadoCaducidad}`}

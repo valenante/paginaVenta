@@ -6,6 +6,7 @@ import React, {
   useMemo,
 } from "react";
 import api from "../../utils/api";
+import { useLocale } from "../../hooks/useLocale";
 import ModalBase from "../MapaEditor/ModalBase";
 import "../MapaEditor/ModalCrearMesa.css";
 import "./HistorialMovimientosModal.css";
@@ -32,11 +33,11 @@ const TIPO_COLORS = {
   salida: "red",
 };
 
-function formatFecha(d) {
+function formatFecha(d, locale = "es-ES") {
   if (!d) return "—";
   const date = new Date(d);
   if (Number.isNaN(date.getTime())) return "—";
-  return date.toLocaleDateString("es-ES", {
+  return date.toLocaleDateString(locale, {
     day: "2-digit",
     month: "short",
     year: "numeric",
@@ -53,6 +54,7 @@ function formatDelta(delta) {
 }
 
 export default function HistorialMovimientosModal({ ingrediente, onClose }) {
+  const { locale } = useLocale();
   const [movimientos, setMovimientos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -212,7 +214,7 @@ export default function HistorialMovimientosModal({ ingrediente, onClose }) {
                       {TIPO_LABELS[m.tipo] || m.tipo}
                     </span>
                     <span className="historial-row-fecha">
-                      {formatFecha(m.fecha || m.timestamp)}
+                      {formatFecha(m.fecha || m.timestamp, locale)}
                     </span>
                   </div>
 

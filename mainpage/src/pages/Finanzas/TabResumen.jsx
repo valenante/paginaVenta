@@ -4,6 +4,7 @@ import {
   ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
 } from "recharts";
 import { useFinanzasDashboard, useFinanzasTendencia } from "../../hooks/useFinanzas";
+import { useLocale } from "../../hooks/useLocale";
 import { eur, pct } from "./utils";
 
 function Card({ icon, label, value, sub, color }) {
@@ -20,6 +21,7 @@ function Card({ icon, label, value, sub, color }) {
 }
 
 export default function TabResumen({ periodo }) {
+  const { locale } = useLocale();
   const { data: dash, loading: dashLoading, error: dashError } =
     useFinanzasDashboard({ desde: periodo.desde, hasta: periodo.hasta });
 
@@ -174,7 +176,7 @@ export default function TabResumen({ periodo }) {
                     <span className="fin-bloque-meta">
                       Vence{" "}
                       {f.fechaVencimiento
-                        ? new Date(f.fechaVencimiento).toLocaleDateString("es-ES")
+                        ? new Date(f.fechaVencimiento).toLocaleDateString(locale)
                         : "—"}
                     </span>
                   </Link>

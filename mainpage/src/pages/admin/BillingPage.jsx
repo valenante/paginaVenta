@@ -15,16 +15,16 @@ function stripeUrl(path, mode) {
 
 function moneyEUR(v, sym = "€") { return `${Number(v || 0).toFixed(2)} ${sym}`; }
 
-function fmtDateTime(ts) {
+function fmtDateTime(ts, locale = "es-ES") {
   if (!ts) return "—";
   const n = Number(ts);
   const ms = n < 1e10 ? n * 1000 : n;
-  try { return new Date(ms).toLocaleString("es-ES"); } catch { return "—"; }
+  try { return new Date(ms).toLocaleString(locale); } catch { return "—"; }
 }
 
-function fmtDate(d) {
+function fmtDate(d, locale = "es-ES") {
   if (!d) return "—";
-  try { return new Date(d).toLocaleDateString("es-ES"); } catch { return "—"; }
+  try { return new Date(d).toLocaleDateString(locale); } catch { return "—"; }
 }
 
 function StatusPill({ status }) {
@@ -46,7 +46,7 @@ function Pagination({ page, totalPages, setPage, disabled }) {
 
 export default function BillingPage() {
   const { showToast } = useToast();
-  const { currencySymbol } = useLocale();
+  const { currencySymbol, locale } = useLocale();
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState(null);
   const [error, setError] = useState("");
@@ -237,7 +237,7 @@ export default function BillingPage() {
                   <td>{moneyEUR((p.amount || 0) / 100, currencySymbol)}</td>
                   <td><StatusPill status={p.status} /></td>
                   <td className="billing-table__customer">{p.customer || "—"}</td>
-                  <td>{fmtDateTime(p.created)}</td>
+                  <td>{fmtDateTime(p.created, locale)}</td>
                   <td className="billing-table__actions">
                     <a href={stripeUrl(`payments/${p.id}`, view.stripeMode)} target="_blank" rel="noopener noreferrer" className="billing-stripe-link" title="Ver en Stripe">
                       <FiExternalLink />
@@ -281,7 +281,7 @@ export default function BillingPage() {
               </div>
               <div className="billing-card__meta">
                 <span>{p.customer || "—"}</span>
-                <span>{fmtDateTime(p.created)}</span>
+                <span>{fmtDateTime(p.created, locale)}</span>
               </div>
               <div className="billing-card__actions">
                 {pStatus(p.status) === "succeeded" && (
@@ -327,8 +327,8 @@ export default function BillingPage() {
                 <tr key={s._id}>
                   <td className="billing-table__tenant">{s.tenantId}</td>
                   <td>{moneyEUR(s.precioMensual || 0, currencySymbol)}</td>
-                  <td>{fmtDate(s.fechaInicio)}</td>
-                  <td>{fmtDate(s.fechaRenovacion)}</td>
+                  <td>{fmtDate(s.fechaInicio, locale)}</td>
+                  <td>{fmtDate(s.fechaRenovacion, locale)}</td>
                   <td>
                     {s.stripeSubscriptionId ? (
                       <a href={stripeUrl(`subscriptions/${s.stripeSubscriptionId}`, view.stripeMode)} target="_blank" rel="noopener noreferrer" className="billing-stripe-link" title="Ver en Stripe">
@@ -352,8 +352,8 @@ export default function BillingPage() {
                 <span className="billing-card__amount">{moneyEUR(s.precioMensual || 0, currencySymbol)}</span>
               </div>
               <div className="billing-card__meta">
-                <span>Inicio: {fmtDate(s.fechaInicio)}</span>
-                <span>Renov: {fmtDate(s.fechaRenovacion)}</span>
+                <span>Inicio: {fmtDate(s.fechaInicio, locale)}</span>
+                <span>Renov: {fmtDate(s.fechaRenovacion, locale)}</span>
               </div>
             </div>
           ))}

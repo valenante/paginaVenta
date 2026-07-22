@@ -6,6 +6,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useConfig } from "../context/ConfigContext";
+import { useLocale } from "../hooks/useLocale";
 import api from "../utils/api";
 import LoadingScreen from "../components/LoadingScreen/LoadingScreen";
 import "../styles/MiCuentaPage.css";
@@ -43,9 +44,9 @@ const SIF_FIELDS = [
   { key: "pais", label: "País", required: true, placeholder: "ES" },
 ];
 
-const toDateES = (d) => {
+const toDateLocale = (d, loc = "es-ES") => {
   try {
-    return new Date(d).toLocaleDateString("es-ES");
+    return new Date(d).toLocaleDateString(loc);
   } catch {
     return "—";
   }
@@ -54,6 +55,16 @@ const toDateES = (d) => {
 export default function MiCuentaPage() {
   const { user, loading: authLoading } = useAuth();
   const { config, loading: configLoading } = useConfig();
+  const { taxIdLabel, taxIdPlaceholder, taxAuthorityCode, isSpain, locale } = useLocale();
+
+  const toDateES = useCallback((d) => toDateLocale(d, locale), [locale]);
+
+  const sifFields = useMemo(() =>
+    SIF_FIELDS.map((f) =>
+      f.key === "cif" ? { ...f, label: taxIdLabel, placeholder: taxIdPlaceholder } : f
+    ),
+    [taxIdLabel, taxIdPlaceholder]
+  );
 
   // OK / avisos
   const [alerta, setAlerta] = useState(null);
@@ -126,9 +137,9 @@ export default function MiCuentaPage() {
   // Validación mínima SIF
   // ============================
   const sifCompleto = useMemo(() => {
-    const requiredKeys = SIF_FIELDS.filter((f) => f.required).map((f) => f.key);
+    const requiredKeys = sifFields.filter((f) => f.required).map((f) => f.key);
     return requiredKeys.every((k) => String(sifForm?.[k] || "").trim().length > 0);
-  }, [sifForm]);
+  }, [sifForm, sifFields]);
 
   const certSubido = !!certStatus?.uploaded;
   const certValido = certStatus?.valid !== false; // si no viene, asumimos ok
@@ -367,33 +378,37 @@ export default function MiCuentaPage() {
           <div>
             <h2>Estado general</h2>
             <p className="config-card-subtitle">
-              Resumen rápido del certificado, datos fiscales y envío a AEAT.
+              {isSpain
+                ? "Resumen rápido del certificado, datos fiscales y envío a AEAT."
+                : "Resumen rápido del certificado y datos fiscales."}
             </p>
           </div>
         </div>
 
         <div className="micuenta-config-stats cfg-stats">
-          <article className="micuenta-config-stat cfg-stat">
-            <span className="micuenta-config-stat__label cfg-stat__label">Certificado</span>
-            <strong>
-              {certStatusLoading
-                ? "Cargando…"
-                : certSubido
-                  ? certValido
-                    ? "Cargado"
-                    : "Revisar"
-                  : "No cargado"}
-            </strong>
-            <span className={`pill pill--${readiness.certificado}`}>
-              {certStatusLoading
-                ? "…"
-                : certSubido
-                  ? certValido
-                    ? "OK"
-                    : "WARN"
-                  : "KO"}
-            </span>
-          </article>
+          {isSpain && (
+            <article className="micuenta-config-stat cfg-stat">
+              <span className="micuenta-config-stat__label cfg-stat__label">Certificado</span>
+              <strong>
+                {certStatusLoading
+                  ? "Cargando…"
+                  : certSubido
+                    ? certValido
+                      ? "Cargado"
+                      : "Revisar"
+                    : "No cargado"}
+              </strong>
+              <span className={`pill pill--${readiness.certificado}`}>
+                {certStatusLoading
+                  ? "…"
+                  : certSubido
+                    ? certValido
+                      ? "OK"
+                      : "WARN"
+                    : "KO"}
+              </span>
+            </article>
+          )}
 
           <article className="micuenta-config-stat cfg-stat">
             <span className="micuenta-config-stat__label cfg-stat__label">Datos fiscales</span>
@@ -403,13 +418,15 @@ export default function MiCuentaPage() {
             </span>
           </article>
 
-          <article className="micuenta-config-stat cfg-stat">
-            <span className="micuenta-config-stat__label cfg-stat__label">Envío a AEAT</span>
-            <strong>{verifactuEnabled ? "Activo" : "Inactivo"}</strong>
-            <span className={`pill pill--${readiness.verifactu}`}>
-              {verifactuEnabled ? "VERI*FACTU ON" : "VERI*FACTU OFF"}
-            </span>
-          </article>
+          {isSpain && (
+            <article className="micuenta-config-stat cfg-stat">
+              <span className="micuenta-config-stat__label cfg-stat__label">Envío a AEAT</span>
+              <strong>{verifactuEnabled ? "Activo" : "Inactivo"}</strong>
+              <span className={`pill pill--${readiness.verifactu}`}>
+                {verifactuEnabled ? "VERI*FACTU ON" : "VERI*FACTU OFF"}
+              </span>
+            </article>
+          )}
         </div>
       </section>
 
@@ -477,162 +494,166 @@ export default function MiCuentaPage() {
             </p>
           </section>
 
-          {/* CUMPLIMIENTO LEGAL */}
-          <section className="card config-card">
-            <div className="config-card-header">
-              <div>
-                <h2>Cumplimiento legal</h2>
-                <p className="config-card-subtitle">
-                  Documentación obligatoria del sistema y activación del envío a
-                  AEAT.
-                </p>
-              </div>
+          {isSpain && (
+            <>
+              {/* CUMPLIMIENTO LEGAL */}
+              <section className="card config-card">
+                <div className="config-card-header">
+                  <div>
+                    <h2>Cumplimiento legal</h2>
+                    <p className="config-card-subtitle">
+                      Documentación obligatoria del sistema y activación del envío a
+                      AEAT.
+                    </p>
+                  </div>
 
-              <div>
-                <span className="pill pill--info">Ley 11/2021</span>
-              </div>
-            </div>
-
-            <div className="legal-block">
-              <div className="legal-row">
-                <div>
-                  <h3>Declaración responsable</h3>
-                  <p className="micuenta-note">
-                    Documento obligatorio del sistema con inalterabilidad,
-                    trazabilidad y registro.
-                  </p>
+                  <div>
+                    <span className="pill pill--info">Ley 11/2021</span>
+                  </div>
                 </div>
 
-                <button className="btn btn-secundario" onClick={descargarDeclaracion}>
-                  Descargar PDF
-                </button>
-              </div>
+                <div className="legal-block">
+                  <div className="legal-row">
+                    <div>
+                      <h3>Declaración responsable</h3>
+                      <p className="micuenta-note">
+                        Documento obligatorio del sistema con inalterabilidad,
+                        trazabilidad y registro.
+                      </p>
+                    </div>
 
-              <div className="legal-row">
-                <div>
-                  <h3>Envío a AEAT (VERI*FACTU)</h3>
-                  <p className="micuenta-note">
-                    Envío automático de registros/facturas a la Agencia Tributaria.
-                  </p>
-                  <p className="micuenta-note">{VERIFACTU_AVISO}</p>
-                  <div className="inline-state">
-                    <span className={`pill pill--${verifactuEnabled ? "ok" : "danger"}`}>
-                      {verifactuEnabled ? "ACTIVO" : "INACTIVO"}
+                    <button className="btn btn-secundario" onClick={descargarDeclaracion}>
+                      Descargar PDF
+                    </button>
+                  </div>
+
+                  <div className="legal-row">
+                    <div>
+                      <h3>Envío a AEAT (VERI*FACTU)</h3>
+                      <p className="micuenta-note">
+                        Envío automático de registros/facturas a la Agencia Tributaria.
+                      </p>
+                      <p className="micuenta-note">{VERIFACTU_AVISO}</p>
+                      <div className="inline-state">
+                        <span className={`pill pill--${verifactuEnabled ? "ok" : "danger"}`}>
+                          {verifactuEnabled ? "ACTIVO" : "INACTIVO"}
+                        </span>
+                      </div>
+                    </div>
+
+                    <button
+                      className={`btn btn-primario ${verifactuEnabled ? "btn-danger" : ""}`}
+                      disabled={toggleLoading}
+                      onClick={() => setMostrarConfirmacionVF(true)}
+                    >
+                      {toggleLoading
+                        ? "Procesando…"
+                        : verifactuEnabled
+                          ? "Desactivar envío"
+                          : "Activar envío"}
+                    </button>
+                  </div>
+                </div>
+
+                <div className="status-box info">
+                  Para activar el envío a AEAT (VERI*FACTU) se requiere certificado
+                  válido y datos fiscales completos.
+                </div>
+              </section>
+
+              {/* FIRMA DIGITAL */}
+              <section className="card config-card">
+                <div className="config-card-header">
+                  <div>
+                    <h2>Firma digital</h2>
+                    <p className="config-card-subtitle">
+                      Sube y valida el certificado que se usará para firma y procesos
+                      legales.
+                    </p>
+                  </div>
+
+                  <div>
+                    <span className={`pill pill--${certSubido ? (certValido ? "ok" : "warn") : "danger"}`}>
+                      {certStatusLoading
+                        ? "…"
+                        : certSubido
+                          ? certValido
+                            ? "Cargado"
+                            : "Revisar"
+                          : "No cargado"}
                     </span>
                   </div>
                 </div>
 
-                <button
-                  className={`btn btn-primario ${verifactuEnabled ? "btn-danger" : ""}`}
-                  disabled={toggleLoading}
-                  onClick={() => setMostrarConfirmacionVF(true)}
-                >
-                  {toggleLoading
-                    ? "Procesando…"
-                    : verifactuEnabled
-                      ? "Desactivar envío"
-                      : "Activar envío"}
-                </button>
-              </div>
-            </div>
-
-            <div className="status-box info">
-              Para activar el envío a AEAT (VERI*FACTU) se requiere certificado
-              válido y datos fiscales completos.
-            </div>
-          </section>
-
-          {/* FIRMA DIGITAL */}
-          <section className="card config-card">
-            <div className="config-card-header">
-              <div>
-                <h2>Firma digital</h2>
-                <p className="config-card-subtitle">
-                  Sube y valida el certificado que se usará para firma y procesos
-                  legales.
-                </p>
-              </div>
-
-              <div>
-                <span className={`pill pill--${certSubido ? (certValido ? "ok" : "warn") : "danger"}`}>
-                  {certStatusLoading
-                    ? "…"
-                    : certSubido
-                      ? certValido
-                        ? "Cargado"
-                        : "Revisar"
-                      : "No cargado"}
-                </span>
-              </div>
-            </div>
-
-            {!certStatusLoading && (
-              <div className={`status-box ${certSubido ? (certValido ? "ok" : "warn") : "danger"}`}>
-                {certSubido ? (
-                  <>
-                    <strong>Certificado cargado.</strong>{" "}
-                    {certCaduca ? (
-                      <>Caduca el <b>{certCaduca}</b>.</>
+                {!certStatusLoading && (
+                  <div className={`status-box ${certSubido ? (certValido ? "ok" : "warn") : "danger"}`}>
+                    {certSubido ? (
+                      <>
+                        <strong>Certificado cargado.</strong>{" "}
+                        {certCaduca ? (
+                          <>Caduca el <b>{certCaduca}</b>.</>
+                        ) : (
+                          "Caducidad: —"
+                        )}
+                        {certStatus?.uploadedAt && (
+                          <div className="status-sub">
+                            Subido: {toDateES(certStatus.uploadedAt)}
+                          </div>
+                        )}
+                      </>
                     ) : (
-                      "Caducidad: —"
+                      <>
+                        <strong>No hay certificado cargado.</strong>
+                        <div className="status-sub">
+                          Súbelo para habilitar firma y/o VeriFactu.
+                        </div>
+                      </>
                     )}
-                    {certStatus?.uploadedAt && (
-                      <div className="status-sub">
-                        Subido: {toDateES(certStatus.uploadedAt)}
-                      </div>
-                    )}
-                  </>
-                ) : (
-                  <>
-                    <strong>No hay certificado cargado.</strong>
-                    <div className="status-sub">
-                      Súbelo para habilitar firma y/o VeriFactu.
-                    </div>
-                  </>
-                )}
-              </div>
-            )}
-
-            <form onSubmit={handleUploadCert} className="micuenta-form">
-              <div className="config-field">
-                <label>Certificado (.p12)</label>
-                <input
-                  type="file"
-                  accept=".p12"
-                  onChange={(e) => setArchivo(e.target.files?.[0] || null)}
-                />
-                {archivo?.name && (
-                  <div className="field-help">
-                    Seleccionado: <b>{archivo.name}</b>
                   </div>
                 )}
-              </div>
 
-              <div className="config-field">
-                <label>Contraseña del certificado</label>
-                <input
-                  type="password"
-                  value={passwordCert}
-                  onChange={(e) => setPasswordCert(e.target.value)}
-                  placeholder="••••••••"
-                />
-              </div>
+                <form onSubmit={handleUploadCert} className="micuenta-form">
+                  <div className="config-field">
+                    <label>Certificado (.p12)</label>
+                    <input
+                      type="file"
+                      accept=".p12"
+                      onChange={(e) => setArchivo(e.target.files?.[0] || null)}
+                    />
+                    {archivo?.name && (
+                      <div className="field-help">
+                        Seleccionado: <b>{archivo.name}</b>
+                      </div>
+                    )}
+                  </div>
 
-              <div className="micuenta-actions cfg-actions">
-                <button
-                  type="submit"
-                  className="btn btn-secundario"
-                  disabled={certLoading}
-                >
-                  {certLoading ? "Subiendo…" : "Subir certificado"}
-                </button>
-              </div>
-            </form>
+                  <div className="config-field">
+                    <label>Contraseña del certificado</label>
+                    <input
+                      type="password"
+                      value={passwordCert}
+                      onChange={(e) => setPasswordCert(e.target.value)}
+                      placeholder="••••••••"
+                    />
+                  </div>
 
-            <p className="micuenta-note">
-              El certificado se usa para firmar facturas y comunicaciones legales del sistema.
-            </p>
-          </section>
+                  <div className="micuenta-actions cfg-actions">
+                    <button
+                      type="submit"
+                      className="btn btn-secundario"
+                      disabled={certLoading}
+                    >
+                      {certLoading ? "Subiendo…" : "Subir certificado"}
+                    </button>
+                  </div>
+                </form>
+
+                <p className="micuenta-note">
+                  El certificado se usa para firmar facturas y comunicaciones legales del sistema.
+                </p>
+              </section>
+            </>
+          )}
 
           {/* DATOS FISCALES */}
           <section className="card config-card">
@@ -640,7 +661,9 @@ export default function MiCuentaPage() {
               <div>
                 <h2>Datos fiscales</h2>
                 <p className="config-card-subtitle">
-                  Información usada para facturación y para el envío a VERI*FACTU.
+                  {isSpain
+                    ? "Información usada para facturación y para el envío a VERI*FACTU."
+                    : "Información usada para facturación."}
                 </p>
               </div>
 
@@ -652,7 +675,7 @@ export default function MiCuentaPage() {
             </div>
 
             <div className="micuenta-sif-grid">
-              {SIF_FIELDS.map((f) => (
+              {sifFields.map((f) => (
                 <div key={f.key} className="config-field">
                   <label>
                     {f.label} {f.required ? <span className="req">*</span> : null}
@@ -684,8 +707,9 @@ export default function MiCuentaPage() {
               <div className="status-box warn">
                 <strong>Faltan datos fiscales.</strong>
                 <div className="status-sub">
-                  Completa CIF/NIF, razón social y dirección para habilitar
-                  VeriFactu sin errores.
+                  {isSpain
+                    ? `Completa ${taxIdLabel}, razón social y dirección para habilitar VeriFactu sin errores.`
+                    : `Completa ${taxIdLabel}, razón social y dirección para la facturación.`}
                 </div>
               </div>
             )}
@@ -693,7 +717,7 @@ export default function MiCuentaPage() {
         </div>
       </div>
 
-      {mostrarConfirmacionVF && (
+      {isSpain && mostrarConfirmacionVF && (
         <ModalConfirmacion
           titulo={
             verifactuEnabled

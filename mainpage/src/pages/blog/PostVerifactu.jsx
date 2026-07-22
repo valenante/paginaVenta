@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useLocale } from "../../hooks/useLocale";
 import TopBar from "../../components/TopBar/TopBar";
 import Footer from "../../components/Footer/Footer";
 import SEOHead from "../../components/SEO/SEOHead";
@@ -13,6 +14,20 @@ const faqs = [
 ];
 
 export default function PostVerifactu() {
+  const { isSpain } = useLocale();
+
+  if (!isSpain) {
+    return (
+      <div className="BlogPost">
+        <TopBar />
+        <div className="BlogPost-body">
+          <p>Este contenido aplica exclusivamente a negocios en España.</p>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
   return (
     <div className="BlogPost">
       <TopBar />

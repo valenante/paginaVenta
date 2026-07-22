@@ -22,11 +22,11 @@
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
-function fmtDate(v) {
+function fmtDate(v, locale = "es-ES") {
   if (!v) return "—";
   const d = v instanceof Date ? v : new Date(v);
   if (Number.isNaN(d.getTime())) return "—";
-  return d.toLocaleDateString("es-ES", { day: "2-digit", month: "long", year: "numeric" });
+  return d.toLocaleDateString(locale, { day: "2-digit", month: "long", year: "numeric" });
 }
 
 function shortFromId(id) {
@@ -34,7 +34,7 @@ function shortFromId(id) {
   return String(id).slice(-8).toUpperCase();
 }
 
-export function generarPedidoProveedorPDF({ emisor, proveedor, pedido, opts = {}, currencySymbol = "€" }) {
+export function generarPedidoProveedorPDF({ emisor, proveedor, pedido, opts = {}, currencySymbol = "€", locale = "es-ES", taxIdLabel = "NIF/CIF" }) {
   const doc = new jsPDF({ orientation: "p", unit: "mm", format: "a4" });
   const pageW = doc.internal.pageSize.getWidth();
   const pageH = doc.internal.pageSize.getHeight();
@@ -44,8 +44,8 @@ export function generarPedidoProveedorPDF({ emisor, proveedor, pedido, opts = {}
   const darkText = [30, 30, 30];
   const grayText = [120, 120, 120];
 
-  const fechaPedido = fmtDate(pedido.fechaPedido || new Date());
-  const fechaEsp = fmtDate(pedido.fechaEsperada);
+  const fechaPedido = fmtDate(pedido.fechaPedido || new Date(), locale);
+  const fechaEsp = fmtDate(pedido.fechaEsperada, locale);
   const numPedido = pedido.numeroPedido || shortFromId(pedido._id);
 
   // Header púrpura
@@ -76,7 +76,7 @@ export function generarPedidoProveedorPDF({ emisor, proveedor, pedido, opts = {}
     doc.setFont(undefined, "normal");
     doc.setTextColor(...grayText);
     let lineY = y + 12;
-    if (data.nif) { doc.text(`NIF/CIF: ${data.nif}`, x, lineY); lineY += 4.5; }
+    if (data.nif) { doc.text(`${taxIdLabel}: ${data.nif}`, x, lineY); lineY += 4.5; }
     if (data.direccion) {
       const lines = doc.splitTextToSize(data.direccion, maxW);
       doc.text(lines, x, lineY);
@@ -157,7 +157,7 @@ export function generarPedidoProveedorPDF({ emisor, proveedor, pedido, opts = {}
   // Footer
   doc.setFontSize(7.5);
   doc.setTextColor(180);
-  doc.text(`Generado el ${new Date().toLocaleString("es-ES")} — ${emisor.nombre || ""}`, margin, pageH - 8);
+  doc.text(`Generado el ${new Date().toLocaleString(locale)} — ${emisor.nombre || ""}`, margin, pageH - 8);
   doc.text("softalef.com", pageW - margin, pageH - 8, { align: "right" });
 
   if (opts.returnDoc) return doc;

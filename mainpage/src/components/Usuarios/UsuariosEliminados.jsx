@@ -2,13 +2,15 @@
 import { useEffect, useState } from "react";
 import { FiRefreshCw, FiUserCheck } from "react-icons/fi";
 import api from "../../utils/api";
+import { useLocale } from "../../hooks/useLocale";
 
-function fmt(d) {
+function fmt(d, locale = "es-ES") {
   if (!d) return "—";
-  try { return new Date(d).toLocaleDateString("es-ES", { day: "2-digit", month: "2-digit", year: "numeric" }); } catch { return "—"; }
+  try { return new Date(d).toLocaleDateString(locale, { day: "2-digit", month: "2-digit", year: "numeric" }); } catch { return "—"; }
 }
 
 export default function UsuariosEliminados({ onRestored }) {
+  const { locale } = useLocale();
   const [usuarios, setUsuarios] = useState([]);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
@@ -67,7 +69,7 @@ export default function UsuariosEliminados({ onRestored }) {
                     <td>{u.name}</td>
                     <td>{u.email}</td>
                     <td>{u.role}</td>
-                    <td>{fmt(u.deletedAt)}</td>
+                    <td>{fmt(u.deletedAt, locale)}</td>
                     <td>
                       <button
                         className="usu-eliminados__restore-btn"

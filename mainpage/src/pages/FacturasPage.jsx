@@ -29,13 +29,13 @@ const ESTADO_LABEL = {
   aceptado_con_errores: "Aceptado con errores",
 };
 
-const ESTADO_OPTIONS = [
+const buildEstadoOptions = (authorityCode) => [
   { value: "", label: "Todos" },
   { value: "pendiente", label: "Pendiente" },
   { value: "enviado", label: "Enviado" },
-  { value: "correcto", label: "Correcto (AEAT)" },
+  { value: "correcto", label: `Correcto (${authorityCode})` },
   { value: "aceptado", label: "Aceptado" },
-  { value: "incorrecto", label: "Incorrecto (AEAT)" },
+  { value: "incorrecto", label: `Incorrecto (${authorityCode})` },
   { value: "rechazado", label: "Rechazado" },
   { value: "error", label: "Error" },
   { value: "anulada", label: "Anulada" },
@@ -50,7 +50,9 @@ const TIPO_RECTIFICATIVA = [
 ];
 
 export default function FacturasPage() {
-  const { currencySymbol } = useLocale();
+  const { currencySymbol, taxIdLabel, taxAuthorityCode, isSpain, locale } = useLocale();
+
+  const ESTADO_OPTIONS = useMemo(() => buildEstadoOptions(taxAuthorityCode), [taxAuthorityCode]);
 
   // ============================
   // State
@@ -362,11 +364,11 @@ export default function FacturasPage() {
       doc.setFontSize(14);
       doc.text("Facturas Encadenadas", 14, 15);
       doc.setFontSize(10);
-      doc.text(`Generado: ${new Date().toLocaleString("es-ES")}`, 14, 21);
+      doc.text(`Generado: ${new Date().toLocaleString(locale)}`, 14, 21);
 
       autoTable(doc, {
         startY: 28,
-        head: [["Número", "Fecha", "Cliente", "NIF", `Importe (${currencySymbol})`, "Estado", "Hash"]],
+        head: [["Número", "Fecha", "Cliente", taxIdLabel, `Importe (${currencySymbol})`, "Estado", "Hash"]],
         body: rows.map((r) => [
           r["Número factura"] || r["Número"] || "-",
           r["Fecha emisión"] || r["Fecha"] || "-",
@@ -422,8 +424,8 @@ export default function FacturasPage() {
     }
   };
 
-  const verRespuestaAEAT = (respuesta) => {
-    if (!respuesta) return showWarn("Esta factura no tiene respuesta de la AEAT.");
+  const verRespuestaAuthority = (respuesta) => {
+    if (!respuesta) return showWarn(`Esta factura no tiene respuesta de ${taxAuthorityCode}.`);
 
     try {
       const pretty = typeof respuesta === "string" ? respuesta : JSON.stringify(respuesta, null, 2);
@@ -432,7 +434,7 @@ export default function FacturasPage() {
       window.open(url, "_blank");
       setTimeout(() => URL.revokeObjectURL(url), 5000);
     } catch {
-      showWarn("No se pudo mostrar la respuesta de la AEAT.");
+      showWarn(`No se pudo mostrar la respuesta de ${taxAuthorityCode}.`);
     }
   };
 
@@ -619,7 +621,7 @@ export default function FacturasPage() {
                     </span>
                   </td>
                   <td>{f.numeroFactura}</td>
-                  <td>{new Date(f.fechaExpedicion).toLocaleString("es-ES")}</td>
+                  <td>{new Date(f.fechaExpedicion).toLocaleString(locale)}</td>
                   <td>{f.clienteNombre || "-"}</td>
                   <td>{f.clienteNIF || "-"}</td>
                   <td>{typeof f.importeTotal === "number" ? `${f.importeTotal.toFixed(2)} ${currencySymbol}` : "-"}</td>
@@ -651,10 +653,12 @@ export default function FacturasPage() {
                       <button onClick={() => verXML(f.xmlFirmado)} disabled={!f.xmlFirmado}>XML
                       </button>
 
-                      {f.respuestaAEAT ? (
-                        <button onClick={() => verRespuestaAEAT(f.respuestaAEAT)}>AEAT</button>
-                      ) : (
-                        <button disabled title="Sin respuesta AEAT">AEAT</button>
+                      {isSpain && (
+                        f.respuestaAEAT ? (
+                          <button onClick={() => verRespuestaAuthority(f.respuestaAEAT)}>{taxAuthorityCode}</button>
+                        ) : (
+                          <button disabled title={`Sin respuesta ${taxAuthorityCode}`}>{taxAuthorityCode}</button>
+                        )
                       )}
                     </div>
                   </td>
@@ -694,7 +698,7 @@ export default function FacturasPage() {
 
             <div className="factura-card-body">
               <div>
-                <strong>Fecha:</strong> {new Date(f.fechaExpedicion).toLocaleDateString("es-ES")}
+                <strong>Fecha:</strong> {new Date(f.fechaExpedicion).toLocaleDateString(locale)}
               </div>
               <div>
                 <strong>Cliente:</strong> {f.clienteNombre || "Consumidor final"}
@@ -729,10 +733,12 @@ export default function FacturasPage() {
               <button onClick={() => verXML(f.xmlFirmado)} disabled={!f.xmlFirmado}>XML
               </button>
 
-              {f.respuestaAEAT ? (
-                <button onClick={() => verRespuestaAEAT(f.respuestaAEAT)}>AEAT</button>
-              ) : (
-                <button disabled>AEAT</button>
+              {isSpain && (
+                f.respuestaAEAT ? (
+                  <button onClick={() => verRespuestaAuthority(f.respuestaAEAT)}>{taxAuthorityCode}</button>
+                ) : (
+                  <button disabled>{taxAuthorityCode}</button>
+                )
               )}
             </div>
           </div>

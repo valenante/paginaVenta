@@ -17,12 +17,13 @@ import AlertaMensaje from "../../../../components/AlertaMensaje/AlertaMensaje.js
 import api from "../../../../utils/api";
 import Portal from "../../../../components/ui/Portal";
 import EmptyState from "../../../../components/ui/EmptyState";
+import { useLocale } from "../../../../hooks/useLocale";
 
 import "./TenantTable.css";
 
 /* ── Helpers ─────────────────────────────────────────── */
 
-function formatLastLogin(date) {
+function formatLastLogin(date, locale = "es-ES") {
   if (!date) return { text: "nunca", cls: "last-login--never" };
   const d = new Date(date);
   if (isNaN(d.getTime())) return { text: "nunca", cls: "last-login--never" };
@@ -34,7 +35,7 @@ function formatLastLogin(date) {
   if (diffH < 1) text = "hace <1h";
   else if (diffH < 24) text = `hace ${diffH}h`;
   else if (diffD < 30) text = `hace ${diffD}d`;
-  else text = d.toLocaleDateString("es-ES");
+  else text = d.toLocaleDateString(locale);
 
   const cls = diffH < 24 ? "last-login--recent" : diffD < 7 ? "last-login--warning" : "last-login--danger";
   return { text, cls };
@@ -148,6 +149,7 @@ function PrintBadge({ info }) {
 
 export default function TenantTable({ tenants, onRefresh, loading, page, setPage, totalPages, total }) {
   const navigate = useNavigate();
+  const { locale } = useLocale();
   const [selected, setSelected] = useState(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [loadingImpersonar, setLoadingImpersonar] = useState(false);
@@ -373,9 +375,9 @@ export default function TenantTable({ tenants, onRefresh, loading, page, setPage
                   </td>
                   <td><span className="tenant-plan-badge">{t.plan}</span></td>
                   <td><span className={`estado-tag estado-${t.estado}`}>{t.estado}</span></td>
-                  <td className="tenant-table__date">{new Date(t.createdAt).toLocaleDateString("es-ES")}</td>
+                  <td className="tenant-table__date">{new Date(t.createdAt).toLocaleDateString(locale)}</td>
                   <td className="tenant-table__date">
-                    {(() => { const ll = formatLastLogin(t.lastLogin); return <span className={ll.cls}>{ll.text}</span>; })()}
+                    {(() => { const ll = formatLastLogin(t.lastLogin, locale); return <span className={ll.cls}>{ll.text}</span>; })()}
                   </td>
                   <td><PrintBadge info={printStatus[slug]} /></td>
                   <td className="tenant-table__cell--actions">{renderActions(t, slug)}</td>
@@ -407,7 +409,7 @@ export default function TenantTable({ tenants, onRefresh, loading, page, setPage
                 </span>
                 <span className="tenant-plan-badge">{t.plan}</span>
                 <span className={`estado-tag estado-${t.estado}`}>{t.estado}</span>
-                {(() => { const ll = formatLastLogin(t.lastLogin); return <span className={`last-login-badge ${ll.cls}`}>{ll.text}</span>; })()}
+                {(() => { const ll = formatLastLogin(t.lastLogin, locale); return <span className={`last-login-badge ${ll.cls}`}>{ll.text}</span>; })()}
                 <PrintBadge info={printStatus[slug]} />
               </div>
             </div>

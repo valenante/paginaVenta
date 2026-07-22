@@ -2,6 +2,7 @@
 // Dashboard de rendimiento del equipo (camareros)
 import React, { useEffect, useState, useMemo } from "react";
 import api from "../../utils/api";
+import { useLocale } from "../../hooks/useLocale";
 import "./EquipoDashboard.css";
 
 const PERIODOS = [
@@ -42,6 +43,7 @@ function PctBadge({ val, avg, invertido = false }) {
 }
 
 export default function EquipoDashboard() {
+  const { currencySymbol } = useLocale();
   const [periodo, setPeriodo] = useState("semana");
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -122,11 +124,11 @@ export default function EquipoDashboard() {
                     <td>{c.totalPedidos}</td>
                     <td>{c.totalProductos}</td>
                     <td className="equipo-importe">
-                      {c.totalImporte.toFixed(2)} €
+                      {c.totalImporte.toFixed(2)} {currencySymbol}
                       <PctBadge val={c.totalImporte} avg={prom.totalGlobal / ranking.length} />
                     </td>
                     <td>
-                      {c.ticketMedio.toFixed(2)} €
+                      {c.ticketMedio.toFixed(2)} {currencySymbol}
                       <PctBadge val={c.ticketMedio} avg={prom.ticketMedio} />
                     </td>
                     <td>
@@ -153,7 +155,7 @@ export default function EquipoDashboard() {
             const insights = [];
 
             if (mejorTicket.ticketMedio > prom.ticketMedio * 1.1) {
-              insights.push(`${mejorTicket.nombre} tiene el mejor ticket medio (${mejorTicket.ticketMedio.toFixed(2)}€, +${Math.round(((mejorTicket.ticketMedio - prom.ticketMedio) / prom.ticketMedio) * 100)}% vs media).`);
+              insights.push(`${mejorTicket.nombre} tiene el mejor ticket medio (${mejorTicket.ticketMedio.toFixed(2)}${currencySymbol}, +${Math.round(((mejorTicket.ticketMedio - prom.ticketMedio) / prom.ticketMedio) * 100)}% vs media).`);
             }
             if (mejorUpsell.pctAdicionales > 5) {
               insights.push(`${mejorUpsell.nombre} lidera en upselling con ${mejorUpsell.pctAdicionales.toFixed(0)}% de adicionales.`);

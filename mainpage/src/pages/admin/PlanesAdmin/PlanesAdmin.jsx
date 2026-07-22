@@ -2,6 +2,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import api from "../../../utils/api";
+import { useLocale } from "../../../hooks/useLocale";
 import "./planesAdmin.css";
 import { useToast } from "../../../context/ToastContext";
 import ModalConfirmacion from "../../../components/Modal/ModalConfirmacion";
@@ -28,6 +29,7 @@ function Pagination({ page, totalPages, setPage }) {
 
 export default function PlanesAdmin() {
   const { showToast } = useToast();
+  const { currencySymbol } = useLocale();
   const [tab, setTab] = useState("planes");
 
   const [planes, setPlanes] = useState([]);
@@ -138,7 +140,7 @@ export default function PlanesAdmin() {
                   ) : planesPaged.map((p) => (
                     <tr className="planes-table__row" key={p._id}>
                       <td><span className="planes-name">{p.nombre}</span></td>
-                      <td><span className="planes-price">{p.precioMensual} €/mes</span></td>
+                      <td><span className="planes-price">{p.precioMensual} {currencySymbol}/mes</span></td>
                       <td><span className={`planes-bool ${p.activo ? "is-true" : "is-false"}`}>{p.activo ? "Si" : "No"}</span></td>
                       <td><span className="planes-count">{p.features?.length || 0}</span></td>
                       <td className="planes-table__cell--actions">
@@ -161,7 +163,7 @@ export default function PlanesAdmin() {
                 <div className="planes-card" key={p._id}>
                   <div className="planes-card__top">
                     <span className="planes-name">{p.nombre}</span>
-                    <span className="planes-price">{p.precioMensual} €/mes</span>
+                    <span className="planes-price">{p.precioMensual} {currencySymbol}/mes</span>
                   </div>
                   <div className="planes-card__tags">
                     <span className={`planes-bool ${p.activo ? "is-true" : "is-false"}`}>{p.activo ? "Activo" : "Inactivo"}</span>

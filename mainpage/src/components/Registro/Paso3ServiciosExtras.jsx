@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import api from "../../utils/api"; // ajusta si tu path es distinto
 import "./Paso3ServiciosExtras.css";
+import { useLocale } from "../../hooks/useLocale";
 
 export default function Paso3ServiciosExtras({
   servicios,
@@ -19,6 +20,7 @@ export default function Paso3ServiciosExtras({
 }) {
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState("");
+  const { currencySymbol } = useLocale();
 
   /* =====================
      Handlers
@@ -202,7 +204,7 @@ export default function Paso3ServiciosExtras({
                   ? "Carga completa de catálogo y productos"
                   : "Carga completa de carta y productos"}
               </span>
-              <span className="servicio-price badge badge-aviso">+80 € único</span>
+              <span className="servicio-price badge badge-aviso">+80 {currencySymbol} único</span>
             </div>
             <p className="servicio-description">
               {isShop
@@ -260,7 +262,7 @@ export default function Paso3ServiciosExtras({
                   Configuración de mesas + QR impresos
                 </span>
                 <span className="servicio-price badge badge-aviso">
-                  desde 80 € único
+                  desde 80 {currencySymbol} único
                 </span>
               </div>
               <p className="servicio-description">
@@ -355,7 +357,7 @@ export default function Paso3ServiciosExtras({
                 <div className="servicio-header-row">
                   <span className="servicio-title">Usar mi TPV/PC</span>
                   <span className="servicio-price badge badge-aviso">
-                    Instalación: desde 120 € único
+                    Instalación: desde 120 {currencySymbol} único
                   </span>
                 </div>
                 <p className="servicio-description">
@@ -379,7 +381,7 @@ export default function Paso3ServiciosExtras({
               <div className="servicio-content">
                 <div className="servicio-header-row">
                   <span className="servicio-title">Quiero un TPV nuevo (recomendado si no tienes)</span>
-                  <span className="servicio-price badge badge-aviso">+550 € aprox.</span>
+                  <span className="servicio-price badge badge-aviso">+550 {currencySymbol} aprox.</span>
                 </div>
                 <p className="servicio-description">
                   Te llega ya instalado y preparado: lo conectas, lo enciendes y con Internet ya puedes entrar a Softalef.
@@ -396,7 +398,7 @@ export default function Paso3ServiciosExtras({
         <div className="servicio-item servicio-item--number">
           <div className="servicio-number-text">
             <label>Impresoras térmicas</label>
-            <small className="servicio-helper">150 € por unidad</small>
+            <small className="servicio-helper">150 {currencySymbol} por unidad</small>
           </div>
           <input
             className="servicio-number-input"
@@ -430,7 +432,7 @@ export default function Paso3ServiciosExtras({
               <div className="servicio-content">
                 <div className="servicio-header-row">
                   <span className="servicio-title">Tablet (11")</span>
-                  <span className="servicio-price badge badge-aviso">+180 € / ud</span>
+                  <span className="servicio-price badge badge-aviso">+180 {currencySymbol} / ud</span>
                 </div>
                 <p className="servicio-description">Más barata, rápida de instalar y portátil.
                   Menos “pro”, más sensible a grasa/golpes si no va protegida.
@@ -449,7 +451,7 @@ export default function Paso3ServiciosExtras({
               <div className="servicio-content">
                 <div className="servicio-header-row">
                   <span className="servicio-title">Pantalla táctil PRO (AIO)</span>
-                  <span className="servicio-price badge badge-aviso">+450 € / ud aprox.</span>
+                  <span className="servicio-price badge badge-aviso">+450 {currencySymbol} / ud aprox.</span>
                 </div>
                 <p className="servicio-description">Más robusta y profesional, fija y siempre lista (tipo TPV).
                   Más cara y requiere instalación fija (enchufe/soporte).
@@ -467,7 +469,7 @@ export default function Paso3ServiciosExtras({
           <div className="servicio-number-text">
             <label>{isShop ? "Cantidad de pantallas TPV" : "Cantidad de pantallas (cocina/barra)"}</label>
             <small className="servicio-helper">
-              {precioPantalla} € por unidad (según tipo elegido)
+              {precioPantalla} {currencySymbol} por unidad (según tipo elegido)
             </small>
           </div>
           <input
@@ -486,7 +488,7 @@ export default function Paso3ServiciosExtras({
           <div className="servicio-item servicio-item--number">
             <div className="servicio-number-text">
               <label>PDA para camareros</label>
-              <small className="servicio-helper">180 € por unidad</small>
+              <small className="servicio-helper">180 {currencySymbol} por unidad</small>
             </div>
             <input
               className="servicio-number-input"
@@ -535,7 +537,7 @@ export default function Paso3ServiciosExtras({
           <div className="servicio-content">
             <div className="servicio-header-row">
               <span className="servicio-title">Formación al equipo (60–90 min)</span>
-              <span className="servicio-price badge badge-aviso">+120 € único</span>
+              <span className="servicio-price badge badge-aviso">+120 {currencySymbol} único</span>
             </div>
             <p className="servicio-description">
               Explicamos el flujo completo (caja, cocina, barra y sala), mejores prácticas y resolución de dudas.
@@ -574,7 +576,7 @@ export default function Paso3ServiciosExtras({
             <div className="servicio-content">
               <div className="servicio-header-row">
                 <span className="servicio-title">Servicio de fotografía profesional</span>
-                <span className="servicio-price badge badge-aviso">+120 € único</span>
+                <span className="servicio-price badge badge-aviso">+120 {currencySymbol} único</span>
               </div>
               <p className="servicio-description">
                 Fotografíamos platos/local con calidad profesional para carta digital y presencia online.

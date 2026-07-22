@@ -1,9 +1,11 @@
 import React, { useMemo, useState } from "react";
 import { useShopCategorias } from "../../context/ShopCategoriasContext";
+import { useLocale } from "../../hooks/useLocale";
 import "../Categories/CrearProducto.css"; // 👈 Reutiliza el CSS PRO del modal
 
 export default function EditProductShop({ product, onClose, onSaved }) {
   const { updateProduct } = useShopCategorias();
+  const { currencySymbol } = useLocale();
 
   const esServicio = useMemo(() => {
     const t = (product?.itemType || product?.type || "").toLowerCase();
@@ -187,7 +189,7 @@ export default function EditProductShop({ product, onClose, onSaved }) {
 
             <div className="form-group--crear">
               <label className="label--crear">
-                Precio de venta (€)
+                Precio de venta ({currencySymbol})
                 <input
                   type="number"
                   min="0"

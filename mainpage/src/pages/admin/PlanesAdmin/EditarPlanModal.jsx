@@ -1,11 +1,13 @@
 // src/pages/admin/PlanesAdmin/EditarPlanModal.jsx
 import { useState } from "react";
 import api from "../../../utils/api";
+import { useLocale } from "../../../hooks/useLocale";
 import './EditarPlanModal.css';
 import { useToast } from "../../../context/ToastContext";
 
 export default function EditarPlanModal({ plan, onClose, onSave, features = [] }) {
   const { showToast } = useToast();
+  const { currencySymbol } = useLocale();
   const [form, setForm] = useState({
     nombre: plan.nombre ?? "",
     precioMensual: plan.precioMensual ?? "",
@@ -67,7 +69,7 @@ export default function EditarPlanModal({ plan, onClose, onSave, features = [] }
           </label>
 
           <label className="form-label-plansEdit">
-            Precio Mensual (€)
+            Precio Mensual ({currencySymbol})
             <input
               className="input-plansEdit"
               name="precioMensual"
@@ -79,7 +81,7 @@ export default function EditarPlanModal({ plan, onClose, onSave, features = [] }
           </label>
 
           <label className="form-label-plansEdit">
-            Precio Anual (€)
+            Precio Anual ({currencySymbol})
             <input
               className="input-plansEdit"
               name="precioAnual"

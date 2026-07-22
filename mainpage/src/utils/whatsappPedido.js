@@ -47,7 +47,7 @@ function formatUnidad(cantidad, formato, unidad) {
  * Construye el cuerpo de mensaje del pedido.
  * Markdown mínimo de WhatsApp (*negrita*). Emojis discretos.
  */
-export function construirMensajePedido({ emisor, proveedor, pedido }) {
+export function construirMensajePedido({ emisor, proveedor, pedido, currencySymbol = "€" }) {
   const lineas = (pedido?.lineas || [])
     .map((l) => {
       const u = formatUnidad(l.cantidad, l.formato, l.unidad);
@@ -78,7 +78,7 @@ export function construirMensajePedido({ emisor, proveedor, pedido }) {
     "",
     lineas,
     "",
-    `Total estimado: *${Number(pedido?.total || 0).toFixed(2)} €*`,
+    `Total estimado: *${Number(pedido?.total || 0).toFixed(2)} ${currencySymbol}*`,
   ];
 
   if (fechaEsp) parts.push(`📅 Entrega deseada: ${fechaEsp}`);
@@ -94,8 +94,8 @@ export function construirMensajePedido({ emisor, proveedor, pedido }) {
  * - Si hay teléfono del proveedor → wa.me/<num>?text=…
  * - Si no hay teléfono → api.whatsapp.com/send?text=… (sin destinatario)
  */
-export function abrirWhatsappPedido({ emisor, proveedor, pedido }) {
-  const mensaje = construirMensajePedido({ emisor, proveedor, pedido });
+export function abrirWhatsappPedido({ emisor, proveedor, pedido, currencySymbol = "€" }) {
+  const mensaje = construirMensajePedido({ emisor, proveedor, pedido, currencySymbol });
   const texto = encodeURIComponent(mensaje);
   const numero = normalizarTelefonoWhatsapp(proveedor?.telefono);
   const url = numero

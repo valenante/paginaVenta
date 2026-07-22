@@ -15,11 +15,12 @@ import AlertaMensaje from "../../components/AlertaMensaje/AlertaMensaje.jsx";
 import { normalizeApiError } from "../../utils/normalizeApiError.js";
 import { generarPedidoProveedorPDF } from "../../utils/pdfs/pedidoProveedorPDF.js";
 import { abrirWhatsappPedido } from "../../utils/whatsappPedido.js";
+import { useLocale } from "../../hooks/useLocale";
 import "./HacerPedidoPage.css";
 
-const fmtEur = (v) => `${Number(v || 0).toFixed(2)} €`;
-
 export default function HacerPedidoPage() {
+  const { currencySymbol } = useLocale();
+  const fmtEur = (v) => `${Number(v || 0).toFixed(2)} ${currencySymbol}`;
   const { tenantId, tenant } = useTenant();
   const [searchParams, setSearchParams] = useSearchParams();
 

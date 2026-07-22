@@ -4,6 +4,7 @@ import api from "../../utils/api";
 import { useTenant } from "../../context/TenantContext";
 import Portal from "../ui/Portal";
 import { useAutoFocus } from "../../hooks/useAutoFocus";
+import { useLocale } from "../../hooks/useLocale";
 import "./FacturaProveedorModal.css";
 
 const IVA_OPTIONS = [
@@ -37,6 +38,7 @@ export default function FacturaProveedorModal({ onClose, onSaved }) {
   const [archivo, setArchivo] = useState(null);
 
   const autoFocusRef = useAutoFocus();
+  const { currencySymbol } = useLocale();
 
   const set = (k, v) => setForm((s) => ({ ...s, [k]: v }));
 
@@ -204,7 +206,7 @@ export default function FacturaProveedorModal({ onClose, onSaved }) {
                   <label>Total</label>
                   <input
                     type="text"
-                    value={subtotalNum > 0 ? `${totalCalc.toFixed(2)} €` : "—"}
+                    value={subtotalNum > 0 ? `${totalCalc.toFixed(2)} ${currencySymbol}` : "—"}
                     readOnly
                     style={{ background: "var(--color-fondo-claro, #f3f4f6)", fontWeight: 700 }}
                   />

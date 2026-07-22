@@ -3,12 +3,13 @@ import React, { useMemo } from "react";
 import { useParams } from "react-router-dom";
 import { VentasProvider, useVentas } from "../context/VentasContext";
 import { useTenant } from "../context/TenantContext.jsx"; // ✅ AÑADIR
+import { useLocale } from "../hooks/useLocale";
 import "../styles/VentasPageShop.css";
 
-const fmtMoney = (n) => {
+const fmtMoney = (n, sym = "€") => {
   const x = Number(n);
   if (!Number.isFinite(x)) return "-";
-  return x.toFixed(2) + " €";
+  return x.toFixed(2) + " " + sym;
 };
 
 const fmtDateTime = (d) => {
@@ -18,6 +19,7 @@ const fmtDateTime = (d) => {
 };
 
 function VentasPageShopInner() {
+  const { currencySymbol } = useLocale();
   const {
     tenantId,
     ventasPage,
@@ -66,7 +68,7 @@ function VentasPageShopInner() {
           <div className="shops-page__metaRow">
             <span className="shops-badge">Ventas: {totals.count}</span>
             <span className="shops-badge">Ítems: {totals.items}</span>
-            <span className="shops-badge">Total: {fmtMoney(totals.total)}</span>
+            <span className="shops-badge">Total: {fmtMoney(totals.total, currencySymbol)}</span>
             <span className="shops-metaText">{meta}</span>
           </div>
         </div>
@@ -194,7 +196,7 @@ function VentasPageShopInner() {
                       </span>
                     </td>
                     <td className="t-right">{v.itemsCount}</td>
-                    <td className="t-right">{fmtMoney(v.total)}</td>
+                    <td className="t-right">{fmtMoney(v.total, currencySymbol)}</td>
                   </tr>
                 ))}
               </tbody>

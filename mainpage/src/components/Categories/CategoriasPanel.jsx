@@ -6,6 +6,7 @@ import CategoriaFormModal from "./CategoriaFormModal";
 import CrearProducto from "./CrearProducto";
 import EditProduct from "./EditProducts";
 import { useCategorias } from "../../context/CategoriasContext";
+import { useLocale } from "../../hooks/useLocale";
 import ExtrasPanel from "../Extras/ExtrasPanel";
 import Portal from "../ui/Portal";
 import api from "../../utils/api";
@@ -19,6 +20,7 @@ const TABS = [
 ];
 
 const CategoriasPanel = ({ onBack }) => {
+  const { currencySymbol } = useLocale();
   const [tab, setTab] = useState("plato");
   const [catModal, setCatModal] = useState({ open: false, categoria: null });
   const [confirmDelete, setConfirmDelete] = useState(null);
@@ -514,7 +516,7 @@ const CategoriasPanel = ({ onBack }) => {
                                                 <div className="catpanel-product-meta">
                                                   {(Array.isArray(prod.precios) ? prod.precios.length > 0 : prod.precios?.precioBase != null) && (
                                                     <span className="catpanel-product-price">
-                                                      {Number(getFirstPrice(prod.precios)).toFixed(2)} €
+                                                      {Number(getFirstPrice(prod.precios)).toFixed(2)} {currencySymbol}
                                                     </span>
                                                   )}
                                                   <span className={`catpanel-product-estado ${prod.estado === "habilitado" ? "catpanel-product-estado--on" : "catpanel-product-estado--off"}`}>

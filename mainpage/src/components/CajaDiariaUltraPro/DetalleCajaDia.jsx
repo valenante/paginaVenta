@@ -4,13 +4,14 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { FiX } from "react-icons/fi";
 import api from "../../utils/api";
+import { useLocale } from "../../hooks/useLocale";
 import "./DetalleCajaDia.css";
 
 const fmtHora = (d) => {
   if (!d) return "—";
   try { return new Date(d).toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" }); } catch { return "—"; }
 };
-const money = (n) => n != null ? `${Number(n).toFixed(2)}€` : "—";
+const money = (n, sym = "€") => n != null ? `${Number(n).toFixed(2)}${sym}` : "—";
 
 const TIPO_LABEL = {
   venta_efectivo: "Venta efectivo",
@@ -25,6 +26,8 @@ const TIPO_LABEL = {
 };
 
 export default function DetalleCajaDia({ fecha, autoOpen = false, onClose }) {
+  const { currencySymbol } = useLocale();
+  const m = (n) => money(n, currencySymbol);
   const [open, setOpen] = useState(autoOpen);
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -90,11 +93,11 @@ export default function DetalleCajaDia({ fecha, autoOpen = false, onClose }) {
               {/* Arqueo */}
               {data.arqueo.efectivoContado != null && (
                 <div className="dcj__arqueo">
-                  <div><span className="dcj__label">Efectivo esperado</span><strong>{money(data.arqueo.efectivoEsperado)}</strong></div>
-                  <div><span className="dcj__label">Efectivo contado</span><strong>{money(data.arqueo.efectivoContado)}</strong></div>
+                  <div><span className="dcj__label">Efectivo esperado</span><strong>{m(data.arqueo.efectivoEsperado)}</strong></div>
+                  <div><span className="dcj__label">Efectivo contado</span><strong>{m(data.arqueo.efectivoContado)}</strong></div>
                   <div className={`dcj__diferencia ${data.arqueo.diferencia < 0 ? "dcj__diferencia--neg" : data.arqueo.diferencia > 0 ? "dcj__diferencia--pos" : ""}`}>
                     <span className="dcj__label">Diferencia</span>
-                    <strong>{data.arqueo.diferencia > 0 ? "+" : ""}{money(data.arqueo.diferencia)}</strong>
+                    <strong>{data.arqueo.diferencia > 0 ? "+" : ""}{m(data.arqueo.diferencia)}</strong>
                   </div>
                 </div>
               )}
@@ -107,7 +110,7 @@ export default function DetalleCajaDia({ fecha, autoOpen = false, onClose }) {
                     {Object.entries(data.resumenMovimientos).map(([tipo, r]) => (
                       <div key={tipo} className="dcj__resumen-item">
                         <span>{TIPO_LABEL[tipo] || tipo}</span>
-                        <strong>{r.count}× — {money(r.total)}</strong>
+                        <strong>{r.count}× — {m(r.total)}</strong>
                       </div>
                     ))}
                   </div>
@@ -130,14 +133,14 @@ export default function DetalleCajaDia({ fecha, autoOpen = false, onClose }) {
                       </tr>
                     </thead>
                     <tbody>
-                      {data.movimientos.map((m, i) => (
+                      {data.movimientos.map((mov, i) => (
                         <tr key={i}>
-                          <td>{m.seq}</td>
-                          <td>{fmtHora(m.hora)}</td>
-                          <td><span className={`dcj__tipo dcj__tipo--${m.tipo}`}>{TIPO_LABEL[m.tipo] || m.tipo}</span></td>
-                          <td className={m.importe < 0 ? "dcj__neg" : ""}>{money(m.importe)}</td>
-                          <td>{m.usuario}</td>
-                          <td className="dcj__ref">{m.referencia || m.motivo || "—"}</td>
+                          <td>{mov.seq}</td>
+                          <td>{fmtHora(mov.hora)}</td>
+                          <td><span className={`dcj__tipo dcj__tipo--${mov.tipo}`}>{TIPO_LABEL[mov.tipo] || mov.tipo}</span></td>
+                          <td className={mov.importe < 0 ? "dcj__neg" : ""}>{m(mov.importe)}</td>
+                          <td>{mov.usuario}</td>
+                          <td className="dcj__ref">{mov.referencia || mov.motivo || "—"}</td>
                         </tr>
                       ))}
                     </tbody>

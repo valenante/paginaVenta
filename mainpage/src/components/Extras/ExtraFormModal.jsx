@@ -3,6 +3,7 @@
 // "Diferencias obvias" de un extra: precio único + opción de descontar stock de un producto.
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import Portal from "../ui/Portal";
+import { useLocale } from "../../hooks/useLocale";
 import "../Categories/CategoriaFormModal.css"; // reutiliza estilos .catmodal-*
 import "./ExtrasPanel.css";
 
@@ -18,6 +19,7 @@ const parsePrecio = (v) => {
 
 export default function ExtraFormModal({ extra, productos = [], onClose, onSave }) {
   const isEdit = !!extra;
+  const { currencySymbol } = useLocale();
 
   const productoById = useMemo(() => {
     const m = new Map();
@@ -111,7 +113,7 @@ export default function ExtraFormModal({ extra, productos = [], onClose, onSave 
             </label>
 
             <label className="catmodal-label">
-              Precio (€)
+              Precio ({currencySymbol})
               <input
                 className="catmodal-input catmodal-input--orden"
                 type="number"

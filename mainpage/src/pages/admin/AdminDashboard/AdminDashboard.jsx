@@ -8,6 +8,7 @@ import {
   FiCheckCircle, FiUnlock, FiXCircle, FiUserX,
 } from "react-icons/fi";
 import api from "../../../utils/api";
+import { useLocale } from "../../../hooks/useLocale";
 import { useToast } from "../../../context/ToastContext";
 import useTenantsData from "../../../hooks/useTenantsData";
 import TenantTable from "./components/TenantTable";
@@ -18,7 +19,7 @@ function fmt(d) {
   if (!d) return "—";
   try { return new Date(d).toLocaleString("es-ES", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" }); } catch { return "—"; }
 }
-function money(n) { return n != null ? `${Number(n).toLocaleString("es-ES", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}€` : "—"; }
+function money(n, sym = "€") { return n != null ? `${Number(n).toLocaleString("es-ES", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}${sym}` : "—"; }
 
 /* ══════════════════════════════════════════
    MAIN DASHBOARD
@@ -26,6 +27,7 @@ function money(n) { return n != null ? `${Number(n).toLocaleString("es-ES", { mi
 export default function AdminDashboard() {
   const navigate = useNavigate();
   const { showToast } = useToast();
+  const { currencySymbol } = useLocale();
   const [billing, setBilling] = useState(null);
   const [incidents, setIncidents] = useState(null);
   const [deploy, setDeploy] = useState(null);
@@ -93,7 +95,7 @@ export default function AdminDashboard() {
         <div className="dash-kpi dash-kpi--accent">
           <FiDollarSign className="dash-kpi__icon" />
           <div className="dash-kpi__body">
-            <span className="dash-kpi__value">{money(mrr)}</span>
+            <span className="dash-kpi__value">{money(mrr, currencySymbol)}</span>
             <span className="dash-kpi__label">MRR · {activeSubs} activas</span>
           </div>
         </div>
@@ -154,7 +156,7 @@ export default function AdminDashboard() {
                     </div>
                     <div className="dash-live-stat">
                       <FiDollarSign />
-                      <span><strong>{money(t.totalEnMesas)}</strong> en mesa</span>
+                      <span><strong>{money(t.totalEnMesas, currencySymbol)}</strong> en mesa</span>
                     </div>
                     <div className="dash-live-stat">
                       <FiClock />

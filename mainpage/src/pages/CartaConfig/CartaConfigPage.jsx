@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { useConfig } from "../../context/ConfigContext.jsx";
 import api from "../../utils/api.js";
+import { useLocale } from "../../hooks/useLocale";
 import AlertaMensaje from "../../components/AlertaMensaje/AlertaMensaje.jsx";
 import ModalConfirmacion from "../../components/Modal/ModalConfirmacion.jsx";
 import CartaOrdenSection from "./CartaOrdenSection.jsx";
@@ -30,6 +31,7 @@ const CartaColorPick = ({ label, value, name, onChange }) => (
 
 export default function CartaConfigPage() {
   const { config, setConfig, refreshConfig } = useConfig();
+  const { currencySymbol } = useLocale();
   const [form, setForm] = useState(config || {});
   const [saving, setSaving] = useState(false);
   const [alerta, setAlerta] = useState(null);
@@ -822,8 +824,8 @@ export default function CartaConfigPage() {
                   </h4>
 
                   {[
-                    { nombre: "Croquetas caseras", precio: "8,50 €", badge: "Popular" },
-                    { nombre: "Ensalada mixta", precio: "7,00 €", badge: null },
+                    { nombre: "Croquetas caseras", precio: `8,50 ${currencySymbol}`, badge: "Popular" },
+                    { nombre: "Ensalada mixta", precio: `7,00 ${currencySymbol}`, badge: null },
                   ].map((p) => (
                     <div
                       key={p.nombre}
@@ -866,7 +868,7 @@ export default function CartaConfigPage() {
                   style={{ backgroundColor: form.temaCarta?.boton || "#9B1C1C" }}
                 >
                   <span>Ver carrito · 2 items</span>
-                  <span style={{ fontWeight: 800 }}>15,50 €</span>
+                  <span style={{ fontWeight: 800 }}>15,50 {currencySymbol}</span>
                 </div>
               </div>
             </div>

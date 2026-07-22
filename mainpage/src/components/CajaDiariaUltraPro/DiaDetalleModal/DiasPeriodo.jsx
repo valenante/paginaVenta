@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import DetalleCajaDia from "../DetalleCajaDia";
 import { formatFechaUI } from "../cajaHelpers";
+import { useLocale } from "../../../hooks/useLocale";
 import "./DiasPeriodo.css";
 
 export default function DiasPeriodo({ dias }) {
+  const { currencySymbol } = useLocale();
   const [fechaDetalle, setFechaDetalle] = useState(null);
 
   return (
@@ -21,7 +23,7 @@ export default function DiasPeriodo({ dias }) {
             {/* DESKTOP */}
             <div className="dia-desktop">
               <span className="dia-total">
-                {d.total.toFixed(2)} €
+                {d.total.toFixed(2)} {currencySymbol}
               </span>
 
               <small className="dia-tickets">

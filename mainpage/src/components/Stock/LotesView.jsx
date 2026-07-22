@@ -15,16 +15,11 @@ import api from "../../utils/api";
 import AlertaMensaje from "../AlertaMensaje/AlertaMensaje.jsx";
 import ErrorToast from "../common/ErrorToast.jsx";
 import { normalizeApiError } from "../../utils/normalizeApiError.js";
+import { useLocale } from "../../hooks/useLocale";
 import ModalBase from "../MapaEditor/ModalBase";
 import "../MapaEditor/ModalCrearMesa.css";
 import "./LotesView.css";
 import { useAutoFocus } from "../../hooks/useAutoFocus";
-
-const eur = (n) =>
-  `${Number(n || 0).toLocaleString("es-ES", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  })} €`;
 
 function fmtFecha(v) {
   if (!v) return "—";
@@ -34,6 +29,14 @@ function fmtFecha(v) {
 }
 
 export default function LotesView({ filtroItemId = null, onChange }) {
+  const { currencySymbol } = useLocale();
+
+  const eur = (n) =>
+    `${Number(n || 0).toLocaleString("es-ES", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })} ${currencySymbol}`;
+
   const [lotes, setLotes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);

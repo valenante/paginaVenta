@@ -34,7 +34,7 @@ function shortFromId(id) {
   return String(id).slice(-8).toUpperCase();
 }
 
-export function generarPedidoProveedorPDF({ emisor, proveedor, pedido, opts = {} }) {
+export function generarPedidoProveedorPDF({ emisor, proveedor, pedido, opts = {}, currencySymbol = "€" }) {
   const doc = new jsPDF({ orientation: "p", unit: "mm", format: "a4" });
   const pageW = doc.internal.pageSize.getWidth();
   const pageH = doc.internal.pageSize.getHeight();
@@ -103,9 +103,9 @@ export function generarPedidoProveedorPDF({ emisor, proveedor, pedido, opts = {}
     l.nombre || "—",
     l.formato || "",
     String(Number(l.cantidad || 0)),
-    `${Number(l.precioUnitario || 0).toFixed(2)} €`,
+    `${Number(l.precioUnitario || 0).toFixed(2)} ${currencySymbol}`,
     `${Number(l.iva || 0)}%`,
-    `${Number(l.totalLinea || 0).toFixed(2)} €`,
+    `${Number(l.totalLinea || 0).toFixed(2)} ${currencySymbol}`,
   ]);
 
   autoTable(doc, {
@@ -133,7 +133,7 @@ export function generarPedidoProveedorPDF({ emisor, proveedor, pedido, opts = {}
     doc.setTextColor(...(bold ? darkText : grayText));
     doc.text(label, pageW - margin - 50, yPos, { align: "right" });
     doc.setTextColor(...darkText);
-    doc.text(`${Number(value || 0).toFixed(2)} €`, pageW - margin, yPos, { align: "right" });
+    doc.text(`${Number(value || 0).toFixed(2)} ${currencySymbol}`, pageW - margin, yPos, { align: "right" });
   };
   drawTotal("Subtotal", pedido.subtotal, finalY, false);
   drawTotal("IVA", pedido.totalIva, finalY + 6, false);

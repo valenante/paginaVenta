@@ -3,9 +3,11 @@ import { createPortal } from "react-dom";
 import api from "../../utils/api";
 import ModalBase from "../MapaEditor/ModalBase";
 import { useAutoFocus } from "../../hooks/useAutoFocus";
+import { useLocale } from "../../hooks/useLocale";
 import "./RecibirFotoModal.css";
 
 export default function RecibirFotoModal({ onClose, onDone }) {
+  const { currencySymbol } = useLocale();
   const [mode, setMode] = useState("foto");
   const [step, setStep] = useState("upload");
   const [image, setImage] = useState(null);
@@ -339,8 +341,8 @@ export default function RecibirFotoModal({ onClose, onDone }) {
                     <th>Producto</th>
                     <th style={{ width: 60 }}>Stock</th>
                     <th style={{ width: 70 }}>Cant.</th>
-                    <th style={{ width: 85 }}>€/ud fact.</th>
-                    <th style={{ width: 80 }}>€/ud DB</th>
+                    <th style={{ width: 85 }}>{currencySymbol}/ud fact.</th>
+                    <th style={{ width: 80 }}>{currencySymbol}/ud DB</th>
                     <th style={{ width: 55 }}>Diff</th>
                     <th style={{ width: 30 }}></th>
                   </tr>
@@ -360,8 +362,8 @@ export default function RecibirFotoModal({ onClose, onDone }) {
                         </td>
                         <td className="recibir-td--muted">{m.match?.stockActual ?? "—"}</td>
                         <td><input type="number" min="0" step="1" className="recibir-editInput" value={m.cantidad ?? ""} onChange={e => updateMatched(i, "cantidad", e.target.value)} /></td>
-                        <td className="recibir-td--precio">{precioUd != null ? precioUd.toFixed(2) + "€" : "—"}</td>
-                        <td className="recibir-td--muted">{m.match?.costeDB != null ? m.match.costeDB.toFixed(2) + "€" : "—"}</td>
+                        <td className="recibir-td--precio">{precioUd != null ? precioUd.toFixed(2) + currencySymbol : "—"}</td>
+                        <td className="recibir-td--muted">{m.match?.costeDB != null ? m.match.costeDB.toFixed(2) + currencySymbol : "—"}</td>
                         <td>{badge ? <span className={`recibir-badge ${badge.cls}`}>{badge.text}</span> : "—"}</td>
                         <td><button type="button" className="recibir-infoBtn" onClick={() => openDetail(m.match?.id)} title="Ver detalle">i</button></td>
                       </tr>
@@ -451,7 +453,7 @@ export default function RecibirFotoModal({ onClose, onDone }) {
                   <div className="recibir-detailKpi"><span className="recibir-detailKpi-label">Actual</span><span className="recibir-detailKpi-value">{detailData.ingrediente?.stockActual} {detailData.ingrediente?.unidad}</span></div>
                   <div className="recibir-detailKpi"><span className="recibir-detailKpi-label">Minimo</span><span className="recibir-detailKpi-value">{detailData.ingrediente?.stockMinimo}</span></div>
                   <div className="recibir-detailKpi"><span className="recibir-detailKpi-label">Maximo</span><span className="recibir-detailKpi-value">{detailData.ingrediente?.stockMax}</span></div>
-                  <div className="recibir-detailKpi"><span className="recibir-detailKpi-label">Coste</span><span className="recibir-detailKpi-value">{detailData.ingrediente?.coste?.toFixed(2)}€/{detailData.ingrediente?.unidad}</span></div>
+                  <div className="recibir-detailKpi"><span className="recibir-detailKpi-label">Coste</span><span className="recibir-detailKpi-value">{detailData.ingrediente?.coste?.toFixed(2)}{currencySymbol}/{detailData.ingrediente?.unidad}</span></div>
                 </div>
               </div>
 
@@ -462,7 +464,7 @@ export default function RecibirFotoModal({ onClose, onDone }) {
                   {detailData.proveedores.map((p, i) => (
                     <div key={i} className="recibir-detailProv">
                       <span className="recibir-detailProv-name">{p.nombre} {p.esPrincipal ? "★" : ""}</span>
-                      <span className="recibir-detailProv-price">{p.precioBase?.toFixed(2)}€/{p.unidad}</span>
+                      <span className="recibir-detailProv-price">{p.precioBase?.toFixed(2)}{currencySymbol}/{p.unidad}</span>
                       <span className="recibir-detailProv-format">{p.formato}</span>
                       {p.leadTimeDias > 0 && <span className="recibir-detailProv-lead">{p.leadTimeDias}d lead</span>}
                     </div>
@@ -477,8 +479,8 @@ export default function RecibirFotoModal({ onClose, onDone }) {
                   {detailData.productos.map((p, i) => (
                     <div key={i} className="recibir-detailProd">
                       <span className="recibir-detailProd-name">{p.nombre}</span>
-                      <span className="recibir-detailProd-pvp">PVP {p.pvp?.toFixed(2)}€</span>
-                      <span className="recibir-detailProd-coste">Coste {p.coste?.toFixed(2)}€</span>
+                      <span className="recibir-detailProd-pvp">PVP {p.pvp?.toFixed(2)}{currencySymbol}</span>
+                      <span className="recibir-detailProd-coste">Coste {p.coste?.toFixed(2)}{currencySymbol}</span>
                     </div>
                   ))}
                 </div>

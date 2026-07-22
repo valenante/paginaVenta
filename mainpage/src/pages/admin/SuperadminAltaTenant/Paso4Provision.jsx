@@ -1,4 +1,5 @@
 import React from "react";
+import { useLocale } from "../../../hooks/useLocale";
 
 export default function Paso4Provision({
   tenant,
@@ -15,6 +16,7 @@ export default function Paso4Provision({
   onProvision,
   successMsg,
 }) {
+  const { currencySymbol } = useLocale();
   const totalHoy =
     periodo === "mensual" ? precio.totalPrimerMes : precio.unico + precio.mensual * 11;
 
@@ -45,7 +47,7 @@ export default function Paso4Provision({
             onClick={() => setPeriodo("mensual")}
           >
             <h4>Mensual</h4>
-            <p className="periodo-precio">{precioBasePlan} €/mes</p>
+            <p className="periodo-precio">{precioBasePlan} {currencySymbol}/mes</p>
           </div>
 
           <div
@@ -53,7 +55,7 @@ export default function Paso4Provision({
             onClick={() => setPeriodo("anual")}
           >
             <h4>Anual</h4>
-            <p className="periodo-precio">{(precioBasePlan * 11).toFixed(2)} €/año</p>
+            <p className="periodo-precio">{(precioBasePlan * 11).toFixed(2)} {currencySymbol}/año</p>
             <p className="periodo-detalle ahorro">1 mes gratis</p>
           </div>
         </div>
@@ -61,10 +63,10 @@ export default function Paso4Provision({
 
       <div className="card" style={{ padding: 16, marginBottom: 12 }}>
         <h3>Coste estimado</h3>
-        <p><strong>Suscripción:</strong> {periodo === "mensual" ? `${precio.mensual.toFixed(2)} €/mes` : `${(precio.mensual * 11).toFixed(2)} €/año`}</p>
-        <p><strong>Único inicial:</strong> {precio.unico.toFixed(2)} €</p>
+        <p><strong>Suscripción:</strong> {periodo === "mensual" ? `${precio.mensual.toFixed(2)} ${currencySymbol}/mes` : `${(precio.mensual * 11).toFixed(2)} ${currencySymbol}/año`}</p>
+        <p><strong>Único inicial:</strong> {precio.unico.toFixed(2)} {currencySymbol}</p>
         <hr />
-        <p><strong>{periodo === "mensual" ? "Total primer mes" : "Total hoy"}:</strong> {totalHoy.toFixed(2)} €</p>
+        <p><strong>{periodo === "mensual" ? "Total primer mes" : "Total hoy"}:</strong> {totalHoy.toFixed(2)} {currencySymbol}</p>
       </div>
 
       <div className="resumen-pago">

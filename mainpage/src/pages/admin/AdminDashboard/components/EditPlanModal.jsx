@@ -1,9 +1,11 @@
 // src/pages/admin/AdminDashboard/components/EditPlanModal.jsx
 import { useEffect, useState } from "react";
 import api from "../../../../utils/api";
+import { useLocale } from "../../../../hooks/useLocale";
 import "../../../../styles/EditPlanModal.css";
 
 export default function EditPlanModal({ tenant, onClose, onSave }) {
+  const { currencySymbol } = useLocale();
   const [planes, setPlanes] = useState([]);
   const [selectedPlan, setSelectedPlan] = useState(tenant.plan || "");
   const [loadingPlanes, setLoadingPlanes] = useState(true);
@@ -113,8 +115,8 @@ export default function EditPlanModal({ tenant, onClose, onSave }) {
                 planes.length > 0 &&
                 planes.map((plan) => (
                   <option key={plan._id} value={plan.slug}>
-                    {plan.nombre} — {plan.precioMensual} €/mes
-                    {plan.precioAnual > 0 ? ` · ${plan.precioAnual} €/año` : ""}
+                    {plan.nombre} — {plan.precioMensual} {currencySymbol}/mes
+                    {plan.precioAnual > 0 ? ` · ${plan.precioAnual} ${currencySymbol}/año` : ""}
                   </option>
                 ))}
             </select>
@@ -138,11 +140,11 @@ export default function EditPlanModal({ tenant, onClose, onSave }) {
 
                 <div className="plan-price-box--planModal">
                   <span className="plan-price-mensual--planModal">
-                    {planInfo.precioMensual} €/mes
+                    {planInfo.precioMensual} {currencySymbol}/mes
                   </span>
                   {planInfo.precioAnual > 0 && (
                     <span className="plan-price-anual--planModal">
-                      {planInfo.precioAnual} €/año
+                      {planInfo.precioAnual} {currencySymbol}/año
                     </span>
                   )}
                 </div>

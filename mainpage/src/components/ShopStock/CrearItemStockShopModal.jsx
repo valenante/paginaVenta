@@ -2,9 +2,11 @@ import React, { useState } from "react";
 import api from "../../utils/api";
 import "./ShopStockModals.css"; // MISMO CSS
 import { useToast } from "../../context/ToastContext";
+import { useLocale } from "../../hooks/useLocale";
 
 export default function CrearProductoShopModal({ onClose, onSave }) {
   const { showToast } = useToast();
+  const { currencySymbol } = useLocale();
   const [form, setForm] = useState({
     nombre: "",
     categoria: "",
@@ -90,7 +92,7 @@ export default function CrearProductoShopModal({ onClose, onSave }) {
           </label>
 
           <label className="label--editar">
-            Precio venta (€)
+            Precio venta ({currencySymbol})
             <input
               className="input--editar"
               type="number"

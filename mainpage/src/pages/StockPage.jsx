@@ -14,6 +14,7 @@ import HistorialMovimientosModal from "../components/Stock/HistorialMovimientosM
 import LotesView from "../components/Stock/LotesView.jsx";
 import ModalBase from "../components/MapaEditor/ModalBase";
 import { formatCantidad } from "../utils/stockFormat";
+import { useLocale } from "../hooks/useLocale";
 import "../styles/StockPage.css";
 
 const ITEMS_PER_PAGE = 12;
@@ -35,6 +36,7 @@ const StockPage = () => {
   const { user } = useAuth();
   const { showToast } = useToast();
   const { hasFeature } = useFeaturesPlan();
+  const { currencySymbol } = useLocale();
   const hasStockAvanzado = hasFeature("stock_avanzado");
 
   // ── Tab ──
@@ -518,7 +520,7 @@ const StockPage = () => {
 
                     {ing.coste > 0 && (
                       <div className="stock-cost">
-                        {ing.coste.toFixed(2)} €/{ing.unidad}
+                        {ing.coste.toFixed(2)} {currencySymbol}/{ing.unidad}
                       </div>
                     )}
 
@@ -776,7 +778,7 @@ const StockPage = () => {
                 <span className="consumo-detail__kpi-label">consumo 8 sem</span>
               </div>
               <div className="consumo-detail__kpi">
-                <span className="consumo-detail__kpi-value">{consumoDetail.coste ? `${consumoDetail.coste.toFixed(2)}€` : "—"}</span>
+                <span className="consumo-detail__kpi-value">{consumoDetail.coste ? `${consumoDetail.coste.toFixed(2)}${currencySymbol}` : "—"}</span>
                 <span className="consumo-detail__kpi-label">coste/{consumoDetail.unidad}</span>
               </div>
             </div>
@@ -809,7 +811,7 @@ const StockPage = () => {
                 <h4 className="consumo-detail__title">Proveedor principal</h4>
                 <div className="consumo-detail__proveedor">
                   <span><strong>{consumoDetail.proveedor.nombre}</strong></span>
-                  <span>Precio: {consumoDetail.proveedor.precioBase.toFixed(2)}€</span>
+                  <span>Precio: {consumoDetail.proveedor.precioBase.toFixed(2)}{currencySymbol}</span>
                   <span>Lead time: {consumoDetail.proveedor.leadTimeDias} días</span>
                 </div>
               </div>

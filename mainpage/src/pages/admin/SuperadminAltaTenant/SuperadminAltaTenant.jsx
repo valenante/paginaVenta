@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FiArrowLeft, FiArrowRight, FiCheck, FiLoader } from "react-icons/fi";
 import api from "../../../utils/api";
+import { useLocale } from "../../../hooks/useLocale";
 import "./SuperadminAlta.css";
 
 /* ── Precios actualizados (coherentes con pricing v3.2) ── */
@@ -15,6 +16,7 @@ const PLAN_SETUP = {
 
 export default function SuperadminAltaTenant() {
   const navigate = useNavigate();
+  const { currencySymbol } = useLocale();
   const [paso, setPaso] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -146,7 +148,7 @@ export default function SuperadminAltaTenant() {
               <option value="">— Selecciona plan —</option>
               {planes.map(p => (
                 <option key={p._id} value={p.slug}>
-                  {p.nombre} — {p.precioMensual}€/mes {p.tipoNegocio === "shop" ? "(Shop)" : ""}
+                  {p.nombre} — {p.precioMensual}{currencySymbol}/mes {p.tipoNegocio === "shop" ? "(Shop)" : ""}
                 </option>
               ))}
             </select>
@@ -154,7 +156,7 @@ export default function SuperadminAltaTenant() {
 
           {planObj && (
             <div className="sa-plan-info">
-              <strong>{planObj.nombre}</strong> — {mensual}€/mes
+              <strong>{planObj.nombre}</strong> — {mensual}{currencySymbol}/mes
               {planObj.features?.length > 0 && (
                 <ul>{planObj.features.slice(0, 6).map((f, i) => <li key={i}>{f.nombre || f}</li>)}</ul>
               )}
@@ -200,15 +202,15 @@ export default function SuperadminAltaTenant() {
             <h3>Coste</h3>
             <div className="sa-pricing__row">
               <span>Suscripción mensual</span>
-              <strong>{mensual.toFixed(2)}€/mes</strong>
+              <strong>{mensual.toFixed(2)}{currencySymbol}/mes</strong>
             </div>
             <div className="sa-pricing__row">
               <span>Alta y configuración</span>
-              <strong>{setup.toFixed(2)}€</strong>
+              <strong>{setup.toFixed(2)}{currencySymbol}</strong>
             </div>
             <div className="sa-pricing__row sa-pricing__row--total">
               <span>Total primer mes</span>
-              <strong>{totalPrimerMes.toFixed(2)}€</strong>
+              <strong>{totalPrimerMes.toFixed(2)}{currencySymbol}</strong>
             </div>
             <p className="sa-pricing__note">Sin permanencia. Provisión sin cobro — facturación manual posterior.</p>
           </div>

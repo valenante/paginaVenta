@@ -10,6 +10,7 @@ import {
   actualizarAnuncio,
   eliminarAnuncio,
 } from "../services/loyaltyAdminService";
+import { useLocale } from "../hooks/useLocale";
 import ClienteLoyaltyDrawer from "./ClienteLoyaltyDrawer";
 import { useAutoFocus } from "../hooks/useAutoFocus";
 import "./LoyaltyConfigPage.css";
@@ -19,7 +20,7 @@ import "./LoyaltyConfigPage.css";
 ===================================================== */
 
 const TIPOS_RECOMPENSA = [
-  { value: "descuento_fijo", label: "Descuento fijo (€)", hint: "Resta una cantidad fija al total." },
+  { value: "descuento_fijo", label: "Descuento fijo", hint: "Resta una cantidad fija al total.", hasCurrency: true },
   { value: "descuento_pct", label: "Descuento porcentual (%)", hint: "Resta un % al total de la mesa." },
   { value: "producto_gratis", label: "Producto gratis", hint: "El camarero retira el producto al cobrar; el valor se declara." },
 ];
@@ -50,7 +51,7 @@ const TIPOS_ANUNCIO = [
   { value: "aviso",   label: "Aviso",     icon: "⚠️" },
 ];
 
-const fmtMoney = (n) => `${Number(n || 0).toFixed(2).replace(".", ",")} €`;
+const fmtMoney = (n, sym = "€") => `${Number(n || 0).toFixed(2).replace(".", ",")} ${sym}`;
 const fmtDate = (d) => d ? new Date(d).toLocaleDateString("es") : "—";
 
 /* =====================================================
@@ -58,6 +59,7 @@ const fmtDate = (d) => d ? new Date(d).toLocaleDateString("es") : "—";
 ===================================================== */
 
 export default function LoyaltyConfigPage() {
+  const { currencySymbol } = useLocale();
   const [config, setConfig] = useState(null);
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -215,6 +217,7 @@ export default function LoyaltyConfigPage() {
       {tab === "recompensas" && (
         <RecompensasTab
           recompensas={config?.recompensas || []}
+          currencySymbol={currencySymbol}
           onAdd={() => setEditingRecompensa({
             nombre: "", descripcion: "", coste: 100,
             tipo: "descuento_fijo", valor: 5, activo: true, stock: null,
@@ -256,12 +259,13 @@ export default function LoyaltyConfigPage() {
         />
       )}
       {tab === "clientes" && <ClientesTab />}
-      {tab === "metricas" && <MetricasTab stats={stats} onReload={cargarStats} />}
+      {tab === "metricas" && <MetricasTab stats={stats} onReload={cargarStats} currencySymbol={currencySymbol} />}
 
       {/* MODALES */}
       {editingRecompensa && (
         <RecompensaModal
           recompensa={editingRecompensa}
+          currencySymbol={currencySymbol}
           onClose={() => setEditingRecompensa(null)}
           onSave={onSaveRecompensa}
         />
@@ -292,6 +296,7 @@ export default function LoyaltyConfigPage() {
 ===================================================== */
 
 function ConfigTab({ config, setConfig, saving, onSave }) {
+  const { currencySymbol } = useLocale();
   return (
     <>
       <section className="card config-card">
@@ -343,7 +348,7 @@ function ConfigTab({ config, setConfig, saving, onSave }) {
               onBlur={(e) => onSave({ puntosPorEuro: Number(e.target.value) })}
               disabled={saving}
             />
-            <p className="cfg-help">Recomendado: 10 (10 € = 100 pts)</p>
+            <p className="cfg-help">Recomendado: 10 (10 {currencySymbol} = 100 pts)</p>
           </div>
 
           <div className="config-field">
@@ -379,7 +384,7 @@ function ConfigTab({ config, setConfig, saving, onSave }) {
   );
 }
 
-function RecompensasTab({ recompensas, onAdd, onEdit, onDelete, onToggle }) {
+function RecompensasTab({ recompensas, currencySymbol, onAdd, onEdit, onDelete, onToggle }) {
   return (
     <section className="card config-card">
       <div className="config-card-header">
@@ -432,8 +437,8 @@ function RecompensasTab({ recompensas, onAdd, onEdit, onDelete, onToggle }) {
                       )}
                     </td>
                     <td data-label="Coste"><strong>{r.coste}</strong> pts</td>
-                    <td data-label="Tipo">{tipoInfo?.label || r.tipo}</td>
-                    <td data-label="Valor">{r.tipo === "descuento_pct" ? `${r.valor}%` : `${r.valor} €`}</td>
+                    <td data-label="Tipo">{tipoInfo ? `${tipoInfo.label}${tipoInfo.hasCurrency ? ` (${currencySymbol})` : ""}` : r.tipo}</td>
+                    <td data-label="Valor">{r.tipo === "descuento_pct" ? `${r.valor}%` : `${r.valor} ${currencySymbol}`}</td>
                     <td data-label="Stock">{r.stock === null || r.stock === undefined ? "Ilimitado" : r.stock}</td>
                     <td data-label="Estado">
                       <button
@@ -692,7 +697,7 @@ function ClientesTab() {
   );
 }
 
-function MetricasTab({ stats, onReload }) {
+function MetricasTab({ stats, onReload, currencySymbol }) {
   if (!stats) {
     return (
       <section className="card config-card">
@@ -742,7 +747,7 @@ function MetricasTab({ stats, onReload }) {
           </article>
           <article className="cfg-stat">
             <span className="cfg-stat__label">Descuento aplicado</span>
-            <strong>{fmtMoney(stats.descuentoTotalAplicado)}</strong>
+            <strong>{fmtMoney(stats.descuentoTotalAplicado, currencySymbol)}</strong>
           </article>
           <article className="cfg-stat">
             <span className="cfg-stat__label">Canjeos realizados</span>
@@ -764,13 +769,13 @@ function MetricasTab({ stats, onReload }) {
         <div className="loyalty-compare">
           <div className="loyalty-compare-col">
             <div className="loyalty-compare-label">Con loyalty</div>
-            <div className="loyalty-compare-num">{fmtMoney(stats.ticketMedioLoyalty)}</div>
+            <div className="loyalty-compare-num">{fmtMoney(stats.ticketMedioLoyalty, currencySymbol)}</div>
             <div className="text-suave loyalty-compare-sub">{stats.mesasConLoyalty} mesas</div>
           </div>
           <div className="loyalty-compare-vs">vs</div>
           <div className="loyalty-compare-col">
             <div className="loyalty-compare-label">Sin loyalty</div>
-            <div className="loyalty-compare-num">{fmtMoney(stats.ticketMedioSinLoyalty)}</div>
+            <div className="loyalty-compare-num">{fmtMoney(stats.ticketMedioSinLoyalty, currencySymbol)}</div>
             <div className="text-suave loyalty-compare-sub">{stats.mesasSinLoyalty} mesas</div>
           </div>
         </div>
@@ -822,7 +827,7 @@ function ModalFooter({ onClose, submitLabel }) {
   );
 }
 
-function RecompensaModal({ recompensa, onClose, onSave }) {
+function RecompensaModal({ recompensa, currencySymbol, onClose, onSave }) {
   const [r, setR] = useState({ ...recompensa, stock: recompensa.stock ?? null });
 
   const submit = (e) => {
@@ -877,12 +882,12 @@ function RecompensaModal({ recompensa, onClose, onSave }) {
             <label>Tipo</label>
             <select value={r.tipo} onChange={(e) => setR({ ...r, tipo: e.target.value })}>
               {TIPOS_RECOMPENSA.map((t) => (
-                <option key={t.value} value={t.value}>{t.label}</option>
+                <option key={t.value} value={t.value}>{t.label}{t.hasCurrency ? ` (${currencySymbol})` : ""}</option>
               ))}
             </select>
           </div>
           <div className="config-field">
-            <label>{r.tipo === "descuento_pct" ? "Porcentaje" : "Valor (€)"}</label>
+            <label>{r.tipo === "descuento_pct" ? "Porcentaje" : `Valor (${currencySymbol})`}</label>
             <input
               type="number" min="0" step="0.01" required
               value={r.valor}

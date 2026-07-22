@@ -1,6 +1,7 @@
 import React, { useState } from "react";
+import { useLocale } from "../../hooks/useLocale";
 
-const fmtMoney = (n) => `${Number(n || 0).toFixed(2).replace(".", ",")} €`;
+const fmtMoney = (n, cs = "€") => `${Number(n || 0).toFixed(2).replace(".", ",")} ${cs}`;
 const fmtMonthYear = (iso) => {
   if (!iso) return "—";
   const d = new Date(iso);
@@ -78,6 +79,7 @@ export function ProximaRecompensaBanner({ proxima, saldo }) {
 
 // ── Tarjeta cliente: última visita + favoritos lado a lado ───────────────────
 function UltimaVisitaPanel({ visita }) {
+  const { currencySymbol } = useLocale();
   if (!visita) return null;
   const items = visita.itemsSnapshot || [];
   const recompensa = visita.loyalty?.recompensaAplicada;
@@ -98,11 +100,11 @@ function UltimaVisitaPanel({ visita }) {
       </div>
       <div className="cli-ultima-cifras">
         <div className="cli-ultima-cifras__total">
-          <span className="cli-ultima-cifras__num">{fmtMoney(visita.total)}</span>
+          <span className="cli-ultima-cifras__num">{fmtMoney(visita.total, currencySymbol)}</span>
           {visita.descuentoAplicado > 0 && (
             <span className="cli-ultima-cifras__desc">
-              <s>{fmtMoney(visita.totalBruto || visita.total)}</s>
-              {" "}−{fmtMoney(visita.descuentoAplicado)}
+              <s>{fmtMoney(visita.totalBruto || visita.total, currencySymbol)}</s>
+              {" "}−{fmtMoney(visita.descuentoAplicado, currencySymbol)}
             </span>
           )}
         </div>
@@ -121,14 +123,14 @@ function UltimaVisitaPanel({ visita }) {
             <li key={it._id || i} className="cli-ultima-items__row">
               <span className="cli-ultima-items__cant">×{it.cantidad}</span>
               <span className="cli-ultima-items__nombre">{it.nombre}</span>
-              <span className="cli-ultima-items__precio">{fmtMoney(it.precio * it.cantidad)}</span>
+              <span className="cli-ultima-items__precio">{fmtMoney(it.precio * it.cantidad, currencySymbol)}</span>
             </li>
           ))}
         </ul>
       )}
       {tieneRecompensa && (
         <div className="cli-ultima-recompensa">Aplicaste <strong>{recompensa.nombre}</strong>
-          {recompensa.descuento > 0 && ` (−${fmtMoney(recompensa.descuento)})`}
+          {recompensa.descuento > 0 && ` (−${fmtMoney(recompensa.descuento, currencySymbol)})`}
         </div>
       )}
     </article>
@@ -187,6 +189,7 @@ export function TarjetaCliente({ resumen }) {
 
 // ── Timeline expandible ──────────────────────────────────────────────────────
 export function TimelineVisitas({ items, total, loading, hasMore, onLoadMore }) {
+  const { currencySymbol } = useLocale();
   const [openId, setOpenId] = useState(null);
   if (!loading && (!items || items.length === 0)) return null;
   return (
@@ -217,7 +220,7 @@ export function TimelineVisitas({ items, total, loading, hasMore, onLoadMore }) 
                   Mesa {v.numero}
                   {v.comensales > 0 && ` · ${v.comensales}p`}
                 </span>
-                <span className="cli-timeline-row__total">{fmtMoney(v.total)}</span>
+                <span className="cli-timeline-row__total">{fmtMoney(v.total, currencySymbol)}</span>
                 {v.loyalty?.puntosAcumulados > 0 && (
                   <span className="cli-timeline-row__pts">
                     +{v.loyalty.puntosAcumulados} pts
@@ -233,13 +236,13 @@ export function TimelineVisitas({ items, total, loading, hasMore, onLoadMore }) 
                     <div key={it._id || i} className="cli-timeline-item-row">
                       <span>×{it.cantidad}</span>
                       <span className="cli-timeline-item-row__nombre">{it.nombre}</span>
-                      <span>{fmtMoney(it.precio * it.cantidad)}</span>
+                      <span>{fmtMoney(it.precio * it.cantidad, currencySymbol)}</span>
                     </div>
                   ))}
                   {v.loyalty?.recompensaAplicada?.recompensaId && (
                     <div className="cli-timeline-recompensa">{v.loyalty.recompensaAplicada.nombre}
                       {v.loyalty.recompensaAplicada.descuento > 0 &&
-                        ` · −${fmtMoney(v.loyalty.recompensaAplicada.descuento)}`}
+                        ` · −${fmtMoney(v.loyalty.recompensaAplicada.descuento, currencySymbol)}`}
                     </div>
                   )}
                 </div>

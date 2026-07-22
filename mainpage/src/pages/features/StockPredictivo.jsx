@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useLocale } from "../../hooks/useLocale";
 import TopBar from "../../components/TopBar/TopBar";
 import Footer from "../../components/Footer/Footer";
 import SEOHead from "../../components/SEO/SEOHead";
@@ -42,6 +43,7 @@ const faqs = [
 ];
 
 export default function StockPredictivo() {
+  const { currencySymbol } = useLocale();
   const [faqOpen, setFaqOpen] = useState(null);
 
   return (
@@ -49,7 +51,7 @@ export default function StockPredictivo() {
       <TopBar />
       <SEOHead
         title="Stock predictivo para restaurantes — pedidos automáticos a proveedor"
-        description="ALEF predice cuánto stock necesitas cada día, genera pedidos a proveedor antes de que te falte producto y te avisa si suben los precios. Incluido desde 129€/mes."
+        description={`ALEF predice cuánto stock necesitas cada día, genera pedidos a proveedor antes de que te falte producto y te avisa si suben los precios. Incluido desde 129${currencySymbol}/mes.`}
         path="/stock-predictivo-restaurante"
         type="article"
       />
@@ -230,7 +232,7 @@ export default function StockPredictivo() {
               <ul>
                 <li>Detecta cambios de precio en las últimas 48 horas</li>
                 <li>Calcula el impacto en cada plato que usa ese ingrediente</li>
-                <li>Sugiere precio de venta con redondeo inteligente (ej: 12,90€)</li>
+                <li>Sugiere precio de venta con redondeo inteligente (ej: 12,90{currencySymbol})</li>
                 <li>Alerta inmediata si algún plato se vende por debajo de coste</li>
               </ul>
             </div>

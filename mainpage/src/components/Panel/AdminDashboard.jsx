@@ -8,6 +8,7 @@ import { CorrelacionCard, AlertasCard } from "./AnalyticsFase3";
 import TiemposCocinaCard from "./TiemposCocinaCard";
 import UpsellEstadisticasPro from "../Estadisticas/UpsellEstadisticasPro";
 import { formatCantidad } from "../../utils/stockFormat";
+import { useLocale } from "../../hooks/useLocale";
 import "./AdminDashboard.css";
 
 const fmt = (v) => Number(v || 0).toFixed(2);
@@ -42,6 +43,7 @@ export default function AdminDashboard() {
   const esHoy = fechaSeleccionada === hoy;
   const isPremium = useFeature("estadisticas_avanzadas");
   const { config } = useConfig();
+  const { currencySymbol } = useLocale();
   const turnos = config?.diaOperativo?.turnos || [];
 
   // Siempre pasamos la fecha operativa al backend para garantizar filtro correcto
@@ -125,11 +127,11 @@ export default function AdminDashboard() {
       {/* ── KPIs principales ── */}
       <div className="adm__kpis">
         <div className="adm__kpi adm__kpi--total">
-          <span className="adm__kpi-value">{fmt(caja?.totalRealizado)} €</span>
+          <span className="adm__kpi-value">{fmt(caja?.totalRealizado)} {currencySymbol}</span>
           <span className="adm__kpi-label">Total realizado</span>
         </div>
         <div className="adm__kpi adm__kpi--cobrado">
-          <span className="adm__kpi-value">{fmt(caja?.cobrado)} €</span>
+          <span className="adm__kpi-value">{fmt(caja?.cobrado)} {currencySymbol}</span>
           <span className="adm__kpi-label">Cobrado</span>
         </div>
         <div className="adm__kpi adm__kpi--mesas">
@@ -145,16 +147,16 @@ export default function AdminDashboard() {
           <>
             {esHoy && caja?.mesasAbiertas > 0 && (
               <div className="adm__kpi adm__kpi--mesas">
-                <span className="adm__kpi-value">{fmt(caja?.enMesasAbiertas)} €</span>
+                <span className="adm__kpi-value">{fmt(caja?.enMesasAbiertas)} {currencySymbol}</span>
                 <span className="adm__kpi-label">En mesas abiertas</span>
               </div>
             )}
             <div className="adm__kpi adm__kpi--ticket">
-              <span className="adm__kpi-value">{fmt(resumen?.ticketMedioMesa)} €</span>
+              <span className="adm__kpi-value">{fmt(resumen?.ticketMedioMesa)} {currencySymbol}</span>
               <span className="adm__kpi-label">Ticket medio / mesa</span>
             </div>
             <div className="adm__kpi adm__kpi--ticket-com">
-              <span className="adm__kpi-value">{fmt(resumen?.ticketMedioComensal)} €</span>
+              <span className="adm__kpi-value">{fmt(resumen?.ticketMedioComensal)} {currencySymbol}</span>
               <span className="adm__kpi-label">Ticket medio / comensal</span>
             </div>
             <div className="adm__kpi adm__kpi--pedidos">
@@ -211,19 +213,19 @@ export default function AdminDashboard() {
           <div className="adm__desglose">
             <div className="adm__desglose-row">
               <span>Efectivo</span>
-              <span>{fmt(caja?.ventasEfectivo)} €</span>
+              <span>{fmt(caja?.ventasEfectivo)} {currencySymbol}</span>
             </div>
             <div className="adm__desglose-row">
               <span>Tarjeta</span>
-              <span>{fmt(caja?.ventasTarjeta)} €</span>
+              <span>{fmt(caja?.ventasTarjeta)} {currencySymbol}</span>
             </div>
             <div className="adm__desglose-row">
               <span>Propinas</span>
-              <span>{fmt(caja?.propinas)} €</span>
+              <span>{fmt(caja?.propinas)} {currencySymbol}</span>
             </div>
             <div className="adm__desglose-row adm__desglose-row--total">
               <span>Cobrado</span>
-              <span>{fmt(caja?.cobrado)} €</span>
+              <span>{fmt(caja?.cobrado)} {currencySymbol}</span>
             </div>
           </div>
         </section>
@@ -264,7 +266,7 @@ export default function AdminDashboard() {
                   <span className="adm__top-pos">{i + 1}</span>
                   <span className="adm__top-name">{p.nombre}</span>
                   <span className="adm__top-qty">{p.cantidad}u</span>
-                  <span className="adm__top-amt">{fmt(p.ingresos || p.total)} €</span>
+                  <span className="adm__top-amt">{fmt(p.ingresos || p.total)} {currencySymbol}</span>
                 </div>
               ))
             ) : (
@@ -291,8 +293,8 @@ export default function AdminDashboard() {
                 <div key={b.rango} className="adm__staff-row">
                   <span className="adm__staff-name">{b.rango}</span>
                   <span>{b.mesas}</span>
-                  <span className="adm__staff-amt">{fmt(b.ticketMedioMesa)} €</span>
-                  <span className="adm__staff-amt">{fmt(b.ticketMedioComensal)} €</span>
+                  <span className="adm__staff-amt">{fmt(b.ticketMedioMesa)} {currencySymbol}</span>
+                  <span className="adm__staff-amt">{fmt(b.ticketMedioComensal)} {currencySymbol}</span>
                 </div>
               ))}
             </div>
@@ -314,7 +316,7 @@ export default function AdminDashboard() {
                   <span className="adm__staff-name">{s.nombre}</span>
                   <span>{s.totalPedidos}</span>
                   <span>{s.totalProductos}</span>
-                  <span className="adm__staff-amt">{fmt(s.totalImporte)} €</span>
+                  <span className="adm__staff-amt">{fmt(s.totalImporte)} {currencySymbol}</span>
                 </div>
               ))}
             </div>
@@ -342,8 +344,8 @@ export default function AdminDashboard() {
                 <div key={m.numero} className="adm__staff-row adm__staff-row--5col">
                   <span className="adm__staff-name">Mesa {m.numero}</span>
                   <span>{m.rotaciones}</span>
-                  <span className="adm__staff-amt">{fmt(m.totalVentas)} €</span>
-                  <span>{fmt(m.ticketMedio)} €</span>
+                  <span className="adm__staff-amt">{fmt(m.totalVentas)} {currencySymbol}</span>
+                  <span>{fmt(m.ticketMedio)} {currencySymbol}</span>
                   <span>{m.duracionMediaMin ? `${m.duracionMediaMin}m` : "—"}</span>
                 </div>
               ))}

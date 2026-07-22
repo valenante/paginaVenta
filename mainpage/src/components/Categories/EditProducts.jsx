@@ -21,6 +21,7 @@ const slugifyClave = (s) =>
 import api from "../../utils/api";
 import AlefSelect from "../AlefSelect/AlefSelect";
 import { useImageUpload } from "../../hooks/useImageUpload";
+import { useLocale } from "../../hooks/useLocale";
 import { useCategorias } from "../../context/CategoriasContext";
 import { useAuth } from "../../context/AuthContext";
 import { useFeaturesPlan } from "../../context/FeaturesPlanContext";
@@ -107,6 +108,7 @@ const EditProduct = ({
   onCancel,
   ingredientesStock = [],
 }) => {
+  const { currencySymbol } = useLocale();
   const { user } = useAuth();
   const productosCtx = useContext(ProductosContext);
   const productosDisponibles = productosCtx?.productos || [];
@@ -825,7 +827,7 @@ const EditProduct = ({
 
                     <div className="precio-entry-numbers">
                       <label className="label--crear">
-                        Precio (€)
+                        Precio ({currencySymbol})
                         <input
                           type="number"
                           value={entry.precio}
@@ -837,7 +839,7 @@ const EditProduct = ({
                         />
                       </label>
                       <label className="label--crear">
-                        Coste (€)
+                        Coste ({currencySymbol})
                         <input
                           type="number"
                           value={entry.coste ?? 0}

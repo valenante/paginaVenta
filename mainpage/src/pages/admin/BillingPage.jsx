@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { FiChevronLeft, FiChevronRight, FiCreditCard, FiRepeat, FiExternalLink, FiRotateCw, FiCornerDownLeft } from "react-icons/fi";
 import api from "../../utils/api";
+import { useLocale } from "../../hooks/useLocale";
 import EmptyState from "../../components/ui/EmptyState";
 import { useToast } from "../../context/ToastContext";
 import "../../styles/BillingPage.css";
@@ -12,7 +13,7 @@ function stripeUrl(path, mode) {
   return path ? `${base}/${path}` : base;
 }
 
-function moneyEUR(v) { return `${Number(v || 0).toFixed(2)} €`; }
+function moneyEUR(v, sym = "€") { return `${Number(v || 0).toFixed(2)} ${sym}`; }
 
 function fmtDateTime(ts) {
   if (!ts) return "—";
@@ -45,6 +46,7 @@ function Pagination({ page, totalPages, setPage, disabled }) {
 
 export default function BillingPage() {
   const { showToast } = useToast();
+  const { currencySymbol } = useLocale();
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState(null);
   const [error, setError] = useState("");
@@ -180,7 +182,7 @@ export default function BillingPage() {
       <div className="billing-kpis">
         <article className="billing-kpi">
           <div className="billing-kpi__label">MRR</div>
-          <div className="billing-kpi__value">{moneyEUR(view.mrr)}</div>
+          <div className="billing-kpi__value">{moneyEUR(view.mrr, currencySymbol)}</div>
           <div className="billing-kpi__hint">Ingresos recurrentes</div>
         </article>
         <article className="billing-kpi">
@@ -232,7 +234,7 @@ export default function BillingPage() {
                 <tr><td colSpan={5}><EmptyState icon={FiCreditCard} title="Sin pagos recientes" description="Los pagos aparecerán aquí cuando se procesen." /></td></tr>
               ) : pagosPaged.map((p) => (
                 <tr key={p.id} className={rowLoading === p.id ? "billing-table__row--loading" : ""}>
-                  <td>{moneyEUR((p.amount || 0) / 100)}</td>
+                  <td>{moneyEUR((p.amount || 0) / 100, currencySymbol)}</td>
                   <td><StatusPill status={p.status} /></td>
                   <td className="billing-table__customer">{p.customer || "—"}</td>
                   <td>{fmtDateTime(p.created)}</td>
@@ -274,7 +276,7 @@ export default function BillingPage() {
           ) : pagosPaged.map((p) => (
             <div className="billing-card" key={p.id}>
               <div className="billing-card__row">
-                <span className="billing-card__amount">{moneyEUR((p.amount || 0) / 100)}</span>
+                <span className="billing-card__amount">{moneyEUR((p.amount || 0) / 100, currencySymbol)}</span>
                 <StatusPill status={p.status} />
               </div>
               <div className="billing-card__meta">
@@ -324,7 +326,7 @@ export default function BillingPage() {
               ) : subsPaged.map((s) => (
                 <tr key={s._id}>
                   <td className="billing-table__tenant">{s.tenantId}</td>
-                  <td>{moneyEUR(s.precioMensual || 0)}</td>
+                  <td>{moneyEUR(s.precioMensual || 0, currencySymbol)}</td>
                   <td>{fmtDate(s.fechaInicio)}</td>
                   <td>{fmtDate(s.fechaRenovacion)}</td>
                   <td>
@@ -347,7 +349,7 @@ export default function BillingPage() {
             <div className="billing-card" key={s._id}>
               <div className="billing-card__row">
                 <span className="billing-card__tenant">{s.tenantId}</span>
-                <span className="billing-card__amount">{moneyEUR(s.precioMensual || 0)}</span>
+                <span className="billing-card__amount">{moneyEUR(s.precioMensual || 0, currencySymbol)}</span>
               </div>
               <div className="billing-card__meta">
                 <span>Inicio: {fmtDate(s.fechaInicio)}</span>
@@ -366,11 +368,11 @@ export default function BillingPage() {
           <div className="billing-modal" onClick={(e) => e.stopPropagation()}>
             <h3 className="billing-modal__title">Reembolsar pago</h3>
             <p className="billing-modal__info">
-              Pago: <strong>{moneyEUR((refundTarget.amount || 0) / 100)}</strong> — {refundTarget.customer || "—"}
+              Pago: <strong>{moneyEUR((refundTarget.amount || 0) / 100, currencySymbol)}</strong> — {refundTarget.customer || "—"}
             </p>
 
             <label className="billing-modal__label">
-              Monto a reembolsar (€)
+              Monto a reembolsar ({currencySymbol})
               <input
                 type="number"
                 step="0.01"

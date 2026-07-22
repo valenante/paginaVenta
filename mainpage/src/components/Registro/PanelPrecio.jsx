@@ -1,6 +1,8 @@
 import "./PanelPrecio.css";
+import { useLocale } from "../../hooks/useLocale";
 
 export default function PanelPrecio({ precio, periodo = "mensual" }) {
+  const { currencySymbol } = useLocale();
   // 👉 Precio anual calculado si no viene desde backend:
   const precioAnual = precio.mensual * 11; // 1 mes gratis
 
@@ -40,8 +42,8 @@ export default function PanelPrecio({ precio, periodo = "mensual" }) {
 
           <span className="row-amount">
             {periodo === "mensual"
-              ? `${precio.mensual.toFixed(2)} €/mes`
-              : `${precioAnual.toFixed(2)} € (1 mes gratis)`}
+              ? `${precio.mensual.toFixed(2)} ${currencySymbol}/mes`
+              : `${precioAnual.toFixed(2)} ${currencySymbol} (1 mes gratis)`}
           </span>
         </div>
 
@@ -49,7 +51,7 @@ export default function PanelPrecio({ precio, periodo = "mensual" }) {
         <div className="panel-precio-row">
           <span className="row-label">Coste único inicial</span>
           <span className="row-amount">
-            {precio.unico.toFixed(2)} €
+            {precio.unico.toFixed(2)} {currencySymbol}
           </span>
         </div>
 
@@ -64,7 +66,7 @@ export default function PanelPrecio({ precio, periodo = "mensual" }) {
           </span>
 
           <span className="row-amount row-amount--total">
-            {totalHoy.toFixed(2)} €
+            {totalHoy.toFixed(2)} {currencySymbol}
           </span>
         </div>
       </div>

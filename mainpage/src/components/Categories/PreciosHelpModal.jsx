@@ -1,6 +1,8 @@
 import React, { useState } from "react";
+import { useLocale } from "../../hooks/useLocale";
 
 export default function PreciosHelpModal({ open, onClose }) {
+  const { currencySymbol } = useLocale();
   const [tab, setTab] = useState("precios");
 
   if (!open) return null;
@@ -53,11 +55,11 @@ export default function PreciosHelpModal({ open, onClose }) {
             <code>media ración</code>.
           </li>
           <li>
-            <strong>Precio (€)</strong>: lo que paga el cliente por esta variante (con IVA si lo
+            <strong>Precio ({currencySymbol})</strong>: lo que paga el cliente por esta variante (con IVA si lo
             aplicas en carta).
           </li>
           <li>
-            <strong>Coste (€)</strong>: lo que te cuesta a ti producir/comprar una unidad de
+            <strong>Coste ({currencySymbol})</strong>: lo que te cuesta a ti producir/comprar una unidad de
             esta variante. Lo usa el módulo Finanzas para calcular margen real.
           </li>
           <li>
@@ -81,14 +83,14 @@ export default function PreciosHelpModal({ open, onClose }) {
           <tbody>
             <tr>
               <td>Copa</td>
-              <td>5 €</td>
-              <td>2,40 €</td>
+              <td>5 {currencySymbol}</td>
+              <td>2,40 {currencySymbol}</td>
               <td>0.2</td>
             </tr>
             <tr>
               <td>Botella</td>
-              <td>25 €</td>
-              <td>12 €</td>
+              <td>25 {currencySymbol}</td>
+              <td>12 {currencySymbol}</td>
               <td>1</td>
             </tr>
           </tbody>
@@ -154,7 +156,7 @@ export default function PreciosHelpModal({ open, onClose }) {
 
             <h4>Ejemplo: hamburguesa con "Extra queso"</h4>
             <ul>
-              <li>Adicional "Extra queso" precio = <code>1.50 €</code>.</li>
+              <li>Adicional "Extra queso" precio = <code>1.50 {currencySymbol}</code>.</li>
               <li>Toggle ON, vinculado a producto "Queso mozzarella", cantidad = <code>30</code>.</li>
               <li>
                 Si vendes 2 hamburguesas con el adicional → "Queso mozzarella" pierde{" "}
@@ -242,12 +244,12 @@ export default function PreciosHelpModal({ open, onClose }) {
             </p>
             <ul>
               <li>
-                Ejemplo: Menú del día <code>15 €</code> con componentes:
+                Ejemplo: Menú del día <code>15 {currencySymbol}</code> con componentes:
                 <code>Ensalada</code> × 1, <code>Plato del día</code> × 1, <code>Postre</code>{" "}
                 × 1, <code>Bebida</code> × 1.
               </li>
               <li>
-                Al vender 1 menú se crea una venta con el precio del padre (15 €) y el stock
+                Al vender 1 menú se crea una venta con el precio del padre (15 {currencySymbol}) y el stock
                 baja en cada uno de los 4 hijos.
               </li>
               <li>

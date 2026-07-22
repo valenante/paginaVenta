@@ -7,6 +7,7 @@ import { useAuth } from "../../context/AuthContext.jsx";
 import { useFeaturesPlan } from "../../context/FeaturesPlanContext";
 import { generarPDFCaja } from "./pdfs/pdfCajaUltraPro";
 import { useTenant } from "../../context/TenantContext";
+import { useLocale } from "../../hooks/useLocale";
 import HeatmapSemana from "./HeatMapSemana";
 import CajaIngresosChart from "./CajaIngresosChart";
 import ComparacionPeriodos from "./ComparacionPeriodos";
@@ -52,6 +53,7 @@ export default function CajaDiariaUltraPro() {
   const { user } = useAuth();
   const { tenant } = useTenant();
   const { hasFeature } = useFeaturesPlan();
+  const { currencySymbol } = useLocale();
   const tipoNegocio = tenant?.tipoNegocio || "restaurante";
   const isPlanEsencial = !hasFeature("estadisticas_avanzadas");
 
@@ -357,7 +359,7 @@ export default function CajaDiariaUltraPro() {
           const abs = val - avg;
           const color = diff > 0 ? "#22c55e" : diff < 0 ? "#ef4444" : "#94a3b8";
           const sign = diff > 0 ? "+" : "";
-          const absStr = isMoney ? `${sign}${abs.toFixed(2)}€` : `${sign}${Math.round(abs)}`;
+          const absStr = isMoney ? `${sign}${abs.toFixed(2)}${currencySymbol}` : `${sign}${Math.round(abs)}`;
           return <span style={{ color, fontSize: "0.78rem", fontWeight: 700, marginLeft: 6 }}>{sign}{diff}% ({absStr}) vs media{suffix}</span>;
         };
 
@@ -378,7 +380,7 @@ export default function CajaDiariaUltraPro() {
             </div>
             <div className="kpi-card">
               <span>Ingresos</span>
-              <strong>{diaData.total.toFixed(2)} €</strong>
+              <strong>{diaData.total.toFixed(2)} {currencySymbol}</strong>
               {diffBadge(diaData.total, avgIngresos, "", true)}
             </div>
             <div className="kpi-card">
@@ -388,7 +390,7 @@ export default function CajaDiariaUltraPro() {
             </div>
             <div className="kpi-card">
               <span>Ticket medio / mesa</span>
-              <strong>{diaTicketMedioMesa.toFixed(2)} €</strong>
+              <strong>{diaTicketMedioMesa.toFixed(2)} {currencySymbol}</strong>
               {diffBadge(diaTicketMedioMesa, avgTicketMedio, "", true)}
             </div>
             <div className="kpi-card">
@@ -398,7 +400,7 @@ export default function CajaDiariaUltraPro() {
             </div>
             <div className="kpi-card">
               <span>Ticket medio / comensal</span>
-              <strong>{diaTicketMedioComensal.toFixed(2)} €</strong>
+              <strong>{diaTicketMedioComensal.toFixed(2)} {currencySymbol}</strong>
               {diffBadge(diaTicketMedioComensal, avgTicketMedioComensal, "", true)}
             </div>
             {diaData.avgDuracionMin != null && diaData.avgDuracionMin > 0 && (
@@ -424,7 +426,7 @@ export default function CajaDiariaUltraPro() {
       <section className="caja-ultra-kpi">
         <div className="kpi-card">
           <span>Ingresos totales</span>
-          <strong>{totalIngresos.toFixed(2)} €</strong>
+          <strong>{totalIngresos.toFixed(2)} {currencySymbol}</strong>
         </div>
       </section>
 
@@ -437,7 +439,7 @@ export default function CajaDiariaUltraPro() {
           </div>
           <div className="kpi-card">
             <span>Ticket medio / mesa</span>
-            <strong>{ticketMedio.toFixed(2)} €</strong>
+            <strong>{ticketMedio.toFixed(2)} {currencySymbol}</strong>
           </div>
           <div className="kpi-card">
             <span>Comensales</span>
@@ -445,7 +447,7 @@ export default function CajaDiariaUltraPro() {
           </div>
           <div className="kpi-card">
             <span>Ticket medio / comensal</span>
-            <strong>{ticketMedioComensal.toFixed(2)} €</strong>
+            <strong>{ticketMedioComensal.toFixed(2)} {currencySymbol}</strong>
           </div>
           {duracionMediaMin != null && (
             <div className="kpi-card">
@@ -471,21 +473,21 @@ export default function CajaDiariaUltraPro() {
               <div className="kpi-card highlight">
                 <span>Mejor día</span>
                 <strong>{formatFechaUI(diaMasFuerte.fecha)}</strong>
-                <small>{diaMasFuerte.total.toFixed(2)} €</small>
+                <small>{diaMasFuerte.total.toFixed(2)} {currencySymbol}</small>
               </div>
             )}
             {diaMasDebil && diaMasDebil.fecha !== diaMasFuerte?.fecha && (
               <div className="kpi-card worst">
                 <span>Peor día</span>
                 <strong>{formatFechaUI(diaMasDebil.fecha)}</strong>
-                <small>{diaMasDebil.total.toFixed(2)} €</small>
+                <small>{diaMasDebil.total.toFixed(2)} {currencySymbol}</small>
               </div>
             )}
             {proyeccion && (
               <div className="kpi-card highlight">
                 <span>Proyección mes</span>
-                <strong>{proyeccion.proyectado.toFixed(0)} €</strong>
-                <small>{proyeccion.diasTranscurridos} de {proyeccion.diasEnMes} días · media {proyeccion.mediaDiaria.toFixed(0)} €/día</small>
+                <strong>{proyeccion.proyectado.toFixed(0)} {currencySymbol}</strong>
+                <small>{proyeccion.diasTranscurridos} de {proyeccion.diasEnMes} días · media {proyeccion.mediaDiaria.toFixed(0)} {currencySymbol}/día</small>
               </div>
             )}
           </section>

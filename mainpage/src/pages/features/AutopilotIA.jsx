@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useLocale } from "../../hooks/useLocale";
 import TopBar from "../../components/TopBar/TopBar";
 import Footer from "../../components/Footer/Footer";
 import SEOHead from "../../components/SEO/SEOHead";
@@ -46,6 +47,7 @@ const faqs = [
 ];
 
 export default function AutopilotIA() {
+  const { currencySymbol } = useLocale();
   const [faqOpen, setFaqOpen] = useState(null);
 
   return (
@@ -53,7 +55,7 @@ export default function AutopilotIA() {
       <TopBar />
       <SEOHead
         title="Automatización inteligente para restaurantes con IA"
-        description="ALEF automatiza tu restaurante: copilot IA que responde con datos reales, Instagram automático, Google Reviews, menu engineering, alertas y pedidos a proveedor. Todo incluido desde 129€/mes."
+        description={`ALEF automatiza tu restaurante: copilot IA que responde con datos reales, Instagram automático, Google Reviews, menu engineering, alertas y pedidos a proveedor. Todo incluido desde 129${currencySymbol}/mes.`}
         path="/automatizacion-restaurante"
         type="article"
       />

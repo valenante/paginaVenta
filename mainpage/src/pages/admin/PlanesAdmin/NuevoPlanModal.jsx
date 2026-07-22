@@ -1,11 +1,13 @@
 // NuevoPlanModal.jsx
 import { useState, useEffect } from "react";
 import api from "../../../utils/api";
+import { useLocale } from "../../../hooks/useLocale";
 import './NuevoPlanModal.css';
 import { useToast } from "../../../context/ToastContext";
 
 export default function NuevoPlanModal({ onClose, onSave }) {
   const { showToast } = useToast();
+  const { currencySymbol } = useLocale();
   const [form, setForm] = useState({
     nombre: "",
     slug: "",
@@ -100,7 +102,7 @@ export default function NuevoPlanModal({ onClose, onSave }) {
 
 
           <label className="form-label-plans">
-            Precio Mensual (€)
+            Precio Mensual ({currencySymbol})
             <input
               className="input-plans"
               name="precioMensual"
@@ -112,7 +114,7 @@ export default function NuevoPlanModal({ onClose, onSave }) {
           </label>
 
           <label className="form-label-plans">
-            Precio Anual (€)
+            Precio Anual ({currencySymbol})
             <input
               className="input-plans"
               name="precioAnual"

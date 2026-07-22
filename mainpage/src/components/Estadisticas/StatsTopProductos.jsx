@@ -1,10 +1,12 @@
 // src/pages/Estadisticas/components/StatsTopProductos.jsx
 import React, { useState, useMemo, useEffect } from "react";
 import "./StatsTopProductos.css";
+import { useLocale } from "../../hooks/useLocale";
 
 const PER_PAGE = 10;
 
 const StatsTopProductos = ({ topProductos, totalIngresosCategoria, productosConStats }) => {
+  const { currencySymbol } = useLocale();
   const [modo, setModo] = useState("ingresos");
   const [page, setPage] = useState(1);
 
@@ -74,10 +76,10 @@ const StatsTopProductos = ({ topProductos, totalIngresosCategoria, productosConS
                   {p.nombre}
                 </span>
                 <span className="toppro-item-meta">
-                  {p.totalCantidad} uds · {p.totalIngresos.toFixed(2)} €
+                  {p.totalCantidad} uds · {p.totalIngresos.toFixed(2)} {currencySymbol}
                   {p.tieneDesglose && p.ingresosAdicionales > 0 && (
                     <span className="toppro-desglose">
-                      ({(p.ingresosBase ?? 0).toFixed(2)} € + {(p.ingresosAdicionales ?? 0).toFixed(2)} € adic.)
+                      ({(p.ingresosBase ?? 0).toFixed(2)} {currencySymbol} + {(p.ingresosAdicionales ?? 0).toFixed(2)} {currencySymbol} adic.)
                     </span>
                   )}
                 </span>

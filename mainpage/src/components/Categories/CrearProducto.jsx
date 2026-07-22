@@ -25,6 +25,7 @@ import { useAuth } from "../../context/AuthContext";
 import { useFeaturesPlan } from "../../context/FeaturesPlanContext";
 import { useToast } from "../../context/ToastContext";
 import { useImageUpload } from "../../hooks/useImageUpload";
+import { useLocale } from "../../hooks/useLocale";
 import AlefSelect from "../AlefSelect/AlefSelect";
 import AlertaMensaje from "../AlertaMensaje/AlertaMensaje";
 import * as logger from "../../utils/logger";
@@ -32,6 +33,7 @@ import api from "../../utils/api";
 import "./CrearProducto.css";
 
 const CrearProducto = ({ onClose, onCreated, initialTipo, cloneFrom }) => {
+  const { currencySymbol } = useLocale();
   // 🔹 ProductosContext — opcional
   const productosCtx = useContext(ProductosContext);
   const { categoryObjectsByTipo, fetchCategoryObjects } = useCategorias();
@@ -841,7 +843,7 @@ const CrearProducto = ({ onClose, onCreated, initialTipo, cloneFrom }) => {
 
                     <div className="precio-entry-numbers">
                       <label className="label--crear">
-                        Precio (€)
+                        Precio ({currencySymbol})
                         <input
                           type="number"
                           value={entry.precio}
@@ -853,7 +855,7 @@ const CrearProducto = ({ onClose, onCreated, initialTipo, cloneFrom }) => {
                         />
                       </label>
                       <label className="label--crear">
-                        Coste (€)
+                        Coste ({currencySymbol})
                         <input
                           type="number"
                           value={entry.coste ?? 0}

@@ -6,6 +6,7 @@ import {
   ResponsiveContainer, ReferenceLine, Cell, Legend,
 } from "recharts";
 import api from "../../utils/api";
+import { useLocale } from "../../hooks/useLocale";
 import "./StatsMatrizBCG.css";
 
 const CUADRANTES = {
@@ -39,6 +40,7 @@ function mediana(arr) {
 const BCG_PER_PAGE = 10;
 
 function CuadranteCard({ qKey, q, items }) {
+  const { currencySymbol } = useLocale();
   const [page, setPage] = useState(1);
   const sorted = useMemo(() => [...items].sort((a, b) => b.revenue - a.revenue), [items]);
   const totalPages = Math.ceil(sorted.length / BCG_PER_PAGE);
@@ -56,7 +58,7 @@ function CuadranteCard({ qKey, q, items }) {
             <span className="bcg-cuadrante-rank">{(page - 1) * BCG_PER_PAGE + i + 1}.</span>
             <span className="bcg-cuadrante-name">{p.nombre}</span>
             <span className="bcg-cuadrante-meta">
-              {p.unidades} uds · {p.revenue?.toFixed(0)}€ · {p.margenPct?.toFixed(0)}%
+              {p.unidades} uds · {p.revenue?.toFixed(0)}{currencySymbol} · {p.margenPct?.toFixed(0)}%
             </span>
           </li>
         ))}
@@ -73,6 +75,7 @@ function CuadranteCard({ qKey, q, items }) {
 }
 
 export default function StatsMatrizBCG({ periodo }) {
+  const { currencySymbol } = useLocale();
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -205,7 +208,7 @@ export default function StatsMatrizBCG({ periodo }) {
                   <div style={{ background: "rgba(15,23,42,0.95)", border: "1px solid rgba(255,255,255,0.15)", borderRadius: 8, padding: "10px 14px", color: "#e5e7eb", fontSize: "0.85rem", maxWidth: 260 }}>
                     <div style={{ fontWeight: 800, marginBottom: 4 }}>{p.nombre}</div>
                     <div style={{ color: "#94a3b8", fontSize: "0.78rem" }}>{p.categoria}</div>
-                    <div style={{ marginTop: 6 }}>{p.unidades} uds · {p.revenue?.toFixed(2)} € · Margen {p.margenPct?.toFixed(1)}%</div>
+                    <div style={{ marginTop: 6 }}>{p.unidades} uds · {p.revenue?.toFixed(2)} {currencySymbol} · Margen {p.margenPct?.toFixed(1)}%</div>
                     <div style={{ marginTop: 4, color: q?.color, fontWeight: 700, fontSize: "0.78rem" }}>{q?.emoji} {q?.label}</div>
                   </div>
                 );

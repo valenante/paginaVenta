@@ -1,4 +1,5 @@
 import LegalLayout from "./LegalLayout";
+import { useLocale } from "../../hooks/useLocale";
 import SEOHead from "../../components/SEO/SEOHead";
 import { ArticleStructuredData, FAQStructuredData, BreadcrumbStructuredData } from "../../components/SEO/StructuredData";
 
@@ -11,11 +12,12 @@ const verifactuFaqs = [
 ];
 
 export default function GuiaVerifactu() {
+  const { currencySymbol } = useLocale();
   return (
     <LegalLayout title="VERI*FACTU: Lo que tu restaurante necesita saber">
       <SEOHead
         title="VeriFactu para restaurantes — Guía completa 2026"
-        description="¿Qué es VeriFactu y cómo afecta a tu restaurante? Guía clara sobre la Ley Antifraude, requisitos técnicos, sanciones de hasta 50.000€ y cómo cumplir con ALEF."
+        description={`¿Qué es VeriFactu y cómo afecta a tu restaurante? Guía clara sobre la Ley Antifraude, requisitos técnicos, sanciones de hasta 50.000${currencySymbol} y cómo cumplir con ALEF.`}
         path="/verifactu"
         type="article"
       />

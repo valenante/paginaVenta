@@ -5,6 +5,7 @@ import TabProductos from "./TabProductos";
 import TabGastos from "./TabGastos";
 import CortesiasPage from "../../components/Cortesias/CortesiasPage";
 import { PERIODOS } from "./utils";
+import { useLocale } from "../../hooks/useLocale";
 import "./Finanzas.css";
 
 const TABS = [
@@ -14,7 +15,7 @@ const TABS = [
   { key: "cortesias", label: "Cortesías" },
 ];
 
-function FinanzasHelpModal({ onClose }) {
+function FinanzasHelpModal({ onClose, currencySymbol = "€" }) {
   useEffect(() => {
     const onKey = (e) => { if (e.key === "Escape") onClose(); };
     window.addEventListener("keydown", onKey);
@@ -38,7 +39,7 @@ function FinanzasHelpModal({ onClose }) {
               menos todos los costes. El IVA no es tuyo — es un impuesto que recaudas para Hacienda.
             </p>
             <p className="fin-help-example">
-              Si en Caja ves 2.200€ y en Finanzas ves 2.000€, la diferencia es el IVA (~10% comida, ~21% alcohol).
+              Si en Caja ves 2.200{currencySymbol} y en Finanzas ves 2.000{currencySymbol}, la diferencia es el IVA (~10% comida, ~21% alcohol).
             </p>
           </div>
 
@@ -107,6 +108,7 @@ function FinanzasHelpModal({ onClose }) {
 }
 
 export default function FinanzasPage() {
+  const { currencySymbol } = useLocale();
   const [periodo, setPeriodo] = useState(PERIODOS.mes());
   const [tab, setTab] = useState("resumen");
   const [showHelp, setShowHelp] = useState(false);
@@ -149,7 +151,7 @@ export default function FinanzasPage() {
         {tab === "cortesias" && <CortesiasPage />}
       </div>
 
-      {showHelp && <FinanzasHelpModal onClose={() => setShowHelp(false)} />}
+      {showHelp && <FinanzasHelpModal onClose={() => setShowHelp(false)} currencySymbol={currencySymbol} />}
     </div>
   );
 }

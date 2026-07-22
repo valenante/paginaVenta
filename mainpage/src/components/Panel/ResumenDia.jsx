@@ -1,4 +1,5 @@
 import { useResumenDia } from "../../hooks/useResumenDia";
+import { useLocale } from "../../hooks/useLocale";
 import "./ResumenDia.css";
 
 function Tarjeta({ titulo, valor, subtitulo, color, icono }) {
@@ -17,6 +18,7 @@ function Tarjeta({ titulo, valor, subtitulo, color, icono }) {
 
 export default function ResumenDia() {
   const { data, loading, error, refetch } = useResumenDia();
+  const { currencySymbol } = useLocale();
 
   if (loading) return null;
 
@@ -91,7 +93,7 @@ export default function ResumenDia() {
         />
         <Tarjeta
           titulo="Ventas hoy"
-          valor={ventasHoy != null ? `${ventasHoy.toFixed(2)} €` : null}
+          valor={ventasHoy != null ? `${ventasHoy.toFixed(2)} ${currencySymbol}` : null}
           color="gold"
           icono="💰"
         />

@@ -1,6 +1,7 @@
 import React from "react";
 import { trackEvent } from "../../utils/trackEvent";
 import "./Comparativa.css";
+import { useLocale } from "../../hooks/useLocale";
 
 const filas = [
   { feature: "TPV completo (mesas, cobros, cierres)", alef: "Incluido", separado: "Incluido", manual: "Caja registradora" },
@@ -18,11 +19,12 @@ const filas = [
 function renderCell(val) {
   if (val === "Incluido" || val === "Con predicción") return <span className="Comp-check">{val}</span>;
   if (val === "No existe" || val === "Imposible" || val === "No incluido") return <span className="Comp-cross">{val}</span>;
-  const isCoste = val.includes("€");
+  const isCoste = val.includes("€") || val.includes("$");
   return <span className={isCoste ? "Comp-cost" : "Comp-text"}>{val}</span>;
 }
 
 export default function Comparativa() {
+  const { currencySymbol } = useLocale();
   return (
     <section className="Comp" id="comparativa">
       <div className="Comp-inner section--wide">
@@ -39,8 +41,8 @@ export default function Comparativa() {
             <thead>
               <tr>
                 <th></th>
-                <th className="Comp-th--alef">ALEF (129€/mes)</th>
-                <th>Otros TPVs (75-150€)</th>
+                <th className="Comp-th--alef">ALEF (129{currencySymbol}/mes)</th>
+                <th>Otros TPVs (75-150{currencySymbol})</th>
                 <th>A mano / Excel</th>
               </tr>
             </thead>
@@ -57,8 +59,8 @@ export default function Comparativa() {
             <tfoot>
               <tr className="Comp-total-row">
                 <td className="Comp-feature"><strong>TOTAL MENSUAL</strong></td>
-                <td className="Comp-cell Comp-cell--alef"><strong className="Comp-total-alef">129€</strong></td>
-                <td className="Comp-cell"><strong className="Comp-total-cost">75–150€ + lo que falta</strong></td>
+                <td className="Comp-cell Comp-cell--alef"><strong className="Comp-total-alef">129{currencySymbol}</strong></td>
+                <td className="Comp-cell"><strong className="Comp-total-cost">75–150{currencySymbol} + lo que falta</strong></td>
                 <td className="Comp-cell"><strong className="Comp-total-manual">Tu tiempo + riesgo</strong></td>
               </tr>
             </tfoot>

@@ -8,6 +8,7 @@
 // Usa las clases del tema oscuro definidas en CrearProducto.css.
 
 import React, { useMemo, useState } from "react";
+import { useLocale } from "../../hooks/useLocale";
 
 const defaultRow = () => ({
   nombre: "",
@@ -23,6 +24,7 @@ export default function AdicionalesEditor({
   productosDisponibles = [],
   disabled = false,
 }) {
+  const { currencySymbol } = useLocale();
   const [queryByRow, setQueryByRow] = useState({});
 
   const candidatos = useMemo(
@@ -101,7 +103,7 @@ export default function AdicionalesEditor({
               </label>
 
               <label className="label--crear adicional-row__label-small--crear">
-                Precio extra (€)
+                Precio extra ({currencySymbol})
                 <input
                   type="number"
                   value={ad.precio ?? 0}

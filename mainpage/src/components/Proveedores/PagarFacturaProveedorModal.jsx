@@ -4,6 +4,7 @@ import api from "../../utils/api";
 import { useTenant } from "../../context/TenantContext";
 import { useToast } from "../../context/ToastContext";
 import Portal from "../ui/Portal";
+import { useLocale } from "../../hooks/useLocale";
 import "./PagarFacturaProveedorModal.css";
 
 const METODOS_PAGO = [
@@ -17,6 +18,7 @@ export default function PagarFacturaProveedorModal({ factura, onClose, onSaved }
   const { proveedorId } = useParams();
   const { tenantId } = useTenant();
   const { showToast } = useToast();
+  const { currencySymbol } = useLocale();
 
   const headersTenant = useMemo(
     () => (tenantId ? { headers: { "x-tenant-id": tenantId } } : {}),
@@ -70,7 +72,7 @@ export default function PagarFacturaProveedorModal({ factura, onClose, onSaved }
                 Factura {factura?.numeroFactura || "—"}
               </span>
               <span className="pagarFactModal-summary-value">
-                {Number(factura?.total || 0).toFixed(2)} €
+                {Number(factura?.total || 0).toFixed(2)} {currencySymbol}
               </span>
             </div>
 

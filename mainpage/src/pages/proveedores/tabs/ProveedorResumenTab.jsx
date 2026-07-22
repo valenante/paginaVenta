@@ -11,10 +11,8 @@ import {
   Legend,
 } from "recharts";
 import { useFinanzasAnalyticsProveedor } from "../../../hooks/useFinanzas.js";
+import { useLocale } from "../../../hooks/useLocale";
 import "./ProveedorResumenTab.css";
-
-const eur = (n) =>
-  `${Number(n || 0).toLocaleString("es-ES", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €`;
 
 function rangoPorDefecto() {
   const hoy = new Date();
@@ -28,6 +26,10 @@ function rangoPorDefecto() {
 export default function ProveedorResumenTab() {
   const { proveedor, loadingProveedor } = useOutletContext();
   const { proveedorId } = useParams();
+  const { currencySymbol } = useLocale();
+
+  const eur = (n) =>
+    `${Number(n || 0).toLocaleString("es-ES", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${currencySymbol}`;
 
   const defaults = useMemo(rangoPorDefecto, []);
   const [desde, setDesde] = useState(defaults.desde);
@@ -151,7 +153,7 @@ export default function ProveedorResumenTab() {
             <span className="provDet-kpiLabel">Facturado</span>
             <span className="provDet-kpiValue">
               {Number.isFinite(stats.totalFacturado)
-                ? `${stats.totalFacturado.toFixed(2)} €`
+                ? `${stats.totalFacturado.toFixed(2)} ${currencySymbol}`
                 : "—"}
             </span>
           </div>
@@ -160,7 +162,7 @@ export default function ProveedorResumenTab() {
             <span className="provDet-kpiLabel">Pendiente</span>
             <span className="provDet-kpiValue">
               {Number.isFinite(stats.facturasPendientes)
-                ? `${stats.facturasPendientes} €`
+                ? `${stats.facturasPendientes} ${currencySymbol}`
                 : "—"}
             </span>
           </div>
@@ -239,7 +241,7 @@ export default function ProveedorResumenTab() {
                     <YAxis
                       yAxisId="gasto"
                       tick={{ fill: "#374151", fontSize: 12 }}
-                      tickFormatter={(v) => `${v} €`}
+                      tickFormatter={(v) => `${v} ${currencySymbol}`}
                     />
                     <YAxis
                       yAxisId="pedidos"

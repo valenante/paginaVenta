@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import api from "../utils/api";
 import "../styles/Registro.css";
 import { useToast } from "../context/ToastContext";
+import { useLocale } from "../hooks/useLocale";
 
 import Paso1DatosRestaurante from "../components/Registro/Paso1DatosRestaurante.jsx";
 import Paso2Pago from "../components/Registro/Paso2Pago.jsx";
@@ -13,6 +14,7 @@ const STORAGE_TTL = 2 * 60 * 60 * 1000; // 2 horas
 export default function Registro() {
   const navigate = useNavigate();
   const { showToast } = useToast();
+  const { currencySymbol } = useLocale();
 
   const [paso, setPaso] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -167,7 +169,7 @@ export default function Registro() {
               <div className="registro-plan-box">
                 <span className="registro-plan-label">Plan seleccionado</span>
                 <strong className="registro-plan-nombre">{planSeleccionado.nombre}</strong>
-                <span className="registro-plan-precio">{planSeleccionado.precioMensual} €/mes</span>
+                <span className="registro-plan-precio">{planSeleccionado.precioMensual} {currencySymbol}/mes</span>
               </div>
             )}
           </header>

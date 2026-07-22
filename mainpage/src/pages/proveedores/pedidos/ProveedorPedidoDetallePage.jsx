@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import api from "../../../utils/api";
 import { useTenant } from "../../../context/TenantContext";
 import { useToast } from "../../../context/ToastContext";
+import { useLocale } from "../../../hooks/useLocale";
 import ModalConfirmacion from "../../../components/Modal/ModalConfirmacion.jsx";
 import RecibirPedidoProveedorModal from "../../../components/Proveedores/RecibirPedidoProveedorModal.jsx";
 import "../../../styles/ProveedorDetallePage.css"; // layout base compartido (header, breadcrumbs, pills, cards)
@@ -21,6 +22,7 @@ export default function ProveedorPedidoDetallePage() {
     const navigate = useNavigate();
     const { tenantId } = useTenant();
     const { showToast } = useToast();
+    const { currencySymbol } = useLocale();
 
     const headersTenant = useMemo(
         () => (tenantId ? { headers: { "x-tenant-id": tenantId } } : {}),
@@ -171,10 +173,10 @@ export default function ProveedorPedidoDetallePage() {
                                                 <td data-label="Unidad">{l.unidad || "—"}</td>
                                                 <td data-label="Formato">{l.formato || "—"}</td>
                                                 <td data-label="Cantidad">{l.cantidad}</td>
-                                                <td data-label="Precio">{l.precioUnitario.toFixed(2)} €</td>
+                                                <td data-label="Precio">{l.precioUnitario.toFixed(2)} {currencySymbol}</td>
                                                 <td data-label="IVA">{l.iva}%</td>
                                                 <td data-label="Total">
-                                                    <b>{l.totalLinea.toFixed(2)} €</b>
+                                                    <b>{l.totalLinea.toFixed(2)} {currencySymbol}</b>
                                                 </td>
                                             </tr>
                                         ))}
@@ -190,21 +192,21 @@ export default function ProveedorPedidoDetallePage() {
                             <div className="provDet-row">
                                 <span className="provDet-k">Subtotal</span>
                                 <span className="provDet-v">
-                                    {pedido.subtotal.toFixed(2)} €
+                                    {pedido.subtotal.toFixed(2)} {currencySymbol}
                                 </span>
                             </div>
 
                             <div className="provDet-row">
                                 <span className="provDet-k">IVA</span>
                                 <span className="provDet-v">
-                                    {pedido.totalIva.toFixed(2)} €
+                                    {pedido.totalIva.toFixed(2)} {currencySymbol}
                                 </span>
                             </div>
 
                             <div className="provDet-row">
                                 <span className="provDet-k">Total</span>
                                 <span className="provDet-v">
-                                    <b>{pedido.total.toFixed(2)} €</b>
+                                    <b>{pedido.total.toFixed(2)} {currencySymbol}</b>
                                 </span>
                             </div>
                         </div>

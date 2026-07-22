@@ -3,6 +3,7 @@ import api from "../../utils/api";
 import { useTenant } from "../../context/TenantContext";
 import Portal from "../ui/Portal";
 import "./RecibirPedidoProveedorModal.css";
+import { useLocale } from "../../hooks/useLocale";
 
 export default function RecibirPedidoProveedorModal({
     pedido,
@@ -12,6 +13,7 @@ export default function RecibirPedidoProveedorModal({
     const { tenantId } = useTenant();
     const proveedorId = pedido.proveedorId;
     const pedidoId = pedido._id;
+    const { currencySymbol } = useLocale();
 
     const headersTenant = useMemo(
         () => (tenantId ? { headers: { "x-tenant-id": tenantId } } : {}),
@@ -123,7 +125,7 @@ export default function RecibirPedidoProveedorModal({
                                         <th>Producto</th>
                                         <th>Pedida</th>
                                         <th>Recibida</th>
-                                        <th>Precio real (€)</th>
+                                        <th>Precio real ({currencySymbol})</th>
                                         <th>Caducidad</th>
                                         <th>Cód. lote</th>
                                     </tr>

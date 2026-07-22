@@ -3,19 +3,21 @@ import Portal from "../ui/Portal";
 import ModalConfirmacion from "../Modal/ModalConfirmacion";
 
 import { useShopCategorias } from "../../context/ShopCategoriasContext";
+import { useLocale } from "../../hooks/useLocale";
 import EditProductShop from "../ShopProductsModals/EditProductShop";
 import CrearProductoShop from "../ShopProductsModals/CrearProductoShop";
 
 import "./ShopCategories.css";
 
-const money = (n) => {
-  const v = Number(n);
-  if (!Number.isFinite(v)) return "-";
-  return `${v.toFixed(2)} €`;
-};
-
 export default function ShopCategories({ category, type }) {
   const { products, fetchProducts, deleteProduct } = useShopCategorias();
+  const { currencySymbol } = useLocale();
+
+  const money = (n) => {
+    const v = Number(n);
+    if (!Number.isFinite(v)) return "-";
+    return `${v.toFixed(2)} ${currencySymbol}`;
+  };
 
   const [editing, setEditing] = useState(null);
   const [mostrarCrear, setMostrarCrear] = useState(false);

@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { getLoyaltyClienteDetalle } from "../services/loyaltyAdminService";
+import { useLocale } from "../hooks/useLocale";
 import "./ClienteLoyaltyDrawer.css";
 
-const fmtMoney = (n) => `${Number(n || 0).toFixed(2).replace(".", ",")} €`;
+const fmtMoney = (n, sym = "€") => `${Number(n || 0).toFixed(2).replace(".", ",")} ${sym}`;
 const fmtDate = (iso) => (iso ? new Date(iso).toLocaleDateString("es") : "—");
 const fmtDateTime = (iso) => {
   if (!iso) return "—";
@@ -26,6 +27,7 @@ const TIPO_MOV = {
 };
 
 export default function ClienteLoyaltyDrawer({ clienteId, onClose }) {
+  const { currencySymbol } = useLocale();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -60,13 +62,13 @@ export default function ClienteLoyaltyDrawer({ clienteId, onClose }) {
         {loading && <div className="cld-loading">Cargando cliente…</div>}
         {error && <div className="cld-error">{error}</div>}
 
-        {data && <DetalleCliente data={data} />}
+        {data && <DetalleCliente data={data} currencySymbol={currencySymbol} />}
       </aside>
     </div>
   );
 }
 
-function DetalleCliente({ data }) {
+function DetalleCliente({ data, currencySymbol }) {
   const { cliente, saldo, resumen, visitasRecientes, movimientos } = data;
   const stats = resumen?.stats;
   const nivel = NIVELES[stats?.nivel || "nuevo"];
@@ -129,8 +131,8 @@ function DetalleCliente({ data }) {
           <h3>Estadísticas</h3>
           <div className="cld-stats">
             <Stat label="Visitas"        value={stats.visitas} />
-            <Stat label="Gasto total"    value={fmtMoney(stats.gastoTotal)} />
-            <Stat label="Ticket medio"   value={fmtMoney(stats.gastoMedio)} />
+            <Stat label="Gasto total"    value={fmtMoney(stats.gastoTotal, currencySymbol)} />
+            <Stat label="Ticket medio"   value={fmtMoney(stats.gastoMedio, currencySymbol)} />
             <Stat label="Cliente desde"  value={fmtDate(stats.primeraVisita)} />
             <Stat label="Día favorito"   value={cap(stats.diaFavorito)} />
             <Stat label="Hora favorita"  value={stats.horaFavorita || "—"} />
@@ -153,7 +155,7 @@ function DetalleCliente({ data }) {
       {resumen?.ultimaVisita && (
         <section className="cld-section">
           <h3>Última visita</h3>
-          <UltimaVisita visita={resumen.ultimaVisita} />
+          <UltimaVisita visita={resumen.ultimaVisita} currencySymbol={currencySymbol} />
         </section>
       )}
 
@@ -161,7 +163,7 @@ function DetalleCliente({ data }) {
       {resumen?.favoritos?.length > 0 && (
         <section className="cld-section">
           <h3>Productos favoritos</h3>
-          <Favoritos favoritos={resumen.favoritos} />
+          <Favoritos favoritos={resumen.favoritos} currencySymbol={currencySymbol} />
         </section>
       )}
 
@@ -174,7 +176,7 @@ function DetalleCliente({ data }) {
               <li key={v._id} className="cld-visita">
                 <div className="cld-visita__head">
                   <span className="cld-visita__fecha">{fmtDateTime(v.cierre)}</span>
-                  <span className="cld-visita__total">{fmtMoney(v.total)}</span>
+                  <span className="cld-visita__total">{fmtMoney(v.total, currencySymbol)}</span>
                 </div>
                 <div className="cld-visita__meta">
                   Mesa {v.numero}
@@ -230,7 +232,7 @@ function Stat({ label, value }) {
   );
 }
 
-function UltimaVisita({ visita }) {
+function UltimaVisita({ visita, currencySymbol }) {
   const items = visita.itemsSnapshot || [];
   const rec = visita.loyalty?.recompensaAplicada;
   return (
@@ -245,7 +247,7 @@ function UltimaVisita({ visita }) {
           </div>
         </div>
         <div className="cld-ultima__cifras">
-          <div className="cld-ultima__total">{fmtMoney(visita.total)}</div>
+          <div className="cld-ultima__total">{fmtMoney(visita.total, currencySymbol)}</div>
           {visita.loyalty?.puntosAcumulados > 0 && (
             <div className="cld-ultima__pts">+{visita.loyalty.puntosAcumulados} pts</div>
           )}
@@ -257,20 +259,20 @@ function UltimaVisita({ visita }) {
             <li key={it._id || i}>
               <span>×{it.cantidad}</span>
               <span className="cld-ultima__item-name">{it.nombre}</span>
-              <span>{fmtMoney(it.precio * it.cantidad)}</span>
+              <span>{fmtMoney(it.precio * it.cantidad, currencySymbol)}</span>
             </li>
           ))}
         </ul>
       )}
       {rec?.recompensaId && (
-        <div className="cld-ultima__rec">{rec.nombre}{rec.descuento > 0 && ` · −${fmtMoney(rec.descuento)}`}
+        <div className="cld-ultima__rec">{rec.nombre}{rec.descuento > 0 && ` · −${fmtMoney(rec.descuento, currencySymbol)}`}
         </div>
       )}
     </div>
   );
 }
 
-function Favoritos({ favoritos }) {
+function Favoritos({ favoritos, currencySymbol }) {
   const max = favoritos[0]?.veces || 1;
   const medals = ["🥇", "🥈", "🥉"];
   return (
@@ -288,7 +290,7 @@ function Favoritos({ favoritos }) {
             <strong>{f.veces}</strong>
             <span> {f.veces === 1 ? "vez" : "veces"}</span>
             {f.gastoEnProducto > 0 && (
-              <div className="cld-favorito__gasto">{fmtMoney(f.gastoEnProducto)}</div>
+              <div className="cld-favorito__gasto">{fmtMoney(f.gastoEnProducto, currencySymbol)}</div>
             )}
           </div>
         </li>

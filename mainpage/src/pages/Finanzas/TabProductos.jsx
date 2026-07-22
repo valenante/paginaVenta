@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useFinanzasProductos } from "../../hooks/useFinanzas";
 import { eur, pct, alertaColor, alertaLabel } from "./utils";
+import { useLocale } from "../../hooks/useLocale";
 import Pagination from "./Pagination";
 
 export default function TabProductos({ periodo }) {
+  const { currencySymbol } = useLocale();
   const [sortBy, setSortBy] = useState("revenue");
   const [filtro, setFiltro] = useState("");
   const [verSinCoste, setVerSinCoste] = useState(false);
@@ -30,7 +32,7 @@ export default function TabProductos({ periodo }) {
 
   const exportCsv = () => {
     if (!items.length) return;
-    const headers = ["Producto", "Categoría", "Unidades", "Ingresos €", "Coste €", "Margen €", "Margen %", "Alerta"];
+    const headers = ["Producto", "Categoría", "Unidades", `Ingresos ${currencySymbol}`, `Coste ${currencySymbol}`, `Margen ${currencySymbol}`, "Margen %", "Alerta"];
     const rows = items.map((i) => [
       i.nombre, i.categoria, i.unidades, i.revenue, i.coste, i.margen, i.margenPct, i.alerta,
     ]);
@@ -60,7 +62,7 @@ export default function TabProductos({ periodo }) {
           className="fin-input"
         >
           <option value="revenue">Ordenar: Ingresos</option>
-          <option value="margen">Ordenar: Margen €</option>
+          <option value="margen">Ordenar: Margen {currencySymbol}</option>
           <option value="margenPct">Ordenar: Margen %</option>
           <option value="unidades">Ordenar: Unidades</option>
         </select>
@@ -98,7 +100,7 @@ export default function TabProductos({ periodo }) {
                   <th>Unidades</th>
                   <th>Ingresos</th>
                   <th>Coste</th>
-                  <th>Margen €</th>
+                  <th>Margen {currencySymbol}</th>
                   <th>Margen %</th>
                   <th>Alerta</th>
                 </tr>

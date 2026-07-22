@@ -4,6 +4,7 @@ import { useEffect, useState, useMemo } from "react";
 import api from "../../utils/api";
 import { InfoButton } from "./InfoModal";
 import "./AnalyticsFase3.css";
+import { useLocale } from "../../hooks/useLocale";
 
 const money = (n) => Number(n || 0).toLocaleString("es-ES", { minimumFractionDigits: 0, maximumFractionDigits: 0 });
 
@@ -227,6 +228,7 @@ export function AlertasCard() {
    3. PROYECCIÓN AJUSTADA (sin media por día)
    ═══════════════════════════════════════ */
 export function ProyeccionCard() {
+  const { currencySymbol } = useLocale();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -268,15 +270,15 @@ export function ProyeccionCard() {
       <div className="af3-proy-kpis">
         <div className="af3-proy-kpi">
           <span className="af3-proy-label">Realizado</span>
-          <span className="af3-proy-value">{money(ventasRealizadas)}€</span>
+          <span className="af3-proy-value">{money(ventasRealizadas)}{currencySymbol}</span>
         </div>
         <div className="af3-proy-kpi af3-proy-kpi--main">
           <span className="af3-proy-label">Proyección ajustada</span>
-          <span className="af3-proy-value">{money(proyeccionAjustada)}€</span>
+          <span className="af3-proy-value">{money(proyeccionAjustada)}{currencySymbol}</span>
         </div>
         <div className="af3-proy-kpi">
           <span className="af3-proy-label">Lineal</span>
-          <span className="af3-proy-value af3-proy-value--dim">{money(proyeccionLineal)}€</span>
+          <span className="af3-proy-value af3-proy-value--dim">{money(proyeccionLineal)}{currencySymbol}</span>
         </div>
       </div>
 
@@ -287,7 +289,7 @@ export function ProyeccionCard() {
 
       {diferencia !== 0 && (
         <p className="af3-proy-diff">
-          Diferencia: <strong>{money(Math.abs(diferencia))}€ {diferencia > 0 ? "más" : "menos"}</strong> —
+          Diferencia: <strong>{money(Math.abs(diferencia))}{currencySymbol} {diferencia > 0 ? "más" : "menos"}</strong> —
           {diferencia > 0 ? " los días restantes incluyen fines de semana fuertes" : " los días restantes son más flojos"}
         </p>
       )}

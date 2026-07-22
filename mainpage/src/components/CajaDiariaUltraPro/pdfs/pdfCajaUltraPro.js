@@ -3,9 +3,9 @@
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
-const money = (n) =>
+const money = (n, sym = "€") =>
   new Intl.NumberFormat("es-ES", { minimumFractionDigits: 2, maximumFractionDigits: 2 })
-    .format(Number(n || 0)) + " €";
+    .format(Number(n || 0)) + ` ${sym}`;
 
 const fmtDate = (iso) => {
   if (!iso) return "—";
@@ -20,6 +20,7 @@ export const generarPDFCaja = ({
   fechaInicio,
   fechaFin,
   brand = { nombre: "Restaurante", primary: "#1a1a2e" },
+  currencySymbol = "€",
 }) => {
   const doc = new jsPDF({ orientation: "p", unit: "mm", format: "a4" });
   const W = doc.internal.pageSize.getWidth();
@@ -59,12 +60,12 @@ export const generarPDFCaja = ({
 
   // KPI grid: 3 columnas × 2 filas
   const kpis = [
-    { label: "INGRESOS TOTALES", value: money(totalIngresos) },
+    { label: "INGRESOS TOTALES", value: money(totalIngresos, currencySymbol) },
     { label: "TICKETS", value: String(totalTickets) },
-    { label: "TICKET MEDIO", value: money(ticketMedio) },
-    { label: "MEDIA DIARIA", value: money(mediaDiaria) },
-    { label: "MEJOR DÍA", value: mejor ? `${fmtDate(mejor.fecha)} (${money(mejor.total)})` : "—" },
-    { label: "PEOR DÍA", value: peor ? `${fmtDate(peor.fecha)} (${money(peor.total)})` : "—" },
+    { label: "TICKET MEDIO", value: money(ticketMedio, currencySymbol) },
+    { label: "MEDIA DIARIA", value: money(mediaDiaria, currencySymbol) },
+    { label: "MEJOR DÍA", value: mejor ? `${fmtDate(mejor.fecha)} (${money(mejor.total, currencySymbol)})` : "—" },
+    { label: "PEOR DÍA", value: peor ? `${fmtDate(peor.fecha)} (${money(peor.total, currencySymbol)})` : "—" },
   ];
 
   const cols = 3;
@@ -116,9 +117,9 @@ export const generarPDFCaja = ({
 
     return [
       fmtDate(d.fecha),
-      money(curr),
+      money(curr, currencySymbol),
       String(d.numTickets || 0),
-      d.numTickets > 0 ? money(curr / d.numTickets) : "—",
+      d.numTickets > 0 ? money(curr / d.numTickets, currencySymbol) : "—",
       i === 0 ? "—" : safePct(pct),
     ];
   });

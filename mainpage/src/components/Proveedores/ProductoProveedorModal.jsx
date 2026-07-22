@@ -5,6 +5,7 @@ import { useTenant } from "../../context/TenantContext";
 import Portal from "../ui/Portal";
 import { useAutoFocus } from "../../hooks/useAutoFocus";
 import "./ProductoProveedorModal.css";
+import { useLocale } from "../../hooks/useLocale";
 
 const DEFAULT = {
   nombre: "",
@@ -106,6 +107,7 @@ export default function ProductoProveedorModal({
   onSaved,
 }) {
   const isEdit = mode === "edit";
+  const { currencySymbol } = useLocale();
   const { proveedorId } = useParams();
   const { tenant } = useTenant();
 
@@ -390,7 +392,7 @@ export default function ProductoProveedorModal({
               <textarea
                 className="ppModal-ai-input"
                 rows={3}
-                placeholder='Ej: "Croquetas de espinaca, caja de 4 bolsas de 1kg, cada croqueta 25g, me sale a 44€ sin IVA"'
+                placeholder={`Ej: "Croquetas de espinaca, caja de 4 bolsas de 1kg, cada croqueta 25g, me sale a 44${currencySymbol} sin IVA"`}
                 value={aiText}
                 onChange={(e) => setAiText(e.target.value)}
                 disabled={aiLoading}
@@ -421,7 +423,7 @@ export default function ProductoProveedorModal({
                   {aiResult.pesoNetoPorItem > 0 && (
                     <span>{aiResult.pesoNetoPorItem}{aiResult.unidadPesoNeto} por {aiResult.unidadContenido}</span>
                   )}
-                  <span>{aiResult.precioBase}€ + IVA {aiResult.iva}% = {aiResult._preview?.precioConIva}€</span>
+                  <span>{aiResult.precioBase}{currencySymbol} + IVA {aiResult.iva}% = {aiResult._preview?.precioConIva}{currencySymbol}</span>
                   <span>Coste: {aiResult._preview?.costeUnitarioLabel}</span>
                   {aiResult._preview?.costePorPesoLabel && (
                     <span>{aiResult._preview.costePorPesoLabel}</span>
@@ -644,8 +646,8 @@ export default function ProductoProveedorModal({
                             {totalPeso > 0 && <> = <b>{totalPeso.toLocaleString()} {udPeso}</b></>}
                           </span>
                           <span className="ppModal-resumen__line">
-                            Coste: <b>{costePorItem.toFixed(2)} €/{udCont}</b>
-                            {costePorPeso > 0 && <> · {costePorPeso.toFixed(4)} €/{udPeso}</>}
+                            Coste: <b>{costePorItem.toFixed(2)} {currencySymbol}/{udCont}</b>
+                            {costePorPeso > 0 && <> · {costePorPeso.toFixed(4)} {currencySymbol}/{udPeso}</>}
                           </span>
                         </>
                       );
@@ -706,9 +708,9 @@ export default function ProductoProveedorModal({
                           return (
                             <div key={p.clave} style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "0.85rem" }}>
                               <span style={{ fontWeight: 700, minWidth: 80 }}>{p.label || p.clave}</span>
-                              <span>{coste.toFixed(2)}€ coste</span>
+                              <span>{coste.toFixed(2)}{currencySymbol} coste</span>
                               <span style={{ color: "#9ca3af" }}>→</span>
-                              <span>venta {p.precio}€</span>
+                              <span>venta {p.precio}{currencySymbol}</span>
                               <span style={{ color: "#9ca3af" }}>→</span>
                               <span style={{ fontWeight: 700, color: margenColor }}>margen {margen.toFixed(0)}%</span>
                             </div>

@@ -1,4 +1,5 @@
 import { useMemo, useState, useEffect } from "react";
+import { useLocale } from "../../hooks/useLocale";
 import {
   AreaChart,
   Area,
@@ -12,6 +13,7 @@ import {
 import "./CajaIngresosChart.css";
 
 export default function CajaIngresosChart({ datosDiarios, onDiaClick, diaSeleccionado }) {
+  const { currencySymbol } = useLocale();
   // Fix #4: isMobile reactivo
   const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768);
 
@@ -84,7 +86,7 @@ export default function CajaIngresosChart({ datosDiarios, onDiaClick, diaSelecci
               tick={{ fill: "#cbd5e1", fontSize: 11 }}
               tickLine={false}
               axisLine={false}
-              tickFormatter={(v) => `${Number(v).toFixed(0)} €`}
+              tickFormatter={(v) => `${Number(v).toFixed(0)} ${currencySymbol}`}
               width={60}
             />
 
@@ -97,7 +99,7 @@ export default function CajaIngresosChart({ datosDiarios, onDiaClick, diaSelecci
                 padding: "10px",
               }}
               labelStyle={{ color: "#fff" }}
-              formatter={(value) => [`${Number(value).toFixed(2)} €`, "Ingresos"]}
+              formatter={(value) => [`${Number(value).toFixed(2)} ${currencySymbol}`, "Ingresos"]}
             />
 
             {!isMobile && (
@@ -109,7 +111,7 @@ export default function CajaIngresosChart({ datosDiarios, onDiaClick, diaSelecci
             <Area
               type="monotone"
               dataKey="total"
-              name="Ingresos (€)"
+              name={`Ingresos (${currencySymbol})`}
               stroke="#6a0dad"
               strokeWidth={3}
               fill="url(#gradTotal)"

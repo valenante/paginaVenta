@@ -3,6 +3,7 @@ import { useOutletContext, useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
 import api from "../../../utils/api";
 import { useToast } from "../../../context/ToastContext";
+import { useLocale } from "../../../hooks/useLocale";
 import ModalConfirmacion from "../../../components/Modal/ModalConfirmacion.jsx";
 import PedidoProveedorModal from "../../../components/Proveedores/PedidoProveedorModal.jsx";
 import "./ProveedorPedidosTab.css";
@@ -19,6 +20,7 @@ export default function ProveedorPedidosTab() {
     const { proveedorId } = useParams();
     const { headersTenant, proveedor } = useOutletContext();
     const { showToast } = useToast();
+    const { currencySymbol } = useLocale();
 
     const [items, setItems] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -121,12 +123,12 @@ return (
                     </span>
                   </td>
 
-                  <td>{Number(p.subtotal || 0).toFixed(2)} €</td>
-                  <td>{Number(p.totalIva || 0).toFixed(2)} €</td>
+                  <td>{Number(p.subtotal || 0).toFixed(2)} {currencySymbol}</td>
+                  <td>{Number(p.totalIva || 0).toFixed(2)} {currencySymbol}</td>
 
                   <td>
                     <strong>
-                      {Number(p.total || 0).toFixed(2)} €
+                      {Number(p.total || 0).toFixed(2)} {currencySymbol}
                     </strong>
                   </td>
 
@@ -178,21 +180,21 @@ return (
                 <div>
                   <span className="k">Subtotal</span>
                   <span className="v">
-                    {Number(p.subtotal || 0).toFixed(2)} €
+                    {Number(p.subtotal || 0).toFixed(2)} {currencySymbol}
                   </span>
                 </div>
 
                 <div>
                   <span className="k">IVA</span>
                   <span className="v">
-                    {Number(p.totalIva || 0).toFixed(2)} €
+                    {Number(p.totalIva || 0).toFixed(2)} {currencySymbol}
                   </span>
                 </div>
 
                 <div className="full">
                   <span className="k">Total</span>
                   <span className="v total">
-                    {Number(p.total || 0).toFixed(2)} €
+                    {Number(p.total || 0).toFixed(2)} {currencySymbol}
                   </span>
                 </div>
               </div>

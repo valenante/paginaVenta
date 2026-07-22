@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import "./Paso4ResumenPago.css";
 import { loadStripe } from "@stripe/stripe-js";
 import api from "../../utils/api";
+import { useLocale } from "../../hooks/useLocale";
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
@@ -25,6 +26,7 @@ export default function Paso4ResumenPago({
   setPeriodo,
   isShop = false,
 }) {
+  const { currencySymbol } = useLocale();
   const handlePago = async () => {
     if (loading) return; // evita doble click
 
@@ -235,14 +237,14 @@ export default function Paso4ResumenPago({
           </div>
           <div className="resumen-servicios-linea">
             <span>Suscripción base</span>
-            <strong>{precioBasePlan} €/mes</strong>
+            <strong>{precioBasePlan} {currencySymbol}/mes</strong>
           </div>
 
           <ul className="resumen-servicios-lista">
             {servicios.cargaProductos && (
               <li>
                 + {isShop ? "Carga completa de catálogo y productos" : "Carga completa de carta y productos"} —{" "}
-                {PRECIO_CARGA_PRODUCTOS} € (único)
+                {PRECIO_CARGA_PRODUCTOS} {currencySymbol} (único)
               </li>
             )}
 
@@ -251,26 +253,26 @@ export default function Paso4ResumenPago({
                 + Configuración de mesas + QR impresos{" "}
                 {servicios.mesasQrCantidad ? `(${servicios.mesasQrCantidad} mesas)` : ""}
                 {" — "}
-                {calcularPrecioMesasQr(servicios.mesasQrCantidad)} € (único)
+                {calcularPrecioMesasQr(servicios.mesasQrCantidad)} {currencySymbol} (único)
               </li>
             )}
 
             {servicios.impresoras > 0 && (
               <li>
                 {servicios.impresoras} × Impresora térmica —{" "}
-                {PRECIO_IMPRESORA * servicios.impresoras} €
+                {PRECIO_IMPRESORA * servicios.impresoras} {currencySymbol}
               </li>
             )}
 
             {servicios.tpvOpcion === "nuevo" && (
               <li>
-                + TPV nuevo instalado y listo — 550 €
+                + TPV nuevo instalado y listo — 550 {currencySymbol}
               </li>
             )}
 
             {servicios.tpvOpcion === "propio" && servicios.instalacionTpvPropio && (
               <li>
-                + Instalación en TPV propio — 120 €
+                + Instalación en TPV propio — 120 {currencySymbol}
               </li>
             )}
 
@@ -282,7 +284,7 @@ export default function Paso4ResumenPago({
                   : "Tablet táctil"}{" "}
                 —{" "}
                 {(servicios.pantallaTipo === "pro" ? 450 : 180) *
-                  servicios.pantallas} €
+                  servicios.pantallas} {currencySymbol}
               </li>
             )}
 
@@ -292,13 +294,13 @@ export default function Paso4ResumenPago({
                 {servicios.formacionPersonas
                   ? `(${servicios.formacionPersonas} personas)`
                   : ""}{" "}
-                — 120 €
+                — 120 {currencySymbol}
               </li>
             )}
 
             {!isShop && servicios.pda > 0 && (
               <li>
-                {servicios.pda} × PDA camarero — {PRECIO_PDA * servicios.pda} €
+                {servicios.pda} × PDA camarero — {PRECIO_PDA * servicios.pda} {currencySymbol}
               </li>
             )}
 
@@ -309,7 +311,7 @@ export default function Paso4ResumenPago({
             )}
 
             {!isShop && servicios.fotografia && (
-              <li>+ Servicio de fotografía profesional — {PRECIO_FOTOGRAFIA} €</li>
+              <li>+ Servicio de fotografía profesional — {PRECIO_FOTOGRAFIA} {currencySymbol}</li>
             )}
 
             {servicios.cargaDatos && (
@@ -317,7 +319,7 @@ export default function Paso4ResumenPago({
                 + {isShop
                   ? "Carga inicial de catálogo y datos básicos"
                   : "Carga inicial de carta y datos básicos"} —{" "}
-                {PRECIO_CARGA_DATOS} €
+                {PRECIO_CARGA_DATOS} {currencySymbol}
               </li>
             )}
 
@@ -344,14 +346,14 @@ export default function Paso4ResumenPago({
           <span>{periodo === "mensual" ? "Suscripción mensual" : "Suscripción anual"}</span>
           <strong>
             {periodo === "mensual"
-              ? `${precio.mensual.toFixed(2)} €`
-              : `${(precio.mensual * 11).toFixed(2)} € (1 mes gratis)`}
+              ? `${precio.mensual.toFixed(2)} ${currencySymbol}`
+              : `${(precio.mensual * 11).toFixed(2)} ${currencySymbol} (1 mes gratis)`}
           </strong>
         </div>
 
         <div className="fila">
           <span>Coste único inicial</span>
-          <strong>{precio.unico.toFixed(2)} €</strong>
+          <strong>{precio.unico.toFixed(2)} {currencySymbol}</strong>
         </div>
 
         <hr />
@@ -360,8 +362,8 @@ export default function Paso4ResumenPago({
           <span>{periodo === "mensual" ? "Total primer mes" : "Total hoy"}</span>
           <strong>
             {periodo === "mensual"
-              ? `${precio.totalPrimerMes.toFixed(2)} €`
-              : `${(precio.unico + precio.mensual * 11).toFixed(2)} €`}
+              ? `${precio.totalPrimerMes.toFixed(2)} ${currencySymbol}`
+              : `${(precio.unico + precio.mensual * 11).toFixed(2)} ${currencySymbol}`}
           </strong>
         </div>
       </div>
@@ -377,7 +379,7 @@ export default function Paso4ResumenPago({
             onClick={() => setPeriodo("mensual")}
           >
             <h4>Pago mensual</h4>
-            <p className="periodo-precio">{precioBasePlan} €/mes</p>
+            <p className="periodo-precio">{precioBasePlan} {currencySymbol}/mes</p>
             <p className="periodo-detalle">Se factura cada mes</p>
           </div>
 
@@ -386,7 +388,7 @@ export default function Paso4ResumenPago({
             onClick={() => setPeriodo("anual")}
           >
             <h4>Pago anual</h4>
-            <p className="periodo-precio">{(precioBasePlan * 11).toFixed(2)} €/año</p>
+            <p className="periodo-precio">{(precioBasePlan * 11).toFixed(2)} {currencySymbol}/año</p>
             <p className="periodo-detalle ahorro">Ahorras 1 mes</p>
           </div>
         </div>

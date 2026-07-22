@@ -1,10 +1,12 @@
 import React from "react";
+import { useLocale } from "../../hooks/useLocale";
 import "./Introduccion.css";
 import letrasalefsinfondo from "../../assets/imagenes/letrasalefsinfondo.webp";
 import verifactuLogo from "../../assets/imagenes/verifactu.webp";
 import tpvDemo from "../../assets/videos/tpv-demo.mp4";
 
 const Introduccion = () => {
+  const { currencySymbol } = useLocale();
   return (
     <section className="Introduccion hero-bg reveal" id="inicio">
       <div className="Introduccion-layout">
@@ -56,7 +58,7 @@ const Introduccion = () => {
 
             <div className="Introduccion-metricas">
               <div>
-                <strong>129€/mes</strong>
+                <strong>129{currencySymbol}/mes</strong>
                 <span>todo incluido</span>
               </div>
               <div>

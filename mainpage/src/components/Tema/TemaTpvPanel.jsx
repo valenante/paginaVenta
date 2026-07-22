@@ -1,4 +1,5 @@
 import React, { useCallback } from "react";
+import { useLocale } from "../../hooks/useLocale";
 
 /* =====================================================
    PRESETS
@@ -87,6 +88,7 @@ const ColorPick = ({ label, value, onChange }) => (
    PANEL PRINCIPAL
 ===================================================== */
 export default function TemaTpvPanel({ temaTpv, setTemaTpv }) {
+  const { currencySymbol } = useLocale();
   const set = useCallback(
     (key, val) => setTemaTpv((prev) => ({ ...prev, [key]: val })),
     [setTemaTpv]
@@ -203,9 +205,9 @@ export default function TemaTpvPanel({ temaTpv, setTemaTpv }) {
           {/* Mesa cards */}
           <div className="tema-preview__cards">
             {[
-              { mesa: "Mesa 1", total: "24,50 €", tipo: "abierta" },
+              { mesa: "Mesa 1", total: `24,50 ${currencySymbol}`, tipo: "abierta" },
               { mesa: "Mesa 3", total: "", tipo: "cerrada" },
-              { mesa: "Mesa 5", total: "18,00 €", tipo: "mia" },
+              { mesa: "Mesa 5", total: `18,00 ${currencySymbol}`, tipo: "mia" },
             ].map((m) => {
               const bgColor = m.tipo === "abierta" ? temaTpv.mesaAbiertaBg
                 : m.tipo === "mia" ? temaTpv.mesaMiaBg

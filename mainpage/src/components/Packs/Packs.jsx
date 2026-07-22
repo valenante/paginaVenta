@@ -2,11 +2,13 @@
 import React, { useEffect, useState } from "react";
 import api from "../../utils/api";
 import useRevealOnScroll from "../../hooks/useRevealOnScroll";
+import { useLocale } from "../../hooks/useLocale";
 import "./Packs.css";
 
 import PlanDetallesModal from "../Packs/PlanDetallesModal";
 
 const Packs = () => {
+  const { currencySymbol } = useLocale();
   const [planes, setPlanes] = useState([]);
   const [modalPlan, setModalPlan] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -91,7 +93,7 @@ const Packs = () => {
                     <span className="precio-cantidad">
                       {plan.precioMensual}
                     </span>
-                    <span className="precio-unidad">€/mes</span>
+                    <span className="precio-unidad">{currencySymbol}/mes</span>
                   </div>
                   <p className="precio-nota">
                     Licencia por restaurante. Impuestos no incluidos.

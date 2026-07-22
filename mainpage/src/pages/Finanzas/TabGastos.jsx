@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { FiEdit2, FiTrash2 } from "react-icons/fi";
 import { useGastosFijos } from "../../hooks/useFinanzas";
 import { eur, ymd, CATEGORIAS_GASTO } from "./utils";
+import { useLocale } from "../../hooks/useLocale";
 
 const PERIODICIDAD_LABEL = {
   mensual: "Mensual",
@@ -21,6 +22,7 @@ const FORM_DEFAULT = {
 };
 
 export default function TabGastos() {
+  const { currencySymbol } = useLocale();
   const { data, loading, error, crear, editar, borrar } = useGastosFijos();
   const [showModal, setShowModal] = useState(false);
   const [editing, setEditing] = useState(null);
@@ -208,7 +210,7 @@ export default function TabGastos() {
 
               <div className="fin-form-row">
                 <label>
-                  Importe (sin IVA) €
+                  Importe (sin IVA) {currencySymbol}
                   <input
                     type="number"
                     step="0.01"

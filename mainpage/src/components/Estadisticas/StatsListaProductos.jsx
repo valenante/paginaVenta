@@ -1,10 +1,12 @@
 // src/pages/Estadisticas/components/StatsListaProductos.jsx
 import React, { useState, useMemo, useEffect } from "react";
+import { useLocale } from "../../hooks/useLocale";
 import "./StatsListaProductos.css";
 
 const PER_PAGE = 15;
 
 const StatsListaProductos = ({ productosConStats, loading }) => {
+  const { currencySymbol } = useLocale();
   const [page, setPage] = useState(1);
 
   // Reset página al cambiar productos
@@ -47,11 +49,11 @@ const StatsListaProductos = ({ productosConStats, loading }) => {
                   <div className="statlist-stat">
                     <span className="statlist-label">Ingresos</span>
                     <strong className="statlist-value statlist-money">
-                      {(p.totalIngresos ?? 0).toFixed(2)} €
+                      {(p.totalIngresos ?? 0).toFixed(2)} {currencySymbol}
                     </strong>
                     {p.tieneDesglose && p.ingresosAdicionales > 0 && (
                       <span className="statlist-desglose">
-                        {(p.ingresosBase ?? 0).toFixed(2)} € base + {(p.ingresosAdicionales ?? 0).toFixed(2)} € adicionales
+                        {(p.ingresosBase ?? 0).toFixed(2)} {currencySymbol} base + {(p.ingresosAdicionales ?? 0).toFixed(2)} {currencySymbol} adicionales
                       </span>
                     )}
                   </div>

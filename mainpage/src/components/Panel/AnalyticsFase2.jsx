@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import api from "../../utils/api";
 import { InfoButton } from "./InfoModal";
 import "./AnalyticsFase2.css";
+import { useLocale } from "../../hooks/useLocale";
 
 const money = (n) => Number(n || 0).toLocaleString("es-ES", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 const pct = (n) => (n > 0 ? "+" : "") + Number(n || 0).toFixed(1) + "%";
@@ -12,6 +13,7 @@ const pct = (n) => (n > 0 ? "+" : "") + Number(n || 0).toFixed(1) + "%";
    1. COMPARATIVA PERIODO ANTERIOR
    ═══════════════════════════════════════ */
 export function ComparativaCard({ fecha }) {
+  const { currencySymbol } = useLocale();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -32,14 +34,14 @@ export function ComparativaCard({ fecha }) {
   const diff = (a, b, isMoney) => {
     const d = (a || 0) - (b || 0);
     if (d === 0) return "";
-    return isMoney ? `${d > 0 ? "+" : ""}${money(d)}€` : `${d > 0 ? "+" : ""}${d}`;
+    return isMoney ? `${d > 0 ? "+" : ""}${money(d)}${currencySymbol}` : `${d > 0 ? "+" : ""}${d}`;
   };
   const items = [
-    { label: "Ventas", value: `${money(actual.ventas)}€`, delta: deltas.ventas, abs: diff(actual.ventas, anterior?.ventas, true) },
+    { label: "Ventas", value: `${money(actual.ventas)}${currencySymbol}`, delta: deltas.ventas, abs: diff(actual.ventas, anterior?.ventas, true) },
     { label: "Mesas", value: actual.mesas, delta: deltas.mesas, abs: diff(actual.mesas, anterior?.mesas) },
     { label: "Comensales", value: actual.comensales, delta: deltas.comensales, abs: diff(actual.comensales, anterior?.comensales) },
-    { label: "Ticket/mesa", value: `${money(actual.ticketMedioMesa)}€`, delta: deltas.ticketMedioMesa, abs: diff(actual.ticketMedioMesa, anterior?.ticketMedioMesa, true) },
-    { label: "Ticket/com.", value: `${money(actual.ticketMedioComensal)}€`, delta: deltas.ticketMedioComensal, abs: diff(actual.ticketMedioComensal, anterior?.ticketMedioComensal, true) },
+    { label: "Ticket/mesa", value: `${money(actual.ticketMedioMesa)}${currencySymbol}`, delta: deltas.ticketMedioMesa, abs: diff(actual.ticketMedioMesa, anterior?.ticketMedioMesa, true) },
+    { label: "Ticket/com.", value: `${money(actual.ticketMedioComensal)}${currencySymbol}`, delta: deltas.ticketMedioComensal, abs: diff(actual.ticketMedioComensal, anterior?.ticketMedioComensal, true) },
     { label: "Pedidos", value: actual.pedidos, delta: deltas.pedidos, abs: diff(actual.pedidos, anterior?.pedidos) },
   ];
 
@@ -76,6 +78,7 @@ export function ComparativaCard({ fecha }) {
    2. RATIO BEBIDA / COMIDA
    ═══════════════════════════════════════ */
 export function RatioTipoCard({ fecha }) {
+  const { currencySymbol } = useLocale();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -101,7 +104,7 @@ export function RatioTipoCard({ fecha }) {
       <div className="af2-card__head">
         <h3>Ratio comida / bebida</h3>
         <div className="af2-card__actions">
-          <span className="af2-card__sub">Total: {money(total)}€</span>
+          <span className="af2-card__sub">Total: {money(total)}{currencySymbol}</span>
           <InfoButton title="Ratio comida / bebida">
             <h4>Qué muestra</h4>
             <p>El porcentaje de facturación que viene de comida vs bebida.</p>
@@ -122,8 +125,8 @@ export function RatioTipoCard({ fecha }) {
         <div className="af2-ratio-bar__bebida" style={{ width: `${bebida.pct}%` }}><span>Bebida {bebida.pct}%</span></div>
       </div>
       <div className="af2-ratio-details">
-        <div><span className="af2-ratio-dot af2-ratio-dot--comida" />Comida: {money(comida.total)}€ · {comida.cantidad} uds</div>
-        <div><span className="af2-ratio-dot af2-ratio-dot--bebida" />Bebida: {money(bebida.total)}€ · {bebida.cantidad} uds</div>
+        <div><span className="af2-ratio-dot af2-ratio-dot--comida" />Comida: {money(comida.total)}{currencySymbol} · {comida.cantidad} uds</div>
+        <div><span className="af2-ratio-dot af2-ratio-dot--bebida" />Bebida: {money(bebida.total)}{currencySymbol} · {bebida.cantidad} uds</div>
       </div>
       <div className={`af2-insight ${insightClass}`}>{insightLabel}</div>
     </div>
@@ -134,6 +137,7 @@ export function RatioTipoCard({ fecha }) {
    3. VENTAS POR HORA DEL DÍA
    ═══════════════════════════════════════ */
 export function VentasPorHoraCard({ fecha }) {
+  const { currencySymbol } = useLocale();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -185,7 +189,7 @@ export function VentasPorHoraCard({ fecha }) {
               <div className="af2-hour-bar-wrap">
                 <div className={`af2-hour-bar ${isHot ? "af2-hour-bar--hot" : ""}`} style={{ width: `${pctBar}%` }} />
               </div>
-              <span className="af2-hour-value">{money(h.ventas)}€</span>
+              <span className="af2-hour-value">{money(h.ventas)}{currencySymbol}</span>
               <span className="af2-hour-mesas">{h.items}u</span>
             </div>
           );

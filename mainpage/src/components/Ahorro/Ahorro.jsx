@@ -1,30 +1,32 @@
 import React from "react";
+import { useLocale } from "../../hooks/useLocale";
 import "./Ahorro.css";
 
-const dolores = [
-  {
-    titulo: "Compras y facturas a ciegas",
-    antes: "Cada factura hay que cargarla a mano. Cada pedido a proveedor requiere llamar, revisar y anotar. 5-8 horas/semana perdidas en tareas administrativas.",
-    conAlef: "Las facturas se procesan solas desde email o cámara. Los pedidos a proveedor se generan automáticamente cuando algo va a faltar. La documentación se envía sola a tu gestoría.",
-  },
-  {
-    titulo: "No saber cuánto ganas realmente",
-    antes: "Facturas 15.000€/mes pero no sabes qué platos te dan dinero. Un proveedor sube un 10% y no te enteras hasta que cierras caja.",
-    conAlef: "Margen real de cada plato en tiempo real. Si un proveedor sube precio, el sistema te avisa y te dice qué platos se ven afectados. Sabes qué vender más y qué sacar.",
-  },
-  {
-    titulo: "Cocina y sala desconectadas",
-    antes: "Comandas que se pierden, cocina que no sabe qué viene, tiempos que se alargan. Cada error de coordinación le cuesta entre 5 y 15€ al restaurante.",
-    conAlef: "Comandas en tiempo real por estación. Cocina predice qué pedidos vienen antes de que lleguen. Tiempos controlados. Menos errores, mejor servicio.",
-  },
-  {
-    titulo: "Horas en tareas que se hacen solas",
-    antes: "Cerrar caja, cuadrar turnos, revisar stock, publicar en redes, responder reseñas. Todo manual, todo disperso. 2-3 horas diarias que no dedicas a tu negocio.",
-    conAlef: "Cierre de caja automático. Stock que se controla solo. Instagram que se publica solo. Reseñas respondidas automáticamente. Tu tiempo vuelve a ser tuyo.",
-  },
-];
-
 export default function Ahorro() {
+  const { currencySymbol } = useLocale();
+
+  const dolores = [
+    {
+      titulo: "Compras y facturas a ciegas",
+      antes: "Cada factura hay que cargarla a mano. Cada pedido a proveedor requiere llamar, revisar y anotar. 5-8 horas/semana perdidas en tareas administrativas.",
+      conAlef: "Las facturas se procesan solas desde email o cámara. Los pedidos a proveedor se generan automáticamente cuando algo va a faltar. La documentación se envía sola a tu gestoría.",
+    },
+    {
+      titulo: "No saber cuánto ganas realmente",
+      antes: `Facturas 15.000${currencySymbol}/mes pero no sabes qué platos te dan dinero. Un proveedor sube un 10% y no te enteras hasta que cierras caja.`,
+      conAlef: "Margen real de cada plato en tiempo real. Si un proveedor sube precio, el sistema te avisa y te dice qué platos se ven afectados. Sabes qué vender más y qué sacar.",
+    },
+    {
+      titulo: "Cocina y sala desconectadas",
+      antes: `Comandas que se pierden, cocina que no sabe qué viene, tiempos que se alargan. Cada error de coordinación le cuesta entre 5 y 15${currencySymbol} al restaurante.`,
+      conAlef: "Comandas en tiempo real por estación. Cocina predice qué pedidos vienen antes de que lleguen. Tiempos controlados. Menos errores, mejor servicio.",
+    },
+    {
+      titulo: "Horas en tareas que se hacen solas",
+      antes: "Cerrar caja, cuadrar turnos, revisar stock, publicar en redes, responder reseñas. Todo manual, todo disperso. 2-3 horas diarias que no dedicas a tu negocio.",
+      conAlef: "Cierre de caja automático. Stock que se controla solo. Instagram que se publica solo. Reseñas respondidas automáticamente. Tu tiempo vuelve a ser tuyo.",
+    },
+  ];
   return (
     <section className="Ahorro" id="ahorro">
       <div className="Ahorro-inner">

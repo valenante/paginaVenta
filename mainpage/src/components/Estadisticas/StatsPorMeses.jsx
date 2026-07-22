@@ -1,5 +1,6 @@
 // src/components/Estadisticas/StatsPorMeses.jsx
 import React from "react";
+import { useLocale } from "../../hooks/useLocale";
 import "./StatsPorMeses.css";
 
 const money = (n) => (Number(n || 0)).toFixed(2);
@@ -17,6 +18,7 @@ const formatMesLabel = (mesKey) => {
 };
 
 const StatsPorMeses = ({ data }) => {
+  const { currencySymbol } = useLocale();
   if (!data || data.length === 0) {
     return (
       <section className="statsmeses-container">
@@ -71,11 +73,11 @@ const StatsPorMeses = ({ data }) => {
                   </td>
 
                   <td data-label="Ingresos" className="stats-money">
-                    {money(row.totalIngresos)} €
+                    {money(row.totalIngresos)} {currencySymbol}
                   </td>
 
                   <td data-label="Ticket medio" className="stats-money">
-                    {money(ticketMedio)} €
+                    {money(ticketMedio)} {currencySymbol}
                   </td>
                 </tr>
               );

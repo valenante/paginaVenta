@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { useShopCategorias } from "../../context/ShopCategoriasContext";
+import { useLocale } from "../../hooks/useLocale";
 import "../Categories/CrearProducto.css";
 
 export default function CrearProductoShop({ defaultCategory, onClose, onCreated }) {
   const { createProduct } = useShopCategorias();
+  const { currencySymbol } = useLocale();
 
   const [formData, setFormData] = useState({
     nombre: "",
@@ -165,7 +167,7 @@ export default function CrearProductoShop({ defaultCategory, onClose, onCreated 
 
             <div className="form-group--crear">
               <label className="label--crear">
-                Precio de venta (€)
+                Precio de venta ({currencySymbol})
                 <input
                   type="number"
                   step="0.01"

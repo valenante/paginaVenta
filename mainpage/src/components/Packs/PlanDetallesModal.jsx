@@ -1,6 +1,7 @@
 // src/components/Packs/PlanDetallesModal.jsx
 import { useMemo, useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
+import { useLocale } from "../../hooks/useLocale";
 import "./PlanDetallesModal.css";
 
 const LABEL_CATEGORIAS = {
@@ -26,6 +27,7 @@ function getEtiquetaCategoria(raw) {
 }
 
 export default function PlanDetallesModal({ plan, onClose }) {
+  const { currencySymbol } = useLocale();
   const [openGroups, setOpenGroups] = useState({});
   const groupRefs = useRef({});
 
@@ -115,11 +117,11 @@ export default function PlanDetallesModal({ plan, onClose }) {
         {/* PRECIO */}
         <p className="modal-precio">
           <span className="modal-precio-cantidad">
-            {plan.precioMensual} €
+            {plan.precioMensual} {currencySymbol}
           </span>
           <span className="modal-precio-unidad">/mes</span>
           {plan.precioAnual > 0 && (
-            <span className="precio-anual"> — {plan.precioAnual} €/año</span>
+            <span className="precio-anual"> — {plan.precioAnual} {currencySymbol}/año</span>
           )}
         </p>
 

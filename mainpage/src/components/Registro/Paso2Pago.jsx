@@ -1,12 +1,14 @@
 import React from "react";
 import api from "../../utils/api";
 import "./Paso2Pago.css";
+import { useLocale } from "../../hooks/useLocale";
 
 export default function Paso2Pago({
   tenant, admin, plan, precio, periodo, setPeriodo,
   precheckoutId, setPrecheckoutId,
   loading, setLoading, error, setError, isShop,
 }) {
+  const { currencySymbol } = useLocale();
 
   const handlePagar = async () => {
     try {
@@ -76,7 +78,7 @@ export default function Paso2Pago({
             onClick={() => setPeriodo("mensual")}
           >
             <strong>Mensual</strong>
-            <span className="p2-periodo-precio">{precio.mensual} €/mes</span>
+            <span className="p2-periodo-precio">{precio.mensual} {currencySymbol}/mes</span>
             <small>Se factura cada mes</small>
           </button>
 
@@ -86,7 +88,7 @@ export default function Paso2Pago({
             onClick={() => setPeriodo("anual")}
           >
             <strong>Anual</strong>
-            <span className="p2-periodo-precio">{precio.anual} €/año</span>
+            <span className="p2-periodo-precio">{precio.anual} {currencySymbol}/año</span>
             <small>Ahorras 1 mes</small>
             <span className="p2-periodo-badge">Recomendado</span>
           </button>
@@ -97,7 +99,7 @@ export default function Paso2Pago({
       <div className="p2-total">
         <div className="p2-total-row">
           <span>Total hoy</span>
-          <strong className="p2-total-amount">{precio.total} €</strong>
+          <strong className="p2-total-amount">{precio.total} {currencySymbol}</strong>
         </div>
         <p className="p2-total-note">
           Sin permanencia. Cancela o cambia de plan cuando quieras.
@@ -111,7 +113,7 @@ export default function Paso2Pago({
         onClick={handlePagar}
         disabled={loading}
       >
-        {loading ? "Redirigiendo a Stripe..." : `Pagar ${precio.total} € y empezar`}
+        {loading ? "Redirigiendo a Stripe..." : `Pagar ${precio.total} ${currencySymbol} y empezar`}
       </button>
 
       <p className="p2-legal">

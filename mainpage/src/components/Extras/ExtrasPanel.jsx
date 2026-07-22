@@ -13,6 +13,7 @@ import ModalConfirmacion from "../Modal/ModalConfirmacion";
 import AlertaMensaje from "../AlertaMensaje/AlertaMensaje";
 import ExtraFormModal from "./ExtraFormModal";
 import { ProductosContext } from "../../context/ProductosContext";
+import { useLocale } from "../../hooks/useLocale";
 
 const byCreatedDesc = (a, b) => {
   const da = new Date(a?.createdAt || 0).getTime();
@@ -21,6 +22,7 @@ const byCreatedDesc = (a, b) => {
 };
 
 export default function ExtrasPanel({ onBack, inline, onExtrasCountChange, nuevoExtraSignal = 0 }) {
+  const { currencySymbol } = useLocale();
   const [extras, setExtras] = useState([]);
   const [loading, setLoading] = useState(false);
   const [savingDelete, setSavingDelete] = useState(false);
@@ -219,7 +221,7 @@ export default function ExtrasPanel({ onBack, inline, onExtrasCountChange, nuevo
                 )}
               </div>
               <div className="catpanel-product-meta">
-                <span className="catpanel-product-price">{Number(extra.precio || 0).toFixed(2)} €</span>
+                <span className="catpanel-product-price">{Number(extra.precio || 0).toFixed(2)} {currencySymbol}</span>
                 <span className="catpanel-product-estado catpanel-product-estado--on">Activo</span>
               </div>
               <div className="catpanel-product-actions">

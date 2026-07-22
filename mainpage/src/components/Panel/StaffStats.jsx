@@ -3,11 +3,13 @@ import { useAuth } from "../../context/AuthContext";
 import { useConfig } from "../../context/ConfigContext";
 import api from "../../utils/api";
 import * as logger from "../../utils/logger";
+import { useLocale } from "../../hooks/useLocale";
 import "./StaffStats.css";
 
 export default function StaffStats() {
   const { user } = useAuth();
   const { config } = useConfig();
+  const { currencySymbol } = useLocale();
   const hoyRef = useRef(new Date().toISOString().slice(0, 10));
 
   const [fecha, setFecha] = useState(hoyRef.current);
@@ -97,7 +99,7 @@ export default function StaffStats() {
       : Math.max(...productos.map((p) => p.totalFacturado || 0), 1);
   }, [productos, ordenProductos]);
 
-  const formatCurrency = (v) => `${Number(v || 0).toFixed(2)} €`;
+  const formatCurrency = (v) => `${Number(v || 0).toFixed(2)} ${currencySymbol}`;
 
   if (config?.staff?.mostrarEstadisticas === false) {
     return null;
@@ -154,7 +156,7 @@ export default function StaffStats() {
                   ? "—"
                   : resumenActual.totalPedidos > 0
                     ? formatCurrency(resumenActual.totalImporte / resumenActual.totalPedidos)
-                    : "0.00 €"}
+                    : `0.00 ${currencySymbol}`}
               </span>
               <span className="stat-sub">Por pedido</span>
             </div>

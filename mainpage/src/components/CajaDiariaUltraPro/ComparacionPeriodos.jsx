@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { obtenerCajasPorRango } from "./ObtenerCajasPorRango";
 import { toISODateKey, formatFechaUI } from "./cajaHelpers";
+import { useLocale } from "../../hooks/useLocale";
 import {
   AreaChart,
   Area,
@@ -79,6 +80,7 @@ function sugerirPeriodoB(inicioA, finA) {
    ========================================================================= */
 
 export default function ComparacionPeriodos({ periodoA, tipoNegocio }) {
+  const { currencySymbol } = useLocale();
   const [bInicio, setBInicio] = useState("");
   const [bFin, setBFin] = useState("");
   const [datosB, setDatosB] = useState([]);
@@ -148,14 +150,14 @@ export default function ComparacionPeriodos({ periodoA, tipoNegocio }) {
     const d = a - b;
     if (d === 0) return "";
     const sign = d > 0 ? "+" : "";
-    return isMoney ? `${sign}${d.toFixed(2)}€` : `${sign}${Math.round(d)}`;
+    return isMoney ? `${sign}${d.toFixed(2)}${currencySymbol}` : `${sign}${Math.round(d)}`;
   };
 
   const kpis = [
     {
       label: "Ingresos",
-      a: `${kpiA.ingresos.toFixed(2)} €`,
-      b: `${kpiB.ingresos.toFixed(2)} €`,
+      a: `${kpiA.ingresos.toFixed(2)} ${currencySymbol}`,
+      b: `${kpiB.ingresos.toFixed(2)} ${currencySymbol}`,
       delta: pctDelta(kpiA.ingresos, kpiB.ingresos),
       abs: absDiff(kpiA.ingresos, kpiB.ingresos, true),
     },
@@ -168,15 +170,15 @@ export default function ComparacionPeriodos({ periodoA, tipoNegocio }) {
     },
     {
       label: "Ticket medio",
-      a: `${kpiA.ticketMedio.toFixed(2)} €`,
-      b: `${kpiB.ticketMedio.toFixed(2)} €`,
+      a: `${kpiA.ticketMedio.toFixed(2)} ${currencySymbol}`,
+      b: `${kpiB.ticketMedio.toFixed(2)} ${currencySymbol}`,
       delta: pctDelta(kpiA.ticketMedio, kpiB.ticketMedio),
       abs: absDiff(kpiA.ticketMedio, kpiB.ticketMedio, true),
     },
     {
       label: "Media diaria",
-      a: `${kpiA.mediaDiaria.toFixed(2)} €`,
-      b: `${kpiB.mediaDiaria.toFixed(2)} €`,
+      a: `${kpiA.mediaDiaria.toFixed(2)} ${currencySymbol}`,
+      b: `${kpiB.mediaDiaria.toFixed(2)} ${currencySymbol}`,
       delta: pctDelta(kpiA.mediaDiaria, kpiB.mediaDiaria),
       abs: absDiff(kpiA.mediaDiaria, kpiB.mediaDiaria, true),
     },
@@ -269,7 +271,7 @@ export default function ComparacionPeriodos({ periodoA, tipoNegocio }) {
                   tick={{ fill: "#94a3b8", fontSize: 11 }}
                   tickLine={false}
                   axisLine={false}
-                  tickFormatter={(v) => `${Number(v).toFixed(0)} €`}
+                  tickFormatter={(v) => `${Number(v).toFixed(0)} ${currencySymbol}`}
                   width={60}
                 />
 
@@ -282,7 +284,7 @@ export default function ComparacionPeriodos({ periodoA, tipoNegocio }) {
                     padding: "10px 14px",
                   }}
                   formatter={(value, name) => [
-                    value != null ? `${Number(value).toFixed(2)} €` : "—",
+                    value != null ? `${Number(value).toFixed(2)} ${currencySymbol}` : "—",
                     name,
                   ]}
                 />

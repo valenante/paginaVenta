@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useLocale } from "../../hooks/useLocale";
 import TopBar from "../../components/TopBar/TopBar";
 import Footer from "../../components/Footer/Footer";
 import SEOHead from "../../components/SEO/SEOHead";
@@ -47,6 +48,7 @@ const faqs = [
 ];
 
 export default function FacturacionAutomatica() {
+  const { currencySymbol } = useLocale();
   const [faqOpen, setFaqOpen] = useState(null);
 
   return (
@@ -55,7 +57,7 @@ export default function FacturacionAutomatica() {
       {/* ── SEO ── */}
       <SEOHead
         title="Facturación automática para restaurantes — VeriFactu incluido"
-        description="Tus proveedores mandan la factura por email y ALEF la procesa sola: extrae productos, actualiza stock, recalcula costes y envía todo a tu gestoría. VeriFactu incluido. Desde 129€/mes."
+        description={`Tus proveedores mandan la factura por email y ALEF la procesa sola: extrae productos, actualiza stock, recalcula costes y envía todo a tu gestoría. VeriFactu incluido. Desde 129${currencySymbol}/mes.`}
         path="/facturacion-automatica-restaurante"
         type="article"
       />

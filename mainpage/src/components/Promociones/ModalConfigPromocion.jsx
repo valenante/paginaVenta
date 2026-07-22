@@ -2,6 +2,7 @@ import React, { useMemo, useState } from "react";
 import api from "../../utils/api";
 import AlertaMensaje from "../AlertaMensaje/AlertaMensaje";
 import ModalConfirmacion from "../Modal/ModalConfirmacion"; // ajusta ruta si hace falta
+import { useLocale } from "../../hooks/useLocale";
 import "./ModalConfigPromocion.css";
 
 // Helpers
@@ -21,6 +22,7 @@ const parseNumberOrNull = (v) => {
 };
 
 export default function ModalConfigPromocion({ producto, onClose, onSaved }) {
+  const { currencySymbol } = useLocale();
   const [form, setForm] = useState(() => ({
     tipo: producto.promocion?.tipo || "mensaje",
     precioPromocional: toNumberOrEmpty(producto.promocion?.precioPromocional),
@@ -183,18 +185,18 @@ export default function ModalConfigPromocion({ producto, onClose, onSaved }) {
     if (form.tipo === "precio") {
       const p = parseNumberOrNull(form.precioPromocional);
       if (p == null) return null;
-      return `Precio final: ${p.toFixed(2)}€ (antes ${precioBase.toFixed(2)}€)`;
+      return `Precio final: ${p.toFixed(2)}${currencySymbol} (antes ${precioBase.toFixed(2)}${currencySymbol})`;
     }
 
     if (form.tipo === "porcentaje") {
       const d = parseNumberOrNull(form.descuentoPorcentaje);
       if (d == null) return null;
       const final = precioBase * (1 - d / 100);
-      return `Precio final aprox: ${final.toFixed(2)}€ (${d}% desc. sobre ${precioBase.toFixed(2)}€)`;
+      return `Precio final aprox: ${final.toFixed(2)}${currencySymbol} (${d}% desc. sobre ${precioBase.toFixed(2)}${currencySymbol})`;
     }
 
     return null;
-  }, [form.tipo, form.precioPromocional, form.descuentoPorcentaje, precioBase]);
+  }, [form.tipo, form.precioPromocional, form.descuentoPorcentaje, precioBase, currencySymbol]);
 
   const promoActiva = !!producto?.promocion?.activa;
 

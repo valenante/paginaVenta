@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams, Navigate } from "react-router-dom";
 import { useClienteAuth } from "../../context/ClienteAuthContext";
+import { useLocale } from "../../hooks/useLocale";
 import {
   getDetalleRestauranteCliente,
   getResumenRestauranteCliente,
@@ -16,13 +17,14 @@ import {
 } from "./ExpedienteRestaurante";
 import "./cliente.css";
 
-const fmtMoney = (n) => `${Number(n || 0).toFixed(2).replace(".", ",")} €`;
+const fmtMoney = (n, cs = "€") => `${Number(n || 0).toFixed(2).replace(".", ",")} ${cs}`;
 const DIA_LABEL = ["D", "L", "M", "X", "J", "V", "S"];
 const VISITAS_PAGE_SIZE = 10;
 
 export default function DetalleRestauranteCliente() {
   const { slug } = useParams();
   const { cliente, loading: loadingAuth } = useClienteAuth();
+  const { currencySymbol } = useLocale();
   const [data, setData] = useState(null);
   const [resumen, setResumen] = useState(null);
   const [visitas, setVisitas] = useState({ items: [], total: 0 });
@@ -126,7 +128,7 @@ export default function DetalleRestauranteCliente() {
           <div className="cli-hero__saldo-num">{saldo.toLocaleString("es")}</div>
           <div className="cli-hero__saldo-label">tus puntos aquí</div>
           <div className="cli-hero__saldo-sub">
-            {loyalty.puntosPorEuro} pts por €
+            {loyalty.puntosPorEuro} pts por {currencySymbol}
             {loyalty.minimoParaCanjear > 0 && ` · Mín. canjeo: ${loyalty.minimoParaCanjear}`}
           </div>
         </div>
@@ -235,8 +237,8 @@ export default function DetalleRestauranteCliente() {
                     {r.tipo === "descuento_pct"
                       ? `${r.valor}% de descuento`
                       : r.tipo === "producto_gratis"
-                      ? `Producto gratis (≈ ${fmtMoney(r.valor)})`
-                      : `${fmtMoney(r.valor)} de descuento`}
+                      ? `Producto gratis (≈ ${fmtMoney(r.valor, currencySymbol)})`
+                      : `${fmtMoney(r.valor, currencySymbol)} de descuento`}
                   </div>
                 </div>
                 <div className="cliente-recompensa__side">

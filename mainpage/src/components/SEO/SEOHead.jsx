@@ -1,11 +1,10 @@
 import { Helmet } from "react-helmet-async";
+import { useLocale } from "../../hooks/useLocale";
 
 const DEFAULTS = {
   siteName: "ALEF",
   siteUrl: "https://softalef.com",
   defaultTitle: "ALEF | Software de gestión para restaurantes — TPV, stock, facturación y VeriFactu",
-  defaultDescription:
-    "Software de hostelería con TPV, carta QR inteligente, stock predictivo, facturación automática y automatización con IA. VeriFactu incluido. Desde 129€/mes sin permanencia.",
   defaultImage: "https://softalef.com/og.png",
   locale: "es_ES",
 };
@@ -19,10 +18,12 @@ export default function SEOHead({
   noindex = false,
   children,
 }) {
+  const { currencySymbol } = useLocale();
+  const defaultDescription = `Software de hostelería con TPV, carta QR inteligente, stock predictivo, facturación automática y automatización con IA. VeriFactu incluido. Desde 129${currencySymbol}/mes sin permanencia.`;
   const fullTitle = title
     ? `${title} | ALEF`
     : DEFAULTS.defaultTitle;
-  const desc = description || DEFAULTS.defaultDescription;
+  const desc = description || defaultDescription;
   const url = `${DEFAULTS.siteUrl}${path}`;
   const img = image || DEFAULTS.defaultImage;
 

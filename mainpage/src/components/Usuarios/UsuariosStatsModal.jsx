@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useMemo } from "react";
 import api from "../../utils/api";
 import * as logger from "../../utils/logger";
+import { useLocale } from "../../hooks/useLocale";
 import "./UsuariosStatsModal.css";
 
 const dayNames = {
@@ -16,12 +17,14 @@ const RANGO_PRESETS = [
   { value: "custom", label: "Personalizado" },
 ];
 
-const formatCurrency = (v) => `${Number(v || 0).toFixed(2)} €`;
+const formatCurrency = (v, sym = "€") => `${Number(v || 0).toFixed(2)} ${sym}`;
 const formatDateTime = (v) => (!v ? "-" : new Date(v).toLocaleString("es-ES", {
   day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit",
 }));
 
 const UsuarioStatsModal = ({ usuario, onClose }) => {
+  const { currencySymbol } = useLocale();
+  const fmt = (v) => formatCurrency(v, currencySymbol);
   const [stats, setStats] = useState(null);
   const [cargando, setCargando] = useState(false);
   const [error, setError] = useState("");
@@ -171,7 +174,7 @@ const UsuarioStatsModal = ({ usuario, onClose }) => {
                 <div className="statsUserModal-grid">
                   <div className="statsUserModal-card statsUserModal-card--accent">
                     <span className="label">Importe generado</span>
-                    <span className="value">{formatCurrency(resumen.totalImporte)}</span>
+                    <span className="value">{fmt(resumen.totalImporte)}</span>
                   </div>
                   <div className="statsUserModal-card">
                     <span className="label">Pedidos tomados</span>
@@ -179,7 +182,7 @@ const UsuarioStatsModal = ({ usuario, onClose }) => {
                   </div>
                   <div className="statsUserModal-card">
                     <span className="label">Ticket medio</span>
-                    <span className="value">{formatCurrency(ticketMedio)}</span>
+                    <span className="value">{fmt(ticketMedio)}</span>
                   </div>
                   <div className="statsUserModal-card">
                     <span className="label">Productos vendidos</span>
@@ -219,14 +222,14 @@ const UsuarioStatsModal = ({ usuario, onClose }) => {
                           <div className="statsUserModal-product-content">
                             <div className="statsUserModal-product-info">
                               <span className="name">{p.nombre}</span>
-                              <span className="meta">{p.cantidad} uds · {formatCurrency(p.totalFacturado)}</span>
+                              <span className="meta">{p.cantidad} uds · {fmt(p.totalFacturado)}</span>
                             </div>
                             <div className="statsUserModal-bar-wrap">
                               <div className="statsUserModal-bar" style={{ width: `${Math.max(pct, 3)}%` }} />
                             </div>
                           </div>
                           <span className="statsUserModal-badge">
-                            {ordenProductos === "cantidad" ? p.cantidad : formatCurrency(p.totalFacturado)}
+                            {ordenProductos === "cantidad" ? p.cantidad : fmt(p.totalFacturado)}
                           </span>
                         </li>
                       );

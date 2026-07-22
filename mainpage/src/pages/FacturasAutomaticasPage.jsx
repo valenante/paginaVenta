@@ -4,6 +4,7 @@
 import React, { useState } from "react";
 import ModalConfirmacion from "../components/Modal/ModalConfirmacion.jsx";
 import api from "../utils/api";
+import { useLocale } from "../hooks/useLocale";
 import {
   useInboundJobs,
   useInboundStats,
@@ -49,7 +50,7 @@ function StatusBadge({ estado }) {
 }
 
 // ── Job detail modal ───────────────────────────────────────
-function JobDetail({ job, onClose, onAction }) {
+function JobDetail({ job, onClose, onAction, currencySymbol = "€" }) {
   if (!job) return null;
   const datos = job.datosExtraidos || {};
   const emisor = datos.emisor || {};
@@ -80,8 +81,8 @@ function JobDetail({ job, onClose, onAction }) {
             <div className="finv-modal__grid2">
               <div><strong>Nº Factura:</strong> {datos.numeroFactura || "—"}</div>
               <div><strong>Fecha:</strong> {datos.fechaFactura ? new Date(datos.fechaFactura).toLocaleDateString("es") : "—"}</div>
-              <div><strong>Total:</strong> {(datos.total || 0).toFixed(2)}€</div>
-              <div><strong>IVA:</strong> {(datos.totalIva || 0).toFixed(2)}€</div>
+              <div><strong>Total:</strong> {(datos.total || 0).toFixed(2)}{currencySymbol}</div>
+              <div><strong>IVA:</strong> {(datos.totalIva || 0).toFixed(2)}{currencySymbol}</div>
             </div>
           </div>
 
@@ -101,13 +102,13 @@ function JobDetail({ job, onClose, onAction }) {
                 <div key={i} className={`finv-modal__table-row ${l.precioCambio ? "finv-modal__table-row--price-change" : ""}`}>
                   <span className="finv-modal__prod-name">{l.descripcion}</span>
                   <span>{l.cantidad} {l.unidad}</span>
-                  <span>{(l.precioUnitario || 0).toFixed(2)}€ <span style={{color:"#64748b",fontSize:"0.7rem"}}>{l.iva}%</span></span>
+                  <span>{(l.precioUnitario || 0).toFixed(2)}{currencySymbol} <span style={{color:"#64748b",fontSize:"0.7rem"}}>{l.iva}%</span></span>
                   <span>
                     {l.matchEstado === "auto" && <span className="finv-badge badge--ok">Auto</span>}
                     {l.matchEstado === "sugerido" && <span className="finv-badge badge--warn">Sugerido</span>}
                     {l.matchEstado === "nuevo" && <span className="finv-badge badge--info">Nuevo</span>}
                     {l.matchEstado === "pendiente" && <span className="finv-badge badge--muted">—</span>}
-                    {l.precioCambio && <span className="finv-price-change">{l.precioAnterior?.toFixed(2)}→{l.precioUnitario?.toFixed(2)}€</span>}
+                    {l.precioCambio && <span className="finv-price-change">{l.precioAnterior?.toFixed(2)}→{l.precioUnitario?.toFixed(2)}{currencySymbol}</span>}
                     {(l.sospecha || []).map((s) => (
                       <span
                         key={s}
@@ -180,6 +181,7 @@ function JobDetail({ job, onClose, onAction }) {
 
 // ── Main page ──────────────────────────────────────────────
 export default function FacturasAutomaticasPage() {
+  const { currencySymbol } = useLocale();
   const [tab, setTab] = useState("pending");
   const [page, setPage] = useState(1);
   const [selectedJob, setSelectedJob] = useState(null);
@@ -742,7 +744,7 @@ export default function FacturasAutomaticasPage() {
                   {job.datosExtraidos?.emisor?.nombre || job.emailFrom || "—"}
                 </span>
                 <span>{job.datosExtraidos?.numeroFactura || "—"}</span>
-                <span>{(job.datosExtraidos?.total || 0).toFixed(2)}€</span>
+                <span>{(job.datosExtraidos?.total || 0).toFixed(2)}{currencySymbol}</span>
                 <span><StatusBadge estado={job.estado} /></span>
               </button>
             ))}
@@ -771,6 +773,7 @@ export default function FacturasAutomaticasPage() {
           job={selectedJob}
           onClose={() => setSelectedJob(null)}
           onAction={handleAction}
+          currencySymbol={currencySymbol}
         />
       )}
 

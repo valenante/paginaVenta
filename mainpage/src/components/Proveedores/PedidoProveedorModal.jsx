@@ -7,6 +7,7 @@ import { useTenant } from "../../context/TenantContext";
 import Portal from "../ui/Portal";
 import ErrorToast from "../common/ErrorToast.jsx";
 import { normalizeApiError } from "../../utils/normalizeApiError.js";
+import { useLocale } from "../../hooks/useLocale";
 import "./PedidoProveedorModal.css";
 
 const DEFAULT = {
@@ -33,6 +34,7 @@ export default function PedidoProveedorModal({ onClose, onSaved, mode = "create"
   const { proveedorId } = useParams();
   const { tenant } = useTenant();
   const isEdit = mode === "edit";
+  const { currencySymbol } = useLocale();
 
   const [productos, setProductos] = useState([]);
   const [loadingProductos, setLoadingProductos] = useState(true);
@@ -341,9 +343,9 @@ export default function PedidoProveedorModal({ onClose, onSaved, mode = "create"
         prod?.nombre || "—",
         prod?.formato || "",
         String(Number(l.cantidad || 0)),
-        `${Number(c.unit || 0).toFixed(2)} €`,
+        `${Number(c.unit || 0).toFixed(2)} ${currencySymbol}`,
         `${c.iva}%`,
-        `${Number(c.total || 0).toFixed(2)} €`,
+        `${Number(c.total || 0).toFixed(2)} ${currencySymbol}`,
       ];
     });
 
@@ -380,7 +382,7 @@ export default function PedidoProveedorModal({ onClose, onSaved, mode = "create"
       doc.setTextColor(...(bold ? darkText : grayText));
       doc.text(label, pageW - margin - 50, yPos, { align: "right" });
       doc.setTextColor(...darkText);
-      doc.text(`${Number(value || 0).toFixed(2)} €`, pageW - margin, yPos, { align: "right" });
+      doc.text(`${Number(value || 0).toFixed(2)} ${currencySymbol}`, pageW - margin, yPos, { align: "right" });
     };
 
     drawTotal("Subtotal", totals.subtotal, finalY, false);
@@ -524,7 +526,7 @@ export default function PedidoProveedorModal({ onClose, onSaved, mode = "create"
                               <option value="">Selecciona…</option>
                               {productos.map((p) => (
                                 <option key={p._id} value={p._id}>
-                                  {p.nombre} · {Number(p.precioBase || 0).toFixed(2)}€ · {p.iva || 0}% · {p.unidad || "—"}
+                                  {p.nombre} · {Number(p.precioBase || 0).toFixed(2)}{currencySymbol} · {p.iva || 0}% · {p.unidad || "—"}
                                 </option>
                               ))}
                             </select>
@@ -555,11 +557,11 @@ export default function PedidoProveedorModal({ onClose, onSaved, mode = "create"
                           <div className="pedProvModal-lineTotals">
                             <div className="row">
                               <span className="k">Base</span>
-                              <span className="v">{Number(c.base || 0).toFixed(2)} €</span>
+                              <span className="v">{Number(c.base || 0).toFixed(2)} {currencySymbol}</span>
                             </div>
                             <div className="row">
                               <span className="k">Total</span>
-                              <span className="v strong">{Number(c.total || 0).toFixed(2)} €</span>
+                              <span className="v strong">{Number(c.total || 0).toFixed(2)} {currencySymbol}</span>
                             </div>
                           </div>
 
@@ -586,15 +588,15 @@ export default function PedidoProveedorModal({ onClose, onSaved, mode = "create"
               <div className="pedProvModal-totals">
                 <div className="trow">
                   <span>Subtotal</span>
-                  <span>{Number(totals.subtotal || 0).toFixed(2)} €</span>
+                  <span>{Number(totals.subtotal || 0).toFixed(2)} {currencySymbol}</span>
                 </div>
                 <div className="trow">
                   <span>IVA</span>
-                  <span>{Number(totals.totalIva || 0).toFixed(2)} €</span>
+                  <span>{Number(totals.totalIva || 0).toFixed(2)} {currencySymbol}</span>
                 </div>
                 <div className="trow total">
                   <span>Total</span>
-                  <span>{Number(totals.total || 0).toFixed(2)} €</span>
+                  <span>{Number(totals.total || 0).toFixed(2)} {currencySymbol}</span>
                 </div>
               </div>
             </section>

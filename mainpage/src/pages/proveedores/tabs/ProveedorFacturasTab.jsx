@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useOutletContext, useParams } from "react-router-dom";
 import api from "../../../utils/api";
+import { useLocale } from "../../../hooks/useLocale";
 import FacturaProveedorModal from "../../../components/Proveedores/FacturaProveedorModal.jsx";
 import { toImgSrc } from "../../../utils/media";
 import PagarFacturaProveedorModal from "../../../components/Proveedores/PagarFacturaProveedorModal.jsx";
@@ -21,6 +22,7 @@ const ESTADO_BADGE = {
 export default function ProveedorFacturasTab() {
   const { proveedorId } = useParams();
   const { headersTenant } = useOutletContext();
+  const { currencySymbol } = useLocale();
 
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -104,7 +106,7 @@ export default function ProveedorFacturasTab() {
                         : "—"}
                     </td>
                     <td className="factTab-total">
-                      {Number(f.total || 0).toFixed(2)} €
+                      {Number(f.total || 0).toFixed(2)} {currencySymbol}
                     </td>
                     <td>
                       <span className={`factTab-badge ${ESTADO_BADGE[f.estado] || ""}`}>
@@ -175,7 +177,7 @@ export default function ProveedorFacturasTab() {
                     <div className="full">
                       <span className="k">Total</span>
                       <span className="v total">
-                        {Number(f.total || 0).toFixed(2)} €
+                        {Number(f.total || 0).toFixed(2)} {currencySymbol}
                       </span>
                     </div>
                   </div>

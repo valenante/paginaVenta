@@ -7,8 +7,9 @@ import SugerenciasConfigPage from "./SugerenciasConfigPage";
 import AprendizajeIAPage from "./AprendizajeIAPage";
 import FacturasAutomaticasPage from "./FacturasAutomaticasPage";
 import InstagramPage from "./InstagramPage";
+import TakeawayConfigPage from "./TakeawayConfigPage";
 import {
-  FiClock, FiRotateCcw, FiZap, FiStar, FiThumbsUp, FiCpu, FiFileText, FiInstagram,
+  FiClock, FiRotateCcw, FiZap, FiStar, FiThumbsUp, FiCpu, FiFileText, FiInstagram, FiPackage,
 } from "react-icons/fi";
 import "./OtrosPage.css";
 
@@ -68,6 +69,13 @@ const MODULES = [
     label: "Instagram",
     description: "Publica automáticamente en Instagram con contenido generado por IA basado en tus datos.",
     component: InstagramPage,
+  },
+  {
+    key: "takeaway",
+    icon: FiPackage,
+    label: "Takeaway y Delivery",
+    description: "Configura pedidos para recoger y entrega a domicilio desde la carta QR y el TPV.",
+    component: TakeawayConfigPage,
   },
 ];
 

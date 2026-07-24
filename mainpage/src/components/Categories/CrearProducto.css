@@ -244,6 +244,29 @@
   margin-top: -0.15rem;
 }
 
+/* === CANALES DE VENTA === */
+.canales-checks--crear {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.canal-check--crear {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.88rem;
+  color: #e5e7eb;
+  cursor: pointer;
+}
+
+.canal-check--crear input[type="checkbox"] {
+  accent-color: #ff6700;
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
 /* === LISTA INGREDIENTES (si se usa) === */
 .ingredientes-lista--crear {
   display: flex;

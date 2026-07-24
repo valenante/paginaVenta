@@ -172,6 +172,7 @@ const EditProduct = ({
       estacion: safeStr(product?.estacion),
       activo: product?.activo !== false,
       estado: safeStr(product?.estado || "habilitado"),
+      canales: Array.isArray(product?.canales) ? [...product.canales] : ["sala", "takeaway", "delivery"],
 
       precios: normalizePrecios(product?.precios),
 
@@ -426,6 +427,7 @@ const EditProduct = ({
       categoria: formData.categoria,
       tipo: formData.tipo,
       estado: formData.estado,
+      canales: Array.isArray(formData.canales) ? formData.canales : ["sala", "takeaway", "delivery"],
       seccion: formData.seccion,
       estacion: formData.estacion,
       precios: preciosArr,
@@ -681,6 +683,35 @@ const EditProduct = ({
                     <br />
                     <em>Ejemplo:</em> si hoy no tienes "Croquetas", la ocultas para que no la pidan
                     por QR, pero el camarero aún podrá añadirla desde el TPV si decides venderlas en sala.
+                  </p>
+                </label>
+
+                {/* === DISPONIBLE PARA LLEVAR === */}
+                <label className="label--crear">
+                  Disponible para llevar:
+                  <div className="estado-toggle--crear">
+                    <input
+                      type="checkbox"
+                      checked={(formData.canales || ["sala", "takeaway", "delivery"]).includes("takeaway")}
+                      onChange={(e) => {
+                        setFormData((prev) => {
+                          const has = (prev.canales || ["sala", "takeaway", "delivery"]).includes("takeaway");
+                          if (e.target.checked && !has) {
+                            return { ...prev, canales: [...(prev.canales || ["sala"]), "takeaway", "delivery"] };
+                          }
+                          if (!e.target.checked && has) {
+                            return { ...prev, canales: (prev.canales || []).filter((c) => c !== "takeaway" && c !== "delivery") };
+                          }
+                          return prev;
+                        });
+                      }}
+                    />
+                    <span>
+                      {(formData.canales || ["sala", "takeaway", "delivery"]).includes("takeaway") ? "Sí" : "No"}
+                    </span>
+                  </div>
+                  <p className="help-text--crear">
+                    Si lo desactivas, este producto no aparecerá en la carta de pedidos para llevar ni en delivery.
                   </p>
                 </label>
 

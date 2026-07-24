@@ -78,10 +78,14 @@ export default function Login() {
       return;
     }
 
-    const isLocalhost = window.location.hostname === "localhost";
-    const targetUrl = redirectByRole({ user, tenantSlug, isLocalhost });
+    // Preview STAGING: tratar staging-panel.softalef.com como in-app (igual que localhost),
+    // para NO saltar a https://<tenant>-panel.softalef.com/pro (panel de PROD) y perder la
+    // cookie host-only de api-staging. En prod (otro host) el flujo queda idéntico.
+    const host = window.location.hostname;
+    const isInApp = host === "localhost" || host === "staging-panel.softalef.com";
+    const targetUrl = redirectByRole({ user, tenantSlug, isLocalhost: isInApp });
 
-    if (isLocalhost) {
+    if (isInApp) {
       navigate(`/${tenantSlug}/pro`, { replace: true });
       return;
     }

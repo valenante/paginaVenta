@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from "react";
 import api from "../utils/api";
+import {
+  FiPackage, FiAlertTriangle, FiBarChart2, FiDollarSign, FiCoffee,
+  FiSliders, FiClipboard, FiSend, FiLock, FiCalendar,
+} from "react-icons/fi";
 import "./AutomatizacionesPage.css";
 
 const MODULES = [
   {
     id: "pedidos",
-    icon: "📦",
+    icon: FiPackage,
     title: "Pedidos a proveedores",
     description: "Genera pedidos automáticos cuando el stock baja del mínimo.",
     configKey: "autoReorderMode",
@@ -18,7 +22,7 @@ const MODULES = [
   },
   {
     id: "margen",
-    icon: "⚠️",
+    icon: FiAlertTriangle,
     title: "Protección de márgenes",
     description: "Alerta cuando un producto cae por debajo del margen objetivo.",
     configKey: "marginAlertEnabled",
@@ -30,7 +34,7 @@ const MODULES = [
   },
   {
     id: "stock",
-    icon: "📊",
+    icon: FiBarChart2,
     title: "Predicción de stock",
     description: "Predice qué ingredientes se agotan en los próximos 7 días.",
     configKey: "stockForecastEnabled",
@@ -42,7 +46,7 @@ const MODULES = [
   },
   {
     id: "pnl",
-    icon: "💰",
+    icon: FiDollarSign,
     title: "P&L semanal",
     description: "Informe financiero automático cada lunes por email.",
     configKey: "weeklyPnlEnabled",
@@ -54,7 +58,7 @@ const MODULES = [
   },
   {
     id: "cocina",
-    icon: "🍳",
+    icon: FiCoffee,
     title: "Informe de cocina",
     description: "Análisis semanal de cuellos de botella y productos lentos.",
     configKey: "kitchenReportEnabled",
@@ -66,7 +70,7 @@ const MODULES = [
   },
   {
     id: "umbrales",
-    icon: "📦",
+    icon: FiSliders,
     title: "Umbrales de stock inteligentes",
     description: "Calcula mínimos, críticos y máximos según el consumo real de cada producto.",
     configKey: "autoThresholdsMode",
@@ -79,7 +83,7 @@ const MODULES = [
   },
   {
     id: "menu",
-    icon: "📋",
+    icon: FiClipboard,
     title: "Ingeniería de menú",
     description: "Analiza la carta y auto-destaca productos estrella.",
     configKey: "menuEngineeringEnabled",
@@ -91,7 +95,7 @@ const MODULES = [
   },
   {
     id: "marketing",
-    icon: "📣",
+    icon: FiSend,
     title: "Marketing automático",
     description: "Emails a clientes dormidos y VIPs en riesgo.",
     configKey: "autoCampaignEnabled",
@@ -103,7 +107,7 @@ const MODULES = [
   },
   {
     id: "cierreCaja",
-    icon: "🔒",
+    icon: FiLock,
     title: "Cierre automático de caja",
     description: "Cierra la caja a una hora fija si te olvidaste, siempre que no queden mesas abiertas.",
     configKey: "cierreCajaMode",
@@ -117,7 +121,7 @@ const MODULES = [
   },
   {
     id: "reservas",
-    icon: "📅",
+    icon: FiCalendar,
     title: "Reservas automáticas",
     description: "Auto-confirmación, recordatorios y no-show automático.",
     configKey: null, // Se configura en ReservasConfigPage
@@ -200,7 +204,7 @@ export default function AutomatizacionesPage() {
             return (
               <div key={mod.id} className="auto-card">
                 <div className="auto-card__header">
-                  <span className="auto-card__icon">{mod.icon}</span>
+                  <span className="auto-card__icon">{mod.icon && <mod.icon aria-hidden />}</span>
                   <div>
                     <h3 className="auto-card__title">{mod.title}</h3>
                     <p className="auto-card__desc">{mod.description}</p>

@@ -13,8 +13,6 @@ const fmtDate = (iso) => {
   return m ? `${m[3]}/${m[2]}/${m[1]}` : "—";
 };
 
-const safePct = (v) => (Number.isFinite(v) ? `${v > 0 ? "+" : ""}${v.toFixed(1)}%` : "—");
-
 export const generarPDFCaja = ({
   datos = [],
   fechaInicio,
@@ -110,11 +108,8 @@ export const generarPDFCaja = ({
   doc.text("Desglose diario", M, y);
   y += 5;
 
-  const rows = datos.map((d, i) => {
+  const rows = datos.map((d) => {
     const curr = Number(d.total || 0);
-    const prev = i > 0 ? Number(datos[i - 1]?.total || 0) : curr;
-    const pct = i === 0 ? 0 : (prev > 0 ? ((curr - prev) / prev) * 100 : 0);
-
     return [
       fmtDate(d.fecha),
       money(curr, currencySymbol),
@@ -126,7 +121,7 @@ export const generarPDFCaja = ({
 
   autoTable(doc, {
     startY: y,
-    head: [["Fecha", "Ingresos", "Tickets", "Ticket medio", "vs anterior"]],
+    head: [["Fecha", "Ingresos", "Tickets", "Ticket medio"]],
     body: rows,
     styles: {
       font: "helvetica",
@@ -150,17 +145,8 @@ export const generarPDFCaja = ({
       1: { halign: "right", fontStyle: "bold" },
       2: { halign: "center" },
       3: { halign: "right" },
-      4: { halign: "right" },
     },
     margin: { left: M, right: M },
-    didParseCell: (data) => {
-      // Color variación: verde positivo, rojo negativo
-      if (data.section === "body" && data.column.index === 4) {
-        const val = data.cell.raw;
-        if (val && val.startsWith("+")) data.cell.styles.textColor = [22, 163, 74];
-        else if (val && val.startsWith("-")) data.cell.styles.textColor = [220, 38, 38];
-      }
-    },
   });
 
   // ── FOOTER en todas las páginas ──

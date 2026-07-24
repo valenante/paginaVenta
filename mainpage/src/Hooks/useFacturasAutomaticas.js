@@ -114,3 +114,9 @@ export async function enviarGestorManual(body = {}) {
   const { data } = await api.post("/admin/facturas-automaticas/enviar-gestor", body);
   return data;
 }
+
+// Previsualización: devuelve el HTML del resumen que se enviaría al gestor SIN enviar email.
+export async function enviarGestorPreview(body = {}) {
+  const { data } = await api.post("/admin/facturas-automaticas/enviar-gestor/preview", body);
+  return data;
+}

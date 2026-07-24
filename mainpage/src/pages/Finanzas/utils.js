@@ -83,14 +83,14 @@ export function alertaLabel(alerta) {
 }
 
 export const CATEGORIAS_GASTO = [
-  { value: "alquiler",       label: "🏠 Alquiler" },
-  { value: "salarios",       label: "👥 Salarios" },
-  { value: "suministros",    label: "💡 Suministros (luz/agua/gas)" },
-  { value: "internet",       label: "🌐 Internet" },
-  { value: "seguros",        label: "🛡️ Seguros" },
-  { value: "gestoria",       label: "📋 Gestoría" },
-  { value: "software",       label: "💻 Software" },
-  { value: "mantenimiento",  label: "🔧 Mantenimiento" },
-  { value: "marketing",      label: "📣 Marketing" },
-  { value: "otros",          label: "📦 Otros" },
+  { value: "alquiler",       label: "Alquiler" },
+  { value: "salarios",       label: "Salarios" },
+  { value: "suministros",    label: "Suministros (luz/agua/gas)" },
+  { value: "internet",       label: "Internet" },
+  { value: "seguros",        label: "Seguros" },
+  { value: "gestoria",       label: "Gestoría" },
+  { value: "software",       label: "Software" },
+  { value: "mantenimiento",  label: "Mantenimiento" },
+  { value: "marketing",      label: "Marketing" },
+  { value: "otros",          label: "Otros" },
 ];

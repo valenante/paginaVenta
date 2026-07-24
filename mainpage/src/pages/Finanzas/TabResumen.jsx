@@ -6,12 +6,13 @@ import {
 import { useFinanzasDashboard, useFinanzasTendencia } from "../../hooks/useFinanzas";
 import { useLocale } from "../../hooks/useLocale";
 import { eur, pct } from "./utils";
+import { FiDollarSign, FiPackage, FiHome, FiTrendingUp, FiTrendingDown } from "react-icons/fi";
 
-function Card({ icon, label, value, sub, color }) {
+function Card({ icon: Icon, label, value, sub, color }) {
   return (
     <div className="fin-card" style={color ? { borderTopColor: color } : null}>
       <div className="fin-card-head">
-        <span className="fin-card-icon">{icon}</span>
+        <span className="fin-card-icon">{Icon && <Icon aria-hidden />}</span>
         <span className="fin-card-label">{label}</span>
       </div>
       <div className="fin-card-value">{value}</div>
@@ -45,14 +46,14 @@ export default function TabResumen({ periodo }) {
       {/* === Cards principales === */}
       <div className="fin-cards-grid">
         <Card
-          icon="💰"
+          icon={FiDollarSign}
           label="Ingresos (sin IVA)"
           value={eur(dash.ingresos.baseImponible)}
           sub={`${dash.ingresos.unidadesVendidas} unidades vendidas`}
           color="#3b82f6"
         />
         <Card
-          icon="📦"
+          icon={FiPackage}
           label="Coste ventas"
           value={eur(dash.costeVentas)}
           sub={
@@ -60,17 +61,17 @@ export default function TabResumen({ periodo }) {
               ? `${pct((dash.costeVentas / dash.ingresos.baseImponible) * 100)} sobre ingresos`
               : "—"
           }
-          color="#a855f7"
+          color="#60b5ff"
         />
         <Card
-          icon="🏠"
+          icon={FiHome}
           label="Gastos totales"
           value={eur(dash.gastos.total)}
           sub={`Proveedores ${eur(dash.gastos.proveedores)} · Fijos ${eur(dash.gastos.fijos)}`}
           color="#f97316"
         />
         <Card
-          icon={dash.beneficioNeto >= 0 ? "📈" : "📉"}
+          icon={dash.beneficioNeto >= 0 ? FiTrendingUp : FiTrendingDown}
           label="Beneficio neto"
           value={eur(dash.beneficioNeto)}
           sub={`Margen ${pct(dash.margenPct)}`}
@@ -80,7 +81,6 @@ export default function TabResumen({ periodo }) {
 
       {/* === Card cortesías === */}
       <div className="fin-cortesias-card">
-        <div className="fin-cortesias-icon">🎁</div>
         <div className="fin-cortesias-body">
           <div className="fin-cortesias-title">Cortesías del periodo</div>
           <div className="fin-cortesias-grid">
@@ -157,7 +157,7 @@ export default function TabResumen({ periodo }) {
             </span>
           </div>
           {(dash.facturasPendientes?.proximas || []).length === 0 ? (
-            <div className="fin-bloque-empty">Todo pagado. 🎉</div>
+            <div className="fin-bloque-empty">Todo pagado.</div>
           ) : (
             <ul className="fin-bloque-lista">
               {dash.facturasPendientes.proximas.map((f) => (

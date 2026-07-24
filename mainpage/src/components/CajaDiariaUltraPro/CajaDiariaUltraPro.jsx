@@ -6,6 +6,7 @@ import UpgradeBanner from "../UpgradeBanner/UpgradeBanner";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { useFeaturesPlan } from "../../context/FeaturesPlanContext";
 import { generarPDFCaja } from "./pdfs/pdfCajaUltraPro";
+import { generarHojaCaja } from "./pdfs/hojaCajaUltraPro";
 import { useTenant } from "../../context/TenantContext";
 import { useLocale } from "../../hooks/useLocale";
 import HeatmapSemana from "./HeatMapSemana";
@@ -43,6 +44,7 @@ export default function CajaDiariaUltraPro() {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [generandoPDF, setGenerandoPDF] = useState(false);
+  const [generandoHoja, setGenerandoHoja] = useState(false);
   const [diaSeleccionado, setDiaSeleccionado] = useState(null);
   const [comparando, setComparando] = useState(false);
 
@@ -236,6 +238,19 @@ export default function CajaDiariaUltraPro() {
     setGenerandoPDF(false);
   };
 
+  // Descarga el mismo "Desglose diario" en hoja de cálculo (.xlsx nativo).
+  const handleHoja = async () => {
+    try {
+      setGenerandoHoja(true);
+      setError(null);
+      await generarHojaCaja({ datos: datosDiarios, fechaInicio, fechaFin });
+    } catch {
+      setError("No se pudo generar la hoja de cálculo.");
+    } finally {
+      setGenerandoHoja(false);
+    }
+  };
+
   /* =========================================================================
       Render
      ========================================================================= */
@@ -286,6 +301,9 @@ export default function CajaDiariaUltraPro() {
               </button>
               <button className="pdf-btn" onClick={handlePDF} disabled={generandoPDF || loading}>
                 {generandoPDF ? "Generando..." : "Descargar PDF"}
+              </button>
+              <button className="pdf-btn" onClick={handleHoja} disabled={generandoHoja || loading}>
+                {generandoHoja ? "Generando..." : "Descargar Excel"}
               </button>
             </>
           )}

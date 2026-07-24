@@ -18,11 +18,13 @@ import {
   syncGmailNow,
   updateFacturasConfig,
   enviarGestorManual,
+  enviarGestorPreview,
 } from "../Hooks/useFacturasAutomaticas";
 import {
   useResumenCajaGestor,
   updateResumenCajaGestor,
   enviarResumenCajaAhora,
+  previewResumenCaja,
 } from "../Hooks/useResumenCajaGestor";
 import "./FacturasAutomaticasPage.css";
 
@@ -190,8 +192,11 @@ export default function FacturasAutomaticasPage() {
   const [syncing, setSyncing] = useState(false);
   const [enviandoGestor, setEnviandoGestor] = useState(false);
   const [gestorExpanded, setGestorExpanded] = useState(false);
+  const [previewGestorLoading, setPreviewGestorLoading] = useState(false);
+  const [previewGestorData, setPreviewGestorData] = useState(null);
   const [enviandoResumen, setEnviandoResumen] = useState(false);
   const [resumenExpanded, setResumenExpanded] = useState(false);
+  const [previewResumenLoading, setPreviewResumenLoading] = useState(false);
 
   const estadoFilter = tab === "pending" ? "pending_review" : tab === "completed" ? "" : "";
   const { items, total, pages, loading, refetch } = useInboundJobs({ estado: estadoFilter, page });
@@ -232,6 +237,19 @@ export default function FacturasAutomaticasPage() {
       facturasConfig.refetch();
       setMsg({ t: "ok", m: gc.envioGestorActivo ? "Envío al gestor desactivado" : "Envío al gestor activado" });
     } catch { setMsg({ t: "error", m: "Error al actualizar config" }); }
+  };
+
+  // Previsualiza el resumen HTML que se enviaría al gestor (no envía email).
+  const handlePreviewGestor = async () => {
+    setPreviewGestorLoading(true);
+    try {
+      const data = await enviarGestorPreview();
+      setPreviewGestorData(data);
+    } catch (err) {
+      setMsg({ t: "error", m: err?.response?.data?.message || "No se pudo generar la vista previa" });
+    } finally {
+      setPreviewGestorLoading(false);
+    }
   };
 
   const handleEnviarGestorAhora = async () => {
@@ -314,6 +332,22 @@ export default function FacturasAutomaticasPage() {
       setMsg({ t: "error", m: err?.response?.data?.message || "Error al enviar" });
     } finally {
       setEnviandoResumen(false);
+    }
+  };
+
+  // Previsualiza el PDF del resumen del mes anterior (abre en pestaña nueva, no envía email).
+  const handlePreviewResumen = async () => {
+    setPreviewResumenLoading(true);
+    try {
+      const blob = await previewResumenCaja({ formato: "pdf" });
+      const url = URL.createObjectURL(new Blob([blob], { type: "application/pdf" }));
+      window.open(url, "_blank");
+      setTimeout(() => URL.revokeObjectURL(url), 5000);
+    } catch {
+      // Con responseType blob el error no trae JSON legible → mensaje genérico.
+      setMsg({ t: "error", m: "No se pudo generar la vista previa" });
+    } finally {
+      setPreviewResumenLoading(false);
     }
   };
 
@@ -435,6 +469,8 @@ export default function FacturasAutomaticasPage() {
         </div>
       </div>
 
+      {/* ── Bloques del gestor (facturas + resumen de caja), 50/50 lado a lado ── */}
+      <div className="finv-gestor-grid">
       {/* ── Envío al gestor ── */}
       <div className="sug-section">
         <div className="sug-toggle-row">
@@ -553,13 +589,22 @@ export default function FacturasAutomaticasPage() {
                   ? `Último envío: ${new Date(gc.ultimoEnvioGestor).toLocaleString(locale, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" })}`
                   : "Aún no se ha enviado ningún resumen"}
               </span>
-              <button
-                className="sug-btn sug-btn--primary"
-                onClick={handleEnviarGestorAhora}
-                disabled={enviandoGestor || !gc.gestorEmail}
-              >
-                {enviandoGestor ? "Enviando..." : "Enviar ahora"}
-              </button>
+              <div className="finv-gestor__actions">
+                <button
+                  className="sug-btn sug-btn--secondary"
+                  onClick={handlePreviewGestor}
+                  disabled={previewGestorLoading}
+                >
+                  {previewGestorLoading ? "Generando..." : "Previsualizar"}
+                </button>
+                <button
+                  className="sug-btn sug-btn--primary"
+                  onClick={handleEnviarGestorAhora}
+                  disabled={enviandoGestor || !gc.gestorEmail}
+                >
+                  {enviandoGestor ? "Enviando..." : "Enviar ahora"}
+                </button>
+              </div>
             </div>
           </div>
         )}
@@ -671,17 +716,27 @@ export default function FacturasAutomaticasPage() {
                   ? `Último envío: ${new Date(rc.ultimoEnvio).toLocaleString(locale, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" })}`
                   : "Aún no se ha enviado ningún resumen"}
               </span>
-              <button
-                className="sug-btn sug-btn--primary"
-                onClick={handleEnviarResumenAhora}
-                disabled={enviandoResumen || !emailResumenEfectivo}
-              >
-                {enviandoResumen ? "Enviando..." : "Enviar mes anterior"}
-              </button>
+              <div className="finv-gestor__actions">
+                <button
+                  className="sug-btn sug-btn--secondary"
+                  onClick={handlePreviewResumen}
+                  disabled={previewResumenLoading}
+                >
+                  {previewResumenLoading ? "Generando..." : "Previsualizar"}
+                </button>
+                <button
+                  className="sug-btn sug-btn--primary"
+                  onClick={handleEnviarResumenAhora}
+                  disabled={enviandoResumen || !emailResumenEfectivo}
+                >
+                  {enviandoResumen ? "Enviando..." : "Enviar mes anterior"}
+                </button>
+              </div>
             </div>
           </div>
         )}
       </div>
+      </div>{/* /finv-gestor-grid */}
 
       {/* Stats */}
       <div className="finv-stats">
@@ -785,6 +840,31 @@ export default function FacturasAutomaticasPage() {
           onConfirm={handleDisconnectGmail}
           onClose={() => setConfirmAction(null)}
         />
+      )}
+
+      {/* Vista previa del envío al gestor (mismo HTML que recibiría por email) */}
+      {previewGestorData && (
+        <div className="finv-overlay" onClick={() => setPreviewGestorData(null)}>
+          <div className="finv-modal" onClick={e => e.stopPropagation()}>
+            <div className="finv-modal__header">
+              <h3>Vista previa — envío al gestor</h3>
+              <button className="finv-modal__close" onClick={() => setPreviewGestorData(null)}>✕</button>
+            </div>
+            <div className="finv-modal__body">
+              <p className="finv-gestor-preview__meta">
+                {previewGestorData.count > 0
+                  ? `${previewGestorData.count} factura${previewGestorData.count !== 1 ? "s" : ""} · Total ${(previewGestorData.totales?.total || 0).toFixed(2)}€ · se enviaría a ${previewGestorData.emailTo || "(sin email de gestor configurado)"}`
+                  : "No hay facturas nuevas en el periodo — no se enviaría ningún email."}
+              </p>
+              {previewGestorData.count > 0 && (
+                <div
+                  className="finv-gestor-preview__html"
+                  dangerouslySetInnerHTML={{ __html: previewGestorData.html }}
+                />
+              )}
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

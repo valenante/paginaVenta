@@ -45,3 +45,13 @@ export async function enviarResumenCajaAhora(body = {}) {
   const { data } = await api.post("/admin/resumen-caja-gestor/enviar", body);
   return data;
 }
+
+// Previsualización: descarga el PDF (o CSV) del resumen SIN enviar email.
+// Reutiliza el endpoint ya existente GET /admin/resumen-caja-gestor/preview.
+export async function previewResumenCaja({ anio, mes, formato = "pdf" } = {}) {
+  const params = { formato };
+  if (anio) params.anio = anio;
+  if (mes) params.mes = mes;
+  const { data } = await api.get("/admin/resumen-caja-gestor/preview", { params, responseType: "blob" });
+  return data;
+}

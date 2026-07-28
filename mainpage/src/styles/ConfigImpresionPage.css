@@ -167,10 +167,11 @@
   color: var(--color-danger, #dc2626);
 }
 
-/* ── Body ── */
+/* ── Body: formulario (columna acotada) + preview ── */
 .td-modal-body {
   display: grid;
-  grid-template-columns: 1fr auto;
+  grid-template-columns: minmax(0, 460px) auto;
+  justify-content: center;
   gap: var(--space-xl);
   padding: var(--space-lg) var(--space-xl);
   overflow-y: auto;
@@ -181,23 +182,29 @@
 .td-form {
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
+  gap: var(--space-md);
+  min-width: 0;
+  width: 100%;
+  max-width: 460px;
 }
 
 .td-fieldset {
   border: 1px solid var(--color-borde-suave, #e0e4ee);
-  border-radius: var(--radius-sm, 8px);
-  padding: var(--space-sm) var(--space-md) var(--space-md);
+  border-radius: var(--radius-md, 12px);
+  padding: var(--space-md);
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
+  gap: var(--space-md);
+  background: var(--color-fondo-card, #fff);
 }
 
 .td-fieldset legend {
   font-weight: 700;
   font-size: var(--font-size-sm);
-  color: var(--color-primario, var(--color-primario, #60b5ff));
-  padding: 0 0.4rem;
+  color: var(--color-primario, #60b5ff);
+  padding: 0 0.45rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
 .td-preview {
@@ -205,6 +212,123 @@
   position: sticky;
   top: 0;
   align-self: start;
+}
+
+/* ── Pestañas por tipo de documento ── */
+.td-tabs {
+  margin: var(--space-md) var(--space-xl) 0;
+}
+
+.td-tab-hint {
+  margin: var(--space-sm) var(--space-xl) 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-texto-suave);
+}
+
+/* ── Fila de campo: etiqueta + toggle "Heredar" arriba, control debajo ── */
+.td-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  min-width: 0;
+}
+
+.td-field__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  min-width: 0;
+}
+
+/* La etiqueta (o el checkbox-label) ocupa el espacio; el toggle no se estira */
+.td-field__label {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-texto);
+}
+
+.td-field__top > .config-checkbox {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.td-field__control {
+  display: flex;
+  min-width: 0;
+}
+
+/* Controles a ancho completo con el estilo estándar de Alef (mismo look que
+   `.config-field input/select/textarea` de index.css: borde, padding, radio,
+   fondo y anillo de foco). Antes solo tenían `width:100%` → salían como
+   controles nativos "sin estilo". */
+.td-field__control input,
+.td-field__control select,
+.td-field__control textarea {
+  width: 100%;
+  font-family: var(--font-base);
+  font-size: var(--font-size-sm);
+  padding: 0.7rem 0.85rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-borde-suave);
+  background: var(--color-blanco, #ffffff);
+  color: var(--color-texto);
+  outline: none;
+  transition:
+    border-color 140ms ease,
+    box-shadow 140ms ease,
+    background 140ms ease;
+}
+
+.td-field__control input:focus,
+.td-field__control select:focus,
+.td-field__control textarea:focus {
+  border-color: var(--color-secundario, #4465e7);
+  box-shadow: 0 0 0 3px rgba(68, 101, 231, 0.18);
+}
+
+/* Campo heredado: atenuado hasta que se desmarque "Heredar" */
+.td-field--inherited .td-field__label,
+.td-field--inherited .config-checkbox,
+.td-field--inherited .td-field__control {
+  opacity: 0.5;
+}
+
+/* ── Toggle "Heredar": chip pequeño pegado a la etiqueta ── */
+.td-inherit {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  flex: 0 0 auto;
+  padding: 0.2rem 0.5rem;
+  border-radius: var(--radius-pill, 999px);
+  border: 1px solid var(--color-borde-suave, #e0e4ee);
+  background: var(--color-fondo-claro, #f5f7fb);
+  font-size: 0.72rem;
+  color: var(--color-texto-suave);
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: border-color 140ms ease, background 140ms ease;
+}
+
+.td-inherit:hover {
+  border-color: var(--color-primario, #60b5ff);
+}
+
+.td-inherit input[type="checkbox"] {
+  width: 13px;
+  height: 13px;
+  accent-color: var(--color-primario, #60b5ff);
+  cursor: pointer;
+  margin: 0;
+}
+
+/* ── Rejilla de 2 columnas para las fuentes ── */
+.td-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-md);
 }
 
 /* ── Footer ── */
@@ -239,6 +363,14 @@
   }
 
   .td-modal-body {
+    grid-template-columns: 1fr;
+  }
+
+  .td-form {
+    max-width: 100%;
+  }
+
+  .td-grid-2 {
     grid-template-columns: 1fr;
   }
 

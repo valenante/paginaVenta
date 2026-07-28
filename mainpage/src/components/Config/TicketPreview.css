@@ -164,10 +164,20 @@
 .tp-type-tab:hover {
   background: var(--color-fondo, #f9fafb);
 }
+/* Fondo oscuro para garantizar contraste del título blanco. El primario Alef
+   (#60b5ff) es un azul claro → blanco encima quedaba lavado/ilegible (~2:1).
+   Con el primario oscuro el label se lee siempre. */
 .tp-type-tab--active {
-  background: var(--color-primario, var(--color-primario, #60b5ff));
+  background: var(--color-primario-oscuro, #2f7ed8);
   color: #fff;
 }
 .tp-type-tab--active:hover {
   background: var(--color-primario-oscuro, #2f7ed8);
+}
+
+/* URL del QR genérico en el preview: que no desborde el papel */
+.tp-qr-url {
+  word-break: break-all;
+  opacity: 0.75;
+  margin-top: 2px;
 }

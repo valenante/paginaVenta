@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { resolveEstiloTicket } from "../../utils/resolveEstiloTicket.js";
 import "./TicketPreview.css";
 
 const SEPARATORS = {
@@ -14,6 +15,24 @@ const SIZE_CLASS = {
   doble_alto: "tp-size-dh",
   doble_ancho: "tp-size-dw",
   doble: "tp-size-dhw",
+};
+
+/* Frases fijas según idioma — debe reflejar lo que imprime el print server
+   (es = comportamiento actual del ticket). */
+const PHRASES = {
+  es: { consulta: "CONSULTA", propinas: "Propinas no incluidas / Tips not included", ticket: "TICKET", qrCaption: "Escanea para más info" },
+  en: { consulta: "CHECK", propinas: "Tips not included", ticket: "RECEIPT", qrCaption: "Scan for more info" },
+  bilingue: { consulta: "CONSULTA / CHECK", propinas: "Propinas no incluidas / Tips not included", ticket: "TICKET", qrCaption: "Escanea para más info / Scan for info" },
+};
+
+/* Mapea la clave de override (porTipo) al layout de preview a dibujar */
+const LAYOUT_MAP = {
+  general: "cuenta",
+  comanda: "pedido",
+  pedido: "pedido",
+  cuenta: "cuenta",
+  factura: "factura",
+  shop: "shop",
 };
 
 const DUMMY_PRODUCTOS = [
@@ -35,17 +54,37 @@ function fmtPrice(n) {
 /**
  * Vista previa de un ticket térmico — puro CSS, sin API call.
  * Se actualiza en tiempo real con cada cambio del formulario.
+ *
+ * Acepta el estilo COMPLETO (`estiloTicket`, con porTipo) + el `tipo` seleccionado
+ * y aplica la MISMA resolución que el backend (base + porTipo[tipo]).
+ * Se mantiene compatibilidad con la firma antigua (`estilo` plano + `tipoTicket`).
  */
 export default function TicketPreview({
-  estilo = {},
-  tipoTicket = "cuenta",
+  estiloTicket = null,
+  estilo: estiloFlat = null,
+  tipo = null,
+  tipoTicket = null,
   fiscal = {},
   logoUrl = null,
   nombreRestaurante = "",
 }) {
+  // Clave de tipo (comanda/cuenta/factura/shop/general) y layout a dibujar
+  const tipoKey = tipo || tipoTicket || "cuenta";
+  const layout = LAYOUT_MAP[tipoKey] || "cuenta";
+
+  // Estilo resuelto: si nos pasan el objeto completo, resolvemos base+porTipo;
+  // si nos pasan el plano antiguo, lo usamos tal cual.
+  const estilo = useMemo(() => {
+    if (estiloTicket) {
+      return resolveEstiloTicket(estiloTicket, tipoKey === "general" ? null : tipoKey);
+    }
+    return estiloFlat || {};
+  }, [estiloTicket, estiloFlat, tipoKey]);
+
   const is58 = estilo.anchoPapel === "58mm";
   const width = is58 ? 32 : 48;
   const sep = hr(estilo.estiloSeparador, width);
+  const ph = PHRASES[estilo.idioma] || PHRASES.es;
 
   const sizeTitulo = SIZE_CLASS[estilo.tamanoTitulo] || "tp-size-dh";
   const sizeProducto = SIZE_CLASS[estilo.tamanoProducto] || "tp-size-dh";
@@ -56,10 +95,29 @@ export default function TicketPreview({
   const direccion = fiscal?.direccion || "Calle Ejemplo 12";
   const nif = fiscal?.nif || fiscal?.cif || "B12345678";
 
+  // Columnas de la tabla (cuenta/factura) — default = mostrar
+  const showQty = estilo.mostrarColumnaCantidad !== false;
+  const showPrice = estilo.mostrarColumnaPrecio !== false;
+  const showAmt = estilo.mostrarColumnaImporte !== false;
+
+  // Factura: si verifactu está activo, los datos fiscales/QR AEAT NO son ocultables
+  const verifactuActivo = !!fiscal?.verifactuActivo;
+  const mostrarDatosFiscales = verifactuActivo ? true : estilo.mostrarDatosFiscales !== false;
+
   const total = useMemo(
     () => DUMMY_PRODUCTOS.reduce((acc, p) => acc + p.cantidad * p.precio, 0),
     []
   );
+
+  const renderTablaProductos = () =>
+    DUMMY_PRODUCTOS.map((p, i) => (
+      <div key={i} className="tp-table-row">
+        <span className="tp-col-art">{p.nombre}</span>
+        {showQty && <span className="tp-col-qty">{p.cantidad}</span>}
+        {showPrice && <span className="tp-col-price">{fmtPrice(p.precio)}</span>}
+        {showAmt && <span className="tp-col-amt">{fmtPrice(p.cantidad * p.precio)}</span>}
+      </div>
+    ));
 
   return (
     <div className={`tp-wrapper ${is58 ? "tp-58mm" : "tp-80mm"}`}>
@@ -93,12 +151,12 @@ export default function TicketPreview({
 
         <div className="tp-sep">{sep}</div>
 
-        {/* Tipo de ticket */}
-        {tipoTicket === "cuenta" && (
+        {/* ── CUENTA ── */}
+        {layout === "cuenta" && (
           <>
             <div className={`tp-center tp-bold ${sizeTitulo}`}>Mesa N.o 5</div>
             <div className="tp-row">
-              <span>CONSULTA</span>
+              <span>{ph.consulta}</span>
               <span>27/03/2026 14:30</span>
             </div>
             <div className="tp-sep">{sep}</div>
@@ -106,22 +164,13 @@ export default function TicketPreview({
             {/* Tabla productos */}
             <div className="tp-table-header">
               <span className="tp-col-art">Articulo</span>
-              <span className="tp-col-qty">Ctd</span>
-              <span className="tp-col-price">Precio</span>
-              <span className="tp-col-amt">Importe</span>
+              {showQty && <span className="tp-col-qty">Ctd</span>}
+              {showPrice && <span className="tp-col-price">Precio</span>}
+              {showAmt && <span className="tp-col-amt">Importe</span>}
             </div>
             <div className="tp-sep">{sep}</div>
 
-            {DUMMY_PRODUCTOS.map((p, i) => (
-              <div key={i} className="tp-table-row">
-                <span className="tp-col-art">{p.nombre}</span>
-                <span className="tp-col-qty">{p.cantidad}</span>
-                <span className="tp-col-price">{fmtPrice(p.precio)}</span>
-                <span className="tp-col-amt">
-                  {fmtPrice(p.cantidad * p.precio)}
-                </span>
-              </div>
-            ))}
+            {renderTablaProductos()}
 
             <div className="tp-sep">{sep}</div>
             <div className={`tp-row tp-bold ${sizeTotal}`}>
@@ -130,12 +179,13 @@ export default function TicketPreview({
             </div>
             <div className="tp-sep">{sep}</div>
             <div className="tp-center tp-small">
-              Propinas no incluidas / Tips not included
+              {ph.propinas}
             </div>
           </>
         )}
 
-        {tipoTicket === "pedido" && (
+        {/* ── COMANDA (pedido) ── */}
+        {layout === "pedido" && (
           <>
             <div className={`tp-center tp-bold ${sizeTitulo}`}>PEDIDO</div>
             <div className="tp-sep">{sep}</div>
@@ -145,7 +195,10 @@ export default function TicketPreview({
               <span>27/03/2026</span>
               <span>14:30:22</span>
             </div>
-            <div>Comensales: 4</div>
+            {estilo.mostrarComensales === true && <div>Comensales: 4</div>}
+            {estilo.mostrarAlergias === true && (
+              <div className="tp-bold">Alergias: Gluten, Frutos secos</div>
+            )}
             <div className="tp-sep">{sep}</div>
 
             {DUMMY_PRODUCTOS.map((p, i) => (
@@ -174,41 +227,50 @@ export default function TicketPreview({
           </>
         )}
 
-        {tipoTicket === "factura" && (
+        {/* ── FACTURA ── */}
+        {layout === "factura" && (
           <>
             <div className={`tp-center tp-bold ${sizeTitulo}`}>FACTURA</div>
             <div className="tp-sep">{sep}</div>
-            <div className="tp-center tp-bold">Datos del cliente</div>
-            <div className="tp-center">Juan Garcia Lopez</div>
-            <div className="tp-center">NIF: 12345678A</div>
-            <div className="tp-sep">{sep}</div>
+            {mostrarDatosFiscales && (
+              <>
+                <div className="tp-center tp-bold">Datos del cliente</div>
+                <div className="tp-center">Juan Garcia Lopez</div>
+                <div className="tp-center">NIF: 12345678A</div>
+                <div className="tp-sep">{sep}</div>
+              </>
+            )}
             <div className="tp-row">
               <span>Factura: 2026-0042</span>
               <span>27/03/2026</span>
             </div>
-            <div>Mesa N.o 5 Comensales: 4</div>
+            <div>Mesa N.o 5{estilo.mostrarComensales === true ? " Comensales: 4" : ""}</div>
             <div className="tp-sep">{sep}</div>
 
-            {DUMMY_PRODUCTOS.map((p, i) => (
-              <div key={i} className="tp-table-row">
-                <span className="tp-col-art">{p.nombre}</span>
-                <span className="tp-col-qty">{p.cantidad}</span>
-                <span className="tp-col-price">{fmtPrice(p.precio)}</span>
-                <span className="tp-col-amt">
-                  {fmtPrice(p.cantidad * p.precio)}
-                </span>
-              </div>
-            ))}
+            {/* Tabla productos */}
+            <div className="tp-table-header">
+              <span className="tp-col-art">Articulo</span>
+              {showQty && <span className="tp-col-qty">Ctd</span>}
+              {showPrice && <span className="tp-col-price">Precio</span>}
+              {showAmt && <span className="tp-col-amt">Importe</span>}
+            </div>
+            <div className="tp-sep">{sep}</div>
+
+            {renderTablaProductos()}
 
             <div className="tp-sep">{sep}</div>
-            <div className="tp-row">
-              <span>Base imponible:</span>
-              <span>{fmtPrice(total / 1.1)}</span>
-            </div>
-            <div className="tp-row">
-              <span>IVA 10% (incluido):</span>
-              <span>{fmtPrice(total - total / 1.1)}</span>
-            </div>
+            {mostrarDatosFiscales && (
+              <>
+                <div className="tp-row">
+                  <span>Base imponible:</span>
+                  <span>{fmtPrice(total / 1.1)}</span>
+                </div>
+                <div className="tp-row">
+                  <span>IVA 10% (incluido):</span>
+                  <span>{fmtPrice(total - total / 1.1)}</span>
+                </div>
+              </>
+            )}
             <div className={`tp-row tp-bold ${sizeTotal}`}>
               <span>TOTAL:</span>
               <span>{fmtPrice(total)}</span>
@@ -218,7 +280,7 @@ export default function TicketPreview({
               Hash: a1b2c3d4e5f6...
             </div>
 
-            {/* QR placeholder */}
+            {/* QR AEAT — sagrado: siempre en factura fiscal */}
             <div className="tp-qr-placeholder">
               <div className="tp-qr-box">QR</div>
               <div className="tp-small">QR tributario AEAT</div>
@@ -226,18 +288,57 @@ export default function TicketPreview({
           </>
         )}
 
-        {/* QR valoraciones */}
-        {estilo.qrValoracionesActivo !== false && tipoTicket === "cuenta" && (
+        {/* ── TIENDA (shop) ── */}
+        {layout === "shop" && (
           <>
+            <div className={`tp-center tp-bold ${sizeTitulo}`}>{ph.ticket}</div>
             <div className="tp-sep">{sep}</div>
-            <div className="tp-center tp-bold">
-              {estilo.qrTexto || "Valora tu experiencia"}
+            <div className="tp-row">
+              <span>Ticket: 000123</span>
+              <span>27/03/2026</span>
             </div>
-            <div className="tp-qr-placeholder">
-              <div className="tp-qr-box">QR</div>
-              <div className="tp-small">Escanea para valorar</div>
+            <div className="tp-sep">{sep}</div>
+
+            {DUMMY_PRODUCTOS.map((p, i) => (
+              <div key={i} className="tp-table-row">
+                <span className="tp-col-art">{p.nombre}</span>
+                {showQty && <span className="tp-col-qty">{p.cantidad}</span>}
+                {showAmt && <span className="tp-col-amt">{fmtPrice(p.cantidad * p.precio)}</span>}
+              </div>
+            ))}
+
+            <div className="tp-sep">{sep}</div>
+            <div className={`tp-row tp-bold ${sizeTotal}`}>
+              <span>TOTAL:</span>
+              <span>{fmtPrice(total)}</span>
             </div>
           </>
+        )}
+
+        {/* QR genérico (nuevo) — cualquier tipo si está activo Y hay contenido.
+            Sin qrUrl el print server no imprime nada, así que el preview tampoco. */}
+        {estilo.qrActivo === true && estilo.qrUrl && (
+          <>
+            <div className="tp-sep">{sep}</div>
+            <div className="tp-qr-placeholder">
+              <div className="tp-qr-box">QR</div>
+              <div className="tp-small">{ph.qrCaption}</div>
+              <div className="tp-small tp-qr-url">{estilo.qrUrl}</div>
+            </div>
+          </>
+        )}
+
+        {/* Mensaje de agradecimiento (nuevo) */}
+        {estilo.mensajeAgradecimiento && (
+          <>
+            <div className="tp-sep">{sep}</div>
+            <div className="tp-center tp-bold">{estilo.mensajeAgradecimiento}</div>
+          </>
+        )}
+
+        {/* Pie legal (nuevo) */}
+        {estilo.pieLegal && (
+          <div className="tp-center tp-small">{estilo.pieLegal}</div>
         )}
 
         {/* Pie custom */}

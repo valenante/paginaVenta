@@ -164,12 +164,14 @@
 .tp-type-tab:hover {
   background: var(--color-fondo, #f9fafb);
 }
-/* Fondo oscuro para garantizar contraste del título blanco. El primario Alef
-   (#60b5ff) es un azul claro → blanco encima quedaba lavado/ilegible (~2:1).
-   Con el primario oscuro el label se lee siempre. */
+/* Pestaña activa A PRUEBA DE BALAS: colores FIJOS (sin var de tema), para que
+   el branding del tenant no pueda dejar el título ilegible pase lo que pase.
+   Azul oscuro + blanco + negrita = siempre legible y claramente "seleccionada". */
 .tp-type-tab--active {
-  background: var(--color-primario-oscuro, #2f7ed8);
+  background: #2f7ed8;
   color: #fff;
+  font-weight: 700;
+  box-shadow: inset 0 -3px 0 rgba(0, 0, 0, 0.18);
 }
 .tp-type-tab--active:hover {
   background: var(--color-primario-oscuro, #2f7ed8);

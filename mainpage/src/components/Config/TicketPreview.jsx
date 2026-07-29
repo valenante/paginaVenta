@@ -22,6 +22,7 @@ const SIZE_CLASS = {
 const PHRASES = {
   es: { consulta: "CONSULTA", propinas: "Propinas no incluidas / Tips not included", ticket: "TICKET", qrCaption: "Escanea para más info" },
   en: { consulta: "CHECK", propinas: "Tips not included", ticket: "RECEIPT", qrCaption: "Scan for more info" },
+  fr: { consulta: "ADDITION", propinas: "Pourboire non inclus", ticket: "TICKET", qrCaption: "Scannez pour plus d'infos" },
   bilingue: { consulta: "CONSULTA / CHECK", propinas: "Propinas no incluidas / Tips not included", ticket: "TICKET", qrCaption: "Escanea para más info / Scan for info" },
 };
 

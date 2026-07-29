@@ -201,7 +201,8 @@
 .td-fieldset legend {
   font-weight: 700;
   font-size: var(--font-size-sm);
-  color: var(--color-primario, #60b5ff);
+  /* azul oscuro (~4.9:1 sobre blanco) — el primario claro #60b5ff quedaba ~2:1 ilegible */
+  color: var(--color-primario-oscuro, #2f7ed8);
   padding: 0 0.45rem;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -283,8 +284,9 @@
 .td-field__control input:focus,
 .td-field__control select:focus,
 .td-field__control textarea:focus {
-  border-color: var(--color-secundario, #4465e7);
-  box-shadow: 0 0 0 3px rgba(68, 101, 231, 0.18);
+  /* --color-secundario es naranja; el foco debe ir azul de marca (borde+halo coherentes) */
+  border-color: var(--color-primario, #60b5ff);
+  box-shadow: 0 0 0 3px rgba(96, 181, 255, 0.28);
 }
 
 /* Campo heredado: atenuado hasta que se desmarque "Heredar" */
@@ -339,7 +341,8 @@
   gap: var(--space-sm);
   padding: var(--space-md) var(--space-xl);
   border-top: 1px solid var(--color-borde-suave, #e0e4ee);
-  background: var(--color-fondo, #f9fafb);
+  /* --color-fondo es el navy #0b1020 del hero (NO usarlo aquí); el pie va gris claro */
+  background: var(--color-fondo-claro, #f9fafb);
 }
 
 /* ===== Responsive ===== */

@@ -17,21 +17,24 @@ export const BLOQUES = {
     nombre: "Recomendados de la casa",
     icono: "⭐",
     descripcion: "Productos marcados como destacados.",
-    variantes: [["default", "Rejilla"]],
-    props: [],
+    variantes: [["default", "Rejilla"], ["carrusel", "Carrusel"], ["lista", "Lista"]],
+    props: [
+      { key: "titulo", label: "Título (opcional)", type: "text", placeholder: "Recomendados de la casa" },
+      { key: "subtitulo", label: "Subtítulo (opcional)", type: "text" },
+    ],
   },
   features: {
     nombre: "Galería «¿Por qué elegirnos?»",
     icono: "✨",
     descripcion: "Las imágenes de secciones del home con su texto.",
-    variantes: [["default", "Rejilla"]],
+    variantes: [["default", "Rejilla"], ["zigzag", "Zig-zag (columna ancha)"], ["compacto", "Compacta"]],
     props: [{ key: "titulo", label: "Título", type: "text", placeholder: "¿Por qué elegirnos?" }],
   },
   mapa: {
     nombre: "Mapa / ubicación",
     icono: "🗺️",
     descripcion: "Mapa de Google con la dirección + botón «Cómo llegar».",
-    variantes: [["default", "Completo"]],
+    variantes: [["default", "Completo"], ["split", "Mapa + contacto"], ["solo-boton", "Solo botón"]],
     props: [],
   },
   texto: {

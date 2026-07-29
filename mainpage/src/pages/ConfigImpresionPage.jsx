@@ -377,6 +377,7 @@ function TicketDesignModal({ estilo, onChange, onClose, onSave, onTestPrint, loa
                 <select value={val("idioma") || "es"} onChange={(e) => setVal("idioma", e.target.value)} disabled={disabledFor("idioma")}>
                   <option value="es">Español</option>
                   <option value="en">Inglés</option>
+                  <option value="fr">Francés</option>
                   <option value="bilingue">Bilingüe</option>
                 </select>
               </TdField>

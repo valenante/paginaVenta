@@ -223,3 +223,5 @@
   margin: 0.5rem 0 0; font-size: var(--font-size-xs, 0.75rem);
   color: var(--color-texto-suave, #6b7280); text-align: center;
 }
+
+.chb-input--color { width: 48px; height: 36px; padding: 2px; cursor: pointer; }

@@ -51,6 +51,63 @@ export const BLOQUES = {
     variantes: [["default", "En fila"], ["grande", "Botón grande"], ["apilado", "Apilados"]],
     props: [{ key: "botones", type: "botones" }],
   },
+  galeria: {
+    nombre: "Galería de fotos",
+    icono: "🖼️",
+    descripcion: "Cuadrícula de fotos. Si no pones fotos propias usa las secciones de la home.",
+    variantes: [["default", "Cuadrícula"], ["masonry", "Mosaico"], ["carrusel", "Carrusel"]],
+    props: [{ key: "titulo", label: "Título (opcional)", type: "text", placeholder: "Nuestro local" }],
+  },
+  horarios: {
+    nombre: "Horarios",
+    icono: "🕒",
+    descripcion: "Días de apertura y turnos de comida/cena.",
+    variantes: [["default", "Compacta"], ["tabla", "Tabla"]],
+    props: [{ key: "titulo", label: "Título", type: "text", placeholder: "Horarios" }],
+  },
+  resenas: {
+    nombre: "Reseñas / Testimonios",
+    icono: "⭐",
+    descripcion: "Testimonios de clientes con estrellas. Los escribes tú.",
+    variantes: [["carrusel", "Carrusel"], ["grid", "Cuadrícula"]],
+    props: [
+      { key: "titulo", label: "Título", type: "text", placeholder: "Lo que dicen" },
+      { key: "items", type: "resenas" },
+    ],
+  },
+  redes: {
+    nombre: "Redes / contacto",
+    icono: "📱",
+    descripcion: "Enlaces a Instagram, WhatsApp, web…",
+    variantes: [["iconos", "Iconos"], ["botones", "Botones"]],
+    props: [
+      { key: "titulo", label: "Título (opcional)", type: "text", placeholder: "Síguenos" },
+      { key: "redes", type: "redes" },
+    ],
+  },
+  banner: {
+    nombre: "Banner promocional",
+    icono: "📣",
+    descripcion: "Barra con un mensaje corto y un botón.",
+    variantes: [["tira", "Tira fina"], ["destacado", "Destacado"]],
+    props: [
+      { key: "texto", label: "Texto del banner", type: "textarea", placeholder: "Ej: 2x1 en cócteles los jueves" },
+      { key: "cta.label", label: "Texto del botón", type: "text", placeholder: "Ej: Reservar" },
+      { key: "cta.accion", label: "Acción del botón", type: "select", opciones: [["carta", "Ver la carta"], ["reservas", "Reservar"], ["takeaway", "Pedir para llevar"], ["url", "Enlace externo"]] },
+      { key: "cta.url", label: "URL (si acción = enlace)", type: "text", placeholder: "https://…" },
+      { key: "colorFondo", label: "Color de fondo (opcional)", type: "color" },
+    ],
+  },
+  separador: {
+    nombre: "Separador",
+    icono: "➖",
+    descripcion: "Aire, línea sutil o pequeño adorno entre bloques.",
+    variantes: [["default", "Espacio"], ["linea", "Línea"], ["icono", "Adorno"]],
+    props: [
+      { key: "alto", label: "Alto", type: "select", opciones: [["s", "Pequeño"], ["m", "Medio"], ["l", "Grande"]] },
+      { key: "icono", label: "Adorno (variante Adorno)", type: "text", placeholder: "◆" },
+    ],
+  },
 };
 
 export const TIPOS_ANADIBLES = Object.keys(BLOQUES);

@@ -42,7 +42,21 @@ export default function CartaHomeBuilder({ home, onChange, disabled = false }) {
   };
   const setBloque = (id, patch) => emit(bloques.map((b) => (b.id === id ? { ...b, ...patch } : b)));
   const setProp = (id, key, val) =>
-    emit(bloques.map((b) => (b.id === id ? { ...b, props: { ...(b.props || {}), [key]: val } } : b)));
+    emit(bloques.map((b) => {
+      if (b.id !== id) return b;
+      const props = { ...(b.props || {}) };
+      if (key.includes(".")) {
+        const [k1, k2] = key.split(".");
+        props[k1] = { ...(props[k1] || {}), [k2]: val };
+      } else {
+        props[key] = val;
+      }
+      return { ...b, props };
+    }));
+  const getProp = (bl, key) => {
+    if (key.includes(".")) { const [k1, k2] = key.split("."); return bl.props?.[k1]?.[k2]; }
+    return bl.props?.[key];
+  };
   const quitar = (id) => emit(bloques.filter((b) => b.id !== id));
   const anadir = (tipo) => { emit([...(bloques || []), nuevoBloque(tipo)]); setAddOpen(false); };
 
@@ -101,6 +115,55 @@ export default function CartaHomeBuilder({ home, onChange, disabled = false }) {
     );
   };
 
+  // ── Editor de reseñas (bloque resenas) ──
+  const editorResenas = (bl) => {
+    const items = Array.isArray(bl.props?.items) ? bl.props.items : [];
+    const set = (arr) => setProp(bl.id, "items", arr);
+    return (
+      <div className="chb-btns">
+        {items.map((it, i) => (
+          <div className="chb-btn-row" key={i}>
+            <input className="chb-input" placeholder="Autor" value={it.autor || ""} disabled={disabled}
+              onChange={(e) => set(items.map((x, j) => (j === i ? { ...x, autor: e.target.value } : x)))} />
+            <select className="chb-input" value={it.estrellas || 5} disabled={disabled}
+              onChange={(e) => set(items.map((x, j) => (j === i ? { ...x, estrellas: Number(e.target.value) } : x)))}>
+              {[5, 4, 3, 2, 1].map((n) => <option key={n} value={n}>{n} ★</option>)}
+            </select>
+            <textarea className="chb-input chb-input--url" rows={2} placeholder="Testimonio" value={it.texto || ""} disabled={disabled}
+              onChange={(e) => set(items.map((x, j) => (j === i ? { ...x, texto: e.target.value } : x)))} />
+            <button type="button" className="chb-icon-btn" disabled={disabled} onClick={() => set(items.filter((_, j) => j !== i))} title="Quitar">✕</button>
+          </div>
+        ))}
+        <button type="button" className="btn btn-secundario chb-add-btn" disabled={disabled}
+          onClick={() => set([...items, { texto: "", autor: "", estrellas: 5 }])}>+ Añadir reseña</button>
+      </div>
+    );
+  };
+
+  // ── Editor de redes (bloque redes) ──
+  const TIPOS_RED = [["instagram", "Instagram"], ["facebook", "Facebook"], ["whatsapp", "WhatsApp"], ["tiktok", "TikTok"], ["web", "Web"], ["telefono", "Teléfono"]];
+  const editorRedes = (bl) => {
+    const redes = Array.isArray(bl.props?.redes) ? bl.props.redes : [];
+    const set = (arr) => setProp(bl.id, "redes", arr);
+    return (
+      <div className="chb-btns">
+        {redes.map((r, i) => (
+          <div className="chb-btn-row" key={i}>
+            <select className="chb-input" value={r.tipo || "instagram"} disabled={disabled}
+              onChange={(e) => set(redes.map((x, j) => (j === i ? { ...x, tipo: e.target.value } : x)))}>
+              {TIPOS_RED.map(([v, n]) => <option key={v} value={v}>{n}</option>)}
+            </select>
+            <input className="chb-input" placeholder="URL o teléfono" value={r.url || ""} disabled={disabled}
+              onChange={(e) => set(redes.map((x, j) => (j === i ? { ...x, url: e.target.value } : x)))} />
+            <button type="button" className="chb-icon-btn" disabled={disabled} onClick={() => set(redes.filter((_, j) => j !== i))} title="Quitar">✕</button>
+          </div>
+        ))}
+        <button type="button" className="btn btn-secundario chb-add-btn" disabled={disabled}
+          onClick={() => set([...redes, { tipo: "instagram", url: "" }])}>+ Añadir red</button>
+      </div>
+    );
+  };
+
   // ── Editor de props de un bloque ──
   const editorProps = (bl) => {
     const def = BLOQUES[bl.tipo];
@@ -111,21 +174,26 @@ export default function CartaHomeBuilder({ home, onChange, disabled = false }) {
       <div className="chb-props">
         {def.props.map((p) => {
           if (p.type === "botones") return <div key={p.key}>{editorBotones(bl)}</div>;
+          if (p.type === "resenas") return <div key={p.key}>{editorResenas(bl)}</div>;
+          if (p.type === "redes") return <div key={p.key}>{editorRedes(bl)}</div>;
+          const val = getProp(bl, p.key) ?? "";
           return (
             <div className="config-field" key={p.key}>
-              <label>{p.label}</label>
+              {p.label && <label>{p.label}</label>}
               {p.type === "textarea" ? (
-                <textarea
-                  className="chb-input" rows={3} placeholder={p.placeholder || ""} disabled={disabled}
-                  value={bl.props?.[p.key] || ""}
-                  onChange={(e) => setProp(bl.id, p.key, e.target.value)}
-                />
+                <textarea className="chb-input" rows={3} placeholder={p.placeholder || ""} disabled={disabled}
+                  value={val} onChange={(e) => setProp(bl.id, p.key, e.target.value)} />
+              ) : p.type === "select" ? (
+                <select className="chb-input" value={val} disabled={disabled}
+                  onChange={(e) => setProp(bl.id, p.key, e.target.value)}>
+                  {(p.opciones || []).map(([v, n]) => <option key={v} value={v}>{n}</option>)}
+                </select>
+              ) : p.type === "color" ? (
+                <input type="color" className="chb-input chb-input--color" disabled={disabled}
+                  value={val || "#60b5ff"} onChange={(e) => setProp(bl.id, p.key, e.target.value)} />
               ) : (
-                <input
-                  type="text" className="chb-input" placeholder={p.placeholder || ""} disabled={disabled}
-                  value={bl.props?.[p.key] || ""}
-                  onChange={(e) => setProp(bl.id, p.key, e.target.value)}
-                />
+                <input type="text" className="chb-input" placeholder={p.placeholder || ""} disabled={disabled}
+                  value={val} onChange={(e) => setProp(bl.id, p.key, e.target.value)} />
               )}
             </div>
           );

@@ -246,8 +246,10 @@
 }
 .tp-type-tab--active,
 .tp-type-tab--active:hover {
-  background: #2f7ed8;
-  color: #ffffff;
+  /* Celeste Alef (--color-primario). Con texto OSCURO porque blanco sobre celeste
+     se lavaba (~2:1); oscuro sobre celeste ~5:1 = legible y con el color de marca. */
+  background: var(--color-primario, #60b5ff);
+  color: #0f172a;
   font-weight: 700;
   box-shadow: 0 1px 3px rgba(15, 23, 42, 0.22);
 }

@@ -19,13 +19,13 @@ import {
   updateFacturasConfig,
   enviarGestorManual,
   enviarGestorPreview,
-} from "../Hooks/useFacturasAutomaticas";
+} from "../hooks/useFacturasAutomaticas";
 import {
   useResumenCajaGestor,
   updateResumenCajaGestor,
   enviarResumenCajaAhora,
   previewResumenCaja,
-} from "../Hooks/useResumenCajaGestor";
+} from "../hooks/useResumenCajaGestor";
 import "./FacturasAutomaticasPage.css";
 
 // ── Status badge ───────────────────────────────────────────

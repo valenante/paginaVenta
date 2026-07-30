@@ -1,7 +1,7 @@
 // src/components/Panel/AdminDashboard.jsx
 import React, { useState, useMemo } from "react";
-import { useAdminDashboard } from "../../Hooks/useAdminDashboard";
-import { useFeature } from "../../Hooks/useFeature";
+import { useAdminDashboard } from "../../hooks/useAdminDashboard";
+import { useFeature } from "../../hooks/useFeature";
 import { useConfig } from "../../context/ConfigContext";
 import { ComparativaCard, RatioTipoCard, VentasPorHoraCard } from "./AnalyticsFase2";
 import { CorrelacionCard, AlertasCard } from "./AnalyticsFase3";

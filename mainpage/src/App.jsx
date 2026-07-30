@@ -47,7 +47,7 @@ import SEOHead from "./components/SEO/SEOHead";
 import { HomeStructuredData } from "./components/SEO/StructuredData";
 
 /* ── Hooks ── */
-import useGoogleAnalytics from "./Hooks/useGoogleAnalytics.js";
+import useGoogleAnalytics from "./hooks/useGoogleAnalytics.js";
 
 /* ── Styles ── */
 import "./index.css";

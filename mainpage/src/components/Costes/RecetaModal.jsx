@@ -5,7 +5,7 @@
 
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { createPortal } from "react-dom";
-import { useReceta, guardarReceta, buscarIngredientes } from "../../Hooks/useRecetas";
+import { useReceta, guardarReceta, buscarIngredientes } from "../../hooks/useRecetas";
 import { useAutoFocus } from "../../hooks/useAutoFocus";
 import { useLocale } from "../../hooks/useLocale";
 import "./RecetaModal.css";

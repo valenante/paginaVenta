@@ -2,7 +2,7 @@
 // Panel de control de acceso por turno — admin habilita/deshabilita empleados en tiempo real.
 
 import React, { useState } from "react";
-import { useTurnosAcceso, toggleTurnoUsuario, bulkToggleTurnos, toggleControlTurnos } from "../../Hooks/useTurnosAcceso";
+import { useTurnosAcceso, toggleTurnoUsuario, bulkToggleTurnos, toggleControlTurnos } from "../../hooks/useTurnosAcceso";
 import "./ControlTurnosPanel.css";
 
 const ROLES_LABEL = {

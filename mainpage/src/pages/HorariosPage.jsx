@@ -2,7 +2,7 @@
 // Calendario semanal de turnos del personal.
 
 import React, { useState, useMemo } from "react";
-import { useSemana, useConflictos, asignarTurno, eliminarAsignacion, editarAsignacion, publicarSemana } from "../Hooks/useHorarios";
+import { useSemana, useConflictos, asignarTurno, eliminarAsignacion, editarAsignacion, publicarSemana } from "../hooks/useHorarios";
 import { useLocale } from "../hooks/useLocale";
 import ControlTurnosPanel from "../components/Turnos/ControlTurnosPanel";
 import "./HorariosPage.css";

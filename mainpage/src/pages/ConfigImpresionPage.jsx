@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, useCallback } from "react";
+import { useEffect, useMemo, useState, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../utils/api";
 import { useConfig } from "../context/ConfigContext.jsx";
@@ -222,6 +222,10 @@ export default function ConfigImpresionPage() {
   const [impCaja, setImpCaja] = useState("");
   const [impTickets, setImpTickets] = useState("");
 
+  // Espejo siempre-actual de hasChanges: evita que un refetch async de `config`
+  // (navegación → refetch tenant → refetch config) pise ediciones sin guardar.
+  const hasChangesRef = useRef(false);
+
   const [impresoras, setImpresoras] = useState([]);
   const [estado, setEstado] = useState("unknown");
   const [loading, setLoading] = useState(false);
@@ -234,6 +238,11 @@ export default function ConfigImpresionPage() {
   const [showDesignModal, setShowDesignModal] = useState(false);
 
   useEffect(() => {
+    // No re-sembrar si el usuario tiene cambios sin guardar: un refetch tardío
+    // de `config` (navegación → refetch tenant → refetch config) no debe pisar la
+    // selección en curso (bug "No hay cambios para guardar").
+    if (hasChangesRef.current) return;
+
     setImpCocina(config?.impresion?.impresoras?.cocina || "");
     setImpBarra(config?.impresion?.impresoras?.barra || "");
     setImpCaja(config?.impresion?.impresoras?.caja || "");
@@ -271,6 +280,11 @@ export default function ConfigImpresionPage() {
     const estiloChanged = JSON.stringify(estiloTicket) !== JSON.stringify(estiloInicial);
     return impChanged || estiloChanged;
   }, [asignacionActual, asignacionInicial, estiloTicket, estiloInicial]);
+
+  // Mantener el espejo sincronizado para que el efecto de re-siembra lo consulte.
+  useEffect(() => {
+    hasChangesRef.current = hasChanges;
+  }, [hasChanges]);
 
   const valoresActuales = useMemo(
     () => [impCocina, impBarra, impCaja, impTickets].filter(Boolean),

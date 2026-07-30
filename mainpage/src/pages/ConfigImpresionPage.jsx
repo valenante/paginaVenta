@@ -310,6 +310,14 @@ export default function ConfigImpresionPage() {
     }
   };
 
+  // Auto-listar impresoras al abrir (best-effort): puebla las sugerencias del
+  // combobox sin obligar a pulsar "Listar impresoras". Si falla (agente offline),
+  // el input de texto libre sigue permitiendo escribir el nombre a mano.
+  useEffect(() => {
+    listarImpresoras();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const guardar = async (reason = "Cambios impresión") => {
     setSuccess(null); setError(null);
     try {
@@ -499,16 +507,28 @@ export default function ConfigImpresionPage() {
               ].map(([id, label, value, setter]) => (
                 <div className="config-field" key={id}>
                   <label htmlFor={id}>Impresora {label}</label>
-                  <select id={id} value={value} onChange={(e) => setter(e.target.value)} disabled={loading}>
-                    <option value="">-- Sin asignar / usar predeterminada --</option>
-                    {opcionesImpresoras.map((imp) => <option key={imp} value={imp}>{imp}</option>)}
-                  </select>
+                  {/* Combobox: sugiere las impresoras detectadas PERO permite escribir
+                      el nombre a mano, para no depender de que "Listar impresoras"
+                      devuelva la impresora (agente lento/offline o listado incompleto). */}
+                  <input
+                    id={id}
+                    list={`${id}-opciones`}
+                    value={value}
+                    onChange={(e) => setter(e.target.value)}
+                    disabled={loading}
+                    placeholder="Escribe el nombre (vacío = sin asignar)"
+                    autoComplete="off"
+                    spellCheck={false}
+                  />
+                  <datalist id={`${id}-opciones`}>
+                    {opcionesImpresoras.map((imp) => <option key={imp} value={imp} />)}
+                  </datalist>
                 </div>
               ))}
             </div>
             <p className="print-config-note">
-              Consejo: usa "Listar impresoras" antes de guardar si acabas de
-              conectar una impresora nueva.
+              Consejo: puedes escribir el nombre de la impresora directamente
+              (p. ej. "POS-80"), o pulsar "Listar impresoras" para ver las detectadas.
             </p>
           </section>
 

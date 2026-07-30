@@ -222,9 +222,11 @@ export default function ConfigImpresionPage() {
   const [impCaja, setImpCaja] = useState("");
   const [impTickets, setImpTickets] = useState("");
 
-  // Espejo siempre-actual de hasChanges: evita que un refetch async de `config`
-  // (navegación → refetch tenant → refetch config) pise ediciones sin guardar.
-  const hasChangesRef = useRef(false);
+  // Sembrado UNA sola vez: `config` se copia al estado local SOLO la primera vez
+  // que llega (null → cargado). Un refetch async posterior (navegación → refetch
+  // tenant → refetch config) o el refreshConfig tras guardar NUNCA vuelven a pisar
+  // la selección en curso (bug "No hay cambios para guardar").
+  const seededRef = useRef(false);
 
   const [impresoras, setImpresoras] = useState([]);
   const [estado, setEstado] = useState("unknown");
@@ -238,10 +240,12 @@ export default function ConfigImpresionPage() {
   const [showDesignModal, setShowDesignModal] = useState(false);
 
   useEffect(() => {
-    // No re-sembrar si el usuario tiene cambios sin guardar: un refetch tardío
-    // de `config` (navegación → refetch tenant → refetch config) no debe pisar la
-    // selección en curso (bug "No hay cambios para guardar").
-    if (hasChangesRef.current) return;
+    // Sembrar el estado local UNA sola vez, cuando `config` pasa de null a cargado.
+    // A partir de ahí NO se re-siembra: ni un refetch tardío de `config` ni el
+    // refreshConfig posterior a guardar pisan la selección del usuario. Al
+    // desmontar/re-montar la página (navegar fuera y volver) se vuelve a sembrar.
+    if (seededRef.current || !config) return;
+    seededRef.current = true;
 
     setImpCocina(config?.impresion?.impresoras?.cocina || "");
     setImpBarra(config?.impresion?.impresoras?.barra || "");
@@ -280,11 +284,6 @@ export default function ConfigImpresionPage() {
     const estiloChanged = JSON.stringify(estiloTicket) !== JSON.stringify(estiloInicial);
     return impChanged || estiloChanged;
   }, [asignacionActual, asignacionInicial, estiloTicket, estiloInicial]);
-
-  // Mantener el espejo sincronizado para que el efecto de re-siembra lo consulte.
-  useEffect(() => {
-    hasChangesRef.current = hasChanges;
-  }, [hasChanges]);
 
   const valoresActuales = useMemo(
     () => [impCocina, impBarra, impCaja, impTickets].filter(Boolean),
@@ -521,22 +520,10 @@ export default function ConfigImpresionPage() {
               ].map(([id, label, value, setter]) => (
                 <div className="config-field" key={id}>
                   <label htmlFor={id}>Impresora {label}</label>
-                  {/* Combobox: sugiere las impresoras detectadas PERO permite escribir
-                      el nombre a mano, para no depender de que "Listar impresoras"
-                      devuelva la impresora (agente lento/offline o listado incompleto). */}
-                  <input
-                    id={id}
-                    list={`${id}-opciones`}
-                    value={value}
-                    onChange={(e) => setter(e.target.value)}
-                    disabled={loading}
-                    placeholder="Escribe el nombre (vacío = sin asignar)"
-                    autoComplete="off"
-                    spellCheck={false}
-                  />
-                  <datalist id={`${id}-opciones`}>
-                    {opcionesImpresoras.map((imp) => <option key={imp} value={imp} />)}
-                  </datalist>
+                  <select id={id} value={value} onChange={(e) => setter(e.target.value)} disabled={loading}>
+                    <option value="">-- Sin asignar / usar predeterminada --</option>
+                    {opcionesImpresoras.map((imp) => <option key={imp} value={imp}>{imp}</option>)}
+                  </select>
                 </div>
               ))}
             </div>

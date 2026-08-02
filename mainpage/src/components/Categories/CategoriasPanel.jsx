@@ -519,9 +519,14 @@ const CategoriasPanel = ({ onBack }) => {
                                                       {Number(getFirstPrice(prod.precios)).toFixed(2)} {currencySymbol}
                                                     </span>
                                                   )}
-                                                  <span className={`catpanel-product-estado ${prod.estado === "habilitado" ? "catpanel-product-estado--on" : "catpanel-product-estado--off"}`}>
-                                                    {prod.estado === "habilitado" ? "Visible" : "Oculto"}
+                                                  <span className={`catpanel-product-estado ${prod.activo !== false ? "catpanel-product-estado--on" : "catpanel-product-estado--off"}`}>
+                                                    {prod.activo !== false ? "Visible" : "Oculto"}
                                                   </span>
+                                                  {prod.estado === "agotado" && (
+                                                    <span className="catpanel-product-estado catpanel-product-estado--off">
+                                                      Agotado
+                                                    </span>
+                                                  )}
                                                 </div>
                                                 <div className="catpanel-product-actions">
                                                   <button

@@ -102,6 +102,7 @@ const CrearProducto = ({ onClose, onCreated, initialTipo, cloneFrom }) => {
         // BUGFIX clonado: aliases sí se pueden copiar (antes quedaba []).
         aliases: aliasesArr,
         aliasesString: aliasesArr.join(", "),
+        activo: cloneFrom.activo !== false,
         estado: cloneFrom.estado || "habilitado",
         canales: Array.isArray(cloneFrom.canales) ? [...cloneFrom.canales] : ["sala", "takeaway", "delivery"],
         precios: preciosArr,
@@ -154,6 +155,7 @@ const CrearProducto = ({ onClose, onCreated, initialTipo, cloneFrom }) => {
       estacion: "",
       aliases: [],
       aliasesString: "",
+      activo: true,
       estado: "habilitado",
       canales: ["sala", "takeaway", "delivery"],
       precios: [{ clave: "precioBase", label: "Precio", precio: 0, coste: 0, factorStock: 1, orden: 0 }],
@@ -672,25 +674,25 @@ const CrearProducto = ({ onClose, onCreated, initialTipo, cloneFrom }) => {
                   <div className="estado-toggle--crear">
                     <input
                       type="checkbox"
-                      checked={formData.estado === "habilitado"}
+                      checked={formData.activo !== false}
                       onChange={(e) =>
                         setFormData((prev) => ({
                           ...prev,
-                          estado: e.target.checked ? "habilitado" : "deshabilitado",
+                          activo: e.target.checked,
                         }))
                       }
                     />
                     <span>
-                      {formData.estado === "habilitado" ? "Habilitado" : "Deshabilitado"}
+                      {formData.activo !== false ? "Visible" : "Oculto"}
                     </span>
                   </div>
 
                   <p className="help-text--crear">
-                    Si lo deshabilitas, <strong>no aparecerá en la carta digital</strong> (clientes),
+                    Si lo ocultas, <strong>no aparecerá en la carta digital</strong> (clientes),
                     pero <strong>seguirá disponible en el panel interno</strong> para que los camareros
                     puedan seguir tomando nota si lo necesitas.
                     <br />
-                    <em>Ejemplo:</em> si hoy te quedas sin "Tarta de queso", la deshabilitas y no la
+                    <em>Ejemplo:</em> si hoy te quedas sin "Tarta de queso", la ocultas y no la
                     verá el cliente en su móvil, pero el camarero podrá seguir añadiéndola desde el TPV
                     si aún te interesa venderla en sala.
                   </p>

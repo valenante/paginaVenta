@@ -426,6 +426,8 @@ const EditProduct = ({
       descripcion: formData.descripcion,
       categoria: formData.categoria,
       tipo: formData.tipo,
+      // visibilidad en carta (decisión del dueño) — separado del stock (estado)
+      activo: formData.activo !== false,
       estado: formData.estado,
       canales: Array.isArray(formData.canales) ? formData.canales : ["sala", "takeaway", "delivery"],
       seccion: formData.seccion,

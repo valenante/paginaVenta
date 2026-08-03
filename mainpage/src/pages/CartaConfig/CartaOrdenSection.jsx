@@ -126,6 +126,54 @@ export default function CartaOrdenSection({ form, handleChange }) {
           </select>
         </div>
       </div>
+
+      {/* Presentación del cuerpo (F5) — cómo se ven los platos */}
+      <div className="config-section-header" style={{ marginTop: "1.25rem" }}>
+        <h3 className="section-title">Presentación de los platos</h3>
+        <p className="section-description">
+          Cambia cómo se muestran las tarjetas de producto y las secciones. El valor por
+          defecto deja la carta exactamente como está ahora.
+        </p>
+      </div>
+
+      <div className="config-field-row">
+        <div className="config-field">
+          <label>Estilo de las tarjetas</label>
+          <select
+            name="carta.presentacion.layoutCuerpo"
+            value={form.carta?.presentacion?.layoutCuerpo ?? "tarjeta"}
+            onChange={handleChange}
+          >
+            <option value="tarjeta">Tarjeta (por defecto)</option>
+            <option value="compacta">Compacta (foto a un lado)</option>
+            <option value="lista">Lista (fila con foto pequeña)</option>
+          </select>
+        </div>
+
+        <div className="config-field">
+          <label>Densidad</label>
+          <select
+            name="carta.presentacion.densidad"
+            value={form.carta?.presentacion?.densidad ?? "comoda"}
+            onChange={handleChange}
+          >
+            <option value="comoda">Cómoda (por defecto)</option>
+            <option value="compacta">Compacta (más apretada)</option>
+          </select>
+        </div>
+      </div>
+
+      <div className="config-field">
+        <label>Secciones de categorías</label>
+        <select
+          name="carta.presentacion.dispositivoSecciones"
+          value={form.carta?.presentacion?.dispositivoSecciones ?? "apilado"}
+          onChange={handleChange}
+        >
+          <option value="apilado">Apiladas (por defecto)</option>
+          <option value="acordeon">Acordeón (plegar/desplegar cada categoría)</option>
+        </select>
+      </div>
     </section>
   );
 }

@@ -5,6 +5,7 @@ import { useLocale } from "../../hooks/useLocale";
 import AlertaMensaje from "../../components/AlertaMensaje/AlertaMensaje.jsx";
 import ModalConfirmacion from "../../components/Modal/ModalConfirmacion.jsx";
 import CartaOrdenSection from "./CartaOrdenSection.jsx";
+import CartaHomeBuilder from "./CartaHomeBuilder.jsx";
 import { useAuth } from "../../context/AuthContext.jsx";
 import CartaPromocionesPanel from "../../components/Promociones/CartaPromocionesPanel.jsx";
 import { toImgSrc } from "../../utils/media";
@@ -465,6 +466,18 @@ export default function CartaConfigPage() {
 
       <div className="carta-config-layout">
         <div className="carta-config-main">
+          {/* ESTRUCTURA DE LA HOME (builder componible + 5 plantillas) */}
+          <CartaHomeBuilder
+            home={form.carta?.home}
+            disabled={!canEditConfig}
+            onChange={(nuevoHome) =>
+              setForm((prev) => ({
+                ...prev,
+                carta: { ...(prev.carta || {}), home: nuevoHome },
+              }))
+            }
+          />
+
           {/* INFORMACIÓN GENERAL */}
           <section className="card config-card">
             <div className="config-card-header">

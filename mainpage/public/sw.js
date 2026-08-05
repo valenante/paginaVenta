@@ -29,6 +29,17 @@ self.addEventListener("fetch", (e) => {
   if (url.pathname.startsWith("/socket.io")) return;
   if (url.protocol === "chrome-extension:") return;
 
+  // No tocar nada que no sea de ESTE origen. La API vive en otro dominio
+  // (api.softalef.com) y su ruta tambien empieza por "/api", asi que sin esta
+  // guarda el bloque de abajo se la tragaba: cuando su fetch fallaba, este SW
+  // fabricaba un `new Response("{}", { status: 503 })` que no lleva cabeceras
+  // CORS ni el `code` del error real. Resultado el 2026-08-05: el print-agent
+  // de tres-catorce llevaba SEIS DIAS caido y la API lo decia con un
+  // `502 PRINT_AGENT_OFFLINE` perfectamente claro, pero el panel mostraba
+  // "503 / Estado desconocido" y Chrome culpaba a CORS. Se perdio una manana
+  // persiguiendo un error que este fichero se habia inventado.
+  if (url.origin !== self.location.origin) return;
+
   // Network-first for API calls
   if (url.pathname.startsWith("/api")) {
     e.respondWith(

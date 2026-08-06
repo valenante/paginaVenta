@@ -31,8 +31,20 @@
   padding: 1.25rem 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.06);
 }
 .dcj-modal__head h2 { font-size: 1.1rem; color: #fff; margin: 0; font-weight: 700; }
+.dcj-modal__actions { display: flex; align-items: center; gap: 0.6rem; }
+.dcj-modal__pdf {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(96,165,250,0.12); color: #60a5fa;
+  border: 1px solid rgba(96,165,250,0.25); border-radius: 8px;
+  padding: 6px 12px; font-size: 0.8rem; font-weight: 600; cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.dcj-modal__pdf:hover:not(:disabled) { background: rgba(96,165,250,0.2); color: #93c5fd; }
+.dcj-modal__pdf:disabled { opacity: 0.55; cursor: default; }
+.dcj-modal__pdf svg { width: 15px; height: 15px; }
 .dcj-modal__close { background: none; border: none; color: #9ca3af; cursor: pointer; font-size: 18px; padding: 4px; }
 .dcj-modal__close:hover { color: #fff; }
+.dcj__pdf-error { color: #f87171; font-size: 0.82rem; margin: 0 0 0.75rem; text-align: center; }
 
 .dcj-modal__body {
   padding: 1.5rem; overflow-y: auto; flex: 1;
@@ -45,6 +57,44 @@
   display: block; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em;
   color: rgba(255,255,255,0.35); margin-bottom: 3px; font-weight: 600;
 }
+
+/* Selector de caja (sólo días con más de una caja) */
+.dcj__cajas {
+  margin-bottom: 1.25rem; padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.dcj__cajas-tabs { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.5rem; }
+.dcj__caja-tab {
+  display: flex; flex-direction: column; gap: 3px; align-items: flex-start;
+  padding: 8px 14px; border-radius: 10px; cursor: pointer; text-align: left;
+  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.55); font-family: inherit;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+.dcj__caja-tab:hover { background: rgba(255,255,255,0.07); color: #e5e7eb; }
+.dcj__caja-tab--activa {
+  background: rgba(96,165,250,0.12); border-color: rgba(96,165,250,0.4); color: #93c5fd;
+}
+.dcj__caja-tab-titulo {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 0.85rem; font-weight: 700; color: #e5e7eb;
+}
+.dcj__caja-tab--activa .dcj__caja-tab-titulo { color: #fff; }
+.dcj__caja-tab-badge {
+  font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700;
+  padding: 1px 6px; border-radius: 999px;
+  background: rgba(168,85,247,0.15); color: #c084fc;
+}
+.dcj__caja-tab-meta { font-size: 0.75rem; color: rgba(255,255,255,0.45); }
+.dcj__caja-tab--activa .dcj__caja-tab-meta { color: rgba(147,197,253,0.85); }
+.dcj__cajas-hint {
+  margin: 0.6rem 0 0; font-size: 0.78rem; color: rgba(255,255,255,0.45); line-height: 1.4;
+}
+.dcj__cajas-hint strong { color: #e5e7eb; font-weight: 700; }
+/* Totales del día completo (unión de cajas) — en punteado para no confundirlos
+   con el resumen de la caja seleccionada, que va más abajo en línea continua. */
+.dcj__dia-resumen { margin-top: 0.85rem; }
+.dcj__resumen-item--dia { border-style: dashed; background: rgba(255,255,255,0.02); }
 
 /* Header */
 .dcj__header { display: flex; gap: 2rem; margin-bottom: 1rem; flex-wrap: wrap; }
@@ -105,5 +155,7 @@
 @media (max-width: 640px) {
   .dcj-modal { max-width: 100vw; border-radius: 12px; }
   .dcj__header { flex-direction: column; gap: 0.5rem; }
+  .dcj__cajas-tabs { flex-direction: column; }
+  .dcj__caja-tab { width: 100%; }
   .dcj__arqueo { flex-direction: column; gap: 0.5rem; }
 }

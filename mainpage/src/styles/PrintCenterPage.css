@@ -140,6 +140,22 @@
   background: rgba(245, 158, 11, 0.12);
 }
 
+/* Cola del spooler de Windows atascada (incidente zabor-feten 2026-08-06). */
+.pc-hint--danger {
+  border-color: rgba(239, 68, 68, 0.45);
+  background: rgba(239, 68, 68, 0.12);
+}
+
+.pc-spoolerTitulo {
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+
+.pc-spoolerLista {
+  margin: 0.35rem 0 0;
+  padding-left: 1.1rem;
+}
+
 /* =========================
    Tabla (desktop)
 ========================= */

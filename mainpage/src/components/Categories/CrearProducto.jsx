@@ -1,9 +1,13 @@
 // src/components/Categories/CrearProducto.jsx
 import React, { useState, useContext, useEffect, useMemo, useRef } from "react";
 import PreciosHelpModal from "./PreciosHelpModal";
-import AdicionalesEditor from "./AdicionalesEditor";
-import CompuestosEditor from "./CompuestosEditor";
+import AdicionalesEditor, { normalizarAdicionales } from "./AdicionalesEditor";
+import CompuestosEditor, {
+  normalizarComponentes,
+  normalizarSeleccionables,
+} from "./CompuestosEditor";
 import AlergenosSelector from "./AlergenosSelector";
+import { toNumOrNull } from "../../utils/numeroInput";
 import { sanearAlergenos } from "../../constants/alergenos";
 
 const capitalizeClave = (s) => {
@@ -344,11 +348,19 @@ const CrearProducto = ({ onClose, onCreated, initialTipo, cloneFrom }) => {
     delete productData.alergenosRaros; // solo UI local
 
     // Auto-derivar clave slug desde label + label desde clave (fallbacks cruzados)
+    // Los inputs numéricos guardan STRING mientras se teclea → aquí se convierten.
     productData.precios = (productData.precios || []).map((p) => ({
       ...p,
       clave: (p.clave && p.clave.trim()) ? p.clave : slugifyClave(p.label || "precioBase"),
       label: (p.label && p.label.trim()) ? p.label : capitalizeClave(p.clave || "precioBase"),
+      precio: toNumOrNull(p.precio) ?? 0,
+      coste: Math.max(0, toNumOrNull(p.coste) ?? 0),
+      factorStock: Math.max(0, toNumOrNull(p.factorStock) ?? 1),
     }));
+
+    productData.adicionales = normalizarAdicionales(productData.adicionales);
+    productData.componentes = normalizarComponentes(productData.componentes);
+    productData.seleccionables = normalizarSeleccionables(productData.seleccionables);
 
     if (productData.tipo === "plato") {
       delete productData.conHielo;

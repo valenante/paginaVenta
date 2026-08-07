@@ -8,6 +8,7 @@ import { normalizeApiError } from "../utils/normalizeApiError.js";
 import ErrorToast from "../components/common/ErrorToast.jsx";
 import TicketPreview from "../components/Config/TicketPreview.jsx";
 import { resolveEstiloTicket } from "../utils/resolveEstiloTicket.js";
+import { toInputText, clampIntNum } from "../utils/numeroInput.js";
 
 const DEFAULT_ESTILO = {
   logoEnTicket: false,
@@ -37,6 +38,28 @@ const DEFAULT_ESTILO = {
   // Overrides por tipo de documento (parciales)
   porTipo: {},
 };
+
+/* `logoAncho` es el único campo numérico del estilo. Su input guarda TEXTO
+   mientras el usuario teclea (para poder vaciarlo y reescribirlo); esta función
+   lo convierte a número, en la base y en cada override por tipo, y es la única
+   puerta por la que el estilo sale hacia el backend o hacia la impresora. */
+function sanearEstiloTicket(estilo) {
+  const anchoDe = (v) => clampIntNum(v, 100, 500, DEFAULT_ESTILO.logoAncho);
+  const out = { ...(estilo || {}) };
+  if ("logoAncho" in out) out.logoAncho = anchoDe(out.logoAncho);
+  const porTipo = out.porTipo && typeof out.porTipo === "object" ? out.porTipo : null;
+  if (porTipo) {
+    const next = {};
+    for (const [tipo, ov] of Object.entries(porTipo)) {
+      next[tipo] =
+        ov && typeof ov === "object" && "logoAncho" in ov
+          ? { ...ov, logoAncho: anchoDe(ov.logoAncho) }
+          : ov;
+    }
+    out.porTipo = next;
+  }
+  return out;
+}
 
 /* Pestañas del editor: General = base; el resto edita porTipo[tipo] */
 const DESIGN_TABS = [
@@ -205,7 +228,8 @@ function TicketDesignModal({ estilo, onChange, onClose, onSave, onTestPrint, loa
               </TdField>
               {val("logoEnTicket") && (
                 <TdField label="Ancho del logo (px)" inheritNode={inheritTag("logoAncho")} inherited={inherited("logoAncho")}>
-                  <input type="number" min={100} max={500} value={val("logoAncho")} onChange={(e) => setVal("logoAncho", Number(e.target.value) || 300)} disabled={disabledFor("logoAncho")} />
+                  {/* texto crudo mientras se teclea; sanearEstiloTicket convierte al guardar/imprimir */}
+                  <input type="number" min={100} max={500} value={toInputText(val("logoAncho"))} onChange={(e) => setVal("logoAncho", e.target.value)} disabled={disabledFor("logoAncho")} />
                 </TdField>
               )}
             </fieldset>
@@ -516,7 +540,7 @@ export default function ConfigImpresionPage() {
       setLoading(true);
       const patch = {
         "impresion.impresoras": { cocina: impCocina, barra: impBarra, caja: impCaja, tickets: impTickets },
-        "impresion.estiloTicket": estiloTicket,
+        "impresion.estiloTicket": sanearEstiloTicket(estiloTicket),
       };
       const { data: draft } = await api.post("/admin/config/versions", { patch, scope: "impresion_config", reason });
       const versionId = draft?.version?.id || draft?.versionId || draft?.id;
@@ -571,7 +595,7 @@ export default function ConfigImpresionPage() {
       setLoading(true);
       const { data } = await api.post("/impresoras/test", {
         estacion: "caja",
-        estiloTicket,
+        estiloTicket: sanearEstiloTicket(estiloTicket),
         ...(activeTab && activeTab !== "general" ? { tipo: activeTab } : {}),
       });
       setEstado(data?.estado || estado);
@@ -589,7 +613,7 @@ export default function ConfigImpresionPage() {
     setSuccess(null); setError(null);
     try {
       setLoading(true);
-      const patch = { "impresion.estiloTicket": estiloTicket };
+      const patch = { "impresion.estiloTicket": sanearEstiloTicket(estiloTicket) };
       const { data: draft } = await api.post("/admin/config/versions", { patch, scope: "impresion_estilo", reason: "Cambios diseño ticket" });
       const versionId = draft?.version?.id || draft?.versionId || draft?.id;
       if (!versionId) throw new Error("No se recibió versionId del draft");

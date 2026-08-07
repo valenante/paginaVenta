@@ -1,6 +1,7 @@
 // src/components/Categories/CategoriaFormModal.jsx
 import React, { useState, useEffect, useCallback } from "react";
 import Portal from "../ui/Portal";
+import { toInputText, clampIntNum } from "../../utils/numeroInput";
 import "./CategoriaFormModal.css";
 
 const ICONOS_SUGERIDOS = [
@@ -18,7 +19,9 @@ const CategoriaFormModal = ({ categoria, tipo, onClose, onSave }) => {
   const [nombre, setNombre] = useState(categoria?.nombre || "");
   const [descripcion, setDescripcion] = useState(categoria?.descripcion || "");
   const [icono, setIcono] = useState(categoria?.icono || "");
-  const [orden, setOrden] = useState(categoria?.orden ?? 0);
+  // Se guarda como TEXTO mientras se teclea (para poder vaciar el campo);
+  // se convierte a número en handleSubmit.
+  const [orden, setOrden] = useState(toInputText(categoria?.orden ?? 0));
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
 
@@ -59,7 +62,7 @@ const CategoriaFormModal = ({ categoria, tipo, onClose, onSave }) => {
           nombre: nombre.trim(),
           descripcion: descripcion.trim(),
           icono: icono.trim(),
-          orden,
+          orden: clampIntNum(orden, 0, Infinity, 0),
           traducciones: {
             en: { nombre: trEN.nombre.trim(), descripcion: trEN.descripcion.trim() },
             fr: { nombre: trFR.nombre.trim(), descripcion: trFR.descripcion.trim() },
@@ -185,7 +188,7 @@ const CategoriaFormModal = ({ categoria, tipo, onClose, onSave }) => {
                     className="catmodal-input catmodal-input--orden"
                     type="number"
                     value={orden}
-                    onChange={(e) => setOrden(Number(e.target.value) || 0)}
+                    onChange={(e) => setOrden(e.target.value)}
                     min={0}
                   />
                 </label>

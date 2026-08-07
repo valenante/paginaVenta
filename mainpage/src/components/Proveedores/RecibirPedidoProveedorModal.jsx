@@ -2,6 +2,7 @@ import React, { useMemo, useState } from "react";
 import api from "../../utils/api";
 import { useTenant } from "../../context/TenantContext";
 import Portal from "../ui/Portal";
+import { toInputText, toNum, toNumOrNull } from "../../utils/numeroInput";
 import "./RecibirPedidoProveedorModal.css";
 
 export default function RecibirPedidoProveedorModal({
@@ -55,15 +56,17 @@ export default function RecibirPedidoProveedorModal({
                 `/admin/proveedores/${proveedorId}/pedidos/${pedidoId}/recibir`,
                 {
                     lineas: lineas.map((l) => {
+                        // los inputs guardan texto mientras se teclea → aquí se convierten
                         const payload = {
                             lineaIndex: l.lineaIndex,
-                            cantidadRecibida: Number(l.cantidadRecibida || 0),
+                            cantidadRecibida: Math.max(0, toNum(l.cantidadRecibida, 0)),
                             ingredienteId: l.ingredienteId,
                             productoShopId: l.productoShopId,
                         };
                         // Fase 0/5: campos opcionales
-                        if (l.precioUnitarioReal !== "" && l.precioUnitarioReal != null) {
-                            payload.precioUnitarioReal = Number(l.precioUnitarioReal);
+                        const precioReal = toNumOrNull(l.precioUnitarioReal);
+                        if (precioReal !== null) {
+                            payload.precioUnitarioReal = precioReal;
                         }
                         if (l.caducidad) payload.caducidad = l.caducidad;
                         if (l.codigoLote) payload.codigoLote = l.codigoLote;
@@ -142,9 +145,9 @@ export default function RecibirPedidoProveedorModal({
                                                     type="number"
                                                     min={0}
                                                     max={l.cantidadPedida}
-                                                    value={l.cantidadRecibida}
+                                                    value={toInputText(l.cantidadRecibida)}
                                                     onChange={(e) =>
-                                                        updateLineaCampo(idx, "cantidadRecibida", Number(e.target.value))
+                                                        updateLineaCampo(idx, "cantidadRecibida", e.target.value)
                                                     }
                                                 />
                                             </td>
@@ -154,7 +157,7 @@ export default function RecibirPedidoProveedorModal({
                                                     min={0}
                                                     step="0.01"
                                                     placeholder="—"
-                                                    value={l.precioUnitarioReal}
+                                                    value={toInputText(l.precioUnitarioReal)}
                                                     onChange={(e) =>
                                                         updateLineaCampo(idx, "precioUnitarioReal", e.target.value)
                                                     }

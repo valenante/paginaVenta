@@ -360,3 +360,10 @@
 .loyalty-pill--ok   { background: rgba(34, 197, 94, 0.12); color: #15803d; }
 .loyalty-pill--info { background: rgba(96, 181, 255, 0.18); color: #2f7ed8; }
 .loyalty-pill--warn { background: rgba(239, 68, 68, 0.12);  color: #b91c1c; }
+
+/* Aviso de campo numérico vacío (Reglas básicas). El valor no se guarda:
+   se restaura el anterior y se avisa, en lugar de persistir un 0 en silencio. */
+.cfg-help--warn {
+  color: #b45309;
+  font-weight: 600;
+}

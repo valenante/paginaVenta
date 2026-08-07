@@ -53,7 +53,7 @@ const CostesPanel = () => {
     items, loading, error, saving,
     hasChanges, dirtyCount, dirty,
     setCosteLocal, discardChanges,
-    getCosteActual, saveProducto, saveAll,
+    getCosteActual, getCosteTexto, saveProducto, saveAll,
     refresh,
   } = useCostes({ tipo: tab });
 
@@ -264,6 +264,7 @@ const CostesPanel = () => {
               onDiscard={() => discardChanges(p._id)}
               saving={saving}
               getCosteActual={getCosteActual}
+              getCosteTexto={getCosteTexto}
               onReceta={(prod) => setRecetaProducto(prod)}
               onNavigateProveedor={handleNavigateProveedor}
             />
@@ -335,7 +336,7 @@ const CostesPanel = () => {
 /* =====================================================
  * Card de producto (con todas sus variantes)
  * ===================================================== */
-function ProductoCard({ producto, dirty, onChangeCoste, onSave, onDiscard, saving, getCosteActual, onReceta, onNavigateProveedor }) {
+function ProductoCard({ producto, dirty, onChangeCoste, onSave, onDiscard, saving, getCosteActual, getCosteTexto, onReceta, onNavigateProveedor }) {
   const precios = producto.precios || [];
   const hasDirty = Object.keys(dirty).length > 0;
   const tieneReceta = producto.receta?.length > 0;
@@ -393,7 +394,7 @@ function ProductoCard({ producto, dirty, onChangeCoste, onSave, onDiscard, savin
                   type="number"
                   step="0.01"
                   min="0"
-                  value={coste === 0 && !isDirty ? "" : coste}
+                  value={getCosteTexto(producto, pr.clave)}
                   placeholder="0.00"
                   onChange={(e) => onChangeCoste(pr.clave, e.target.value)}
                 />

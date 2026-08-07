@@ -1,5 +1,6 @@
 // src/components/Config/OperativaSlaCapacidadPanel.jsx
 import React, { useMemo } from "react";
+import { toInputText } from "../../utils/numeroInput";
 import "./OperativaSlaCapacidadPanel.css";
 
 export default function OperativaSlaCapacidadPanel({ form, setForm }) {
@@ -81,9 +82,9 @@ export default function OperativaSlaCapacidadPanel({ form, setForm }) {
                   type="number"
                   min="1"
                   max="60"
-                  value={slaSafe.fallbackMinutosMax}
+                  value={toInputText(slaSafe.fallbackMinutosMax)}
                   onChange={(e) =>
-                    setSla({ fallbackMinutosMax: clampInt(e.target.value, 1, 60) })
+                    setSla({ fallbackMinutosMax: e.target.value })
                   }
                   placeholder="10"
                 />
@@ -100,9 +101,9 @@ export default function OperativaSlaCapacidadPanel({ form, setForm }) {
                   type="number"
                   min="0"
                   max="300"
-                  value={slaSafe.margenGraciaSegundos}
+                  value={toInputText(slaSafe.margenGraciaSegundos)}
                   onChange={(e) =>
-                    setSla({ margenGraciaSegundos: clampInt(e.target.value, 0, 300) })
+                    setSla({ margenGraciaSegundos: e.target.value })
                   }
                   placeholder="60"
                 />
@@ -121,9 +122,9 @@ export default function OperativaSlaCapacidadPanel({ form, setForm }) {
                   type="number"
                   min="50"
                   max="99"
-                  value={slaSafe.porcentajeAvisoRiesgo}
+                  value={toInputText(slaSafe.porcentajeAvisoRiesgo)}
                   onChange={(e) =>
-                    setSla({ porcentajeAvisoRiesgo: clampInt(e.target.value, 50, 99) })
+                    setSla({ porcentajeAvisoRiesgo: e.target.value })
                   }
                   placeholder="80"
                 />
@@ -141,9 +142,9 @@ export default function OperativaSlaCapacidadPanel({ form, setForm }) {
                   type="number"
                   min="0"
                   max="30"
-                  value={slaSafe.cooldownAvisoMinutos}
+                  value={toInputText(slaSafe.cooldownAvisoMinutos)}
                   onChange={(e) =>
-                    setSla({ cooldownAvisoMinutos: clampInt(e.target.value, 0, 30) })
+                    setSla({ cooldownAvisoMinutos: e.target.value })
                   }
                   placeholder="5"
                 />
@@ -162,9 +163,9 @@ export default function OperativaSlaCapacidadPanel({ form, setForm }) {
                   type="number"
                   min="1"
                   max="10"
-                  value={slaSafe.proximosMax}
+                  value={toInputText(slaSafe.proximosMax)}
                   onChange={(e) =>
-                    setSla({ proximosMax: clampInt(e.target.value, 1, 10) })
+                    setSla({ proximosMax: e.target.value })
                   }
                   placeholder="3"
                 />
@@ -208,9 +209,3 @@ export default function OperativaSlaCapacidadPanel({ form, setForm }) {
   );
 }
 
-/* helpers */
-function clampInt(val, min, max) {
-  const n = Number(val);
-  if (Number.isNaN(n)) return min;
-  return Math.min(max, Math.max(min, Math.trunc(n)));
-}

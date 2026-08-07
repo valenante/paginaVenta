@@ -3,6 +3,7 @@ import api from "../../utils/api";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import AlertaMensaje from "../../components/AlertaMensaje/AlertaMensaje.jsx";
+import { toInputText, clampIntNum } from "../../utils/numeroInput";
 import "./ReservasAjustesPage.css";
 
 // Backend keys: sin tildes (miercoles, sabado)
@@ -20,16 +21,14 @@ const FRANJA_DEFAULT = { horaInicio: "13:00", horaFin: "15:00", maxReservas: 10 
 const toISODate = (d) => {
   try { return new Date(d).toISOString().slice(0, 10); } catch { return ""; }
 };
-const clampInt = (v, min = 1, max = 9999) => {
-  const n = Number(v);
-  return !Number.isFinite(n) ? min : Math.max(min, Math.min(max, Math.trunc(n)));
-};
+// El input de maxReservas guarda TEXTO mientras se teclea (para poder vaciarlo);
+// sanitizeFranjas es quien convierte y clampea, tanto al cargar como al GUARDAR.
 const sanitizeFranjas = (arr) =>
   (Array.isArray(arr) ? arr : [])
     .map((f) => ({
       horaInicio: String(f?.horaInicio || "13:00").slice(0, 5),
       horaFin: String(f?.horaFin || "15:00").slice(0, 5),
-      maxReservas: clampInt(f?.maxReservas ?? 10, 1, 9999),
+      maxReservas: clampIntNum(f?.maxReservas, 1, 9999, 10),
     }))
     .filter((f) => f.horaInicio && f.horaFin);
 
@@ -167,7 +166,7 @@ export default function ReservasAjustesPage({ onClose }) {
     setFranjas((prev) => {
       const next = [...prev];
       const cur = { ...(next[idx] || FRANJA_DEFAULT) };
-      if (key === "maxReservas") cur.maxReservas = clampInt(value, 1, 9999);
+      if (key === "maxReservas") cur.maxReservas = value; // texto crudo; se convierte en sanitizeFranjas al guardar
       else cur[key] = String(value || "").slice(0, 5);
       next[idx] = cur;
       return next;
@@ -181,7 +180,7 @@ export default function ReservasAjustesPage({ onClose }) {
     setFranjasEspeciales((prev) => {
       const next = [...prev];
       const cur = { ...(next[idx] || FRANJA_DEFAULT) };
-      if (key === "maxReservas") cur.maxReservas = clampInt(value, 1, 9999);
+      if (key === "maxReservas") cur.maxReservas = value; // texto crudo; se convierte en sanitizeFranjas al guardar
       else cur[key] = String(value || "").slice(0, 5);
       next[idx] = cur;
       return next;
@@ -252,7 +251,7 @@ export default function ReservasAjustesPage({ onClose }) {
       <div className="ra-franja-extra">
         <div className="mnr-field">
           <label>Max. reservas</label>
-          <input type="number" min="1" value={f.maxReservas} onChange={(e) => update(i, "maxReservas", e.target.value)} disabled={busy} />
+          <input type="number" min="1" value={toInputText(f.maxReservas)} onChange={(e) => update(i, "maxReservas", e.target.value)} disabled={busy} />
         </div>
         <button type="button" className="ra-btn-delete" onClick={() => remove(i)} disabled={busy} aria-label="Eliminar franja" title="Eliminar">
           ✕

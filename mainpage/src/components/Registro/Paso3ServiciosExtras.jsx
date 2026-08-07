@@ -1,7 +1,28 @@
 // src/components/Paso3ServiciosExtras.jsx
 import React, { useState } from "react";
 import api from "../../utils/api"; // ajusta si tu path es distinto
+import { toInputText, clampIntNum } from "../../utils/numeroInput";
 import "./Paso3ServiciosExtras.css";
+
+// Campos numéricos del formulario: sus inputs guardan TEXTO mientras el usuario
+// teclea (así se pueden vaciar). Esta función los convierte a número, y es la
+// única puerta por la que `servicios` sale hacia el backend.
+const SERVICIOS_NUMERICOS = [
+  "mesasQrCantidad",
+  "impresoras",
+  "pantallas",
+  "pda",
+  "scanner",
+  "formacionPersonas",
+];
+
+export function normalizarServicios(servicios) {
+  const out = { ...(servicios || {}) };
+  for (const k of SERVICIOS_NUMERICOS) {
+    if (k in out) out[k] = clampIntNum(out[k], 0, Infinity, 0);
+  }
+  return out;
+}
 
 export default function Paso3ServiciosExtras({
   servicios,
@@ -33,10 +54,11 @@ export default function Paso3ServiciosExtras({
         return { ...prev, [name]: checked };
       }
 
-      // ✅ number (nunca negativo)
+      // ✅ number: se guarda el TEXTO tal cual se teclea, para poder vaciar el
+      // campo. Mapear "" a 0 impedía borrarlo (React reponía el "0" en el DOM).
+      // Paso4ResumenPago convierte con toNum al calcular y al enviar.
       if (type === "number") {
-        const num = value === "" ? 0 : Math.max(0, Math.floor(Number(value)));
-        return { ...prev, [name]: num };
+        return { ...prev, [name]: value };
       }
 
       // ✅ radio/select/text
@@ -53,7 +75,7 @@ export default function Paso3ServiciosExtras({
     const { data: pre } = await api.post("/pago/precheckout", {
       tenant,
       config,
-      servicios,
+      servicios: normalizarServicios(servicios),
       precio,
       admin,
       plan: slugCompleto,
@@ -284,7 +306,7 @@ export default function Paso3ServiciosExtras({
                       name="mesasQrCantidad"
                       min="1"
                       max="150"
-                      value={servicios.mesasQrCantidad ?? ""}
+                      value={toInputText(servicios.mesasQrCantidad)}
                       onChange={handleChange}
                     />
                   </div>
@@ -404,7 +426,7 @@ export default function Paso3ServiciosExtras({
             name="impresoras"
             min="0"
             max="10"
-            value={servicios.impresoras ?? 0}
+            value={toInputText(servicios.impresoras)}
             onChange={handleChange}
           />
         </div>
@@ -476,7 +498,7 @@ export default function Paso3ServiciosExtras({
             name="pantallas"
             min="0"
             max="10"
-            value={servicios.pantallas ?? 0}
+            value={toInputText(servicios.pantallas)}
             onChange={handleChange}
           />
         </div>
@@ -494,7 +516,7 @@ export default function Paso3ServiciosExtras({
               name="pda"
               min="0"
               max="10"
-              value={servicios.pda ?? 0}
+              value={toInputText(servicios.pda)}
               onChange={handleChange}
             />
           </div>
@@ -510,7 +532,7 @@ export default function Paso3ServiciosExtras({
               name="scanner"
               min="0"
               max="10"
-              value={servicios.scanner ?? 0}
+              value={toInputText(servicios.scanner)}
               onChange={handleChange}
             />
           </div>
@@ -554,7 +576,7 @@ export default function Paso3ServiciosExtras({
                   name="formacionPersonas"
                   min="1"
                   max="50"
-                  value={servicios.formacionPersonas ?? ""}
+                  value={toInputText(servicios.formacionPersonas)}
                   onChange={handleChange}
                 />
               </div>

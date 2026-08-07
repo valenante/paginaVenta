@@ -1,10 +1,14 @@
 import React, { useContext, useEffect, useMemo, useState, useRef } from "react";
 import PreciosHelpModal from "./PreciosHelpModal";
-import AdicionalesEditor from "./AdicionalesEditor";
-import CompuestosEditor from "./CompuestosEditor";
+import AdicionalesEditor, { normalizarAdicionales } from "./AdicionalesEditor";
+import CompuestosEditor, {
+  normalizarComponentes,
+  normalizarSeleccionables,
+} from "./CompuestosEditor";
 import AlergenosSelector from "./AlergenosSelector";
 import { sanearAlergenos } from "../../constants/alergenos";
 import { ProductosContext } from "../../context/ProductosContext";
+import { toNumOrNull } from "../../utils/numeroInput";
 
 const capitalizeClave = (s) => {
   const v = String(s || "").trim();
@@ -31,11 +35,9 @@ import "./CrearProducto.css";
 /* =========================
    Helpers
 ========================= */
-const toNumOrNull = (v) => {
-  if (v === "" || v == null) return null;
-  const n = Number(v);
-  return Number.isFinite(n) ? n : null;
-};
+// `toNumOrNull` vive en utils/numeroInput.js (fuente unica). La copia local que
+// habia aqui usaba Number() a secas y se comia la coma decimal: escribir "1,29"
+// daba NaN y el precio se perdia al guardar.
 
 const safeStr = (v) => (v == null ? "" : String(v));
 
@@ -414,7 +416,8 @@ const EditProduct = ({
     }
 
     // v2 stock-modelo-v2: adicionales es lista editable completa desde AdicionalesEditor
-    const adicionales = Array.isArray(formData.adicionales) ? formData.adicionales : [];
+    // Sus inputs numéricos guardan STRING mientras se teclea → aquí se convierten.
+    const adicionales = normalizarAdicionales(formData.adicionales);
 
     const payload = {
       _id: product?._id,
@@ -433,8 +436,8 @@ const EditProduct = ({
       alergenosTrazas: formData.alergenosTrazas || [],
       receta: Array.isArray(formData.receta) ? formData.receta : [],
       // v3 fase 4 — compuestos
-      componentes: Array.isArray(formData.componentes) ? formData.componentes : [],
-      seleccionables: Array.isArray(formData.seleccionables) ? formData.seleccionables : [],
+      componentes: normalizarComponentes(formData.componentes),
+      seleccionables: normalizarSeleccionables(formData.seleccionables),
       stock: Number(formData.stock) || 0,
       controlStock: !!formData.controlStock,
       imprimirSiempre: !!formData.imprimirSiempre,

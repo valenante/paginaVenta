@@ -6,6 +6,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { createPortal } from "react-dom";
 import { useReceta, guardarReceta, buscarIngredientes } from "../../Hooks/useRecetas";
+import { toInputText, toNum } from "../../utils/numeroInput";
 import "./RecetaModal.css";
 
 const UNIDADES = ["ud", "g", "kg", "ml", "cl", "litro"];
@@ -66,7 +67,8 @@ export default function RecetaModal({ productoId, productoNombre, onClose, onSav
       const updated = { ...l, [field]: value };
       const costeUd = calcCosteUnitario(updated);
       updated.costeUnitario = costeUd;
-      updated.costeLinea = Math.round(updated.cantidad * costeUd * 100) / 100;
+      // cantidad puede ser un string a medio teclear ("", "1.") → toNum, nunca NaN
+      updated.costeLinea = Math.round(toNum(updated.cantidad, 0) * costeUd * 100) / 100;
       return updated;
     }));
   };
@@ -103,7 +105,8 @@ export default function RecetaModal({ productoId, productoNombre, onClose, onSav
         productoProveedorId: l.productoProveedorId,
         ingrediente: l.ingrediente || null,
         nombre: l.nombre,
-        cantidad: l.cantidad,
+        // el input guarda string mientras se teclea → se convierte aquí, al guardar
+        cantidad: Math.max(0, toNum(l.cantidad, 0)),
         unidad: l.unidad,
         clavePrecio: l.clavePrecio || null,
       })));
@@ -133,10 +136,10 @@ export default function RecetaModal({ productoId, productoNombre, onClose, onSav
         <input
           type="number"
           className="rec-input"
-          value={l.cantidad}
+          value={toInputText(l.cantidad)}
           min="0"
           step="any"
-          onChange={e => updateLinea(globalIdx, "cantidad", Number(e.target.value) || 0)}
+          onChange={e => updateLinea(globalIdx, "cantidad", e.target.value)}
         />
       </span>
       <span>

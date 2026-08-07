@@ -8,14 +8,28 @@
 // Usa las clases del tema oscuro definidas en CrearProducto.css.
 
 import React, { useMemo, useState } from "react";
+import { toInputText, toNum } from "../../utils/numeroInput";
 
 const defaultRow = () => ({
   nombre: "",
-  precio: 0,
+  precio: "",
   productoId: null,
   cantidad: 1,
   consumeStock: false,
 });
+
+/**
+ * Los inputs numéricos guardan STRING mientras el usuario teclea (para poder
+ * vaciarlos y escribir "1.29"). La conversión a número se hace aquí, al guardar.
+ * La usan CrearProducto y EditProducts en su handleSubmit.
+ */
+export function normalizarAdicionales(adicionales) {
+  return (Array.isArray(adicionales) ? adicionales : []).map((ad) => ({
+    ...ad,
+    precio: Math.max(0, toNum(ad?.precio, 0)),
+    cantidad: Math.max(0, toNum(ad?.cantidad, 0)),
+  }));
+}
 
 export default function AdicionalesEditor({
   adicionales = [],
@@ -104,8 +118,8 @@ export default function AdicionalesEditor({
                 Precio extra (€)
                 <input
                   type="number"
-                  value={ad.precio ?? 0}
-                  onChange={(e) => update(idx, { precio: parseFloat(e.target.value) || 0 })}
+                  value={toInputText(ad.precio)}
+                  onChange={(e) => update(idx, { precio: e.target.value })}
                   className="input--crear"
                   min="0"
                   step="0.01"
@@ -182,8 +196,8 @@ export default function AdicionalesEditor({
                   Cantidad por unidad
                   <input
                     type="number"
-                    value={ad.cantidad ?? 1}
-                    onChange={(e) => update(idx, { cantidad: parseFloat(e.target.value) || 0 })}
+                    value={toInputText(ad.cantidad)}
+                    onChange={(e) => update(idx, { cantidad: e.target.value })}
                     className="input--crear"
                     min="0"
                     step="0.01"

@@ -7,6 +7,35 @@
 // Usa clases del tema oscuro en CrearProducto.css (compuesto-*).
 
 import React, { useMemo, useState } from "react";
+import { toInputText, toNum, clampIntNum } from "../../utils/numeroInput";
+
+/**
+ * Los inputs numéricos guardan STRING mientras el usuario teclea (para poder
+ * vaciarlos y escribir "1.29"). La conversión a número se hace aquí, al guardar.
+ * Las usan CrearProducto y EditProducts en su handleSubmit.
+ */
+export function normalizarComponentes(componentes) {
+  return (Array.isArray(componentes) ? componentes : []).map((c) => ({
+    ...c,
+    cantidad: Math.max(0, toNum(c?.cantidad, 0)),
+  }));
+}
+
+export function normalizarSeleccionables(seleccionables) {
+  return (Array.isArray(seleccionables) ? seleccionables : []).map((sel) => ({
+    ...sel,
+    slotsTotal: clampIntNum(sel?.slotsTotal, 1, Infinity, 1),
+    minPorOpcion: clampIntNum(sel?.minPorOpcion, 0, Infinity, 0),
+    maxPorOpcion:
+      sel?.maxPorOpcion === "" || sel?.maxPorOpcion == null
+        ? null
+        : clampIntNum(sel.maxPorOpcion, 0, Infinity, 0),
+    opciones: (Array.isArray(sel?.opciones) ? sel.opciones : []).map((op) => ({
+      ...op,
+      cantidadPorSlot: Math.max(0, toNum(op?.cantidadPorSlot, 0)),
+    })),
+  }));
+}
 
 const defaultComponente = () => ({
   productoId: null,
@@ -165,9 +194,9 @@ export default function CompuestosEditor({
                   type="number"
                   min="0"
                   step="0.01"
-                  value={comp.cantidad ?? 1}
+                  value={toInputText(comp.cantidad)}
                   onChange={(e) =>
-                    patchComponente(idx, { cantidad: parseFloat(e.target.value) || 0 })
+                    patchComponente(idx, { cantidad: e.target.value })
                   }
                   className="input--crear"
                   disabled={disabled}
@@ -243,11 +272,9 @@ export default function CompuestosEditor({
                   type="number"
                   min="1"
                   step="1"
-                  value={sel.slotsTotal ?? 1}
+                  value={toInputText(sel.slotsTotal)}
                   onChange={(e) =>
-                    patchSeleccionable(selIdx, {
-                      slotsTotal: parseInt(e.target.value, 10) || 1,
-                    })
+                    patchSeleccionable(selIdx, { slotsTotal: e.target.value })
                   }
                   className="input--crear"
                   disabled={disabled}
@@ -258,11 +285,9 @@ export default function CompuestosEditor({
                 <input
                   type="number"
                   min="0"
-                  value={sel.minPorOpcion ?? 0}
+                  value={toInputText(sel.minPorOpcion)}
                   onChange={(e) =>
-                    patchSeleccionable(selIdx, {
-                      minPorOpcion: parseInt(e.target.value, 10) || 0,
-                    })
+                    patchSeleccionable(selIdx, { minPorOpcion: e.target.value })
                   }
                   className="input--crear"
                   disabled={disabled}
@@ -273,13 +298,10 @@ export default function CompuestosEditor({
                 <input
                   type="number"
                   min="0"
-                  value={sel.maxPorOpcion ?? ""}
-                  onChange={(e) => {
-                    const v = e.target.value;
-                    patchSeleccionable(selIdx, {
-                      maxPorOpcion: v === "" ? null : parseInt(v, 10) || 0,
-                    });
-                  }}
+                  value={toInputText(sel.maxPorOpcion)}
+                  onChange={(e) =>
+                    patchSeleccionable(selIdx, { maxPorOpcion: e.target.value })
+                  }
                   className="input--crear"
                   disabled={disabled}
                 />
@@ -356,10 +378,10 @@ export default function CompuestosEditor({
                         type="number"
                         min="0"
                         step="0.01"
-                        value={op.cantidadPorSlot ?? 1}
+                        value={toInputText(op.cantidadPorSlot)}
                         onChange={(e) =>
                           patchOpcion(selIdx, opIdx, {
-                            cantidadPorSlot: parseFloat(e.target.value) || 0,
+                            cantidadPorSlot: e.target.value,
                           })
                         }
                         className="input--crear"

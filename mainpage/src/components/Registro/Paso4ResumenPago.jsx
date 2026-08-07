@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import "./Paso4ResumenPago.css";
 import { loadStripe } from "@stripe/stripe-js";
 import api from "../../utils/api";
+import { toNum } from "../../utils/numeroInput";
+import { normalizarServicios } from "./Paso3ServiciosExtras";
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
@@ -42,7 +44,8 @@ export default function Paso4ResumenPago({
         const { data: pre } = await api.post("/pago/precheckout", {
           tenant,
           config,
-          servicios,
+          // los inputs del paso 3 guardan texto → aquí se convierten a número
+          servicios: normalizarServicios(servicios),
           precio,
           admin,
           plan: slugCompleto,
@@ -86,8 +89,15 @@ export default function Paso4ResumenPago({
 
   const [mostrarSoloActivas, setMostrarSoloActivas] = useState(true);
 
+  // Las cantidades del paso 3 llegan como TEXTO ("" incluido) → toNum para
+  // contar y multiplicar sin que salga NaN ni fallen las comparaciones.
+  const nImpresoras = toNum(servicios.impresoras, 0);
+  const nPantallas = toNum(servicios.pantallas, 0);
+  const nPda = toNum(servicios.pda, 0);
+  const nScanner = toNum(servicios.scanner, 0);
+
   const calcularPrecioMesasQr = (cantidadMesas) => {
-    const n = Number(cantidadMesas) || 0;
+    const n = toNum(cantidadMesas, 0);
     if (n <= 30) return PRECIO_MESAS_QR_BASE;
     return PRECIO_MESAS_QR_BASE + (n - 30) * 2;
   };
@@ -255,10 +265,10 @@ export default function Paso4ResumenPago({
               </li>
             )}
 
-            {servicios.impresoras > 0 && (
+            {nImpresoras > 0 && (
               <li>
-                {servicios.impresoras} × Impresora térmica —{" "}
-                {PRECIO_IMPRESORA * servicios.impresoras} €
+                {nImpresoras} × Impresora térmica —{" "}
+                {PRECIO_IMPRESORA * nImpresoras} €
               </li>
             )}
 
@@ -274,15 +284,15 @@ export default function Paso4ResumenPago({
               </li>
             )}
 
-            {servicios.pantallas > 0 && (
+            {nPantallas > 0 && (
               <li>
-                {servicios.pantallas} ×{" "}
+                {nPantallas} ×{" "}
                 {servicios.pantallaTipo === "pro"
                   ? "Pantalla táctil PRO"
                   : "Tablet táctil"}{" "}
                 —{" "}
                 {(servicios.pantallaTipo === "pro" ? 450 : 180) *
-                  servicios.pantallas} €
+                  nPantallas} €
               </li>
             )}
 
@@ -296,15 +306,15 @@ export default function Paso4ResumenPago({
               </li>
             )}
 
-            {!isShop && servicios.pda > 0 && (
+            {!isShop && nPda > 0 && (
               <li>
-                {servicios.pda} × PDA camarero — {PRECIO_PDA * servicios.pda} €
+                {nPda} × PDA camarero — {PRECIO_PDA * nPda} €
               </li>
             )}
 
-            {isShop && (servicios.scanner ?? 0) > 0 && (
+            {isShop && nScanner > 0 && (
               <li>
-                {servicios.scanner} × Scanner codigos de barras — consultar precio
+                {nScanner} × Scanner codigos de barras — consultar precio
               </li>
             )}
 
@@ -323,12 +333,12 @@ export default function Paso4ResumenPago({
 
             {!servicios.cargaProductos &&
               (!servicios.mesasQr || isShop) &&
-              servicios.impresoras === 0 &&
-              servicios.pantallas === 0 &&
-              (!servicios.pda || isShop) &&
+              nImpresoras === 0 &&
+              nPantallas === 0 &&
+              (nPda === 0 || isShop) &&
               !servicios.fotografia &&
               !servicios.cargaDatos &&
-              (servicios.scanner ?? 0) === 0 && (
+              nScanner === 0 && (
                 <li className="resumen-empty">
                   No has añadido servicios adicionales. Podrás hacerlo más
                   adelante si lo necesitas.

@@ -87,6 +87,11 @@ export default function PrintCenterPage() {
   // UI: retry printer select per-job
   const [printerPick, setPrinterPick] = useState({}); // jobId -> printerName
 
+  // Estado de la COLA DE WINDOWS (incidente zabor-feten 2026-08-06). Los jobs de la tabla
+  // dicen "printed" aunque el papel no haya salido: el spooler acepta siempre el trabajo.
+  // Esto es lo único que sabe si de verdad salió. Lo escribe la tarea `print-spooler-watch`.
+  const [spooler, setSpooler] = useState(null);
+
   const timerRef = useRef(null);
 
   const fetchJobs = async (silent = false) => {
@@ -100,6 +105,7 @@ export default function PrintCenterPage() {
         },
       });
       setJobs(Array.isArray(data?.jobs) ? data.jobs : []);
+      setSpooler(data?.spooler || null);
     } catch (e) {
       setAlerta({
         tipo: "error",
@@ -186,6 +192,11 @@ export default function PrintCenterPage() {
     estadoAgente === "online" ? "Online" : estadoAgente === "offline" ? "Offline" : "Unknown";
 
   const hasFailed = useMemo(() => jobs.some((j) => j.status === "failed"), [jobs]);
+
+  const spoolerAtascadas = useMemo(
+    () => (Array.isArray(spooler?.atascadas) ? spooler.atascadas : []),
+    [spooler]
+  );
 
   return (
     <main className="section section--wide">
@@ -280,6 +291,36 @@ export default function PrintCenterPage() {
             </select>
           </div>
         </div>
+
+        {/* ======= COLA DE WINDOWS ATASCADA =======
+            Incidente zabor-feten 2026-08-06: 296 comandas encoladas ~1 día. Los jobs de la
+            tabla de abajo salen como "printed" porque el spooler los aceptó, así que sin
+            este aviso el Centro de impresión también miente.
+            ⚠️ NO se ofrece aquí "Reintentar fallidos" (/jobs/retry-failed): estos jobs están
+            en `printed`, no en `failed`, y ese botón no los tocaría. Prometerlo sería mentir
+            otra vez. El reintento por-job de la tabla sí funciona (re-encola cualquiera). */}
+        {spoolerAtascadas.length > 0 && (
+          <div className="pc-hint pc-hint--danger" role="alert">
+            <div className="pc-spoolerTitulo">
+              Windows aceptó las comandas pero la impresora no las ha sacado.
+            </div>
+            <ul className="pc-spoolerLista">
+              {spoolerAtascadas.map((s) => (
+                <li key={s.printer}>
+                  <strong>
+                    {s.estacion ? `${s.estacion} (${s.printer})` : s.printer}
+                  </strong>
+                  {s.pendientes != null ? `: ${s.pendientes} comanda(s) en la cola` : ""}
+                  {s.desdeSec ? ` desde hace ${Math.round(s.desdeSec / 60)} min` : ""}.
+                  {" Comprueba: encendida · con papel · conectada a la red del local."}
+                  {s.reachable === false
+                    ? ` La impresora no responde en la red del local.`
+                    : ""}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
 
         {hasFailed && <div className="pc-hint pc-hint--warn">Hay jobs fallidos. Reintenta o cambia la impresora.</div>}
 

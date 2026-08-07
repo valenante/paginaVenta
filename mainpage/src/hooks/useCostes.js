@@ -1,6 +1,7 @@
 // src/hooks/useCostes.js
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import api from "../utils/api";
+import { toNum } from "../utils/numeroInput";
 
 /**
  * Hook para la pantalla de Gestión de Costes.
@@ -47,20 +48,15 @@ export default function useCostes({ tipo } = {}) {
   /* =====================================================
    * Dirty tracking
    * ===================================================== */
+  // Guarda el TEXTO tal cual escribe el usuario (incluido "" o "1." a medio
+  // teclear). Convertir aquí impedía borrar el campo y mataba el punto decimal:
+  // al llegar "" se borraba el dirty, el input volvía al coste guardado y React
+  // reescribía ese valor en el DOM. La conversión se hace al GUARDAR.
   const setCosteLocal = useCallback((productoId, clavePrecio, valor) => {
     setDirty((prev) => {
       const prod = { ...(prev[productoId] || {}) };
-      const num = valor === "" || valor === null || valor === undefined
-        ? undefined
-        : Number(valor);
-      if (num === undefined || Number.isNaN(num)) {
-        delete prod[clavePrecio];
-      } else {
-        prod[clavePrecio] = num;
-      }
-      const next = { ...prev, [productoId]: prod };
-      if (Object.keys(prod).length === 0) delete next[productoId];
-      return next;
+      prod[clavePrecio] = valor == null ? "" : String(valor);
+      return { ...prev, [productoId]: prod };
     });
   }, []);
 
@@ -82,8 +78,15 @@ export default function useCostes({ tipo } = {}) {
    * Guardado
    * ===================================================== */
   const saveProducto = useCallback(async (productoId, nota = "") => {
-    const costes = dirty[productoId];
-    if (!costes || Object.keys(costes).length === 0) return null;
+    const raw = dirty[productoId];
+    if (!raw || Object.keys(raw).length === 0) return null;
+
+    // dirty guarda texto → aquí se convierte a número. Campo vacío = coste 0
+    // (es la misma convención que ya usa la pantalla: un coste 0 se ve vacío).
+    const costes = {};
+    for (const [clave, val] of Object.entries(raw)) {
+      costes[clave] = Math.max(0, toNum(val, 0));
+    }
 
     setSaving(true);
     setError(null);
@@ -128,11 +131,21 @@ export default function useCostes({ tipo } = {}) {
   /* =====================================================
    * Helper: calcular valor efectivo (dirty || original)
    * ===================================================== */
+  // Valor NUMÉRICO efectivo (para márgenes, filtros y cálculos).
   const getCosteActual = useCallback((producto, clave) => {
+    const d = dirty[producto._id]?.[clave];
+    if (d !== undefined) return toNum(d, 0);
+    const entry = (producto.precios || []).find((p) => p.clave === clave);
+    return toNum(entry?.coste, 0);
+  }, [dirty]);
+
+  // TEXTO para el input: respeta lo que el usuario está escribiendo ("" incluido).
+  const getCosteTexto = useCallback((producto, clave) => {
     const d = dirty[producto._id]?.[clave];
     if (d !== undefined) return d;
     const entry = (producto.precios || []).find((p) => p.clave === clave);
-    return Number(entry?.coste || 0);
+    const n = toNum(entry?.coste, 0);
+    return n === 0 ? "" : String(n);
   }, [dirty]);
 
   return {
@@ -148,6 +161,7 @@ export default function useCostes({ tipo } = {}) {
     setCosteLocal,
     discardChanges,
     getCosteActual,
+    getCosteTexto,
     // save
     saveProducto,
     saveAll,

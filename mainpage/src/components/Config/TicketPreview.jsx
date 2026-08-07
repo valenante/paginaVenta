@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { resolveEstiloTicket } from "../../utils/resolveEstiloTicket.js";
+import { toNum } from "../../utils/numeroInput.js";
 import "./TicketPreview.css";
 
 const SEPARATORS = {
@@ -129,7 +130,9 @@ export default function TicketPreview({
             <img
               src={logoUrl}
               alt="Logo"
-              style={{ maxWidth: estilo.logoAncho || 300 }}
+              /* el editor guarda logoAncho como texto mientras se teclea → toNum
+                 para que React siga añadiendo "px" (con string no lo hace) */
+              style={{ maxWidth: toNum(estilo.logoAncho, 300) || 300 }}
             />
           </div>
         )}

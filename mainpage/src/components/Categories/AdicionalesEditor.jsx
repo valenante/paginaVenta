@@ -10,6 +10,8 @@
 import React, { useMemo, useState } from "react";
 import { useLocale } from "../../hooks/useLocale";
 
+import { toInputText, toNumOrNull } from "../../utils/numeroInput";
+
 const defaultRow = () => ({
   nombre: "",
   precio: 0,
@@ -106,8 +108,8 @@ export default function AdicionalesEditor({
                 Precio extra ({currencySymbol})
                 <input
                   type="number"
-                  value={ad.precio ?? 0}
-                  onChange={(e) => update(idx, { precio: parseFloat(e.target.value) || 0 })}
+                  value={toInputText(ad.precio)}
+                  onChange={(e) => update(idx, { precio: e.target.value })}
                   className="input--crear"
                   min="0"
                   step="0.01"
@@ -184,8 +186,8 @@ export default function AdicionalesEditor({
                   Cantidad por unidad
                   <input
                     type="number"
-                    value={ad.cantidad ?? 1}
-                    onChange={(e) => update(idx, { cantidad: parseFloat(e.target.value) || 0 })}
+                    value={toInputText(ad.cantidad)}
+                    onChange={(e) => update(idx, { cantidad: e.target.value })}
                     className="input--crear"
                     min="0"
                     step="0.01"

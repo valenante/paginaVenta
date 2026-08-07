@@ -2,6 +2,7 @@
 import React, { useState, useContext, useEffect, useMemo, useRef } from "react";
 import PreciosHelpModal from "./PreciosHelpModal";
 import AdicionalesEditor from "./AdicionalesEditor";
+import { toInputText, toNumOrNull } from "../../utils/numeroInput";
 import CompuestosEditor from "./CompuestosEditor";
 import AlergenosSelector from "./AlergenosSelector";
 import { sanearAlergenos } from "../../constants/alergenos";
@@ -158,7 +159,7 @@ const CrearProducto = ({ onClose, onCreated, initialTipo, cloneFrom }) => {
       activo: true,
       estado: "habilitado",
       canales: ["sala", "takeaway", "delivery"],
-      precios: [{ clave: "precioBase", label: "Precio", precio: 0, coste: 0, factorStock: 1, orden: 0 }],
+      precios: [{ clave: "precioBase", label: "Precio", precio: "", coste: "", factorStock: 1, orden: 0 }],
       alergenos: [],
       alergenosTrazas: [],
       alergenosRaros: [],
@@ -303,7 +304,7 @@ const CrearProducto = ({ onClose, onCreated, initialTipo, cloneFrom }) => {
       ...prev,
       precios: [
         ...prev.precios,
-        { clave: "", label: "", precio: 0, coste: 0, factorStock: 1, orden: prev.precios.length },
+        { clave: "", label: "", precio: "", coste: "", factorStock: 1, orden: prev.precios.length },
       ],
     }));
   };
@@ -350,10 +351,29 @@ const CrearProducto = ({ onClose, onCreated, initialTipo, cloneFrom }) => {
     delete productData.alergenosRaros; // solo UI local
 
     // Auto-derivar clave slug desde label + label desde clave (fallbacks cruzados)
+    // Los inputs numericos guardan TEXTO mientras se teclea (si no, React reescribe "0"
+    // y el punto decimal nunca se queda). Aqui es donde vuelve a ser numero: ni "" ni NaN
+    // pueden llegar a la base (Art.5).
     productData.precios = (productData.precios || []).map((p) => ({
       ...p,
       clave: (p.clave && p.clave.trim()) ? p.clave : slugifyClave(p.label || "precioBase"),
       label: (p.label && p.label.trim()) ? p.label : capitalizeClave(p.clave || "precioBase"),
+      precio: toNumOrNull(p.precio) ?? 0,
+      coste: Math.max(0, toNumOrNull(p.coste) ?? 0),
+      factorStock: Math.max(0, toNumOrNull(p.factorStock) ?? 1),
+    }));
+    productData.adicionales = (productData.adicionales || []).map((a) => ({
+      ...a,
+      precio: toNumOrNull(a.precio) ?? 0,
+      ...(a.cantidad !== undefined ? { cantidad: toNumOrNull(a.cantidad) ?? 1 } : {}),
+    }));
+    productData.componentes = (productData.componentes || []).map((c) => ({
+      ...c,
+      ...(c.cantidad !== undefined ? { cantidad: toNumOrNull(c.cantidad) ?? 1 } : {}),
+    }));
+    productData.seleccionables = (productData.seleccionables || []).map((sl) => ({
+      ...sl,
+      ...(sl.cantidadPorSlot !== undefined ? { cantidadPorSlot: toNumOrNull(sl.cantidadPorSlot) ?? 1 } : {}),
     }));
 
     if (productData.tipo === "plato") {
@@ -879,7 +899,7 @@ const CrearProducto = ({ onClose, onCreated, initialTipo, cloneFrom }) => {
                         Precio ({currencySymbol})
                         <input
                           type="number"
-                          value={entry.precio}
+                          value={toInputText(entry.precio)}
                           onChange={(e) => handlePrecioChange(idx, "precio", e.target.value)}
                           className="input--crear"
                           min="0"
@@ -891,7 +911,7 @@ const CrearProducto = ({ onClose, onCreated, initialTipo, cloneFrom }) => {
                         Coste ({currencySymbol})
                         <input
                           type="number"
-                          value={entry.coste ?? 0}
+                          value={toInputText(entry.coste)}
                           onChange={(e) => handlePrecioChange(idx, "coste", e.target.value)}
                           className="input--crear"
                           min="0"
@@ -904,7 +924,7 @@ const CrearProducto = ({ onClose, onCreated, initialTipo, cloneFrom }) => {
                         Factor stock
                         <input
                           type="number"
-                          value={entry.factorStock ?? 1}
+                          value={toInputText(entry.factorStock)}
                           onChange={(e) => handlePrecioChange(idx, "factorStock", e.target.value)}
                           className="input--crear"
                           min="0"

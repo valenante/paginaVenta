@@ -167,7 +167,7 @@ export default function CompuestosEditor({
                   step="0.01"
                   value={comp.cantidad ?? 1}
                   onChange={(e) =>
-                    patchComponente(idx, { cantidad: parseFloat(e.target.value) || 0 })
+                    patchComponente(idx, { cantidad: e.target.value })
                   }
                   className="input--crear"
                   disabled={disabled}
@@ -359,7 +359,7 @@ export default function CompuestosEditor({
                         value={op.cantidadPorSlot ?? 1}
                         onChange={(e) =>
                           patchOpcion(selIdx, opIdx, {
-                            cantidadPorSlot: parseFloat(e.target.value) || 0,
+                            cantidadPorSlot: e.target.value,
                           })
                         }
                         className="input--crear"

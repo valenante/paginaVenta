@@ -17,12 +17,12 @@ import {
   syncGmailNow,
   updateFacturasConfig,
   enviarGestorManual,
-} from "../Hooks/useFacturasAutomaticas";
+} from "../hooks/useFacturasAutomaticas";
 import {
   useResumenCajaGestor,
   updateResumenCajaGestor,
   enviarResumenCajaAhora,
-} from "../Hooks/useResumenCajaGestor";
+} from "../hooks/useResumenCajaGestor";
 import "./FacturasAutomaticasPage.css";
 
 // ── Status badge ───────────────────────────────────────────

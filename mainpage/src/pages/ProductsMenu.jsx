@@ -4,7 +4,7 @@ import CategoriasPanel from "../components/Categories/CategoriasPanel";
 import CostesPanel from "../components/Costes/CostesPanel";
 import IvaPanel from "../components/Iva/IvaPanel";
 import CartaAnalyticsPage from "./CartaAnalyticsPage";
-import { useFeature } from "../Hooks/useFeature";
+import { useFeature } from "../hooks/useFeature";
 import UpgradeBanner from "../components/UpgradeBanner/UpgradeBanner";
 import "../styles/ProductsMenu.css";
 

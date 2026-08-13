@@ -1,4 +1,4 @@
-// src/Hooks/useTenantsData.jsx
+// src/hooks/useTenantsData.jsx
 // Hook para cargar tenants con paginación y búsqueda server-side.
 import { useCallback, useEffect, useRef, useState } from "react";
 import api from "../utils/api";

@@ -1,4 +1,4 @@
-// src/Hooks/useEstadisticasCategoria.jsx
+// src/hooks/useEstadisticasCategoria.jsx
 import { useEffect, useMemo, useState, useRef, useCallback } from "react";
 import api from "../utils/api";
 

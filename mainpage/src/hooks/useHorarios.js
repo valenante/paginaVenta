@@ -1,4 +1,4 @@
-// src/Hooks/useHorarios.js
+// src/hooks/useHorarios.js
 import { useState, useEffect, useCallback } from "react";
 import api from "../utils/api";
 

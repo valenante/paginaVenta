@@ -892,7 +892,16 @@ export default function FacturasPage() {
           // (`:13-17`). No se crea ningún componente nuevo (Art. 6).
           // ⚠️ El motivo es rastro de auditoría INTERNO: se guarda en `EventosFactura.motivo`
           // y NO viaja al XML de la AEAT. Por eso puede quedar vacío sin romper nada fiscal.
-          placeholder="Motivo de la anulación (opcional)"
+          placeholder="Motivo de la anulación"
+          // ⚠️ Art. 7 — SÍ→NO, autorizado explícitamente por Valen el 2026-08-13.
+          // ANTES se podía confirmar con el campo vacío; ahora no. Es el ÚNICO sitio del
+          // panel donde se activa (`ModalConfirmacion` tiene 28 consumidores y su default
+          // es `false`): aquí hay una persona delante que sabe por qué anula, y el motivo
+          // es el único rastro humano que queda en `EventosFactura`.
+          // ⚠️ El BACKEND sigue aceptándolo vacío a propósito, y no debe cambiarse:
+          // `alefShops` llama sin body y la app móvil puede mandar "". Endurecer el
+          // servidor los rompería. La obligación es de producto, no de contrato.
+          valorRequerido
           onConfirm={ejecutarAnulacion}
           onClose={() => {
             setMostrarConfirmacion(false);

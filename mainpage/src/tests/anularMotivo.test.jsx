@@ -37,12 +37,13 @@ import { fileURLToPath } from "node:url";
 import ModalConfirmacion from "../components/Modal/ModalConfirmacion.jsx";
 
 const RAIZ = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const fuenteFacturas = fs.readFileSync(path.join(RAIZ, "pages/FacturasPage.jsx"), "utf8");
 
 /** Las props EXACTAS con las que `FacturasPage.jsx` invoca el modal al anular. */
 const propsDeAnulacion = (onConfirm) => ({
   titulo: "Confirmar anulación",
   mensaje: "Vas a anular la factura Nº 2026-0001. Esta acción no se puede deshacer.",
-  placeholder: "Motivo de la anulación (opcional)",
+  placeholder: "Motivo de la anulación",
   onConfirm,
   onClose: () => {},
 });
@@ -50,7 +51,7 @@ const propsDeAnulacion = (onConfirm) => ({
 describe("ModalConfirmacion · el eslabón que rompió «Anular»", () => {
   it("⭐ CON `placeholder` PINTA el input — sin esto no hay dónde escribir el motivo", () => {
     render(<ModalConfirmacion {...propsDeAnulacion(vi.fn())} />);
-    expect(screen.getByPlaceholderText("Motivo de la anulación (opcional)")).toBeInTheDocument();
+    expect(screen.getByPlaceholderText("Motivo de la anulación")).toBeInTheDocument();
   });
 
   it("⚠️ CONTROL · SIN `placeholder` NO pinta ningún input — así estaba y así nació el bug", () => {
@@ -64,7 +65,7 @@ describe("ModalConfirmacion · el eslabón que rompió «Anular»", () => {
     const onConfirm = vi.fn();
     render(<ModalConfirmacion {...propsDeAnulacion(onConfirm)} />);
 
-    fireEvent.change(screen.getByPlaceholderText("Motivo de la anulación (opcional)"), {
+    fireEvent.change(screen.getByPlaceholderText("Motivo de la anulación"), {
       target: { value: "Factura duplicada" },
     });
     fireEvent.click(screen.getByRole("button", { name: "Aceptar" }));
@@ -77,18 +78,99 @@ describe("ModalConfirmacion · el eslabón que rompió «Anular»", () => {
   it("recorta los espacios: el motivo no se guarda con bordes sucios", () => {
     const onConfirm = vi.fn();
     render(<ModalConfirmacion {...propsDeAnulacion(onConfirm)} />);
-    fireEvent.change(screen.getByPlaceholderText("Motivo de la anulación (opcional)"), {
+    fireEvent.change(screen.getByPlaceholderText("Motivo de la anulación"), {
       target: { value: "  Error al emitir  " },
     });
     fireEvent.click(screen.getByRole("button", { name: "Aceptar" }));
     expect(onConfirm).toHaveBeenCalledWith("Error al emitir");
   });
 
-  it("⚠️ dejarlo vacío SIGUE siendo válido — el motivo es opcional (Art. 7: no se prohíbe nada)", () => {
+  it("sin `valorRequerido` dejarlo vacío SIGUE siendo válido — los otros 27 consumidores", () => {
     const onConfirm = vi.fn();
     render(<ModalConfirmacion {...propsDeAnulacion(onConfirm)} />);
     fireEvent.click(screen.getByRole("button", { name: "Aceptar" }));
     expect(onConfirm).toHaveBeenCalledWith("");
+  });
+});
+
+/* ════════════════════════════════════════════════════════════════════════════════════
+ * ⚠️ Art. 7 · EL ENFORCEMENT — SÍ→NO, autorizado por Valen el 2026-08-13
+ *
+ * ANTES se podía confirmar la anulación con el motivo vacío; AHORA no. Es un cambio que
+ * EMPIEZA A DECIR QUE NO, y por eso lleva prop OPT-IN con default `false`: el modal tiene
+ * 28 consumidores y 27 no deben enterarse de nada (Art. 3).
+ *
+ * ⚠️ EL BACKEND SIGUE ACEPTANDO EL VACÍO, y no debe cambiarse: `alefShops` llama sin body
+ * y la app móvil puede mandar "". La obligación es de PRODUCTO, no de contrato.
+ * ════════════════════════════════════════════════════════════════════════════════════ */
+describe("ModalConfirmacion · valorRequerido (el enforcement)", () => {
+  const conRequerido = (onConfirm) => ({ ...propsDeAnulacion(onConfirm), valorRequerido: true });
+
+  it("⭐ con el campo VACÍO el botón está deshabilitado", () => {
+    render(<ModalConfirmacion {...conRequerido(vi.fn())} />);
+    expect(screen.getByRole("button", { name: "Aceptar" })).toBeDisabled();
+  });
+
+  it("⭐ con el campo vacío, hacer clic NO confirma", () => {
+    const onConfirm = vi.fn();
+    render(<ModalConfirmacion {...conRequerido(onConfirm)} />);
+    const boton = screen.getByRole("button", { name: "Aceptar" });
+
+    // Se intenta incluso quitando el atributo a mano, como haría alguien desde las devtools.
+    boton.removeAttribute("disabled");
+    fireEvent.click(boton);
+
+    expect(onConfirm).not.toHaveBeenCalled();
+  });
+
+  /**
+   * ⚠️⚠️ MUTANTE QUE SOBREVIVE, DECLARADO (Art. 9 · Art. 4c).
+   *
+   * `manejarConfirmacion` lleva un `if (bloqueado) return;` además del `disabled` del
+   * botón. **Ese guard NO está cubierto por ningún test, y no se puede cubrir desde el
+   * DOM**: React no despacha eventos sobre elementos cuyas props dice que están
+   * `disabled`, aunque se quite el atributo del DOM a mano. El clic nunca llega al
+   * handler, así que borrar el `if` deja esta suite en verde. MEDIDO, no supuesto.
+   *
+   * Se CONSERVA igualmente porque protege del refactor probable: el día que alguien quite
+   * el `disabled` del botón —por diseño, por accesibilidad o por descuido— el guard es lo
+   * único que impide confirmar una anulación sin motivo. Es cinturón, no tirantes.
+   *
+   * Para cubrirlo haría falta un test de integración con navegador real (Playwright), que
+   * este repo no tiene. Queda anotado en vez de fingir que está protegido.
+   */
+  it.skip("[NO CUBIERTO] el guard del handler por sí solo — React no deja llegar el clic", () => {});
+
+  it("⭐ al escribir un motivo se habilita y confirma", () => {
+    const onConfirm = vi.fn();
+    render(<ModalConfirmacion {...conRequerido(onConfirm)} />);
+    const input = screen.getByPlaceholderText("Motivo de la anulación");
+    fireEvent.change(input, { target: { value: "Factura duplicada" } });
+    expect(screen.getByRole("button", { name: "Aceptar" })).toBeEnabled();
+    fireEvent.click(screen.getByRole("button", { name: "Aceptar" }));
+    expect(onConfirm).toHaveBeenCalledWith("Factura duplicada");
+  });
+
+  it("⚠️ SOLO espacios NO cuenta como motivo — misma idea de «vacío» que el backend", () => {
+    const onConfirm = vi.fn();
+    render(<ModalConfirmacion {...conRequerido(onConfirm)} />);
+    fireEvent.change(screen.getByPlaceholderText("Motivo de la anulación"), {
+      target: { value: "     " },
+    });
+    expect(screen.getByRole("button", { name: "Aceptar" })).toBeDisabled();
+    fireEvent.click(screen.getByRole("button", { name: "Aceptar" }));
+    expect(onConfirm).not.toHaveBeenCalled();
+  });
+
+  it("⚠️ CONTROL · el default es `false`: sin la prop, los otros 27 consumidores siguen igual", () => {
+    render(<ModalConfirmacion titulo="x" mensaje="y" onConfirm={vi.fn()} onClose={() => {}} />);
+    expect(screen.getByRole("button", { name: "Aceptar" })).toBeEnabled();
+  });
+
+  it("⭐ FacturasPage ACTIVA el enforcement en el modal de anulación", () => {
+    const i = fuenteFacturas.indexOf('titulo="Confirmar anulación"');
+    const bloque = fuenteFacturas.slice(i, fuenteFacturas.indexOf("/>", i) + 2);
+    expect(bloque, "se perdió el enforcement autorizado").toMatch(/valorRequerido/);
   });
 });
 

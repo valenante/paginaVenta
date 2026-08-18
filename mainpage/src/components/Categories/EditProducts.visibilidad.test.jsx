@@ -57,8 +57,20 @@ vi.mock("../../utils/api", () => ({
 
 /* ---------- stubs de subcomponentes pesados e irrelevantes aquí ---------- */
 vi.mock("./PreciosHelpModal", () => ({ default: () => null }));
-vi.mock("./AdicionalesEditor", () => ({ default: () => null }));
-vi.mock("./CompuestosEditor", () => ({ default: () => null }));
+// ⚠️ MERGE main + fix/inputs-numericos: estos dos módulos ya no exportan solo el
+// componente — exportan además los normalizadores (`normalizarAdicionales`,
+// `normalizarComponentes`, `normalizarSeleccionables`) que EditProducts llama en
+// handleSubmit. Si el mock los borra, el submit revienta con "is not a function"
+// y este regression-lock se cae por una razón que no es la que vigila.
+// Por eso se conserva el módulo real y solo se stubea el componente pesado.
+vi.mock("./AdicionalesEditor", async (importOriginal) => ({
+  ...(await importOriginal()),
+  default: () => null,
+}));
+vi.mock("./CompuestosEditor", async (importOriginal) => ({
+  ...(await importOriginal()),
+  default: () => null,
+}));
 vi.mock("./AlergenosSelector", () => ({ default: () => null }));
 vi.mock("../AlefSelect/AlefSelect", () => ({ default: () => null }));
 vi.mock("../AlertaMensaje/AlertaMensaje", () => ({ default: () => null }));

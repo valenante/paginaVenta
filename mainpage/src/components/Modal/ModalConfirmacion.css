@@ -156,3 +156,22 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ⭐ 2026-08-13 — Estado bloqueado del botón «Aceptar» cuando `valorRequerido` está activo
+   y el campo sigue vacío. Por CLASES, nunca inline.
+   `pointer-events: none` NO se usa a propósito: quitaría el cursor `not-allowed` y el
+   `title`, que son los dos únicos avisos de POR QUÉ no se puede confirmar. El guard real
+   está en el handler (`ModalConfirmacion.jsx -> manejarConfirmacion`), no aquí. */
+.boton-aceptar--modalconfirmacion:disabled,
+.boton-aceptar--modalconfirmacion[disabled] {
+  opacity: 0.45;
+  cursor: not-allowed;
+  filter: grayscale(0.6);
+}
+
+.boton-aceptar--modalconfirmacion:disabled:hover,
+.boton-aceptar--modalconfirmacion[disabled]:hover {
+  /* Neutraliza el :hover heredado: un botón deshabilitado que reacciona al ratón miente. */
+  filter: grayscale(0.6);
+  opacity: 0.45;
+}

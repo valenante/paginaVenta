@@ -11,7 +11,12 @@ import {
   eliminarRegla,
   toggleRegla,
 } from "../hooks/useSugerenciasConfig";
+import { toInputText, clampIntNum } from "../utils/numeroInput";
 import "./SugerenciasConfigPage.css";
+
+/* Valores por defecto de los umbrales: los usa el estado inicial, el "restaurar
+   por defecto" y la conversión del guardado cuando un campo se deja vacío. */
+const UMBRAL_DEFAULTS = { minCoocPct: 30, minCoocMuestras: 5, minCatPct: 35, minFreqPct: 40 };
 
 const TABS = [
   {
@@ -506,11 +511,21 @@ function TabPesos({ config, onSave }) {
     if (config?.umbrales) setUmbrales(prev => ({ ...prev, ...config.umbrales }));
   }, [config]);
 
+  // Los inputs de umbrales guardan TEXTO mientras se teclea (para poder
+  // vaciarlos); aquí se convierten y se aplican los límites de cada métrica.
+  const umbralesNumericos = () => {
+    const out = {};
+    for (const [key, meta] of Object.entries(UMBRAL_LABELS)) {
+      out[key] = clampIntNum(umbrales[key], meta.min, meta.max, UMBRAL_DEFAULTS[key]);
+    }
+    return out;
+  };
+
   const save = async () => {
     setSaving(true);
     setMsg(null);
     try {
-      await onSave({ pesos, umbrales });
+      await onSave({ pesos, umbrales: umbralesNumericos() });
       setMsg({ t: "ok", m: "Guardado" });
       setTimeout(() => setMsg(null), 2500);
     } catch { setMsg({ t: "error", m: "Error al guardar" }); }
@@ -581,8 +596,8 @@ function TabPesos({ config, onSave }) {
               <div className="sug-umbral-input">
                 <input
                   type="number" min={meta.min} max={meta.max}
-                  value={umbrales[key] ?? meta.min}
-                  onChange={e => setUmbrales(prev => ({ ...prev, [key]: Number(e.target.value) }))}
+                  value={toInputText(umbrales[key])}
+                  onChange={e => setUmbrales(prev => ({ ...prev, [key]: e.target.value }))}
                 />
                 {meta.unit && <span className="sug-umbral-unit">{meta.unit}</span>}
               </div>
@@ -639,7 +654,8 @@ function TabReglas({ config, onSave }) {
     setMsg(null);
     try {
       // Enriquecer con nombres
-      const enriched = { ...form };
+      // prioridad se teclea como texto → aquí se convierte (1-100, defecto 90)
+      const enriched = { ...form, prioridad: clampIntNum(form.prioridad, 1, 100, 90) };
       if (enriched.productoOrigen) {
         const p = productos.find(pp => String(pp._id) === String(enriched.productoOrigen));
         if (p) enriched.nombreOrigen = p.nombre;
@@ -832,8 +848,8 @@ function TabReglas({ config, onSave }) {
             <div className="sug-form-row">
               <label>Prioridad (1-100)</label>
               <input type="number" min="1" max="100"
-                value={form.prioridad ?? 90}
-                onChange={e => setForm(prev => ({ ...prev, prioridad: Number(e.target.value) }))} />
+                value={toInputText(form.prioridad)}
+                onChange={e => setForm(prev => ({ ...prev, prioridad: e.target.value }))} />
             </div>
 
             <div className="sug-form-actions">

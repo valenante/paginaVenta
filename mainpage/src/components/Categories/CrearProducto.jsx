@@ -1,9 +1,12 @@
 // src/components/Categories/CrearProducto.jsx
 import React, { useState, useContext, useEffect, useMemo, useRef } from "react";
 import PreciosHelpModal from "./PreciosHelpModal";
-import AdicionalesEditor from "./AdicionalesEditor";
+import AdicionalesEditor, { normalizarAdicionales } from "./AdicionalesEditor";
 import { toInputText, toNumOrNull } from "../../utils/numeroInput";
-import CompuestosEditor from "./CompuestosEditor";
+import CompuestosEditor, {
+  normalizarComponentes,
+  normalizarSeleccionables,
+} from "./CompuestosEditor";
 import AlergenosSelector from "./AlergenosSelector";
 import { sanearAlergenos } from "../../constants/alergenos";
 
@@ -362,19 +365,13 @@ const CrearProducto = ({ onClose, onCreated, initialTipo, cloneFrom }) => {
       coste: Math.max(0, toNumOrNull(p.coste) ?? 0),
       factorStock: Math.max(0, toNumOrNull(p.factorStock) ?? 1),
     }));
-    productData.adicionales = (productData.adicionales || []).map((a) => ({
-      ...a,
-      precio: toNumOrNull(a.precio) ?? 0,
-      ...(a.cantidad !== undefined ? { cantidad: toNumOrNull(a.cantidad) ?? 1 } : {}),
-    }));
-    productData.componentes = (productData.componentes || []).map((c) => ({
-      ...c,
-      ...(c.cantidad !== undefined ? { cantidad: toNumOrNull(c.cantidad) ?? 1 } : {}),
-    }));
-    productData.seleccionables = (productData.seleccionables || []).map((sl) => ({
-      ...sl,
-      ...(sl.cantidadPorSlot !== undefined ? { cantidadPorSlot: toNumOrNull(sl.cantidadPorSlot) ?? 1 } : {}),
-    }));
+
+    // Adicionales / componentes / seleccionables: la conversión vive en el editor
+    // que los pinta (una sola fuente de verdad, Art.6). La versión inline de main
+    // buscaba `cantidadPorSlot` en el seleccionable, cuando vive dentro de opciones[].
+    productData.adicionales = normalizarAdicionales(productData.adicionales);
+    productData.componentes = normalizarComponentes(productData.componentes);
+    productData.seleccionables = normalizarSeleccionables(productData.seleccionables);
 
     if (productData.tipo === "plato") {
       delete productData.conHielo;

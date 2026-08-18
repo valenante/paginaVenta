@@ -52,7 +52,11 @@ function StatusBadge({ estado }) {
 }
 
 // ── Job detail modal ───────────────────────────────────────
-function JobDetail({ job, onClose, onAction, currencySymbol = "€" }) {
+// MERGE main+fix/inputs-numericos: main i18n-izo este componente (paso `currencySymbol`
+// como prop) pero se dejo `locale` sin pasar, y la linea 85 lo usaba igual ->
+// ReferenceError al abrir el detalle. Default "es" = exactamente lo que hace
+// produccion hoy en la rama (`toLocaleDateString("es")`).
+function JobDetail({ job, onClose, onAction, currencySymbol = "€", locale = "es" }) {
   if (!job) return null;
   const datos = job.datosExtraidos || {};
   const emisor = datos.emisor || {};
@@ -829,6 +833,7 @@ export default function FacturasAutomaticasPage() {
           onClose={() => setSelectedJob(null)}
           onAction={handleAction}
           currencySymbol={currencySymbol}
+          locale={locale}
         />
       )}
 

@@ -265,14 +265,26 @@ export default function FacturasPage() {
     setMostrarConfirmacion(true);
   };
 
-  const ejecutarAnulacion = async () => {
+  /**
+   * ⭐ 2026-08-13 — `motivo` ENTRA POR PARÁMETRO. Antes esta función no aceptaba argumentos
+   * y mandaba `{ motivo: "" }` hardcodeado, mientras `anularFacturaSchema` exigía
+   * `.min(1)`: **400 siempre, desde el 18-mar-2026**. `ModalConfirmacion` ya llamaba a
+   * `onConfirm(valor.trim())` (`ModalConfirmacion.jsx:16`) — el valor llegaba aquí y se
+   * tiraba a la basura.
+   *
+   * El `= ""` por defecto es deliberado: si alguien invoca esta función sin argumento
+   * (o el modal se usa sin `placeholder`), sigue funcionando. Aditivo, no rompe a nadie.
+   */
+  const ejecutarAnulacion = async (motivo = "") => {
     if (!facturaAAnular?._id) return;
 
     try {
       setAnulandoId(facturaAAnular._id);
       setErrorToast(null);
 
-      const { data } = await api.post(`/facturas/anular/${facturaAAnular._id}`, { motivo: "" });
+      const { data } = await api.post(`/facturas/anular/${facturaAAnular._id}`, {
+        motivo: String(motivo || "").trim().slice(0, 500),
+      });
 
       showOk(
         data?.already
@@ -881,6 +893,24 @@ export default function FacturasPage() {
         <ModalConfirmacion
           titulo="Confirmar anulación"
           mensaje={`Vas a anular la factura Nº ${facturaAAnular?.numeroFactura}. Esta acción no se puede deshacer.`}
+          // ⭐ 2026-08-13 — SIN este `placeholder` el modal NO pinta ningún input
+          // (`ModalConfirmacion.jsx:32` → `{placeholder && (`, y su default es `""`, falsy).
+          // Por eso `ejecutarAnulacion` mandaba `motivo: ""` hardcodeado: no es que el
+          // usuario lo dejara en blanco, es que NO HABÍA DÓNDE ESCRIBIRLO. 148 días de 400.
+          // El modal ya sabía hacer esto: guarda el valor y llama `onConfirm(valor.trim())`
+          // (`:13-17`). No se crea ningún componente nuevo (Art. 6).
+          // ⚠️ El motivo es rastro de auditoría INTERNO: se guarda en `EventosFactura.motivo`
+          // y NO viaja al XML de la AEAT. Por eso puede quedar vacío sin romper nada fiscal.
+          placeholder="Motivo de la anulación"
+          // ⚠️ Art. 7 — SÍ→NO, autorizado explícitamente por Valen el 2026-08-13.
+          // ANTES se podía confirmar con el campo vacío; ahora no. Es el ÚNICO sitio del
+          // panel donde se activa (`ModalConfirmacion` tiene 28 consumidores y su default
+          // es `false`): aquí hay una persona delante que sabe por qué anula, y el motivo
+          // es el único rastro humano que queda en `EventosFactura`.
+          // ⚠️ El BACKEND sigue aceptándolo vacío a propósito, y no debe cambiarse:
+          // `alefShops` llama sin body y la app móvil puede mandar "". Endurecer el
+          // servidor los rompería. La obligación es de producto, no de contrato.
+          valorRequerido
           onConfirm={ejecutarAnulacion}
           onClose={() => {
             setMostrarConfirmacion(false);

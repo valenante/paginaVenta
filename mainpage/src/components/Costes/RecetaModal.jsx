@@ -4,7 +4,7 @@
 // Si tiene 1 solo precio, UI plana como antes.
 
 import React, { useState, useEffect, useCallback, useMemo } from "react";
-import { toInputText, toNumOrNull } from "../../utils/numeroInput";
+import { toInputText, toNum } from "../../utils/numeroInput";
 import { createPortal } from "react-dom";
 import { useReceta, guardarReceta, buscarIngredientes } from "../../hooks/useRecetas";
 import { useAutoFocus } from "../../hooks/useAutoFocus";
@@ -72,7 +72,8 @@ export default function RecetaModal({ productoId, productoNombre, onClose, onSav
       const updated = { ...l, [field]: value };
       const costeUd = calcCosteUnitario(updated);
       updated.costeUnitario = costeUd;
-      updated.costeLinea = Math.round((toNumOrNull(updated.cantidad) ?? 0) * costeUd * 100) / 100;
+      // cantidad puede ser un string a medio teclear ("", "1.") → toNum, nunca NaN
+      updated.costeLinea = Math.round(toNum(updated.cantidad, 0) * costeUd * 100) / 100;
       return updated;
     }));
   };
@@ -109,7 +110,10 @@ export default function RecetaModal({ productoId, productoNombre, onClose, onSav
         productoProveedorId: l.productoProveedorId,
         ingrediente: l.ingrediente || null,
         nombre: l.nombre,
-        cantidad: toNumOrNull(l.cantidad) ?? 0, // el input guarda texto mientras se teclea
+        // el input guarda string mientras se teclea → se convierte aquí, al guardar.
+        // Math.max(0, ...) viene de la rama (lo que corre en producción): evita que
+        // una cantidad negativa a medio teclear llegue a la base de datos.
+        cantidad: Math.max(0, toNum(l.cantidad, 0)),
         unidad: l.unidad,
         clavePrecio: l.clavePrecio || null,
       })));

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import "./ModalNuevaReserva.css";
 import api from "../../utils/api";
 import AlertaMensaje from "../AlertaMensaje/AlertaMensaje.jsx";
+import { toInputText, toNum, toNumOrNull } from "../../utils/numeroInput";
 
 export default function ModalNuevaReserva({ onClose, onCreated }) {
   const dialogRef = useRef(null);
@@ -40,16 +41,12 @@ export default function ModalNuevaReserva({ onClose, onCreated }) {
     el?.focus?.();
   }, []);
 
+  // "personas" guarda TEXTO mientras se teclea (para poder vaciar el campo);
+  // se convierte en canSubmit/handleSubmit. Convertir aquí impedía borrarlo:
+  // Number("") === 0 es finito, el estado quedaba en 0 y React reponía el "0".
   const handleChange = (e) => {
     const { name, value } = e.target;
-
-    setForm((prev) => {
-      if (name === "personas") {
-        const n = Number(value);
-        return { ...prev, personas: Number.isFinite(n) ? n : prev.personas };
-      }
-      return { ...prev, [name]: value };
-    });
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
   const trimOr = (v) => String(v || "").trim();
@@ -59,7 +56,8 @@ export default function ModalNuevaReserva({ onClose, onCreated }) {
     const telOk = trimOr(form.telefono).length >= 6;
     const emailOk = isEmail(form.email);
     const horaOk = !!form.hora;
-    const persOk = Number.isInteger(Number(form.personas)) && Number(form.personas) >= 1;
+    const pers = toNumOrNull(form.personas);
+    const persOk = pers !== null && Number.isInteger(pers) && pers >= 1;
     return nombreOk && telOk && emailOk && horaOk && persOk;
   }, [form]);
 
@@ -79,6 +77,8 @@ export default function ModalNuevaReserva({ onClose, onCreated }) {
       // y en el controller permite origen solo si req.user existe.
       const payload = {
         ...form,
+        // el input guarda texto mientras se teclea → aquí se convierte
+        personas: toNum(form.personas, 1),
         nombre: trimOr(form.nombre),
         email: trimOr(form.email).toLowerCase(),
         telefono: trimOr(form.telefono),
@@ -178,7 +178,7 @@ export default function ModalNuevaReserva({ onClose, onCreated }) {
                 name="personas"
                 min="1"
                 max="20"
-                value={form.personas}
+                value={toInputText(form.personas)}
                 onChange={handleChange}
                 inputMode="numeric"
                 disabled={saving}

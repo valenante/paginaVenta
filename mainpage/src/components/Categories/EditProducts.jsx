@@ -1,7 +1,10 @@
 import React, { useContext, useEffect, useMemo, useState, useRef } from "react";
 import PreciosHelpModal from "./PreciosHelpModal";
-import AdicionalesEditor from "./AdicionalesEditor";
-import CompuestosEditor from "./CompuestosEditor";
+import AdicionalesEditor, { normalizarAdicionales } from "./AdicionalesEditor";
+import CompuestosEditor, {
+  normalizarComponentes,
+  normalizarSeleccionables,
+} from "./CompuestosEditor";
 import AlergenosSelector from "./AlergenosSelector";
 import { sanearAlergenos } from "../../constants/alergenos";
 import { ProductosContext } from "../../context/ProductosContext";
@@ -417,12 +420,9 @@ const EditProduct = ({
     }
 
     // v2 stock-modelo-v2: adicionales es lista editable completa desde AdicionalesEditor
-    // Los inputs numericos guardan TEXTO mientras se teclea; aqui vuelven a ser numero.
-    const adicionales = (Array.isArray(formData.adicionales) ? formData.adicionales : []).map((a) => ({
-      ...a,
-      precio: toNumOrNull(a.precio) ?? 0,
-      ...(a.cantidad !== undefined ? { cantidad: toNumOrNull(a.cantidad) ?? 1 } : {}),
-    }));
+    // Sus inputs numericos guardan TEXTO mientras se teclea; la conversion vive en el
+    // editor que los pinta (una sola fuente de verdad, Art.6).
+    const adicionales = normalizarAdicionales(formData.adicionales);
 
     const payload = {
       _id: product?._id,
@@ -444,14 +444,8 @@ const EditProduct = ({
       alergenosTrazas: formData.alergenosTrazas || [],
       receta: Array.isArray(formData.receta) ? formData.receta : [],
       // v3 fase 4 — compuestos
-      componentes: (Array.isArray(formData.componentes) ? formData.componentes : []).map((c) => ({
-        ...c,
-        ...(c.cantidad !== undefined ? { cantidad: toNumOrNull(c.cantidad) ?? 1 } : {}),
-      })),
-      seleccionables: (Array.isArray(formData.seleccionables) ? formData.seleccionables : []).map((sl) => ({
-        ...sl,
-        ...(sl.cantidadPorSlot !== undefined ? { cantidadPorSlot: toNumOrNull(sl.cantidadPorSlot) ?? 1 } : {}),
-      })),
+      componentes: normalizarComponentes(formData.componentes),
+      seleccionables: normalizarSeleccionables(formData.seleccionables),
       stock: Number(formData.stock) || 0,
       controlStock: !!formData.controlStock,
       imprimirSiempre: !!formData.imprimirSiempre,

@@ -4,6 +4,7 @@ import api from "../../utils/api";
 import { useTenant } from "../../context/TenantContext";
 import Portal from "../ui/Portal";
 import { useAutoFocus } from "../../hooks/useAutoFocus";
+import { toInputText, toNum } from "../../utils/numeroInput";
 import "./ProductoProveedorModal.css";
 import { useLocale } from "../../hooks/useLocale";
 
@@ -223,26 +224,29 @@ export default function ProductoProveedorModal({
     setMultiPrecioRestored(true);
   }, [tieneMultiPrecios, producto, form.factoresPorPrecio, form.cantidadPorCompra, multiPrecioRestored]);
 
-  const setRatio = (clave, val) => setRatios((prev) => ({ ...prev, [clave]: Number(val) || 0 }));
+  // Guarda el TEXTO tal cual se teclea ("" incluido). Convertir aquí impedía
+  // borrar el campo (Number("") === 0 → React reponía el "0"). Se convierte al
+  // usarlo/guardarlo, siempre con toNum.
+  const setRatio = (clave, val) => setRatios((prev) => ({ ...prev, [clave]: val }));
 
   // Calcular factoresPorPrecio a partir de unidadBase + ratios + factorConversion
   const buildFactoresPorPrecio = () => {
     if (!tieneMultiPrecios || !unidadBase) return [];
-    const fc = Number(form.cantidadPorCompra) || 1;
+    const fc = toNum(form.cantidadPorCompra, 1) || 1;
     return preciosProducto.map((p) => {
       if (p.clave === unidadBase) return { clave: p.clave, factor: fc };
-      const ratio = ratios[p.clave] || 0;
+      const ratio = toNum(ratios[p.clave], 0);
       return { clave: p.clave, factor: fc * ratio };
     }).filter((f) => f.factor > 0);
   };
 
   // Coste por tipo
   const getCostePorTipo = (clave) => {
-    const fc = Number(form.cantidadPorCompra) || 1;
-    const precio = Number(form.precio) || 0;
+    const fc = toNum(form.cantidadPorCompra, 1) || 1;
+    const precio = toNum(form.precio, 0);
     if (precio <= 0) return null;
     if (clave === unidadBase) return precio / fc;
-    const ratio = ratios[clave] || 0;
+    const ratio = toNum(ratios[clave], 0);
     if (ratio <= 0) return null;
     return precio / (fc * ratio);
   };
@@ -281,10 +285,11 @@ export default function ProductoProveedorModal({
      Validación
   ========================= */
   const validate = () => {
+    // Los inputs numéricos guardan TEXTO mientras se teclea → toNum, nunca NaN.
     if (!form.nombre.trim()) return "El nombre es obligatorio.";
-    if (Number(form.precio) <= 0) return "El precio debe ser mayor que 0.";
-    if (Number(form.iva) < 0) return "IVA no válido.";
-    if (Number(form.cantidadPorCompra) <= 0) {
+    if (toNum(form.precio, 0) <= 0) return "El precio debe ser mayor que 0.";
+    if (toNum(form.iva, 0) < 0) return "IVA no válido.";
+    if (toNum(form.cantidadPorCompra, 0) <= 0) {
       return "La cantidad por compra debe ser mayor que 0.";
     }
 
@@ -317,18 +322,19 @@ export default function ProductoProveedorModal({
       setSaving(true);
       setError("");
 
-      const cantPorCompra = Number(form.cantidadPorCompra) || 1;
+      // los inputs guardan texto mientras se teclea → aquí se convierten
+      const cantPorCompra = toNum(form.cantidadPorCompra, 1) || 1;
       const payload = {
         nombre: form.nombre,
         unidad: form.unidad,
         formato: form.formato,
-        precioBase: Number(form.precio),
-        iva: Number(form.iva),
+        precioBase: toNum(form.precio, 0),
+        iva: toNum(form.iva, 0),
         activo: !!form.activo,
         // Presentación
         cantidadPorCompra: cantPorCompra,
         unidadContenido: form.unidadContenido || "",
-        pesoNetoPorItem: Number(form.pesoNetoPorItem) || 0,
+        pesoNetoPorItem: Math.max(0, toNum(form.pesoNetoPorItem, 0)),
         unidadPesoNeto: form.unidadPesoNeto || "",
         // Legacy compat
         factorConversion: cantPorCompra,
@@ -574,9 +580,10 @@ export default function ProductoProveedorModal({
                     type="number"
                     min="1"
                     step="1"
-                    value={form.cantidadPorCompra}
+                    value={toInputText(form.cantidadPorCompra)}
                     onChange={(e) => {
-                      const v = Number(e.target.value) || 1;
+                      // texto crudo mientras se teclea; se convierte en submit()
+                      const v = e.target.value;
                       set("cantidadPorCompra", v);
                       set("factorConversion", v);
                     }}
@@ -688,7 +695,7 @@ export default function ProductoProveedorModal({
                         type="number"
                         min="0"
                         step="1"
-                        value={ratios[p.clave] || ""}
+                        value={toInputText(ratios[p.clave])}
                         onChange={(e) => setRatio(p.clave, e.target.value)}
                         placeholder="Ej: 5"
                       />

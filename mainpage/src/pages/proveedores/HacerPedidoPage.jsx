@@ -16,6 +16,7 @@ import { normalizeApiError } from "../../utils/normalizeApiError.js";
 import { generarPedidoProveedorPDF } from "../../utils/pdfs/pedidoProveedorPDF.js";
 import { abrirWhatsappPedido } from "../../utils/whatsappPedido.js";
 import { useLocale } from "../../hooks/useLocale";
+import { toInputText, toNum } from "../../utils/numeroInput";
 import "./HacerPedidoPage.css";
 
 export default function HacerPedidoPage() {
@@ -171,7 +172,7 @@ export default function HacerPedidoPage() {
     const porProveedor = new Map();
     for (const it of items) {
       const k = itemKey(it);
-      const cant = Number(cantidades[k] || 0);
+      const cant = Math.max(0, toNum(cantidades[k], 0));
       if (cant <= 0) continue;
       totalItems += 1;
       const precio = Number(it.productoProveedor?.precioBase || 0);
@@ -203,20 +204,21 @@ export default function HacerPedidoPage() {
 
   const cambiarCantidad = (k, delta) => {
     setCantidades((prev) => {
-      const curr = Number(prev[k] || 0);
+      const curr = Math.max(0, toNum(prev[k], 0));
       const next = Math.max(0, curr + delta);
       return { ...prev, [k]: next };
     });
   };
+  // Guarda el TEXTO tal cual se teclea ("" incluido) para poder vaciar el campo;
+  // la conversion se hace con toNum en cada uso y al construir los bloques.
   const setCantidadExacta = (k, v) => {
-    const n = Math.max(0, Number(v) || 0);
-    setCantidades((prev) => ({ ...prev, [k]: n }));
+    setCantidades((prev) => ({ ...prev, [k]: v }));
   };
 
   const construirBloques = () => {
     const porProveedor = new Map();
     for (const it of items) {
-      const cant = Number(cantidades[itemKey(it)] || 0);
+      const cant = Math.max(0, toNum(cantidades[itemKey(it)], 0));
       if (cant <= 0) continue;
       if (!it.proveedor?._id || !it.productoProveedor?._id) continue;
       const pid = String(it.proveedor._id);
@@ -641,7 +643,7 @@ export default function HacerPedidoPage() {
                       <tbody>
                         {g.items.map((it) => {
                           const k = itemKey(it);
-                          const cant = Number(cantidades[k] || 0);
+                          const cant = Math.max(0, toNum(cantidades[k], 0));
                           const precio = Number(
                             it.productoProveedor?.precioBase || 0
                           );
@@ -717,7 +719,7 @@ export default function HacerPedidoPage() {
                                     type="number"
                                     min="0"
                                     step="1"
-                                    value={cant}
+                                    value={toInputText(cantidades[k])}
                                     onChange={(e) =>
                                       setCantidadExacta(k, e.target.value)
                                     }

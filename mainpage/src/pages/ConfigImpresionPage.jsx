@@ -8,6 +8,8 @@ import { normalizeApiError } from "../utils/normalizeApiError.js";
 import ErrorToast from "../components/common/ErrorToast.jsx";
 import TicketPreview from "../components/Config/TicketPreview.jsx";
 import { useLocale } from "../hooks/useLocale";
+import { resolveEstiloTicket } from "../utils/resolveEstiloTicket.js";
+import { toInputText, clampIntNum } from "../utils/numeroInput.js";
 
 const DEFAULT_ESTILO = {
   logoEnTicket: false,
@@ -21,17 +23,143 @@ const DEFAULT_ESTILO = {
   tamanoDetalle: "normal",
   tamanoTotal: "doble",
   estiloSeparador: "guion",
-  qrValoracionesActivo: true,
-  qrTexto: "Valora tu experiencia",
   anchoPapel: "80mm",
+  // ── Campos nuevos (default = conducta actual) ──
+  mensajeAgradecimiento: "",
+  pieLegal: "",
+  mostrarColumnaCantidad: true,
+  mostrarColumnaPrecio: true,
+  mostrarColumnaImporte: true,
+  mostrarComensales: false,
+  mostrarAlergias: false,
+  mostrarDatosFiscales: true,
+  qrActivo: false,
+  qrUrl: "", // Contenido del QR genérico (URL o texto). Vacío ⇒ no se imprime QR.
+  idioma: "es",
+  // Overrides por tipo de documento (parciales)
+  porTipo: {},
 };
 
+/* `logoAncho` es el único campo numérico del estilo. Su input guarda TEXTO
+   mientras el usuario teclea (para poder vaciarlo y reescribirlo); esta función
+   lo convierte a número, en la base y en cada override por tipo, y es la única
+   puerta por la que el estilo sale hacia el backend o hacia la impresora. */
+function sanearEstiloTicket(estilo) {
+  const anchoDe = (v) => clampIntNum(v, 100, 500, DEFAULT_ESTILO.logoAncho);
+  const out = { ...(estilo || {}) };
+  if ("logoAncho" in out) out.logoAncho = anchoDe(out.logoAncho);
+  const porTipo = out.porTipo && typeof out.porTipo === "object" ? out.porTipo : null;
+  if (porTipo) {
+    const next = {};
+    for (const [tipo, ov] of Object.entries(porTipo)) {
+      next[tipo] =
+        ov && typeof ov === "object" && "logoAncho" in ov
+          ? { ...ov, logoAncho: anchoDe(ov.logoAncho) }
+          : ov;
+    }
+    out.porTipo = next;
+  }
+  return out;
+}
+
+/* Pestañas del editor: General = base; el resto edita porTipo[tipo] */
+const DESIGN_TABS = [
+  { key: "general", label: "General" },
+  { key: "comanda", label: "Comanda" },
+  { key: "cuenta", label: "Cuenta" },
+  { key: "factura", label: "Factura" },
+  { key: "shop", label: "Tienda" },
+];
+
+/* Etiqueta "Heredar de General" para los campos de una pestaña de tipo */
+function InheritTag({ show, inherited, onToggle, loading }) {
+  if (!show) return null;
+  return (
+    <label className="td-inherit" title="Heredar el valor de General">
+      <input
+        type="checkbox"
+        checked={inherited}
+        onChange={(e) => onToggle(e.target.checked)}
+        disabled={loading}
+      />
+      Heredar
+    </label>
+  );
+}
+
+/* Fila de campo reutilizable del editor de ticket.
+   - `label` + `children` (control) para inputs/selects (etiqueta arriba, control debajo).
+   - `checkbox`: el propio `children` es el <label.config-checkbox> con el input dentro.
+   - `inheritNode`: el toggle "Heredar" (o null); queda pegado a la etiqueta, no estirado.
+   - `inherited`: atenúa la fila cuando el valor se hereda de General. */
+function TdField({ label, inheritNode = null, inherited = false, checkbox = false, children }) {
+  return (
+    <div className={`td-field${inherited ? " td-field--inherited" : ""}`}>
+      <div className="td-field__top">
+        {checkbox ? children : <span className="td-field__label">{label}</span>}
+        {inheritNode}
+      </div>
+      {!checkbox && <div className="td-field__control">{children}</div>}
+    </div>
+  );
+}
+
 /* ================================================================
-   MODAL: Diseño del ticket
+   MODAL: Diseño del ticket — pestañas General / por tipo
    ================================================================ */
-function TicketDesignModal({ estilo, onChange, onClose, onSave, onTestPrint, loading, config, tipoPreview, setTipoPreview }) {
+function TicketDesignModal({ estilo, onChange, onClose, onSave, onTestPrint, loading, config, activeTab, setActiveTab }) {
   const { taxIdLabel } = useLocale();
-  const update = (key, value) => onChange({ ...estilo, [key]: value });
+  const isType = activeTab !== "general";
+  const tipoKey = activeTab; // comanda | cuenta | factura | shop
+  const porTipo = estilo.porTipo || {};
+  const override = (isType && porTipo[tipoKey]) || {};
+
+  // Estilo resuelto para la pestaña activa (base + override del tipo)
+  const resolved = useMemo(
+    () => resolveEstiloTicket(estilo, isType ? tipoKey : null),
+    [estilo, isType, tipoKey]
+  );
+
+  // Valor mostrado por campo: en un tipo, el override si existe la clave; si no, el resuelto (heredado)
+  const val = (key) => {
+    if (!isType) return estilo[key];
+    return key in override ? override[key] : resolved[key];
+  };
+  const inherited = (key) => isType && !(key in override);
+  const disabledFor = (key) => loading || (isType && inherited(key));
+
+  const setVal = (key, value) => {
+    if (!isType) {
+      onChange({ ...estilo, [key]: value });
+      return;
+    }
+    const nextOv = { ...override, [key]: value };
+    onChange({ ...estilo, porTipo: { ...porTipo, [tipoKey]: nextOv } });
+  };
+
+  // Heredar => borrar la clave del override; dejar de heredar => sembrar con el valor resuelto
+  const setInherit = (key, inh) => {
+    if (!isType) return;
+    const nextOv = { ...override };
+    if (inh) delete nextOv[key];
+    else nextOv[key] = resolved[key];
+    onChange({ ...estilo, porTipo: { ...porTipo, [tipoKey]: nextOv } });
+  };
+
+  const inheritTag = (key) => (
+    <InheritTag
+      show={isType}
+      inherited={inherited(key)}
+      onToggle={(inh) => setInherit(key, inh)}
+      loading={loading}
+    />
+  );
+
+  // Preview: General se previsualiza como cuenta; cada tipo con su propio layout
+  const previewTipo = activeTab === "general" ? "cuenta" : activeTab;
+
+  // Factura + VeriFactu: los datos fiscales NO son ocultables
+  const fiscalLock = activeTab === "factura" && !!config?.sif?.verifactuActivo;
 
   // Cerrar con ESC
   useEffect(() => {
@@ -48,8 +176,8 @@ function TicketDesignModal({ estilo, onChange, onClose, onSave, onTestPrint, loa
           <div>
             <h2>Diseño del ticket</h2>
             <p className="td-modal-subtitle">
-              Personaliza fuentes, logo, frases y separadores. La vista previa se
-              actualiza en tiempo real.
+              Personaliza cada tipo de documento. "General" es la base; en cada
+              pestaña puedes sobrescribir campos o dejarlos heredados.
             </p>
           </div>
           <button className="td-modal-close" onClick={onClose} aria-label="Cerrar">
@@ -57,136 +185,234 @@ function TicketDesignModal({ estilo, onChange, onClose, onSave, onTestPrint, loa
           </button>
         </header>
 
+        {/* Pestañas por tipo de documento */}
+        <div className="td-tabs tp-type-tabs">
+          {DESIGN_TABS.map((t) => (
+            <button
+              key={t.key}
+              type="button"
+              className={`tp-type-tab ${activeTab === t.key ? "tp-type-tab--active" : ""}`}
+              onClick={() => setActiveTab(t.key)}
+            >
+              {t.label}
+            </button>
+          ))}
+        </div>
+        <p className="td-tab-hint">
+          Editando <strong>{DESIGN_TABS.find((t) => t.key === activeTab)?.label}</strong>
+          {isType
+            ? " — los campos marcados como “Heredar” toman el valor de General."
+            : " — es la base que heredan los demás documentos."}
+        </p>
+
         {/* Body: form + preview */}
         <div className="td-modal-body">
           <div className="td-form">
             {/* ── Papel ── */}
             <fieldset className="td-fieldset">
               <legend>Papel</legend>
-              <div className="config-field">
-                <label>Ancho</label>
-                <select value={estilo.anchoPapel} onChange={(e) => update("anchoPapel", e.target.value)} disabled={loading}>
+              <TdField label="Ancho del papel" inheritNode={inheritTag("anchoPapel")} inherited={inherited("anchoPapel")}>
+                <select value={val("anchoPapel")} onChange={(e) => setVal("anchoPapel", e.target.value)} disabled={disabledFor("anchoPapel")}>
                   <option value="80mm">80 mm (estandar)</option>
                   <option value="58mm">58 mm (compacto)</option>
                 </select>
-              </div>
+              </TdField>
             </fieldset>
 
             {/* ── Logo ── */}
             <fieldset className="td-fieldset">
               <legend>Logo</legend>
-              <div className="config-field">
+              <TdField checkbox inheritNode={inheritTag("logoEnTicket")} inherited={inherited("logoEnTicket")}>
                 <label className="config-checkbox">
-                  <input type="checkbox" checked={estilo.logoEnTicket} onChange={(e) => update("logoEnTicket", e.target.checked)} disabled={loading} />
+                  <input type="checkbox" checked={!!val("logoEnTicket")} onChange={(e) => setVal("logoEnTicket", e.target.checked)} disabled={disabledFor("logoEnTicket")} />
                   Imprimir logo en ticket
                 </label>
-              </div>
-              {estilo.logoEnTicket && (
-                <div className="config-field">
-                  <label>Ancho del logo (px)</label>
-                  <input type="number" min={100} max={500} value={estilo.logoAncho} onChange={(e) => update("logoAncho", Number(e.target.value) || 300)} disabled={loading} />
-                </div>
+              </TdField>
+              {val("logoEnTicket") && (
+                <TdField label="Ancho del logo (px)" inheritNode={inheritTag("logoAncho")} inherited={inherited("logoAncho")}>
+                  {/* texto crudo mientras se teclea; sanearEstiloTicket convierte al guardar/imprimir */}
+                  <input type="number" min={100} max={500} value={toInputText(val("logoAncho"))} onChange={(e) => setVal("logoAncho", e.target.value)} disabled={disabledFor("logoAncho")} />
+                </TdField>
               )}
             </fieldset>
 
             {/* ── Cabecera ── */}
             <fieldset className="td-fieldset">
               <legend>Cabecera</legend>
-              <div className="config-field">
+              <TdField checkbox inheritNode={inheritTag("mostrarNombreRestaurante")} inherited={inherited("mostrarNombreRestaurante")}>
                 <label className="config-checkbox">
-                  <input type="checkbox" checked={estilo.mostrarNombreRestaurante} onChange={(e) => update("mostrarNombreRestaurante", e.target.checked)} disabled={loading} />
+                  <input type="checkbox" checked={!!val("mostrarNombreRestaurante")} onChange={(e) => setVal("mostrarNombreRestaurante", e.target.checked)} disabled={disabledFor("mostrarNombreRestaurante")} />
                   Nombre del restaurante
                 </label>
-              </div>
-              <div className="config-field">
+              </TdField>
+              <TdField checkbox inheritNode={inheritTag("mostrarDireccion")} inherited={inherited("mostrarDireccion")}>
                 <label className="config-checkbox">
-                  <input type="checkbox" checked={estilo.mostrarDireccion} onChange={(e) => update("mostrarDireccion", e.target.checked)} disabled={loading} />
+                  <input type="checkbox" checked={!!val("mostrarDireccion")} onChange={(e) => setVal("mostrarDireccion", e.target.checked)} disabled={disabledFor("mostrarDireccion")} />
                   Dirección y {taxIdLabel}
                 </label>
-              </div>
-              <div className="config-field">
-                <label>Frase de encabezado</label>
-                <input type="text" maxLength={200} placeholder="Ej: Bienvenido a nuestro restaurante" value={estilo.encabezado} onChange={(e) => update("encabezado", e.target.value)} disabled={loading} />
-              </div>
-              <div className="config-field">
-                <label>Frase de pie</label>
-                <input type="text" maxLength={200} placeholder="Ej: Gracias por su visita" value={estilo.pie} onChange={(e) => update("pie", e.target.value)} disabled={loading} />
-              </div>
+              </TdField>
+              <TdField label="Frase de encabezado" inheritNode={inheritTag("encabezado")} inherited={inherited("encabezado")}>
+                <input type="text" maxLength={200} placeholder="Ej: Bienvenido a nuestro restaurante" value={val("encabezado") || ""} onChange={(e) => setVal("encabezado", e.target.value)} disabled={disabledFor("encabezado")} />
+              </TdField>
+              <TdField label="Frase de pie" inheritNode={inheritTag("pie")} inherited={inherited("pie")}>
+                <input type="text" maxLength={200} placeholder="Ej: Gracias por su visita" value={val("pie") || ""} onChange={(e) => setVal("pie", e.target.value)} disabled={disabledFor("pie")} />
+              </TdField>
             </fieldset>
 
             {/* ── Fuentes ── */}
             <fieldset className="td-fieldset">
               <legend>Fuentes</legend>
-              <div className="print-config-grid">
+              <div className="td-grid-2">
                 {[
                   ["tamanoTitulo", "Titulo"],
                   ["tamanoProducto", "Productos"],
                   ["tamanoDetalle", "Detalles"],
                   ["tamanoTotal", "Total"],
                 ].map(([key, label]) => (
-                  <div className="config-field" key={key}>
-                    <label>{label}</label>
-                    <select value={estilo[key]} onChange={(e) => update(key, e.target.value)} disabled={loading}>
+                  <TdField key={key} label={label} inheritNode={inheritTag(key)} inherited={inherited(key)}>
+                    <select value={val(key)} onChange={(e) => setVal(key, e.target.value)} disabled={disabledFor(key)}>
                       <option value="normal">Normal</option>
                       <option value="doble_alto">Doble alto</option>
                       {key !== "tamanoDetalle" && <option value="doble_ancho">Doble ancho</option>}
                       {key !== "tamanoDetalle" && <option value="doble">Doble alto + ancho</option>}
                     </select>
-                  </div>
+                  </TdField>
                 ))}
               </div>
-            </fieldset>
-
-            {/* ── Separador ── */}
-            <fieldset className="td-fieldset">
-              <legend>Separadores</legend>
-              <div className="config-field">
-                <label>Estilo</label>
-                <select value={estilo.estiloSeparador} onChange={(e) => update("estiloSeparador", e.target.value)} disabled={loading}>
+              <TdField label="Estilo de separador" inheritNode={inheritTag("estiloSeparador")} inherited={inherited("estiloSeparador")}>
+                <select value={val("estiloSeparador")} onChange={(e) => setVal("estiloSeparador", e.target.value)} disabled={disabledFor("estiloSeparador")}>
                   <option value="guion">Guiones  ---</option>
                   <option value="linea">Linea  ___</option>
                   <option value="igual">Igual  ===</option>
                   <option value="punto">Puntos  ...</option>
                   <option value="espacio">Espacio en blanco</option>
                 </select>
-              </div>
+              </TdField>
+            </fieldset>
+
+            {/* ── Productos (comanda de cocina) ── */}
+            <fieldset className="td-fieldset">
+              <legend>Productos (comanda de cocina)</legend>
+              <TdField checkbox inheritNode={inheritTag("mostrarComensales")} inherited={inherited("mostrarComensales")}>
+                <label className="config-checkbox">
+                  <input type="checkbox" checked={!!val("mostrarComensales")} onChange={(e) => setVal("mostrarComensales", e.target.checked)} disabled={disabledFor("mostrarComensales")} />
+                  Mostrar comensales
+                </label>
+              </TdField>
+              <TdField checkbox inheritNode={inheritTag("mostrarAlergias")} inherited={inherited("mostrarAlergias")}>
+                <label className="config-checkbox">
+                  <input type="checkbox" checked={!!val("mostrarAlergias")} onChange={(e) => setVal("mostrarAlergias", e.target.checked)} disabled={disabledFor("mostrarAlergias")} />
+                  Mostrar alergias
+                </label>
+              </TdField>
+            </fieldset>
+
+            {/* ── Columnas (cuenta / factura / tienda) ── */}
+            <fieldset className="td-fieldset">
+              <legend>Columnas de la tabla</legend>
+              <TdField checkbox inheritNode={inheritTag("mostrarColumnaCantidad")} inherited={inherited("mostrarColumnaCantidad")}>
+                <label className="config-checkbox">
+                  <input type="checkbox" checked={!!val("mostrarColumnaCantidad")} onChange={(e) => setVal("mostrarColumnaCantidad", e.target.checked)} disabled={disabledFor("mostrarColumnaCantidad")} />
+                  Columna cantidad
+                </label>
+              </TdField>
+              <TdField checkbox inheritNode={inheritTag("mostrarColumnaPrecio")} inherited={inherited("mostrarColumnaPrecio")}>
+                <label className="config-checkbox">
+                  <input type="checkbox" checked={!!val("mostrarColumnaPrecio")} onChange={(e) => setVal("mostrarColumnaPrecio", e.target.checked)} disabled={disabledFor("mostrarColumnaPrecio")} />
+                  Columna precio
+                </label>
+              </TdField>
+              <TdField checkbox inheritNode={inheritTag("mostrarColumnaImporte")} inherited={inherited("mostrarColumnaImporte")}>
+                <label className="config-checkbox">
+                  <input type="checkbox" checked={!!val("mostrarColumnaImporte")} onChange={(e) => setVal("mostrarColumnaImporte", e.target.checked)} disabled={disabledFor("mostrarColumnaImporte")} />
+                  Columna importe
+                </label>
+              </TdField>
+            </fieldset>
+
+            {/* ── Factura ── */}
+            <fieldset className="td-fieldset">
+              <legend>Factura</legend>
+              <TdField
+                checkbox
+                inheritNode={fiscalLock ? null : inheritTag("mostrarDatosFiscales")}
+                inherited={!fiscalLock && inherited("mostrarDatosFiscales")}
+              >
+                <label className="config-checkbox">
+                  <input
+                    type="checkbox"
+                    checked={fiscalLock ? true : !!val("mostrarDatosFiscales")}
+                    onChange={(e) => setVal("mostrarDatosFiscales", e.target.checked)}
+                    disabled={fiscalLock || disabledFor("mostrarDatosFiscales")}
+                  />
+                  Mostrar datos fiscales
+                </label>
+              </TdField>
+              {fiscalLock && (
+                <p className="print-config-note">
+                  VeriFactu activo: los datos fiscales y el QR de la AEAT son obligatorios y no pueden ocultarse.
+                </p>
+              )}
             </fieldset>
 
             {/* ── QR ── */}
             <fieldset className="td-fieldset">
-              <legend>QR Valoraciones</legend>
-              <div className="config-field">
+              <legend>QR</legend>
+              <TdField checkbox inheritNode={inheritTag("qrActivo")} inherited={inherited("qrActivo")}>
                 <label className="config-checkbox">
-                  <input type="checkbox" checked={estilo.qrValoracionesActivo} onChange={(e) => update("qrValoracionesActivo", e.target.checked)} disabled={loading} />
-                  Incluir QR en cuenta
+                  <input type="checkbox" checked={!!val("qrActivo")} onChange={(e) => setVal("qrActivo", e.target.checked)} disabled={disabledFor("qrActivo")} />
+                  Incluir QR en el ticket
                 </label>
-              </div>
-              {estilo.qrValoracionesActivo && (
-                <div className="config-field">
-                  <label>Texto sobre el QR</label>
-                  <input type="text" maxLength={100} placeholder="Valora tu experiencia" value={estilo.qrTexto} onChange={(e) => update("qrTexto", e.target.value)} disabled={loading} />
-                </div>
+              </TdField>
+              {val("qrActivo") && (
+                <TdField label="Contenido del QR (URL o texto)" inheritNode={inheritTag("qrUrl")} inherited={inherited("qrUrl")}>
+                  <input
+                    type="text"
+                    maxLength={2000}
+                    placeholder="Ej: https://tuweb.com/carta o https://g.page/tu-negocio/review"
+                    value={val("qrUrl") || ""}
+                    onChange={(e) => setVal("qrUrl", e.target.value)}
+                    disabled={disabledFor("qrUrl")}
+                  />
+                </TdField>
               )}
+              <p className="print-config-note">
+                El QR codifica lo que escribas aquí (una URL a tu carta, tu web, tus
+                reseñas de Google…). Si lo dejas vacío no se imprime ningún QR.
+                No afecta al QR fiscal de la AEAT en las facturas, que es aparte.
+              </p>
+            </fieldset>
+
+            {/* ── Frases al pie ── */}
+            <fieldset className="td-fieldset">
+              <legend>Frases al pie</legend>
+              <TdField label="Mensaje de agradecimiento" inheritNode={inheritTag("mensajeAgradecimiento")} inherited={inherited("mensajeAgradecimiento")}>
+                <input type="text" maxLength={200} placeholder="Ej: ¡Gracias por su visita!" value={val("mensajeAgradecimiento") || ""} onChange={(e) => setVal("mensajeAgradecimiento", e.target.value)} disabled={disabledFor("mensajeAgradecimiento")} />
+              </TdField>
+              <TdField label="Texto legal" inheritNode={inheritTag("pieLegal")} inherited={inherited("pieLegal")}>
+                <input type="text" maxLength={300} placeholder="Vacío = texto por defecto del ticket" value={val("pieLegal") || ""} onChange={(e) => setVal("pieLegal", e.target.value)} disabled={disabledFor("pieLegal")} />
+              </TdField>
+            </fieldset>
+
+            {/* ── Idioma ── */}
+            <fieldset className="td-fieldset">
+              <legend>Idioma</legend>
+              <TdField label="Frases fijas" inheritNode={inheritTag("idioma")} inherited={inherited("idioma")}>
+                <select value={val("idioma") || "es"} onChange={(e) => setVal("idioma", e.target.value)} disabled={disabledFor("idioma")}>
+                  <option value="es">Español</option>
+                  <option value="en">Inglés</option>
+                  <option value="fr">Francés</option>
+                  <option value="bilingue">Bilingüe</option>
+                </select>
+              </TdField>
             </fieldset>
           </div>
 
           {/* ── Preview ── */}
           <div className="td-preview">
-            <div className="tp-type-tabs">
-              {["cuenta", "pedido", "factura"].map((t) => (
-                <button
-                  key={t}
-                  type="button"
-                  className={`tp-type-tab ${tipoPreview === t ? "tp-type-tab--active" : ""}`}
-                  onClick={() => setTipoPreview(t)}
-                >
-                  {t.charAt(0).toUpperCase() + t.slice(1)}
-                </button>
-              ))}
-            </div>
             <TicketPreview
-              estilo={estilo}
-              tipoTicket={tipoPreview}
+              estiloTicket={estilo}
+              tipo={previewTipo}
               fiscal={config?.sif || {}}
               logoUrl={config?.branding?.logoUrl || null}
               nombreRestaurante={config?.branding?.nombreRestaurante || config?.nombre || ""}
@@ -236,7 +462,7 @@ export default function ConfigImpresionPage() {
 
   // Estilo de ticket + modal
   const [estiloTicket, setEstiloTicket] = useState(DEFAULT_ESTILO);
-  const [tipoPreview, setTipoPreview] = useState("cuenta");
+  const [activeTab, setActiveTab] = useState("general");
   const [showDesignModal, setShowDesignModal] = useState(false);
 
   useEffect(() => {
@@ -337,7 +563,7 @@ export default function ConfigImpresionPage() {
       setLoading(true);
       const patch = {
         "impresion.impresoras": { cocina: impCocina, barra: impBarra, caja: impCaja, tickets: impTickets },
-        "impresion.estiloTicket": estiloTicket,
+        "impresion.estiloTicket": sanearEstiloTicket(estiloTicket),
       };
       const { data: draft } = await api.post("/admin/config/versions", { patch, scope: "impresion_config", reason });
       const versionId = draft?.version?.id || draft?.versionId || draft?.id;
@@ -358,6 +584,12 @@ export default function ConfigImpresionPage() {
     try {
       setLoading(true);
       await api.post("/admin/config/rollback", { reason });
+      // Rollback = el dueño pide EXPLÍCITAMENTE volver atrás: aquí sí queremos que
+      // el formulario se re-siembre con la config revertida. `seededRef` (main) solo
+      // debe blindar contra refetches ASÍNCRONOS y contra el refresh posterior a
+      // guardar; sin esta línea la pantalla seguiría mostrando los valores viejos y
+      // "Guardar" volvería a aplicarlos, deshaciendo el rollback de un clic.
+      seededRef.current = false;
       await refreshConfig();
       await listarImpresoras();
       setSuccess("Rollback aplicado");
@@ -392,7 +624,8 @@ export default function ConfigImpresionPage() {
       setLoading(true);
       const { data } = await api.post("/impresoras/test", {
         estacion: "caja",
-        estiloTicket,
+        estiloTicket: sanearEstiloTicket(estiloTicket),
+        ...(activeTab && activeTab !== "general" ? { tipo: activeTab } : {}),
       });
       setEstado(data?.estado || estado);
       setSuccess(data?.message || "Prueba con diseño enviada a caja");
@@ -403,13 +636,13 @@ export default function ConfigImpresionPage() {
     } finally {
       setLoading(false);
     }
-  }, [estiloTicket, estado]);
+  }, [estiloTicket, estado, activeTab]);
 
   const handleSaveFromModal = useCallback(async () => {
     setSuccess(null); setError(null);
     try {
       setLoading(true);
-      const patch = { "impresion.estiloTicket": estiloTicket };
+      const patch = { "impresion.estiloTicket": sanearEstiloTicket(estiloTicket) };
       const { data: draft } = await api.post("/admin/config/versions", { patch, scope: "impresion_estilo", reason: "Cambios diseño ticket" });
       const versionId = draft?.version?.id || draft?.versionId || draft?.id;
       if (!versionId) throw new Error("No se recibió versionId del draft");
@@ -435,7 +668,7 @@ export default function ConfigImpresionPage() {
     if (estiloTicket.logoEnTicket) parts.push("con logo");
     if (estiloTicket.encabezado) parts.push("encabezado");
     if (estiloTicket.pie) parts.push("pie");
-    if (estiloTicket.qrValoracionesActivo) parts.push("QR");
+    if (estiloTicket.qrActivo) parts.push("QR");
     return parts.join(" · ");
   }, [estiloTicket]);
 
@@ -601,8 +834,8 @@ export default function ConfigImpresionPage() {
           onTestPrint={testPrintConEstilo}
           loading={loading}
           config={config}
-          tipoPreview={tipoPreview}
-          setTipoPreview={setTipoPreview}
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
         />
       )}
     </main>

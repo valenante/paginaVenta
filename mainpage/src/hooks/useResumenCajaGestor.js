@@ -1,4 +1,4 @@
-// src/Hooks/useResumenCajaGestor.js
+// src/hooks/useResumenCajaGestor.js
 // Configuración y envío del resumen MENSUAL de caja (efectivo/tarjeta) al gestor.
 
 import { useState, useEffect, useCallback } from "react";

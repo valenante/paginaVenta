@@ -1,4 +1,4 @@
-const CACHE = "alef-landing-v1";
+const CACHE = "alef-landing-v3";
 const PRECACHE = ["/", "/login", "/manifest.json", "/pwa-192.png"];
 
 /* ── Install: pre-cache shell ── */
@@ -56,8 +56,18 @@ self.addEventListener("fetch", (e) => {
       (cached) =>
         cached ||
         fetch(request).then((resp) => {
-          const clone = resp.clone();
-          caches.open(CACHE).then((c) => c.put(request, clone));
+          // ⚠️ SOLO SE CACHEA LO QUE ESTA BIEN. Antes se guardaba la respuesta fuera cual
+          // fuera su estado, asi que un 404 pasajero se quedaba PEGADO: cache-first no
+          // vuelve a la red mientras haya entrada, o sea que ese 404 sobrevivia hasta el
+          // siguiente bump de CACHE. Y el 2026-08-18 se midio que hay una ventana real de
+          // 404: al construir la landing, vite VACIA el directorio de salida (emptyOutDir
+          // por defecto) durante ~7s. Cloudflare ademas los cachea 4h por su cuenta.
+          // `resp.ok` es 200-299. Redirecciones y errores se devuelven al navegador pero
+          // NO se persisten.
+          if (resp.ok) {
+            const clone = resp.clone();
+            caches.open(CACHE).then((c) => c.put(request, clone));
+          }
           return resp;
         }).catch(() => {
           // SPA fallback: return cached index for navigation requests

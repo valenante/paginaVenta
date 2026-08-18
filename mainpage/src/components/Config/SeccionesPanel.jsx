@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import api from "../../utils/api";
 import BorrarConReasignacionModal from "./BorrarConReasignacionModal";
 import UpgradeBanner from "../UpgradeBanner/UpgradeBanner";
+import { toInputText, clampIntNum } from "../../utils/numeroInput";
 import "./SeccionesPanel.css";
 import "./SeccionesModal.css";
 
@@ -122,7 +123,8 @@ export default function SeccionesPanel({
         slug: (editando.slug || "").trim(),
         destino: editando.destino,
         activa: !!editando.activa,
-        orden: Number(editando.orden) || 0,
+        // el input guarda texto mientras se teclea → se convierte aquí
+        orden: clampIntNum(editando.orden, 0, Infinity, 0),
       };
 
       const res = await api.put(`/secciones/${editando._id}`, payload);
@@ -350,7 +352,7 @@ export default function SeccionesPanel({
                   type="number"
                   min={0}
                   step={1}
-                  value={Number(editando.orden ?? 0)}
+                  value={toInputText(editando.orden)}
                   onChange={(e) =>
                     setEditando((p) => ({ ...p, orden: e.target.value }))
                   }

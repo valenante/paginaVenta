@@ -12,6 +12,7 @@
 
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import api from "../../utils/api";
+import { toInputText, toNum } from "../../utils/numeroInput";
 import AlertaMensaje from "../AlertaMensaje/AlertaMensaje.jsx";
 import ErrorToast from "../common/ErrorToast.jsx";
 import { normalizeApiError } from "../../utils/normalizeApiError.js";
@@ -72,8 +73,9 @@ export default function LotesView({ filtroItemId = null, onChange }) {
   const confirmarMerma = async () => {
     if (!mermaAction) return;
     try {
+      // el input guarda string mientras se teclea → se convierte aquí
       await api.post(`/stock/lotes/${mermaAction.lote._id}/merma`, {
-        cantidad: Number(mermaAction.cantidad),
+        cantidad: toNum(mermaAction.cantidad, 0),
         motivo: mermaAction.motivo,
       });
       setAlerta({
@@ -275,9 +277,9 @@ export default function LotesView({ filtroItemId = null, onChange }) {
                 className="alefBtn primary"
                 onClick={confirmarMerma}
                 disabled={
-                  !mermaAction.cantidad ||
-                  mermaAction.cantidad <= 0 ||
-                  mermaAction.cantidad > mermaAction.lote.cantidadDisponible
+                  toNum(mermaAction.cantidad, 0) <= 0 ||
+                  toNum(mermaAction.cantidad, 0) >
+                    Number(mermaAction.lote.cantidadDisponible || 0)
                 }
               >
                 Confirmar merma
@@ -304,12 +306,9 @@ export default function LotesView({ filtroItemId = null, onChange }) {
                 min="0"
                 max={mermaAction.lote.cantidadDisponible}
                 step="0.01"
-                value={mermaAction.cantidad}
+                value={toInputText(mermaAction.cantidad)}
                 onChange={(e) =>
-                  setMermaAction((s) => ({
-                    ...s,
-                    cantidad: Number(e.target.value),
-                  }))
+                  setMermaAction((s) => ({ ...s, cantidad: e.target.value }))
                 }
               />
             </label>
@@ -336,7 +335,7 @@ export default function LotesView({ filtroItemId = null, onChange }) {
             <div className="alefHint">Valor estimado:{" "}
               <b style={{ color: "#fcd34d" }}>
                 {eur(
-                  Number(mermaAction.cantidad || 0) *
+                  toNum(mermaAction.cantidad, 0) *
                     Number(mermaAction.lote.costeUnitario || 0)
                 )}
               </b>

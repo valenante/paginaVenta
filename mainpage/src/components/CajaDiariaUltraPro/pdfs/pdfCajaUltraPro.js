@@ -115,7 +115,6 @@ export const generarPDFCaja = ({
       money(curr, currencySymbol),
       String(d.numTickets || 0),
       d.numTickets > 0 ? money(curr / d.numTickets, currencySymbol) : "—",
-      i === 0 ? "—" : safePct(pct),
     ];
   });
 

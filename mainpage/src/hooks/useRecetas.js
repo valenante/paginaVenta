@@ -1,4 +1,4 @@
-// src/Hooks/useRecetas.js
+// src/hooks/useRecetas.js
 import { useState, useEffect, useCallback } from "react";
 import api from "../utils/api";
 

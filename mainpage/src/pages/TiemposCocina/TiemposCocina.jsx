@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import api from "../../utils/api";
+import { toInputText, clampIntNum } from "../../utils/numeroInput";
 import AlertaMensaje from "../../components/AlertaMensaje/AlertaMensaje";
 import EtaPerfiles from "./EtaPerfiles";
 import EtaSimulador from "./EtaSimulador";
@@ -177,20 +178,29 @@ export default function TiemposCocina() {
   // ── SLA helpers ──
   const updateSla = (key, val) => setSlaConfig((prev) => ({ ...prev, [key]: val }));
   const slaHasChanges = slaConfig && slaOriginal && JSON.stringify(slaConfig) !== slaOriginal;
-  const clamp = (val, min, max) => { const n = Number(val); return Number.isNaN(n) ? min : Math.min(max, Math.max(min, Math.trunc(n))); };
 
   const handleSaveSla = async () => {
     if (!slaConfig) return;
     setSavingSla(true);
+    // los inputs guardan TEXTO mientras se teclea -> aqui se convierten y se
+    // aplican los limites (nunca "" ni NaN al servidor)
+    const slaPayload = {
+      ...slaConfig,
+      umbralAbsolutoMin: clampIntNum(slaConfig.umbralAbsolutoMin, 5, 120, 25),
+      margenGraciaSegundos: clampIntNum(slaConfig.margenGraciaSegundos, 0, 300, 60),
+      porcentajeAvisoRiesgo: clampIntNum(slaConfig.porcentajeAvisoRiesgo, 50, 99, 80),
+      proximosMax: clampIntNum(slaConfig.proximosMax, 1, 10, 3),
+    };
     try {
       const { data: draft } = await api.post("/admin/config/versions", {
-        patch: { slaMesas: slaConfig },
+        patch: { slaMesas: slaPayload },
         scope: "sla_config",
         reason: "Actualizar configuracion SLA desde Tiempos cocina",
       });
       const versionId = draft?.version?.id || draft?.versionId || draft?.id;
       if (versionId) await api.post(`/admin/config/versions/${versionId}/apply`, { reason: "Aplicar SLA" });
-      setSlaOriginal(JSON.stringify(slaConfig));
+      setSlaConfig(slaPayload);
+      setSlaOriginal(JSON.stringify(slaPayload));
       setMsg({ tipo: "ok", texto: "Configuracion de alertas guardada." });
     } catch {
       setMsg({ tipo: "error", texto: "Error guardando configuracion de alertas." });
@@ -400,29 +410,29 @@ export default function TiemposCocina() {
               <div className="tc-sla-grid">
                 <div className="tc-sla-field">
                   <label>Limite maximo de espera (min)</label>
-                  <input type="number" value={slaConfig.umbralAbsolutoMin} min="5" max="120"
-                    onChange={(e) => updateSla("umbralAbsolutoMin", clamp(e.target.value, 5, 120))} />
+                  <input type="number" value={toInputText(slaConfig.umbralAbsolutoMin)} min="5" max="120"
+                    onChange={(e) => updateSla("umbralAbsolutoMin", e.target.value)} />
                   <span>Si una mesa supera este tiempo sin recibir un plato, se marca como retraso. Es el techo duro independiente de la prediccion.</span>
                 </div>
 
                 <div className="tc-sla-field">
                   <label>Margen de gracia (seg)</label>
-                  <input type="number" value={slaConfig.margenGraciaSegundos} min="0" max="300"
-                    onChange={(e) => updateSla("margenGraciaSegundos", clamp(e.target.value, 0, 300))} />
+                  <input type="number" value={toInputText(slaConfig.margenGraciaSegundos)} min="0" max="300"
+                    onChange={(e) => updateSla("margenGraciaSegundos", e.target.value)} />
                   <span>Segundos que espera antes de empezar a contar. Evita alertas justo al entrar el pedido.</span>
                 </div>
 
                 <div className="tc-sla-field">
                   <label>Aviso "en riesgo" al (%)</label>
-                  <input type="number" value={slaConfig.porcentajeAvisoRiesgo} min="50" max="99"
-                    onChange={(e) => updateSla("porcentajeAvisoRiesgo", clamp(e.target.value, 50, 99))} />
+                  <input type="number" value={toInputText(slaConfig.porcentajeAvisoRiesgo)} min="50" max="99"
+                    onChange={(e) => updateSla("porcentajeAvisoRiesgo", e.target.value)} />
                   <span>La mesa se marca amarilla cuando el tiempo alcanza este % del estimado. Al 100% pasa a rojo.</span>
                 </div>
 
                 <div className="tc-sla-field">
                   <label>Proximos en salir por mesa</label>
-                  <input type="number" value={slaConfig.proximosMax} min="1" max="10"
-                    onChange={(e) => updateSla("proximosMax", clamp(e.target.value, 1, 10))} />
+                  <input type="number" value={toInputText(slaConfig.proximosMax)} min="1" max="10"
+                    onChange={(e) => updateSla("proximosMax", e.target.value)} />
                   <span>Cuantos platos muestra el panel de "Proximos" por cada mesa.</span>
                 </div>
               </div>

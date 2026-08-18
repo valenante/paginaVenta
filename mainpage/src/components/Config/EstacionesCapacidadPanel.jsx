@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import api from "../../utils/api";
+import { toInputText, toNum, clampIntNum } from "../../utils/numeroInput";
 import "./EstacionesCapacidadPanel.css";
 
 export default function EstacionesCapacidadPanel({
@@ -11,27 +12,32 @@ export default function EstacionesCapacidadPanel({
   const [savingId, setSavingId] = useState(null);
   const [savingAll, setSavingAll] = useState(false);
 
-  // Inicializa draft cuando llegan estaciones
+  // El draft guarda TEXTO (lo que el usuario está tecleando, "" incluido).
+  // Convertir dentro del onChange impedía borrar el campo: Number("") === 0,
+  // el clamp lo subía a 1 y React reescribía "1" en el DOM en cada tecla.
+  // La conversión y el clamp se hacen al GUARDAR.
   useEffect(() => {
     const next = {};
     for (const e of estaciones) {
-      next[e._id] = Number(e.capacidadMax ?? 5);
+      next[e._id] = toInputText(toNum(e.capacidadMax, 5));
     }
     setDraft(next);
   }, [estaciones]);
 
-  const hasChanges = useMemo(() => {
-    return estaciones.some(
-      (e) => Number(e.capacidadMax ?? 5) !== Number(draft[e._id])
-    );
-  }, [estaciones, draft]);
+  // Capacidad efectiva que se enviaría: respeta los límites del input (1..200).
+  const capGuardable = (e) =>
+    clampIntNum(draft[e._id], 1, 200, toNum(e.capacidadMax, 5));
 
-  const isChanged = (e) =>
-    Number(e.capacidadMax ?? 5) !== Number(draft[e._id]);
+  const isChanged = (e) => toNum(e.capacidadMax, 5) !== capGuardable(e);
+
+  const hasChanges = useMemo(
+    () => estaciones.some((e) => isChanged(e)),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [estaciones, draft]
+  );
 
   const setCap = (id, value) => {
-    const n = clampInt(value, 1, 200);
-    setDraft((prev) => ({ ...prev, [id]: n }));
+    setDraft((prev) => ({ ...prev, [id]: value }));
   };
 
   const normalizeUpdated = (data) => {
@@ -41,7 +47,8 @@ export default function EstacionesCapacidadPanel({
   };
 
   const guardarUna = async (estacion) => {
-    const nuevaCap = Number(draft[estacion._id] ?? estacion.capacidadMax ?? 5);
+    // el input guarda texto → aquí se convierte y se aplican los límites
+    const nuevaCap = capGuardable(estacion);
 
     try {
       setSavingId(estacion._id);
@@ -79,7 +86,7 @@ export default function EstacionesCapacidadPanel({
       .filter((e) => isChanged(e))
       .map((e) => ({
         _id: e._id,
-        capacidadMax: Number(draft[e._id] ?? e.capacidadMax ?? 5),
+        capacidadMax: capGuardable(e),
       }));
 
     if (!cambios.length) {
@@ -176,7 +183,7 @@ export default function EstacionesCapacidadPanel({
                     type="number"
                     min="1"
                     max="200"
-                    value={draft[e._id] ?? 5}
+                    value={toInputText(draft[e._id])}
                     onChange={(ev) => setCap(e._id, ev.target.value)}
                   />
                 </div>
@@ -202,10 +209,4 @@ export default function EstacionesCapacidadPanel({
       </small>
     </section>
   );
-}
-
-function clampInt(val, min, max) {
-  const n = Number(val);
-  if (Number.isNaN(n)) return min;
-  return Math.min(max, Math.max(min, Math.trunc(n)));
 }

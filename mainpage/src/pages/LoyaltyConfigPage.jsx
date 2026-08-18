@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import { Link } from "react-router-dom";
 import {
   getLoyaltyConfig,
@@ -13,6 +13,7 @@ import {
 import { useLocale } from "../hooks/useLocale";
 import ClienteLoyaltyDrawer from "./ClienteLoyaltyDrawer";
 import { useAutoFocus } from "../hooks/useAutoFocus";
+import { toInputText, toNumOrNull } from "../utils/numeroInput";
 import "./LoyaltyConfigPage.css";
 
 /* =====================================================
@@ -297,6 +298,35 @@ export default function LoyaltyConfigPage() {
 
 function ConfigTab({ config, setConfig, saving, onSave }) {
   const { currencySymbol, currencyName } = useLocale();
+
+  // Estos tres campos se GUARDAN en el onBlur. Sus inputs guardan TEXTO mientras
+  // se teclea (para poder vaciarlos); la conversión se hace aquí, al salir del
+  // campo. Si se deja vacío NO se persiste un 0 en silencio (Art.5): se avisa y
+  // se restaura el valor que tenía al entrar.
+  const [avisoNum, setAvisoNum] = useState(null);
+  const valorAlEnfocar = useRef(null);
+
+  const alEnfocarNumero = (e) => { valorAlEnfocar.current = e.target.value; };
+
+  const guardarNumero = (campo, texto) => {
+    const n = toNumOrNull(texto);
+    if (n === null || n < 0) {
+      setAvisoNum(campo);
+      setConfig((c) => ({ ...c, [campo]: valorAlEnfocar.current }));
+      return;
+    }
+    setAvisoNum(null);
+    setConfig((c) => ({ ...c, [campo]: n }));
+    onSave({ [campo]: n });
+  };
+
+  const avisoDe = (campo) =>
+    avisoNum === campo ? (
+      <p className="cfg-help cfg-help--warn">
+        Este campo no puede quedar vacío. No se ha guardado nada; se ha restaurado el valor anterior.
+      </p>
+    ) : null;
+
   return (
     <>
       <section className="card config-card">
@@ -343,11 +373,13 @@ function ConfigTab({ config, setConfig, saving, onSave }) {
               type="number"
               min="0"
               step="1"
-              value={config.puntosPorEuro ?? 10}
-              onChange={(e) => setConfig((c) => ({ ...c, puntosPorEuro: Number(e.target.value) }))}
-              onBlur={(e) => onSave({ puntosPorEuro: Number(e.target.value) })}
+              value={toInputText(config.puntosPorEuro)}
+              onChange={(e) => setConfig((c) => ({ ...c, puntosPorEuro: e.target.value }))}
+              onFocus={alEnfocarNumero}
+              onBlur={(e) => guardarNumero("puntosPorEuro", e.target.value)}
               disabled={saving}
             />
+            {avisoDe("puntosPorEuro")}
             <p className="cfg-help">Recomendado: 10 (10 {currencySymbol} = 100 pts)</p>
           </div>
 
@@ -357,11 +389,13 @@ function ConfigTab({ config, setConfig, saving, onSave }) {
               type="number"
               min="0"
               step="1"
-              value={config.minimoParaCanjear ?? 0}
-              onChange={(e) => setConfig((c) => ({ ...c, minimoParaCanjear: Number(e.target.value) }))}
-              onBlur={(e) => onSave({ minimoParaCanjear: Number(e.target.value) })}
+              value={toInputText(config.minimoParaCanjear)}
+              onChange={(e) => setConfig((c) => ({ ...c, minimoParaCanjear: e.target.value }))}
+              onFocus={alEnfocarNumero}
+              onBlur={(e) => guardarNumero("minimoParaCanjear", e.target.value)}
               disabled={saving}
             />
+            {avisoDe("minimoParaCanjear")}
             <p className="cfg-help">Saldo mínimo antes de poder canjear cualquier recompensa.</p>
           </div>
 
@@ -371,11 +405,13 @@ function ConfigTab({ config, setConfig, saving, onSave }) {
               type="number"
               min="0"
               step="1"
-              value={config.caducidadDias ?? 0}
-              onChange={(e) => setConfig((c) => ({ ...c, caducidadDias: Number(e.target.value) }))}
-              onBlur={(e) => onSave({ caducidadDias: Number(e.target.value) })}
+              value={toInputText(config.caducidadDias)}
+              onChange={(e) => setConfig((c) => ({ ...c, caducidadDias: e.target.value }))}
+              onFocus={alEnfocarNumero}
+              onBlur={(e) => guardarNumero("caducidadDias", e.target.value)}
               disabled={saving}
             />
+            {avisoDe("caducidadDias")}
             <p className="cfg-help">0 = sin caducidad. La caducidad se aplica vía cron en producción.</p>
           </div>
         </div>

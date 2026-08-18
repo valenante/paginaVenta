@@ -141,33 +141,13 @@
   border-top: 2px dashed #ccc;
 }
 
-/* ── Tabs para tipo de ticket ─── */
-.tp-type-tabs {
-  display: flex;
-  gap: 0;
-  margin-bottom: var(--space-sm);
-  border-radius: var(--radius-md);
-  overflow: hidden;
-  border: 1px solid var(--color-borde-suave, #e0e4ee);
-}
-.tp-type-tab {
-  flex: 1;
-  padding: 0.5rem 0.75rem;
-  border: none;
-  background: var(--color-blanco, #fff);
-  cursor: pointer;
-  font-size: var(--font-size-sm);
-  font-weight: 600;
-  color: var(--color-texto-suave, #6b7280);
-  transition: background 0.15s, color 0.15s;
-}
-.tp-type-tab:hover {
-  background: var(--color-fondo, #f9fafb);
-}
-.tp-type-tab--active {
-  background: var(--color-primario, var(--color-primario, #60b5ff));
-  color: #fff;
-}
-.tp-type-tab--active:hover {
-  background: var(--color-primario-oscuro, #2f7ed8);
+/* Las pestañas por tipo de documento (.tp-type-tabs/.tp-type-tab) se MOVIERON a
+   ConfigImpresionPage.css — pertenecen al modal, no al preview, y así su estilo
+   carga SIEMPRE con el modal (no dependía de este chunk CSS aparte). */
+
+/* URL del QR genérico en el preview: que no desborde el papel */
+.tp-qr-url {
+  word-break: break-all;
+  opacity: 0.75;
+  margin-top: 2px;
 }

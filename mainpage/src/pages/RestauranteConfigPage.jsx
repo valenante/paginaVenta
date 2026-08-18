@@ -15,6 +15,7 @@ import IdentidadNegocioPanel from "../components/Config/IdentidadNegocioPanel.js
 import ErrorToast from "../components/common/ErrorToast.jsx";
 import { normalizeApiError } from "../utils/normalizeApiError.js";
 import { DEFAULT_TEMA_TPV, normalizarTemaTpv } from "../utils/tema";
+import { clampIntNum } from "../utils/numeroInput";
 import { DEFAULT_TEMA_SHOP, normalizarTemaShop } from "../utils/temaShop";
 import { useLocale } from "../hooks/useLocale";
 import TemaTpvPanel from "../components/Tema/TemaTpvPanel.jsx";
@@ -150,6 +151,17 @@ export default function RestauranteConfigPage() {
     try {
       setSaving(true);
 
+      // Los inputs numericos del panel de SLA guardan TEXTO mientras se teclea
+      // (para poder vaciarlos). Aqui se convierten y se aplican los limites.
+      const slaMesas = {
+        ...(form.slaMesas || {}),
+        fallbackMinutosMax: clampIntNum(form.slaMesas?.fallbackMinutosMax, 1, 60, 10),
+        margenGraciaSegundos: clampIntNum(form.slaMesas?.margenGraciaSegundos, 0, 300, 60),
+        porcentajeAvisoRiesgo: clampIntNum(form.slaMesas?.porcentajeAvisoRiesgo, 50, 99, 80),
+        cooldownAvisoMinutos: clampIntNum(form.slaMesas?.cooldownAvisoMinutos, 0, 30, 5),
+        proximosMax: clampIntNum(form.slaMesas?.proximosMax, 1, 10, 3),
+      };
+
       const patch = {
         branding: form.branding,
         informacionRestaurante: form.informacionRestaurante,
@@ -157,10 +169,12 @@ export default function RestauranteConfigPage() {
         estilo: form.estilo,
         temaTpv: form.temaTpv,
         temaShop: form.temaShop,
-        slaMesas: form.slaMesas,
+        slaMesas,
         capacidadEstaciones: form.capacidadEstaciones,
         diaOperativo: form.diaOperativo,
       };
+      // el estado local se queda con los mismos numeros que se han guardado
+      setForm((prev) => ({ ...prev, slaMesas }));
 
       const { data: draft } = await api.post("/admin/config/versions", {
         patch,

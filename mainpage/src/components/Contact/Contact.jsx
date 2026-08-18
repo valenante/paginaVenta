@@ -27,13 +27,16 @@ const Contact = () => {
       const negocio = String(data.get("negocio") || "").trim();
       const zona = String(data.get("zona") || "").trim();
       const problema = String(data.get("problema") || "").trim();
-      const website = String(data.get("website") || "").trim();
+      const mensaje = String(data.get("mensaje") || "").trim();
+      const website = String(data.get("website") || "").trim(); // honeypot
 
+      // El backend (leads.schemas.js) exige nombre, email y telefono.
       if (!nombre || !email || !telefono) return;
 
       setSending(true);
       setSentOk(false);
 
+      // Texto reutilizado para el fallback de WhatsApp si la API fallara.
       const subject = `Quiero automatizar mi restaurante — ${negocio || "Negocio sin nombre"}`;
       const body = [
         `Hola! Soy ${nombre}.`,
@@ -42,14 +45,18 @@ const Contact = () => {
         `Negocio: ${negocio || "—"}`,
         `Zona: ${zona || "—"}`,
         `Problema: ${problema || "—"}`,
+        ...(mensaje ? ["", mensaje] : []),
       ].join("\n");
 
       try {
-        await api.post("/leads", { nombre, email, telefono, negocio, zona, problema, website });
+        // Canal principal: el lead llega por email a soporte (no se pierde).
+        await api.post("/leads", { nombre, email, telefono, negocio, zona, problema, mensaje, website });
         trackEvent("lead_form_submit", { negocio: negocio || "sin nombre" });
         setSentOk(true);
         form.reset();
       } catch {
+        // Fallback: si la API falla, abrimos WhatsApp con el mensaje ya escrito
+        // para no perder el lead bajo ninguna circunstancia.
         trackEvent("lead_form_submit", { negocio: negocio || "sin nombre", fallback: "whatsapp" });
         openWhatsApp(`${subject}\n\n${body}`);
         setSentOk(true);
@@ -125,7 +132,15 @@ const Contact = () => {
               <p>Te contactaremos en menos de 24 horas.</p>
             </div>
 
-            <input type="text" name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" style={{position:"absolute",left:"-9999px",width:1,height:1,opacity:0}} />
+            {/* Honeypot anti-spam: oculto para humanos, los bots lo rellenan */}
+            <input
+              type="text"
+              name="website"
+              tabIndex={-1}
+              autoComplete="off"
+              aria-hidden="true"
+              style={{ position: "absolute", left: "-9999px", width: 1, height: 1, opacity: 0 }}
+            />
 
             <div className="Contact-field">
               <label htmlFor="contact-nombre">Nombre</label>
@@ -170,6 +185,16 @@ const Contact = () => {
                 <option value="Todo manual">Todo es manual y me quita horas</option>
                 <option value="Otro">Otro</option>
               </select>
+            </div>
+
+            <div className="Contact-field">
+              <label htmlFor="contact-mensaje">¿Qué te gustaría automatizar? (opcional)</label>
+              <textarea
+                id="contact-mensaje"
+                name="mensaje"
+                placeholder="Cuéntanos cómo trabajas ahora y qué procesos te gustaría que se hicieran solos."
+                rows={4}
+              />
             </div>
 
             <p className="Contact-legal">

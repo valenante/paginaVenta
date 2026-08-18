@@ -8,12 +8,26 @@ export default function ModalConfirmacion({
   textoConfirmar = "Aceptar",
   onConfirm,
   onClose,
-  children
+  children,
+  // ⭐ 2026-08-13 — `valorRequerido` es OPT-IN y su default es `false` A PROPÓSITO.
+  // Este modal tiene 28 consumidores (grep en `src/`). Hacer el campo obligatorio para
+  // todos sería un SÍ→NO en 27 pantallas que nadie ha pedido tocar (Art. 7 · Art. 3).
+  // Sólo lo activa quien lo necesita; hoy: la anulación de facturas.
+  valorRequerido = false,
 }) {
   const [valor, setValor] = useState("");
 
+  // ⚠️ Se compara sobre el valor YA recortado: "   " no cuenta como motivo escrito, igual
+  // que en el backend, donde `zTrimmedString` aplica `.trim()` antes que nada (Art. 6:
+  // una sola idea de "vacío" en los dos lados).
+  const valorLimpio = valor.trim();
+  const bloqueado = valorRequerido && valorLimpio === "";
+
   const manejarConfirmacion = () => {
-    onConfirm(valor.trim());
+    // Cinturón además del `disabled`: un botón deshabilitado se puede saltar desde las
+    // devtools, y este guard es el que de verdad decide.
+    if (bloqueado) return;
+    onConfirm(valorLimpio);
   };
 
   return (
@@ -76,6 +90,10 @@ export default function ModalConfirmacion({
           <button
             onClick={manejarConfirmacion}
             className="boton-aceptar--modalconfirmacion"
+            disabled={bloqueado}
+            // Sin esto, un botón gris no dice POR QUÉ está gris y el usuario se queda
+            // igual de perdido que con el «Algo no salió bien» que tapó este bug 148 días.
+            title={bloqueado ? "Escribe el motivo para continuar" : undefined}
           >
             {textoConfirmar}
           </button>

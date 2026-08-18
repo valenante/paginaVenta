@@ -10,15 +10,28 @@
 import React, { useMemo, useState } from "react";
 import { useLocale } from "../../hooks/useLocale";
 
-import { toInputText, toNumOrNull } from "../../utils/numeroInput";
+import { toInputText, toNum } from "../../utils/numeroInput";
 
 const defaultRow = () => ({
   nombre: "",
-  precio: 0,
+  precio: "",
   productoId: null,
   cantidad: 1,
   consumeStock: false,
 });
+
+/**
+ * Los inputs numéricos guardan STRING mientras el usuario teclea (para poder
+ * vaciarlos y escribir "1.29"). La conversión a número se hace aquí, al guardar.
+ * La usan CrearProducto y EditProducts en su handleSubmit.
+ */
+export function normalizarAdicionales(adicionales) {
+  return (Array.isArray(adicionales) ? adicionales : []).map((ad) => ({
+    ...ad,
+    precio: Math.max(0, toNum(ad?.precio, 0)),
+    cantidad: Math.max(0, toNum(ad?.cantidad, 0)),
+  }));
+}
 
 export default function AdicionalesEditor({
   adicionales = [],

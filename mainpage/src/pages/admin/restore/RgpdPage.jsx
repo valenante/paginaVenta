@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import api from "../../../utils/api.js";
 import ModalConfirmacion from "../../../components/Modal/ModalConfirmacion.jsx";
 import AlertaMensaje from "../../../components/AlertaMensaje/AlertaMensaje.jsx";
+import { toInputText, clampIntNum } from "../../../utils/numeroInput.js";
 import "./RgpdPage.css";
 
 function Badge({ tone = "neutral", children }) {
@@ -175,7 +176,8 @@ export default function RgpdPage() {
 
         try {
             await api.post(`/admin/system/rgpd/tenant/${slug}/schedule-delete`, {
-                days,
+                // el input guarda texto mientras se teclea → se convierte aquí
+                days: clampIntNum(days, 0, Infinity, 30),
                 reason,
                 idempotencyKey: `schedule_${slug}_${Date.now()}`,
             });
@@ -384,8 +386,8 @@ export default function RgpdPage() {
                                 className="rgpd-input"
                                 type="number"
                                 min="0"
-                                value={days}
-                                onChange={(e) => setDays(Number(e.target.value))}
+                                value={toInputText(days)}
+                                onChange={(e) => setDays(e.target.value)}
                             />
                         </label>
 

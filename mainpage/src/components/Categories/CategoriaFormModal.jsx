@@ -1,8 +1,8 @@
 // src/components/Categories/CategoriaFormModal.jsx
 import React, { useState, useEffect, useCallback } from "react";
-import { toInputText, toNumOrNull } from "../../utils/numeroInput";
 import Portal from "../ui/Portal";
 import { useAutoFocus } from "../../hooks/useAutoFocus";
+import { toInputText, clampIntNum } from "../../utils/numeroInput";
 import "./CategoriaFormModal.css";
 
 const ICONOS_SUGERIDOS = [
@@ -20,6 +20,8 @@ const CategoriaFormModal = ({ categoria, tipo, onClose, onSave }) => {
   const [nombre, setNombre] = useState(categoria?.nombre || "");
   const [descripcion, setDescripcion] = useState(categoria?.descripcion || "");
   const [icono, setIcono] = useState(categoria?.icono || "");
+  // Se guarda como TEXTO mientras se teclea (para poder vaciar el campo);
+  // se convierte a número en handleSubmit.
   const [orden, setOrden] = useState(toInputText(categoria?.orden ?? 0));
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
@@ -63,7 +65,7 @@ const CategoriaFormModal = ({ categoria, tipo, onClose, onSave }) => {
           nombre: nombre.trim(),
           descripcion: descripcion.trim(),
           icono: icono.trim(),
-          orden: toNumOrNull(orden) ?? 0, // el input guarda texto mientras se teclea
+          orden: clampIntNum(orden, 0, Infinity, 0),
           traducciones: {
             en: { nombre: trEN.nombre.trim(), descripcion: trEN.descripcion.trim() },
             fr: { nombre: trFR.nombre.trim(), descripcion: trFR.descripcion.trim() },
@@ -188,7 +190,7 @@ const CategoriaFormModal = ({ categoria, tipo, onClose, onSave }) => {
                   <input
                     className="catmodal-input catmodal-input--orden"
                     type="number"
-                    value={toInputText(orden)}
+                    value={orden}
                     onChange={(e) => setOrden(e.target.value)}
                     min={0}
                   />

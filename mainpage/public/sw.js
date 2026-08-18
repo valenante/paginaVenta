@@ -1,4 +1,4 @@
-const CACHE = "alef-landing-v1";
+const CACHE = "alef-landing-v2";
 const PRECACHE = ["/", "/login", "/manifest.json", "/pwa-192.png"];
 
 /* ── Install: pre-cache shell ── */

@@ -25,6 +25,18 @@ const API_BASE_URL = import.meta.env.VITE_API_URL;
     const apuntaAProduccion = /(^|\/\/)api\.softalef\.com/.test(String(API_BASE_URL || ""));
     if (!esEntornoDePruebas || !apuntaAProduccion) return;
 
+    // ⚠️ EL `console.error` NO EXISTE EN EL BUILD. `vite.config.js` lleva
+    //    `esbuild: { drop: ["console", "debugger"] }`, así que TODOS los `console.*` se eliminan
+    //    del artefacto. La primera versión de este guard confiaba en él para la parte
+    //    «contable» del Art. 5, y el test lo daba por bueno porque vitest no minifica: P-2 en el
+    //    propio verificador. Se descubrió grepeando el bundle, no el fuente.
+    //    Por eso la señal estable va en `window`, que sobrevive a la minificación, y el aviso
+    //    visible en el DOM. El `console` se queda porque en `npm run dev` sí ayuda.
+    window.__ALEF_GUARD_ENTORNO = {
+      code: "PANEL_APUNTA_A_PRODUCCION",
+      host,
+      api: String(API_BASE_URL || ""),
+    };
     // eslint-disable-next-line no-console
     console.error(
       "[ALEF][D-84] PANEL_APUNTA_A_PRODUCCION — este panel se sirve en %s pero su API es %s. " +

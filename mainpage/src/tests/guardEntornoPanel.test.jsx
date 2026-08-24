@@ -30,11 +30,12 @@ async function arrancarPanel({ hostname, apiUrl }) {
   return {
     errores,
     banner: document.querySelector('[data-alef-guard="panel-apunta-a-produccion"]'),
+    marca: window.__ALEF_GUARD_ENTORNO,
   };
 }
 
 describe("D-84 · guard de entorno del panel", () => {
-  beforeEach(() => { vi.unstubAllEnvs(); vi.unstubAllGlobals(); });
+  beforeEach(() => { vi.unstubAllEnvs(); vi.unstubAllGlobals(); delete window.__ALEF_GUARD_ENTORNO; });
   afterEach(() => { vi.unstubAllEnvs(); vi.unstubAllGlobals(); document.body.innerHTML = ""; });
 
   it("G1 · staging-panel + API de PRODUCCIÓN → grita y se ve", async () => {
@@ -42,7 +43,11 @@ describe("D-84 · guard de entorno del panel", () => {
       hostname: "staging-panel.softalef.com",
       apiUrl: "https://api.softalef.com/api",
     });
-    expect(r.errores.join(" "), "tiene que dejar un código greppable").toContain("PANEL_APUNTA_A_PRODUCCION");
+    // ⚠️ La señal estable NO puede ser el `console`: `vite.config.js` lleva
+    //    `esbuild: { drop: ["console"] }` y lo borra del build. Esto se descubrió grepeando el
+    //    bundle: el test pasaba y el artefacto no lo llevaba (P-2 en el verificador).
+    expect(r.marca?.code, "el código estable tiene que sobrevivir a la minificación").toBe("PANEL_APUNTA_A_PRODUCCION");
+    expect(r.errores.join(" "), "y en dev, además, por consola").toContain("PANEL_APUNTA_A_PRODUCCION");
     expect(r.banner, "y un aviso VISIBLE: la consola no la mira nadie antes de pulsar Guardar").toBeTruthy();
     expect(r.banner.textContent).toMatch(/PRODUCCIÓN/i);
   });
@@ -53,6 +58,7 @@ describe("D-84 · guard de entorno del panel", () => {
       apiUrl: "https://api-staging.softalef.com/api",
     });
     expect(r.errores.join(" "), "un guard que salta con el build bueno se desactiva en una semana").not.toContain("PANEL_APUNTA_A_PRODUCCION");
+    expect(r.marca, "ni deja marca").toBeFalsy();
     expect(r.banner).toBeNull();
   });
 

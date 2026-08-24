@@ -51,8 +51,31 @@ export default function IvaPanel() {
   const guardar = async (categoria, iva) => {
     setSaving(categoria);
     try {
-      await api.put("/productos/bulk-iva", { categoria, iva, tipo: tab });
-      setToast({ ok: true, msg: `${categoria} actualizado a IVA ${iva}%` });
+      // ── D-85 · SE LEE LO QUE EL BACKEND CONTESTA, QUE PARA ESO LO DICE ────────────────
+      // Aquí se hacía `await api.put(...)` tirando la respuesta y se pintaba el toast verde de
+      // forma incondicional. El backend YA devuelve `actualizados: result.modifiedCount`
+      // (`productosController.js` -> `bulkAsignarIva`), justo el dato que delata un cambio que
+      // no tocó nada — y nadie lo leía.
+      //
+      // Que casen 0 documentos no es raro: el `updateMany` filtra por `{categoria, tipo}` con
+      // igualdad EXACTA de dos strings que nadie normaliza igual (el zod hace `.trim()` sobre la
+      // categoria entrante, `Producto.categoria` no declara `trim: true`), y el `tipo` sale de la
+      // PESTAÑA activa, no de la fila. Con el bug dentro: HTTP 200, `actualizados: 0`, toast
+      // verde, y el usuario se va convencido de haber cambiado el IVA de su carta.
+      //
+      // Zona fiscal ⇒ Art. 5: un 0 tiene que GRITAR. Y si el backend no informa del recuento,
+      // tampoco se afirma un exito rotundo: «no lo se» no es «esta bien».
+      const res = await api.put("/productos/bulk-iva", { categoria, iva, tipo: tab });
+      const cuerpo = res?.data?.data ?? res?.data ?? {};
+      const n = Number(cuerpo.actualizados);
+
+      if (Number.isFinite(n) && n > 0) {
+        setToast({ ok: true, msg: `${categoria}: ${n} producto${n === 1 ? "" : "s"} a IVA ${iva}%` });
+      } else if (n === 0) {
+        setToast({ ok: false, msg: `${categoria}: 0 productos actualizados. El IVA NO ha cambiado.` });
+      } else {
+        setToast({ ok: false, msg: `${categoria}: el servidor no confirmó cuántos productos cambió. Comprueba la carta.` });
+      }
       setEditCat(null);
       await fetchResumen();
     } catch (err) {

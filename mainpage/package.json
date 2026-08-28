@@ -10,7 +10,8 @@
     "preview": "vite preview",
     "start": "vite",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "build:staging": "vite build --mode staging"
   },
   "dependencies": {
     "@hello-pangea/dnd": "^18.0.1",

@@ -3,6 +3,59 @@ import axios from "axios";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL;
 
+// ── D-84 · UN PANEL SERVIDO EN staging-* NO PUEDE HABLAR CON LA API DE PRODUCCIÓN ──────────
+// Esto existe porque pasó: `staging-panel.softalef.com` sirvió durante meses un bundle
+// compilado contra `https://api.softalef.com`. Quien creía estar probando estaba editando la
+// base de un cliente REAL — el que tuviera seleccionado. Se detectó el 24-ago-2026 al cambiar
+// el IVA de una categoría "en staging" y encontrarlo escrito en producción.
+//
+// La causa es que `VITE_API_URL` se resuelve en tiempo de BUILD: un `npm run build` a secas coge
+// `.env.production` y el artefacto resultante se copiaba a `panel-staging/`. El runbook ya
+// documentaba el build correcto; no bastó, porque la protección dependía de que alguien
+// recordara exportar tres variables. Ahora la lleva el código.
+//
+// ⚠️ NO se corrige la URL sobre la marcha, a propósito: apuntar en silencio a otro sitio del que
+// el build declara sería sustituir una mentira por otra. Se GRITA y se hace visible, que es lo
+// único que un humano nota antes de pulsar Guardar (Art. 5: fail-loud, y que se pueda contar).
+(() => {
+  try {
+    if (typeof window === "undefined") return;
+    const host = window.location.hostname || "";
+    const esEntornoDePruebas = host.startsWith("staging-") || host.includes("-staging.");
+    const apuntaAProduccion = /(^|\/\/)api\.softalef\.com/.test(String(API_BASE_URL || ""));
+    if (!esEntornoDePruebas || !apuntaAProduccion) return;
+
+    // ⚠️ EL `console.error` NO EXISTE EN EL BUILD. `vite.config.js` lleva
+    //    `esbuild: { drop: ["console", "debugger"] }`, así que TODOS los `console.*` se eliminan
+    //    del artefacto. La primera versión de este guard confiaba en él para la parte
+    //    «contable» del Art. 5, y el test lo daba por bueno porque vitest no minifica: P-2 en el
+    //    propio verificador. Se descubrió grepeando el bundle, no el fuente.
+    //    Por eso la señal estable va en `window`, que sobrevive a la minificación, y el aviso
+    //    visible en el DOM. El `console` se queda porque en `npm run dev` sí ayuda.
+    window.__ALEF_GUARD_ENTORNO = {
+      code: "PANEL_APUNTA_A_PRODUCCION",
+      host,
+      api: String(API_BASE_URL || ""),
+    };
+    // eslint-disable-next-line no-console
+    console.error(
+      "[ALEF][D-84] PANEL_APUNTA_A_PRODUCCION — este panel se sirve en %s pero su API es %s. " +
+      "Todo lo que guardes aquí se escribirá en PRODUCCIÓN. Reconstruye con `npm run build:staging`.",
+      host, API_BASE_URL
+    );
+
+    const aviso = document.createElement("div");
+    aviso.setAttribute("data-alef-guard", "panel-apunta-a-produccion");
+    aviso.textContent =
+      "⚠️ ESTE PANEL ESCRIBE EN PRODUCCIÓN (" + API_BASE_URL + "). No guardes nada. " +
+      "Build incorrecto: usa `npm run build:staging`.";
+    aviso.className = "alef-guard-entorno";
+    const pintar = () => document.body && document.body.prepend(aviso);
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", pintar);
+    else pintar();
+  } catch { /* un guard nunca puede romper el arranque del panel */ }
+})();
+
 const api = axios.create({
   baseURL: API_BASE_URL,
   withCredentials: true,

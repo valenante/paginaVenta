@@ -402,3 +402,16 @@ html, body {
     padding: var(--space-sm) var(--space-md);
   }
 }
+/* D-84 · aviso de que el panel apunta a una API que no es la de su entorno.
+   Sólo se pinta si el guard de src/utils/api.js detecta la discrepancia. */
+.alef-guard-entorno {
+  position: sticky;
+  top: 0;
+  z-index: 99999;
+  background: #b00020;
+  color: #fff;
+  font: 700 14px/1.4 system-ui, sans-serif;
+  padding: 10px 16px;
+  text-align: center;
+  letter-spacing: 0.02em;
+}

@@ -59,6 +59,19 @@ const PRECIO_SUGGESTIONS = [
  * Backward compat: convert old flat object format to new array format.
  * If already an array, return as-is.
  */
+/**
+ * IVA por producto. Los cuatro tipos son EXACTAMENTE los que acepta el backend
+ * (`validation/schemas/productos.schemas.js:75` y `:129`: `[0, 4, 10, 21]`); mandar otro
+ * devuelve 400. Las etiquetas se copian de `components/Iva/IvaPanel.jsx:8-13` para que la
+ * pantalla de IVA por categoría y ésta digan lo mismo (Art. 6).
+ */
+const IVA_OPCIONES = [
+  { value: 10, label: "10% (reducido) · hostelería en sala" },
+  { value: 21, label: "21% (general) · alcohol takeaway, retail" },
+  { value: 4, label: "4% (superreducido) · básicos" },
+  { value: 0, label: "0% (exento)" },
+];
+
 const normalizePrecios = (precios) => {
   // Already new format
   if (Array.isArray(precios)) {
@@ -177,6 +190,12 @@ const EditProduct = ({
       canales: Array.isArray(product?.canales) ? [...product.canales] : ["sala", "takeaway", "delivery"],
 
       precios: normalizePrecios(product?.precios),
+
+      // IVA por producto. El backend lo soporta desde siempre (`Producto.schema.js:222`,
+      // `default: 10`) pero el panel sólo dejaba tocarlo EN BLOQUE por categoría
+      // (`components/Iva/IvaPanel.jsx`): un producto con un IVA distinto al de sus hermanos
+      // no se podía arreglar desde aquí. Se usa el default del schema cuando no viene.
+      iva: [0, 4, 10, 21].includes(Number(product?.iva)) ? Number(product.iva) : 10,
 
       // v2 stock-modelo-v2: adicionales es lista editable directamente
       adicionales: Array.isArray(product?.adicionales) ? product.adicionales : [],
@@ -437,6 +456,11 @@ const EditProduct = ({
       seccion: formData.seccion,
       estacion: formData.estacion,
       precios: preciosArr,
+      // ⚠️ El payload se construye CLAVE A CLAVE, y en 2026-07 este objeto se quedó sin
+      // `activo`: el dueño ocultaba un producto, salía 200 OK y seguía en la carta un mes.
+      // Ese es el motivo de `EditProducts.visibilidad.test.jsx`. `iva` entra aquí a la vez
+      // que en el formulario, y tiene su propio caso en el test por la misma razón.
+      iva: Number(formData.iva),
       traducciones: formData.traducciones,
       adicionales,
       aliases: formData.aliases,
@@ -796,6 +820,28 @@ const EditProduct = ({
                     onClick={() => setShowPreciosHelp(true)}
                   >Ayuda
                   </button>
+                </div>
+
+                <div className="campo-iva--crear">
+                  <label className="label--crear" htmlFor="edit-producto-iva">
+                    IVA aplicable
+                    <select
+                      id="edit-producto-iva"
+                      name="iva"
+                      className="input--crear"
+                      value={String(formData.iva)}
+                      onChange={(e) =>
+                        setFormData((prev) => ({ ...prev, iva: Number(e.target.value) }))
+                      }
+                    >
+                      {IVA_OPCIONES.map((o) => (
+                        <option key={o.value} value={o.value}>{o.label}</option>
+                      ))}
+                    </select>
+                  </label>
+                  <p className="help-text--crear">
+                    Sólo afecta a este producto. Para cambiarlo en bloque, usa «Gestión de IVA».
+                  </p>
                 </div>
 
                 <datalist id="precio-suggestions-edit">
@@ -1333,8 +1379,13 @@ const EditProduct = ({
                     }
                   >
                     <option value="">Universal (todas)</option>
-                    {(formData.precios || []).map((p) => (
-                      <option key={p.clave} value={p.clave}>
+                    {/* D-114 · `key={p.clave}` se duplicaba. `normalizePrecios` no deduplica y
+                        hace `clave: p.clave || ""`, así que DOS variantes recién añadidas —cuya
+                        clave aún no se ha tecleado— comparten `""` y React pinta dos hijos con
+                        la misma key: reordena mal y puede quedarse con la selección anterior.
+                        El índice desempata sin cambiar el `value`, que es lo que se envía. */}
+                    {(formData.precios || []).map((p, idx) => (
+                      <option key={`${p.clave}-${idx}`} value={p.clave}>
                         Solo {p.label || p.clave}
                       </option>
                     ))}

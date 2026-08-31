@@ -225,3 +225,13 @@
     padding: 12px;
   }
 }
+
+/* IVA por producto — vive dentro del fieldset de Precios porque es una decisión del precio,
+   no de la ficha del plato. (CSS por clases, nunca inline.) */
+.campo-iva--crear {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 8px 0 12px;
+}
+.campo-iva--crear .input--crear { max-width: 320px; }

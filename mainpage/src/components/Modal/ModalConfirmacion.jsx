@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { createPortal } from "react-dom";
 import "./ModalConfirmacion.css";
 
 export default function ModalConfirmacion({
@@ -30,7 +31,22 @@ export default function ModalConfirmacion({
     onConfirm(valorLimpio);
   };
 
-  return (
+  // ⭐ SE PORTALIZA A `document.body`, y no es cosmético: MEDIDO el 31-ago en staging.
+  //
+  // El overlay es `position: fixed; inset: 0`, que debería cubrir la pantalla entera. Pero un
+  // `fixed` lo RECORTA cualquier ancestro con `overflow: hidden`, y el panel los tiene: al
+  // abrir «Eliminar extra» el overlay medía `top 238 · left 27 · 1852×379` sobre un viewport
+  // de `1920×941` — descolocado y cortado a media altura, porque
+  // `SECTION.products-content-card--productos` lo estaba clipando.
+  //
+  // Se arregla AQUÍ y no en cada pantalla: este componente tiene ~29 consumidores y **ninguno**
+  // lo envolvía en `<Portal>`. Pedirle a 29 sitios que se acuerden es la definición de una
+  // asimetría esperando a pasar (Art. 6). Portalizándose él, todos quedan bien de una vez.
+  //
+  // ⚠️ `z-index: 50` del CSS se conserva: colgando de `body` ya no compite con las capas
+  // internas del panel, así que no hace falta subirlo. Si algún día un overlay hermano lo tapa,
+  // el sitio de mirar es `ModalConfirmacion.css`, no este fichero.
+  return createPortal(
     <div className="modal-overlay--modalconfirmacion">
       <div className="modal-contenido--modalconfirmacion glass-card">
         
@@ -100,6 +116,7 @@ export default function ModalConfirmacion({
         </div>
 
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

@@ -9,6 +9,7 @@ import { useCategorias } from "../../context/CategoriasContext";
 import { useLocale } from "../../hooks/useLocale";
 import ExtrasPanel from "../Extras/ExtrasPanel";
 import Portal from "../ui/Portal";
+import ModalConfirmacion from "../Modal/ModalConfirmacion";
 import api from "../../utils/api";
 import { getFirstPrice } from "./categoriesHelpers";
 import "./CategoriasPanel.css";
@@ -642,67 +643,40 @@ const CategoriasPanel = ({ onBack }) => {
       )}
 
       {/* Confirm delete category */}
+      {/* ⚠️ ANTES esto era un modal PINTADO A MANO (`catconfirm-card`, `catmodal-btn`…), el
+          único de los 30 confirmatorios del panel que no usaba el componente compartido. Se
+          veía distinto al de borrar un extra, un proveedor o una imagen de la carta, que sí
+          lo usan. Es Art. 6: dos implementaciones de la misma cosa acaban divergiendo, y la
+          que diverge es la que el usuario nota.
+          El error del backend —el 409 CATEGORIA_EN_USO— sigue mostrándose DENTRO del modal,
+          ahora por el slot `children` que `ModalConfirmacion` ya ofrecía.
+          ⚠️ Diferencia asumida: el modal viejo se cerraba pulsando fuera y el compartido no.
+          Se acepta a cambio de que las 30 confirmaciones se comporten igual. */}
       {confirmDelete && (
-        <Portal>
-          <div className="catmodal-overlay" onClick={() => { setConfirmDelete(null); setDeleteError(null); }}>
-            <div className="catconfirm-card" onClick={(e) => e.stopPropagation()}>
-              <h3 className="catconfirm-title">Eliminar categoría</h3>
-              <p className="catconfirm-msg">
-                ¿Seguro que quieres eliminar <strong>{confirmDelete.nombre}</strong>?
-                Solo se puede eliminar si no tiene productos asignados.
-              </p>
-              {deleteError && <div className="catmodal-error">{deleteError}</div>}
-              <div className="catmodal-actions">
-                <button
-                  type="button"
-                  className="catmodal-btn catmodal-btn--cancel"
-                  onClick={() => { setConfirmDelete(null); setDeleteError(null); }}
-                >
-                  Cancelar
-                </button>
-                <button
-                  type="button"
-                  className="catmodal-btn catmodal-btn--delete"
-                  onClick={() => handleDelete(confirmDelete)}
-                >
-                  Eliminar
-                </button>
-              </div>
-            </div>
-          </div>
-        </Portal>
+        <ModalConfirmacion
+          titulo="Eliminar categoría"
+          mensaje={`¿Seguro que quieres eliminar “${confirmDelete.nombre}”? Solo se puede eliminar si no tiene productos asignados.`}
+          textoConfirmar="Eliminar"
+          onConfirm={() => handleDelete(confirmDelete)}
+          onClose={() => { setConfirmDelete(null); setDeleteError(null); }}
+        >
+          {deleteError && <div className="catmodal-error">{deleteError}</div>}
+        </ModalConfirmacion>
       )}
 
       {/* Confirm delete product */}
+      {/* El gemelo del de arriba: se migra a la vez, porque arreglar uno y dejar el otro
+          sería cambiar una asimetría por otra. */}
       {confirmDeleteProduct && (
-        <Portal>
-          <div className="catmodal-overlay" onClick={() => { setConfirmDeleteProduct(null); setDeleteProductError(null); }}>
-            <div className="catconfirm-card" onClick={(e) => e.stopPropagation()}>
-              <h3 className="catconfirm-title">Eliminar producto</h3>
-              <p className="catconfirm-msg">
-                ¿Seguro que quieres eliminar <strong>{confirmDeleteProduct.nombre}</strong>?
-                Esta acción no se puede deshacer.
-              </p>
-              {deleteProductError && <div className="catmodal-error">{deleteProductError}</div>}
-              <div className="catmodal-actions">
-                <button
-                  type="button"
-                  className="catmodal-btn catmodal-btn--cancel"
-                  onClick={() => { setConfirmDeleteProduct(null); setDeleteProductError(null); }}
-                >
-                  Cancelar
-                </button>
-                <button
-                  type="button"
-                  className="catmodal-btn catmodal-btn--delete"
-                  onClick={() => handleDeleteProduct(confirmDeleteProduct)}
-                >
-                  Eliminar
-                </button>
-              </div>
-            </div>
-          </div>
-        </Portal>
+        <ModalConfirmacion
+          titulo="Eliminar producto"
+          mensaje={`¿Seguro que quieres eliminar “${confirmDeleteProduct.nombre}”? Esta acción no se puede deshacer.`}
+          textoConfirmar="Eliminar"
+          onConfirm={() => handleDeleteProduct(confirmDeleteProduct)}
+          onClose={() => { setConfirmDeleteProduct(null); setDeleteProductError(null); }}
+        >
+          {deleteProductError && <div className="catmodal-error">{deleteProductError}</div>}
+        </ModalConfirmacion>
       )}
     </div>
   );

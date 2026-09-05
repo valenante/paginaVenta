@@ -858,7 +858,7 @@ export default function FacturasAutomaticasPage() {
             <div className="finv-modal__body">
               <p className="finv-gestor-preview__meta">
                 {previewGestorData.count > 0
-                  ? `${previewGestorData.count} factura${previewGestorData.count !== 1 ? "s" : ""} · Total ${(previewGestorData.totales?.total || 0).toFixed(2)}€ · se enviaría a ${previewGestorData.emailTo || "(sin email de gestor configurado)"}`
+                  ? `${previewGestorData.count} factura${previewGestorData.count !== 1 ? "s" : ""} · Total ${(previewGestorData.totales?.total || 0).toFixed(2)}${currencySymbol} · se enviaría a ${previewGestorData.emailTo || "(sin email de gestor configurado)"}`
                   : "No hay facturas nuevas en el periodo — no se enviaría ningún email."}
               </p>
               {previewGestorData.count > 0 && (

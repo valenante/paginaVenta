@@ -6,6 +6,7 @@ import {
   AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, ReferenceLine,
 } from "recharts";
 import api from "../../utils/api";
+import { useLocale } from "../../hooks/useLocale";
 import "./DayReplay.css";
 
 const EVENT_ICONS = {
@@ -35,9 +36,13 @@ const FILTERS = [
   { key: "eliminacion", label: "Eliminaciones" },
 ];
 
-function fmtEur(v) { return v != null ? `${v.toFixed(2)}\u20AC` : "-"; }
+// ⚠️ Es una función de MÓDULO y la usan DOS componentes (`EventRow` y la página), así que no
+// puede llamar al hook ella misma: recibe el símbolo por parámetro y cada componente se lo pasa
+// desde `useLocale()`. El defecto se conserva para no romper a nadie que la llame sin él.
+function fmtEur(v, sym = "\u20AC") { return v != null ? `${v.toFixed(2)}${sym}` : "-"; }
 
 function EventRow({ ev, highlight }) {
+  const { currencySymbol } = useLocale();
   const icon = EVENT_ICONS[ev.tipo] || "\u2022";
   const color = EVENT_COLORS[ev.tipo] || "blue";
 
@@ -53,13 +58,13 @@ function EventRow({ ev, highlight }) {
     case "mesa_cerrada":
       main = `Mesa ${ev.mesa} cerrada`;
       detail = `${ev.comensales} comensales \u00B7 ${ev.durMin ? ev.durMin + " min" : ""}`;
-      badge = { text: fmtEur(ev.total), color: ev.metodoPago === "tarjeta" ? "blue" : "green" };
+      badge = { text: fmtEur(ev.total, currencySymbol), color: ev.metodoPago === "tarjeta" ? "blue" : "green" };
       break;
     case "pedido":
       main = `Pedido Mesa ${ev.mesa}`;
       detail = ev.items?.map(i => `${i.qty}x ${i.nombre}`).join(", ") || "";
       if (ev.tomadoPor) detail += ` \u00B7 ${ev.tomadoPor}`;
-      badge = ev.total > 0 ? { text: fmtEur(ev.total), color: "purple" } : null;
+      badge = ev.total > 0 ? { text: fmtEur(ev.total, currencySymbol), color: "purple" } : null;
       break;
     case "item_listo":
       main = `${ev.cantidad > 1 ? ev.cantidad + "x " : ""}${ev.nombre}`;
@@ -72,7 +77,7 @@ function EventRow({ ev, highlight }) {
     case "movimiento_caja":
       main = ev.subtipo?.replace(/_/g, " ") || "Movimiento";
       detail = ev.usuario ? `por ${ev.usuario}` : "";
-      badge = { text: `${ev.importe > 0 ? "+" : ""}${fmtEur(ev.importe)}`, color: ev.importe >= 0 ? "green" : "red" };
+      badge = { text: `${ev.importe > 0 ? "+" : ""}${fmtEur(ev.importe, currencySymbol)}`, color: ev.importe >= 0 ? "green" : "red" };
       break;
     default:
       main = ev.tipo;
@@ -92,6 +97,7 @@ function EventRow({ ev, highlight }) {
 }
 
 export default function DayReplay() {
+  const { currencySymbol } = useLocale();
   const today = new Date().toISOString().slice(0, 10);
   const [fecha, setFecha] = useState(today);
   const [data, setData] = useState(null);
@@ -213,7 +219,7 @@ export default function DayReplay() {
         <div className="adm__kpi adm__kpi--mesas-live"><span className="adm__kpi-value">{currentSlot?.mesasAbiertas ?? 0}</span><span className="adm__kpi-label">Mesas abiertas</span></div>
         <div className="adm__kpi adm__kpi--comensales-live"><span className="adm__kpi-value">{currentSlot?.comensalesActivos ?? 0}</span><span className="adm__kpi-label">Comensales</span></div>
         <div className="adm__kpi adm__kpi--cocina-live"><span className="adm__kpi-value">{currentSlot?.itemsEnCocina ?? 0}</span><span className="adm__kpi-label">En cocina</span></div>
-        <div className="adm__kpi adm__kpi--ventas-live"><span className="adm__kpi-value">{fmtEur(currentSlot?.ventasAcumuladas)}</span><span className="adm__kpi-label">Ventas acumuladas</span></div>
+        <div className="adm__kpi adm__kpi--ventas-live"><span className="adm__kpi-value">{fmtEur(currentSlot?.ventasAcumuladas, currencySymbol)}</span><span className="adm__kpi-label">Ventas acumuladas</span></div>
         <div className="adm__kpi adm__kpi--efectivo-live"><span className="adm__kpi-value">{fmtEur(currentSlot?.efectivoAcumulado)}</span><span className="adm__kpi-label">Efectivo</span></div>
         <div className="adm__kpi adm__kpi--tarjeta-live"><span className="adm__kpi-value">{fmtEur(currentSlot?.tarjetaAcumulada)}</span><span className="adm__kpi-label">Tarjeta</span></div>
       </div>

@@ -1,9 +1,13 @@
 import { useEffect } from "react";
 import { useCortesias } from "../../hooks/useCortesias";
+import { useLocale } from "../../hooks/useLocale";
 import "./CortesiasPanel.css";
 
 export default function CortesiasPanel({ abierto, onClose }) {
   const c = useCortesias();
+  // El símbolo sale del restaurante. Este resumen lo reescribió `main` DESPUÉS de que mi rama
+  // se quedara atrás, así que el parche no lo cubría y lo cazó el centinela al portar.
+  const { formatMoney } = useLocale();
 
   // Refetch when panel opens
   useEffect(() => {
@@ -55,8 +59,8 @@ export default function CortesiasPanel({ abierto, onClose }) {
         {(c.tab === "invitaciones" || c.tab === "personal") && (
           <div className="cortpanel__resumen">
             {c.tab === "invitaciones"
-              ? `${c.resumenInv.totalItems} invitaciones \u2014 ${Number(c.resumenInv.totalValor || 0).toFixed(2)} \u20AC valor`
-              : `${c.resumenCp.totalRegistros} registros \u2014 ${Number(c.resumenCp.totalValor || 0).toFixed(2)} \u20AC valor`}
+              ? `${c.resumenInv.totalItems} invitaciones \u2014 ${formatMoney(c.resumenInv.totalValor)} valor`
+              : `${c.resumenCp.totalRegistros} registros \u2014 ${formatMoney(c.resumenCp.totalValor)} valor`}
           </div>
         )}
 

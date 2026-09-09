@@ -6,6 +6,7 @@ import {
   AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, ReferenceLine,
 } from "recharts";
 import api from "../../utils/api";
+import { useLocale } from "../../hooks/useLocale";
 import "./DayReplay.css";
 
 const EVENT_ICONS = {
@@ -35,9 +36,14 @@ const FILTERS = [
   { key: "eliminacion", label: "Eliminaciones" },
 ];
 
-function fmtEur(v) { return v != null ? `${v.toFixed(2)}\u20AC` : "-"; }
+// El s\u00EDmbolo sale del restaurante (hooks/useLocale.js) y entra por par\u00E1metro porque esto es una
+// funci\u00F3n de m\u00F3dulo: los hooks solo se llaman dentro del componente.
+// \u26A0\uFE0F NO se usa formatMoney() aqu\u00ED a prop\u00F3sito: esta pantalla imprime el s\u00EDmbolo PEGADO al n\u00FAmero
+// ("12.50\u20AC") y formatMoney siempre mete un espacio. Y "-" para el valor ausente se conserva.
+function fmtMoney(v, sym) { return v != null ? `${v.toFixed(2)}${sym}` : "-"; }
 
 function EventRow({ ev, highlight }) {
+  const { currencySymbol } = useLocale();
   const icon = EVENT_ICONS[ev.tipo] || "\u2022";
   const color = EVENT_COLORS[ev.tipo] || "blue";
 
@@ -53,13 +59,13 @@ function EventRow({ ev, highlight }) {
     case "mesa_cerrada":
       main = `Mesa ${ev.mesa} cerrada`;
       detail = `${ev.comensales} comensales \u00B7 ${ev.durMin ? ev.durMin + " min" : ""}`;
-      badge = { text: fmtEur(ev.total), color: ev.metodoPago === "tarjeta" ? "blue" : "green" };
+      badge = { text: fmtMoney(ev.total, currencySymbol), color: ev.metodoPago === "tarjeta" ? "blue" : "green" };
       break;
     case "pedido":
       main = `Pedido Mesa ${ev.mesa}`;
       detail = ev.items?.map(i => `${i.qty}x ${i.nombre}`).join(", ") || "";
       if (ev.tomadoPor) detail += ` \u00B7 ${ev.tomadoPor}`;
-      badge = ev.total > 0 ? { text: fmtEur(ev.total), color: "purple" } : null;
+      badge = ev.total > 0 ? { text: fmtMoney(ev.total, currencySymbol), color: "purple" } : null;
       break;
     case "item_listo":
       main = `${ev.cantidad > 1 ? ev.cantidad + "x " : ""}${ev.nombre}`;
@@ -72,7 +78,7 @@ function EventRow({ ev, highlight }) {
     case "movimiento_caja":
       main = ev.subtipo?.replace(/_/g, " ") || "Movimiento";
       detail = ev.usuario ? `por ${ev.usuario}` : "";
-      badge = { text: `${ev.importe > 0 ? "+" : ""}${fmtEur(ev.importe)}`, color: ev.importe >= 0 ? "green" : "red" };
+      badge = { text: `${ev.importe > 0 ? "+" : ""}${fmtMoney(ev.importe, currencySymbol)}`, color: ev.importe >= 0 ? "green" : "red" };
       break;
     default:
       main = ev.tipo;
@@ -92,6 +98,8 @@ function EventRow({ ev, highlight }) {
 }
 
 export default function DayReplay() {
+  // Antes de cualquier return temprano (más abajo hay `if (loading)` / `if (error)`).
+  const { currencySymbol } = useLocale();
   const today = new Date().toISOString().slice(0, 10);
   const [fecha, setFecha] = useState(today);
   const [data, setData] = useState(null);
@@ -213,9 +221,9 @@ export default function DayReplay() {
         <div className="adm__kpi adm__kpi--mesas-live"><span className="adm__kpi-value">{currentSlot?.mesasAbiertas ?? 0}</span><span className="adm__kpi-label">Mesas abiertas</span></div>
         <div className="adm__kpi adm__kpi--comensales-live"><span className="adm__kpi-value">{currentSlot?.comensalesActivos ?? 0}</span><span className="adm__kpi-label">Comensales</span></div>
         <div className="adm__kpi adm__kpi--cocina-live"><span className="adm__kpi-value">{currentSlot?.itemsEnCocina ?? 0}</span><span className="adm__kpi-label">En cocina</span></div>
-        <div className="adm__kpi adm__kpi--ventas-live"><span className="adm__kpi-value">{fmtEur(currentSlot?.ventasAcumuladas)}</span><span className="adm__kpi-label">Ventas acumuladas</span></div>
-        <div className="adm__kpi adm__kpi--efectivo-live"><span className="adm__kpi-value">{fmtEur(currentSlot?.efectivoAcumulado)}</span><span className="adm__kpi-label">Efectivo</span></div>
-        <div className="adm__kpi adm__kpi--tarjeta-live"><span className="adm__kpi-value">{fmtEur(currentSlot?.tarjetaAcumulada)}</span><span className="adm__kpi-label">Tarjeta</span></div>
+        <div className="adm__kpi adm__kpi--ventas-live"><span className="adm__kpi-value">{fmtMoney(currentSlot?.ventasAcumuladas, currencySymbol)}</span><span className="adm__kpi-label">Ventas acumuladas</span></div>
+        <div className="adm__kpi adm__kpi--efectivo-live"><span className="adm__kpi-value">{fmtMoney(currentSlot?.efectivoAcumulado, currencySymbol)}</span><span className="adm__kpi-label">Efectivo</span></div>
+        <div className="adm__kpi adm__kpi--tarjeta-live"><span className="adm__kpi-value">{fmtMoney(currentSlot?.tarjetaAcumulada, currencySymbol)}</span><span className="adm__kpi-label">Tarjeta</span></div>
       </div>
 
       {/* Summary bar — day totals */}
@@ -223,8 +231,8 @@ export default function DayReplay() {
         <div className="adm__kpi"><span className="adm__kpi-value">{r.totalMesas}</span><span className="adm__kpi-label">Mesas total</span></div>
         <div className="adm__kpi"><span className="adm__kpi-value">{r.totalComensales}</span><span className="adm__kpi-label">Comensales</span></div>
         <div className="adm__kpi"><span className="adm__kpi-value">{r.totalPlatos}</span><span className="adm__kpi-label">Platos</span></div>
-        <div className="adm__kpi"><span className="adm__kpi-value">{fmtEur(r.totalVentas)}</span><span className="adm__kpi-label">Ventas día</span></div>
-        <div className="adm__kpi"><span className="adm__kpi-value">{fmtEur(r.ticketMedio)}</span><span className="adm__kpi-label">Ticket medio</span></div>
+        <div className="adm__kpi"><span className="adm__kpi-value">{fmtMoney(r.totalVentas, currencySymbol)}</span><span className="adm__kpi-label">Ventas día</span></div>
+        <div className="adm__kpi"><span className="adm__kpi-value">{fmtMoney(r.ticketMedio, currencySymbol)}</span><span className="adm__kpi-label">Ticket medio</span></div>
         <div className="adm__kpi"><span className="adm__kpi-value">{r.duracionMediaMesa}m</span><span className="adm__kpi-label">Duración mesa</span></div>
       </div>
 
@@ -288,7 +296,7 @@ export default function DayReplay() {
                   <span>{s.pedidos} pedidos</span>
                   <span>{s.mesas} mesas</span>
                   <span>{s.items} items</span>
-                  <span className="dr-staff__importe">{fmtEur(s.importe)}</span>
+                  <span className="dr-staff__importe">{fmtMoney(s.importe, currencySymbol)}</span>
                 </div>
               </div>
             ))}

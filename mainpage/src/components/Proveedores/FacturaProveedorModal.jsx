@@ -2,6 +2,7 @@ import React, { useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import api from "../../utils/api";
 import { useTenant } from "../../context/TenantContext";
+import { useLocale } from "../../hooks/useLocale";
 import Portal from "../ui/Portal";
 import "./FacturaProveedorModal.css";
 
@@ -15,6 +16,8 @@ const IVA_OPTIONS = [
 export default function FacturaProveedorModal({ onClose, onSaved }) {
   const { proveedorId } = useParams();
   const { tenantId } = useTenant();
+  // El símbolo de moneda sale del restaurante, no del código (ver hooks/useLocale.js).
+  const { formatMoney } = useLocale();
 
   const headersTenant = useMemo(
     () => (tenantId ? { headers: { "x-tenant-id": tenantId } } : {}),
@@ -201,7 +204,7 @@ export default function FacturaProveedorModal({ onClose, onSaved }) {
                   <label>Total</label>
                   <input
                     type="text"
-                    value={subtotalNum > 0 ? `${totalCalc.toFixed(2)} €` : "—"}
+                    value={subtotalNum > 0 ? formatMoney(totalCalc) : "—"}
                     readOnly
                     style={{ background: "var(--color-fondo-claro, #f3f4f6)", fontWeight: 700 }}
                   />

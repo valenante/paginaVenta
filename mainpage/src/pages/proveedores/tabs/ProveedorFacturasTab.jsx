@@ -4,6 +4,7 @@ import api from "../../../utils/api";
 import FacturaProveedorModal from "../../../components/Proveedores/FacturaProveedorModal.jsx";
 import { toImgSrc } from "../../../utils/media";
 import PagarFacturaProveedorModal from "../../../components/Proveedores/PagarFacturaProveedorModal.jsx";
+import { useLocale } from "../../../hooks/useLocale";
 import "./ProveedorFacturasTab.css";
 
 const ESTADO_LABEL = {
@@ -21,6 +22,8 @@ const ESTADO_BADGE = {
 export default function ProveedorFacturasTab() {
   const { proveedorId } = useParams();
   const { headersTenant } = useOutletContext();
+  // El símbolo de moneda sale del restaurante, no del código (ver hooks/useLocale.js).
+  const { formatMoney } = useLocale();
 
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -104,7 +107,7 @@ export default function ProveedorFacturasTab() {
                         : "—"}
                     </td>
                     <td className="factTab-total">
-                      {Number(f.total || 0).toFixed(2)} €
+                      {formatMoney(f.total || 0)}
                     </td>
                     <td>
                       <span className={`factTab-badge ${ESTADO_BADGE[f.estado] || ""}`}>
@@ -175,7 +178,7 @@ export default function ProveedorFacturasTab() {
                     <div className="full">
                       <span className="k">Total</span>
                       <span className="v total">
-                        {Number(f.total || 0).toFixed(2)} €
+                        {formatMoney(f.total || 0)}
                       </span>
                     </div>
                   </div>

@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import api from "../../utils/api";
 import { useTenant } from "../../context/TenantContext";
+import { useLocale } from "../../hooks/useLocale";
 import Portal from "../ui/Portal";
 import { toInputText, toNum } from "../../utils/numeroInput";
 import "./ProductoProveedorModal.css";
@@ -108,6 +109,8 @@ export default function ProductoProveedorModal({
   const isEdit = mode === "edit";
   const { proveedorId } = useParams();
   const { tenant } = useTenant();
+  // El símbolo de moneda sale del restaurante, no del código (ver hooks/useLocale.js).
+  const { formatMoney, currencySymbol } = useLocale();
 
   const [form, setForm] = useState(() => ({
     ...DEFAULT,
@@ -424,7 +427,7 @@ export default function ProductoProveedorModal({
                   {aiResult.pesoNetoPorItem > 0 && (
                     <span>{aiResult.pesoNetoPorItem}{aiResult.unidadPesoNeto} por {aiResult.unidadContenido}</span>
                   )}
-                  <span>{aiResult.precioBase}€ + IVA {aiResult.iva}% = {aiResult._preview?.precioConIva}€</span>
+                  <span>{aiResult.precioBase}{currencySymbol} + IVA {aiResult.iva}% = {aiResult._preview?.precioConIva}{currencySymbol}</span>
                   <span>Coste: {aiResult._preview?.costeUnitarioLabel}</span>
                   {aiResult._preview?.costePorPesoLabel && (
                     <span>{aiResult._preview.costePorPesoLabel}</span>
@@ -648,8 +651,8 @@ export default function ProductoProveedorModal({
                             {totalPeso > 0 && <> = <b>{totalPeso.toLocaleString()} {udPeso}</b></>}
                           </span>
                           <span className="ppModal-resumen__line">
-                            Coste: <b>{costePorItem.toFixed(2)} €/{udCont}</b>
-                            {costePorPeso > 0 && <> · {costePorPeso.toFixed(4)} €/{udPeso}</>}
+                            Coste: <b>{formatMoney(costePorItem)}/{udCont}</b>
+                            {costePorPeso > 0 && <> · {costePorPeso.toFixed(4)} {currencySymbol}/{udPeso}</>}
                           </span>
                         </>
                       );
@@ -710,9 +713,9 @@ export default function ProductoProveedorModal({
                           return (
                             <div key={p.clave} style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "0.85rem" }}>
                               <span style={{ fontWeight: 700, minWidth: 80 }}>{p.label || p.clave}</span>
-                              <span>{coste.toFixed(2)}€ coste</span>
+                              <span>{formatMoney(coste)} coste</span>
                               <span style={{ color: "#9ca3af" }}>→</span>
-                              <span>venta {p.precio}€</span>
+                              <span>venta {p.precio}{currencySymbol}</span>
                               <span style={{ color: "#9ca3af" }}>→</span>
                               <span style={{ fontWeight: 700, color: margenColor }}>margen {margen.toFixed(0)}%</span>
                             </div>

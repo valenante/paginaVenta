@@ -1,8 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { getLoyaltyClienteDetalle } from "../services/loyaltyAdminService";
+import { useLocale } from "../hooks/useLocale";
 import "./ClienteLoyaltyDrawer.css";
 
-const fmtMoney = (n) => `${Number(n || 0).toFixed(2).replace(".", ",")} €`;
+// El símbolo sale del restaurante (hooks/useLocale.js) y entra por parámetro porque esto es una
+// función de módulo: los hooks solo se llaman dentro del componente.
+// ⚠️ NO se usa formatMoney() aquí a propósito: esta pantalla imprime "12,50" (coma) y formatMoney
+// imprime "12.50" (punto). Se cambia el símbolo, NO el formato decimal.
+const fmtMoney = (n, sym) => `${Number(n || 0).toFixed(2).replace(".", ",")} ${sym}`;
 const fmtDate = (iso) => (iso ? new Date(iso).toLocaleDateString("es") : "—");
 const fmtDateTime = (iso) => {
   if (!iso) return "—";
@@ -67,6 +72,7 @@ export default function ClienteLoyaltyDrawer({ clienteId, onClose }) {
 }
 
 function DetalleCliente({ data }) {
+  const { currencySymbol } = useLocale();
   const { cliente, saldo, resumen, visitasRecientes, movimientos } = data;
   const stats = resumen?.stats;
   const nivel = NIVELES[stats?.nivel || "nuevo"];
@@ -129,8 +135,8 @@ function DetalleCliente({ data }) {
           <h3>Estadísticas</h3>
           <div className="cld-stats">
             <Stat label="Visitas"        value={stats.visitas} />
-            <Stat label="Gasto total"    value={fmtMoney(stats.gastoTotal)} />
-            <Stat label="Ticket medio"   value={fmtMoney(stats.gastoMedio)} />
+            <Stat label="Gasto total"    value={fmtMoney(stats.gastoTotal, currencySymbol)} />
+            <Stat label="Ticket medio"   value={fmtMoney(stats.gastoMedio, currencySymbol)} />
             <Stat label="Cliente desde"  value={fmtDate(stats.primeraVisita)} />
             <Stat label="Día favorito"   value={cap(stats.diaFavorito)} />
             <Stat label="Hora favorita"  value={stats.horaFavorita || "—"} />
@@ -174,7 +180,7 @@ function DetalleCliente({ data }) {
               <li key={v._id} className="cld-visita">
                 <div className="cld-visita__head">
                   <span className="cld-visita__fecha">{fmtDateTime(v.cierre)}</span>
-                  <span className="cld-visita__total">{fmtMoney(v.total)}</span>
+                  <span className="cld-visita__total">{fmtMoney(v.total, currencySymbol)}</span>
                 </div>
                 <div className="cld-visita__meta">
                   Mesa {v.numero}
@@ -231,6 +237,7 @@ function Stat({ label, value }) {
 }
 
 function UltimaVisita({ visita }) {
+  const { currencySymbol } = useLocale();
   const items = visita.itemsSnapshot || [];
   const rec = visita.loyalty?.recompensaAplicada;
   return (
@@ -245,7 +252,7 @@ function UltimaVisita({ visita }) {
           </div>
         </div>
         <div className="cld-ultima__cifras">
-          <div className="cld-ultima__total">{fmtMoney(visita.total)}</div>
+          <div className="cld-ultima__total">{fmtMoney(visita.total, currencySymbol)}</div>
           {visita.loyalty?.puntosAcumulados > 0 && (
             <div className="cld-ultima__pts">+{visita.loyalty.puntosAcumulados} pts</div>
           )}
@@ -257,13 +264,13 @@ function UltimaVisita({ visita }) {
             <li key={it._id || i}>
               <span>×{it.cantidad}</span>
               <span className="cld-ultima__item-name">{it.nombre}</span>
-              <span>{fmtMoney(it.precio * it.cantidad)}</span>
+              <span>{fmtMoney(it.precio * it.cantidad, currencySymbol)}</span>
             </li>
           ))}
         </ul>
       )}
       {rec?.recompensaId && (
-        <div className="cld-ultima__rec">{rec.nombre}{rec.descuento > 0 && ` · −${fmtMoney(rec.descuento)}`}
+        <div className="cld-ultima__rec">{rec.nombre}{rec.descuento > 0 && ` · −${fmtMoney(rec.descuento, currencySymbol)}`}
         </div>
       )}
     </div>
@@ -271,6 +278,7 @@ function UltimaVisita({ visita }) {
 }
 
 function Favoritos({ favoritos }) {
+  const { currencySymbol } = useLocale();
   const max = favoritos[0]?.veces || 1;
   const medals = ["🥇", "🥈", "🥉"];
   return (
@@ -288,7 +296,7 @@ function Favoritos({ favoritos }) {
             <strong>{f.veces}</strong>
             <span> {f.veces === 1 ? "vez" : "veces"}</span>
             {f.gastoEnProducto > 0 && (
-              <div className="cld-favorito__gasto">{fmtMoney(f.gastoEnProducto)}</div>
+              <div className="cld-favorito__gasto">{fmtMoney(f.gastoEnProducto, currencySymbol)}</div>
             )}
           </div>
         </li>

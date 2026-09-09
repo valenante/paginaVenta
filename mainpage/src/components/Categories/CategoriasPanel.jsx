@@ -9,6 +9,7 @@ import { useCategorias } from "../../context/CategoriasContext";
 import ExtrasPanel from "../Extras/ExtrasPanel";
 import Portal from "../ui/Portal";
 import api from "../../utils/api";
+import { useLocale } from "../../hooks/useLocale";
 import { getFirstPrice } from "./categoriesHelpers";
 import "./CategoriasPanel.css";
 
@@ -19,6 +20,8 @@ const TABS = [
 ];
 
 const CategoriasPanel = ({ onBack }) => {
+  // El símbolo de moneda sale del restaurante, no del código (ver hooks/useLocale.js).
+  const { formatMoney } = useLocale();
   const [tab, setTab] = useState("plato");
   const [catModal, setCatModal] = useState({ open: false, categoria: null });
   const [confirmDelete, setConfirmDelete] = useState(null);
@@ -514,7 +517,7 @@ const CategoriasPanel = ({ onBack }) => {
                                                 <div className="catpanel-product-meta">
                                                   {(Array.isArray(prod.precios) ? prod.precios.length > 0 : prod.precios?.precioBase != null) && (
                                                     <span className="catpanel-product-price">
-                                                      {Number(getFirstPrice(prod.precios)).toFixed(2)} €
+                                                      {formatMoney(getFirstPrice(prod.precios))}
                                                     </span>
                                                   )}
                                                   <span className={`catpanel-product-estado ${prod.estado === "habilitado" ? "catpanel-product-estado--on" : "catpanel-product-estado--off"}`}>

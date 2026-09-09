@@ -11,10 +11,8 @@ import {
   Legend,
 } from "recharts";
 import { useFinanzasAnalyticsProveedor } from "../../../hooks/useFinanzas.js";
+import { useLocale } from "../../../hooks/useLocale";
 import "./ProveedorResumenTab.css";
-
-const eur = (n) =>
-  `${Number(n || 0).toLocaleString("es-ES", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €`;
 
 function rangoPorDefecto() {
   const hoy = new Date();
@@ -28,6 +26,13 @@ function rangoPorDefecto() {
 export default function ProveedorResumenTab() {
   const { proveedor, loadingProveedor } = useOutletContext();
   const { proveedorId } = useParams();
+  // El símbolo de moneda sale del restaurante, no del código (ver hooks/useLocale.js).
+  const { formatMoney, currencySymbol } = useLocale();
+
+  // Se mantiene el formato de miles/decimales que ya tenía esta pantalla (es-ES,
+  // "1.234,56"); aquí sólo cambia el símbolo. Por eso NO usa formatMoney.
+  const eur = (n) =>
+    `${Number(n || 0).toLocaleString("es-ES", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${currencySymbol}`;
 
   const defaults = useMemo(rangoPorDefecto, []);
   const [desde, setDesde] = useState(defaults.desde);
@@ -151,7 +156,7 @@ export default function ProveedorResumenTab() {
             <span className="provDet-kpiLabel">Facturado</span>
             <span className="provDet-kpiValue">
               {Number.isFinite(stats.totalFacturado)
-                ? `${stats.totalFacturado.toFixed(2)} €`
+                ? formatMoney(stats.totalFacturado)
                 : "—"}
             </span>
           </div>
@@ -160,7 +165,7 @@ export default function ProveedorResumenTab() {
             <span className="provDet-kpiLabel">Pendiente</span>
             <span className="provDet-kpiValue">
               {Number.isFinite(stats.facturasPendientes)
-                ? `${stats.facturasPendientes} €`
+                ? `${stats.facturasPendientes} ${currencySymbol}`
                 : "—"}
             </span>
           </div>
@@ -239,7 +244,7 @@ export default function ProveedorResumenTab() {
                     <YAxis
                       yAxisId="gasto"
                       tick={{ fill: "#374151", fontSize: 12 }}
-                      tickFormatter={(v) => `${v} €`}
+                      tickFormatter={(v) => `${v} ${currencySymbol}`}
                     />
                     <YAxis
                       yAxisId="pedidos"

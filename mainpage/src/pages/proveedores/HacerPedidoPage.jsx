@@ -15,12 +15,15 @@ import AlertaMensaje from "../../components/AlertaMensaje/AlertaMensaje.jsx";
 import { normalizeApiError } from "../../utils/normalizeApiError.js";
 import { generarPedidoProveedorPDF } from "../../utils/pdfs/pedidoProveedorPDF.js";
 import { abrirWhatsappPedido } from "../../utils/whatsappPedido.js";
+import { useLocale } from "../../hooks/useLocale";
 import { toInputText, toNum } from "../../utils/numeroInput";
 import "./HacerPedidoPage.css";
 
-const fmtEur = (v) => `${Number(v || 0).toFixed(2)} €`;
 
 export default function HacerPedidoPage() {
+  // La moneda sale del restaurante, no del código. El PDF y el mensaje de WhatsApp salen HACIA
+  // UN PROVEEDOR, así que el importe tiene que ir en la moneda con la que se opera de verdad.
+  const { formatMoney: fmtEur, currencySymbol } = useLocale();
   const { tenantId, tenant } = useTenant();
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -450,6 +453,7 @@ export default function HacerPedidoPage() {
                               emisor,
                               proveedor,
                               pedido,
+                              opts: { currencySymbol },
                             })
                           }
                           title="Descargar PDF"
@@ -459,7 +463,7 @@ export default function HacerPedidoPage() {
                           type="button"
                           className="btn btn-primario hp-wa-btn"
                           onClick={() =>
-                            abrirWhatsappPedido({ emisor, proveedor, pedido })
+                            abrirWhatsappPedido({ emisor, proveedor, pedido, currencySymbol })
                           }
                           disabled={!tieneWhatsapp}
                           title={

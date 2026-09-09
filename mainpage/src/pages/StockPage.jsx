@@ -14,6 +14,7 @@ import HistorialMovimientosModal from "../components/Stock/HistorialMovimientosM
 import LotesView from "../components/Stock/LotesView.jsx";
 import ModalBase from "../components/MapaEditor/ModalBase";
 import { formatCantidad } from "../utils/stockFormat";
+import { useLocale } from "../hooks/useLocale";
 import "../styles/StockPage.css";
 
 const ITEMS_PER_PAGE = 12;
@@ -32,6 +33,9 @@ const getEstadoIng = (it) => {
    Component
 ================================================================ */
 const StockPage = () => {
+  // La moneda sale del restaurante (ver hooks/useLocale.js). Este fichero se me escapó al
+  // repartir el trabajo en tandas y lo cazó el centinela, no mi lista — que es para lo que está.
+  const { formatMoney, currencySymbol } = useLocale();
   const { user } = useAuth();
   const { showToast } = useToast();
   const { hasFeature } = useFeaturesPlan();
@@ -518,7 +522,7 @@ const StockPage = () => {
 
                     {ing.coste > 0 && (
                       <div className="stock-cost">
-                        {ing.coste.toFixed(2)} €/{ing.unidad}
+                        {formatMoney(ing.coste)}/{ing.unidad}
                       </div>
                     )}
 
@@ -776,7 +780,7 @@ const StockPage = () => {
                 <span className="consumo-detail__kpi-label">consumo 8 sem</span>
               </div>
               <div className="consumo-detail__kpi">
-                <span className="consumo-detail__kpi-value">{consumoDetail.coste ? `${consumoDetail.coste.toFixed(2)}€` : "—"}</span>
+                <span className="consumo-detail__kpi-value">{consumoDetail.coste ? `${consumoDetail.coste.toFixed(2)}${currencySymbol}` : "—"}</span>
                 <span className="consumo-detail__kpi-label">coste/{consumoDetail.unidad}</span>
               </div>
             </div>
@@ -809,7 +813,7 @@ const StockPage = () => {
                 <h4 className="consumo-detail__title">Proveedor principal</h4>
                 <div className="consumo-detail__proveedor">
                   <span><strong>{consumoDetail.proveedor.nombre}</strong></span>
-                  <span>Precio: {consumoDetail.proveedor.precioBase.toFixed(2)}€</span>
+                  <span>Precio: {consumoDetail.proveedor.precioBase.toFixed(2)}{currencySymbol}</span>
                   <span>Lead time: {consumoDetail.proveedor.leadTimeDias} días</span>
                 </div>
               </div>

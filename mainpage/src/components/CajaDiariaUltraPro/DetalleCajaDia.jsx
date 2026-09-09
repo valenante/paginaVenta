@@ -4,13 +4,13 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { FiX, FiDownload } from "react-icons/fi";
 import api from "../../utils/api";
+import { useLocale } from "../../hooks/useLocale";
 import "./DetalleCajaDia.css";
 
 const fmtHora = (d) => {
   if (!d) return "—";
   try { return new Date(d).toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" }); } catch { return "—"; }
 };
-const money = (n) => n != null ? `${Number(n).toFixed(2)}€` : "—";
 // Franja horaria de una caja: "12:06–00:51" / "12:06–abierta"
 const fmtFranja = (c) => `${fmtHora(c?.fechaApertura)}–${c?.estado === "cerrada" ? fmtHora(c?.fechaCierre) : "abierta"}`;
 const to2 = (n) => Math.round(n * 100) / 100;
@@ -28,6 +28,9 @@ const TIPO_LABEL = {
 };
 
 export default function DetalleCajaDia({ fecha, autoOpen = false, onClose }) {
+  // El símbolo de moneda sale del restaurante, no del código (ver hooks/useLocale.js).
+  const { formatMoney } = useLocale();
+  const money = (n) => n != null ? formatMoney(n) : "—";
   const [open, setOpen] = useState(autoOpen);
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);

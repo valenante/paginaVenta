@@ -4,6 +4,7 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import api from "../../utils/api";
 import { useTenant } from "../../context/TenantContext";
+import { useLocale } from "../../hooks/useLocale";
 import Portal from "../ui/Portal";
 import ErrorToast from "../common/ErrorToast.jsx";
 import { normalizeApiError } from "../../utils/normalizeApiError.js";
@@ -32,6 +33,8 @@ function toDateInputValue(v) {
 export default function PedidoProveedorModal({ onClose, onSaved, mode = "create", pedido, proveedor }) {
   const { proveedorId } = useParams();
   const { tenant } = useTenant();
+  // El símbolo de moneda sale del restaurante, no del código (ver hooks/useLocale.js).
+  const { formatMoney } = useLocale();
   const isEdit = mode === "edit";
 
   const [productos, setProductos] = useState([]);
@@ -341,9 +344,9 @@ export default function PedidoProveedorModal({ onClose, onSaved, mode = "create"
         prod?.nombre || "—",
         prod?.formato || "",
         String(Number(l.cantidad || 0)),
-        `${Number(c.unit || 0).toFixed(2)} €`,
+        formatMoney(c.unit || 0),
         `${c.iva}%`,
-        `${Number(c.total || 0).toFixed(2)} €`,
+        formatMoney(c.total || 0),
       ];
     });
 
@@ -380,7 +383,7 @@ export default function PedidoProveedorModal({ onClose, onSaved, mode = "create"
       doc.setTextColor(...(bold ? darkText : grayText));
       doc.text(label, pageW - margin - 50, yPos, { align: "right" });
       doc.setTextColor(...darkText);
-      doc.text(`${Number(value || 0).toFixed(2)} €`, pageW - margin, yPos, { align: "right" });
+      doc.text(formatMoney(value || 0), pageW - margin, yPos, { align: "right" });
     };
 
     drawTotal("Subtotal", totals.subtotal, finalY, false);
@@ -524,7 +527,7 @@ export default function PedidoProveedorModal({ onClose, onSaved, mode = "create"
                               <option value="">Selecciona…</option>
                               {productos.map((p) => (
                                 <option key={p._id} value={p._id}>
-                                  {p.nombre} · {Number(p.precioBase || 0).toFixed(2)}€ · {p.iva || 0}% · {p.unidad || "—"}
+                                  {p.nombre} · {formatMoney(p.precioBase || 0)} · {p.iva || 0}% · {p.unidad || "—"}
                                 </option>
                               ))}
                             </select>
@@ -555,11 +558,11 @@ export default function PedidoProveedorModal({ onClose, onSaved, mode = "create"
                           <div className="pedProvModal-lineTotals">
                             <div className="row">
                               <span className="k">Base</span>
-                              <span className="v">{Number(c.base || 0).toFixed(2)} €</span>
+                              <span className="v">{formatMoney(c.base || 0)}</span>
                             </div>
                             <div className="row">
                               <span className="k">Total</span>
-                              <span className="v strong">{Number(c.total || 0).toFixed(2)} €</span>
+                              <span className="v strong">{formatMoney(c.total || 0)}</span>
                             </div>
                           </div>
 
@@ -586,15 +589,15 @@ export default function PedidoProveedorModal({ onClose, onSaved, mode = "create"
               <div className="pedProvModal-totals">
                 <div className="trow">
                   <span>Subtotal</span>
-                  <span>{Number(totals.subtotal || 0).toFixed(2)} €</span>
+                  <span>{formatMoney(totals.subtotal || 0)}</span>
                 </div>
                 <div className="trow">
                   <span>IVA</span>
-                  <span>{Number(totals.totalIva || 0).toFixed(2)} €</span>
+                  <span>{formatMoney(totals.totalIva || 0)}</span>
                 </div>
                 <div className="trow total">
                   <span>Total</span>
-                  <span>{Number(totals.total || 0).toFixed(2)} €</span>
+                  <span>{formatMoney(totals.total || 0)}</span>
                 </div>
               </div>
             </section>

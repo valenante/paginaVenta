@@ -3,13 +3,8 @@ import React, { useMemo } from "react";
 import { useParams } from "react-router-dom";
 import { VentasProvider, useVentas } from "../context/VentasContext";
 import { useTenant } from "../context/TenantContext.jsx"; // ✅ AÑADIR
+import { useLocale } from "../hooks/useLocale";
 import "../styles/VentasPageShop.css";
-
-const fmtMoney = (n) => {
-  const x = Number(n);
-  if (!Number.isFinite(x)) return "-";
-  return x.toFixed(2) + " €";
-};
 
 const fmtDateTime = (d) => {
   const t = new Date(d);
@@ -48,6 +43,16 @@ function VentasPageShopInner() {
     setPageSize,
     pageCount,
   } = useVentas();
+
+  // El símbolo de moneda sale del restaurante, no del código (ver hooks/useLocale.js).
+  const { formatMoney } = useLocale();
+
+  // Se conserva el "-" para valores no numéricos, que formatMoney no distingue.
+  const fmtMoney = (n) => {
+    const x = Number(n);
+    if (!Number.isFinite(x)) return "-";
+    return formatMoney(x);
+  };
 
   const meta = useMemo(() => {
     const ts = lastUpdatedAt ? fmtDateTime(lastUpdatedAt) : "—";

@@ -6,6 +6,7 @@ import {
   getResumenRestauranteCliente,
   getVisitasRestauranteCliente,
 } from "../../services/loyaltyService";
+import { useLocale } from "../../hooks/useLocale";
 import ClienteLayout from "./ClienteLayout";
 import RestaurantLogo from "./RestaurantLogo";
 import {
@@ -16,13 +17,16 @@ import {
 } from "./ExpedienteRestaurante";
 import "./cliente.css";
 
-const fmtMoney = (n) => `${Number(n || 0).toFixed(2).replace(".", ",")} €`;
+// El símbolo llega por parámetro: es una función de módulo y no puede llamar a hooks.
+const fmtMoney = (n, sym) => `${Number(n || 0).toFixed(2).replace(".", ",")} ${sym}`;
 const DIA_LABEL = ["D", "L", "M", "X", "J", "V", "S"];
 const VISITAS_PAGE_SIZE = 10;
 
 export default function DetalleRestauranteCliente() {
   const { slug } = useParams();
   const { cliente, loading: loadingAuth } = useClienteAuth();
+  // El símbolo de moneda sale del restaurante, no del código (ver hooks/useLocale.js).
+  const { currencySymbol } = useLocale();
   const [data, setData] = useState(null);
   const [resumen, setResumen] = useState(null);
   const [visitas, setVisitas] = useState({ items: [], total: 0 });
@@ -126,7 +130,7 @@ export default function DetalleRestauranteCliente() {
           <div className="cli-hero__saldo-num">{saldo.toLocaleString("es")}</div>
           <div className="cli-hero__saldo-label">tus puntos aquí</div>
           <div className="cli-hero__saldo-sub">
-            {loyalty.puntosPorEuro} pts por €
+            {loyalty.puntosPorEuro} pts por {currencySymbol}
             {loyalty.minimoParaCanjear > 0 && ` · Mín. canjeo: ${loyalty.minimoParaCanjear}`}
           </div>
         </div>
@@ -235,8 +239,8 @@ export default function DetalleRestauranteCliente() {
                     {r.tipo === "descuento_pct"
                       ? `${r.valor}% de descuento`
                       : r.tipo === "producto_gratis"
-                      ? `Producto gratis (≈ ${fmtMoney(r.valor)})`
-                      : `${fmtMoney(r.valor)} de descuento`}
+                      ? `Producto gratis (≈ ${fmtMoney(r.valor, currencySymbol)})`
+                      : `${fmtMoney(r.valor, currencySymbol)} de descuento`}
                   </div>
                 </div>
                 <div className="cliente-recompensa__side">

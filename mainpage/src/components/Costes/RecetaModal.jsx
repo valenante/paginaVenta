@@ -6,12 +6,15 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { createPortal } from "react-dom";
 import { useReceta, guardarReceta, buscarIngredientes } from "../../hooks/useRecetas";
+import { useLocale } from "../../hooks/useLocale";
 import { toInputText, toNum } from "../../utils/numeroInput";
 import "./RecetaModal.css";
 
 const UNIDADES = ["ud", "g", "kg", "ml", "cl", "litro"];
 
 export default function RecetaModal({ productoId, productoNombre, onClose, onSaved }) {
+  // El símbolo de moneda sale del restaurante, no del código (ver hooks/useLocale.js).
+  const { formatMoney, currencySymbol } = useLocale();
   const { data, loading } = useReceta(productoId);
   const [lineas, setLineas] = useState([]);
   const [saving, setSaving] = useState(false);
@@ -147,8 +150,8 @@ export default function RecetaModal({ productoId, productoNombre, onClose, onSav
           {UNIDADES.map(u => <option key={u} value={u}>{u}</option>)}
         </select>
       </span>
-      <span className="rec-cost">{l.costeUnitario?.toFixed(4)}€</span>
-      <span className="rec-cost rec-cost--total">{l.costeLinea?.toFixed(2)}€</span>
+      <span className="rec-cost">{l.costeUnitario?.toFixed(4)}{currencySymbol}</span>
+      <span className="rec-cost rec-cost--total">{l.costeLinea?.toFixed(2)}{currencySymbol}</span>
       <span>
         <button className="rec-remove" onClick={() => removeLinea(globalIdx)}>✕</button>
       </span>
@@ -179,7 +182,7 @@ export default function RecetaModal({ productoId, productoNombre, onClose, onSav
             {searchResults.map(pp => (
               <button key={pp._id} className="rec-search__item" onClick={() => addIngrediente(pp, clavePrecio)}>
                 <span className="rec-search__name">{pp.nombre}</span>
-                <span className="rec-search__meta">{pp.precioBase}€/{pp.unidad} | {pp.formato}</span>
+                <span className="rec-search__meta">{pp.precioBase}{currencySymbol}/{pp.unidad} | {pp.formato}</span>
               </button>
             ))}
           </div>
@@ -194,9 +197,9 @@ export default function RecetaModal({ productoId, productoNombre, onClose, onSav
     const margen = precio > 0 ? Math.round((1 - coste / precio) * 100) : 0;
     return (
       <div className="rec-variant-summary">
-        <span>Coste: <strong>{coste.toFixed(2)}€</strong></span>
+        <span>Coste: <strong>{formatMoney(coste)}</strong></span>
         <span className={`rec-margin ${margen < 40 ? "rec-margin--warn" : ""}`}>
-          Margen: {(precio - coste).toFixed(2)}€ ({margen}%)
+          Margen: {formatMoney(precio - coste)} ({margen}%)
         </span>
       </div>
     );
@@ -231,7 +234,7 @@ export default function RecetaModal({ productoId, productoNombre, onClose, onSav
                 <div key={p.clave} className="rec-variant-section">
                   <div className="rec-variant-header">
                     <span className="rec-variant-label">{p.label || p.clave}</span>
-                    <span className="rec-variant-price">{p.precio}€</span>
+                    <span className="rec-variant-price">{p.precio}{currencySymbol}</span>
                   </div>
 
                   {variantLineas.length > 0 && (
@@ -287,7 +290,7 @@ export default function RecetaModal({ productoId, productoNombre, onClose, onSav
             <>
               <div className="rec-total">
                 <span>Coste total receta:</span>
-                <strong>{costeTotalGlobal.toFixed(2)}€</strong>
+                <strong>{formatMoney(costeTotalGlobal)}</strong>
               </div>
               {precios.length > 0 && (
                 <div className="rec-margins">
@@ -295,7 +298,7 @@ export default function RecetaModal({ productoId, productoNombre, onClose, onSav
                     const margen = p.precio > 0 ? Math.round((1 - costeTotalGlobal / p.precio) * 100) : 0;
                     return (
                       <span key={p.clave} className={`rec-margin ${margen < 40 ? "rec-margin--warn" : ""}`}>
-                        {p.label}: {p.precio}€ → {margen}%
+                        {p.label}: {p.precio}{currencySymbol} → {margen}%
                       </span>
                     );
                   })}

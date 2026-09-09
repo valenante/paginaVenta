@@ -12,14 +12,19 @@ import {
 } from "../services/loyaltyAdminService";
 import ClienteLoyaltyDrawer from "./ClienteLoyaltyDrawer";
 import { toInputText, toNumOrNull } from "../utils/numeroInput";
+import { useLocale } from "../hooks/useLocale";
 import "./LoyaltyConfigPage.css";
 
 /* =====================================================
    Constantes
 ===================================================== */
 
-const TIPOS_RECOMPENSA = [
-  { value: "descuento_fijo", label: "Descuento fijo (€)", hint: "Resta una cantidad fija al total." },
+// Era una constante de módulo con el `€` escrito a mano. Ahora es una función que recibe el
+// símbolo, porque el símbolo sale del restaurante (`hooks/useLocale.js`) y los hooks sólo se
+// pueden llamar dentro de un componente. Se le pasa por parámetro; la lista sigue siendo la
+// MISMA y sigue viviendo en un solo sitio (Art. 6). Sus 3 consumidores son componentes.
+const tiposRecompensa = (simbolo) => [
+  { value: "descuento_fijo", label: `Descuento fijo (${simbolo})`, hint: "Resta una cantidad fija al total." },
   { value: "descuento_pct", label: "Descuento porcentual (%)", hint: "Resta un % al total de la mesa." },
   { value: "producto_gratis", label: "Producto gratis", hint: "El camarero retira el producto al cobrar; el valor se declara." },
 ];
@@ -50,7 +55,10 @@ const TIPOS_ANUNCIO = [
   { value: "aviso",   label: "Aviso",     icon: "⚠️" },
 ];
 
-const fmtMoney = (n) => `${Number(n || 0).toFixed(2).replace(".", ",")} €`;
+// ⚠️ NO se sustituye por `formatMoney` de useLocale a propósito: este helper imprime la coma
+// decimal (`12,50 €`) y `formatMoney` imprime el punto (`12.50 €`). Cambiarlo cambiaría el
+// FORMATO, no sólo el símbolo. Aquí sólo se parametriza el símbolo, que es lo del lote.
+const fmtMoney = (n, simbolo) => `${Number(n || 0).toFixed(2).replace(".", ",")} ${simbolo}`;
 const fmtDate = (d) => d ? new Date(d).toLocaleDateString("es") : "—";
 
 /* =====================================================
@@ -292,6 +300,9 @@ export default function LoyaltyConfigPage() {
 ===================================================== */
 
 function ConfigTab({ config, setConfig, saving, onSave }) {
+  // El símbolo de moneda sale del restaurante, no del código (ver hooks/useLocale.js).
+  const { currencySymbol } = useLocale();
+
   // Estos tres campos se GUARDAN en el onBlur. Sus inputs guardan TEXTO mientras
   // se teclea (para poder vaciarlos); la conversión se hace aquí, al salir del
   // campo. Si se deja vacío NO se persiste un 0 en silencio (Art.5): se avisa y
@@ -373,7 +384,7 @@ function ConfigTab({ config, setConfig, saving, onSave }) {
               disabled={saving}
             />
             {avisoDe("puntosPorEuro")}
-            <p className="cfg-help">Recomendado: 10 (10 € = 100 pts)</p>
+            <p className="cfg-help">Recomendado: 10 (10 {currencySymbol} = 100 pts)</p>
           </div>
 
           <div className="config-field">
@@ -414,6 +425,10 @@ function ConfigTab({ config, setConfig, saving, onSave }) {
 }
 
 function RecompensasTab({ recompensas, onAdd, onEdit, onDelete, onToggle }) {
+  // El símbolo de moneda sale del restaurante, no del código (ver hooks/useLocale.js).
+  const { currencySymbol } = useLocale();
+  const TIPOS = tiposRecompensa(currencySymbol);
+
   return (
     <section className="card config-card">
       <div className="config-card-header">
@@ -454,7 +469,7 @@ function RecompensasTab({ recompensas, onAdd, onEdit, onDelete, onToggle }) {
             </thead>
             <tbody>
               {recompensas.map((r) => {
-                const tipoInfo = TIPOS_RECOMPENSA.find((t) => t.value === r.tipo);
+                const tipoInfo = TIPOS.find((t) => t.value === r.tipo);
                 return (
                   <tr key={r._id || r.nombre} className={!r.activo ? "is-off" : ""}>
                     <td data-label="Recompensa">
@@ -467,7 +482,9 @@ function RecompensasTab({ recompensas, onAdd, onEdit, onDelete, onToggle }) {
                     </td>
                     <td data-label="Coste"><strong>{r.coste}</strong> pts</td>
                     <td data-label="Tipo">{tipoInfo?.label || r.tipo}</td>
-                    <td data-label="Valor">{r.tipo === "descuento_pct" ? `${r.valor}%` : `${r.valor} €`}</td>
+                    {/* ⚠️ Sin `toFixed`: aquí se pinta el valor CRUDO ("5", no "5.00").
+                        Por eso se usa `currencySymbol` y no `formatMoney`, que redondearía a 2. */}
+                    <td data-label="Valor">{r.tipo === "descuento_pct" ? `${r.valor}%` : `${r.valor} ${currencySymbol}`}</td>
                     <td data-label="Stock">{r.stock === null || r.stock === undefined ? "Ilimitado" : r.stock}</td>
                     <td data-label="Estado">
                       <button
@@ -727,6 +744,10 @@ function ClientesTab() {
 }
 
 function MetricasTab({ stats, onReload }) {
+  // El símbolo de moneda sale del restaurante, no del código (ver hooks/useLocale.js).
+  // ⚠️ ANTES del `if (!stats) return` de abajo: los hooks no pueden ir tras un return temprano.
+  const { currencySymbol } = useLocale();
+
   if (!stats) {
     return (
       <section className="card config-card">
@@ -776,7 +797,7 @@ function MetricasTab({ stats, onReload }) {
           </article>
           <article className="cfg-stat">
             <span className="cfg-stat__label">Descuento aplicado</span>
-            <strong>{fmtMoney(stats.descuentoTotalAplicado)}</strong>
+            <strong>{fmtMoney(stats.descuentoTotalAplicado, currencySymbol)}</strong>
           </article>
           <article className="cfg-stat">
             <span className="cfg-stat__label">Canjeos realizados</span>
@@ -798,13 +819,13 @@ function MetricasTab({ stats, onReload }) {
         <div className="loyalty-compare">
           <div className="loyalty-compare-col">
             <div className="loyalty-compare-label">Con loyalty</div>
-            <div className="loyalty-compare-num">{fmtMoney(stats.ticketMedioLoyalty)}</div>
+            <div className="loyalty-compare-num">{fmtMoney(stats.ticketMedioLoyalty, currencySymbol)}</div>
             <div className="text-suave loyalty-compare-sub">{stats.mesasConLoyalty} mesas</div>
           </div>
           <div className="loyalty-compare-vs">vs</div>
           <div className="loyalty-compare-col">
             <div className="loyalty-compare-label">Sin loyalty</div>
-            <div className="loyalty-compare-num">{fmtMoney(stats.ticketMedioSinLoyalty)}</div>
+            <div className="loyalty-compare-num">{fmtMoney(stats.ticketMedioSinLoyalty, currencySymbol)}</div>
             <div className="text-suave loyalty-compare-sub">{stats.mesasSinLoyalty} mesas</div>
           </div>
         </div>
@@ -857,6 +878,9 @@ function ModalFooter({ onClose, submitLabel }) {
 }
 
 function RecompensaModal({ recompensa, onClose, onSave }) {
+  // El símbolo de moneda sale del restaurante, no del código (ver hooks/useLocale.js).
+  const { currencySymbol } = useLocale();
+  const TIPOS = tiposRecompensa(currencySymbol);
   const [r, setR] = useState({ ...recompensa, stock: recompensa.stock ?? null });
 
   const submit = (e) => {
@@ -870,7 +894,7 @@ function RecompensaModal({ recompensa, onClose, onSave }) {
     });
   };
 
-  const tipoActual = TIPOS_RECOMPENSA.find((t) => t.value === r.tipo);
+  const tipoActual = TIPOS.find((t) => t.value === r.tipo);
 
   return (
     <ModalShell title={r._id ? "Editar recompensa" : "Nueva recompensa"} onClose={onClose}>
@@ -910,13 +934,13 @@ function RecompensaModal({ recompensa, onClose, onSave }) {
           <div className="config-field">
             <label>Tipo</label>
             <select value={r.tipo} onChange={(e) => setR({ ...r, tipo: e.target.value })}>
-              {TIPOS_RECOMPENSA.map((t) => (
+              {TIPOS.map((t) => (
                 <option key={t.value} value={t.value}>{t.label}</option>
               ))}
             </select>
           </div>
           <div className="config-field">
-            <label>{r.tipo === "descuento_pct" ? "Porcentaje" : "Valor (€)"}</label>
+            <label>{r.tipo === "descuento_pct" ? "Porcentaje" : `Valor (${currencySymbol})`}</label>
             <input
               type="number" min="0" step="0.01" required
               value={r.valor}

@@ -3,19 +3,23 @@ import Portal from "../ui/Portal";
 import ModalConfirmacion from "../Modal/ModalConfirmacion";
 
 import { useShopCategorias } from "../../context/ShopCategoriasContext";
+import { useLocale } from "../../hooks/useLocale";
 import EditProductShop from "../ShopProductsModals/EditProductShop";
 import CrearProductoShop from "../ShopProductsModals/CrearProductoShop";
 
 import "./ShopCategories.css";
 
-const money = (n) => {
-  const v = Number(n);
-  if (!Number.isFinite(v)) return "-";
-  return `${v.toFixed(2)} €`;
-};
-
 export default function ShopCategories({ category, type }) {
   const { products, fetchProducts, deleteProduct } = useShopCategorias();
+  const { formatMoney } = useLocale();
+
+  // Mismo contrato que el helper de módulo que había aquí: lo no numérico sigue
+  // saliendo como "-"; sólo cambia el símbolo, que ahora lo pone el tenant.
+  const money = (n) => {
+    const v = Number(n);
+    if (!Number.isFinite(v)) return "-";
+    return formatMoney(v);
+  };
 
   const [editing, setEditing] = useState(null);
   const [mostrarCrear, setMostrarCrear] = useState(false);

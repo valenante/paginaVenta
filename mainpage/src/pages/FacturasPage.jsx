@@ -12,6 +12,7 @@ import FacturasHelpModal from "../components/Facturas/FacturasHelpModal.jsx";
 import ModalConfirmacion from "../components/Modal/ModalConfirmacion.jsx";
 
 import { normalizeApiError } from "../utils/normalizeApiError.js";
+import { useLocale } from "../hooks/useLocale";
 import "../styles/FacturasPage.css";
 
 const LIMIT_DEFAULT = 20;
@@ -49,6 +50,10 @@ const TIPO_RECTIFICATIVA = [
 ];
 
 export default function FacturasPage() {
+  // El símbolo de moneda sale del restaurante, no del código (ver hooks/useLocale.js).
+  // Estas facturas son las que el RESTAURANTE emite a SUS clientes: dinero del restaurante.
+  const { formatMoney, currencySymbol } = useLocale();
+
   // ============================
   // State
   // ============================
@@ -375,7 +380,7 @@ export default function FacturasPage() {
 
       autoTable(doc, {
         startY: 28,
-        head: [["Número", "Fecha", "Cliente", "NIF", "Importe (€)", "Estado", "Hash"]],
+        head: [["Número", "Fecha", "Cliente", "NIF", `Importe (${currencySymbol})`, "Estado", "Hash"]],
         body: rows.map((r) => [
           r["Número factura"] || r["Número"] || "-",
           r["Fecha emisión"] || r["Fecha"] || "-",
@@ -631,7 +636,7 @@ export default function FacturasPage() {
                   <td>{new Date(f.fechaExpedicion).toLocaleString("es-ES")}</td>
                   <td>{f.clienteNombre || "-"}</td>
                   <td>{f.clienteNIF || "-"}</td>
-                  <td>{typeof f.importeTotal === "number" ? `${f.importeTotal.toFixed(2)} €` : "-"}</td>
+                  <td>{typeof f.importeTotal === "number" ? formatMoney(f.importeTotal) : "-"}</td>
                   <td className="facturaspage-hash">{f.hash}</td>
 
                   <td className="acciones-sticky">
@@ -710,7 +715,7 @@ export default function FacturasPage() {
               </div>
               <div>
                 <strong>Importe:</strong>{" "}
-                {typeof f.importeTotal === "number" ? `${f.importeTotal.toFixed(2)} €` : "-"}
+                {typeof f.importeTotal === "number" ? formatMoney(f.importeTotal) : "-"}
               </div>
             </div>
 
@@ -758,7 +763,7 @@ export default function FacturasPage() {
                 <p className="rectModal-sub">
                   Factura original: <strong>{facturaSeleccionada?.numeroFactura}</strong>
                   {facturaSeleccionada?.importeTotal != null && (
-                    <> — {Number(facturaSeleccionada.importeTotal).toFixed(2)} €</>
+                    <> — {formatMoney(facturaSeleccionada.importeTotal)}</>
                   )}
                 </p>
               </div>
@@ -823,7 +828,7 @@ export default function FacturasPage() {
               <p className="rectModal-section-title">Importe y motivo</p>
               <div className="rectModal-grid">
                 <div className="config-field">
-                  <label>Importe total (€) *</label>
+                  <label>Importe total ({currencySymbol}) *</label>
                   <input
                     type="number"
                     step="0.01"

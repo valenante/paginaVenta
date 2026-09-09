@@ -1,8 +1,7 @@
 // src/components/Estadisticas/StatsPorMeses.jsx
 import React from "react";
+import { useLocale } from "../../hooks/useLocale";
 import "./StatsPorMeses.css";
-
-const money = (n) => (Number(n || 0)).toFixed(2);
 
 const MESES_LABEL = [
   "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
@@ -17,6 +16,9 @@ const formatMesLabel = (mesKey) => {
 };
 
 const StatsPorMeses = ({ data }) => {
+  // El símbolo de moneda sale del restaurante, no del código (ver hooks/useLocale.js).
+  const { formatMoney } = useLocale();
+
   if (!data || data.length === 0) {
     return (
       <section className="statsmeses-container">
@@ -71,11 +73,11 @@ const StatsPorMeses = ({ data }) => {
                   </td>
 
                   <td data-label="Ingresos" className="stats-money">
-                    {money(row.totalIngresos)} €
+                    {formatMoney(row.totalIngresos)}
                   </td>
 
                   <td data-label="Ticket medio" className="stats-money">
-                    {money(ticketMedio)} €
+                    {formatMoney(ticketMedio)}
                   </td>
                 </tr>
               );

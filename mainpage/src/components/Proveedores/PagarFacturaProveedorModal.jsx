@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import api from "../../utils/api";
 import { useTenant } from "../../context/TenantContext";
 import { useToast } from "../../context/ToastContext";
+import { useLocale } from "../../hooks/useLocale";
 import Portal from "../ui/Portal";
 import "./PagarFacturaProveedorModal.css";
 
@@ -17,6 +18,8 @@ export default function PagarFacturaProveedorModal({ factura, onClose, onSaved }
   const { proveedorId } = useParams();
   const { tenantId } = useTenant();
   const { showToast } = useToast();
+  // El símbolo de moneda sale del restaurante, no del código (ver hooks/useLocale.js).
+  const { formatMoney } = useLocale();
 
   const headersTenant = useMemo(
     () => (tenantId ? { headers: { "x-tenant-id": tenantId } } : {}),
@@ -70,7 +73,7 @@ export default function PagarFacturaProveedorModal({ factura, onClose, onSaved }
                 Factura {factura?.numeroFactura || "—"}
               </span>
               <span className="pagarFactModal-summary-value">
-                {Number(factura?.total || 0).toFixed(2)} €
+                {formatMoney(factura?.total || 0)}
               </span>
             </div>
 

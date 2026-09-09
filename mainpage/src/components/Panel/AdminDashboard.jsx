@@ -3,6 +3,7 @@ import React, { useState, useMemo } from "react";
 import { useAdminDashboard } from "../../hooks/useAdminDashboard";
 import { useFeature } from "../../hooks/useFeature";
 import { useConfig } from "../../context/ConfigContext";
+import { useLocale } from "../../hooks/useLocale";
 import { ComparativaCard, RatioTipoCard, VentasPorHoraCard } from "./AnalyticsFase2";
 import { CorrelacionCard, AlertasCard } from "./AnalyticsFase3";
 import TiemposCocinaCard from "./TiemposCocinaCard";
@@ -10,7 +11,6 @@ import UpsellEstadisticasPro from "../Estadisticas/UpsellEstadisticasPro";
 import { formatCantidad } from "../../utils/stockFormat";
 import "./AdminDashboard.css";
 
-const fmt = (v) => Number(v || 0).toFixed(2);
 const fmtHora = (d) => {
   if (!d) return "--";
   try {
@@ -42,6 +42,8 @@ export default function AdminDashboard() {
   const esHoy = fechaSeleccionada === hoy;
   const isPremium = useFeature("estadisticas_avanzadas");
   const { config } = useConfig();
+  // El símbolo de moneda sale del restaurante, no del código (ver hooks/useLocale.js).
+  const { formatMoney } = useLocale();
   const turnos = config?.diaOperativo?.turnos || [];
 
   // Siempre pasamos la fecha operativa al backend para garantizar filtro correcto
@@ -125,11 +127,11 @@ export default function AdminDashboard() {
       {/* ── KPIs principales ── */}
       <div className="adm__kpis">
         <div className="adm__kpi adm__kpi--total">
-          <span className="adm__kpi-value">{fmt(caja?.totalRealizado)} €</span>
+          <span className="adm__kpi-value">{formatMoney(caja?.totalRealizado)}</span>
           <span className="adm__kpi-label">Total realizado</span>
         </div>
         <div className="adm__kpi adm__kpi--cobrado">
-          <span className="adm__kpi-value">{fmt(caja?.cobrado)} €</span>
+          <span className="adm__kpi-value">{formatMoney(caja?.cobrado)}</span>
           <span className="adm__kpi-label">Cobrado</span>
         </div>
         <div className="adm__kpi adm__kpi--mesas">
@@ -145,16 +147,16 @@ export default function AdminDashboard() {
           <>
             {esHoy && caja?.mesasAbiertas > 0 && (
               <div className="adm__kpi adm__kpi--mesas">
-                <span className="adm__kpi-value">{fmt(caja?.enMesasAbiertas)} €</span>
+                <span className="adm__kpi-value">{formatMoney(caja?.enMesasAbiertas)}</span>
                 <span className="adm__kpi-label">En mesas abiertas</span>
               </div>
             )}
             <div className="adm__kpi adm__kpi--ticket">
-              <span className="adm__kpi-value">{fmt(resumen?.ticketMedioMesa)} €</span>
+              <span className="adm__kpi-value">{formatMoney(resumen?.ticketMedioMesa)}</span>
               <span className="adm__kpi-label">Ticket medio / mesa</span>
             </div>
             <div className="adm__kpi adm__kpi--ticket-com">
-              <span className="adm__kpi-value">{fmt(resumen?.ticketMedioComensal)} €</span>
+              <span className="adm__kpi-value">{formatMoney(resumen?.ticketMedioComensal)}</span>
               <span className="adm__kpi-label">Ticket medio / comensal</span>
             </div>
             <div className="adm__kpi adm__kpi--pedidos">
@@ -211,19 +213,19 @@ export default function AdminDashboard() {
           <div className="adm__desglose">
             <div className="adm__desglose-row">
               <span>Efectivo</span>
-              <span>{fmt(caja?.ventasEfectivo)} €</span>
+              <span>{formatMoney(caja?.ventasEfectivo)}</span>
             </div>
             <div className="adm__desglose-row">
               <span>Tarjeta</span>
-              <span>{fmt(caja?.ventasTarjeta)} €</span>
+              <span>{formatMoney(caja?.ventasTarjeta)}</span>
             </div>
             <div className="adm__desglose-row">
               <span>Propinas</span>
-              <span>{fmt(caja?.propinas)} €</span>
+              <span>{formatMoney(caja?.propinas)}</span>
             </div>
             <div className="adm__desglose-row adm__desglose-row--total">
               <span>Cobrado</span>
-              <span>{fmt(caja?.cobrado)} €</span>
+              <span>{formatMoney(caja?.cobrado)}</span>
             </div>
           </div>
         </section>
@@ -264,7 +266,7 @@ export default function AdminDashboard() {
                   <span className="adm__top-pos">{i + 1}</span>
                   <span className="adm__top-name">{p.nombre}</span>
                   <span className="adm__top-qty">{p.cantidad}u</span>
-                  <span className="adm__top-amt">{fmt(p.ingresos || p.total)} €</span>
+                  <span className="adm__top-amt">{formatMoney(p.ingresos || p.total)}</span>
                 </div>
               ))
             ) : (
@@ -291,8 +293,8 @@ export default function AdminDashboard() {
                 <div key={b.rango} className="adm__staff-row">
                   <span className="adm__staff-name">{b.rango}</span>
                   <span>{b.mesas}</span>
-                  <span className="adm__staff-amt">{fmt(b.ticketMedioMesa)} €</span>
-                  <span className="adm__staff-amt">{fmt(b.ticketMedioComensal)} €</span>
+                  <span className="adm__staff-amt">{formatMoney(b.ticketMedioMesa)}</span>
+                  <span className="adm__staff-amt">{formatMoney(b.ticketMedioComensal)}</span>
                 </div>
               ))}
             </div>
@@ -314,7 +316,7 @@ export default function AdminDashboard() {
                   <span className="adm__staff-name">{s.nombre}</span>
                   <span>{s.totalPedidos}</span>
                   <span>{s.totalProductos}</span>
-                  <span className="adm__staff-amt">{fmt(s.totalImporte)} €</span>
+                  <span className="adm__staff-amt">{formatMoney(s.totalImporte)}</span>
                 </div>
               ))}
             </div>
@@ -342,8 +344,8 @@ export default function AdminDashboard() {
                 <div key={m.numero} className="adm__staff-row adm__staff-row--5col">
                   <span className="adm__staff-name">Mesa {m.numero}</span>
                   <span>{m.rotaciones}</span>
-                  <span className="adm__staff-amt">{fmt(m.totalVentas)} €</span>
-                  <span>{fmt(m.ticketMedio)} €</span>
+                  <span className="adm__staff-amt">{formatMoney(m.totalVentas)}</span>
+                  <span>{formatMoney(m.ticketMedio)}</span>
                   <span>{m.duracionMediaMin ? `${m.duracionMediaMin}m` : "—"}</span>
                 </div>
               ))}

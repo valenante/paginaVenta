@@ -4,6 +4,7 @@
 
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import useCostes from "../../hooks/useCostes";
+import { useLocale } from "../../hooks/useLocale";
 import RecetaModal from "./RecetaModal";
 import api from "../../utils/api";
 import "./CostesPanel.css";
@@ -22,7 +23,6 @@ const FILTROS = [
 
 const PAGE_SIZES = [12, 24, 48, 96];
 
-const fmtMoney = (n) => `${(Number(n) || 0).toFixed(2)}€`;
 const fmtPct = (n) => `${(Number(n) || 0).toFixed(1)}%`;
 
 function margenClass(pct, negativo) {
@@ -337,6 +337,8 @@ const CostesPanel = () => {
  * Card de producto (con todas sus variantes)
  * ===================================================== */
 function ProductoCard({ producto, dirty, onChangeCoste, onSave, onDiscard, saving, getCosteActual, getCosteTexto, onReceta, onNavigateProveedor }) {
+  // El símbolo de moneda sale del restaurante, no del código (ver hooks/useLocale.js).
+  const { formatMoney, currencySymbol } = useLocale();
   const precios = producto.precios || [];
   const hasDirty = Object.keys(dirty).length > 0;
   const tieneReceta = producto.receta?.length > 0;
@@ -385,7 +387,7 @@ function ProductoCard({ producto, dirty, onChangeCoste, onSave, onDiscard, savin
             <div key={pr.clave} className={`costes-variant ${isDirty ? "is-dirty" : ""}`}>
               <div className="costes-variant__label">
                 <span className="costes-variant__name">{pr.label}</span>
-                <span className="costes-variant__precio">{fmtMoney(pr.precio)}</span>
+                <span className="costes-variant__precio">{formatMoney(pr.precio)}</span>
               </div>
 
               <div className="costes-variant__input">
@@ -398,11 +400,11 @@ function ProductoCard({ producto, dirty, onChangeCoste, onSave, onDiscard, savin
                   placeholder="0.00"
                   onChange={(e) => onChangeCoste(pr.clave, e.target.value)}
                 />
-                <span className="costes-variant__unit">€</span>
+                <span className="costes-variant__unit">{currencySymbol}</span>
               </div>
 
               <div className={`costes-variant__margen ${cls}`}>
-                <span className="costes-variant__margen-unit">{fmtMoney(unit)}</span>
+                <span className="costes-variant__margen-unit">{formatMoney(unit)}</span>
                 <span className="costes-variant__margen-pct">{fmtPct(pct)}</span>
                 {negativo && <span className="costes-variant__warn">Precio &lt; coste</span>}
               </div>

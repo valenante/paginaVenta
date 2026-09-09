@@ -14,6 +14,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { createPortal } from "react-dom";
 import api from "../utils/api";
+import { useLocale } from "../hooks/useLocale";
 import "./CartaAnalyticsPage.css";
 
 const fmtDate = (d) => d.toISOString().split("T")[0];
@@ -22,6 +23,8 @@ const allergenEmoji = { gluten: "🌾", lactosa: "🥛", "frutos secos": "🥜",
 
 export default function CartaAnalyticsPage({ onBack }) {
   const hoyStr = fmtDate(new Date());
+  // El símbolo de moneda sale del restaurante, no del código (ver hooks/useLocale.js).
+  const { formatMoney, currencySymbol } = useLocale();
   const [modo, setModo] = useState("hoy");
   const [desde, setDesde] = useState(hoyStr);
   const [hasta, setHasta] = useState(hoyStr);
@@ -105,12 +108,12 @@ export default function CartaAnalyticsPage({ onBack }) {
       const top = (r.topPedidos || [])[0];
       if (top) {
         const pct = Math.round((top.revenue / totalRevenue) * 100);
-        if (pct >= 20) list.push({ icon: "⭐", text: `${top.nombre} genera el ${pct}% de lo que se pide desde la carta (${top.revenue.toFixed(0)}€). Es tu estrella digital.`, type: "success" });
+        if (pct >= 20) list.push({ icon: "⭐", text: `${top.nombre} genera el ${pct}% de lo que se pide desde la carta (${top.revenue.toFixed(0)}${currencySymbol}). Es tu estrella digital.`, type: "success" });
       }
     }
 
     return list.slice(0, 5);
-  }, [conversionFiltrada, idiomasList, alergenosList, totalRevenue, r.topPedidos]);
+  }, [conversionFiltrada, idiomasList, alergenosList, totalRevenue, r.topPedidos, currencySymbol]);
 
   const periodoLabel = modo === "hoy" ? "vs ayer" : modo === "rango" ? "vs periodo ant." : "";
 
@@ -264,7 +267,7 @@ export default function CartaAnalyticsPage({ onBack }) {
                     <thead><tr><th>Producto</th><th>Veces</th><th>Revenue</th></tr></thead>
                     <tbody>
                       {(r.topPedidos || []).map((p, i) => (
-                        <tr key={i}><td className="prod-name">{p.nombre}</td><td className="num">{p.pedidos}</td><td className="num revenue">{p.revenue?.toFixed(2)} €</td></tr>
+                        <tr key={i}><td className="prod-name">{p.nombre}</td><td className="num">{p.pedidos}</td><td className="num revenue">{formatMoney(p.revenue)}</td></tr>
                       ))}
                     </tbody>
                   </table>

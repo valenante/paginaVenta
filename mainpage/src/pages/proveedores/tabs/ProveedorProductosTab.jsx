@@ -3,12 +3,15 @@ import { useOutletContext, useParams, useSearchParams } from "react-router-dom";
 import api from "../../../utils/api";
 import ModalConfirmacion from "../../../components/Modal/ModalConfirmacion.jsx";
 import ProductoProveedorModal from "../../../components/Proveedores/ProductoProveedorModal.jsx";
+import { useLocale } from "../../../hooks/useLocale";
 import "./ProveedorProductosTab.css";
 
 export default function ProveedorProductosTab() {
   const { proveedorId } = useParams();
   const { headersTenant } = useOutletContext();
   const [searchParams, setSearchParams] = useSearchParams();
+  // El símbolo de moneda sale del restaurante, no del código (ver hooks/useLocale.js).
+  const { formatMoney } = useLocale();
 
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -106,8 +109,8 @@ export default function ProveedorProductosTab() {
                     <td className="prov-name">{p.nombre}</td>
                     <td>{p.unidad || "—"}</td>
                     <td>{p.formato || "—"}</td>
-                    <td>{Number(p.precioBase).toFixed(2)} €</td>
-                    <td>{(Number(p.precioBase) * (1 + (Number(p.iva) || 0) / 100)).toFixed(2)} €</td>
+                    <td>{formatMoney(p.precioBase)}</td>
+                    <td>{formatMoney(Number(p.precioBase) * (1 + (Number(p.iva) || 0) / 100))}</td>
                     <td>{p.iva}%</td>
                     <td>
                       <span className={`prov-pill ${p.activo === false ? "is-off" : ""}`}>
@@ -170,11 +173,11 @@ export default function ProveedorProductosTab() {
                   </div>
                   <div>
                     <span className="k">Sin IVA</span>
-                    <span className="v">{Number(p.precioBase).toFixed(2)} €</span>
+                    <span className="v">{formatMoney(p.precioBase)}</span>
                   </div>
                   <div>
                     <span className="k">Con IVA</span>
-                    <span className="v">{(Number(p.precioBase) * (1 + (Number(p.iva) || 0) / 100)).toFixed(2)} €</span>
+                    <span className="v">{formatMoney(Number(p.precioBase) * (1 + (Number(p.iva) || 0) / 100))}</span>
                   </div>
                   <div>
                     <span className="k">IVA</span>

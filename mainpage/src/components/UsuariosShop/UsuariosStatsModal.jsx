@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useMemo } from "react";
 import api from "../../utils/api";
 import * as logger from "../../utils/logger";
+import { useLocale } from "../../hooks/useLocale";
 import "./UsuariosStatsModal.css";
 
 const dayNames = {
@@ -22,6 +23,8 @@ const RANGO_PRESETS = [
 ];
 
 const UsuarioStatsModal = ({ usuario, onClose }) => {
+  // El símbolo de moneda sale del restaurante, no del código (ver hooks/useLocale.js).
+  const { formatMoney: formatCurrency } = useLocale();
   const [stats, setStats] = useState(null);
   const [cargando, setCargando] = useState(false);
   const [error, setError] = useState("");
@@ -30,7 +33,6 @@ const UsuarioStatsModal = ({ usuario, onClose }) => {
   const [desde, setDesde] = useState("");
   const [hasta, setHasta] = useState("");
 
-  const formatCurrency = (value) => `${Number(value || 0).toFixed(2)} €`;
   const formatDateTime = (value) => (!value ? "-" : new Date(value).toLocaleString());
 
   const rangoDescripcion = useMemo(() => {

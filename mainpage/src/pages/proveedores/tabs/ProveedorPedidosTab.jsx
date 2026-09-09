@@ -5,6 +5,7 @@ import api from "../../../utils/api";
 import { useToast } from "../../../context/ToastContext";
 import ModalConfirmacion from "../../../components/Modal/ModalConfirmacion.jsx";
 import PedidoProveedorModal from "../../../components/Proveedores/PedidoProveedorModal.jsx";
+import { useLocale } from "../../../hooks/useLocale";
 import "./ProveedorPedidosTab.css";
 
 const ESTADO_LABEL = {
@@ -19,6 +20,8 @@ export default function ProveedorPedidosTab() {
     const { proveedorId } = useParams();
     const { headersTenant, proveedor } = useOutletContext();
     const { showToast } = useToast();
+    // El símbolo de moneda sale del restaurante, no del código (ver hooks/useLocale.js).
+    const { formatMoney } = useLocale();
 
     const [items, setItems] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -121,12 +124,12 @@ return (
                     </span>
                   </td>
 
-                  <td>{Number(p.subtotal || 0).toFixed(2)} €</td>
-                  <td>{Number(p.totalIva || 0).toFixed(2)} €</td>
+                  <td>{formatMoney(p.subtotal || 0)}</td>
+                  <td>{formatMoney(p.totalIva || 0)}</td>
 
                   <td>
                     <strong>
-                      {Number(p.total || 0).toFixed(2)} €
+                      {formatMoney(p.total || 0)}
                     </strong>
                   </td>
 
@@ -178,21 +181,21 @@ return (
                 <div>
                   <span className="k">Subtotal</span>
                   <span className="v">
-                    {Number(p.subtotal || 0).toFixed(2)} €
+                    {formatMoney(p.subtotal || 0)}
                   </span>
                 </div>
 
                 <div>
                   <span className="k">IVA</span>
                   <span className="v">
-                    {Number(p.totalIva || 0).toFixed(2)} €
+                    {formatMoney(p.totalIva || 0)}
                   </span>
                 </div>
 
                 <div className="full">
                   <span className="k">Total</span>
                   <span className="v total">
-                    {Number(p.total || 0).toFixed(2)} €
+                    {formatMoney(p.total || 0)}
                   </span>
                 </div>
               </div>

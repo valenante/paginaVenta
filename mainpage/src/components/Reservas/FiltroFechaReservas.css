@@ -1,0 +1,25 @@
+/* ⚖️ D-445 · Los días con reserva, en el celeste de Alef.
+   ⚠️ Por CLASES, nunca en línea (regla de Valen). Y con la variable de marca `--cli-primary`
+   (#60b5ff, el color más usado del panel: 225 apariciones), no con el hex a mano — para que el
+   día que cambie la marca, cambie aquí también. */
+.react-datepicker__day.dia-con-reserva {
+  background: var(--cli-primary, #60b5ff);
+  color: #fff;
+  font-weight: 700;
+  border-radius: 6px;
+}
+
+.react-datepicker__day.dia-con-reserva:hover {
+  background: var(--cli-primary-dark, #2f7ed8);
+}
+
+/* El día elegido manda sobre la marca: si no, al seleccionar un día con reserva no se ve
+   cuál has elegido. */
+.react-datepicker__day.dia-con-reserva.react-datepicker__day--selected {
+  outline: 2px solid var(--cli-primary-dark, #2f7ed8);
+  outline-offset: 1px;
+}
+
+.alef-filtro-fecha {
+  width: 100%;
+}

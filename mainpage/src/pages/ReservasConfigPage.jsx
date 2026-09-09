@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
+import FiltroFechaReservas from "../components/Reservas/FiltroFechaReservas";
 import api from "../utils/api";
 import AlertaMensaje from "../components/AlertaMensaje/AlertaMensaje.jsx";
 import ModalConfirmacion from "../components/Modal/ModalConfirmacion.jsx";
@@ -30,6 +31,12 @@ const ESTADOS_LABEL = {
 
 export default function ReservasConfigPage() {
   const [reservas, setReservas] = useState([]);
+  // ⚖️ D-445 · dias con reserva, para pintarlos en el filtro.
+  // ⭐ `GET /reservas/fechasReserva` ya existia y NO la llamaba nadie (censo Art. 3: ni panel,
+  // ni TPV, ni carta). Devuelve "YYYY-MM-DD" agrupado por dia y excluyendo las rechazadas.
+  // No se acota por mes a proposito: medido el 9-sep, devuelve 2 fechas en zabor-feten, 0 en
+  // bodegon y 4 en tres-catorce. Acotarlo seria resolver un problema que no existe.
+  const [diasConReserva, setDiasConReserva] = useState([]);
   const [fecha, setFecha] = useState(new Date().toISOString().split("T")[0]);
   const [estado, setEstado] = useState("");
   const [alerta, setAlerta] = useState(null);
@@ -38,6 +45,28 @@ export default function ReservasConfigPage() {
   const [showAjustes, setShowAjustes] = useState(false);
   const [loading, setLoading] = useState(false);
   const reservasHabilitadas = useFeature("reservas.habilitadas", true);
+
+  // ⚖️ D-445 · carga de los dias con reserva para marcarlos en el filtro.
+  //
+  // ⚠️ Va APARTE de `cargarReservas` a proposito: aquella depende de `fecha` y `estado` y se
+  // relanza cada vez que el usuario toca un filtro. Los dias con reserva NO dependen del filtro
+  // —son todos— asi que meterlos ahi seria pedir lo mismo una y otra vez sin necesidad.
+  //
+  // ⚠️ Art. 5 · si esto falla NO rompe la pantalla ni enseña un error: el calendario se queda sin
+  // marcas y las reservas se siguen viendo. Es una ayuda visual, no un dato del que dependa nadie.
+  // Pero GRITA en la consola con un codigo estable, para que el fallo no sea invisible.
+  const cargarDiasConReserva = useCallback(async () => {
+    try {
+      const { data } = await api.get("/reservas/fechasReserva");
+      const fechas = Array.isArray(data?.fechas) ? data.fechas : Array.isArray(data) ? data : [];
+      setDiasConReserva(fechas);
+    } catch (err) {
+      console.warn("reservas.fechasConReserva.fail", err?._server?.message || err?.message);
+      setDiasConReserva([]);
+    }
+  }, []);
+
+  useEffect(() => { cargarDiasConReserva(); }, [cargarDiasConReserva]);
 
   const cargarReservas = useCallback(async () => {
     try {
@@ -216,7 +245,16 @@ export default function ReservasConfigPage() {
             <div className="cfg-filtros">
               <div className="config-field">
                 <label>Fecha</label>
-                <input type="date" value={fecha} onChange={(e) => setFecha(e.target.value)} />
+                {/* ⚖️ D-445 · era un `<input type="date">` NATIVO: su calendario lo pinta el
+                    navegador y a sus dias NO llega ninguna hoja de estilos, asi que era imposible
+                    marcar los dias con reserva. `FiltroFechaReservas` habla en "YYYY-MM-DD" hacia
+                    fuera, igual que el input al que sustituye, para no cambiar como se guarda ni
+                    como se consulta. */}
+                <FiltroFechaReservas
+                  value={fecha}
+                  onChange={setFecha}
+                  diasConReserva={diasConReserva}
+                />
               </div>
               <div className="config-field">
                 <label>Estado</label>

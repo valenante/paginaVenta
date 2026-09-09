@@ -222,3 +222,66 @@
     font-size: var(--font-size-xs);
   }
 }
+
+/* =====================================================================
+   ⚖️ D-447 · LOS CAMPOS DE LA TABLA NO TENÍAN NINGÚN ESTILO.
+   Los `<input>` de la tabla salían con el aspecto por defecto del
+   navegador dentro de una tabla que sí estaba estilada, y por eso el
+   modal se veía a medio hacer.
+
+   ⚠️ NO se inventa nada: es la MISMA regla que ya usa el modal hermano
+   `ProductoProveedorModal.css:142-160` — mismas variables de marca,
+   mismo relleno, mismo radio, mismo borde y el foco en el celeste.
+   Regla de Valen: por clases, jamás en línea.
+   ===================================================================== */
+
+.ppRec-table input,
+.ppRec-table select {
+  width: 100%;
+  box-sizing: border-box;
+  font-family: var(--font-base);
+  font-size: var(--font-size-sm);
+  padding: 0.45rem 0.6rem;          /* algo más ajustado que en un formulario: van en celda */
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-borde-suave);
+  background: var(--color-fondo-card, #fff);
+  color: inherit;
+}
+
+.ppRec-table input:focus,
+.ppRec-table select:focus {
+  outline: none;
+  border-color: var(--color-primario);
+  box-shadow: 0 0 0 2px rgba(96, 181, 255, 0.25);
+}
+
+/* Los numéricos no necesitan el ancho de una celda entera y se leen mejor
+   alineados a la derecha, como las cifras de la propia tabla. */
+.ppRec-table input[type="number"] {
+  text-align: right;
+  max-width: 110px;
+}
+
+/* La fecha de caducidad: sin esto el selector nativo desborda la celda. */
+.ppRec-table input[type="date"] {
+  max-width: 150px;
+}
+
+/* Las celdas dejan respirar a los campos: sin esto los bordes se tocan. */
+.ppRec-table td {
+  padding: 0.4rem 0.5rem;
+  vertical-align: middle;
+}
+
+.ppRec-table th {
+  padding: 0.5rem;
+  white-space: nowrap;
+}
+
+/* La unidad debajo del nombre del producto. Estaba EN LÍNEA en el JSX
+   (`style={{ fontSize: "0.7rem", opacity: 0.6 }}`), contra la regla de Valen:
+   CSS por clases, jamás en línea. Mismos valores, ahora donde toca. */
+.ppRec-name .ppRec-unidad {
+  font-size: 0.7rem;
+  opacity: 0.6;
+}

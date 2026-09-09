@@ -136,7 +136,7 @@ return (
                   <td className="t-right">
                     <div className="prov-rowActions">
                       <Link
-                        className="btn btn-ghost"
+                        className="btn btn-primario"
                         to={`/configuracion/proveedores/${proveedorId}/pedidos/${p._id}`}
                       >
                         Ver
@@ -202,7 +202,7 @@ return (
 
               <div className="prov-mobileActions">
                 <Link
-                  className="btn btn-ghost"
+                  className="btn btn-primario"
                   to={`/configuracion/proveedores/${proveedorId}/pedidos/${p._id}`}
                 >
                   Ver pedido

@@ -3,7 +3,9 @@ import React from "react";
 import { useLocale } from "../../hooks/useLocale";
 import "./StatsPorHora.css";
 const StatsPorHora = ({ data }) => {
-  const { currencySymbol } = useLocale();
+  // El símbolo de moneda sale del restaurante, no del código (ver hooks/useLocale.js).
+  const { formatMoney } = useLocale();
+
   if (!data || data.every((h) => h.totalIngresos === 0)) {
     return (
       <section className="statshora-container">
@@ -58,7 +60,7 @@ const StatsPorHora = ({ data }) => {
               <div className="statshora-meta">
                 <span className="statshora-units">{totalCantidad} uds</span>
                 <span className="statshora-money">
-                  {totalIngresos.toFixed(2)} {currencySymbol}
+                  {formatMoney(totalIngresos)}
                 </span>
               </div>
             </div>

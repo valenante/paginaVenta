@@ -18,7 +18,8 @@ function Tarjeta({ titulo, valor, subtitulo, color, icono }) {
 
 export default function ResumenDia() {
   const { data, loading, error, refetch } = useResumenDia();
-  const { currencySymbol } = useLocale();
+  // El símbolo de moneda sale del restaurante, no del código (ver hooks/useLocale.js).
+  const { formatMoney } = useLocale();
 
   if (loading) return null;
 
@@ -93,7 +94,7 @@ export default function ResumenDia() {
         />
         <Tarjeta
           titulo="Ventas hoy"
-          valor={ventasHoy != null ? `${ventasHoy.toFixed(2)} ${currencySymbol}` : null}
+          valor={ventasHoy != null ? formatMoney(ventasHoy) : null}
           color="gold"
           icono="💰"
         />

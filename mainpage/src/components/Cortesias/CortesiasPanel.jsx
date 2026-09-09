@@ -5,8 +5,7 @@ import "./CortesiasPanel.css";
 
 export default function CortesiasPanel({ abierto, onClose }) {
   const c = useCortesias();
-  // El símbolo sale del restaurante. Este resumen lo reescribió `main` DESPUÉS de que mi rama
-  // se quedara atrás, así que el parche no lo cubría y lo cazó el centinela al portar.
+  // El símbolo de moneda sale del restaurante, no del código (ver hooks/useLocale.js).
   const { formatMoney } = useLocale();
 
   // Refetch when panel opens
@@ -59,8 +58,8 @@ export default function CortesiasPanel({ abierto, onClose }) {
         {(c.tab === "invitaciones" || c.tab === "personal") && (
           <div className="cortpanel__resumen">
             {c.tab === "invitaciones"
-              ? `${c.resumenInv.totalItems} invitaciones \u2014 ${formatMoney(c.resumenInv.totalValor)} valor`
-              : `${c.resumenCp.totalRegistros} registros \u2014 ${formatMoney(c.resumenCp.totalValor)} valor`}
+              ? `${c.resumenInv.totalItems} invitaciones \u2014 ${formatMoney(c.resumenInv.totalValor || 0)} valor`
+              : `${c.resumenCp.totalRegistros} registros \u2014 ${formatMoney(c.resumenCp.totalValor || 0)} valor`}
           </div>
         )}
 
@@ -88,7 +87,7 @@ export default function CortesiasPanel({ abierto, onClose }) {
                 </div>
                 <div className="cortpanel__item-mid">
                   <span>x{inv.cantidad} &middot; Mesa {inv.mesa ?? "--"}</span>
-                  <span className="cortpanel__item-valor">{Number((inv.precioOriginal || 0) * (inv.cantidad || 1)).toFixed(2)} &euro;</span>
+                  <span className="cortpanel__item-valor">{formatMoney((inv.precioOriginal || 0) * (inv.cantidad || 1))}</span>
                 </div>
                 <div className="cortpanel__item-bottom">
                   <span>Autorizado: {inv.autorizadoPor || "--"}</span>
@@ -111,7 +110,7 @@ export default function CortesiasPanel({ abierto, onClose }) {
                 </div>
                 <div className="cortpanel__item-mid">
                   <span>{(cp.items || []).map((i) => `${i.nombre} x${i.cantidad}`).join(", ")}</span>
-                  <span className="cortpanel__item-valor">{Number(cp.totalValor || 0).toFixed(2)} &euro;</span>
+                  <span className="cortpanel__item-valor">{formatMoney(cp.totalValor || 0)}</span>
                 </div>
                 <div className="cortpanel__item-bottom">
                   <span>Autorizado: {cp.autorizadoPor?.nombre || "--"}</span>
@@ -145,7 +144,7 @@ export default function CortesiasPanel({ abierto, onClose }) {
                     <div className="cortpanel__config-info">
                       <strong>{prod.nombre}</strong>
                       <span className="cortpanel__config-cat">{prod.categoria}</span>
-                      <span className="cortpanel__config-price">{Number(prod.precios?.[0]?.precio ?? 0).toFixed(2)} &euro;</span>
+                      <span className="cortpanel__config-price">{formatMoney(prod.precios?.[0]?.precio ?? 0)}</span>
                     </div>
                     <button
                       className={`cortpanel__toggle ${prod.elegibleComidaPersonal ? "cortpanel__toggle--on" : ""}`}
@@ -189,7 +188,7 @@ export default function CortesiasPanel({ abierto, onClose }) {
                   <div key={prod._id} className="cortpanel__item-config">
                     <div className="cortpanel__config-info">
                       <strong>{prod.nombre}</strong>
-                      <span className="cortpanel__config-price">{Number(prod.precios?.[0]?.precio ?? 0).toFixed(2)} &euro;</span>
+                      <span className="cortpanel__config-price">{formatMoney(prod.precios?.[0]?.precio ?? 0)}</span>
                     </div>
                     <div className="cortpanel__qty-controls">
                       {enCarrito && (
@@ -210,12 +209,12 @@ export default function CortesiasPanel({ abierto, onClose }) {
                 {c.carrito.map((i) => (
                   <div key={i.productoId} className="cortpanel__cart-line">
                     <span>{i.nombre} x{i.cantidad}</span>
-                    <span>{(i.precio * i.cantidad).toFixed(2)} &euro;</span>
+                    <span>{formatMoney(i.precio * i.cantidad)}</span>
                   </div>
                 ))}
                 <div className="cortpanel__cart-total">
                   <strong>Total:</strong>
-                  <strong>{c.totalCarrito.toFixed(2)} &euro;</strong>
+                  <strong>{formatMoney(c.totalCarrito)}</strong>
                 </div>
               </div>
             )}

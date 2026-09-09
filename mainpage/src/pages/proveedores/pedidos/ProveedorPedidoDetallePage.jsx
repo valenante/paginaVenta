@@ -22,7 +22,9 @@ export default function ProveedorPedidoDetallePage() {
     const navigate = useNavigate();
     const { tenantId } = useTenant();
     const { showToast } = useToast();
-    const { currencySymbol } = useLocale();
+    // El símbolo de moneda sale del restaurante, no del código (ver hooks/useLocale.js).
+    // Lo que el restaurante paga a sus proveedores: dinero del restaurante.
+    const { formatMoney } = useLocale();
 
     const headersTenant = useMemo(
         () => (tenantId ? { headers: { "x-tenant-id": tenantId } } : {}),
@@ -173,10 +175,10 @@ export default function ProveedorPedidoDetallePage() {
                                                 <td data-label="Unidad">{l.unidad || "—"}</td>
                                                 <td data-label="Formato">{l.formato || "—"}</td>
                                                 <td data-label="Cantidad">{l.cantidad}</td>
-                                                <td data-label="Precio">{l.precioUnitario.toFixed(2)} {currencySymbol}</td>
+                                                <td data-label="Precio">{formatMoney(l.precioUnitario)}</td>
                                                 <td data-label="IVA">{l.iva}%</td>
                                                 <td data-label="Total">
-                                                    <b>{l.totalLinea.toFixed(2)} {currencySymbol}</b>
+                                                    <b>{formatMoney(l.totalLinea)}</b>
                                                 </td>
                                             </tr>
                                         ))}
@@ -192,21 +194,21 @@ export default function ProveedorPedidoDetallePage() {
                             <div className="provDet-row">
                                 <span className="provDet-k">Subtotal</span>
                                 <span className="provDet-v">
-                                    {pedido.subtotal.toFixed(2)} {currencySymbol}
+                                    {formatMoney(pedido.subtotal)}
                                 </span>
                             </div>
 
                             <div className="provDet-row">
                                 <span className="provDet-k">IVA</span>
                                 <span className="provDet-v">
-                                    {pedido.totalIva.toFixed(2)} {currencySymbol}
+                                    {formatMoney(pedido.totalIva)}
                                 </span>
                             </div>
 
                             <div className="provDet-row">
                                 <span className="provDet-k">Total</span>
                                 <span className="provDet-v">
-                                    <b>{pedido.total.toFixed(2)} {currencySymbol}</b>
+                                    <b>{formatMoney(pedido.total)}</b>
                                 </span>
                             </div>
                         </div>

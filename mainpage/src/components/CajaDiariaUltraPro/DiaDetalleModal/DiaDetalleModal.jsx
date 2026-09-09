@@ -4,7 +4,9 @@ import { useLocale } from "../../../hooks/useLocale";
 import "./DiaDetalleModal.css";
 
 export default function DiaDetalleModal({ dia, onClose }) {
-  const { currencySymbol } = useLocale();
+  // El símbolo de moneda sale del restaurante, no del código (ver hooks/useLocale.js).
+  const { formatMoney } = useLocale();
+
   if (!dia) return null;
 
   return (
@@ -37,7 +39,7 @@ export default function DiaDetalleModal({ dia, onClose }) {
           <section className="diaModal-kpis">
             <div className="diaModal-kpi">
               <span>Total</span>
-              <strong>{dia.total.toFixed(2)} {currencySymbol}</strong>
+              <strong>{formatMoney(dia.total)}</strong>
             </div>
 
             <div className="diaModal-kpi">

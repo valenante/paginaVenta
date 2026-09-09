@@ -5,7 +5,8 @@ import "./HeatMapSemana.css";
 const DIAS_SEMANA = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
 
 const HeatmapSemana = ({ datos = [] }) => {
-  const { currencySymbol } = useLocale();
+  // El símbolo de moneda sale del restaurante, no del código (ver hooks/useLocale.js).
+  const { formatMoney } = useLocale();
   const [isMobile, setIsMobile] = useState(() => window.innerWidth < 700);
   const [showFullMobile, setShowFullMobile] = useState(false);
 
@@ -103,7 +104,7 @@ const HeatmapSemana = ({ datos = [] }) => {
                         ? "0 0 8px rgba(255, 103, 0, 0.4)"
                         : "none",
                   }}
-                  title={`${diasSemana[diaIndex]} ${hora}:00 — ${valor.toFixed(2)} ${currencySymbol}`}
+                  title={`${diasSemana[diaIndex]} ${hora}:00 — ${formatMoney(valor)}`}
                 />
               );
             })}
@@ -111,7 +112,7 @@ const HeatmapSemana = ({ datos = [] }) => {
         ))}
       </div>
     ),
-    [mapa, maxValor]
+    [mapa, maxValor, formatMoney]
   );
 
   return (
@@ -137,7 +138,7 @@ const HeatmapSemana = ({ datos = [] }) => {
                   <span>
                     {diasSemana[h.dia]} · {h.hora.toString().padStart(2, "0")}:00
                   </span>
-                  <strong>{h.total.toFixed(2)} {currencySymbol}</strong>
+                  <strong>{formatMoney(h.total)}</strong>
                 </div>
               ))}
 

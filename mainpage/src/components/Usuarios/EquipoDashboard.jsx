@@ -43,7 +43,8 @@ function PctBadge({ val, avg, invertido = false }) {
 }
 
 export default function EquipoDashboard() {
-  const { currencySymbol } = useLocale();
+  // El símbolo de moneda sale del restaurante, no del código (ver hooks/useLocale.js).
+  const { formatMoney, currencySymbol } = useLocale();
   const [periodo, setPeriodo] = useState("semana");
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -124,11 +125,11 @@ export default function EquipoDashboard() {
                     <td>{c.totalPedidos}</td>
                     <td>{c.totalProductos}</td>
                     <td className="equipo-importe">
-                      {c.totalImporte.toFixed(2)} {currencySymbol}
+                      {formatMoney(c.totalImporte)}
                       <PctBadge val={c.totalImporte} avg={prom.totalGlobal / ranking.length} />
                     </td>
                     <td>
-                      {c.ticketMedio.toFixed(2)} {currencySymbol}
+                      {formatMoney(c.ticketMedio)}
                       <PctBadge val={c.ticketMedio} avg={prom.ticketMedio} />
                     </td>
                     <td>

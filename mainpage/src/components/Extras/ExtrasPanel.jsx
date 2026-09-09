@@ -22,7 +22,8 @@ const byCreatedDesc = (a, b) => {
 };
 
 export default function ExtrasPanel({ onBack, inline, onExtrasCountChange, nuevoExtraSignal = 0 }) {
-  const { currencySymbol } = useLocale();
+  // El símbolo de moneda sale del restaurante, no del código (ver hooks/useLocale.js).
+  const { formatMoney } = useLocale();
   const [extras, setExtras] = useState([]);
   const [loading, setLoading] = useState(false);
   const [savingDelete, setSavingDelete] = useState(false);
@@ -221,7 +222,7 @@ export default function ExtrasPanel({ onBack, inline, onExtrasCountChange, nuevo
                 )}
               </div>
               <div className="catpanel-product-meta">
-                <span className="catpanel-product-price">{Number(extra.precio || 0).toFixed(2)} {currencySymbol}</span>
+                <span className="catpanel-product-price">{formatMoney(extra.precio || 0)}</span>
                 <span className="catpanel-product-estado catpanel-product-estado--on">Activo</span>
               </div>
               <div className="catpanel-product-actions">

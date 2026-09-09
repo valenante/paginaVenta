@@ -1,12 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import api from "../../utils/api";
 import { useTenant } from "../../context/TenantContext";
+import { useLocale } from "../../hooks/useLocale";
 import Portal from "../ui/Portal";
-import { useAutoFocus } from "../../hooks/useAutoFocus";
 import { toInputText, toNum } from "../../utils/numeroInput";
 import "./ProductoProveedorModal.css";
-import { useLocale } from "../../hooks/useLocale";
 
 const DEFAULT = {
   nombre: "",
@@ -108,9 +107,10 @@ export default function ProductoProveedorModal({
   onSaved,
 }) {
   const isEdit = mode === "edit";
-  const { currencySymbol } = useLocale();
   const { proveedorId } = useParams();
   const { tenant } = useTenant();
+  // El símbolo de moneda sale del restaurante, no del código (ver hooks/useLocale.js).
+  const { formatMoney, currencySymbol } = useLocale();
 
   const [form, setForm] = useState(() => ({
     ...DEFAULT,
@@ -184,8 +184,6 @@ export default function ProductoProveedorModal({
   };
 
   const [aiApplied, setAiApplied] = useState(false);
-
-  const autoFocusRef = useAutoFocus();
 
   const isRest = tenant?.tipoNegocio === "restaurante";
   const isShop = tenant?.tipoNegocio === "shop";
@@ -398,7 +396,7 @@ export default function ProductoProveedorModal({
               <textarea
                 className="ppModal-ai-input"
                 rows={3}
-                placeholder={`Ej: "Croquetas de espinaca, caja de 4 bolsas de 1kg, cada croqueta 25g, me sale a 44${currencySymbol} sin IVA"`}
+                placeholder='Ej: "Croquetas de espinaca, caja de 4 bolsas de 1kg, cada croqueta 25g, me sale a 44€ sin IVA"'
                 value={aiText}
                 onChange={(e) => setAiText(e.target.value)}
                 disabled={aiLoading}
@@ -459,9 +457,9 @@ export default function ProductoProveedorModal({
               <div className="ppModal-field ppModal-field--full">
                 <label>Nombre *</label>
                 <input
-                  ref={autoFocusRef}
                   value={form.nombre}
                   onChange={(e) => set("nombre", e.target.value)}
+                  autoFocus
                 />
               </div>
 
@@ -653,7 +651,7 @@ export default function ProductoProveedorModal({
                             {totalPeso > 0 && <> = <b>{totalPeso.toLocaleString()} {udPeso}</b></>}
                           </span>
                           <span className="ppModal-resumen__line">
-                            Coste: <b>{costePorItem.toFixed(2)} {currencySymbol}/{udCont}</b>
+                            Coste: <b>{formatMoney(costePorItem)}/{udCont}</b>
                             {costePorPeso > 0 && <> · {costePorPeso.toFixed(4)} {currencySymbol}/{udPeso}</>}
                           </span>
                         </>
@@ -715,7 +713,7 @@ export default function ProductoProveedorModal({
                           return (
                             <div key={p.clave} style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "0.85rem" }}>
                               <span style={{ fontWeight: 700, minWidth: 80 }}>{p.label || p.clave}</span>
-                              <span>{coste.toFixed(2)}{currencySymbol} coste</span>
+                              <span>{formatMoney(coste)} coste</span>
                               <span style={{ color: "#9ca3af" }}>→</span>
                               <span>venta {p.precio}{currencySymbol}</span>
                               <span style={{ color: "#9ca3af" }}>→</span>

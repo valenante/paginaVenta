@@ -80,7 +80,9 @@ function sugerirPeriodoB(inicioA, finA) {
    ========================================================================= */
 
 export default function ComparacionPeriodos({ periodoA, tipoNegocio }) {
-  const { currencySymbol } = useLocale();
+  // El símbolo de moneda sale del restaurante, no del código (ver hooks/useLocale.js).
+  const { formatMoney, currencySymbol } = useLocale();
+
   const [bInicio, setBInicio] = useState("");
   const [bFin, setBFin] = useState("");
   const [datosB, setDatosB] = useState([]);
@@ -156,8 +158,8 @@ export default function ComparacionPeriodos({ periodoA, tipoNegocio }) {
   const kpis = [
     {
       label: "Ingresos",
-      a: `${kpiA.ingresos.toFixed(2)} ${currencySymbol}`,
-      b: `${kpiB.ingresos.toFixed(2)} ${currencySymbol}`,
+      a: formatMoney(kpiA.ingresos),
+      b: formatMoney(kpiB.ingresos),
       delta: pctDelta(kpiA.ingresos, kpiB.ingresos),
       abs: absDiff(kpiA.ingresos, kpiB.ingresos, true),
     },
@@ -170,15 +172,15 @@ export default function ComparacionPeriodos({ periodoA, tipoNegocio }) {
     },
     {
       label: "Ticket medio",
-      a: `${kpiA.ticketMedio.toFixed(2)} ${currencySymbol}`,
-      b: `${kpiB.ticketMedio.toFixed(2)} ${currencySymbol}`,
+      a: formatMoney(kpiA.ticketMedio),
+      b: formatMoney(kpiB.ticketMedio),
       delta: pctDelta(kpiA.ticketMedio, kpiB.ticketMedio),
       abs: absDiff(kpiA.ticketMedio, kpiB.ticketMedio, true),
     },
     {
       label: "Media diaria",
-      a: `${kpiA.mediaDiaria.toFixed(2)} ${currencySymbol}`,
-      b: `${kpiB.mediaDiaria.toFixed(2)} ${currencySymbol}`,
+      a: formatMoney(kpiA.mediaDiaria),
+      b: formatMoney(kpiB.mediaDiaria),
       delta: pctDelta(kpiA.mediaDiaria, kpiB.mediaDiaria),
       abs: absDiff(kpiA.mediaDiaria, kpiB.mediaDiaria, true),
     },
@@ -284,7 +286,7 @@ export default function ComparacionPeriodos({ periodoA, tipoNegocio }) {
                     padding: "10px 14px",
                   }}
                   formatter={(value, name) => [
-                    value != null ? `${Number(value).toFixed(2)} ${currencySymbol}` : "—",
+                    value != null ? formatMoney(value) : "—",
                     name,
                   ]}
                 />

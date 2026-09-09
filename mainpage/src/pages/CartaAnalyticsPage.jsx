@@ -22,8 +22,9 @@ const flagEmoji = { es: "🇪🇸", en: "🇬🇧", fr: "🇫🇷", de: "🇩�
 const allergenEmoji = { gluten: "🌾", lactosa: "🥛", "frutos secos": "🥜", huevo: "🥚", pescado: "🐟", marisco: "🦐", soja: "🫘", apio: "🌿", mostaza: "🟡", sesamo: "⚪", sulfitos: "🍷", moluscos: "🐚", altramuz: "🌱" };
 
 export default function CartaAnalyticsPage({ onBack }) {
-  const { currencySymbol } = useLocale();
   const hoyStr = fmtDate(new Date());
+  // El símbolo de moneda sale del restaurante, no del código (ver hooks/useLocale.js).
+  const { formatMoney, currencySymbol } = useLocale();
   const [modo, setModo] = useState("hoy");
   const [desde, setDesde] = useState(hoyStr);
   const [hasta, setHasta] = useState(hoyStr);
@@ -112,7 +113,7 @@ export default function CartaAnalyticsPage({ onBack }) {
     }
 
     return list.slice(0, 5);
-  }, [conversionFiltrada, idiomasList, alergenosList, totalRevenue, r.topPedidos]);
+  }, [conversionFiltrada, idiomasList, alergenosList, totalRevenue, r.topPedidos, currencySymbol]);
 
   const periodoLabel = modo === "hoy" ? "vs ayer" : modo === "rango" ? "vs periodo ant." : "";
 
@@ -266,7 +267,7 @@ export default function CartaAnalyticsPage({ onBack }) {
                     <thead><tr><th>Producto</th><th>Veces</th><th>Revenue</th></tr></thead>
                     <tbody>
                       {(r.topPedidos || []).map((p, i) => (
-                        <tr key={i}><td className="prod-name">{p.nombre}</td><td className="num">{p.pedidos}</td><td className="num revenue">{p.revenue?.toFixed(2)} {currencySymbol}</td></tr>
+                        <tr key={i}><td className="prod-name">{p.nombre}</td><td className="num">{p.pedidos}</td><td className="num revenue">{formatMoney(p.revenue)}</td></tr>
                       ))}
                     </tbody>
                   </table>

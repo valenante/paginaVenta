@@ -1,7 +1,7 @@
 // src/pages/Estadisticas/components/StatsResumenCategoria.jsx
 import React from "react";
-import "./StatsResumenCategoria.css";
 import { useLocale } from "../../hooks/useLocale";
+import "./StatsResumenCategoria.css";
 
 const StatsResumenCategoria = ({
   category,
@@ -11,7 +11,9 @@ const StatsResumenCategoria = ({
   productoEstrella,
   isPro,
 }) => {
-  const { currencySymbol } = useLocale();
+  // El símbolo de moneda sale del restaurante, no del código (ver hooks/useLocale.js).
+  const { formatMoney } = useLocale();
+
   const { totalCantidad = 0, totalIngresos = 0, precioMedioUnidad = 0 } =
     resumenCategoria || {};
 
@@ -37,13 +39,13 @@ const StatsResumenCategoria = ({
 
         <div className="stats-resumen-item">
           <span className="stats-label">Ingresos totales</span>
-          <strong className="stats-value">{totalIngresos.toFixed(2)} {currencySymbol}</strong>
+          <strong className="stats-value">{formatMoney(totalIngresos)}</strong>
         </div>
 
         <div className="stats-resumen-item">
           <span className="stats-label">Precio medio por unidad</span>
           <strong className="stats-value">
-            {precioMedioUnidad > 0 ? `${precioMedioUnidad.toFixed(2)} ${currencySymbol}` : "—"}
+            {precioMedioUnidad > 0 ? formatMoney(precioMedioUnidad) : "—"}
           </strong>
         </div>
 
@@ -59,7 +61,7 @@ const StatsResumenCategoria = ({
             <span className="stats-label">Producto estrella</span>
             <strong className="stats-value">{productoEstrella.nombre}</strong>
             <small className="stats-helper">
-              {productoEstrella.totalIngresos.toFixed(2)} {currencySymbol} ·{" "}
+              {formatMoney(productoEstrella.totalIngresos)} ·{" "}
               {productoEstrella.totalCantidad} uds
             </small>
           </div>

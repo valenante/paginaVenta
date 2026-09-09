@@ -23,7 +23,8 @@ const RANGO_PRESETS = [
 ];
 
 const UsuarioStatsModal = ({ usuario, onClose }) => {
-  const { currencySymbol } = useLocale();
+  // El símbolo de moneda sale del restaurante, no del código (ver hooks/useLocale.js).
+  const { formatMoney: formatCurrency } = useLocale();
   const [stats, setStats] = useState(null);
   const [cargando, setCargando] = useState(false);
   const [error, setError] = useState("");
@@ -32,7 +33,6 @@ const UsuarioStatsModal = ({ usuario, onClose }) => {
   const [desde, setDesde] = useState("");
   const [hasta, setHasta] = useState("");
 
-  const formatCurrency = (value) => `${Number(value || 0).toFixed(2)} ${currencySymbol}`;
   const formatDateTime = (value) => (!value ? "-" : new Date(value).toLocaleString());
 
   const rangoDescripcion = useMemo(() => {

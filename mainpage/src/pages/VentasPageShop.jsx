@@ -6,12 +6,6 @@ import { useTenant } from "../context/TenantContext.jsx"; // ✅ AÑADIR
 import { useLocale } from "../hooks/useLocale";
 import "../styles/VentasPageShop.css";
 
-const fmtMoney = (n, sym = "€") => {
-  const x = Number(n);
-  if (!Number.isFinite(x)) return "-";
-  return x.toFixed(2) + " " + sym;
-};
-
 const fmtDateTime = (d) => {
   const t = new Date(d);
   if (Number.isNaN(t.getTime())) return "-";
@@ -19,7 +13,6 @@ const fmtDateTime = (d) => {
 };
 
 function VentasPageShopInner() {
-  const { currencySymbol } = useLocale();
   const {
     tenantId,
     ventasPage,
@@ -51,6 +44,16 @@ function VentasPageShopInner() {
     pageCount,
   } = useVentas();
 
+  // El símbolo de moneda sale del restaurante, no del código (ver hooks/useLocale.js).
+  const { formatMoney } = useLocale();
+
+  // Se conserva el "-" para valores no numéricos, que formatMoney no distingue.
+  const fmtMoney = (n) => {
+    const x = Number(n);
+    if (!Number.isFinite(x)) return "-";
+    return formatMoney(x);
+  };
+
   const meta = useMemo(() => {
     const ts = lastUpdatedAt ? fmtDateTime(lastUpdatedAt) : "—";
     return `Actualizado: ${ts}`;
@@ -68,7 +71,7 @@ function VentasPageShopInner() {
           <div className="shops-page__metaRow">
             <span className="shops-badge">Ventas: {totals.count}</span>
             <span className="shops-badge">Ítems: {totals.items}</span>
-            <span className="shops-badge">Total: {fmtMoney(totals.total, currencySymbol)}</span>
+            <span className="shops-badge">Total: {fmtMoney(totals.total)}</span>
             <span className="shops-metaText">{meta}</span>
           </div>
         </div>
@@ -196,7 +199,7 @@ function VentasPageShopInner() {
                       </span>
                     </td>
                     <td className="t-right">{v.itemsCount}</td>
-                    <td className="t-right">{fmtMoney(v.total, currencySymbol)}</td>
+                    <td className="t-right">{fmtMoney(v.total)}</td>
                   </tr>
                 ))}
               </tbody>

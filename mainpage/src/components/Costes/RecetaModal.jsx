@@ -4,17 +4,17 @@
 // Si tiene 1 solo precio, UI plana como antes.
 
 import React, { useState, useEffect, useCallback, useMemo } from "react";
-import { toInputText, toNum } from "../../utils/numeroInput";
 import { createPortal } from "react-dom";
 import { useReceta, guardarReceta, buscarIngredientes } from "../../hooks/useRecetas";
-import { useAutoFocus } from "../../hooks/useAutoFocus";
 import { useLocale } from "../../hooks/useLocale";
+import { toInputText, toNum } from "../../utils/numeroInput";
 import "./RecetaModal.css";
 
 const UNIDADES = ["ud", "g", "kg", "ml", "cl", "litro"];
 
 export default function RecetaModal({ productoId, productoNombre, onClose, onSaved }) {
-  const { currencySymbol } = useLocale();
+  // El símbolo de moneda sale del restaurante, no del código (ver hooks/useLocale.js).
+  const { formatMoney, currencySymbol } = useLocale();
   const { data, loading } = useReceta(productoId);
   const [lineas, setLineas] = useState([]);
   const [saving, setSaving] = useState(false);
@@ -22,8 +22,6 @@ export default function RecetaModal({ productoId, productoNombre, onClose, onSav
   const [searchResults, setSearchResults] = useState([]);
   const [searching, setSearching] = useState(false);
   const [searchForVariant, setSearchForVariant] = useState(null); // null = no search, string = clavePrecio
-
-  const autoFocusRef = useAutoFocus();
 
   const precios = data?.precios || [];
   const multiVariante = precios.length > 1;
@@ -110,9 +108,7 @@ export default function RecetaModal({ productoId, productoNombre, onClose, onSav
         productoProveedorId: l.productoProveedorId,
         ingrediente: l.ingrediente || null,
         nombre: l.nombre,
-        // el input guarda string mientras se teclea → se convierte aquí, al guardar.
-        // Math.max(0, ...) viene de la rama (lo que corre en producción): evita que
-        // una cantidad negativa a medio teclear llegue a la base de datos.
+        // el input guarda string mientras se teclea → se convierte aquí, al guardar
         cantidad: Math.max(0, toNum(l.cantidad, 0)),
         unidad: l.unidad,
         clavePrecio: l.clavePrecio || null,
@@ -173,12 +169,12 @@ export default function RecetaModal({ productoId, productoNombre, onClose, onSav
     return (
       <div className="rec-search">
         <input
-          ref={autoFocusRef}
           type="text"
           className="rec-search__input"
           placeholder="Buscar ingrediente..."
           value={searchQ}
           onChange={e => setSearchQ(e.target.value)}
+          autoFocus
         />
         {searching && <div className="rec-search__loading">Buscando...</div>}
         {searchResults.length > 0 && (
@@ -201,9 +197,9 @@ export default function RecetaModal({ productoId, productoNombre, onClose, onSav
     const margen = precio > 0 ? Math.round((1 - coste / precio) * 100) : 0;
     return (
       <div className="rec-variant-summary">
-        <span>Coste: <strong>{coste.toFixed(2)}{currencySymbol}</strong></span>
+        <span>Coste: <strong>{formatMoney(coste)}</strong></span>
         <span className={`rec-margin ${margen < 40 ? "rec-margin--warn" : ""}`}>
-          Margen: {(precio - coste).toFixed(2)}{currencySymbol} ({margen}%)
+          Margen: {formatMoney(precio - coste)} ({margen}%)
         </span>
       </div>
     );
@@ -294,7 +290,7 @@ export default function RecetaModal({ productoId, productoNombre, onClose, onSav
             <>
               <div className="rec-total">
                 <span>Coste total receta:</span>
-                <strong>{costeTotalGlobal.toFixed(2)}{currencySymbol}</strong>
+                <strong>{formatMoney(costeTotalGlobal)}</strong>
               </div>
               {precios.length > 0 && (
                 <div className="rec-margins">

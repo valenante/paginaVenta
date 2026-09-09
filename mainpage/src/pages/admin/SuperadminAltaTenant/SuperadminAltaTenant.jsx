@@ -21,6 +21,9 @@ export default function SuperadminAltaTenant() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  // 🩹 C2-3 (2026-08-19) — el alta puede terminar BIEN y el correo de bienvenida NO salir.
+  // No es `error` (el tenant existe) ni `success` (el cliente no puede entrar todavía).
+  const [avisoBienvenida, setAvisoBienvenida] = useState(null);
 
   // Planes desde API
   const [planes, setPlanes] = useState([]);
@@ -77,6 +80,7 @@ export default function SuperadminAltaTenant() {
     setLoading(true);
     setError("");
     setSuccess("");
+    setAvisoBienvenida(null);
 
     try {
       // 1. Precheckout
@@ -105,7 +109,21 @@ export default function SuperadminAltaTenant() {
       const provRes = await api.post("/admin/superadmin/onboarding/provision", { precheckoutId });
       const d = provRes.data?.data || provRes.data;
 
-      if (d?.passwordSetupUrl) {
+      // 🩹 CICATRIZ 2026-08-19 (C2-3) — AQUÍ SE PINTABA VERDE PASARA LO QUE PASARA.
+      // Desde el lote C el backend puede contener el correo de bienvenida (proceso no
+      // productivo, o `ALEF_ENV_MODE` ausente/no reconocido) y desde C2-3 lo DICE en
+      // `bienvenidaEnviada`. Un solo `setSuccess` para los dos casos hacía que el superadmin
+      // cerrara la pantalla convencido de que el cliente tenía su enlace — y el cliente no
+      // podía entrar, sin que nadie se enterara.
+      // ⚠️ NO hay reintento automático: el enlace se enseña para pasarlo A MANO. Es el mismo
+      //    `passwordSetupUrl` que ya venía en la respuesta; no se genera un segundo token.
+      if (d?.bienvenidaEnviada === false) {
+        setAvisoBienvenida({
+          tenantSlug: d?.tenantSlug || form.nombre,
+          passwordSetupUrl: d?.passwordSetupUrl || null,
+          motivo: d?.bienvenidaMotivo || null,
+        });
+      } else if (d?.passwordSetupUrl) {
         setSuccess(`Tenant creado. Link set-password: ${d.passwordSetupUrl}`);
       } else {
         setSuccess(`Tenant ${d?.tenantSlug || form.nombre} creado correctamente.`);
@@ -124,7 +142,11 @@ export default function SuperadminAltaTenant() {
       </button>
 
       <h1 className="sa-alta__title">Alta de nuevo negocio</h1>
-      <p className="sa-alta__sub">Provisión directa sin pago. Se envía email con link de contraseña.</p>
+      <p className="sa-alta__sub">
+        {avisoBienvenida
+          ? "Provisión directa sin pago."
+          : "Provisión directa sin pago. Se envía email con link de contraseña."}
+      </p>
 
       {/* Stepper */}
       <div className="sa-stepper">
@@ -227,6 +249,23 @@ export default function SuperadminAltaTenant() {
       )}
 
       {error && <div className="sa-msg sa-msg--error">{error}</div>}
+
+      {avisoBienvenida && (
+        <div className="sa-msg sa-msg--warn">
+          <span className="sa-msg__titulo">
+            Tenant «{avisoBienvenida.tenantSlug}» creado — pero el email de bienvenida NO se ha enviado.
+          </span>
+          Copia este enlace y pásaselo tú al cliente para que se ponga la contraseña. No hay
+          reenvío automático.
+          {avisoBienvenida.passwordSetupUrl && (
+            <code className="sa-msg__enlace">{avisoBienvenida.passwordSetupUrl}</code>
+          )}
+          {avisoBienvenida.motivo && <small>Motivo: {avisoBienvenida.motivo}</small>}
+          <button className="sa-btn sa-btn--ghost" onClick={() => navigate("/superadmin")}>
+            Volver al dashboard
+          </button>
+        </div>
+      )}
       {success && (
         <div className="sa-msg sa-msg--success">
           {success}

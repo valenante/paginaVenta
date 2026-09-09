@@ -5,7 +5,8 @@ import { useLocale } from "../../../hooks/useLocale";
 import "./DiasPeriodo.css";
 
 export default function DiasPeriodo({ dias }) {
-  const { currencySymbol } = useLocale();
+  // El símbolo de moneda sale del restaurante, no del código (ver hooks/useLocale.js).
+  const { formatMoney } = useLocale();
   const [fechaDetalle, setFechaDetalle] = useState(null);
 
   return (
@@ -23,7 +24,7 @@ export default function DiasPeriodo({ dias }) {
             {/* DESKTOP */}
             <div className="dia-desktop">
               <span className="dia-total">
-                {d.total.toFixed(2)} {currencySymbol}
+                {formatMoney(d.total)}
               </span>
 
               <small className="dia-tickets">

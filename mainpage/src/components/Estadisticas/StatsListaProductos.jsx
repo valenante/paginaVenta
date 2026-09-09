@@ -6,7 +6,8 @@ import "./StatsListaProductos.css";
 const PER_PAGE = 15;
 
 const StatsListaProductos = ({ productosConStats, loading }) => {
-  const { currencySymbol } = useLocale();
+  // El símbolo de moneda sale del restaurante, no del código (ver hooks/useLocale.js).
+  const { formatMoney } = useLocale();
   const [page, setPage] = useState(1);
 
   // Reset página al cambiar productos
@@ -49,11 +50,11 @@ const StatsListaProductos = ({ productosConStats, loading }) => {
                   <div className="statlist-stat">
                     <span className="statlist-label">Ingresos</span>
                     <strong className="statlist-value statlist-money">
-                      {(p.totalIngresos ?? 0).toFixed(2)} {currencySymbol}
+                      {formatMoney(p.totalIngresos ?? 0)}
                     </strong>
                     {p.tieneDesglose && p.ingresosAdicionales > 0 && (
                       <span className="statlist-desglose">
-                        {(p.ingresosBase ?? 0).toFixed(2)} {currencySymbol} base + {(p.ingresosAdicionales ?? 0).toFixed(2)} {currencySymbol} adicionales
+                        {formatMoney(p.ingresosBase ?? 0)} base + {formatMoney(p.ingresosAdicionales ?? 0)} adicionales
                       </span>
                     )}
                   </div>

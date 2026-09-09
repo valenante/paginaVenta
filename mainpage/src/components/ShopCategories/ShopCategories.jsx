@@ -11,12 +11,14 @@ import "./ShopCategories.css";
 
 export default function ShopCategories({ category, type }) {
   const { products, fetchProducts, deleteProduct } = useShopCategorias();
-  const { currencySymbol } = useLocale();
+  const { formatMoney } = useLocale();
 
+  // Mismo contrato que el helper de módulo que había aquí: lo no numérico sigue
+  // saliendo como "-"; sólo cambia el símbolo, que ahora lo pone el tenant.
   const money = (n) => {
     const v = Number(n);
     if (!Number.isFinite(v)) return "-";
-    return `${v.toFixed(2)} ${currencySymbol}`;
+    return formatMoney(v);
   };
 
   const [editing, setEditing] = useState(null);

@@ -14,20 +14,26 @@ import { useFinanzasAnalyticsProveedor } from "../../../hooks/useFinanzas.js";
 import { useLocale } from "../../../hooks/useLocale";
 import "./ProveedorResumenTab.css";
 
+// ⚖️ D-449 · SIN FILTRO POR DEFECTO. Antes esto devolvia «los ultimos 12 meses HASTA HOY», y
+// una factura pagada con fecha de MAÑANA quedaba fuera por un dia: el bloque decia
+// «Gasto total 0,00 · 0 facturas» mientras la ficha de arriba, en la misma pantalla, decia
+// «Facturado 22,00». Dos cifras del mismo proveedor contradiciendose.
+//
+// ⚠️ «Sin filtro» son cadenas VACIAS, no fechas inventadas muy amplias: el backend
+// (`parseDateRange`, arreglado en el mismo lote) abre el rango por el lado que falte, y sigue
+// rechazando una fecha mal escrita. Ausente no es basura.
 function rangoPorDefecto() {
-  const hoy = new Date();
-  const desde = new Date(hoy.getFullYear(), hoy.getMonth() - 11, 1);
-  return {
-    desde: desde.toISOString().slice(0, 10),
-    hasta: hoy.toISOString().slice(0, 10),
-  };
+  return { desde: "", hasta: "" };
 }
 
 export default function ProveedorResumenTab() {
   const { proveedor, loadingProveedor } = useOutletContext();
   const { proveedorId } = useParams();
-  const { currencySymbol } = useLocale();
+  // El símbolo de moneda sale del restaurante, no del código (ver hooks/useLocale.js).
+  const { formatMoney, currencySymbol } = useLocale();
 
+  // Se mantiene el formato de miles/decimales que ya tenía esta pantalla (es-ES,
+  // "1.234,56"); aquí sólo cambia el símbolo. Por eso NO usa formatMoney.
   const eur = (n) =>
     `${Number(n || 0).toLocaleString("es-ES", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${currencySymbol}`;
 
@@ -153,7 +159,7 @@ export default function ProveedorResumenTab() {
             <span className="provDet-kpiLabel">Facturado</span>
             <span className="provDet-kpiValue">
               {Number.isFinite(stats.totalFacturado)
-                ? `${stats.totalFacturado.toFixed(2)} ${currencySymbol}`
+                ? formatMoney(stats.totalFacturado)
                 : "—"}
             </span>
           </div>
@@ -181,7 +187,13 @@ export default function ProveedorResumenTab() {
       {/* === Analytics enriquecido === */}
       <div className="card provDet-card provDet-card--full">
         <div className="provDet-analytics-head">
-          <h2 className="provDet-cardTitle">Analytics del periodo</h2>
+          {/* ⚖️ D-449 · el titulo dice la VERDAD sobre lo que se esta mirando. Antes decia
+              siempre «del periodo» aunque no hubiera periodo, y con el rango abierto por
+              defecto eso seria mentira. Una pantalla que se contradice a si misma es peor que
+              una incompleta: el usuario cree la mitad que no toca. */}
+          <h2 className="provDet-cardTitle">
+            {desde || hasta ? "Analytics del periodo" : "Analytics · todo el historico"}
+          </h2>
           <div className="provDet-analytics-filtros">
             <label>
               Desde

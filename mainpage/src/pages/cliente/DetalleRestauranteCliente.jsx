@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams, Navigate } from "react-router-dom";
 import { useClienteAuth } from "../../context/ClienteAuthContext";
-import { useLocale } from "../../hooks/useLocale";
 import {
   getDetalleRestauranteCliente,
   getResumenRestauranteCliente,
   getVisitasRestauranteCliente,
 } from "../../services/loyaltyService";
+import { useLocale } from "../../hooks/useLocale";
 import ClienteLayout from "./ClienteLayout";
 import RestaurantLogo from "./RestaurantLogo";
 import {
@@ -17,13 +17,15 @@ import {
 } from "./ExpedienteRestaurante";
 import "./cliente.css";
 
-const fmtMoney = (n, cs = "€") => `${Number(n || 0).toFixed(2).replace(".", ",")} ${cs}`;
+// El símbolo llega por parámetro: es una función de módulo y no puede llamar a hooks.
+const fmtMoney = (n, sym) => `${Number(n || 0).toFixed(2).replace(".", ",")} ${sym}`;
 const DIA_LABEL = ["D", "L", "M", "X", "J", "V", "S"];
 const VISITAS_PAGE_SIZE = 10;
 
 export default function DetalleRestauranteCliente() {
   const { slug } = useParams();
   const { cliente, loading: loadingAuth } = useClienteAuth();
+  // El símbolo de moneda sale del restaurante, no del código (ver hooks/useLocale.js).
   const { currencySymbol } = useLocale();
   const [data, setData] = useState(null);
   const [resumen, setResumen] = useState(null);

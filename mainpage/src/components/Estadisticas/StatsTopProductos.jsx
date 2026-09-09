@@ -1,12 +1,13 @@
 // src/pages/Estadisticas/components/StatsTopProductos.jsx
 import React, { useState, useMemo, useEffect } from "react";
-import "./StatsTopProductos.css";
 import { useLocale } from "../../hooks/useLocale";
+import "./StatsTopProductos.css";
 
 const PER_PAGE = 10;
 
 const StatsTopProductos = ({ topProductos, totalIngresosCategoria, productosConStats }) => {
-  const { currencySymbol } = useLocale();
+  // El símbolo de moneda sale del restaurante, no del código (ver hooks/useLocale.js).
+  const { formatMoney } = useLocale();
   const [modo, setModo] = useState("ingresos");
   const [page, setPage] = useState(1);
 
@@ -76,10 +77,10 @@ const StatsTopProductos = ({ topProductos, totalIngresosCategoria, productosConS
                   {p.nombre}
                 </span>
                 <span className="toppro-item-meta">
-                  {p.totalCantidad} uds · {p.totalIngresos.toFixed(2)} {currencySymbol}
+                  {p.totalCantidad} uds · {formatMoney(p.totalIngresos)}
                   {p.tieneDesglose && p.ingresosAdicionales > 0 && (
                     <span className="toppro-desglose">
-                      ({(p.ingresosBase ?? 0).toFixed(2)} {currencySymbol} + {(p.ingresosAdicionales ?? 0).toFixed(2)} {currencySymbol} adic.)
+                      ({formatMoney(p.ingresosBase ?? 0)} + {formatMoney(p.ingresosAdicionales ?? 0)} adic.)
                     </span>
                   )}
                 </span>

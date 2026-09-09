@@ -11,7 +11,6 @@ const fmtHora = (d) => {
   if (!d) return "—";
   try { return new Date(d).toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" }); } catch { return "—"; }
 };
-const money = (n, sym = "€") => n != null ? `${Number(n).toFixed(2)}${sym}` : "—";
 // Franja horaria de una caja: "12:06–00:51" / "12:06–abierta"
 const fmtFranja = (c) => `${fmtHora(c?.fechaApertura)}–${c?.estado === "cerrada" ? fmtHora(c?.fechaCierre) : "abierta"}`;
 const to2 = (n) => Math.round(n * 100) / 100;
@@ -29,10 +28,9 @@ const TIPO_LABEL = {
 };
 
 export default function DetalleCajaDia({ fecha, autoOpen = false, onClose }) {
-  const { currencySymbol } = useLocale();
-  // ⚠️ `m` es EL FORMATEADOR DE DINERO (viene de main/i18n). Los movimientos se
-  // llaman `mov` / `mv` en todo el fichero: no reutilizar `m` para un movimiento.
-  const m = (n) => money(n, currencySymbol);
+  // El símbolo de moneda sale del restaurante, no del código (ver hooks/useLocale.js).
+  const { formatMoney } = useLocale();
+  const money = (n) => n != null ? formatMoney(n) : "—";
   const [open, setOpen] = useState(autoOpen);
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -63,13 +61,13 @@ export default function DetalleCajaDia({ fecha, autoOpen = false, onClose }) {
   const arqueoVista = multiCaja ? cajaSel?.arqueo : data?.arqueo;
   const movsTodos = Array.isArray(data?.movimientos) ? data.movimientos : [];
   const movsVista = multiCaja
-    ? movsTodos.filter(mv => String(mv.cajaId) === String(cajaSel?._id))
+    ? movsTodos.filter(m => String(m.cajaId) === String(cajaSel?._id))
     : movsTodos;
   const resumenVista = multiCaja
-    ? movsVista.reduce((acc, mv) => {
-        if (!acc[mv.tipo]) acc[mv.tipo] = { count: 0, total: 0 };
-        acc[mv.tipo].count++;
-        acc[mv.tipo].total = to2(acc[mv.tipo].total + Math.abs(mv.importe));
+    ? movsVista.reduce((acc, m) => {
+        if (!acc[m.tipo]) acc[m.tipo] = { count: 0, total: 0 };
+        acc[m.tipo].count++;
+        acc[m.tipo].total = to2(acc[m.tipo].total + Math.abs(m.importe));
         return acc;
       }, {})
     : (data?.resumenMovimientos || {});
@@ -102,13 +100,13 @@ export default function DetalleCajaDia({ fecha, autoOpen = false, onClose }) {
 
   useEffect(() => {
     if (!open || !fecha) return;
-    let vivo = true;
+    let m = true;
     setLoading(true);
     api.get("/caja/detalle-dia", { params: { fecha } })
-      .then(({ data: d }) => { if (vivo) { setData(d?.data || d); setCajaSelId(null); } })
-      .catch(() => { if (vivo) setData(null); })
-      .finally(() => { if (vivo) setLoading(false); });
-    return () => { vivo = false; };
+      .then(({ data: d }) => { if (m) { setData(d?.data || d); setCajaSelId(null); } })
+      .catch(() => { if (m) setData(null); })
+      .finally(() => { if (m) setLoading(false); });
+    return () => { m = false; };
   }, [open, fecha]);
 
   useEffect(() => {
@@ -185,7 +183,7 @@ export default function DetalleCajaDia({ fecha, autoOpen = false, onClose }) {
                         {Object.entries(data.resumenMovimientos).map(([tipo, r]) => (
                           <div key={tipo} className="dcj__resumen-item dcj__resumen-item--dia">
                             <span>{TIPO_LABEL[tipo] || tipo}</span>
-                            <strong>{r.count}× — {m(r.total)}</strong>
+                            <strong>{r.count}× — {money(r.total)}</strong>
                           </div>
                         ))}
                       </div>
@@ -217,11 +215,11 @@ export default function DetalleCajaDia({ fecha, autoOpen = false, onClose }) {
               {/* Arqueo */}
               {arqueoVista?.efectivoContado != null && (
                 <div className="dcj__arqueo">
-                  <div><span className="dcj__label">Efectivo esperado</span><strong>{m(arqueoVista.efectivoEsperado)}</strong></div>
-                  <div><span className="dcj__label">Efectivo contado</span><strong>{m(arqueoVista.efectivoContado)}</strong></div>
+                  <div><span className="dcj__label">Efectivo esperado</span><strong>{money(arqueoVista.efectivoEsperado)}</strong></div>
+                  <div><span className="dcj__label">Efectivo contado</span><strong>{money(arqueoVista.efectivoContado)}</strong></div>
                   <div className={`dcj__diferencia ${arqueoVista.diferencia < 0 ? "dcj__diferencia--neg" : arqueoVista.diferencia > 0 ? "dcj__diferencia--pos" : ""}`}>
                     <span className="dcj__label">Diferencia</span>
-                    <strong>{arqueoVista.diferencia > 0 ? "+" : ""}{m(arqueoVista.diferencia)}</strong>
+                    <strong>{arqueoVista.diferencia > 0 ? "+" : ""}{money(arqueoVista.diferencia)}</strong>
                   </div>
                 </div>
               )}
@@ -236,7 +234,7 @@ export default function DetalleCajaDia({ fecha, autoOpen = false, onClose }) {
                     {Object.entries(resumenVista).map(([tipo, r]) => (
                       <div key={tipo} className="dcj__resumen-item">
                         <span>{TIPO_LABEL[tipo] || tipo}</span>
-                        <strong>{r.count}× — {m(r.total)}</strong>
+                        <strong>{r.count}× — {money(r.total)}</strong>
                       </div>
                     ))}
                   </div>
@@ -259,14 +257,14 @@ export default function DetalleCajaDia({ fecha, autoOpen = false, onClose }) {
                       </tr>
                     </thead>
                     <tbody>
-                      {movsVista.map((mov, i) => (
+                      {movsVista.map((m, i) => (
                         <tr key={i}>
-                          <td>{mov.seq}</td>
-                          <td>{fmtHora(mov.hora)}</td>
-                          <td><span className={`dcj__tipo dcj__tipo--${mov.tipo}`}>{TIPO_LABEL[mov.tipo] || mov.tipo}</span></td>
-                          <td className={mov.importe < 0 ? "dcj__neg" : ""}>{m(mov.importe)}</td>
-                          <td>{mov.usuario}</td>
-                          <td className="dcj__ref">{mov.referencia || mov.motivo || "—"}</td>
+                          <td>{m.seq}</td>
+                          <td>{fmtHora(m.hora)}</td>
+                          <td><span className={`dcj__tipo dcj__tipo--${m.tipo}`}>{TIPO_LABEL[m.tipo] || m.tipo}</span></td>
+                          <td className={m.importe < 0 ? "dcj__neg" : ""}>{money(m.importe)}</td>
+                          <td>{m.usuario}</td>
+                          <td className="dcj__ref">{m.referencia || m.motivo || "—"}</td>
                         </tr>
                       ))}
                     </tbody>

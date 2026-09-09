@@ -2,9 +2,8 @@ import React, { useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import api from "../../utils/api";
 import { useTenant } from "../../context/TenantContext";
-import Portal from "../ui/Portal";
-import { useAutoFocus } from "../../hooks/useAutoFocus";
 import { useLocale } from "../../hooks/useLocale";
+import Portal from "../ui/Portal";
 import "./FacturaProveedorModal.css";
 
 const IVA_OPTIONS = [
@@ -17,6 +16,8 @@ const IVA_OPTIONS = [
 export default function FacturaProveedorModal({ onClose, onSaved }) {
   const { proveedorId } = useParams();
   const { tenantId } = useTenant();
+  // El símbolo de moneda sale del restaurante, no del código (ver hooks/useLocale.js).
+  const { formatMoney } = useLocale();
 
   const headersTenant = useMemo(
     () => (tenantId ? { headers: { "x-tenant-id": tenantId } } : {}),
@@ -36,9 +37,6 @@ export default function FacturaProveedorModal({ onClose, onSaved }) {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [archivo, setArchivo] = useState(null);
-
-  const autoFocusRef = useAutoFocus();
-  const { currencySymbol } = useLocale();
 
   const set = (k, v) => setForm((s) => ({ ...s, [k]: v }));
 
@@ -144,10 +142,10 @@ export default function FacturaProveedorModal({ onClose, onSaved }) {
                 <div className="facturaProvModal-field">
                   <label>Nº Factura *</label>
                   <input
-                    ref={autoFocusRef}
                     value={form.numeroFactura}
                     onChange={(e) => set("numeroFactura", e.target.value)}
                     placeholder="F-2026/001"
+                    autoFocus
                   />
                 </div>
 
@@ -206,7 +204,7 @@ export default function FacturaProveedorModal({ onClose, onSaved }) {
                   <label>Total</label>
                   <input
                     type="text"
-                    value={subtotalNum > 0 ? `${totalCalc.toFixed(2)} ${currencySymbol}` : "—"}
+                    value={subtotalNum > 0 ? formatMoney(totalCalc) : "—"}
                     readOnly
                     style={{ background: "var(--color-fondo-claro, #f3f4f6)", fontWeight: 700 }}
                   />

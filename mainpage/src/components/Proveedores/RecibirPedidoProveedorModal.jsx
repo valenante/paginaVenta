@@ -139,7 +139,7 @@ export default function RecibirPedidoProveedorModal({
                                         <tr key={idx}>
                                             <td className="ppRec-name">
                                                 {l.nombre}
-                                                <div style={{ fontSize: "0.7rem", opacity: 0.6 }}>{l.unidad || ""}</div>
+                                                <div className="ppRec-unidad">{l.unidad || ""}</div>
                                             </td>
                                             <td>{l.cantidadPedida}</td>
                                             <td>

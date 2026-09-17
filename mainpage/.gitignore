@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# D-642 · registro local del aviso ALEF-DEV-DESTINO-FUERA (nunca sale de tu máquina)
+.alef-destinos-fuera.log

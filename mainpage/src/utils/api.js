@@ -21,7 +21,16 @@ const API_BASE_URL = import.meta.env.VITE_API_URL;
   try {
     if (typeof window === "undefined") return;
     const host = window.location.hostname || "";
-    const esEntornoDePruebas = host.startsWith("staging-") || host.includes("-staging.");
+    // ⭐ D-642 (17-sep) · TU PORTÁTIL TAMBIÉN ES UN ENTORNO DE PRUEBAS.
+    // Antes esto sólo miraba `staging-*`, así que un panel abierto en `localhost` contra la API de
+    // producción no gritaba nada — y el panel escribe precios, carta y configuración. Es el mismo
+    // defecto de D-84 en el otro sitio donde la gente trabaja de verdad. Mismo predicado de
+    // «esta máquina» que `vite.config.js`, `alef/carta/src/utils/destinoDeProduccion.js` y el botón
+    // «Panel» del TPV: cuatro sitios con el mismo significado tienen que decir lo mismo (Art. 6).
+    const esMaquinaLocal =
+      /^(localhost(\.localdomain)?|0\.0\.0\.0|127\.\d{1,3}\.\d{1,3}\.\d{1,3}|\[?::1\]?)$/i.test(host);
+    const esEntornoDePruebas =
+      host.startsWith("staging-") || host.includes("-staging.") || esMaquinaLocal;
     const apuntaAProduccion = /(^|\/\/)api\.softalef\.com/.test(String(API_BASE_URL || ""));
     if (!esEntornoDePruebas || !apuntaAProduccion) return;
 
@@ -40,7 +49,10 @@ const API_BASE_URL = import.meta.env.VITE_API_URL;
     // eslint-disable-next-line no-console
     console.error(
       "[ALEF][D-84] PANEL_APUNTA_A_PRODUCCION — este panel se sirve en %s pero su API es %s. " +
-      "Todo lo que guardes aquí se escribirá en PRODUCCIÓN. Reconstruye con `npm run build:staging`.",
+      "Todo lo que guardes aquí se escribirá en PRODUCCIÓN. " +
+      (esMaquinaLocal
+        ? "Apunta VITE_API_URL a tu API local (o usa el proxy de desarrollo, que ya va a localhost)."
+        : "Reconstruye con `npm run build:staging`."),
       host, API_BASE_URL
     );
 
@@ -48,7 +60,9 @@ const API_BASE_URL = import.meta.env.VITE_API_URL;
     aviso.setAttribute("data-alef-guard", "panel-apunta-a-produccion");
     aviso.textContent =
       "⚠️ ESTE PANEL ESCRIBE EN PRODUCCIÓN (" + API_BASE_URL + "). No guardes nada. " +
-      "Build incorrecto: usa `npm run build:staging`.";
+      (esMaquinaLocal
+        ? "Lo estás sirviendo desde tu máquina: apunta VITE_API_URL a tu API local."
+        : "Build incorrecto: usa `npm run build:staging`.");
     aviso.className = "alef-guard-entorno";
     const pintar = () => document.body && document.body.prepend(aviso);
     if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", pintar);

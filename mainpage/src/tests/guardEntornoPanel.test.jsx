@@ -81,4 +81,40 @@ describe("D-84 · guard de entorno del panel", () => {
     });
     expect(r.banner, "sólo la API de producción real dispara el aviso").toBeNull();
   });
+  // ── D-642 · TU PORTÁTIL TAMBIÉN ES UN ENTORNO DE PRUEBAS (17-sep) ────────────────────────
+  // El guard sólo consideraba `staging-*`. Un panel abierto en `localhost` contra la API de
+  // producción **no gritaba nada**, y el panel escribe precios, carta y configuración. Es el
+  // mismo defecto de D-84, en el otro sitio donde la gente trabaja de verdad.
+  // 🟥 G5 y G6 nacieron ROJOS el 17-sep con el defecto dentro.
+
+  it("G5 · panel en localhost + API de PRODUCCIÓN → grita y se ve", async () => {
+    const r = await arrancarPanel({ hostname: "localhost", apiUrl: "https://api.softalef.com/api" });
+    expect(r.marca?.code, "en tu máquina también tiene que dejar marca").toBe("PANEL_APUNTA_A_PRODUCCION");
+    expect(r.banner, "y el aviso VISIBLE, que es lo único que se mira antes de pulsar Guardar").toBeTruthy();
+  });
+
+  it("G6 · ídem con 127.0.0.1, que es la misma máquina con otro nombre", async () => {
+    const r = await arrancarPanel({ hostname: "127.0.0.1", apiUrl: "https://api.softalef.com/api" });
+    expect(r.marca?.code).toBe("PANEL_APUNTA_A_PRODUCCION");
+    expect(r.banner).toBeTruthy();
+  });
+
+  it("G7 · CONTROL · panel en localhost contra tu API local → no molesta", async () => {
+    const r = await arrancarPanel({ hostname: "localhost", apiUrl: "http://localhost:3000/api" });
+    expect(r.marca, "un guard que salta con la configuración buena se desactiva en una semana").toBeFalsy();
+    expect(r.banner).toBeNull();
+  });
+
+  it("G8 · LÍMITE DECLARADO · con ruta relativa el guard NO puede saberlo, y quien protege es el proxy", async () => {
+    // ⚠️ Esto NO es un descuido: es el caso real de D-642. Si `VITE_API_URL=/api`, el navegador
+    // no sabe a dónde va esa petición — lo decide el proxy de `vite.config.js`. Por eso el arreglo
+    // de D-642 tiene DOS capas y ésta sólo cubre una:
+    //   · capa 1 (compilación): el proxy apunta a tu máquina por defecto y GRITA si lo apuntas fuera
+    //     (`vite.config.js`, código `ALEF-DEV-DESTINO-FUERA`, gemelo de tpv/carta);
+    //   · capa 2 (ejecución): este guard, para builds con URL ABSOLUTA — el caso `npm run preview`.
+    // Este caso fija por escrito que la capa 2 no cubre la ruta relativa, para que nadie lea el
+    // verde de G5/G6 como «el panel ya no puede tocar producción». [CONTRATO, no red causal.]
+    const r = await arrancarPanel({ hostname: "localhost", apiUrl: "/api" });
+    expect(r.marca, "con ruta relativa no hay nada que mirar desde el navegador").toBeFalsy();
+  });
 });

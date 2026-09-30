@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { leerQuery, quitarDeQuery } from "../utils/parametrosDeVuelta";
 import TiemposCocina from "./TiemposCocina/TiemposCocina";
 import DayReplay from "./DayReplay/DayReplay";
 import AutomatizacionesPage from "./AutomatizacionesPage";
@@ -39,7 +40,7 @@ const MODULES = [
     key: "google-reviews",
     icon: FiStar,
     label: "Google Reviews",
-    description: "Gestiona reseñas de Google Business con respuestas automáticas por IA.",
+    description: "Reseñas de Google Business: la IA prepara cada respuesta y tú la publicas.",
     component: GoogleReviewsPage,
   },
   {
@@ -79,8 +80,16 @@ const MODULES = [
   },
 ];
 
+// `?modulo=<key>` (p. ej. al volver del OAuth) abre ese módulo. Uno inventado no necesita filtro:
+// el render de abajo sólo abre claves de MODULES con pantalla y si no pinta la rejilla (el
+// mutante que quitaba el filtro sobrevivía ⇒ sobraba).
+const moduloDeLaUrl = () => leerQuery("modulo");
+
 export default function OtrosPage() {
-  const [activeModule, setActiveModule] = useState(null);
+  const [activeModule, setActiveModule] = useState(moduloDeLaUrl);
+
+  // Se quita al montar (válido o no): el parámetro ya se ha usado.
+  useEffect(() => { quitarDeQuery(["modulo"]); }, []);
 
   if (activeModule) {
     const mod = MODULES.find((m) => m.key === activeModule);

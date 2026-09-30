@@ -599,3 +599,13 @@
 .FP-crosslinks a:hover {
   color: #93cbff;
 }
+
+/* ─── Variantes que sustituyen estilos inline (AutopilotIA.jsx, 30-sep) ─── */
+.FP-feature-card--oscura {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(148, 163, 184, 0.15);
+}
+.FP-feature-card--oscura h3 { color: #fff; }
+.FP-feature-card--oscura p { color: rgba(226, 232, 240, 0.75); }
+.FP-feature-card--oscura li { color: rgba(226, 232, 240, 0.7); }
+.FP-pain-card--primario { border-left-color: var(--color-primario); }

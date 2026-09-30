@@ -14,7 +14,7 @@ import "./CartaQR.css";
 const faqs = [
   {
     q: "¿Qué quiere decir que el restaurante piensa solo?",
-    a: "Significa que ALEF vigila tu negocio las 24 horas: analiza ventas, detecta problemas de stock, responde reseñas de Google, publica en Instagram, protege tus márgenes y te avisa antes de que pase nada malo. Tú decides qué se hace solo y qué necesita tu aprobación.",
+    a: "Significa que ALEF vigila tu negocio las 24 horas: analiza ventas, detecta problemas de stock, te prepara las respuestas a las reseñas de Google, publica en Instagram, protege tus márgenes y te avisa antes de que pase nada malo. Tú decides qué se hace solo y qué necesita tu aprobación.",
   },
   {
     q: "¿El copilot tiene acceso a mis datos reales?",
@@ -29,8 +29,8 @@ const faqs = [
     a: "Por defecto no. ALEF genera un borrador con texto e imagen, y tú lo revisas antes de publicar. Si lo prefieres, puedes activar la publicación automática para que salga sin tu intervención.",
   },
   {
-    q: "¿Responde a las reseñas de Google automáticamente?",
-    a: "Las reseñas positivas (4-5 estrellas) se responden automáticamente con un mensaje personalizado. Las negativas (1-2 estrellas) se guardan como borrador para que tú las revises antes de publicar. Las reseñas negativas también te llegan como notificación.",
+    q: "¿Cómo funcionan las respuestas a las reseñas de Google?",
+    a: "La IA te prepara la respuesta de cada reseña; tú la revisas y la publicas con un clic. Si una reseña tiene 3 estrellas o menos, te llega además un aviso en la app de ALEF.",
   },
   {
     q: "¿Qué es el menu engineering automático?",
@@ -86,8 +86,8 @@ export default function AutopilotIA() {
             Tú decides cuánto.
           </h1>
           <p className="FP-hero-sub">
-            ALEF vigila tu negocio las 24 horas: analiza ventas, responde
-            reseñas, publica en Instagram, protege tus márgenes y te avisa
+            ALEF vigila tu negocio las 24 horas: analiza ventas, te prepara
+            las respuestas a las reseñas, publica en Instagram, protege tus márgenes y te avisa
             antes de que pase nada. Y si tienes una duda, le preguntas
             como si fuera tu socio.
           </p>
@@ -157,65 +157,64 @@ export default function AutopilotIA() {
           </div>
 
           <div className="FP-features">
-            <div className="FP-feature-card" style={{ background: "rgba(255,255,255,0.04)", borderColor: "rgba(148,163,184,0.15)" }}>
+            <div className="FP-feature-card FP-feature-card--oscura">
               <div className="FP-feature-icon">&#128241;</div>
-              <h3 style={{ color: "#fff" }}>Instagram se publica solo</h3>
-              <p style={{ color: "rgba(226,232,240,0.75)" }}>
+              <h3>Instagram se publica solo</h3>
+              <p>
                 ALEF genera posts con fotos de tus platos y textos
                 adaptados al tono de tu restaurante. Tú lo revisas y apruebas,
                 o dejas que se publique automáticamente.
               </p>
               <ul>
-                <li style={{ color: "rgba(226,232,240,0.7)" }}>Elige qué publicar según tus platos más vendidos</li>
-                <li style={{ color: "rgba(226,232,240,0.7)" }}>Programa horario de publicación</li>
-                <li style={{ color: "rgba(226,232,240,0.7)" }}>Usa las fotos de tu galería, no genéricas</li>
+                <li>Elige qué publicar según tus platos más vendidos</li>
+                <li>Programa horario de publicación</li>
+                <li>Usa las fotos de tu galería, no genéricas</li>
               </ul>
             </div>
 
-            <div className="FP-feature-card" style={{ background: "rgba(255,255,255,0.04)", borderColor: "rgba(148,163,184,0.15)" }}>
+            <div className="FP-feature-card FP-feature-card--oscura">
               <div className="FP-feature-icon">&#11088;</div>
-              <h3 style={{ color: "#fff" }}>Google Reviews se responden solas</h3>
-              <p style={{ color: "rgba(226,232,240,0.75)" }}>
-                Cada reseña nueva se responde automáticamente con un
-                mensaje personalizado. Las negativas te llegan como
-                notificación para que las revises antes de publicar.
+              <h3>Respuestas a reseñas de Google, preparadas por IA</h3>
+              <p>
+                La IA te prepara la respuesta de cada reseña; tú la revisas
+                y la publicas con un clic.
               </p>
               <ul>
-                <li style={{ color: "rgba(226,232,240,0.7)" }}>Reseñas positivas: respuesta automática y cálida</li>
-                <li style={{ color: "rgba(226,232,240,0.7)" }}>Reseñas negativas: borrador pendiente de tu aprobación</li>
-                <li style={{ color: "rgba(226,232,240,0.7)" }}>Alerta inmediata si recibes 1-2 estrellas</li>
+                <li>Respuesta personalizada según la valoración del cliente</li>
+                <li>Tú decides qué se publica: nada sale sin tu clic</li>
+                <li>Aviso en la app de ALEF si recibes 3 estrellas o menos</li>
               </ul>
             </div>
 
-            <div className="FP-feature-card" style={{ background: "rgba(255,255,255,0.04)", borderColor: "rgba(148,163,184,0.15)" }}>
+            <div className="FP-feature-card FP-feature-card--oscura">
               <div className="FP-feature-icon">&#127775;</div>
-              <h3 style={{ color: "#fff" }}>Tu carta se optimiza cada semana</h3>
-              <p style={{ color: "rgba(226,232,240,0.75)" }}>
+              <h3>Tu carta se optimiza cada semana</h3>
+              <p>
                 Cada domingo, ALEF analiza qué platos venden bien y dan
                 buen margen, cuáles no funcionan, y cuáles tienen
                 potencial. Destaca las estrellas automáticamente y te
                 propone eliminar lo que no rinde.
               </p>
               <ul>
-                <li style={{ color: "rgba(226,232,240,0.7)" }}>Marca automáticamente los platos estrella en tu carta</li>
-                <li style={{ color: "rgba(226,232,240,0.7)" }}>Te propone quitar los que no venden ni dan margen</li>
-                <li style={{ color: "rgba(226,232,240,0.7)" }}>Análisis basado en ventas reales de las últimas 4 semanas</li>
+                <li>Marca automáticamente los platos estrella en tu carta</li>
+                <li>Te propone quitar los que no venden ni dan margen</li>
+                <li>Análisis basado en ventas reales de las últimas 4 semanas</li>
               </ul>
             </div>
 
-            <div className="FP-feature-card" style={{ background: "rgba(255,255,255,0.04)", borderColor: "rgba(148,163,184,0.15)" }}>
+            <div className="FP-feature-card FP-feature-card--oscura">
               <div className="FP-feature-icon">&#128232;</div>
-              <h3 style={{ color: "#fff" }}>Resúmenes que llegan solos</h3>
-              <p style={{ color: "rgba(226,232,240,0.75)" }}>
+              <h3>Resúmenes que llegan solos</h3>
+              <p>
                 Cada noche recibes un email con lo que pasó hoy:
                 ventas, ticket medio, comensales, plato estrella del día.
                 Cada lunes, un análisis semanal con comparativa.
                 Sin buscar nada, sin abrir ningún panel.
               </p>
               <ul>
-                <li style={{ color: "rgba(226,232,240,0.7)" }}>Resumen diario automático por email</li>
-                <li style={{ color: "rgba(226,232,240,0.7)" }}>Análisis semanal con comparativa y tendencias</li>
-                <li style={{ color: "rgba(226,232,240,0.7)" }}>Alertas solo cuando algo necesita tu atención</li>
+                <li>Resumen diario automático por email</li>
+                <li>Análisis semanal con comparativa y tendencias</li>
+                <li>Alertas solo cuando algo necesita tu atención</li>
               </ul>
             </div>
           </div>
@@ -236,28 +235,28 @@ export default function AutopilotIA() {
           </div>
 
           <div className="FP-pain-grid">
-            <div className="FP-pain-card" style={{ borderLeftColor: "var(--color-primario)" }}>
+            <div className="FP-pain-card FP-pain-card--primario">
               <strong>"¿Por qué vendí menos esta semana?"</strong>
               <span>
                 Compara con la semana anterior, cruza con el clima,
                 revisa las reservas y te dice exactamente qué pasó.
               </span>
             </div>
-            <div className="FP-pain-card" style={{ borderLeftColor: "var(--color-primario)" }}>
+            <div className="FP-pain-card FP-pain-card--primario">
               <strong>"¿Qué plato me da más margen?"</strong>
               <span>
                 Te da el ranking completo: unidades vendidas, coste real,
                 margen por plato. Con datos de las últimas 4 semanas.
               </span>
             </div>
-            <div className="FP-pain-card" style={{ borderLeftColor: "var(--color-primario)" }}>
+            <div className="FP-pain-card FP-pain-card--primario">
               <strong>"Sube las croquetas a 9 euros"</strong>
               <span>
                 Te muestra el impacto en el margen, te pide
                 confirmación y lo aplica al instante. Todo en una frase.
               </span>
             </div>
-            <div className="FP-pain-card" style={{ borderLeftColor: "var(--color-primario)" }}>
+            <div className="FP-pain-card FP-pain-card--primario">
               <strong>"¿Cuántos comensales espero el viernes?"</strong>
               <span>
                 Mira el histórico de los últimos viernes, las reservas
@@ -300,7 +299,7 @@ export default function AutopilotIA() {
               </tr>
               <tr>
                 <td>Respuesta a reseñas Google</td>
-                <td className="FP-compare-alef FP-check">Automático</td>
+                <td className="FP-compare-alef FP-check">La IA la prepara, tú publicas</td>
                 <td className="FP-cross">No</td>
                 <td className="FP-cross">Tú a mano</td>
               </tr>

@@ -44,8 +44,8 @@ export default function PostAutomatizacion() {
         <p>Cruzar datos de ventas con datos de coste para clasificar platos en 4 categorías: estrellas (venden mucho + buen margen), caballos (venden mucho + mal margen), incógnitas (venden poco + buen margen) y perros (venden poco + mal margen).</p>
         <p><strong>Impacto real:</strong> decisiones de carta basadas en datos, no en intuición. Saber qué platos promocionar, cuáles subir de precio y cuáles eliminar.</p>
 
-        <h3>4. Respuestas automáticas a reseñas de Google</h3>
-        <p>Las reseñas positivas (4-5 estrellas) se pueden responder automáticamente con un mensaje personalizado que menciona detalles del restaurante. Las negativas se guardan como borrador para revisión humana.</p>
+        <h3>4. Respuestas a reseñas de Google preparadas por IA</h3>
+        <p>La IA te prepara la respuesta de cada reseña; tú la revisas y la publicas con un clic. La respuesta es personalizada y menciona detalles del restaurante.</p>
         <p><strong>Impacto real:</strong> mantener un perfil de Google activo sin dedicarle tiempo. Las reseñas respondidas mejoran el posicionamiento local.</p>
 
         <h3>5. Publicación automática en Instagram</h3>
@@ -77,7 +77,7 @@ export default function PostAutomatizacion() {
         <ul>
           <li>Registrar facturas no te añade valor → automatiza.</li>
           <li>Contar stock no te añade valor → automatiza.</li>
-          <li>Responder reseñas de 5 estrellas no te añade valor → automatiza.</li>
+          <li>Redactar desde cero la respuesta a cada reseña no te añade valor → deja que la IA la prepare y revísala antes de publicar.</li>
           <li>Decidir el menú de la semana SÍ te añade valor → que la IA te sugiera, pero decides tú.</li>
           <li>Hablar con un cliente insatisfecho SÍ te añade valor → que la IA prepare el borrador, pero mandas tú.</li>
         </ul>

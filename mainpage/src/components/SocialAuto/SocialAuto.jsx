@@ -18,7 +18,7 @@ export default function SocialAuto() {
             <h3 className="Social-card-title">Tu Instagram se mantiene activo sin que nadie toque el móvil</h3>
             <ul className="Social-card-list">
               <li>Genera posts con fotos de tu carta y textos profesionales</li>
-              <li>Publica automáticamente según tu calendario</li>
+              <li>Se publica solo según tu calendario si tú quieres, o revisándolo antes</li>
               <li>Adapta el tono y estilo a tu marca</li>
             </ul>
             <a
@@ -37,11 +37,10 @@ export default function SocialAuto() {
               <span className="Social-card-icon">⭐</span>
               <span className="Social-card-badge Social-card-badge--green">Reseñas de Google</span>
             </div>
-            <h3 className="Social-card-title">Cada reseña respondida automáticamente con el tono adecuado</h3>
+            <h3 className="Social-card-title">La IA te prepara la respuesta de cada reseña; tú la revisas y la publicas con un clic.</h3>
             <ul className="Social-card-list">
-              <li>Respuestas personalizadas según la valoración del cliente</li>
-              <li>Las reseñas negativas generan alerta inmediata</li>
-              <li>Restaurantes con reseñas respondidas suben un 15% en visibilidad</li>
+              <li>Respuestas personalizadas según la valoración del cliente, con el tono adecuado</li>
+              <li>Aviso en la app de ALEF cuando llega una reseña de 3 estrellas o menos</li>
             </ul>
           </div>
 

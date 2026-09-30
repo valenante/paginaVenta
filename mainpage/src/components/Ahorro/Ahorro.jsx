@@ -24,7 +24,7 @@ export default function Ahorro() {
     {
       titulo: "Horas en tareas que se hacen solas",
       antes: "Cerrar caja, cuadrar turnos, revisar stock, publicar en redes, responder reseñas. Todo manual, todo disperso. 2-3 horas diarias que no dedicas a tu negocio.",
-      conAlef: "Cierre de caja automático. Stock que se controla solo. Instagram que se publica solo. Reseñas respondidas automáticamente. Tu tiempo vuelve a ser tuyo.",
+      conAlef: "Cierre de caja automático. Stock que se controla solo. Instagram que se publica solo. Respuestas a reseñas que la IA te deja preparadas: tú las revisas y las publicas con un clic. Tu tiempo vuelve a ser tuyo.",
     },
   ];
   return (

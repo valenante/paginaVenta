@@ -9,6 +9,7 @@ import AlergenosSelector from "./AlergenosSelector";
 import { sanearAlergenos } from "../../constants/alergenos";
 import { ProductosContext } from "../../context/ProductosContext";
 import { toInputText, toNumOrNull } from "../../utils/numeroInput";
+import { formatCantidad } from "../../utils/stockFormat";
 
 const capitalizeClave = (s) => {
   const v = String(s || "").trim();
@@ -121,10 +122,48 @@ const EditProduct = ({
   product,
   onSave,
   onCancel,
-  ingredientesStock = [],
+  ingredientesStock: ingredientesIniciales,
 }) => {
   const { currencySymbol } = useLocale();
   const { user } = useAuth();
+  const [ingredientesCargados, setIngredientesCargados] = useState([]);
+  const [estadoIngredientes, setEstadoIngredientes] = useState("cargando");
+  const [reintentoIngredientes, setReintentoIngredientes] = useState(0);
+  const tenantIngredientes = user?.tenantSlug || user?.tenantId;
+  const ingredientesStock = ingredientesIniciales ?? ingredientesCargados;
+
+  // Los dos padres del editor no pasan ingredientes. Cargar todo el catálogo:
+  // la API pagina a 12 por defecto y limita cada página a 50.
+  useEffect(() => {
+    if (ingredientesIniciales != null) {
+      setEstadoIngredientes("listo");
+      return;
+    }
+    let cancelado = false;
+    setIngredientesCargados([]);
+    setEstadoIngredientes("cargando");
+    const cargar = async () => {
+      try {
+        const ingredientes = [];
+        let page = 1;
+        let totalPages = 1;
+        do {
+          const { data } = await api.get("/stock/ingredientes", { params: { page, limit: 50 } });
+          if (cancelado) return;
+          if (!Array.isArray(data?.ingredientes)) throw new Error("Respuesta de ingredientes inválida");
+          ingredientes.push(...data.ingredientes);
+          totalPages = Number(data.totalPages) || 1;
+          page += 1;
+        } while (page <= totalPages);
+        setIngredientesCargados(ingredientes);
+        setEstadoIngredientes("listo");
+      } catch {
+        if (!cancelado) setEstadoIngredientes("error");
+      }
+    };
+    cargar();
+    return () => { cancelado = true; };
+  }, [ingredientesIniciales, tenantIngredientes, reintentoIngredientes]);
   const productosCtx = useContext(ProductosContext);
   const productosDisponibles = productosCtx?.productos || [];
   const cargarProductosCatalogo = productosCtx?.cargarProductos;
@@ -1273,6 +1312,12 @@ const EditProduct = ({
               cuando se sirve.
             </p>
 
+            {estadoIngredientes === "error" && (
+              <p role="alert">
+                No se pudieron cargar los ingredientes del stock.
+                {" "}<button type="button" onClick={() => setReintentoIngredientes((n) => n + 1)}>Reintentar</button>
+              </p>
+            )}
             <div
               className="receta-crear-lista"
               style={{
@@ -1282,7 +1327,7 @@ const EditProduct = ({
             >
               {formData.receta.map((item, index) => {
                 const ing = ingredientesStock.find(
-                  (i) => i._id === item.ingrediente
+                  (i) => String(i._id) === String(item.ingrediente?._id || item.ingrediente)
                 );
                 // v3 stock-modelo-v2 fase 3
                 const variantePill = item.clavePrecio
@@ -1291,7 +1336,7 @@ const EditProduct = ({
                 return (
                   <div key={index} className="receta-item--crear">
                     <span className="receta-nombre--crear">
-                      {ing?.nombre || "Ingrediente eliminado"}
+                      {ing?.nombre || item.nombre || item.ingrediente?.nombre || (estadoIngredientes === "cargando" ? "Cargando ingrediente…" : "Ingrediente no disponible")}
                       {(formData.precios || []).length > 1 && (
                         <span
                           style={{
@@ -1315,8 +1360,8 @@ const EditProduct = ({
                     </span>
 
                     <strong className="receta-cant--crear">
-                      {item.cantidad}
-                      {ing?.unidad || ""}
+                      {formatCantidad(item.cantidad)}
+                      {" "}{ing?.unidad || item.unidad || item.ingrediente?.unidad || ""}
                     </strong>
 
                     <button

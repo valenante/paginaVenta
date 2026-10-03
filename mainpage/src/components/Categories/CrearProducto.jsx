@@ -1,3 +1,4 @@
+import { formatCantidad } from "../../utils/stockFormat";
 // src/components/Categories/CrearProducto.jsx
 import React, { useState, useContext, useEffect, useMemo, useRef } from "react";
 import PreciosHelpModal from "./PreciosHelpModal";
@@ -1322,7 +1323,7 @@ const CrearProducto = ({ onClose, onCreated, initialTipo, cloneFrom }) => {
                     </span>
 
                     <strong className="receta-cant--crear">
-                      {item.cantidad}
+                      {formatCantidad(item.cantidad)}
                       {ing?.unidad || ""}
                     </strong>
 

@@ -12,11 +12,29 @@ import {
   toggleRegla,
 } from "../hooks/useSugerenciasConfig";
 import { toInputText, clampIntNum } from "../utils/numeroInput";
+import { mensajeConCampos } from "../utils/normalizeApiError";
 import "./SugerenciasConfigPage.css";
 
 /* Valores por defecto de los umbrales: los usa el estado inicial, el "restaurar
    por defecto" y la conversión del guardado cuando un campo se deja vacío. */
 const UMBRAL_DEFAULTS = { minCoocPct: 30, minCoocMuestras: 5, minCatPct: 35, minFreqPct: 40 };
+
+/* Pesos por defecto = los del esquema del backend (`SugerenciaConfig.schema.js`, pesos.*).
+   Sólo los usa «Restaurar defaults»: lo que se PINTA viene siempre de la config efectiva de la
+   API. «Valoraciones» ya no existe (señal borrada en el backend). */
+const PESO_DEFAULTS = {
+  flujoComida: 80, coocurrencia: 70, margen: 50, popularidad: 40,
+  cargaCocina: 30, stock: 25, categoriaEsperada: 20, promocion: 15, clima: 35,
+};
+
+// 0 = domingo … 6 = sábado (igual que el motor: `sugerenciasCarrito.service.js`). Orden de lunes a domingo.
+const DIAS_SEMANA = [
+  { v: 1, l: "L", n: "Lunes" }, { v: 2, l: "M", n: "Martes" }, { v: 3, l: "X", n: "Miércoles" },
+  { v: 4, l: "J", n: "Jueves" }, { v: 5, l: "V", n: "Viernes" }, { v: 6, l: "S", n: "Sábado" },
+  { v: 0, l: "D", n: "Domingo" },
+];
+
+const cruzaMedianoche = (desde, hasta) => Boolean(desde && hasta && hasta < desde);
 
 const TABS = [
   {
@@ -28,7 +46,7 @@ const TABS = [
         "- **En el carrito**: el cliente ve sugerencias antes de enviar su pedido. Es el momento de mayor impacto.\n" +
         "- **Post-pedido**: después de enviar, un toast sutil sugiere postres, café o copa. Auto-desaparece en 12 segundos.\n" +
         "- **Detalle de producto**: al abrir la ficha de un producto, muestra 1-2 productos que \"van bien con\" ese plato.\n\n" +
-        "El **filtro de alérgenos** es crítico: si un cliente declara alergias al entrar a la mesa, el sistema NUNCA le sugerirá un producto con ese alérgeno. Si activas \"incluir trazas\", también filtra productos que pueden contener trazas.",
+        "El **filtro de alérgenos** es crítico. **Con el filtro activado**: Filtra los productos con los alérgenos que la mesa ha declarado o confirmado; revisa siempre la ficha de alérgenos del plato. Mira toda la mesa: las alergias que declaran los comensales al entrar y las que se anotan en los platos del pedido. Si activas \"incluir trazas\", también filtra productos que pueden contener trazas. Con el filtro desactivado, las sugerencias no miran los alérgenos.",
     },
   },
   {
@@ -54,11 +72,23 @@ const TABS = [
         "- **Co-ocurrencia** (70): productos que históricamente se piden juntos. Ej: \"El 77% que pide Patatas Bravas también pide Pan\".\n" +
         "- **Margen** (50): prioriza productos más rentables para ti.\n" +
         "- **Popularidad** (40): lo más vendido en los ultimos 30 dias.\n" +
-        "- **Valoraciones** (30): productos mejor puntuados por clientes.\n" +
+        "- **Carga de cocina** (30): evita sugerir platos de una estación saturada.\n" +
+        "- **Stock** (25): prioriza lo que hay en abundancia y evita lo que se está acabando.\n" +
         "- **Categoria esperada** (20): categorias que aparecen en un % alto de mesas pero faltan en el carrito.\n" +
-        "- **Promocion** (15): boost a productos en oferta.\n\n" +
+        "- **Promocion** (15): boost a productos en oferta.\n" +
+        "- **Clima** (35): con calor o frío, sube las categorías que elijas en la pestaña Clima.\n\n" +
         "**Umbrales:** son los minimos para que una señal se active. Bajarlos = más sugerencias pero menos precision. Subirlos = menos sugerencias pero más relevantes.\n\n" +
         "Si no sabes qué tocar, deja los valores por defecto. Funcionan bien para la mayoría de restaurantes.",
+    },
+  },
+  {
+    key: "clima",
+    label: "Clima",
+    help: {
+      titulo: "Clima",
+      texto: "Cuando hace calor o frío, el motor sube las categorías que elijas (por ejemplo, bebidas frías con calor y sopas con frío).\n\n" +
+        "**Requisitos:** el restaurante tiene que tener su **ubicación configurada** y el servicio del tiempo tiene que estar disponible. Si no lo está, esta señal simplemente no suma nada: el resto del motor sigue igual.\n\n" +
+        "Cuánto pesa el clima frente a las demás señales se ajusta en «Pesos y umbrales».",
     },
   },
   {
@@ -72,7 +102,7 @@ const TABS = [
         "- **Siempre sugerir**: un producto aparece siempre en sugerencias (si no está agotado ni tiene conflicto de alérgenos). Ideal para tu plato estrella.\n" +
         "- **Nunca sugerir**: bloquea un producto. Ej: el Pan que ya pones gratis en la mesa.\n" +
         "- **Por fase**: cuando falta una fase concreta, sugiere una categoria específica. Ej: \"Si falta postre → sugerir Tartas\".\n" +
-        "- **Franja horaria**: sugiere un producto solo en un horario. Ej: \"Mojitos de 17:00 a 20:00 (happy hour)\".\n\n" +
+        "- **Franja horaria**: sugiere un producto solo en un horario y, si quieres, sólo unos días. Ej: \"Mojitos de 17:00 a 20:00 (happy hour)\". Una franja como 22:00-02:00 cruza la medianoche y es válida. La hora es la del restaurante.\n\n" +
         "La **prioridad** (1-100) determina el orden. Las reglas con prioridad 90+ suelen ganar al motor automático. Puedes pausar una regla sin borrarla.",
     },
   },
@@ -93,7 +123,7 @@ function HelpModal({ help, onClose }) {
             // Bold markdown **text**
             const parts = line.split(/\*\*(.*?)\*\*/g);
             return (
-              <p key={i} style={{ margin: "2px 0" }}>
+              <p key={i} className="sug-help-modal__linea">
                 {parts.map((part, j) =>
                   j % 2 === 1 ? <strong key={j}>{part}</strong> : part
                 )}
@@ -126,12 +156,17 @@ function TabGeneral({ config, onSave, stats }) {
   const [msg, setMsg] = useState(null);
 
   useEffect(() => {
+    // La API devuelve la config EFECTIVA (con los defaults del esquema): se usa tal cual. Antes
+    // `enabled ?? false` pintaba «apagado» un documento sin campo que el motor trataba como ENCENDIDO.
     if (config) setLocal({
-      enabled: config.enabled ?? false,
-      touchpoints: config.touchpoints ?? { carrito: true, postPedido: true, detalleProducto: false },
-      maxSugerencias: config.maxSugerencias ?? { carrito: 3, postPedido: 2, detalleProducto: 2 },
-      filtrarAlergenos: config.filtrarAlergenos ?? true,
-      incluirTrazas: config.incluirTrazas ?? true,
+      enabled: config.enabled,
+      touchpoints: config.touchpoints,
+      maxSugerencias: config.maxSugerencias,
+      filtrarAlergenos: config.filtrarAlergenos,
+      incluirTrazas: config.incluirTrazas,
+      // «Mostrar el camarero IA en la carta» = NO `asistenteIA.apagadoPorDueno`. Ausente ⇒ encendido
+      // (así lo define el backend, R2-ART16). Se guarda aparte en `inicial` para mandarlo SÓLO si cambia.
+      asistenteVisible: config.asistenteIA?.apagadoPorDueno !== true,
     });
   }, [config]);
 
@@ -139,10 +174,16 @@ function TabGeneral({ config, onSave, stats }) {
     setSaving(true);
     setMsg(null);
     try {
-      await onSave(local);
+      const { asistenteVisible, ...resto } = local;
+      const payload = { ...resto };
+      // Sólo si el dueño lo ha cambiado: ausente = el backend no lo toca.
+      if (asistenteVisible !== (config?.asistenteIA?.apagadoPorDueno !== true)) {
+        payload.asistenteIA = { apagadoPorDueno: !asistenteVisible };
+      }
+      await onSave(payload);
       setMsg({ t: "ok", m: "Guardado" });
       setTimeout(() => setMsg(null), 2500);
-    } catch { setMsg({ t: "error", m: "Error al guardar" }); }
+    } catch (err) { setMsg({ t: "error", m: mensajeConCampos(err, "Error al guardar") }); }
     finally { setSaving(false); }
   };
 
@@ -160,6 +201,8 @@ function TabGeneral({ config, onSave, stats }) {
   return (
     <div className="sug-tab">
       {msg && <div className={`sug-toast sug-toast--${msg.t}`}>{msg.m}</div>}
+
+      {stats?.error && <div className="sug-toast sug-toast--error">{stats.error}</div>}
 
       {/* Stats badge */}
       {stats?.data && (
@@ -188,7 +231,33 @@ function TabGeneral({ config, onSave, stats }) {
           </div>
           <button
             className={`sug-toggle ${local.enabled ? "sug-toggle--on" : ""}`}
+            role="switch"
+            aria-checked={Boolean(local.enabled)}
+            aria-label="Sugerencias inteligentes"
             onClick={() => set("enabled", !local.enabled)}
+          >
+            <span className="sug-toggle__knob" />
+          </button>
+        </div>
+      </div>
+
+      {/* Camarero IA en la carta (interruptor del dueño) */}
+      <div className="sug-section">
+        <div className="sug-toggle-row">
+          <div>
+            <span className="sug-toggle-label">Mostrar el camarero IA en la carta</span>
+            <span className="sug-toggle-desc" data-testid="sug-asistente-desc">
+              {local.asistenteVisible
+                ? "Los clientes ven el asistente IA en la carta QR."
+                : "Oculto: los clientes no ven el asistente IA en la carta QR."}
+            </span>
+          </div>
+          <button
+            className={`sug-toggle ${local.asistenteVisible ? "sug-toggle--on" : ""}`}
+            role="switch"
+            aria-checked={Boolean(local.asistenteVisible)}
+            aria-label="Mostrar el camarero IA en la carta"
+            onClick={() => set("asistenteVisible", !local.asistenteVisible)}
           >
             <span className="sug-toggle__knob" />
           </button>
@@ -209,7 +278,7 @@ function TabGeneral({ config, onSave, stats }) {
                 <label key={tp.key} className={`sug-checkbox ${local.touchpoints?.[tp.key] ? "sug-checkbox--active" : ""}`}>
                   <input
                     type="checkbox"
-                    checked={local.touchpoints?.[tp.key] ?? false}
+                    checked={Boolean(local.touchpoints?.[tp.key])}
                     onChange={e => set(`touchpoints.${tp.key}`, e.target.checked)}
                   />
                   <div>
@@ -250,15 +319,19 @@ function TabGeneral({ config, onSave, stats }) {
             <h3 className="sug-section__title">Seguridad de alérgenos</h3>
             <div className="sug-checkboxes">
               <label className={`sug-checkbox ${local.filtrarAlergenos ? "sug-checkbox--active" : ""}`}>
-                <input type="checkbox" checked={local.filtrarAlergenos ?? true}
+                <input type="checkbox" checked={Boolean(local.filtrarAlergenos)}
                   onChange={e => set("filtrarAlergenos", e.target.checked)} />
                 <div>
                   <span className="sug-checkbox__label">Filtrar alérgenos</span>
-                  <span className="sug-checkbox__desc">No sugerir productos con alérgenos del cliente</span>
+                  <span className="sug-checkbox__desc" data-testid="sug-alergenos-desc">
+                    {local.filtrarAlergenos
+                      ? "Filtra los productos con los alérgenos que la mesa ha declarado o confirmado; revisa siempre la ficha de alérgenos del plato."
+                      : "Desactivado: las sugerencias NO miran los alérgenos de la mesa."}
+                  </span>
                 </div>
               </label>
               <label className={`sug-checkbox ${local.incluirTrazas ? "sug-checkbox--active" : ""}`}>
-                <input type="checkbox" checked={local.incluirTrazas ?? true}
+                <input type="checkbox" checked={Boolean(local.incluirTrazas)}
                   onChange={e => set("incluirTrazas", e.target.checked)} />
                 <div>
                   <span className="sug-checkbox__label">Incluir trazas</span>
@@ -301,7 +374,9 @@ function TabFases({ config, onSave }) {
         if (!config?.fasesMenu || !Array.isArray(config.fasesMenu) || !config.fasesMenu.length) {
           setFases(data.fases);
         }
-      } catch { /* ignore */ }
+      } catch (err) {
+        setMsg({ t: "error", m: mensajeConCampos(err, "No se pudieron cargar las categorías") });
+      }
     })();
   }, [config]);
 
@@ -313,7 +388,7 @@ function TabFases({ config, onSave }) {
       setCategoriasDisp(data.categoriasDisponibles || []);
       setMsg({ t: "ok", m: "Fases auto-detectadas. Revisa y guarda." });
       setTimeout(() => setMsg(null), 3000);
-    } catch { setMsg({ t: "error", m: "Error al auto-detectar" }); }
+    } catch (err) { setMsg({ t: "error", m: mensajeConCampos(err, "Error al auto-detectar") }); }
     finally { setDetecting(false); }
   };
 
@@ -324,7 +399,7 @@ function TabFases({ config, onSave }) {
       await onSave({ fasesMenu: fases });
       setMsg({ t: "ok", m: "Fases guardadas" });
       setTimeout(() => setMsg(null), 2500);
-    } catch { setMsg({ t: "error", m: "Error al guardar" }); }
+    } catch (err) { setMsg({ t: "error", m: mensajeConCampos(err, "Error al guardar") }); }
     finally { setSaving(false); }
   };
 
@@ -406,7 +481,7 @@ function TabFases({ config, onSave }) {
               Crea y personaliza las fases de tu menú. Cada fase guía al cliente por tu carta.
             </p>
           </div>
-          <div style={{ display: "flex", gap: "8px" }}>
+          <div className="sug-acciones">
             <button className="sug-btn sug-btn--secondary" onClick={handleAutoDetect} disabled={detecting}>
               {detecting ? "Detectando..." : "Auto-detectar"}
             </button>
@@ -418,17 +493,17 @@ function TabFases({ config, onSave }) {
 
         {/* Formulario nueva fase */}
         {showNewForm && (
-          <div className="sug-new-fase" style={{ display: "flex", gap: "8px", alignItems: "center", padding: "12px", background: "var(--bg-card)", borderRadius: "8px", marginBottom: "12px" }}>
-            <select value={newFase.emoji} onChange={e => setNewFase(p => ({ ...p, emoji: e.target.value }))} style={{ fontSize: "1.2rem", width: "50px" }}>
+          <div className="sug-new-fase">
+            <select className="sug-new-fase__emoji" value={newFase.emoji} onChange={e => setNewFase(p => ({ ...p, emoji: e.target.value }))}>
               {EMOJI_OPTIONS.map(e => <option key={e} value={e}>{e}</option>)}
             </select>
             <input
               type="text" placeholder="Nombre de la fase (ej: Sushi, Tapas...)"
               value={newFase.label} onChange={e => setNewFase(p => ({ ...p, label: e.target.value }))}
-              style={{ flex: 1, padding: "8px", borderRadius: "6px", border: "1px solid var(--border)" }}
+              className="sug-new-fase__nombre"
               onKeyDown={e => e.key === "Enter" && addFase()}
             />
-            <label style={{ display: "flex", alignItems: "center", gap: "4px", fontSize: "0.8rem", whiteSpace: "nowrap" }}>
+            <label className="sug-new-fase__bebida">
               <input type="checkbox" checked={newFase.esBebida} onChange={e => setNewFase(p => ({ ...p, esBebida: e.target.checked }))} />
               Es bebida
             </label>
@@ -443,8 +518,8 @@ function TabFases({ config, onSave }) {
               <div className="sug-fase-col__header">
                 <span className="sug-fase-col__emoji">{f.emoji}</span>
                 <span className="sug-fase-col__label">{f.label}</span>
-                {f.esBebida && <span style={{ fontSize: "0.6rem", background: "#3b82f6", color: "#fff", padding: "1px 6px", borderRadius: "8px" }}>bebida</span>}
-                <div style={{ marginLeft: "auto", display: "flex", gap: "2px" }}>
+                {f.esBebida && <span className="sug-fase-col__bebida">bebida</span>}
+                <div className="sug-fase-col__botones">
                   <button className="sug-fase-col__move" onClick={() => moveFase(idx, -1)} disabled={idx === 0} title="Subir">↑</button>
                   <button className="sug-fase-col__move" onClick={() => moveFase(idx, 1)} disabled={idx === fases.length - 1} title="Bajar">↓</button>
                   <button className="sug-fase-col__delete" onClick={() => removeFase(f.key)} title="Eliminar">✕</button>
@@ -496,10 +571,7 @@ function TabFases({ config, onSave }) {
 /*  Tab Pesos y umbrales                                     */
 /* ══════════════════════════════════════════════════════════ */
 function TabPesos({ config, onSave }) {
-  const [pesos, setPesos] = useState({
-    flujoComida: 80, coocurrencia: 70, margen: 50, popularidad: 40,
-    valoraciones: 30, categoriaEsperada: 20, promocion: 15,
-  });
+  const [pesos, setPesos] = useState(PESO_DEFAULTS);
   const [umbrales, setUmbrales] = useState({
     minCoocPct: 30, minCoocMuestras: 5, minCatPct: 35, minFreqPct: 40,
   });
@@ -508,6 +580,7 @@ function TabPesos({ config, onSave }) {
 
   useEffect(() => {
     if (config?.pesos) setPesos(prev => ({ ...prev, ...config.pesos }));
+    // (la config efectiva ya trae todos los pesos; el merge sólo protege de una respuesta parcial)
     if (config?.umbrales) setUmbrales(prev => ({ ...prev, ...config.umbrales }));
   }, [config]);
 
@@ -525,15 +598,17 @@ function TabPesos({ config, onSave }) {
     setSaving(true);
     setMsg(null);
     try {
-      await onSave({ pesos, umbrales: umbralesNumericos() });
+      // Sólo las señales que existen (nunca `valoraciones`, aunque llegara de un documento viejo).
+      const soloVigentes = Object.fromEntries(Object.keys(PESO_LABELS).map((k) => [k, clampIntNum(pesos[k], 0, 100, PESO_DEFAULTS[k])]));
+      await onSave({ pesos: soloVigentes, umbrales: umbralesNumericos() });
       setMsg({ t: "ok", m: "Guardado" });
       setTimeout(() => setMsg(null), 2500);
-    } catch { setMsg({ t: "error", m: "Error al guardar" }); }
+    } catch (err) { setMsg({ t: "error", m: mensajeConCampos(err, "Error al guardar") }); }
     finally { setSaving(false); }
   };
 
   const resetDefaults = () => {
-    setPesos({ flujoComida: 80, coocurrencia: 70, margen: 50, popularidad: 40, valoraciones: 30, categoriaEsperada: 20, promocion: 15 });
+    setPesos(PESO_DEFAULTS);
     setUmbrales({ minCoocPct: 30, minCoocMuestras: 5, minCatPct: 35, minFreqPct: 40 });
   };
 
@@ -542,9 +617,11 @@ function TabPesos({ config, onSave }) {
     coocurrencia: { label: "Co-ocurrencia", desc: "Productos que se piden juntos" },
     margen: { label: "Margen", desc: "Priorizar productos más rentables" },
     popularidad: { label: "Popularidad", desc: "Lo más vendido en los ultimos 30 dias" },
-    valoraciones: { label: "Valoraciones", desc: "Productos mejor puntuados" },
+    cargaCocina: { label: "Carga de cocina", desc: "Evitar platos de una estación saturada" },
+    stock: { label: "Stock", desc: "Priorizar lo que sobra, evitar lo que se acaba" },
     categoriaEsperada: { label: "Categoria esperada", desc: "Categorias frecuentes que faltan" },
     promocion: { label: "Promocion activa", desc: "Boost a productos en oferta" },
+    clima: { label: "Clima", desc: "Calor o frío suben las categorías de la pestaña Clima" },
   };
 
   const UMBRAL_LABELS = {
@@ -575,7 +652,8 @@ function TabPesos({ config, onSave }) {
               <div className="sug-slider-control">
                 <input
                   type="range" min="0" max="100" step="5"
-                  value={pesos[key] ?? 50}
+                  aria-label={`Peso ${meta.label}`}
+                  value={pesos[key] ?? PESO_DEFAULTS[key]}
                   onChange={e => setPesos(prev => ({ ...prev, [key]: Number(e.target.value) }))}
                 />
                 <span className="sug-slider-value">{pesos[key]}</span>
@@ -614,6 +692,151 @@ function TabPesos({ config, onSave }) {
 }
 
 /* ══════════════════════════════════════════════════════════ */
+/*  Tab Clima                                                */
+/* ══════════════════════════════════════════════════════════ */
+// Rangos = `sugerenciasConfigSchema.clima` del backend.
+const CLIMA_RANGOS = { calorUmbral: [-20, 55], frioUmbral: [-40, 40] };
+
+function TabClima({ config, onSave }) {
+  const [clima, setClima] = useState(null);
+  const [categorias, setCategorias] = useState([]);
+  const [saving, setSaving] = useState(false);
+  const [msg, setMsg] = useState(null);
+
+  useEffect(() => {
+    // Config efectiva: trae enabled/umbrales/categorías con los defaults del esquema.
+    if (config?.clima) setClima({ ...config.clima });
+  }, [config]);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const { data } = await api.get("/categorias");
+        setCategorias((data?.categorias || data?.data || []).map(c => c.nombre).filter(Boolean));
+      } catch (err) {
+        setMsg({ t: "error", m: mensajeConCampos(err, "No se pudieron cargar las categorías") });
+      }
+    })();
+  }, []);
+
+  if (!clima) return <div className="sug-tab"><div className="sug-loading">Cargando...</div></div>;
+
+  const toggleCat = (lista, cat) => setClima(prev => {
+    const actual = prev[lista] || [];
+    return { ...prev, [lista]: actual.includes(cat) ? actual.filter(c => c !== cat) : [...actual, cat] };
+  });
+
+  const save = async () => {
+    const calor = clampIntNum(clima.calorUmbral, ...CLIMA_RANGOS.calorUmbral, 28);
+    const frio = clampIntNum(clima.frioUmbral, ...CLIMA_RANGOS.frioUmbral, 12);
+    if (frio >= calor) {
+      setMsg({ t: "error", m: "El umbral de frío tiene que ser más bajo que el de calor" });
+      return;
+    }
+    setSaving(true);
+    setMsg(null);
+    try {
+      await onSave({
+        clima: {
+          enabled: Boolean(clima.enabled),
+          calorUmbral: calor,
+          frioUmbral: frio,
+          categoriasCalor: clima.categoriasCalor || [],
+          categoriasFrio: clima.categoriasFrio || [],
+        },
+      });
+      setMsg({ t: "ok", m: "Clima guardado" });
+      setTimeout(() => setMsg(null), 2500);
+    } catch (err) {
+      setMsg({ t: "error", m: mensajeConCampos(err, "Error al guardar") });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const bloqueCategorias = (lista, titulo) => (
+    <div className="sug-form-row">
+      <label>{titulo}</label>
+      {categorias.length === 0
+        ? <span className="sug-form-hint">No hay categorías en tu carta.</span>
+        : (
+          <div className="sug-clima-cats" role="group" aria-label={titulo}>
+            {categorias.map(cat => {
+              const on = (clima[lista] || []).includes(cat);
+              return (
+                <button key={cat} type="button" aria-pressed={on}
+                  className={`sug-fase-tag sug-clima-cat ${on ? "sug-clima-cat--on" : ""}`}
+                  onClick={() => toggleCat(lista, cat)}>
+                  {cat}
+                </button>
+              );
+            })}
+          </div>
+        )}
+    </div>
+  );
+
+  return (
+    <div className="sug-tab">
+      {msg && <div className={`sug-toast sug-toast--${msg.t}`}>{msg.m}</div>}
+
+      <div className="sug-section">
+        <div className="sug-toggle-row">
+          <div>
+            <span className="sug-toggle-label">Sugerir según el tiempo</span>
+            <span className="sug-toggle-desc" data-testid="sug-clima-requisito">
+              Necesita que el restaurante tenga su ubicación configurada y que el servicio del tiempo esté disponible.
+              Si no lo está, el clima no suma nada y el resto de sugerencias sigue igual.
+            </span>
+          </div>
+          <button
+            className={`sug-toggle ${clima.enabled ? "sug-toggle--on" : ""}`}
+            role="switch"
+            aria-checked={Boolean(clima.enabled)}
+            aria-label="Sugerir según el tiempo"
+            onClick={() => setClima(prev => ({ ...prev, enabled: !prev.enabled }))}
+          >
+            <span className="sug-toggle__knob" />
+          </button>
+        </div>
+      </div>
+
+      {clima.enabled && (
+        <div className="sug-section">
+          <h3 className="sug-section__title">Temperaturas</h3>
+          <div className="sug-umbrales-grid">
+            <div className="sug-umbral-item">
+              <label className="sug-umbral-label" htmlFor="sug-clima-calor">Calor a partir de</label>
+              <div className="sug-umbral-input">
+                <input id="sug-clima-calor" type="number" min={CLIMA_RANGOS.calorUmbral[0]} max={CLIMA_RANGOS.calorUmbral[1]}
+                  value={toInputText(clima.calorUmbral)}
+                  onChange={e => setClima(prev => ({ ...prev, calorUmbral: e.target.value }))} />
+                <span className="sug-umbral-unit">°C</span>
+              </div>
+            </div>
+            <div className="sug-umbral-item">
+              <label className="sug-umbral-label" htmlFor="sug-clima-frio">Frío por debajo de</label>
+              <div className="sug-umbral-input">
+                <input id="sug-clima-frio" type="number" min={CLIMA_RANGOS.frioUmbral[0]} max={CLIMA_RANGOS.frioUmbral[1]}
+                  value={toInputText(clima.frioUmbral)}
+                  onChange={e => setClima(prev => ({ ...prev, frioUmbral: e.target.value }))} />
+                <span className="sug-umbral-unit">°C</span>
+              </div>
+            </div>
+          </div>
+          {bloqueCategorias("categoriasCalor", "Categorías que suben con calor")}
+          {bloqueCategorias("categoriasFrio", "Categorías que suben con frío")}
+        </div>
+      )}
+
+      <button className="sug-btn sug-btn--primary" onClick={save} disabled={saving}>
+        {saving ? "Guardando..." : "Guardar clima"}
+      </button>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════════════ */
 /*  Tab Reglas fijas                                         */
 /* ══════════════════════════════════════════════════════════ */
 function TabReglas({ config, onSave }) {
@@ -637,7 +860,9 @@ function TabReglas({ config, onSave }) {
         ]);
         setProductos(prodRes.data?.productos || prodRes.data?.data || []);
         setCategorias((catRes.data?.categorias || catRes.data?.data || []).map(c => c.nombre));
-      } catch { /* ignore */ }
+      } catch (err) {
+        setMsg({ t: "error", m: mensajeConCampos(err, "No se pudieron cargar productos y categorías") });
+      }
     })();
   }, []);
 
@@ -675,7 +900,8 @@ function TabReglas({ config, onSave }) {
       onSave({}); // trigger refetch
       setTimeout(() => setMsg(null), 2500);
     } catch (err) {
-      setMsg({ t: "error", m: err?.response?.data?.message || "Error" });
+      // La API explica QUÉ falta (`fields`): «Elige el producto de la regla», «Hora HH:MM»…
+      setMsg({ t: "error", m: mensajeConCampos(err, "No se pudo guardar la regla") });
     } finally {
       setSaving(false);
     }
@@ -690,7 +916,7 @@ function TabReglas({ config, onSave }) {
       setMsg({ t: "ok", m: "Regla eliminada" });
       onSave({});
       setTimeout(() => setMsg(null), 2500);
-    } catch { setMsg({ t: "error", m: "Error al eliminar" }); }
+    } catch (err) { setMsg({ t: "error", m: mensajeConCampos(err, "Error al eliminar") }); }
     setConfirmDeleteRegla(null);
   };
 
@@ -698,7 +924,9 @@ function TabReglas({ config, onSave }) {
     try {
       await toggleRegla(id);
       onSave({});
-    } catch { /* ignore */ }
+    } catch (err) {
+      setMsg({ t: "error", m: mensajeConCampos(err, "No se pudo pausar/activar la regla") });
+    }
   };
 
   const handleEdit = (regla) => {
@@ -714,7 +942,8 @@ function TabReglas({ config, onSave }) {
   };
 
   const needsOrigen = form.tipo === "maridaje";
-  const needsSugerido = ["maridaje", "siempre", "franja"].includes(form.tipo);
+  // «nunca» también necesita producto: sin él la API responde 400 (y el motor no sabría qué bloquear).
+  const needsSugerido = ["maridaje", "siempre", "nunca", "franja"].includes(form.tipo);
   const needsCategoria = form.tipo === "fase";
   const needsFranja = form.tipo === "franja";
   const needsFase = form.tipo === "fase";
@@ -774,9 +1003,10 @@ function TabReglas({ config, onSave }) {
 
             {needsSugerido && (
               <div className="sug-form-row">
-                <label>Producto a sugerir</label>
+                <label>{form.tipo === "nunca" ? "Producto que NUNCA se sugiere" : "Producto a sugerir"}</label>
                 <input
                   type="text" placeholder="Buscar producto..."
+                  aria-label="Buscar producto de la regla"
                   value={buscarSugerido}
                   onChange={e => setBuscarSugerido(e.target.value)}
                 />
@@ -815,16 +1045,50 @@ function TabReglas({ config, onSave }) {
             )}
 
             {needsFranja && (
-              <div className="sug-form-row sug-form-row--inline">
-                <div>
-                  <label>Desde</label>
-                  <input type="time" value={form.desde || ""} onChange={e => setForm(prev => ({ ...prev, desde: e.target.value }))} />
+              <>
+                <div className="sug-form-row sug-form-row--inline">
+                  <div>
+                    <label htmlFor="sug-franja-desde">Desde</label>
+                    <input id="sug-franja-desde" type="time" value={form.desde || ""} onChange={e => setForm(prev => ({ ...prev, desde: e.target.value }))} />
+                  </div>
+                  <div>
+                    <label htmlFor="sug-franja-hasta">Hasta</label>
+                    <input id="sug-franja-hasta" type="time" value={form.hasta || ""} onChange={e => setForm(prev => ({ ...prev, hasta: e.target.value }))} />
+                  </div>
                 </div>
-                <div>
-                  <label>Hasta</label>
-                  <input type="time" value={form.hasta || ""} onChange={e => setForm(prev => ({ ...prev, hasta: e.target.value }))} />
+                <p className="sug-form-hint">
+                  Hora del restaurante.
+                  {cruzaMedianoche(form.desde, form.hasta) && (
+                    <span data-testid="sug-franja-medianoche"> La franja {form.desde}-{form.hasta} cruza la medianoche: vale, se aplica de {form.desde} hasta las {form.hasta} del día siguiente.</span>
+                  )}
+                </p>
+                <div className="sug-form-row">
+                  <label>Días de la semana</label>
+                  <div className="sug-dias" role="group" aria-label="Días de la semana">
+                    {DIAS_SEMANA.map(d => {
+                      const marcado = (form.diasSemana || []).includes(d.v);
+                      return (
+                        <button
+                          key={d.v}
+                          type="button"
+                          className={`sug-dia ${marcado ? "sug-dia--on" : ""}`}
+                          aria-pressed={marcado}
+                          aria-label={d.n}
+                          title={d.n}
+                          onClick={() => setForm(prev => {
+                            const actuales = prev.diasSemana || [];
+                            const nuevos = actuales.includes(d.v) ? actuales.filter(x => x !== d.v) : [...actuales, d.v];
+                            return { ...prev, diasSemana: nuevos.sort((a, b) => a - b) };
+                          })}
+                        >
+                          {d.l}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  <span className="sug-form-hint">Si no marcas ninguno, se aplica todos los días.</span>
                 </div>
-              </div>
+              </>
             )}
 
             {form.tipo !== "nunca" && (
@@ -891,7 +1155,10 @@ function TabReglas({ config, onSave }) {
                     <span>Fase {r.faseTrigger} → {r.categoriaSugerida}</span>
                   )}
                   {r.tipo === "franja" && (
-                    <span>{r.nombreSugerido || "?"} ({r.desde}-{r.hasta})</span>
+                    <span>
+                      {r.nombreSugerido || "?"} ({r.desde}-{r.hasta})
+                      {r.diasSemana?.length ? ` · ${DIAS_SEMANA.filter(d => r.diasSemana.includes(d.v)).map(d => d.l).join(" ")}` : ""}
+                    </span>
                   )}
                   {r.mensaje && <span className="sug-regla-msg">"{r.mensaje}"</span>}
                 </div>
@@ -977,6 +1244,7 @@ export default function SugerenciasConfigPage() {
       {tab === "general" && <TabGeneral config={config} onSave={handleSave} stats={stats} />}
       {tab === "fases" && <TabFases config={config} onSave={handleSave} />}
       {tab === "pesos" && <TabPesos config={config} onSave={handleSave} />}
+      {tab === "clima" && <TabClima config={config} onSave={handleSave} />}
       {tab === "reglas" && <TabReglas config={config} onSave={handleSave} />}
 
       <HelpModal help={helpModal} onClose={() => setHelpModal(null)} />

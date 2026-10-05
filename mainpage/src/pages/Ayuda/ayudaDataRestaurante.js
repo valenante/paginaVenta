@@ -2977,7 +2977,7 @@ Desde **Otros → Sugerencias inteligentes**:
 
 ## 🔹 Filtro de alérgenos
 
-Si el cliente indica sus alergias al escanear el QR, las sugerencias filtran automáticamente los productos que contengan esos alérgenos. Nunca se sugiere algo que el cliente no puede comer.`
+Con el filtro activado, las sugerencias filtran los productos con los alérgenos que la mesa ha declarado o confirmado (al escanear el QR o anotados en los platos). Revisa siempre la ficha de alérgenos del plato.`
                 ]
             }
         ]
@@ -3188,10 +3188,10 @@ Weather Intelligence se activa automáticamente cuando configuras la dirección 
             },
             {
                 id: "google-reviews",
-                titulo: "Google Reviews: respuestas automáticas con IA",
-                descripcion: "ALEF lee tus reseñas de Google y genera respuestas profesionales automáticamente.",
+                titulo: "Google Reviews: respuestas preparadas con IA",
+                descripcion: "ALEF lee tus reseñas de Google y te prepara una respuesta profesional para cada una.",
                 contenido: [
-                    `El módulo de **Google Reviews** conecta tu cuenta de Google Business con ALEF para gestionar las reseñas de tus clientes automáticamente.
+                    `El módulo de **Google Reviews** conecta tu cuenta de Google Business con ALEF para gestionar las reseñas de tus clientes. La IA te prepara la respuesta de cada reseña; tú la revisas y la publicas con un clic.
 
 ---
 
@@ -3200,7 +3200,7 @@ Weather Intelligence se activa automáticamente cuando configuras la dirección 
 1. Conectas tu cuenta de Google Business desde **Otros → Google Reviews**
 2. ALEF escanea tus reseñas nuevas cada 30 minutos
 3. La IA genera una respuesta profesional y personalizada para cada reseña
-4. Según el modo, la publica automáticamente o te la deja como borrador
+4. Por defecto (modo **Manual**) te la deja como borrador para que la revises y publiques. Cuando quieras, puedes pasar a Supervisado
 
 ---
 
@@ -3208,8 +3208,11 @@ Weather Intelligence se activa automáticamente cuando configuras la dirección 
 
 | Modo | Reseñas positivas | Reseñas negativas |
 |---|---|---|
-| **Automático** | Se publican solas | Se dejan como borrador para revisión |
-| **Supervisado** | Todas como borrador para que las revises antes |
+| **Manual** (por defecto) | Borrador: tú revisas y publicas | Borrador: tú revisas y publicas |
+| **Supervisado** | 4 y 5 estrellas se publican solas | 3 estrellas o menos: borrador para ti |
+| **Automático** | 3, 4 y 5 estrellas se publican solas | 1 y 2 estrellas: borrador para ti |
+
+En todos los modos quedan como borrador las reseñas anteriores a la conexión y las respuestas con enlaces, teléfonos, emails o códigos de descuento.
 
 ---
 

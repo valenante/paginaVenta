@@ -118,3 +118,64 @@
   .ia-learn__kpis { grid-template-columns: repeat(3, 1fr); }
   .ia-learn__distrib-label { width: 120px; font-size: 0.65rem; }
 }
+
+/* ─── Lote FEATURES-VENTA-30SEP: sustituyen los style={{}} inline ─── */
+/* Anchos y altos en pasos de 5 % (la página redondea con `paso5`). */
+.ia-learn__ancho-0 { width: 0%; }
+.ia-learn__ancho-5 { width: 5%; }
+.ia-learn__ancho-10 { width: 10%; }
+.ia-learn__ancho-15 { width: 15%; }
+.ia-learn__ancho-20 { width: 20%; }
+.ia-learn__ancho-25 { width: 25%; }
+.ia-learn__ancho-30 { width: 30%; }
+.ia-learn__ancho-35 { width: 35%; }
+.ia-learn__ancho-40 { width: 40%; }
+.ia-learn__ancho-45 { width: 45%; }
+.ia-learn__ancho-50 { width: 50%; }
+.ia-learn__ancho-55 { width: 55%; }
+.ia-learn__ancho-60 { width: 60%; }
+.ia-learn__ancho-65 { width: 65%; }
+.ia-learn__ancho-70 { width: 70%; }
+.ia-learn__ancho-75 { width: 75%; }
+.ia-learn__ancho-80 { width: 80%; }
+.ia-learn__ancho-85 { width: 85%; }
+.ia-learn__ancho-90 { width: 90%; }
+.ia-learn__ancho-95 { width: 95%; }
+.ia-learn__ancho-100 { width: 100%; }
+.ia-learn__alto-0 { height: 0%; }
+.ia-learn__alto-5 { height: 5%; }
+.ia-learn__alto-10 { height: 10%; }
+.ia-learn__alto-15 { height: 15%; }
+.ia-learn__alto-20 { height: 20%; }
+.ia-learn__alto-25 { height: 25%; }
+.ia-learn__alto-30 { height: 30%; }
+.ia-learn__alto-35 { height: 35%; }
+.ia-learn__alto-40 { height: 40%; }
+.ia-learn__alto-45 { height: 45%; }
+.ia-learn__alto-50 { height: 50%; }
+.ia-learn__alto-55 { height: 55%; }
+.ia-learn__alto-60 { height: 60%; }
+.ia-learn__alto-65 { height: 65%; }
+.ia-learn__alto-70 { height: 70%; }
+.ia-learn__alto-75 { height: 75%; }
+.ia-learn__alto-80 { height: 80%; }
+.ia-learn__alto-85 { height: 85%; }
+.ia-learn__alto-90 { height: 90%; }
+.ia-learn__alto-95 { height: 95%; }
+.ia-learn__alto-100 { height: 100%; }
+.ia-learn__bar--cero { opacity: 0.35; }
+/* Colores por nivel de score (antes `scoreColor()` inline) */
+.ia-learn__nivel--excelente { background: #22c55e; }
+.ia-learn__nivel--bueno { background: #3b82f6; }
+.ia-learn__nivel--regular { background: #f59e0b; }
+.ia-learn__nivel--bajo { background: #ef4444; }
+.ia-learn__nivel--sindatos { background: #6b7280; }
+.ia-learn__sin-datos { color: #94a3b8; font-size: 0.72rem; font-style: italic; }
+.ia-learn__explica { margin: -4px 0 12px; color: #94a3b8; font-size: 0.76rem; line-height: 1.5; }
+.ia-learn__empty p { margin: 4px 0; }
+.ia-learn__error { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.ia-learn__retry {
+  padding: 6px 14px; border-radius: 8px; border: 1px solid rgba(239,68,68,0.4);
+  background: rgba(239,68,68,0.12); color: #fca5a5; font-weight: 700; font-size: 0.8rem;
+  cursor: pointer; font-family: inherit;
+}

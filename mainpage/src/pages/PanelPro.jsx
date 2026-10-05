@@ -42,6 +42,9 @@ import { useTenant } from "../context/TenantContext";
 import { useAuth } from "../context/AuthContext.jsx";
 import { useFeaturesPlan } from "../context/FeaturesPlanContext";
 
+// ✅ Vuelta del OAuth: `?tab=` abre esa pestaña (contrato 30-sep, ver utils/parametrosDeVuelta.js)
+import { leerQuery, quitarDeQuery } from "../utils/parametrosDeVuelta";
+
 // ✅ Changelog (novedades al entrar)
 import ChangelogModal from "../components/Changelog/ChangelogModal";
 
@@ -94,9 +97,23 @@ export default function PanelPro() {
     return staffVisible ? [STAFF_TAB, ...gestion] : gestion;
   }, [tipoNegocio, tienePermiso, hasFeature]);
 
-  const [active, setActive] = useState("staff");
+  // `?tab=<key>` (p. ej. al volver del OAuth de Google/Instagram) abre esa pestaña SÓLO si está
+  // entre las que el usuario puede ver (mismo filtro de permiso y plan que el menú). Si no, la de
+  // siempre. Se guarda en un ref porque los permisos pueden llegar después del primer render.
+  const tabPedidaRef = useRef(undefined);
+  if (tabPedidaRef.current === undefined) tabPedidaRef.current = leerQuery("tab");
+  const [active, setActive] = useState(() =>
+    tabs.some((t) => t.key === tabPedidaRef.current) ? tabPedidaRef.current : "staff"
+  );
 
   useEffect(() => {
+    const pedida = tabPedidaRef.current;
+    if (pedida && tabs.some((t) => t.key === pedida)) {
+      tabPedidaRef.current = null;
+      quitarDeQuery(["tab"]);
+      if (active !== pedida) setActive(pedida);
+      return;
+    }
     if (!tabs.some((t) => t.key === active)) {
       setActive(tabs[0]?.key);
     }

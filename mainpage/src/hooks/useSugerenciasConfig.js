@@ -31,19 +31,23 @@ export function useSugerenciasConfig() {
 export function useSugerenciasStats() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const fetch = useCallback(async () => {
     setLoading(true);
+    setError(null);
     try {
       const { data: res } = await api.get(`${BASE}/stats`);
       setData(res);
-    } catch { /* ignore */ }
-    finally { setLoading(false); }
+    } catch (err) {
+      // Antes el catch era mudo: la barra de estadísticas desaparecía sin decir por qué.
+      setError(err?.response?.data?.message || err?.message || "No se pudieron cargar las estadísticas");
+    } finally { setLoading(false); }
   }, []);
 
   useEffect(() => { fetch(); }, [fetch]);
 
-  return { data, loading, refetch: fetch };
+  return { data, loading, error, refetch: fetch };
 }
 
 // ─── Acciones ────────────────────────────────────────

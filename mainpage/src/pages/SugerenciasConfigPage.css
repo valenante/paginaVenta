@@ -374,3 +374,43 @@
 .sug-fase-col__move:disabled { opacity: 0.3; cursor: default; }
 .sug-fase-col__delete { color: #ef4444; border-color: #ef4444; }
 .sug-fase-col__delete:hover { background: #ef4444; color: #fff; }
+
+/* ─── Lote FEATURES-VENTA-30SEP: sustituyen estilos inline y piezas nuevas ─── */
+.sug-help-modal__linea { margin: 2px 0; }
+.sug-acciones { display: flex; gap: 8px; }
+
+.sug-new-fase {
+  display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
+  padding: 12px; margin-bottom: 12px; border-radius: 8px;
+  background: var(--bg-card, rgba(255,255,255,0.04));
+}
+.sug-new-fase__emoji { font-size: 1.2rem; width: 50px; }
+.sug-new-fase__nombre {
+  flex: 1; min-width: 160px; padding: 8px; border-radius: 6px;
+  border: 1px solid var(--border, rgba(255,255,255,0.1));
+}
+.sug-new-fase__bebida { display: flex; align-items: center; gap: 4px; font-size: .8rem; white-space: nowrap; }
+
+.sug-fase-col__bebida {
+  font-size: .6rem; background: #3b82f6; color: #fff; padding: 1px 6px; border-radius: 8px;
+}
+.sug-fase-col__botones { margin-left: auto; display: flex; gap: 2px; }
+
+.sug-form-hint { display: block; font-size: .74rem; color: #94a3b8; margin: 4px 0 0; }
+
+/* Días de la semana (franja) */
+.sug-dias { display: flex; gap: 6px; flex-wrap: wrap; }
+.sug-dia {
+  width: 34px; height: 34px; border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.04);
+  color: #94a3b8; font-weight: 700; font-size: .78rem; cursor: pointer; font-family: inherit;
+}
+.sug-dia--on { background: rgba(106,13,173,0.35); border-color: rgba(106,13,173,0.6); color: #fff; }
+
+/* Categorías de clima */
+.sug-clima-cats { display: flex; gap: 6px; flex-wrap: wrap; }
+.sug-clima-cat {
+  cursor: pointer; font-family: inherit;
+  background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.08); color: #94a3b8;
+}
+.sug-clima-cat--on { background: rgba(106,13,173,0.25); border-color: rgba(106,13,173,0.5); color: #fff; }

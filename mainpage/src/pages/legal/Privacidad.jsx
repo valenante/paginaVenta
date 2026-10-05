@@ -47,7 +47,15 @@ export default function Privacidad() {
           <tr><td>Token de notificaciones push</td><td>Envío de notificaciones sobre pedidos y actividad</td><td>Consentimiento (art. 6.1.a RGPD)</td></tr>
           <tr><td>Datos biométricos (Face ID / huella dactilar)</td><td>Inicio de sesión rápido (el dato biométrico no sale del dispositivo)</td><td>Consentimiento (art. 6.1.a RGPD)</td></tr>
           <tr><td>Fotos de cámara o galería</td><td>Subir imágenes de perfil, logo o carta</td><td>Consentimiento (art. 6.1.a RGPD)</td></tr>
-          <tr><td>Audio del micrófono</td><td>Comandas por voz (procesado en el dispositivo y enviado como texto)</td><td>Consentimiento (art. 6.1.a RGPD)</td></tr>
+          <tr><td>Audio del micrófono (solo mientras se usa la función de voz)</td><td>Comandas por voz: la grabación se envía a nuestro servidor y a OpenAI para transcribirla a texto e interpretar la orden</td><td>Consentimiento (art. 6.1.a RGPD)</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Usuarios del TPV (personal del establecimiento)</h3>
+      <table>
+        <thead><tr><th>Datos</th><th>Finalidad</th><th>Base legal</th></tr></thead>
+        <tbody>
+          <tr><td>Audio del micrófono y texto de las órdenes (solo si se activa el asistente de voz)</td><td>Tomar comandas y consultar el estado del servicio por voz. El audio se envía a OpenAI para transcribirlo e interpretarlo; en el modo de conversación en tiempo real, el navegador se conecta directamente con OpenAI. Las respuestas habladas se generan también con OpenAI</td><td>Ejecución del contrato (art. 6.1.b RGPD)</td></tr>
         </tbody>
       </table>
 
@@ -55,12 +63,13 @@ export default function Privacidad() {
       <p>Alef actúa como <strong>encargado del tratamiento</strong> por cuenta del establecimiento (responsable). Los datos de comensales (nombre, teléfono, email en reservas) se tratan conforme al <a href="/dpa">Acuerdo de Procesamiento de Datos (DPA)</a>.</p>
 
       <h3>Integraciones con Instagram y con Google (opcionales)</h3>
-      <p>El establecimiento puede conectar, si lo desea, su cuenta profesional de Instagram y su Perfil de Empresa en Google. Solo se accede a las cuentas que el propio establecimiento conecta y autoriza.</p>
+      <p>El establecimiento puede conectar, si lo desea, su cuenta profesional de Instagram, su Perfil de Empresa en Google y su correo de Gmail. Solo se accede a las cuentas que el propio establecimiento conecta y autoriza.</p>
       <table>
         <thead><tr><th>Datos</th><th>Finalidad</th><th>Base legal</th></tr></thead>
         <tbody>
           <tr><td>Instagram: token de acceso, identificador y nombre de usuario de la cuenta profesional; publicaciones que el establecimiento prepara en ALEF</td><td>Preparar y publicar en la cuenta del establecimiento las publicaciones que este aprueba</td><td>Ejecución del contrato (art. 6.1.b RGPD) y consentimiento al conectar la cuenta (art. 6.1.a RGPD)</td></tr>
           <tr><td>Google: token de acceso al Perfil de Empresa; reseñas recibidas (nombre del autor tal como lo muestra Google, puntuación y texto)</td><td>Mostrar las reseñas al establecimiento y publicar las respuestas que una persona del establecimiento aprueba</td><td>Ejecución del contrato (art. 6.1.b RGPD) e interés legítimo del establecimiento en atender a sus clientes (art. 6.1.f RGPD)</td></tr>
+          <tr><td>Gmail (solo lectura): token de acceso y dirección de correo conectada; correos que parecen facturas de proveedores y sus adjuntos</td><td>Importar automáticamente las facturas de proveedores del establecimiento</td><td>Ejecución del contrato (art. 6.1.b RGPD) y consentimiento al conectar la cuenta (art. 6.1.a RGPD)</td></tr>
         </tbody>
       </table>
       <p>Los textos de las publicaciones y los borradores de respuesta a reseñas se generan con inteligencia artificial (Anthropic). <strong>Nada se publica sin la aprobación de una persona del establecimiento.</strong> No usamos estos datos para publicidad ni los vendemos.</p>
@@ -90,6 +99,10 @@ export default function Privacidad() {
           <tr><td>Expo (EAS)</td><td>Distribución de actualizaciones de la app</td><td>EE.&nbsp;UU.</td></tr>
           <tr><td>Meta Platforms (Instagram)</td><td>Publicación en la cuenta de Instagram conectada por el establecimiento</td><td>UE (Irlanda) / EE.&nbsp;UU.</td></tr>
           <tr><td>Google</td><td>Lectura y respuesta de reseñas del Perfil de Empresa conectado</td><td>UE / EE.&nbsp;UU.</td></tr>
+          <tr><td>OpenAI</td><td>Transcripción, interpretación y voz del asistente de voz</td><td>EE.&nbsp;UU.</td></tr>
+          <tr><td>Cloudflare</td><td>Almacenamiento de archivos (imágenes y facturas de proveedores) y DNS</td><td>UE / EE.&nbsp;UU.</td></tr>
+          <tr><td>Resend / proveedor SMTP</td><td>Envío de correos del servicio</td><td>UE / EE.&nbsp;UU.</td></tr>
+          <tr><td>Sentry</td><td>Registro de errores técnicos (se eliminan contraseñas y tokens)</td><td>EE.&nbsp;UU.</td></tr>
           <tr><td>Anthropic</td><td>Redacción asistida por IA de publicaciones y borradores de respuesta</td><td>EE.&nbsp;UU.</td></tr>
         </tbody>
       </table>

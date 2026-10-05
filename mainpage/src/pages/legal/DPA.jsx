@@ -5,7 +5,7 @@ export default function DPA() {
   return (
     <LegalLayout title="Acuerdo de Procesamiento de Datos (DPA)">
       <SEOHead title="Acuerdo de procesamiento de datos (DPA)" description="Data Processing Agreement conforme al artículo 28 del RGPD. Obligaciones de ALEF como encargado del tratamiento de datos personales." path="/dpa" />
-      <p><em>Conforme al Artículo 28 del RGPD. Última actualización: 16 de junio de 2026.</em></p>
+      <p><em>Conforme al Artículo 28 del RGPD. Última actualización: 5 de octubre de 2026.</em></p>
 
       <h2>1. Partes</h2>
       <p><strong>Responsable del tratamiento</strong> («el Cliente»): El titular de la cuenta Alef (restaurante, bar, tienda o comercio).</p>
@@ -25,6 +25,9 @@ export default function DPA() {
           <tr><td>Transacciones</td><td>Pedidos, importes, método de pago</td><td>Comensales</td></tr>
           <tr><td>Reservas</td><td>Nombre, teléfono, fecha, comensales</td><td>Comensales</td></tr>
           <tr><td>Fiscales</td><td>NIF/CIF, dirección fiscal, facturas</td><td>Cliente</td></tr>
+          <tr><td>Voz (solo si se activa el asistente de voz)</td><td>Audio de las órdenes y su transcripción</td><td>Empleados</td></tr>
+          <tr><td>Reseñas (solo si se conecta Google)</td><td>Nombre público del autor, puntuación y texto de la reseña</td><td>Comensales</td></tr>
+          <tr><td>Facturas de proveedores (solo si se conecta Gmail)</td><td>Correos con factura y sus adjuntos</td><td>Proveedores del Cliente</td></tr>
         </tbody>
       </table>
       <p>No se tratan datos sensibles (salud, religión, orientación sexual, etc.).</p>
@@ -59,6 +62,11 @@ export default function DPA() {
           <tr><td>MongoDB Atlas</td><td>Base de datos</td><td>UE (Fráncfort)</td><td>RGPD, SOC 2</td></tr>
           <tr><td>Stripe</td><td>Pagos</td><td>UE (Irlanda) / EE.&nbsp;UU.</td><td>DPA, SCC, PCI-DSS</td></tr>
           <tr><td>Tailscale</td><td>VPN agentes de impresión</td><td>EE.&nbsp;UU.</td><td>Datos mínimos (solo IPs)</td></tr>
+          <tr><td>Cloudflare</td><td>Almacenamiento de archivos (imágenes, facturas de proveedores) y DNS</td><td>UE / EE.&nbsp;UU.</td><td>DPA, SCC</td></tr>
+          <tr><td>Resend / proveedor SMTP</td><td>Envío de correos del servicio</td><td>UE / EE.&nbsp;UU.</td><td>DPA, SCC</td></tr>
+          <tr><td>Sentry</td><td>Registro de errores técnicos (sin contraseñas ni tokens)</td><td>EE.&nbsp;UU.</td><td>DPA, SCC</td></tr>
+          <tr><td>OpenAI</td><td>Asistente de voz: transcripción, interpretación y voz</td><td>EE.&nbsp;UU.</td><td>DPA, SCC</td></tr>
+          <tr><td>Anthropic</td><td>Redacción asistida de publicaciones y de borradores de respuesta a reseñas</td><td>EE.&nbsp;UU.</td><td>DPA, SCC</td></tr>
         </tbody>
       </table>
       <p>Alef notificará cambios en la lista de sub-procesadores con un preaviso mínimo de 15 días. El Cliente podrá oponerse en 10 días. Si no se alcanza acuerdo, cualquiera de las partes podrá resolver el contrato.</p>
@@ -95,7 +103,7 @@ export default function DPA() {
       <p>El Cliente se compromete a cumplir con el RGPD y la LOPDGDD, informar a sus empleados y clientes sobre el tratamiento de datos, y obtener consentimiento cuando sea exigible.</p>
 
       <h2>6. Transferencias internacionales</h2>
-      <p>Los datos se tratan principalmente en la UE (Fráncfort). Stripe y Tailscale operan parcialmente desde EE.&nbsp;UU. Las transferencias se amparan en las Cláusulas Contractuales Tipo (SCC) de la Comisión Europea adoptadas por dichos proveedores.</p>
+      <p>Los datos se tratan principalmente en la UE (Fráncfort). Stripe, Tailscale, Cloudflare, Resend, Sentry, OpenAI y Anthropic operan total o parcialmente desde EE.&nbsp;UU. Las transferencias se amparan en las Cláusulas Contractuales Tipo (SCC) de la Comisión Europea adoptadas por dichos proveedores.</p>
 
       <h2>7. Duración</h2>
       <p>Este Acuerdo tiene la misma duración que la relación contractual. Las obligaciones de confidencialidad y eliminación sobreviven a su finalización.</p>

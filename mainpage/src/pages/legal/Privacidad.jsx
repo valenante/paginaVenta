@@ -5,7 +5,7 @@ export default function Privacidad() {
   return (
     <LegalLayout title="Política de Privacidad">
       <SEOHead title="Política de privacidad" description="Cómo ALEF recoge, trata y protege los datos personales de usuarios y clientes. Cumplimiento RGPD y derechos del interesado." path="/privacidad" />
-      <p><em>Última actualización: 16 de junio de 2026</em></p>
+      <p><em>Última actualización: 5 de octubre de 2026</em></p>
 
       <h2>1. Responsable del tratamiento</h2>
       <table>
@@ -54,6 +54,18 @@ export default function Privacidad() {
       <h3>Clientes finales de los establecimientos</h3>
       <p>Alef actúa como <strong>encargado del tratamiento</strong> por cuenta del establecimiento (responsable). Los datos de comensales (nombre, teléfono, email en reservas) se tratan conforme al <a href="/dpa">Acuerdo de Procesamiento de Datos (DPA)</a>.</p>
 
+      <h3>Integraciones con Instagram y con Google (opcionales)</h3>
+      <p>El establecimiento puede conectar, si lo desea, su cuenta profesional de Instagram y su Perfil de Empresa en Google. Solo se accede a las cuentas que el propio establecimiento conecta y autoriza.</p>
+      <table>
+        <thead><tr><th>Datos</th><th>Finalidad</th><th>Base legal</th></tr></thead>
+        <tbody>
+          <tr><td>Instagram: token de acceso, identificador y nombre de usuario de la cuenta profesional; publicaciones que el establecimiento prepara en ALEF</td><td>Preparar y publicar en la cuenta del establecimiento las publicaciones que este aprueba</td><td>Ejecución del contrato (art. 6.1.b RGPD) y consentimiento al conectar la cuenta (art. 6.1.a RGPD)</td></tr>
+          <tr><td>Google: token de acceso al Perfil de Empresa; reseñas recibidas (nombre del autor tal como lo muestra Google, puntuación y texto)</td><td>Mostrar las reseñas al establecimiento y publicar las respuestas que una persona del establecimiento aprueba</td><td>Ejecución del contrato (art. 6.1.b RGPD) e interés legítimo del establecimiento en atender a sus clientes (art. 6.1.f RGPD)</td></tr>
+        </tbody>
+      </table>
+      <p>Los textos de las publicaciones y los borradores de respuesta a reseñas se generan con inteligencia artificial (Anthropic). <strong>Nada se publica sin la aprobación de una persona del establecimiento.</strong> No usamos estos datos para publicidad ni los vendemos.</p>
+      <p><strong>Desconexión y borrado de datos de Instagram:</strong> el establecimiento puede desconectar la cuenta desde el panel de ALEF, o quitar el acceso de ALEF desde la configuración de Instagram o de Facebook. Si se solicita a Meta el borrado de datos, ALEF elimina el token, el identificador y el nombre de usuario de esa cuenta y facilita un código para consultar el estado de la solicitud. También puedes pedir el borrado escribiendo a contacto@softalef.com.</p>
+
       <h2>3. Cuánto tiempo conservamos los datos</h2>
       <table>
         <thead><tr><th>Tipo de dato</th><th>Plazo</th></tr></thead>
@@ -76,6 +88,9 @@ export default function Privacidad() {
           <tr><td>Stripe</td><td>Pagos</td><td>UE (Irlanda) / EE.&nbsp;UU.</td></tr>
           <tr><td>Tailscale</td><td>VPN agentes de impresión</td><td>EE.&nbsp;UU.</td></tr>
           <tr><td>Expo (EAS)</td><td>Distribución de actualizaciones de la app</td><td>EE.&nbsp;UU.</td></tr>
+          <tr><td>Meta Platforms (Instagram)</td><td>Publicación en la cuenta de Instagram conectada por el establecimiento</td><td>UE (Irlanda) / EE.&nbsp;UU.</td></tr>
+          <tr><td>Google</td><td>Lectura y respuesta de reseñas del Perfil de Empresa conectado</td><td>UE / EE.&nbsp;UU.</td></tr>
+          <tr><td>Anthropic</td><td>Redacción asistida por IA de publicaciones y borradores de respuesta</td><td>EE.&nbsp;UU.</td></tr>
         </tbody>
       </table>
       <p>Las transferencias fuera del EEE se realizan bajo Cláusulas Contractuales Tipo (SCC) aprobadas por la Comisión Europea.</p>

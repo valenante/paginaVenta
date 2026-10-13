@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useShopCategorias } from "../../context/ShopCategoriasContext";
 import { useLocale } from "../../hooks/useLocale";
+import AlertaMensaje from "../AlertaMensaje/AlertaMensaje";
 import "../Categories/CrearProducto.css";
 
 export default function CrearProductoShop({ defaultCategory, onClose, onCreated }) {
@@ -20,6 +21,7 @@ export default function CrearProductoShop({ defaultCategory, onClose, onCreated 
   });
 
   const [saving, setSaving] = useState(false);
+  const [alerta, setAlerta] = useState(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -29,6 +31,7 @@ export default function CrearProductoShop({ defaultCategory, onClose, onCreated 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSaving(true);
+    setAlerta(null);
 
     try {
       await createProduct({
@@ -62,6 +65,11 @@ export default function CrearProductoShop({ defaultCategory, onClose, onCreated 
 
       onCreated?.();
       onClose();
+    } catch (error) {
+      setAlerta({
+        tipo: "error",
+        mensaje: error?.response?.data?.message || "Error al crear el producto",
+      });
     } finally {
       setSaving(false);
     }
@@ -70,7 +78,15 @@ export default function CrearProductoShop({ defaultCategory, onClose, onCreated 
   return (
     <div className="crear-producto-overlay--crear">
       <div className="crear-producto-modal--crear">
-        <h2 className="titulo--crear">Crear producto (Shop)</h2>
+        <h2 className="titulo--crear">Crear producto</h2>
+
+        {alerta && (
+          <AlertaMensaje
+            tipo={alerta.tipo}
+            mensaje={alerta.mensaje}
+            onClose={() => setAlerta(null)}
+          />
+        )}
 
         <form onSubmit={handleSubmit} className="form--crear">
           {/* =========================

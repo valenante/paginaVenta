@@ -1,20 +1,21 @@
+// src/components/ShopCategories/ShopCategories.jsx
+// Productos de UNA categoría de tienda, con el aspecto de las filas de producto de la carta de
+// restaurante (components/Categories/CategoriasPanel.jsx → catpanel-product).
 import React, { useEffect, useState } from "react";
 import Portal from "../ui/Portal";
 import ModalConfirmacion from "../Modal/ModalConfirmacion";
-
 import { useShopCategorias } from "../../context/ShopCategoriasContext";
 import { useLocale } from "../../hooks/useLocale";
 import EditProductShop from "../ShopProductsModals/EditProductShop";
-import CrearProductoShop from "../ShopProductsModals/CrearProductoShop";
+import "../Categories/CategoriasPanel.css"; // filas catpanel-product de la carta
+import "../Categories/CategoriaFormModal.css"; // catmodal-error de la carta
 
-import "./ShopCategories.css";
-
-export default function ShopCategories({ category, type }) {
-  const { products, fetchProducts, deleteProduct } = useShopCategorias();
+export default function ShopCategories({ category, type, onCambio }) {
+  const { products, loadingProducts, errorProducts, fetchProducts, deleteProduct } =
+    useShopCategorias();
   const { formatMoney } = useLocale();
 
-  // Mismo contrato que el helper de módulo que había aquí: lo no numérico sigue
-  // saliendo como "-"; sólo cambia el símbolo, que ahora lo pone el tenant.
+  // Mismo contrato que antes: lo no numérico sigue saliendo como "-".
   const money = (n) => {
     const v = Number(n);
     if (!Number.isFinite(v)) return "-";
@@ -22,8 +23,8 @@ export default function ShopCategories({ category, type }) {
   };
 
   const [editing, setEditing] = useState(null);
-  const [mostrarCrear, setMostrarCrear] = useState(false);
   const [toDelete, setToDelete] = useState(null);
+  const [deleteError, setDeleteError] = useState(null);
 
   useEffect(() => {
     if (category && type) {
@@ -33,129 +34,100 @@ export default function ShopCategories({ category, type }) {
 
   const total = Array.isArray(products) ? products.length : 0;
 
-  const recargar = () => fetchProducts({ category, type });
+  const confirmarEliminacion = async (prod) => {
+    try {
+      setDeleteError(null);
+      await deleteProduct(prod._id);
+      setToDelete(null);
+      onCambio?.();
+    } catch (err) {
+      setDeleteError(err?.response?.data?.message || "No se pudo eliminar el producto.");
+    }
+  };
 
-  const confirmarEliminacion = async (id) => {
-    await deleteProduct(id);
-    setToDelete(null);
-    recargar();
+  const trasGuardar = () => {
+    setEditing(null);
+    onCambio?.();
   };
 
   return (
-    <div className="shopcats-root">
-      <header className="shopcats-header">
-        <div>
-          <h3 className="shopcats-title">{category}</h3>
-          <p className="shopcats-subtitle">
-            {editing
-              ? `Editando: ${editing.nombre}`
-              : total === 0
-              ? "Aún no hay ítems en esta categoría."
-              : `${total} ítem${total !== 1 ? "s" : ""} en esta categoría.`}
-          </p>
-        </div>
+    <div className="catpanel-products">
+      {loadingProducts ? (
+        <p className="catpanel-products-loading">Cargando productos…</p>
+      ) : errorProducts ? (
+        <div className="catmodal-error">{errorProducts}</div>
+      ) : total === 0 ? (
+        <p className="catpanel-products-empty">Sin productos en esta categoría.</p>
+      ) : (
+        products.map((p) => {
+          const itemType = p.itemType || p.type || "producto"; // por si viene legacy
+          const esServicio = itemType === "servicio";
 
-        {!editing && (
-          <button
-            className="btn-secondary"
-            type="button"
-            onClick={() => setMostrarCrear(true)}
-          >Nuevo
-          </button>
-        )}
-      </header>
+          const precioVenta = p?.precios?.venta ?? p?.precio ?? null;
+          const precioOferta = p?.precios?.oferta ?? null;
 
-      <section className="shopcats-body">
-        {total === 0 ? (
-          <div className="shopcats-empty">
-            <p className="muted">
-              Empieza creando un {type === "servicio" ? "servicio" : "producto"}.
-            </p>
-            <button className="btn-secondary" onClick={() => setMostrarCrear(true)}>
-              Crear primero
-            </button>
-          </div>
-        ) : (
-          <div className="shopcats-grid">
-            {products.map((p) => {
-              const itemType = p.itemType || p.type || "producto"; // por si viene legacy
-              const precioVenta = p?.precios?.venta ?? p?.precio ?? null;
-              const precioOferta = p?.precios?.oferta ?? null;
+          const stock = p?.inventario?.stock ?? p?.stockActual ?? null;
+          const stockMin = p?.inventario?.stockMinimo ?? p?.stockMinimo ?? null;
+          const gestionaStock = p?.inventario?.gestionaStock ?? true;
 
-              const stock = p?.inventario?.stock ?? p?.stockActual ?? null;
-              const stockMin = p?.inventario?.stockMinimo ?? p?.stockMinimo ?? null;
+          // Mismo criterio que la carta de restaurante (CategoriasPanel: prod.activo !== false).
+          // La tienda no tiene campo `estado`: el valor real es `activo` (ProductoShop.schema).
+          const activo = p?.activo !== false;
 
-              const gestionaStock = p?.inventario?.gestionaStock ?? true;
-              const estado = p?.estado || "habilitado";
+          const detalle = [
+            p.sku && `SKU ${p.sku}`,
+            p.barcode && `EAN ${p.barcode}`,
+            !esServicio &&
+              gestionaStock &&
+              `Stock ${stock ?? 0}${stockMin != null ? ` (mín ${stockMin})` : ""}`,
+            esServicio && p?.duracionMinutos != null && `Duración ${p.duracionMinutos} min`,
+            esServicio && "Servicio",
+            p.descripcion,
+          ]
+            .filter(Boolean)
+            .join(" · ");
 
-              return (
-                <article key={p._id} className="shopcats-card">
-                  <div className="shopcats-cardMain">
-                    <div className="shopcats-name">
-                      {p.nombre}
-                      <span className="shopcats-pill" style={{ marginLeft: 8 }}>
-                        {itemType}
-                      </span>
-                      <span
-                        className="shopcats-pill"
-                        style={{ marginLeft: 8, opacity: estado === "habilitado" ? 1 : 0.7 }}
-                      >
-                        {estado}
-                      </span>
-                    </div>
+          return (
+            <div key={p._id} className="catpanel-product">
+              <div className="catpanel-product-info">
+                <span className="catpanel-product-nombre">{p.nombre}</span>
+                {detalle && <span className="catpanel-product-desc">{detalle}</span>}
+              </div>
 
-                    {/* Precio */}
-                    <div className="shopcats-meta" style={{ marginTop: 6 }}>
-                      <span className="shopcats-pill">
-                        Precio: {money(precioVenta)}
-                      </span>
-                      {precioOferta != null && (
-                        <span className="shopcats-pill">
-                          Oferta: {money(precioOferta)}
-                        </span>
-                      )}
+              <div className="catpanel-product-meta">
+                <span className="catpanel-product-price">{money(precioVenta)}</span>
+                {precioOferta != null && (
+                  <span className="catpanel-product-price">Oferta {money(precioOferta)}</span>
+                )}
+                <span
+                  className={`catpanel-product-estado ${
+                    activo ? "catpanel-product-estado--on" : "catpanel-product-estado--off"
+                  }`}
+                >
+                  {activo ? "Visible" : "Oculto"}
+                </span>
+              </div>
 
-                      {/* Inventario solo si aplica */}
-                      {itemType === "producto" && gestionaStock && (
-                        <span className="shopcats-pill">
-                          Stock: {stock ?? 0}
-                          {stockMin != null ? ` (min ${stockMin})` : ""}
-                        </span>
-                      )}
-
-                      {/* Servicios */}
-                      {itemType === "servicio" && p?.duracionMinutos != null && (
-                        <span className="shopcats-pill">
-                          Duración: {p.duracionMinutos} min
-                        </span>
-                      )}
-                    </div>
-
-                    {/* SKU / EAN */}
-                    {(p.sku || p.barcode) && (
-                      <div className="shopcats-meta">
-                        {p.sku && <span className="shopcats-pill">SKU: {p.sku}</span>}
-                        {p.barcode && <span className="shopcats-pill">EAN: {p.barcode}</span>}
-                      </div>
-                    )}
-
-                    {p.descripcion && <div className="shopcats-desc">{p.descripcion}</div>}
-                  </div>
-
-                  <div className="shopcats-actions">
-                    <button className="btn-ghost" onClick={() => setEditing(p)}>
-                      Editar
-                    </button>
-                    <button className="btn-danger" onClick={() => setToDelete(p)}>
-                      Eliminar
-                    </button>
-                  </div>
-                </article>
-              );
-            })}
-          </div>
-        )}
-      </section>
+              <div className="catpanel-product-actions">
+                <button
+                  type="button"
+                  className="catpanel-action-btn"
+                  onClick={() => setEditing(p)}
+                >
+                  Editar
+                </button>
+                <button
+                  type="button"
+                  className="catpanel-action-btn catpanel-action-btn--del"
+                  onClick={() => setToDelete(p)}
+                >
+                  Eliminar
+                </button>
+              </div>
+            </div>
+          );
+        })
+      )}
 
       {/* Modales */}
       {editing && (
@@ -163,32 +135,24 @@ export default function ShopCategories({ category, type }) {
           <EditProductShop
             product={editing}
             onClose={() => setEditing(null)}
-            onSaved={() => {
-              setEditing(null);
-              recargar();
-            }}
-          />
-        </Portal>
-      )}
-
-      {mostrarCrear && (
-        <Portal>
-          <CrearProductoShop
-            type={type}
-            defaultCategory={category}
-            onClose={() => setMostrarCrear(false)}
-            onCreated={recargar}
+            onSaved={trasGuardar}
           />
         </Portal>
       )}
 
       {toDelete && (
         <ModalConfirmacion
-          titulo="Eliminar ítem"
-          mensaje={`¿Seguro que deseas eliminar "${toDelete.nombre}"?`}
-          onConfirm={() => confirmarEliminacion(toDelete._id)}
-          onClose={() => setToDelete(null)}
-        />
+          titulo="Eliminar producto"
+          mensaje={`¿Seguro que quieres eliminar “${toDelete.nombre}”? Esta acción no se puede deshacer.`}
+          textoConfirmar="Eliminar"
+          onConfirm={() => confirmarEliminacion(toDelete)}
+          onClose={() => {
+            setToDelete(null);
+            setDeleteError(null);
+          }}
+        >
+          {deleteError && <div className="catmodal-error">{deleteError}</div>}
+        </ModalConfirmacion>
       )}
     </div>
   );

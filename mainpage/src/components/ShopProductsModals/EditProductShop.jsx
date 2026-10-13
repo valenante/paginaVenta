@@ -1,7 +1,9 @@
 import React, { useMemo, useState } from "react";
 import { useShopCategorias } from "../../context/ShopCategoriasContext";
 import { useLocale } from "../../hooks/useLocale";
+import AlertaMensaje from "../AlertaMensaje/AlertaMensaje";
 import "../Categories/CrearProducto.css"; // 👈 Reutiliza el CSS PRO del modal
+import "./ShopProductModals.css";
 
 export default function EditProductShop({ product, onClose, onSaved }) {
   const { updateProduct } = useShopCategorias();
@@ -29,6 +31,7 @@ export default function EditProductShop({ product, onClose, onSaved }) {
   });
 
   const [saving, setSaving] = useState(false);
+  const [alerta, setAlerta] = useState(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -38,6 +41,7 @@ export default function EditProductShop({ product, onClose, onSaved }) {
   const onSubmit = async (e) => {
     e.preventDefault();
     setSaving(true);
+    setAlerta(null);
 
     try {
       // ✅ Payload en formato BD
@@ -80,6 +84,11 @@ export default function EditProductShop({ product, onClose, onSaved }) {
 
       onClose?.();
       onSaved?.();
+    } catch (error) {
+      setAlerta({
+        tipo: "error",
+        mensaje: error?.response?.data?.message || "Error al actualizar el producto",
+      });
     } finally {
       setSaving(false);
     }
@@ -88,7 +97,15 @@ export default function EditProductShop({ product, onClose, onSaved }) {
   return (
     <div className="crear-producto-overlay--crear">
       <div className="crear-producto-modal--crear">
-        <h2 className="titulo--crear">Editar producto (Shop)</h2>
+        <h2 className="titulo--crear">Editar producto</h2>
+
+        {alerta && (
+          <AlertaMensaje
+            tipo={alerta.tipo}
+            mensaje={alerta.mensaje}
+            onClose={() => setAlerta(null)}
+          />
+        )}
 
         <form onSubmit={onSubmit} className="form--crear">
           {/* =========================
@@ -292,7 +309,7 @@ export default function EditProductShop({ product, onClose, onSaved }) {
               ========================= */}
           <div className="botones--crear">
             <button type="submit" className="boton--crear" disabled={saving}>
-              {saving ? "Guardando..." : "Guardar"}
+              {saving ? "Guardando..." : "Guardar cambios"}
             </button>
             <button
               type="button"
@@ -308,7 +325,7 @@ export default function EditProductShop({ product, onClose, onSaved }) {
               NOTA PARA SERVICIOS
               ========================= */}
           {esServicio && (
-            <p className="help-text--crear" style={{ textAlign: "center" }}>
+            <p className="help-text--crear shopprod-nota">
               Este ítem es un <strong>servicio</strong>, por eso no se gestiona stock.
             </p>
           )}

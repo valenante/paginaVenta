@@ -2,12 +2,10 @@
 import React, { useEffect } from "react";
 import ShopProducts from "../components/ShopProducts/ShopProducts";
 import { useShopCategorias } from "../context/ShopCategoriasContext";
-import { useTenant } from "../context/TenantContext.jsx";
 import "../styles/ProductosPageShop.css";
 
 export default function ProductosPageShop() {
-  const { categories, fetchCategories } = useShopCategorias();
-  const { tenantId } = useTenant();
+  const { fetchCategories } = useShopCategorias();
 
   useEffect(() => {
     fetchCategories();
@@ -15,23 +13,19 @@ export default function ProductosPageShop() {
 
   return (
     <div className="products-page--productos alef-products-page">
-      {/* ===== HEADER ===== */}
+      {/* ===== HEADER (mismas clases y estructura que ProductsMenu de restaurante) ===== */}
       <header className="products-header--productos">
         <div>
-          <h1 className="products-title--productos">Gestor de catálogo</h1>
+          <h1 className="products-title--productos">Gestor de productos</h1>
           <p className="products-subtitle--productos">
-            Crea y edita productos de tu shop: precios, impuestos, stock,
-            duración y opciones avanzadas.
-          </p>
-          <p className="products-subtitle--productos">
-            Tenant: <b>{tenantId || "—"}</b>
+            Gestiona las categorías y los productos de tu tienda.
           </p>
         </div>
       </header>
 
       {/* ===== CONTENIDO ===== */}
       <section className="products-content-card--productos">
-        <ShopProducts categories={categories} />
+        <ShopProducts />
       </section>
     </div>
   );

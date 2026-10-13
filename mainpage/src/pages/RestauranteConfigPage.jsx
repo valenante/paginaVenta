@@ -20,8 +20,9 @@ import { DEFAULT_TEMA_SHOP, normalizarTemaShop } from "../utils/temaShop";
 import { useLocale } from "../hooks/useLocale";
 import TemaTpvPanel from "../components/Tema/TemaTpvPanel.jsx";
 import TemaShopPanel from "../components/Tema/TemaShopPanel.jsx";
+import TiendaConfigPage from "./TiendaConfigPage.jsx";
 
-export default function RestauranteConfigPage() {
+function ConfigRestaurantePage() {
   const { config, setConfig, refreshConfig } = useConfig();
   const { user } = useAuth();
   const location = useLocation();
@@ -532,4 +533,16 @@ export default function RestauranteConfigPage() {
       </div>
     </main>
   );
+}
+
+/*
+ * Entrada de /configuracion/restaurante (panelRoutes.jsx la monta para todos los tenants).
+ * La tienda tiene su pantalla propia. La decisión usa la MISMA fuente que elige el endpoint de
+ * configuración (ConfigContext.tipoNegocio), para que pantalla y endpoints no puedan discrepar.
+ * Con tipo restaurante el cuerpo de arriba se ejecuta igual que antes.
+ */
+export default function RestauranteConfigPage() {
+  const { tipoNegocio } = useConfig();
+  if (tipoNegocio === "shop") return <TiendaConfigPage />;
+  return <ConfigRestaurantePage />;
 }

@@ -15,7 +15,9 @@ export default function IdentidadNegocioPanel({
             <header className="config-card-header">
                 <h2>Datos del {esTienda ? "negocio" : "restaurante"}</h2>
                 <p className="config-card-subtitle">
-                    Información visible en el TPV y el dashboard.
+                    {esTienda
+                        ? "Nombre, logo y datos de contacto de tu tienda."
+                        : "Información visible en el TPV y el dashboard."}
                 </p>
             </header>
 

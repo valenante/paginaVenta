@@ -3,7 +3,7 @@ import api from "../utils/api";
 
 const REFRESH_MS = 5 * 60 * 1000; // 5 minutos
 
-export function useAutopilot() {
+export function useAutopilot({ enabled = true } = {}) {
   const [actions, setActions] = useState({ pendientes: [], ejecutadas: [] });
   const [badge, setBadge] = useState({ count: 0, severity: "ok" });
   const [loading, setLoading] = useState(true);
@@ -22,10 +22,12 @@ export function useAutopilot() {
   }, []);
 
   useEffect(() => {
+    // Sin enabled no se pide nada: /autopilot sólo existe para restaurante (ver AICopilotGate).
+    if (!enabled) return undefined;
     fetchActions();
     intervalRef.current = setInterval(fetchActions, REFRESH_MS);
     return () => clearInterval(intervalRef.current);
-  }, [fetchActions]);
+  }, [enabled, fetchActions]);
 
   const approve = useCallback(async (id) => {
     try {
@@ -54,5 +56,6 @@ export function useAutopilot() {
     }
   }, [fetchActions]);
 
-  return { actions, badge, loading, approve, reject, revert, refetch: fetchActions };
+  // Deshabilitado no hay carga pendiente: sin esto el panel quedaría cargando para siempre.
+  return { actions, badge, loading: enabled && loading, approve, reject, revert, refetch: fetchActions };
 }

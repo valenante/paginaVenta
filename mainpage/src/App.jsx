@@ -142,10 +142,15 @@ function WhatsAppFloatingGate() {
 /* ══════════════════════════════════════════════
    AI Copilot gate — solo logueado
    ══════════════════════════════════════════════ */
-function AICopilotGate() {
+export function AICopilotGate() {
   const { user, loading: authLoading } = useAuth();
+  const { tenant } = useTenant() || {};
   if (authLoading || !user) return null;
-  return <AICopilot />;
+  // /autopilot sólo lo monta el backend para restaurante (requireTipoNegocio("restaurante"),
+  // saas-api/src/app.js:795). Mismo origen de tipo que ConfigContext, pero sin default: con el
+  // tenant todavía sin cargar no se pide nada, porque este gate no espera a TenantContext.
+  const tipoNegocio = String(tenant?.tipoNegocio || tenant?.suscripcion?.tipoNegocio || "").toLowerCase();
+  return <AICopilot autopilot={tipoNegocio === "restaurante"} />;
 }
 
 /* ══════════════════════════════════════════════

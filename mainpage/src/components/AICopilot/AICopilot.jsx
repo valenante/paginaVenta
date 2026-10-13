@@ -9,7 +9,7 @@ import CopilotMini from "./CopilotMini";
 import CopilotFullscreen from "./CopilotFullscreen";
 import "./AICopilot.css";
 
-export default function AICopilot() {
+export default function AICopilot({ autopilot = true }) {
   const { user } = useAuth();
   const { hasFeature } = useFeaturesPlan();
   // closed → autopilot → mini → fullscreen
@@ -23,7 +23,7 @@ export default function AICopilot() {
     newConversation, deleteConversation,
   } = useCopilot();
 
-  const { actions, badge, loading: apLoading, approve, reject, revert } = useAutopilot();
+  const { actions, badge, loading: apLoading, approve, reject, revert } = useAutopilot({ enabled: autopilot });
 
   const handleSuggestionClick = useCallback((text) => {
     sendMessage(text);

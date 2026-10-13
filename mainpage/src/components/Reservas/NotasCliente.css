@@ -1,0 +1,19 @@
+/* Notas del cliente en una reserva (mensaje y alergias). */
+.rc-notas-cliente {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: var(--font-size-sm, 0.875rem);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.rc-alergias {
+  background: var(--color-error-suave);
+  color: var(--color-texto);
+  border: 1px solid var(--color-error);
+  border-radius: var(--radius-sm, 8px);
+  padding: 0.15rem 0.5rem;
+  font-weight: 600;
+}
+.rc-alergias-k { text-transform: uppercase; font-size: var(--font-size-xs, 0.75rem); }
+.rc-mensaje { color: var(--color-texto-suave); }

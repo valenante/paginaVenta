@@ -5,11 +5,19 @@
 
 /* ===== Estado badges ===== */
 .rc-estado { text-transform: capitalize; }
-.rc-estado--pendiente { background: rgba(251, 191, 36, 0.14); color: #a16207; }
-.rc-estado--confirmada, .rc-estado--auto-confirmada { background: rgba(16, 185, 129, 0.12); color: #047857; }
-.rc-estado--rechazada { background: rgba(239, 68, 68, 0.12); color: #b91c1c; }
-.rc-estado--completada { background: rgba(59, 130, 246, 0.12); color: #1d4ed8; }
-.rc-estado--no-show { background: rgba(168, 85, 247, 0.12); color: #7c3aed; }
+/* Colores de ALEF (tokens de index.css). El TEXTO va en el color de texto principal y el
+   color del estado en fondo y borde: los tokens claros (aviso, éxito) como texto no llegan al
+   contraste mínimo de lectura (4,5:1) sobre su fondo suave. */
+.rc-estado { color: var(--color-texto); border: 1px solid transparent; }
+.rc-estado--pendiente { background: var(--color-aviso-suave); border-color: var(--color-aviso); }
+.rc-estado--confirmada, .rc-estado--auto-confirmada { background: var(--color-exito-suave); border-color: var(--color-exito); }
+.rc-estado--rechazada { background: var(--color-error-suave); border-color: var(--color-error); }
+.rc-estado--completada { background: var(--color-primario-suave); border-color: var(--color-primario-oscuro); }
+.rc-estado--no-show { background: var(--color-terciario); border-color: var(--color-secundario-oscuro); }
+
+/* ===== Notas del cliente (mensaje y alergias) ===== */
+.rc-notas { max-width: 280px; }
+.rc-mcard-notas { margin-top: 0.5rem; }
 
 
 /* ===== Mobile cards ===== */

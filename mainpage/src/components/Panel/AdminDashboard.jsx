@@ -9,6 +9,8 @@ import TiemposCocinaCard from "./TiemposCocinaCard";
 import UpsellEstadisticasPro from "../Estadisticas/UpsellEstadisticasPro";
 import { formatCantidad } from "../../utils/stockFormat";
 import { useLocale } from "../../hooks/useLocale";
+import NotasCliente from "../Reservas/NotasCliente.jsx";
+import { etiquetaEstado } from "../Reservas/reservaEstado.js";
 import "./AdminDashboard.css";
 
 const fmt = (v) => Number(v || 0).toFixed(2);
@@ -459,15 +461,25 @@ export default function AdminDashboard() {
                   <div className="adm__modal-list-head">
                     <span>Hora</span>
                     <span>Nombre</span>
-                    <span>Personas</span>
+                    <span>Pers.</span>
+                    <span>Mesa</span>
+                    <span>Teléfono</span>
                     <span>Estado</span>
                   </div>
                   {reservasList.map((r, i) => (
-                    <div key={i} className="adm__modal-list-row">
+                    <div key={r._id || i} className="adm__modal-list-row adm__reserva-row">
                       <span>{fmtHora(r.hora || r.fecha, locale)}</span>
                       <span>{r.nombre || r.cliente?.nombre || "--"}</span>
                       <span>{r.comensales || r.personas || "--"}</span>
-                      <span className={`adm__badge adm__badge--${r.estado}`}>{r.estado}</span>
+                      <span>{r.mesaAsignada || "--"}</span>
+                      <span>{r.telefono || "--"}</span>
+                      <span className={`adm__badge adm__badge--${r.estado}`}>{etiquetaEstado(r.estado)}</span>
+                      {(r.mensaje || r.alergias || r.email) && (
+                        <div className="adm__reserva-extra">
+                          {r.email && <span className="adm__reserva-email">{r.email}</span>}
+                          {(r.mensaje || r.alergias) && <NotasCliente r={r} />}
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>

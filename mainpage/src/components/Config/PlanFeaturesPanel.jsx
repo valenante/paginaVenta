@@ -267,6 +267,41 @@ export default function PlanFeaturesPanel({ onAlert }) {
                         )}
                     </div>
 
+                    {/* === Impresión doble (comandas) === */}
+                    <div className="features-cat">
+                        <button
+                            type="button"
+                            className="features-cat-header"
+                            onClick={() => toggleCat("__dobleImpresion")}
+                        >
+                            <span className="features-cat-title">
+                                Impresión doble <span className="features-cat-count">(2)</span>
+                            </span>
+                            <span className="features-cat-chevron">{openCats["__dobleImpresion"] ? "▾" : "▸"}</span>
+                        </button>
+
+                        {openCats["__dobleImpresion"] && (
+                            <div className="feature-grid">
+                                <label className="feature-item">
+                                    <input
+                                        type="checkbox"
+                                        checked={Boolean(getConfigValue(config, "impresion.dobleImpresionCocina"))}
+                                        onChange={(e) => handleFeatureUpdate("impresion.dobleImpresionCocina", e.target.checked)}
+                                    />
+                                    <span>Comanda doble — Cocina</span>
+                                </label>
+                                <label className="feature-item">
+                                    <input
+                                        type="checkbox"
+                                        checked={Boolean(getConfigValue(config, "impresion.dobleImpresionBarra"))}
+                                        onChange={(e) => handleFeatureUpdate("impresion.dobleImpresionBarra", e.target.checked)}
+                                    />
+                                    <span>Comanda doble — Barra</span>
+                                </label>
+                            </div>
+                        )}
+                    </div>
+
                     {/* === Comportamiento al marcar listo === */}
                     <div className="features-cat">
                         <button

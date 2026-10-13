@@ -1,13 +1,17 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import FiltroFechaReservas from "../components/Reservas/FiltroFechaReservas";
 import api from "../utils/api";
 import AlertaMensaje from "../components/AlertaMensaje/AlertaMensaje.jsx";
 import ModalConfirmacion from "../components/Modal/ModalConfirmacion.jsx";
 import ModalNuevaReserva from "../components/Reservas/ModalNuevaReserva.jsx";
 import ReservasAjustesPage from "../components/Reservas/ReservasAjustesPage.jsx";
+import NotasCliente from "../components/Reservas/NotasCliente.jsx";
+import { ESTADOS_LABEL } from "../components/Reservas/reservaEstado.js";
 import ErrorToast from "../components/common/ErrorToast.jsx";
 import { normalizeApiError } from "../utils/normalizeApiError.js";
 import { useFeature } from "../hooks/useFeature";
+import Pagination from "./Finanzas/Pagination.jsx";
+import "./Finanzas/Finanzas.css";
 import "../styles/ReservasConfigPage.css";
 
 const fmtFecha = (v) => {
@@ -20,14 +24,21 @@ const fmtFecha = (v) => {
   } catch { return "—"; }
 };
 
-const ESTADOS_LABEL = {
-  pendiente: "Pendiente",
-  confirmada: "Confirmada",
-  "auto-confirmada": "Auto-confirmada",
-  rechazada: "Rechazada",
-  completada: "Completada",
-  "no-show": "No vino",
-};
+
+const POR_PAGINA = 20;
+
+// Próximas primero: lo de hoy en adelante, de la más cercana a la más lejana; después lo
+// pasado, de la más reciente a la más antigua. "Hoy" empieza a las 00:00 del navegador,
+// para que la de las 13:00 siga arriba cuando se mira a las 16:00.
+function ordenarProximasPrimero(lista) {
+  const inicioHoy = new Date();
+  inicioHoy.setHours(0, 0, 0, 0);
+  // Hora ilegible ⇒ al final de todo (nunca entre las próximas), sin romper el orden.
+  const t = (r) => { const v = new Date(r?.hora).getTime(); return Number.isFinite(v) ? v : -Infinity; };
+  const proximas = lista.filter((r) => t(r) >= inicioHoy.getTime()).sort((a, b) => t(a) - t(b));
+  const pasadas = lista.filter((r) => !(t(r) >= inicioHoy.getTime())).sort((a, b) => t(b) - t(a));
+  return [...proximas, ...pasadas];
+}
 
 export default function ReservasConfigPage() {
   const [reservas, setReservas] = useState([]);
@@ -44,6 +55,7 @@ export default function ReservasConfigPage() {
   const [modal, setModal] = useState(null);
   const [showAjustes, setShowAjustes] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [pagina, setPagina] = useState(1);
   const reservasHabilitadas = useFeature("reservas.habilitadas", true);
 
   // ⚖️ D-445 · carga de los dias con reserva para marcarlos en el filtro.
@@ -83,6 +95,13 @@ export default function ReservasConfigPage() {
       setLoading(false);
     }
   }, [fecha, estado]);
+
+  useEffect(() => { setPagina(1); }, [fecha, estado]);
+
+  const ordenadas = useMemo(() => ordenarProximasPrimero(reservas), [reservas]);
+  const totalPaginas = Math.max(1, Math.ceil(ordenadas.length / POR_PAGINA));
+  const paginaActual = Math.min(pagina, totalPaginas);
+  const visibles = ordenadas.slice((paginaActual - 1) * POR_PAGINA, paginaActual * POR_PAGINA);
 
   useEffect(() => {
     if (!reservasHabilitadas) return;
@@ -171,8 +190,8 @@ export default function ReservasConfigPage() {
     if (r.estado === "confirmada" || r.estado === "auto-confirmada") {
       return (
         <div className="cfg-actions">
-          <button className="btn btn-primario cfg-btn-compact" onClick={() => checkinReserva(r._id)}>Check-in</button>
-          <button className="btn btn-secundario cfg-btn-compact" onClick={() => marcarNoShow(r._id)}>No-show</button>
+          <button className="btn btn-primario cfg-btn-compact" onClick={() => checkinReserva(r._id)}>Ha llegado</button>
+          <button className="btn btn-secundario cfg-btn-compact" onClick={() => marcarNoShow(r._id)}>No vino</button>
           <button className="btn btn-ghost cfg-btn-compact" onClick={() => abrirCancelarReserva(r._id)}>Cancelar</button>
         </div>
       );
@@ -264,7 +283,7 @@ export default function ReservasConfigPage() {
                   <option value="confirmada">Confirmadas</option>
                   <option value="auto-confirmada">Auto-confirmadas</option>
                   <option value="completada">Completadas</option>
-                  <option value="no-show">No-show</option>
+                  <option value="no-show">No vino</option>
                   <option value="rechazada">Rechazadas</option>
                 </select>
               </div>
@@ -294,18 +313,20 @@ export default function ReservasConfigPage() {
                         <th>Reserva para</th>
                         <th>Mesa</th>
                         <th>Teléfono</th>
+                        <th>Notas del cliente</th>
                         <th>Estado</th>
                         <th>Acciones</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {reservas.map((r) => (
+                      {visibles.map((r) => (
                         <tr key={r._id}>
                           <td><strong>{r.nombre}</strong></td>
                           <td>{r.personas}</td>
                           <td>{fmtFecha(r.hora)}</td>
                           <td>{r.mesaAsignada || "—"}</td>
                           <td>{r.telefono}</td>
+                          <td className="rc-notas"><NotasCliente r={r} /></td>
                           <td><span className={`badge rc-estado rc-estado--${r.estado}`}>{ESTADOS_LABEL[r.estado] || r.estado}</span></td>
                           <td>{renderActions(r)}</td>
                         </tr>
@@ -316,11 +337,11 @@ export default function ReservasConfigPage() {
 
                 {/* Mobile */}
                 <div className="rc-mcards">
-                  {reservas.map((r) => (
+                  {visibles.map((r) => (
                     <div key={r._id} className="rc-mcard">
                       <div className="rc-mcard-head">
                         <strong>{r.nombre}</strong>
-                        <span className={`badge rc-estado rc-estado--${r.estado}`}>{r.estado}</span>
+                        <span className={`badge rc-estado rc-estado--${r.estado}`}>{ESTADOS_LABEL[r.estado] || r.estado}</span>
                       </div>
                       <div className="rc-mcard-grid">
                         <div><span className="rc-mcard-k">Personas</span><span className="rc-mcard-v">{r.personas}</span></div>
@@ -328,10 +349,21 @@ export default function ReservasConfigPage() {
                         {r.telefono && <div><span className="rc-mcard-k">Tel.</span><span className="rc-mcard-v">{r.telefono}</span></div>}
                         {r.email && <div><span className="rc-mcard-k">Email</span><span className="rc-mcard-v">{r.email}</span></div>}
                       </div>
+                      {(r.mensaje || r.alergias) && <div className="rc-mcard-notas"><NotasCliente r={r} /></div>}
                       <div className="rc-mcard-actions">{renderActions(r)}</div>
                     </div>
                   ))}
                 </div>
+
+                {totalPaginas > 1 && (
+                  <Pagination
+                    page={paginaActual}
+                    totalPages={totalPaginas}
+                    total={ordenadas.length}
+                    pageSize={POR_PAGINA}
+                    onPageChange={setPagina}
+                  />
+                )}
               </>
             )}
           </section>

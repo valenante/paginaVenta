@@ -457,6 +457,8 @@ export default function ConfigImpresionPage() {
   const [impresoras, setImpresoras] = useState([]);
   const [estado, setEstado] = useState("unknown");
   const [loading, setLoading] = useState(false);
+  // Solo las operaciones de guardado encienden «Guardando...»; `loading` cubre cualquier operación.
+  const [guardando, setGuardando] = useState(false);
   const [success, setSuccess] = useState(null);
   const [error, setError] = useState(null);
 
@@ -561,6 +563,7 @@ export default function ConfigImpresionPage() {
     setSuccess(null); setError(null);
     try {
       setLoading(true);
+      setGuardando(true);
       const patch = {
         "impresion.impresoras": { cocina: impCocina, barra: impBarra, caja: impCaja, tickets: impTickets },
         "impresion.estiloTicket": sanearEstiloTicket(estiloTicket),
@@ -576,6 +579,7 @@ export default function ConfigImpresionPage() {
       setError({ ...normalized, retryFn: () => guardar(reason) });
     } finally {
       setLoading(false);
+      setGuardando(false);
     }
   };
 
@@ -642,6 +646,7 @@ export default function ConfigImpresionPage() {
     setSuccess(null); setError(null);
     try {
       setLoading(true);
+      setGuardando(true);
       const patch = { "impresion.estiloTicket": sanearEstiloTicket(estiloTicket) };
       const { data: draft } = await api.post("/admin/config/versions", { patch, scope: "impresion_estilo", reason: "Cambios diseño ticket" });
       const versionId = draft?.version?.id || draft?.versionId || draft?.id;
@@ -654,6 +659,7 @@ export default function ConfigImpresionPage() {
       setError({ ...normalized, retryFn: handleSaveFromModal });
     } finally {
       setLoading(false);
+      setGuardando(false);
     }
   }, [estiloTicket, refreshConfig]);
 
@@ -675,7 +681,7 @@ export default function ConfigImpresionPage() {
   return (
     <main className="print-config-page cfg-page cfg-page--fixed-bar section section--wide">
       {success && (
-        <AlertaMensaje tipo="success" mensaje={success} onClose={() => setSuccess(null)} autoCerrar duracion={3200} />
+        <AlertaMensaje tipo="exito" mensaje={success} onClose={() => setSuccess(null)} autoCerrar duracion={3200} />
       )}
       {error && (
         <ErrorToast error={error} onRetry={error.canRetry ? error.retryFn : undefined} onClose={() => setError(null)} />
@@ -761,8 +767,8 @@ export default function ConfigImpresionPage() {
               ))}
             </div>
             <p className="print-config-note">
-              Consejo: puedes escribir el nombre de la impresora directamente
-              (p. ej. "POS-80"), o pulsar "Listar impresoras" para ver las detectadas.
+              Consejo: elige la impresora de la lista. Incluye las que detecta el agente
+              (pulsa "Listar impresoras" para actualizarla) y las ya asignadas a una estación.
             </p>
           </section>
 
@@ -817,7 +823,7 @@ export default function ConfigImpresionPage() {
           disabled={loading || !hasChanges}
           title={!hasChanges ? "No hay cambios para guardar" : ""}
         >
-          {loading ? "Guardando..." : "Guardar configuración"}
+          {guardando ? "Guardando..." : "Guardar configuración"}
         </button>
         <button type="button" className="btn btn-secundario" onClick={() => handleRollback("Rollback impresión")} disabled={loading}>
           Revertir último cambio

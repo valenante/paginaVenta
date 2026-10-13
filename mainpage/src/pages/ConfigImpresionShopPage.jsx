@@ -19,8 +19,9 @@ import { normalizeApiError } from "../utils/normalizeApiError.js";
    Fuera de este lote a propósito:
      - Diseño del ticket: la pantalla de restaurante lo guarda con /admin/config/versions,
        un contrato distinto al de la tienda.
-     - Revertir último cambio: /admin/config/rollback restaura la última ConfigVersion aplicada
-       de cualquier pantalla, y guardar en la tienda no crea versiones. */
+     - Revertir: la pantalla de tienda no lo tiene. El rollback de restaurante
+       (/admin/config/rollback) puede deshacer un cambio de otra pantalla, y guardar
+       en la tienda no crea versiones. Decisión registrada: se oculta en tienda. */
 
 // Mismo mapeo de estado que ConfigImpresionPage (restaurante).
 function estadoFromError(e) {

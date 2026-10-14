@@ -3,21 +3,81 @@
    Base: config-common.css (cfg-*, card, badge, btn, etc.)
    ========================================================= */
 
-/* ===== Estado badges ===== */
-.rc-estado { text-transform: capitalize; }
-/* Colores de ALEF (tokens de index.css). El TEXTO va en el color de texto principal y el
-   color del estado en fondo y borde: los tokens claros (aviso, éxito) como texto no llegan al
-   contraste mínimo de lectura (4,5:1) sobre su fondo suave. */
-.rc-estado { color: var(--color-texto); border: 1px solid transparent; }
-.rc-estado--pendiente { background: var(--color-aviso-suave); border-color: var(--color-aviso); }
-.rc-estado--confirmada, .rc-estado--auto-confirmada { background: var(--color-exito-suave); border-color: var(--color-exito); }
-.rc-estado--rechazada { background: var(--color-error-suave); border-color: var(--color-error); }
-.rc-estado--completada { background: var(--color-primario-suave); border-color: var(--color-primario-oscuro); }
-.rc-estado--no-show { background: var(--color-terciario); border-color: var(--color-secundario-oscuro); }
+/* ===== Píldoras de estado =====
+   NADA INVENTADO. Todo con el ámbito de la página (una regla sin ámbito acaba pisando otra
+   pantalla, D-1311).
+   · FORMA: la de la hermana Fidelización, `.loyalty-pill` (LoyaltyConfigPage.css:351-359):
+     MAYÚSCULAS, 0.72rem, 600, radio de píldora, sin borde.
+   · COLOR: fondos y textos que YA usa el panel en tema claro para estados, con texto oscuro (los
+     `-suave` de index.css con su texto no llegan a 4,5:1, D-1313). Y NINGÚN fondo que a la vista
+     sea el verde #d1fae5 o el rosa #fee2e2 que Valen rechazó en producción: ΔE2000 ≥ 10 frente a
+     los dos, medido sobre la tarjeta blanca y sobre la fila bajo el ratón (R4; la R3 dejaba
+     «Confirmada» a ΔE 6,8 del verde y «Rechazada» a ΔE 1,4 del rosa, es decir, el MISMO rosa).
+                                fondo · texto                                           ΔE verde/rosa · contraste
+       confirmada / auto-conf.  tinte «ok» de la píldora clara de Exportaciones          11,8 / 17,6 · 4,89:1
+                                (ExportsPage.css:118, y status-box.ok de MiCuentaPage.css:121)
+                                · texto «correcto» de Facturas (FacturasPage.css:244)
+       pendiente                «pendiente» de Facturas (FacturasPage.css:247-253)       18,3 / 13,3 · 6,09:1
+       rechazada                fondo de la píldora base de Facturas (FacturasPage.css:233)
+                                · texto «rechazado» de Facturas (FacturasPage.css:260)   16,8 / 11,8 · 5,88:1
+       no-show («No vino»)      «anulada» de Facturas (FacturasPage.css:263-267)         16,9 / 12,5 · 6,26:1
+       completada               «info» de Mi cuenta (MiCuentaPage.css:201-205)           14,8 / 19,5 · 5,12:1
+     «Rechazada» NO lleva tinte rojo: TODOS los tintes rojos que usan las piezas claras del panel
+     (alfa 0,03 a 0,2) pintan a ΔE ≤ 9 del rosa de la captura — medido, ver lotes/PANEL-RESERVAS-
+     ESTILO/CIERRE.md —; el rojo va en el TEXTO. (La red de color pintado lo recalcula todo:
+     src/tests/reservasColorPintado.red.test.jsx.) */
+.reservas-config-page .rc-estado {
+  display: inline-block;
+  padding: 2px 9px;
+  border-radius: var(--radius-pill);
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+.reservas-config-page .rc-estado--confirmada,
+.reservas-config-page .rc-estado--auto-confirmada { background: rgba(22, 163, 74, 0.06); color: #047857; }
+.reservas-config-page .rc-estado--pendiente { background: rgba(245, 158, 11, 0.14); color: #92400e; }
+.reservas-config-page .rc-estado--rechazada { background: #f3f4f6; color: #b91c1c; }
+.reservas-config-page .rc-estado--no-show { background: rgba(148, 163, 184, 0.18); color: #475569; }
+.reservas-config-page .rc-estado--completada { background: rgba(14, 165, 233, 0.1); color: #0369a1; }
 
-/* ===== Notas del cliente (mensaje y alergias) ===== */
+/* ===== Notas del cliente (mensaje y alergias) =====
+   NotasCliente.css sólo pone la maqueta. Las alergias: SIN caja, sólo texto en negrita en el rojo
+   oscuro del panel claro (#b91c1c, el mismo texto de «Rechazada»; 6,47:1 sobre blanco — el token
+   --color-error se queda en 3,76:1). La etiqueta, como las etiquetas de la tarjeta de móvil. */
 .rc-notas { max-width: 280px; }
 .rc-mcard-notas { margin-top: 0.5rem; }
+.reservas-config-page .rc-notas-cliente { font-size: var(--font-size-sm); }
+.reservas-config-page .rc-alergias { color: #b91c1c; font-weight: 700; }
+.reservas-config-page .rc-alergias-k { font-size: var(--font-size-xs); letter-spacing: 0.03em; }
+.reservas-config-page .rc-mensaje { color: var(--color-texto-suave); }
+
+/* ===== Paginación =====
+   Contenedor `.cfg-pager` (config-common.css) y TODOS los botones `btn btn-secundario
+   cfg-btn-compact`, también la página activa: el «seleccionado» del panel claro (`btn-primario`,
+   `.rpp-pager-num.active`, `.loyalty-tab.is-active`) es blanco sobre #60b5ff = 2,10:1 (D-1346).
+   La activa se marca con `aria-current="page"`: número en negrita en el texto del botón (17,7:1) y
+   el borde en el azul oscuro de ALEF (`--color-primario-oscuro`, 4,1:1 contra el blanco; para un
+   borde que señala un estado WCAG pide 3:1). Sólo tokens. */
+.reservas-config-page .rc-pager-pages {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+}
+.reservas-config-page .rc-pager-pages .btn[aria-current="page"] {
+  border-color: var(--color-primario-oscuro);
+  font-weight: 800;
+}
+/* Primera/anterior en la página 1 y siguiente/última en la última se ven apagadas, como en la
+   paginación de antes: la receta del botón claro desactivado de configuración
+   (`.cfg-btn-ghost:disabled`, config-common.css). WCAG no exige contraste a un control inactivo. */
+.reservas-config-page .rc-pager-pages .btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
 
 
 /* ===== Mobile cards ===== */
@@ -55,6 +115,18 @@
   font-weight: 600;
   color: var(--color-texto, #1f2937);
 }
+
+/* Tabla de escritorio: el teléfono no se parte («+34 651 657 / 946», D-1438, de antes del lote).
+   Y la columna principal puede encoger por debajo del ancho de la tabla, que entonces se desplaza
+   DENTRO de su tarjeta (`.cfg-table-scroll` ya lleva overflow-x: auto). Sin esto, entre 769 y
+   ~955 px la tarjeta se salía de la pantalla y se cortaba (D-1439: de antes del lote; la R3 la
+   ensanchó 43 px). Es el `min-width: auto` de un elemento de rejilla; aquí sólo con ámbito. */
+.reservas-config-page .rc-tel { white-space: nowrap; }
+.reservas-config-page .reservas-config-main { min-width: 0; }
+
+/* Un email o un teléfono largos parten en la tarjeta en vez de empujarla fuera de la pantalla
+   (D-1391: venía de antes del lote; `body` lleva overflow-x: hidden y lo cortado no se ve). */
+.reservas-config-page .rc-mcard-v { overflow-wrap: anywhere; }
 
 .rc-mcard-actions { display: flex; gap: 0.4rem; }
 .rc-mcard-actions .btn { flex: 1; }

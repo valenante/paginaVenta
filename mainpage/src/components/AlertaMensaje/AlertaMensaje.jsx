@@ -13,7 +13,9 @@ const AlertaMensaje = ({ tipo = "info", mensaje, onClose, autoCerrar = true, dur
   return (
     <div className={`alerta-mensaje alerta-${tipo}`}>
       <span>{mensaje}</span>
-      <button onClick={onClose} className="alerta-cerrar">×</button>
+      {/* D-1330/D-1331 · type="button": sin `type`, un <button> dentro de un <form> ENVÍA el form, y
+          la × volvía a guardar (producto o reserva duplicados). Cerrar un aviso nunca envía nada. */}
+      <button type="button" onClick={onClose} className="alerta-cerrar">×</button>
     </div>
   );
 };

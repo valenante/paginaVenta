@@ -10,8 +10,9 @@ import { ESTADOS_LABEL } from "../components/Reservas/reservaEstado.js";
 import ErrorToast from "../components/common/ErrorToast.jsx";
 import { normalizeApiError } from "../utils/normalizeApiError.js";
 import { useFeature } from "../hooks/useFeature";
-import Pagination from "./Finanzas/Pagination.jsx";
-import "./Finanzas/Finanzas.css";
+// Sólo la cuenta de qué números enseñar (1 … 4 [5] 6 … 9). El componente de Finanzas y su CSS
+// son del tema OSCURO y no se usan aquí.
+import { pageRange } from "./Finanzas/Pagination.jsx";
 import "../styles/ReservasConfigPage.css";
 
 const fmtFecha = (v) => {
@@ -192,7 +193,7 @@ export default function ReservasConfigPage() {
         <div className="cfg-actions">
           <button className="btn btn-primario cfg-btn-compact" onClick={() => checkinReserva(r._id)}>Ha llegado</button>
           <button className="btn btn-secundario cfg-btn-compact" onClick={() => marcarNoShow(r._id)}>No vino</button>
-          <button className="btn btn-ghost cfg-btn-compact" onClick={() => abrirCancelarReserva(r._id)}>Cancelar</button>
+          <button className="btn btn-secundario cfg-btn-compact" onClick={() => abrirCancelarReserva(r._id)}>Cancelar</button>
         </div>
       );
     }
@@ -219,7 +220,11 @@ export default function ReservasConfigPage() {
           <p className="text-suave">ALEF gestiona tus reservas: confirma sola, recuerda al cliente y detecta ausencias.</p>
         </div>
         <div className="reservas-config-header-status">
-          <span className="badge badge-exito">Reservas activas</span>
+          {/* No `badge badge-exito` (global, #d1fae5: el verde exacto que Valen rechazó, 2,24:1). La
+              cabecera va sobre el fondo OSCURO de la app (UserLayout.css:9), así que la pieza es la
+              píldora oscura de estado del panel (dashboard-common.css:621, cargada siempre por
+              App.jsx:54): el mismo verde #22c55e del «HOY» y de «Confirmada» del panel operativo. */}
+          <span className="dash-badge dash-badge--ok">Reservas activas</span>
         </div>
       </header>
 
@@ -236,19 +241,19 @@ export default function ReservasConfigPage() {
             <div className="cfg-stats">
               <article className="cfg-stat">
                 <span className="cfg-stat__label">Confirmación automática</span>
-                <span className="text-suave" style={{ fontSize: "0.78rem" }}>Se confirman solas si cumplen los criterios</span>
+                <span className="cfg-help">Se confirman solas si cumplen los criterios</span>
               </article>
               <article className="cfg-stat">
                 <span className="cfg-stat__label">Recordatorio 24h</span>
-                <span className="text-suave" style={{ fontSize: "0.78rem" }}>Email automático al cliente el día antes</span>
+                <span className="cfg-help">Email automático al cliente el día antes</span>
               </article>
               <article className="cfg-stat">
                 <span className="cfg-stat__label">Detección de ausencias</span>
-                <span className="text-suave" style={{ fontSize: "0.78rem" }}>Si no llega en 30 min, ALEF lo marca</span>
+                <span className="cfg-help">Si no llega en 30 min, ALEF lo marca</span>
               </article>
               <article className="cfg-stat">
                 <span className="cfg-stat__label">Overbooking inteligente</span>
-                <span className="text-suave" style={{ fontSize: "0.78rem" }}>Acepta reservas extra según tasa de ausencias</span>
+                <span className="cfg-help">Acepta reservas extra según tasa de ausencias</span>
               </article>
             </div>
           </section>
@@ -325,7 +330,7 @@ export default function ReservasConfigPage() {
                           <td>{r.personas}</td>
                           <td>{fmtFecha(r.hora)}</td>
                           <td>{r.mesaAsignada || "—"}</td>
-                          <td>{r.telefono}</td>
+                          <td className="rc-tel">{r.telefono}</td>
                           <td className="rc-notas"><NotasCliente r={r} /></td>
                           <td><span className={`badge rc-estado rc-estado--${r.estado}`}>{ESTADOS_LABEL[r.estado] || r.estado}</span></td>
                           <td>{renderActions(r)}</td>
@@ -355,14 +360,38 @@ export default function ReservasConfigPage() {
                   ))}
                 </div>
 
+                {/* Paginación: las MISMAS funciones que la de antes (Finanzas/Pagination.jsx:
+                    «Mostrando X–Y de Z», primera, anterior, números con elipsis, siguiente,
+                    última) con las piezas claras de configuración: contenedor `.cfg-pager` y
+                    botones `btn btn-secundario`. La página activa, por `aria-current` (su borde
+                    lo pone ReservasConfigPage.css): `btn-primario` se lee a 2,10:1 (D-1346). */}
                 {totalPaginas > 1 && (
-                  <Pagination
-                    page={paginaActual}
-                    totalPages={totalPaginas}
-                    total={ordenadas.length}
-                    pageSize={POR_PAGINA}
-                    onPageChange={setPagina}
-                  />
+                  <nav className="cfg-pager" aria-label="Páginas de reservas">
+                    <span className="text-suave">
+                      Mostrando <strong>{(paginaActual - 1) * POR_PAGINA + 1}–{Math.min(paginaActual * POR_PAGINA, ordenadas.length)}</strong> de <strong>{ordenadas.length}</strong>
+                    </span>
+                    <div className="rc-pager-pages">
+                      <button type="button" className="btn btn-secundario cfg-btn-compact" disabled={paginaActual <= 1} onClick={() => setPagina(1)} title="Primera" aria-label="Primera página">«</button>
+                      <button type="button" className="btn btn-secundario cfg-btn-compact" disabled={paginaActual <= 1} onClick={() => setPagina(paginaActual - 1)} title="Anterior" aria-label="Página anterior">‹</button>
+                      {pageRange(paginaActual, totalPaginas).map((p, idx) =>
+                        p === "…" ? (
+                          <span key={`e${idx}`} className="text-suave" aria-hidden="true">…</span>
+                        ) : (
+                          <button
+                            key={p}
+                            type="button"
+                            className="btn btn-secundario cfg-btn-compact"
+                            aria-current={p === paginaActual ? "page" : undefined}
+                            onClick={() => setPagina(p)}
+                          >
+                            {p}
+                          </button>
+                        )
+                      )}
+                      <button type="button" className="btn btn-secundario cfg-btn-compact" disabled={paginaActual >= totalPaginas} onClick={() => setPagina(paginaActual + 1)} title="Siguiente" aria-label="Página siguiente">›</button>
+                      <button type="button" className="btn btn-secundario cfg-btn-compact" disabled={paginaActual >= totalPaginas} onClick={() => setPagina(totalPaginas)} title="Última" aria-label="Última página">»</button>
+                    </div>
+                  </nav>
                 )}
               </>
             )}

@@ -1,7 +1,9 @@
 import React from "react";
 
 // Genera los números visibles con elipsis estilo: 1 … 4 5 [6] 7 8 … 20
-function pageRange(current, total) {
+// Exportada para que la reutilice la paginación CLARA de reservas (ReservasConfigPage.jsx) sin
+// copiarla ni traerse este componente, que es del tema oscuro de Finanzas.
+export function pageRange(current, total) {
   const delta = 1; // vecinos a cada lado
   const range = [];
   const rangeWithDots = [];

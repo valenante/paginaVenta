@@ -371,11 +371,13 @@
 .adm__modal:not(.adm__modal--wide):not(.adm__modal--reservas) .adm__modal-list-row {
   grid-template-columns: 1fr 60px 60px;
 }
-/* Reservas modal: 4 cols */
-.adm__modal--reservas { max-width: 760px; width: 95vw; }
+/* Reservas modal: 6 cols. Ancho = el del modal de correlación (800px), no una medida nueva.
+   La columna del estado es FIJA y cabe «AUTO-CONFIRMADA»: cada fila es su propia rejilla, así que
+   una columna «auto» descuadraría la cabecera con las filas. */
+.adm__modal--reservas { max-width: 800px; width: 95vw; }
 .adm__modal--reservas .adm__modal-list-head,
 .adm__modal--reservas .adm__modal-list-row {
-  grid-template-columns: 56px 1fr 44px 56px 110px 110px;
+  grid-template-columns: 56px 1fr 44px 56px 110px 132px;
 }
 /* Eliminaciones modal: 5 cols */
 .adm__modal--wide .adm__modal-list-head,
@@ -395,22 +397,48 @@
 .adm__badge--confirmada, .adm__badge--auto-confirmada { background: rgba(34,197,94,0.2); color: #22c55e; }
 .adm__badge--completada { background: rgba(96,181,255,0.2); color: #60b5ff; }
 .adm__badge--rechazada { background: rgba(239,68,68,0.2); color: #fca5a5; }
-.adm__badge--no-show { background: rgba(255,145,73,0.2); color: #ff9149; }
+/* «No vino»: fuera el naranja y distinto de «Rechazada». Gris neutro del PROPIO panel operativo:
+   el par «apagado» de Control de turnos (`.ct-count-badge--off`, ControlTurnosPanel.css:23-26, la
+   pestaña «Control turnos» de /pro), 5,9–6,6:1 sobre el modal. Gris también en la página. */
+.adm__badge--no-show { background: rgba(148, 163, 184, 0.12); color: #94a3b8; }
+/* La píldora no se estira a toda la columna ni se parte en dos líneas (como las píldoras oscuras
+   compartidas, dashboard-common.css: white-space: nowrap). */
+.adm__modal--reservas .adm__badge { justify-self: start; align-self: start; white-space: nowrap; }
 
-/* Reserva en el modal del KPI: la segunda línea (email, alergias, mensaje) ocupa todo el ancho. */
-.adm__reserva-extra {
-  grid-column: 1 / -1;
+/* Segunda línea de la reserva (email, alergias, mensaje): habla el idioma del modal, sin cajas.
+   Va bajo el nombre, no bajo la hora. Email y etiqueta en el gris de las cabeceras; el mensaje en
+   el color y tamaño de la fila; las alergias en el rojo de `.adm__modal-danger` (el dato crítico
+   del modal de stock), que es el token --color-error. */
+.adm__modal--reservas .adm__reserva-extra {
+  grid-column: 2 / -1;
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  padding-top: 4px;
+  gap: 2px;
 }
-.adm__reserva-email { color: var(--dash-text-muted); font-size: 0.75rem; }
-/* En el fondo oscuro del panel el gris del mensaje no se lee: va en el texto del panel. */
-.adm__reserva-extra .rc-mensaje { color: var(--dash-text); }
+.adm__modal--reservas .adm__reserva-email { color: var(--dash-text-muted); font-size: 0.75rem; overflow-wrap: anywhere; }
+/* Teléfono (5.ª celda): la API admite hasta 30 caracteres con espacios; que parta, no que se salga. */
+.adm__modal--reservas .adm__modal-list-row > :nth-child(5) { overflow-wrap: anywhere; }
+.adm__modal--reservas .rc-alergias { color: var(--color-error); font-weight: 700; }
+.adm__modal--reservas .rc-alergias-k { font-size: 0.72rem; letter-spacing: 0.04em; }
+.adm__modal--reservas .rc-mensaje { color: var(--dash-text-soft); }
+/* MÓVIL (≤ 600px): la forma de los demás modales del panel (Stock bajo, Cancelados): la cabecera
+   SE QUEDA y cada dato está bajo su etiqueta. Seis columnas no caben, así que la fila se apila:
+     línea 1 → Hora · Nombre · Pers. · Mesa      (las cuatro columnas con etiqueta)
+     línea 2 → teléfono, bajo el nombre
+     línea 3 → estado, bajo el teléfono, a la izquierda
+     línea 4 → email, alergias y mensaje, como en escritorio
+   Cada cosa en SU línea: nada comparte línea con el teléfono, así que un teléfono largo (la API
+   admite 30 caracteres con espacios) nunca queda debajo de la píldora (ataque visual 2: en R2 la
+   píldora, en la misma línea y sin poder encogerse, tapaba la última cifra a 360 px y menos).
+   ⚠️ Depende del orden de los <span> de AdminDashboard.jsx (hora, nombre, pers., mesa, teléfono,
+   estado): la red lo comprueba. */
 @media (max-width: 600px) {
-  .adm__modal--reservas .adm__modal-list-head { display: none; }
-  .adm__modal--reservas .adm__modal-list-row { grid-template-columns: 56px 1fr auto; }
+  .adm__modal--reservas .adm__modal-list-head,
+  .adm__modal--reservas .adm__modal-list-row { grid-template-columns: 44px 1fr 36px 40px; }
+  .adm__modal--reservas .adm__modal-list-head > :nth-child(n+5) { display: none; }
+  .adm__modal--reservas .adm__modal-list-row > :nth-child(5) { grid-row: 2; grid-column: 2 / -1; }
+  .adm__modal--reservas .adm__modal-list-row > .adm__badge { grid-row: 3; grid-column: 2 / -1; }
+  .adm__modal--reservas .adm__reserva-extra { grid-row: 4; }
 }
 
 /* ── Responsive ── */
